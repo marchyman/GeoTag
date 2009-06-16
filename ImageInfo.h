@@ -23,6 +23,11 @@
 }
 @property (retain) NSMutableDictionary *info;
 @property BOOL validImage;
+@property (readonly) NSString *imageName;
+@property (readonly) NSString *imageDate;
+@property (readonly) NSString *imageLat;
+@property (readonly) NSString *imageLon;
+
 
 + (id) imageInfoWithPath: (NSString *) path;
 

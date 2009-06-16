@@ -56,9 +56,9 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	     row: (int) row
 {
     (void) tv;
-    (void) tableColumn;
-    (void) row;
-    return @"not yet";
+    ImageInfo *imageInfo = [images objectAtIndex: row];
+    SEL selector = NSSelectorFromString([tableColumn identifier]);
+    return [imageInfo performSelector: selector];
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification

@@ -11,7 +11,6 @@
 @synthesize info;
 @synthesize validImage;
 
-
 + (id) imageInfoWithPath: (NSString *) path
 {
     ImageInfo *newInfo = [[ImageInfo alloc] init];
@@ -39,9 +38,34 @@
     [super dealloc];
 }
 
+#pragma mark properties
+
+- (NSString *) imageName
+{
+    return [info objectForKey: IIImageName];
+}
+
+- (NSString *) imageDate
+{
+    return [info objectForKey: IIDateTime];
+}
+
+- (NSString *) imageLat
+{
+    return [info objectForKey: IILatitude];
+}
+
+- (NSString *) imageLon
+{
+    return [info objectForKey: IILongitude];
+}
+
+#pragma mark helper functions
 
 - (BOOL) parseExif
 {
+    NSString *path = [info objectForKey: IIPathName];
+    [info setObject: path forKey: IIImageName];
     ;;;
     return NO;
 }
