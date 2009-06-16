@@ -18,9 +18,11 @@
 + (id) imageInfoWithPath: (NSString *) path
 {
     ImageInfo *newInfo = [[ImageInfo alloc] init];
-    [newInfo setInfo: [NSMutableDictionary dictionaryWithObject: path
-							 forKey: IIPathName]];
-    [newInfo setValidImage: [newInfo parseExif]];
+    if (newInfo) {
+	[newInfo setInfo: [NSMutableDictionary dictionaryWithObject: path
+							     forKey: IIPathName]];
+	[newInfo setValidImage: [newInfo parseExif]];
+    }
     return newInfo;
 }
 
