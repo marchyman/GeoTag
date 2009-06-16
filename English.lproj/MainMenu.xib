@@ -9,7 +9,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="72"/>
-			<integer value="372"/>
+			<integer value="453"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1162,13 +1162,14 @@
 											<object class="NSMutableArray" key="NSTableColumns">
 												<bool key="EncodedWithXMLCoder">YES</bool>
 												<object class="NSTableColumn" id="106300243">
+													<string key="NSIdentifier">fn</string>
 													<double key="NSWidth">1.500000e+02</double>
 													<double key="NSMinWidth">4.000000e+01</double>
 													<double key="NSMaxWidth">1.000000e+03</double>
 													<object class="NSTableHeaderCell" key="NSHeaderCell">
 														<int key="NSCellFlags">75628032</int>
 														<int key="NSCellFlags2">0</int>
-														<string key="NSContents">File Name</string>
+														<string key="NSContents">Image Name</string>
 														<object class="NSFont" key="NSSupport" id="26">
 															<string key="NSName">LucidaGrande</string>
 															<double key="NSSize">1.100000e+01</double>
@@ -1219,6 +1220,7 @@
 													<reference key="NSTableView" ref="504687421"/>
 												</object>
 												<object class="NSTableColumn" id="774679189">
+													<string key="NSIdentifier">dt</string>
 													<double key="NSWidth">1.100000e+02</double>
 													<double key="NSMinWidth">4.000000e+01</double>
 													<double key="NSMaxWidth">1.000000e+03</double>
@@ -1244,6 +1246,7 @@
 													<reference key="NSTableView" ref="504687421"/>
 												</object>
 												<object class="NSTableColumn" id="266193996">
+													<string key="NSIdentifier">lat</string>
 													<double key="NSWidth">1.350000e+02</double>
 													<double key="NSMinWidth">1.000000e+01</double>
 													<double key="NSMaxWidth">3.402823e+38</double>
@@ -1277,6 +1280,7 @@
 													<reference key="NSTableView" ref="504687421"/>
 												</object>
 												<object class="NSTableColumn" id="626046179">
+													<string key="NSIdentifier">lon</string>
 													<double key="NSWidth">1.220000e+02</double>
 													<double key="NSMinWidth">1.000000e+01</double>
 													<double key="NSMaxWidth">3.402823e+38</double>
@@ -1423,7 +1427,7 @@
 							<bool key="UseBackForwardList">NO</bool>
 							<bool key="AllowsUndo">YES</bool>
 						</object>
-						<object class="NSImageView" id="729185729">
+						<object class="NSImageView" id="930143902">
 							<reference key="NSNextResponder" ref="439893737"/>
 							<int key="NSvFlags">283</int>
 							<object class="NSMutableSet" key="NSDragTypes">
@@ -1441,7 +1445,7 @@
 							<string key="NSFrame">{{556, 425}, {606, 406}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<bool key="NSEnabled">YES</bool>
-							<object class="NSImageCell" key="NSCell" id="190461215">
+							<object class="NSImageCell" key="NSCell" id="943620119">
 								<int key="NSCellFlags">130560</int>
 								<int key="NSCellFlags2">33554432</int>
 								<int key="NSAlign">0</int>
@@ -2009,6 +2013,14 @@
 						<reference key="destination" ref="657427450"/>
 					</object>
 					<int key="connectionID">472</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showOpenPanel:</string>
+						<reference key="source" ref="657427450"/>
+						<reference key="destination" ref="722745758"/>
+					</object>
+					<int key="connectionID">475</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2598,7 +2610,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="331004398"/>
 							<reference ref="640333295"/>
-							<reference ref="729185729"/>
+							<reference ref="930143902"/>
 						</object>
 						<reference key="parent" ref="972006081"/>
 					</object>
@@ -3019,17 +3031,17 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">473</int>
-						<reference key="object" ref="729185729"/>
+						<reference key="object" ref="930143902"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="190461215"/>
+							<reference ref="943620119"/>
 						</object>
 						<reference key="parent" ref="439893737"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">474</int>
-						<reference key="object" ref="190461215"/>
-						<reference key="parent" ref="729185729"/>
+						<reference key="object" ref="943620119"/>
+						<reference key="parent" ref="930143902"/>
 					</object>
 				</object>
 			</object>
@@ -3552,7 +3564,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">474</int>
+			<int key="maxID">475</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

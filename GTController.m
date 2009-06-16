@@ -6,46 +6,39 @@
 //
 
 #import "GTController.h"
-
+#import "ImageInfo.h"
 
 @implementation GTController
 
 - (id) init
 {
     if ((self = [super init])) {
-	;;;
+	images = [[NSMutableArray alloc] init];
     }
     return self;
 }
 
 /*
- * open/load images into the table view for processing
+ * Let the user select images or directories of images from an
+ * open dialog box.
  */
-- (void) openPanelDidEnd: (NSOpenPanel *) openPanel
-	      returnCode: (int) returnCode
-	     contextInfo: (void *) x
-{
-    if (returnCode == NSOKButton) {
-	NSString *path = [openPanel filename];
-	NSLog(@"open panel path: %@", path);
-	;;;
-	/*
-	NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
-	[stretchView setImage:image];
-	[image release];
-	 */
-    }
-}
-
 - (IBAction) showOpenPanel: (id) sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
-    [panel beginSheetForDirectory:nil
-			     file:nil
-		   modalForWindow:[tableView window]
-		    modalDelegate:self
-		   didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:)
-		      contextInfo:NULL];
+    NSInteger result;
+
+    [panel setAllowsMultipleSelection: YES];
+    [panel setCanChooseFiles: YES];
+    [panel setCanChooseDirectories: YES];
+    result = [panel runModalForDirectory: nil file: nil types: nil];
+    if (result == NSOKButton) {
+	NSArray *filenames = [panel filenames];
+	for (NSString *path in filenames) {
+	    NSLog(@"open panel path: %@", path);
+	    [images addObject: [ImageInfo imageInfoWithPath: path]];
+	}
+	[tableView reloadData];
+    }
 }
 
 /*
@@ -53,16 +46,14 @@
  */
 - (int) numberOfRowsInTableView: (NSTableView *) tv
 {
-    ;;;
-    return 0;
+    return [images count];
 }
 
 - (id) tableView: (NSTableView *) tv
 objectValueForTableColumn: (NSTableColumn *) tableColumn
 	     row: (int) row
 {
-    ;;;
-    return nil;
+    return @"not yet";
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
@@ -70,6 +61,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     int row = [tableView selectedRow];
     if (row == -1)
 	return;
+    NSLog(@"table view row %d selected", row);
     ;;;
 }
 

@@ -9,6 +9,7 @@
 
 @interface GTController : NSObject {
     IBOutlet NSTableView *tableView;
+    NSMutableArray *images;
 }
 
 - (IBAction) showOpenPanel: (id) sender;
