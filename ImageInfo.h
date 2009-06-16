@@ -21,6 +21,7 @@
     NSMutableDictionary *info;
     BOOL validImage;
 }
+@property (retain) NSMutableDictionary *info;
 @property BOOL validImage;
 
 + (id) imageInfoWithPath: (NSString *) path;

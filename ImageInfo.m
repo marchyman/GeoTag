@@ -7,13 +7,10 @@
 
 #import "ImageInfo.h"
 
-@interface ImageInfo ()
-- (NSMutableDictionary *) info;
-- (void) setInfo: (NSMutableDictionary *) newInfo;
-@end
-
 @implementation ImageInfo
+@synthesize info;
 @synthesize validImage;
+
 
 + (id) imageInfoWithPath: (NSString *) path
 {
@@ -42,16 +39,6 @@
     [super dealloc];
 }
 
-- (NSMutableDictionary *) info
-{
-    return info;
-}
-
-- (void) setInfo: (NSMutableDictionary *) newInfo
-{
-    [info autorelease];
-    info = [newInfo retain];
-}
 
 - (BOOL) parseExif
 {

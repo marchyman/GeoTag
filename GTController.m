@@ -24,6 +24,7 @@
  */
 - (IBAction) showOpenPanel: (id) sender
 {
+    (void) sender;
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     NSInteger result;
 
@@ -46,6 +47,7 @@
  */
 - (int) numberOfRowsInTableView: (NSTableView *) tv
 {
+    (void) tv;
     return [images count];
 }
 
@@ -53,11 +55,15 @@
 objectValueForTableColumn: (NSTableColumn *) tableColumn
 	     row: (int) row
 {
+    (void) tv;
+    (void) tableColumn;
+    (void) row;
     return @"not yet";
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
 {
+    (void) notification;
     int row = [tableView selectedRow];
     if (row == -1)
 	return;
