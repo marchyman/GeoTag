@@ -65,7 +65,7 @@
 - (BOOL) parseExif
 {
     NSString *path = [info objectForKey: IIPathName];
-    [info setObject: path forKey: IIImageName];
+    [info setObject: [path lastPathComponent] forKey: IIImageName];
     ;;;
     return NO;
 }
