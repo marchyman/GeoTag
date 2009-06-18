@@ -7,8 +7,22 @@
 
 #import "GTController.h"
 #import "ImageInfo.h"
+#import "PrefController.h"
 
 @implementation GTController
+
+/*
+ * Would be better to initialze this from a UserDefaults.plist in the
+ * bundle.
+ */
++ (void) initialize
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *appDefaults = [NSDictionary
+				 dictionaryWithObject: @"/usr/bin/exiftool"
+				 forKey: SSExiftoolPathKey];
+    [defaults registerDefaults: appDefaults];
+}
 
 - (id) init
 {
@@ -16,6 +30,17 @@
 	images = [[NSMutableArray alloc] init];
     }
     return self;
+}
+
+/*
+ * instantiate, if necessary, and open the preference window
+ */
+- (IBAction) showPreferencePanel: (id) sender
+{
+    (void) sender;
+    if (! prefController) 
+	prefController = [[PrefController alloc] init];
+    [prefController showWindow: self];
 }
 
 /*
