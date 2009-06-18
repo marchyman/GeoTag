@@ -17,16 +17,22 @@ NSString * const SSExiftoolPathKey = @"ExiftoolPath";
     return [super initWithWindowNibName:@"Preferences"];
 }
 
+- (NSString *) exiftoolPath
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults stringForKey: SSExiftoolPathKey];
+}
+
+- (void) windowDidLoad
+{
+    [exiftoolPath setStringValue: [self exiftoolPath]];
+}
+
 - (IBAction) chooseExiftoolPath: (id) sender
 {
     (void) sender;
     NSLog(@"Choose button pressed");
     ;;;
-}
-
-- (NSTextField *) exiftoolPath
-{
-    return exiftoolPath;
 }
 
 - (void) setExiftoolPath: (NSTextField*) newExiftoolPath

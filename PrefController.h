@@ -15,7 +15,7 @@ extern NSString * const SSExiftoolPathKey;
 
 - (IBAction) chooseExiftoolPath: (id) sender;
 
-- (NSTextField *) exiftoolPath;
+- (NSString *) exiftoolPath;
 - (void) setExiftoolPath: (NSTextField *) newExiftoolPath;
 
 @end
