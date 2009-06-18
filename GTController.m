@@ -17,11 +17,11 @@
  */
 + (void) initialize
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *appDefaults = [NSDictionary
 				 dictionaryWithObject: @"/usr/bin/exiftool"
 				 forKey: SSExiftoolPathKey];
-    [defaults registerDefaults: appDefaults];
+    [[NSUserDefaults standardUserDefaults] registerDefaults: appDefaults];
+    NSLog(@"Registered defaults %@", appDefaults);
 }
 
 - (id) init
