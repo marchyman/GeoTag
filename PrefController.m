@@ -6,51 +6,53 @@
 //
 
 #import "PrefController.h"
-
-NSString * const SSExiftoolPathKey = @"ExiftoolPath";
+#import "GTDefaults.h"
 
 @implementation PrefController
 
+#pragma mark -
+#pragma mark init
 
 - (id)init
 {
     return [super initWithWindowNibName:@"Preferences"];
 }
 
-- (NSString *) exiftoolPath
+#pragma mark -
+#pragma mark delegate methods
+
+- (IBAction) setMakeBackupFiles: (id) sender
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return [defaults stringForKey: SSExiftoolPathKey];
+    (void) sender;
+}
+
+- (IBAction) checkExiftoolValidity: (id) sender
+{
+    (void) sender;
+}
+
+- (IBAction) resetExiftoolPath: (id) sender
+{
+    [[NSUserDefaults standardUserDefaults]
+	removeObjectForKey:SSExiftoolPathKey];
+}
+
+- (void) pathCell: (NSPathCell *) pathCell
+    willDisplayOpenPanel: (NSOpenPanel *) openPanel
+{
+    [openPanel setCanChooseDirectories:NO];
+    [openPanel setCanChooseFiles:YES];
+    [openPanel setAllowsMultipleSelection:NO];
+    [openPanel setTreatsFilePackagesAsDirectories:YES];
+    // [openPanel setAccessoryView:exiftoolPathOpenAccessory];
+    
+    exiftoolPathOpenPanel = openPanel;
 }
 
 - (void) windowDidLoad
 {
-    [exiftoolPath setStringValue: [self exiftoolPath]];
-}
-
-- (IBAction) chooseExiftoolPath: (id) sender
-{
-    (void) sender;
-    NSLog(@"Choose button pressed");
     ;;;
+    NSLog(@"windowDidLoad");
 }
-
-- (void) setExiftoolPath: (NSTextField*) newExiftoolPath
-{
-    [exiftoolPath autorelease];
-    exiftoolPath = [newExiftoolPath retain];
-}
-
-/*
- NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
- return [defaults boolForKey: SSEmptyDocKey];
- 
- 
- int state = [checkBox state];
- NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
- [defaults setBool: state forKey: SSEmptyDocKey];
- NSLog(@"checkBox changed %d", state);
- 
- */
 
 @end

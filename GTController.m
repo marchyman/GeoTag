@@ -8,26 +8,21 @@
 #import "GTController.h"
 #import "ImageInfo.h"
 #import "PrefController.h"
+#import "GTDefaults.h"
+#import "PathToStringTransformer.h"
+
 
 @implementation GTController
-
-/*
- * Would be better to initialze this from a UserDefaults.plist in the
- * bundle.
- */
-+ (void) initialize
-{
-    NSDictionary *appDefaults = [NSDictionary
-				 dictionaryWithObject: @"/usr/bin/exiftool"
-				 forKey: SSExiftoolPathKey];
-    [[NSUserDefaults standardUserDefaults] registerDefaults: appDefaults];
-    NSLog(@"Registered defaults %@", appDefaults);
-}
 
 - (id) init
 {
     if ((self = [super init])) {
 	images = [[NSMutableArray alloc] init];
+	
+	NSValueTransformer *transformer = [[PathToStringTransformer alloc] init];
+	[NSValueTransformer setValueTransformer: transformer
+					forName: @"PathToStringTransformer"];
+	[GTDefaults class];
     }
     return self;
 }

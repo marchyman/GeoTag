@@ -10,6 +10,8 @@
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		4959729C0FE8E61E00DD267E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4959729B0FE8E61E00DD267E /* Preferences.xib */; };
 		4959729F0FE8E65B00DD267E /* PrefController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4959729E0FE8E65B00DD267E /* PrefController.m */; };
+		495973820FEB125C00DD267E /* GTDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973810FEB125C00DD267E /* GTDefaults.m */; };
+		495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973C30FEB36D900DD267E /* PathToStringTransformer.m */; };
 		495FBA280FE5D9F200A7030E /* GTController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBA270FE5D9F200A7030E /* GTController.m */; };
 		495FBAA20FE62D8900A7030E /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495FBAA10FE62D8900A7030E /* WebKit.framework */; };
 		495FBBDF0FE7350D00A7030E /* ImageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBBDE0FE7350D00A7030E /* ImageInfo.m */; };
@@ -30,6 +32,10 @@
 		4959729B0FE8E61E00DD267E /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		4959729D0FE8E65B00DD267E /* PrefController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefController.h; sourceTree = "<group>"; };
 		4959729E0FE8E65B00DD267E /* PrefController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefController.m; sourceTree = "<group>"; };
+		495973800FEB125C00DD267E /* GTDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTDefaults.h; sourceTree = "<group>"; };
+		495973810FEB125C00DD267E /* GTDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTDefaults.m; sourceTree = "<group>"; };
+		495973C20FEB36D900DD267E /* PathToStringTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathToStringTransformer.h; sourceTree = "<group>"; };
+		495973C30FEB36D900DD267E /* PathToStringTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathToStringTransformer.m; sourceTree = "<group>"; };
 		495FBA260FE5D9F200A7030E /* GTController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTController.h; sourceTree = "<group>"; };
 		495FBA270FE5D9F200A7030E /* GTController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTController.m; sourceTree = "<group>"; };
 		495FBAA10FE62D8900A7030E /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
@@ -61,6 +67,10 @@
 				495FBBDE0FE7350D00A7030E /* ImageInfo.m */,
 				4959729D0FE8E65B00DD267E /* PrefController.h */,
 				4959729E0FE8E65B00DD267E /* PrefController.m */,
+				495973800FEB125C00DD267E /* GTDefaults.h */,
+				495973810FEB125C00DD267E /* GTDefaults.m */,
+				495973C20FEB36D900DD267E /* PathToStringTransformer.h */,
+				495973C30FEB36D900DD267E /* PathToStringTransformer.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -193,6 +203,8 @@
 				495FBA280FE5D9F200A7030E /* GTController.m in Sources */,
 				495FBBDF0FE7350D00A7030E /* ImageInfo.m in Sources */,
 				4959729F0FE8E65B00DD267E /* PrefController.m in Sources */,
+				495973820FEB125C00DD267E /* GTDefaults.m in Sources */,
+				495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

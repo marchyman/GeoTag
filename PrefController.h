@@ -7,15 +7,18 @@
 
 #import <Cocoa/Cocoa.h>
 
-extern NSString * const SSExiftoolPathKey;
-
 @interface PrefController : NSWindowController {
-    IBOutlet NSTextField *exiftoolPath;
+    IBOutlet NSPathControl *exiftoolPathController;
+    IBOutlet NSImageView *badExiftoolPathIcon;
+    IBOutlet NSView *exiftoolPathOpenAccessory;
+    NSOpenPanel *exiftoolPathOpenPanel;
 }
 
-- (IBAction) chooseExiftoolPath: (id) sender;
+- (IBAction) setMakeBackupFiles: (id) sender;
+- (IBAction) checkExiftoolValidity: (id) sender;
+- (IBAction) resetExiftoolPath: (id) sender;
 
-- (NSString *) exiftoolPath;
-- (void) setExiftoolPath: (NSTextField *) newExiftoolPath;
+- (void) pathCell: (NSPathCell *) pathCell
+    willDisplayOpenPanel: (NSOpenPanel *) openPanel;
 
 @end
