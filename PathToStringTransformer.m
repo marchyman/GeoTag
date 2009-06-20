@@ -22,17 +22,22 @@
 
 - (id) transformedValue: (id) value
 {
+    id result = nil;
+    
     if (value)
-	return [NSURL URLWithString: value
-		      relativeToURL: [NSURL URLWithString:@"file://localhost/"]];
-    return nil;
+	result = [NSURL URLWithString: value
+			relativeToURL: [NSURL URLWithString:
+					@"file://localhost/"]];
+    return result;
 }
 
 - (id) reverseTransformedValue: (id) value
 {
+    id result = nil;
+    
     if (value)
-	return [value path];
-    return nil;
+	result = [value path];
+    return result;
 }
 
 @end

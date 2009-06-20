@@ -7,9 +7,7 @@
 
 #import "GTController.h"
 #import "ImageInfo.h"
-#import "PrefController.h"
-#import "GTDefaults.h"
-#import "PathToStringTransformer.h"
+#import "GTDefaultscontroller.h"
 
 
 @implementation GTController
@@ -18,24 +16,20 @@
 {
     if ((self = [super init])) {
 	images = [[NSMutableArray alloc] init];
-	
-	NSValueTransformer *transformer = [[PathToStringTransformer alloc] init];
-	[NSValueTransformer setValueTransformer: transformer
-					forName: @"PathToStringTransformer"];
-	[GTDefaults class];
+
+	// force app defaults and preferences initialization
+	[GTDefaultsController class];
     }
     return self;
 }
 
 /*
- * instantiate, if necessary, and open the preference window
+ * open the preference window
  */
 - (IBAction) showPreferencePanel: (id) sender
 {
-    (void) sender;
-    if (! prefController) 
-	prefController = [[PrefController alloc] init];
-    [prefController showWindow: self];
+    [[GTDefaultsController sharedPrefsWindowController] showWindow:nil];
+    (void)sender;
 }
 
 /*

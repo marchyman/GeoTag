@@ -9,9 +9,10 @@
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		4959729C0FE8E61E00DD267E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4959729B0FE8E61E00DD267E /* Preferences.xib */; };
-		4959729F0FE8E65B00DD267E /* PrefController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4959729E0FE8E65B00DD267E /* PrefController.m */; };
-		495973820FEB125C00DD267E /* GTDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973810FEB125C00DD267E /* GTDefaults.m */; };
+		495973820FEB125C00DD267E /* GTDefaultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973810FEB125C00DD267E /* GTDefaultsController.m */; };
 		495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973C30FEB36D900DD267E /* PathToStringTransformer.m */; };
+		495974750FEC46C900DD267E /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495974740FEC46C900DD267E /* DBPrefsWindowController.m */; };
+		495974FD0FEC6AB200DD267E /* General.png in Resources */ = {isa = PBXBuildFile; fileRef = 495974FC0FEC6AB200DD267E /* General.png */; };
 		495FBA280FE5D9F200A7030E /* GTController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBA270FE5D9F200A7030E /* GTController.m */; };
 		495FBAA20FE62D8900A7030E /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495FBAA10FE62D8900A7030E /* WebKit.framework */; };
 		495FBBDF0FE7350D00A7030E /* ImageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBBDE0FE7350D00A7030E /* ImageInfo.m */; };
@@ -30,12 +31,13 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* GeoTag_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoTag_Prefix.pch; sourceTree = "<group>"; };
 		4959729B0FE8E61E00DD267E /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
-		4959729D0FE8E65B00DD267E /* PrefController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefController.h; sourceTree = "<group>"; };
-		4959729E0FE8E65B00DD267E /* PrefController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefController.m; sourceTree = "<group>"; };
-		495973800FEB125C00DD267E /* GTDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTDefaults.h; sourceTree = "<group>"; };
-		495973810FEB125C00DD267E /* GTDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTDefaults.m; sourceTree = "<group>"; };
+		495973800FEB125C00DD267E /* GTDefaultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTDefaultsController.h; sourceTree = "<group>"; };
+		495973810FEB125C00DD267E /* GTDefaultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTDefaultsController.m; sourceTree = "<group>"; };
 		495973C20FEB36D900DD267E /* PathToStringTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathToStringTransformer.h; sourceTree = "<group>"; };
 		495973C30FEB36D900DD267E /* PathToStringTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathToStringTransformer.m; sourceTree = "<group>"; };
+		495974730FEC46C900DD267E /* DBPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBPrefsWindowController.h; sourceTree = "<group>"; };
+		495974740FEC46C900DD267E /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBPrefsWindowController.m; sourceTree = "<group>"; };
+		495974FC0FEC6AB200DD267E /* General.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = General.png; sourceTree = "<group>"; };
 		495FBA260FE5D9F200A7030E /* GTController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTController.h; sourceTree = "<group>"; };
 		495FBA270FE5D9F200A7030E /* GTController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTController.m; sourceTree = "<group>"; };
 		495FBAA10FE62D8900A7030E /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
@@ -65,12 +67,6 @@
 				495FBA270FE5D9F200A7030E /* GTController.m */,
 				495FBBDD0FE7350D00A7030E /* ImageInfo.h */,
 				495FBBDE0FE7350D00A7030E /* ImageInfo.m */,
-				4959729D0FE8E65B00DD267E /* PrefController.h */,
-				4959729E0FE8E65B00DD267E /* PrefController.m */,
-				495973800FEB125C00DD267E /* GTDefaults.h */,
-				495973810FEB125C00DD267E /* GTDefaults.m */,
-				495973C20FEB36D900DD267E /* PathToStringTransformer.h */,
-				495973C30FEB36D900DD267E /* PathToStringTransformer.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -104,6 +100,7 @@
 		29B97314FDCFA39411CA2CEA /* GeoTag */ = {
 			isa = PBXGroup;
 			children = (
+				4959746F0FEC45B500DD267E /* Preferences */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -125,6 +122,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				495974FC0FEC6AB200DD267E /* General.png */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
@@ -141,6 +139,19 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4959746F0FEC45B500DD267E /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				495974730FEC46C900DD267E /* DBPrefsWindowController.h */,
+				495974740FEC46C900DD267E /* DBPrefsWindowController.m */,
+				495973C20FEB36D900DD267E /* PathToStringTransformer.h */,
+				495973C30FEB36D900DD267E /* PathToStringTransformer.m */,
+				495973800FEB125C00DD267E /* GTDefaultsController.h */,
+				495973810FEB125C00DD267E /* GTDefaultsController.m */,
+			);
+			name = Preferences;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -189,6 +200,7 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				4959729C0FE8E61E00DD267E /* Preferences.xib in Resources */,
+				495974FD0FEC6AB200DD267E /* General.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,9 +214,9 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				495FBA280FE5D9F200A7030E /* GTController.m in Sources */,
 				495FBBDF0FE7350D00A7030E /* ImageInfo.m in Sources */,
-				4959729F0FE8E65B00DD267E /* PrefController.m in Sources */,
-				495973820FEB125C00DD267E /* GTDefaults.m in Sources */,
+				495973820FEB125C00DD267E /* GTDefaultsController.m in Sources */,
 				495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */,
+				495974750FEC46C900DD267E /* DBPrefsWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
