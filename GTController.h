@@ -6,12 +6,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-@class PrefController;
 
 @interface GTController : NSObject {
     IBOutlet NSTableView *tableView;
     NSMutableArray *images;
-    PrefController *prefController;
 }
 
 - (IBAction) showOpenPanel: (id) sender;
