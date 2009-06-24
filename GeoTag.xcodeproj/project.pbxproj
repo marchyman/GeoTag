@@ -13,6 +13,7 @@
 		495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973C30FEB36D900DD267E /* PathToStringTransformer.m */; };
 		495974750FEC46C900DD267E /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495974740FEC46C900DD267E /* DBPrefsWindowController.m */; };
 		495974FD0FEC6AB200DD267E /* General.png in Resources */ = {isa = PBXBuildFile; fileRef = 495974FC0FEC6AB200DD267E /* General.png */; };
+		4959750A0FECB69B00DD267E /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 495975090FECB69B00DD267E /* Credits.rtf */; };
 		495FBA280FE5D9F200A7030E /* GTController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBA270FE5D9F200A7030E /* GTController.m */; };
 		495FBAA20FE62D8900A7030E /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495FBAA10FE62D8900A7030E /* WebKit.framework */; };
 		495FBBDF0FE7350D00A7030E /* ImageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBBDE0FE7350D00A7030E /* ImageInfo.m */; };
@@ -38,6 +39,7 @@
 		495974730FEC46C900DD267E /* DBPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBPrefsWindowController.h; sourceTree = "<group>"; };
 		495974740FEC46C900DD267E /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBPrefsWindowController.m; sourceTree = "<group>"; };
 		495974FC0FEC6AB200DD267E /* General.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = General.png; sourceTree = "<group>"; };
+		495975090FECB69B00DD267E /* Credits.rtf */ = {isa = PBXFileReference; explicitFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		495FBA260FE5D9F200A7030E /* GTController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTController.h; sourceTree = "<group>"; };
 		495FBA270FE5D9F200A7030E /* GTController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTController.m; sourceTree = "<group>"; };
 		495FBAA10FE62D8900A7030E /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
@@ -127,6 +129,7 @@
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 				4959729B0FE8E61E00DD267E /* Preferences.xib */,
+				495975090FECB69B00DD267E /* Credits.rtf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -161,6 +164,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "GeoTag" */;
 			buildPhases = (
+				495C85720FF1A57000FA483C /* ShellScript */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -201,10 +205,27 @@
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				4959729C0FE8E61E00DD267E /* Preferences.xib in Resources */,
 				495974FD0FEC6AB200DD267E /* General.png in Resources */,
+				4959750A0FECB69B00DD267E /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		495C85720FF1A57000FA483C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sha=`git-head-id`\nsed -e \"s/|.*|/|$sha|/\" <Credits.rtf >Credits.rtf+\nmv Credits.rtf+ Credits.rtf";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {
