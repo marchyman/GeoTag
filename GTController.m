@@ -59,7 +59,7 @@
 /*
  * table view delegated functions
  */
-- (int) numberOfRowsInTableView: (NSTableView *) tv
+- (NSInteger) numberOfRowsInTableView: (NSTableView *) tv
 {
     (void) tv;
     return [images count];
@@ -67,7 +67,7 @@
 
 - (id) tableView: (NSTableView *) tv
 objectValueForTableColumn: (NSTableColumn *) tableColumn
-	     row: (int) row
+	     row: (NSInteger) row
 {
     (void) tv;
     ImageInfo *imageInfo = [images objectAtIndex: row];
@@ -78,7 +78,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
 {
     (void) notification;
-    int row = [tableView selectedRow];
+    NSInteger row = [tableView selectedRow];
     if (row == -1)
 	return;
     NSLog(@"table view row %d selected", row);
