@@ -14,7 +14,6 @@
 		495974750FEC46C900DD267E /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495974740FEC46C900DD267E /* DBPrefsWindowController.m */; };
 		495974FD0FEC6AB200DD267E /* General.png in Resources */ = {isa = PBXBuildFile; fileRef = 495974FC0FEC6AB200DD267E /* General.png */; };
 		4959750A0FECB69B00DD267E /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 495975090FECB69B00DD267E /* Credits.rtf */; };
-		495C85A40FF1AC1B00FA483C /* Credits-input.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 495C85A30FF1AC1B00FA483C /* Credits-input.rtf */; };
 		495FBA280FE5D9F200A7030E /* GTController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBA270FE5D9F200A7030E /* GTController.m */; };
 		495FBAA20FE62D8900A7030E /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495FBAA10FE62D8900A7030E /* WebKit.framework */; };
 		495FBBDF0FE7350D00A7030E /* ImageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBBDE0FE7350D00A7030E /* ImageInfo.m */; };
@@ -209,7 +208,6 @@
 				4959729C0FE8E61E00DD267E /* Preferences.xib in Resources */,
 				495974FD0FEC6AB200DD267E /* General.png in Resources */,
 				4959750A0FECB69B00DD267E /* Credits.rtf in Resources */,
-				495C85A40FF1AC1B00FA483C /* Credits-input.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,11 +222,11 @@
 			inputPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Credits.rtf",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "sha=`/opt/local/bin/git --no-pager log -1 --pretty=format:\"%H\"`\nsed -e \"s/#.*#/#$sha#/\" <Credits-input.rtf >Credits.rtf\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
