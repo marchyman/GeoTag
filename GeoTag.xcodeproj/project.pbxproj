@@ -225,7 +225,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sha=`/opt/local/bin/git --no-pager log -1 --pretty=format:\"%H\"`\nsed -e \"s/#.*#/#$sha#/\" <Credits-input.rtf >Credits.rtf\n";
+			shellScript = "sed -e \"s/#.*#/#`/opt/local/bin/git describe`#/\" <Credits-input.rtf >Credits.rtf\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
