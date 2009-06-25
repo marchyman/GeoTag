@@ -33,11 +33,7 @@
 
 - (id) reverseTransformedValue: (id) value
 {
-    id result = nil;
-    
-    if (value)
-	result = [value path];
-    return result;
+    return [value path];
 }
 
 @end

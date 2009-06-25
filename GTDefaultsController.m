@@ -14,7 +14,7 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
 @implementation GTDefaultsController
 
 #pragma mark -
-#pragma mark Defaults initialization and access functions
+#pragma mark Class methods
 
 /*
  * Application preference handling initialization
@@ -34,9 +34,6 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
     NSLog(@"Registered defaults %@", defaultValues);
 }
 
-#pragma mark -
-#pragma mark defaults accessors
-
 + (NSString *) exiftoolPath
 {
     return [[NSUserDefaults standardUserDefaults]
@@ -51,7 +48,7 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
 }
 
 #pragma mark -
-#pragma mark defaults toolbar initialization
+#pragma mark Preferences toolbar initialization
 
 - (void) setupToolbar
 {
@@ -62,7 +59,7 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
 }
 
 #pragma mark -
-#pragma mark acctions and delegate functions
+#pragma mark actions and delegate functions
 
 - (IBAction) checkExiftoolValidity: (id) sender
 {
