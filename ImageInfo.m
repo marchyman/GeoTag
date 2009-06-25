@@ -11,6 +11,9 @@
 @synthesize info;
 @synthesize validImage;
 
+#pragma mark -
+#pragma mark Class methods
+
 + (id) imageInfoWithPath: (NSString *) path
 {
     ImageInfo *newInfo = [[ImageInfo alloc] init];
@@ -22,23 +25,19 @@
     return newInfo;
 }
 
+#pragma mark -
+#pragma mark init and property accessors
+
 - (id) init
 {
     self = [super init];
     if (self) {
-	info = [[NSMutableDictionary dictionaryWithCapacity: IICapacity] retain];
+	info = [NSMutableDictionary dictionaryWithCapacity: IICapacity];
 	validImage = NO;
     }
     return self;
 }
 
-- (void) dealloc
-{
-    [info release];
-    [super dealloc];
-}
-
-#pragma mark properties
 
 - (NSString *) imageName
 {
@@ -60,6 +59,7 @@
     return [info objectForKey: IILongitude];
 }
 
+#pragma mark -
 #pragma mark helper functions
 
 - (BOOL) parseExif
