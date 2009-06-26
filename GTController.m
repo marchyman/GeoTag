@@ -74,7 +74,7 @@
 }
 
 #pragma mark -
-#pragma mark tableView datasource and delegate functions
+#pragma mark tableView datasource functions
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *) tv
 {
@@ -90,6 +90,20 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     ImageInfo *imageInfo = [images objectAtIndex: row];
     SEL selector = NSSelectorFromString([tableColumn identifier]);
     return [imageInfo performSelector: selector];
+}
+
+#pragma mark -
+#pragma mark tableView delegate functions
+
+- (void) tableView: (NSTableView *) aTableView
+   willDisplayCell: (id) aCell
+    forTableColumn: (NSTableColumn *) aTableColumn
+	       row: (NSInteger) rowIndex
+{
+    if (! [[images objectAtIndex: rowIndex] validImage])
+	[aCell setTextColor: [NSColor grayColor]];
+    (void) aTableView;
+    (void) aTableColumn;
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification

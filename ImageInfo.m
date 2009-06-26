@@ -8,6 +8,7 @@
 #import "ImageInfo.h"
 
 @implementation ImageInfo
+@synthesize validImage;
 
 #pragma mark -
 #pragma mark Convenience methods
