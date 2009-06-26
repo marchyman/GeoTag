@@ -61,7 +61,9 @@
     NSString *path = [info objectForKey: IIPathName];
     [info setObject: [path lastPathComponent] forKey: IIImageName];
     ;;;
-    return NO;
+    // temp code for testing
+    static int counter;
+    return ++counter % 2 ? YES : NO;
 }
 
 @end

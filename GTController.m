@@ -100,10 +100,28 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     forTableColumn: (NSTableColumn *) aTableColumn
 	       row: (NSInteger) rowIndex
 {
-    if (! [[images objectAtIndex: rowIndex] validImage])
-	[aCell setTextColor: [NSColor grayColor]];
+    NSColor *textColor;
+    ImageInfo *anImage = [images objectAtIndex: rowIndex];
+    
+    if ([anImage validImage]) {
+	if ([[anImage imageLat] length] > 0)
+	    textColor = [NSColor greenColor];
+	else
+	    textColor = [NSColor blackColor];
+    } else
+	textColor = [NSColor grayColor];
+    
+    [aCell setTextColor: textColor];
+
     (void) aTableView;
     (void) aTableColumn;
+}
+
+- (BOOL) tableView: (NSTableView *) aTableView
+   shouldSelectRow: (NSInteger) rowIndex
+{
+    return [[images objectAtIndex: rowIndex] validImage];
+    (void) aTableView;
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
