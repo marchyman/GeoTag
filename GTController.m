@@ -12,6 +12,9 @@
 
 @implementation GTController
 
+#pragma mark -
+#pragma mark Startup and teardown
+
 - (id) init
 {
     if ((self = [super init])) {
@@ -22,6 +25,20 @@
     }
     return self;
 }
+
+/*
+ * This controller is set as the window deligate in IB so it will be
+ * notified when the window is closing, letting it terminate the
+ * app.
+ */
+- (void) windowWillClose: (NSNotification *) aNotification
+{
+    (void) aNotification;   
+    [NSApp terminate: self];
+}
+
+#pragma mark -
+#pragma mark IB Actions
 
 /*
  * open the preference window
@@ -56,9 +73,9 @@
     }
 }
 
-/*
- * table view delegated functions
- */
+#pragma mark -
+#pragma mark tableView datasource and delegate functions
+
 - (NSInteger) numberOfRowsInTableView: (NSTableView *) tv
 {
     (void) tv;
@@ -83,17 +100,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	return;
     NSLog(@"table view row %d selected", row);
     ;;;
-}
-
-/*
- * This view is set as the windows deligate in IB so it will be
- * notified when the window is closing, letting it terminate the
- * app.
- */
-- (void) windowWillClose: (NSNotification *) aNotification
-{
-    (void) aNotification;   
-    [NSApp terminate: self];
 }
 
 @end

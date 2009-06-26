@@ -8,32 +8,25 @@
 #import "ImageInfo.h"
 
 @implementation ImageInfo
-@synthesize info;
-@synthesize validImage;
 
 #pragma mark -
-#pragma mark Class methods
+#pragma mark Convenience methods
 
 + (id) imageInfoWithPath: (NSString *) path
 {
-    ImageInfo *newInfo = [[ImageInfo alloc] init];
-    if (newInfo) {
-	[newInfo setInfo: [NSMutableDictionary dictionaryWithObject: path
-							     forKey: IIPathName]];
-	[newInfo setValidImage: [newInfo parseExif]];
-    }
-    return newInfo;
+    return [[ImageInfo alloc] initWithPath: path];
 }
 
 #pragma mark -
 #pragma mark init and property accessors
 
-- (id) init
+- (id) initWithPath: (NSString *) path
 {
     self = [super init];
     if (self) {
-	info = [NSMutableDictionary dictionaryWithCapacity: IICapacity];
-	validImage = NO;
+	info = [NSMutableDictionary dictionaryWithObject: path
+							  forKey: IIPathName];
+	validImage = [self parseExif];
     }
     return self;
 }

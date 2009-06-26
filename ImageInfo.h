@@ -21,8 +21,6 @@
     NSMutableDictionary *info;
     BOOL validImage;
 }
-@property NSMutableDictionary *info;
-@property BOOL validImage;
 @property (readonly) NSString *imageName;
 @property (readonly) NSString *imageDate;
 @property (readonly) NSString *imageLat;
