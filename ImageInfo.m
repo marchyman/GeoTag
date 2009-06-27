@@ -32,27 +32,27 @@
     return self;
 }
 
-- (NSString *) imagePath
+- (NSString *) path
 {
     return [info objectForKey: IIPathName];
 }
 
-- (NSString *) imageName
+- (NSString *) name
 {
     return [info objectForKey: IIImageName];
 }
 
-- (NSString *) imageDate
+- (NSString *) date
 {
     return [info objectForKey: IIDateTime];
 }
 
-- (NSString *) imageLat
+- (NSString *) latitude
 {
     return [info objectForKey: IILatitude];
 }
 
-- (NSString *) imageLon
+- (NSString *) longitude
 {
     return [info objectForKey: IILongitude];
 }

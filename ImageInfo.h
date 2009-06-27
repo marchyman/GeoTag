@@ -22,11 +22,11 @@
     BOOL validImage;
 }
 @property BOOL validImage;
-@property (readonly) NSString *imagePath;
-@property (readonly) NSString *imageName;
-@property (readonly) NSString *imageDate;
-@property (readonly) NSString *imageLat;
-@property (readonly) NSString *imageLon;
+@property (readonly) NSString *path;
+@property (readonly) NSString *name;
+@property (readonly) NSString *date;
+@property (readonly) NSString *latitude;
+@property (readonly) NSString *longitude;
 
 
 + (id) imageInfoWithPath: (NSString *) path;

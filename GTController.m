@@ -170,7 +170,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	NSColor *textColor;
 
 	if ([anImage validImage]) {
-	    if ([[anImage imageLat] length] > 0)
+	    if ([[anImage latitude] length] > 0)
 		textColor = [NSColor greenColor];
 	    else
 		textColor = [NSColor blackColor];
@@ -207,7 +207,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 - (BOOL) duplicatePath: (NSString *) path
 {
     for (ImageInfo *image in images) {
-	if ([[image imagePath] isEqualToString: path]) {
+	if ([[image path] isEqualToString: path]) {
 	    NSLog(@"duplicatePath: %@", path);
 	    return YES;
 	}
