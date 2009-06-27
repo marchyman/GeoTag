@@ -26,36 +26,37 @@
 {
     self = [super init];
     if (self) {
-	info = [NSMutableDictionary dictionaryWithObject: path
-						  forKey: IIPathName];
-	validImage = [self parseExif];
+	infoDict = [NSMutableDictionary dictionaryWithObject: path
+						      forKey: IIPathName];
+	[infoDict setObject: [path lastPathComponent] forKey: IIImageName];
+	validImage = [self callExiftoolForFileAt: path];
     }
     return self;
 }
 
 - (NSString *) path
 {
-    return [info objectForKey: IIPathName];
+    return [infoDict objectForKey: IIPathName];
 }
 
 - (NSString *) name
 {
-    return [info objectForKey: IIImageName];
+    return [infoDict objectForKey: IIImageName];
 }
 
 - (NSString *) date
 {
-    return [info objectForKey: IIDateTime];
+    return [infoDict objectForKey: IIDateTime];
 }
 
 - (NSString *) latitude
 {
-    return [info objectForKey: IILatitude];
+    return [infoDict objectForKey: IILatitude];
 }
 
 - (NSString *) longitude
 {
-    return [info objectForKey: IILongitude];
+    return [infoDict objectForKey: IILongitude];
 }
 
 #pragma mark -
@@ -78,6 +79,7 @@
     [exiftool launch];
     
     inData = [readHandle readDataToEndOfFile];
+    [readHandle closeFile];
     if ([inData length]) {
 	NSString *s = [[NSString alloc] initWithData: inData
 					    encoding: NSASCIIStringEncoding];
@@ -90,15 +92,5 @@
     return [exiftool terminationStatus] == 0;
 }
 
-- (BOOL) parseExif
-{
-    NSString *path = [info objectForKey: IIPathName];
-    [info setObject: [path lastPathComponent] forKey: IIImageName];
-    BOOL validExif = [self callExiftoolForFileAt: path];
-    if (validExif) {
-	;;;
-    }
-    return validExif;
-}
 
 @end

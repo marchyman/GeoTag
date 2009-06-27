@@ -18,7 +18,7 @@
 #define IICapacity 6
 
 @interface ImageInfo : NSObject {
-    NSMutableDictionary *info;
+    NSMutableDictionary *infoDict;
     BOOL validImage;
 }
 @property BOOL validImage;
@@ -31,6 +31,6 @@
 
 + (id) imageInfoWithPath: (NSString *) path;
 
-- (BOOL) parseExif;
+- (BOOL) callExiftoolForFileAt: (NSString *) path;
 
 @end
