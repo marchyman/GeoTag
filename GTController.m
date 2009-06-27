@@ -104,6 +104,9 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     return [imageInfo performSelector: selector];
 }
 
+#pragma mark -
+#pragma mark Drop functions
+
 // !!!: currently all drops happen at the end of the table.
 
 - (NSDragOperation) tableView: (NSTableView *) aTableView
@@ -115,10 +118,15 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 
     NSPasteboard* pboard = [info draggingPasteboard];
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
-	NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
-	for (NSString *path in pathArray)
-	    if ([self isDuplicatePath: path])
-		dropValid = NO;
+	if (row < [aTableView numberOfRows])
+	    dropValid = NO;
+	else {
+	    NSArray *pathArray =
+		    [pboard propertyListForType:NSFilenamesPboardType];
+	    for (NSString *path in pathArray)
+		if ([self isDuplicatePath: path])
+		    dropValid = NO;
+	}
     }
     if (dropValid)
 	return NSDragOperationLink;
