@@ -10,7 +10,7 @@
 #import "GTDefaultscontroller.h"
 
 @interface GTController ()
-- (BOOL) duplicatePath: (NSString *) path;
+- (BOOL) isDuplicatePath: (NSString *) path;
 @end
 
 
@@ -74,7 +74,7 @@
     if (result == NSOKButton) {
 	NSArray *filenames = [panel filenames];
 	for (NSString *path in filenames) {
-	    if (! [self duplicatePath: path]) {
+	    if (! [self isDuplicatePath: path]) {
 		[images addObject: [ImageInfo imageInfoWithPath: path]];
 		reloadNeeded = YES;
 	    }
@@ -117,7 +117,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
 	NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
 	for (NSString *path in pathArray)
-	    if ([self duplicatePath: path])
+	    if ([self isDuplicatePath: path])
 		dropValid = NO;
     }
     if (dropValid)
@@ -140,7 +140,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
 	NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
 	for (NSString *path in pathArray) {
-	    if (! [self duplicatePath: path]) {
+	    if (! [self isDuplicatePath: path]) {
 		[images addObject: [ImageInfo imageInfoWithPath: path]];
 		dropAccepted = YES;
 	    }
@@ -204,7 +204,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 #pragma mark -
 #pragma mark helper methods
 
-- (BOOL) duplicatePath: (NSString *) path
+- (BOOL) isDuplicatePath: (NSString *) path
 {
     for (ImageInfo *image in images) {
 	if ([[image path] isEqualToString: path]) {
