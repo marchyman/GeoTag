@@ -69,7 +69,7 @@
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     [panel setAllowsMultipleSelection: YES];
     [panel setCanChooseFiles: YES];
-    [panel setCanChooseDirectories: YES];
+    [panel setCanChooseDirectories: NO];
     NSInteger result = [panel runModalForDirectory: nil file: nil types: nil];
     if (result == NSOKButton) {
 	NSArray *filenames = [panel filenames];
@@ -107,7 +107,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 #pragma mark -
 #pragma mark Drop functions
 
-// !!!: currently all drops happen at the end of the table.
+// Drops are only allowed at the end of the table
 
 - (NSDragOperation) tableView: (NSTableView *) aTableView
 		 validateDrop: (id < NSDraggingInfo >) info
@@ -123,9 +123,13 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	else {
 	    NSArray *pathArray =
 		    [pboard propertyListForType:NSFilenamesPboardType];
-	    for (NSString *path in pathArray)
-		if ([self isDuplicatePath: path])
+	    NSFileManager *fileManager = [NSFileManager defaultManager];
+	    BOOL dir;
+	    for (NSString *path in pathArray) {
+		[fileManager fileExistsAtPath: path isDirectory: &dir];
+		if (dir || [self isDuplicatePath: path])
 		    dropValid = NO;
+	    }
 	}
     }
     if (dropValid)
