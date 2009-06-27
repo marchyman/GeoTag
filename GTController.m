@@ -9,6 +9,10 @@
 #import "ImageInfo.h"
 #import "GTDefaultscontroller.h"
 
+@interface GTController ()
+- (BOOL) duplicatePath: (NSString *) path;
+@end
+
 
 @implementation GTController
 
@@ -24,6 +28,12 @@
 	[GTDefaultsController class];
     }
     return self;
+}
+
+- (void) awakeFromNib
+{
+    [tableView registerForDraggedTypes:
+     [NSArray arrayWithObject: NSFilenamesPboardType]];
 }
 
 /*
@@ -51,26 +61,28 @@
 
 /*
  * Let the user select images or directories of images from an
- * open dialog box.
+ * open dialog box.  Don't allow duplicate paths.
  */
 - (IBAction) showOpenPanel: (id) sender
 {
-    (void) sender;
+    BOOL reloadNeeded = NO;
     NSOpenPanel *panel = [NSOpenPanel openPanel];
-    NSInteger result;
-
     [panel setAllowsMultipleSelection: YES];
     [panel setCanChooseFiles: YES];
     [panel setCanChooseDirectories: YES];
-    result = [panel runModalForDirectory: nil file: nil types: nil];
+    NSInteger result = [panel runModalForDirectory: nil file: nil types: nil];
     if (result == NSOKButton) {
 	NSArray *filenames = [panel filenames];
 	for (NSString *path in filenames) {
-	    NSLog(@"open panel path: %@", path);
-	    [images addObject: [ImageInfo imageInfoWithPath: path]];
+	    if (! [self duplicatePath: path]) {
+		[images addObject: [ImageInfo imageInfoWithPath: path]];
+		reloadNeeded = YES;
+	    }
 	}
-	[tableView reloadData];
+	if (reloadNeeded)
+	    [tableView reloadData];
     }
+    (void) sender;
 }
 
 #pragma mark -
@@ -92,6 +104,59 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     return [imageInfo performSelector: selector];
 }
 
+// !!!: currently all drops happen at the end of the table.
+
+- (NSDragOperation) tableView: (NSTableView *) aTableView
+		 validateDrop: (id < NSDraggingInfo >) info
+		  proposedRow: (NSInteger) row
+	proposedDropOperation: (NSTableViewDropOperation) op
+{
+    BOOL dropValid = YES;
+
+    NSPasteboard* pboard = [info draggingPasteboard];
+    if ([[pboard types] containsObject: NSFilenamesPboardType]) {
+	NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
+	for (NSString *path in pathArray)
+	    if ([self duplicatePath: path])
+		dropValid = NO;
+    }
+    if (dropValid)
+	return NSDragOperationLink;
+
+    return NSDragOperationNone;
+    (void) aTableView;
+    (void) row;
+    (void) op;
+}
+
+
+- (BOOL) tableView: (NSTableView *) aTableView
+	acceptDrop: (id <NSDraggingInfo>) info
+	       row: (NSInteger) row
+     dropOperation: (NSTableViewDropOperation) op 
+{
+    BOOL dropAccepted = NO;
+    NSPasteboard* pboard = [info draggingPasteboard];
+    if ([[pboard types] containsObject: NSFilenamesPboardType]) {
+	NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
+	for (NSString *path in pathArray) {
+	    if (! [self duplicatePath: path]) {
+		[images addObject: [ImageInfo imageInfoWithPath: path]];
+		dropAccepted = YES;
+	    }
+	}
+    }
+    if (dropAccepted)
+	[tableView reloadData];
+
+    return dropAccepted;
+
+    (void) aTableView;
+    (void) row;
+    (void) op;
+} 
+
+
 #pragma mark -
 #pragma mark tableView delegate functions
 
@@ -100,18 +165,20 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     forTableColumn: (NSTableColumn *) aTableColumn
 	       row: (NSInteger) rowIndex
 {
-    NSColor *textColor;
-    ImageInfo *anImage = [images objectAtIndex: rowIndex];
+    if ([aCell respondsToSelector:@selector(setTextColor:)]) {
+	ImageInfo *anImage = [images objectAtIndex: rowIndex];
+	NSColor *textColor;
+
+	if ([anImage validImage]) {
+	    if ([[anImage imageLat] length] > 0)
+		textColor = [NSColor greenColor];
+	    else
+		textColor = [NSColor blackColor];
+	} else
+	    textColor = [NSColor grayColor];
     
-    if ([anImage validImage]) {
-	if ([[anImage imageLat] length] > 0)
-	    textColor = [NSColor greenColor];
-	else
-	    textColor = [NSColor blackColor];
-    } else
-	textColor = [NSColor grayColor];
-    
-    [aCell setTextColor: textColor];
+	[aCell setTextColor: textColor];
+    }
 
     (void) aTableView;
     (void) aTableColumn;
@@ -134,4 +201,17 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     ;;;
 }
 
+#pragma mark -
+#pragma mark helper methods
+
+- (BOOL) duplicatePath: (NSString *) path
+{
+    for (ImageInfo *image in images) {
+	if ([[image imagePath] isEqualToString: path]) {
+	    NSLog(@"duplicatePath: %@", path);
+	    return YES;
+	}
+    }
+    return NO;
+}
 @end

@@ -26,12 +26,16 @@
     self = [super init];
     if (self) {
 	info = [NSMutableDictionary dictionaryWithObject: path
-							  forKey: IIPathName];
+						  forKey: IIPathName];
 	validImage = [self parseExif];
     }
     return self;
 }
 
+- (NSString *) imagePath
+{
+    return [info objectForKey: IIPathName];
+}
 
 - (NSString *) imageName
 {
