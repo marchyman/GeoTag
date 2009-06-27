@@ -61,7 +61,7 @@
 #pragma mark -
 #pragma mark helper functions
 
-- (BOOL) callExiftool: (NSString *) path
+- (BOOL) callExiftoolForFileAt: (NSString *) path
 {
     NSTask *exiftool = [[NSTask alloc] init];
     NSPipe *newPipe = [NSPipe pipe];
@@ -71,13 +71,19 @@
     [exiftool setStandardOutput: newPipe];
     [exiftool setStandardError: [NSFileHandle fileHandleWithNullDevice]];
     [exiftool setLaunchPath:[GTDefaultsController exiftoolPath]];
-    [exiftool setArguments:[NSArray arrayWithObjects: @"-S",
-	@"-datetimeoriginal", @"-GPSLatitude", @"-GPSLongitude",
+    [exiftool setArguments:[NSArray arrayWithObjects: @"-S", @"-filetype",
+			    @"-filemodifydate",@"-datetimeoriginal",
+			    @"-GPSLatitude", @"-GPSLongitude",
 			    path, nil]];
     [exiftool launch];
     
-    while ((inData = [readHandle readDataToEndOfFile]) && [inData length]) {
-        NSLog(@"read data: %@", inData);
+    inData = [readHandle readDataToEndOfFile];
+    if ([inData length]) {
+	NSString *s = [[NSString alloc] initWithData: inData
+					    encoding: NSASCIIStringEncoding];
+	NSArray *a = [s componentsSeparatedByString:@"\n"];
+	NSLog(@"exif data: %@", a);
+	;;;
     }
     [exiftool waitUntilExit];
     NSLog(@"exiftool returned %d", [exiftool terminationStatus]);
@@ -88,7 +94,7 @@
 {
     NSString *path = [info objectForKey: IIPathName];
     [info setObject: [path lastPathComponent] forKey: IIImageName];
-    BOOL validExif = [self callExiftool: path];
+    BOOL validExif = [self callExiftoolForFileAt: path];
     if (validExif) {
 	;;;
     }
