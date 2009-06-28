@@ -87,7 +87,9 @@
 
 - (IBAction) addImageFromView: (id) sender
 {
-    NSLog(@"Image added to view %@", sender);
+    NSImage *image = [sender image];
+    NSString *name = [image name];
+    NSLog(@"Image named %@ added to view", name);
 }
 
 
@@ -210,10 +212,12 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 {
     (void) notification;
     NSInteger row = [tableView selectedRow];
-    if (row == -1)
-	return;
     NSLog(@"table view row %d selected", row);
-    ;;;
+    NSImage *image = nil;
+    if (row != -1)
+	image = [[NSImage alloc] initWithContentsOfFile:
+		 [[images objectAtIndex: row] path]];
+    [imageWell setImage: image];
 }
 
 #pragma mark -
