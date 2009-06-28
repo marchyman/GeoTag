@@ -8,11 +8,25 @@
 #import "ImageInfo.h"
 #import "GTDefaultsController.h"
 
+static NSArray *knownFileTypes;
+
 @implementation ImageInfo
 @synthesize validImage;
 
 #pragma mark -
-#pragma mark Convenience methods
+#pragma mark Class methods
+
++ (void) initialize
+{
+    if (! knownFileTypes)
+	knownFileTypes = [NSArray arrayWithObjects: @"JPEG", @"CR2", @"CRW",
+			    @"CS1", @"DCP", @"DNG", @"EPS", @"ERF", @"EXIF",
+			    @"GIF", @"HDP", @"ICC", @"JNG", @"JP2", @"MEF",
+			    @"MIE", @"MNG", @"MOS", @"MRW", @"NEF", @"NRW",
+			    @"ORF", @"PBM", @"PDF", @"PEF", @"PGM", @"PNG",
+			    @"PPM", @"PS", @"PSD", @"RAF", @"RAW", @"THM",
+			    @"TIFF", @"WDP", @"XMP", nil];
+}
 
 + (id) imageInfoWithPath: (NSString *) path
 {
@@ -64,8 +78,10 @@
 
 - (BOOL) checkTypeWithValue: (NSString *) val
 {
-    return ([val caseInsensitiveCompare: @"jpeg"] == NSOrderedSame) ||
-    ([val caseInsensitiveCompare: @"cr2"] == NSOrderedSame);
+    for (NSString *fileType in knownFileTypes)
+	if ([fileType isEqualToString: val])
+	    return YES;
+    return NO;
 }
 
 - (BOOL) checkTag: (NSString *) tag
