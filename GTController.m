@@ -85,6 +85,12 @@
     (void) sender;
 }
 
+- (IBAction) addImageFromView: (id) sender
+{
+    NSLog(@"Image added to view %@", sender);
+}
+
+
 #pragma mark -
 #pragma mark tableView datasource functions
 
