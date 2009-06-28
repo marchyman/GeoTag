@@ -31,6 +31,6 @@
 
 + (id) imageInfoWithPath: (NSString *) path;
 
-- (BOOL) callExiftoolForFileAt: (NSString *) path;
+- (BOOL) getExifInfoForFileAt: (NSString *) path;
 
 @end

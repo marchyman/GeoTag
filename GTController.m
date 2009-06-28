@@ -181,12 +181,9 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	ImageInfo *anImage = [images objectAtIndex: rowIndex];
 	NSColor *textColor;
 
-	if ([anImage validImage]) {
-	    if ([[anImage latitude] length] > 0)
-		textColor = [NSColor greenColor];
-	    else
-		textColor = [NSColor blackColor];
-	} else
+	if ([anImage validImage])
+	    textColor = [NSColor blackColor];
+	else
 	    textColor = [NSColor grayColor];
     
 	[aCell setTextColor: textColor];
