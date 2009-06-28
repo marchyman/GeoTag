@@ -166,13 +166,15 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	    }
 	}
     }
-    if (dropAccepted)
+    if (dropAccepted) {
 	[tableView reloadData];
+	[tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
+	       byExtendingSelection: NO];
+    }
 
     return dropAccepted;
 
     (void) aTableView;
-    (void) row;
     (void) op;
 } 
 

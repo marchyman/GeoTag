@@ -1449,8 +1449,8 @@
 							<reference key="NSSuperview" ref="439893737"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSImageCell" key="NSCell" id="839815790">
-								<int key="NSCellFlags">270663168</int>
-								<int key="NSCellFlags2">0</int>
+								<int key="NSCellFlags">130560</int>
+								<int key="NSCellFlags2">33554432</int>
 								<int key="NSAlign">0</int>
 								<int key="NSScale">0</int>
 								<int key="NSStyle">2</int>
