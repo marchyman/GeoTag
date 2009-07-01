@@ -32,9 +32,21 @@
 
 - (void) awakeFromNib
 {
-    [NSApp setDelegate: self];	// for termination when window is closed
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    [NSApp setDelegate: self];
     [tableView registerForDraggedTypes:
      [NSArray arrayWithObject: NSFilenamesPboardType]];
+    
+    // webview
+    /* set self as UI and Resource Load delegate for our WebView */
+    [webView setUIDelegate: self];
+    [webView setResourceLoadDelegate: self];
+    
+    /* Ask webKit to load the map.html file from our resources directory. */
+    [[webView mainFrame] loadRequest:
+     [NSURLRequest requestWithURL:
+      [NSURL fileURLWithPath:
+       [[NSBundle mainBundle] pathForResource:@"map" ofType:@"html"]]]];
 }
 
 /*
