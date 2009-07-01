@@ -10,6 +10,7 @@
 #import "GTDefaultscontroller.h"
 
 @interface GTController ()
+- (void) adjustMapViewForRow: (NSInteger) row;
 - (BOOL) isDuplicatePath: (NSString *) path;
 @end
 
@@ -227,10 +228,32 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     NSInteger row = [tableView selectedRow];
     NSLog(@"table view row %d selected", row);
     NSImage *image = nil;
-    if (row != -1)
+    if (row != -1) {
 	image = [[NSImage alloc] initWithContentsOfFile:
 		 [[images objectAtIndex: row] path]];
+	[self adjustMapViewForRow: row];
+    }
     [imageWell setImage: image];
+}
+
+#pragma mark -
+#pragma mark map view control functions
+
+/*
+ * If there is a latitude and longitude associated with the
+ * data at the given row center the map and drop a marker
+ * at that location.
+ */
+- (void) adjustMapViewForRow: (NSInteger) row
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    ImageInfo * image = [images objectAtIndex: row];
+    NSArray* args = [NSArray arrayWithObjects:
+		     [image latitude], [image longitude],
+		     [image name], nil];
+    NSLog(@"args = %@", args);
+    [[webView windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
+					withArguments: args];
 }
 
 #pragma mark -

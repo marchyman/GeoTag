@@ -94,14 +94,26 @@ static NSArray *knownFileTypes;
 	ok = [self checkTypeWithValue: val];
     else if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)
 	[infoDict setObject: val forKey: IIDateTime];
-    else if ([tag caseInsensitiveCompare:@"datetimeoriginal"] == NSOrderedSame)
+    else if ([tag caseInsensitiveCompare: @"datetimeoriginal"] == NSOrderedSame)
 	// yes, this is supposed to overwrite filemodifydate
 	[infoDict setObject: val forKey: IIDateTime];
-    else if ([tag caseInsensitiveCompare:@"gpslatitude"] == NSOrderedSame)
+    else if ([tag caseInsensitiveCompare: @"gpslatitude"] == NSOrderedSame) {
+	NSArray *a = [val componentsSeparatedByString:@" "];
+	if (([a count] == 2) &&
+	    ([[a objectAtIndex: 1] compare: @"S"] == NSOrderedSame))
+	    val = [@"-" stringByAppendingString: [a objectAtIndex: 0]];
+	else
+	    val = [a objectAtIndex: 0];
 	[infoDict setObject: val forKey: IILatitude];
-    else if ([tag caseInsensitiveCompare:@"gpslongitude"] == NSOrderedSame)
+    } else if ([tag caseInsensitiveCompare:@"gpslongitude"] == NSOrderedSame) {
+	NSArray *a = [val componentsSeparatedByString:@" "];
+	if (([a count] == 2) &&
+	    ([[a objectAtIndex: 1] compare: @"W"] == NSOrderedSame))
+	    val = [@"-" stringByAppendingString: [a objectAtIndex: 0]];
+	else
+	    val = [a objectAtIndex: 0];
 	[infoDict setObject: val forKey: IILongitude];
-    else
+    } else
 	ok = NO;
     return ok;
 }
@@ -117,7 +129,8 @@ static NSArray *knownFileTypes;
     [exiftool setStandardOutput: newPipe];
     [exiftool setStandardError: [NSFileHandle fileHandleWithNullDevice]];
     [exiftool setLaunchPath:[GTDefaultsController exiftoolPath]];
-    [exiftool setArguments:[NSArray arrayWithObjects: @"-S", @"-c %.6f˚",
+    [exiftool setArguments:[NSArray arrayWithObjects: @"-S",
+			    @"-coordFormat", @"%.6f",
 			    @"-filetype", @"-filemodifydate",
 			    @"-datetimeoriginal",
 			    @"-GPSLatitude", @"-GPSLongitude",
