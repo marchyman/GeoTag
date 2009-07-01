@@ -6,10 +6,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
 
 @interface GTController : NSObject {
     IBOutlet NSTableView *tableView;
     IBOutlet NSImageView *imageWell;
+    IBOutlet WebView *webView;
     NSMutableArray *images;
 }
 

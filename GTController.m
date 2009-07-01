@@ -32,19 +32,18 @@
 
 - (void) awakeFromNib
 {
+    [NSApp setDelegate: self];	// for termination when window is closed
     [tableView registerForDraggedTypes:
      [NSArray arrayWithObject: NSFilenamesPboardType]];
 }
 
 /*
- * This controller is set as the window deligate in IB so it will be
- * notified when the window is closing, letting it terminate the
- * app.
+ * NSApp delegate function.
  */
-- (void) windowWillClose: (NSNotification *) aNotification
+- (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) sender
 {
-    (void) aNotification;   
-    [NSApp terminate: self];
+    return YES;
+    (void) sender;
 }
 
 #pragma mark -
