@@ -54,9 +54,11 @@
 - (BOOL) saveOrDontSave: (NSWindow *) window
 {
     if ([window isDocumentEdited]) {
-	NSInteger choice = NSRunAlertPanel(@"Unsaved location changes",
-					   @"You have modified or assigned locations to images that have not yet been saved.   What is your desire?",
-					   @"Save",  @"Don't Save", @"Cancel");
+	NSInteger choice = NSRunAlertPanel(NSLocalizedString(@"UNSAVED_TITLE", @"Unsaved Changes"),
+					   NSLocalizedString(@"UNSAVED_DESC", @"Unsaved Changes"),
+					   NSLocalizedString(@"SAVE", @"Save"),
+					   NSLocalizedString(@"DONT_SAVE", @"Don't Save"),
+					   NSLocalizedString(@"CANCEL", @"Cancel"));
 	switch (choice) {
 	    case NSAlertDefaultReturn:
 		;;; // save data here
