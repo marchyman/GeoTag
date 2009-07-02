@@ -92,6 +92,27 @@
     (void) sender;
 }
 
+/*
+ * Update any images that had a new location assigned.
+ */
+- (IBAction) saveLocations: (id) sender
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    ;;;
+    [[tableView window] setDocumentEdited: NO];
+    (void) sender;
+}
+
+/*
+ *
+ */
+- (IBAction) revertToSaved: (id) sender
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    ;;;
+    [[tableView window] setDocumentEdited: NO];
+    (void) sender;
+}
 
 #pragma mark -
 #pragma mark tableView datasource functions
@@ -284,6 +305,7 @@ didClearWindowObject: (WebScriptObject *) windowObject
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSLog(@"webLat = %@, webLng = %@", webLat, webLng);
+    [[tableView window] setDocumentEdited: YES];
 }
 
 #pragma mark -

@@ -22,6 +22,8 @@
 + (NSString *) webScriptNameForSelector: (SEL) sel;
 
 - (IBAction) showOpenPanel: (id) sender;
+- (IBAction) saveLocations: (id) sender;
+- (IBAction) revertToSaved: (id) sender;
 - (IBAction) showPreferencePanel: (id) sender;
 
 - (void) report;
