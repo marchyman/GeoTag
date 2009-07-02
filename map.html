@@ -8,31 +8,45 @@
 <script type="text/javascript">
     var map;
     var locn;
-    
+    var marker;
+
     function newMapCenteredAtLatLon(latitude, longitude) {
 	locn = new google.maps.LatLng(latitude, longitude);
-	var myOptions = {
-	    zoom: 15,
+	var mapOptions = {
+	    zoom: 9,
 	    center: locn,
-	    mapTypeId: google.maps.MapTypeId.HYBRID
+	    mapTypeId: google.maps.MapTypeId.ROADMAP
 	}
 	map = new google.maps.Map(document.getElementById("map_canvas"),
-				  myOptions);
-    }
-    
-    function addMarkerToMapAt(latitude, longitude, title) {
-	locn = new google.maps.LatLng(latitude, longitude);
+				  mapOptions);
+				  
 	var markerOpts = {
 	    position: locn,
 	    map: map,
-	    title: title
+	    visible: 0
 	}
-	var marker = new google.maps.Marker(markerOpts);
+	marker = new google.maps.Marker(markerOpts);
+	google.maps.event.addListener(map, 'click', function(event) {
+				      moveMarkerOnClick(event.latLng);
+				      });
+     }
+    
+    function addMarkerToMapAt(latitude, longitude, title) {
+	locn = new google.maps.LatLng(latitude, longitude);
 	map.set_center(locn);
+	map.set_zoom(15);
+	marker.set_position(locn);
+	marker.set_title(title);
+	marker.set_visible(1);
+    }
+
+    function moveMarkerOnClick(location) {
+	marker.set_position(location);
+	marker.set_visible(1);
     }
 
     function initialize() {
-	newMapCenteredAtLatLon(37.512994, -122.33963, "");
+	newMapCenteredAtLatLon(37.512994, -122.33963);
     }
 </script>
 </head>

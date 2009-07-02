@@ -97,13 +97,6 @@
     (void) sender;
 }
 
-- (IBAction) addImageFromView: (id) sender
-{
-    NSImage *image = [sender image];
-    NSString *name = [image name];
-    NSLog(@"Image named %@ added to view", name);
-}
-
 
 #pragma mark -
 #pragma mark tableView datasource functions
@@ -226,7 +219,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 {
     (void) notification;
     NSInteger row = [tableView selectedRow];
-    NSLog(@"table view row %d selected", row);
     NSImage *image = nil;
     if (row != -1) {
 	image = [[NSImage alloc] initWithContentsOfFile:
@@ -251,7 +243,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     NSArray* args = [NSArray arrayWithObjects:
 		     [image latitude], [image longitude],
 		     [image name], nil];
-    NSLog(@"args = %@", args);
     [[webView windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
 					withArguments: args];
 }

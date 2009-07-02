@@ -17,6 +17,5 @@
 
 - (IBAction) showOpenPanel: (id) sender;
 - (IBAction) showPreferencePanel: (id) sender;
-- (IBAction) addImageFromView: (id) sender;
 
 @end
