@@ -51,6 +51,32 @@
     (void) sender;
 }
 
+/*
+ * If there are unsaved changes put up an alert sheet asking
+ * what to do and return NO.   The final action will depend
+ * upon what button the user selects.
+ */
+- (void) alertEnded: (NSAlert *) alert
+	 withCode: (NSInteger) choice
+	    context: (void *) context
+{
+    NSWindow *window = (NSWindow *) context;
+    switch (choice) {
+	case NSAlertFirstButtonReturn:
+	    // Save
+	    ;;;
+	    break;
+	case NSAlertSecondButtonReturn:
+	    // Cancel
+	    return;
+	default:
+	    // Don't save
+	    break;
+    }
+    [window setDocumentEdited: NO];
+    [window close];
+    (void) alert;
+}
 - (BOOL) saveOrDontSave: (NSWindow *) window
 {
     if ([window isDocumentEdited]) {
@@ -60,20 +86,11 @@
 	[alert addButtonWithTitle: NSLocalizedString(@"DONT_SAVE", @"Don't Save")];
 	[alert setMessageText: NSLocalizedString(@"UNSAVED_TITLE", @"Unsaved Changes")];
 	[alert setInformativeText: NSLocalizedString(@"UNSAVED_DESC", @"Unsaved Changes")];
-	NSInteger choice = [alert runModal];
-
-	switch (choice) {
-	    case NSAlertFirstButtonReturn:
-		// Save
-		;;;
-		break;
-	    case NSAlertSecondButtonReturn:
-		// Cancel
-		return NO;
-	    default:
-		// Don't save
-		break;
-	}
+	[alert beginSheetModalForWindow: window
+			  modalDelegate: self
+			 didEndSelector: @selector(alertEnded:withCode:context:)
+			    contextInfo: window];
+	return NO;
     }
     [window setDocumentEdited: NO];
     return YES;
