@@ -45,14 +45,49 @@
        [[NSBundle mainBundle] pathForResource:@"map" ofType:@"html"]]]];
 }
 
-/*
- * NSApp delegate function.
- */
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) sender
 {
     return YES;
     (void) sender;
 }
+
+- (BOOL) saveOrDontSave: (NSWindow *) window
+{
+    if ([window isDocumentEdited]) {
+	NSInteger choice = NSRunAlertPanel(@"Unsaved location changes",
+					   @"You have modified or assigned locations to images that have not yet been saved.   What is your desire?",
+					   @"Save",  @"Don't Save", @"Cancel");
+	switch (choice) {
+	    case NSAlertDefaultReturn:
+		;;; // save data here
+		break;
+	    case NSAlertAlternateReturn:
+		// do not save data
+		break;
+	    case NSAlertOtherReturn:
+		return NO;
+	    default:
+		break;
+	}
+    }
+    [window setDocumentEdited: NO];
+    return YES;
+}
+
+- (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication *) app
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    if ([self saveOrDontSave: [app mainWindow]])
+	return NSTerminateNow;
+    return NSTerminateLater;
+}
+
+- (BOOL) windowShouldClose: (id) window
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    return [self saveOrDontSave: window];
+}
+
 
 #pragma mark -
 #pragma mark IB Actions
@@ -115,7 +150,7 @@
 }
 
 #pragma mark -
-#pragma mark Menu item validation
+#pragma mark menu item validation
 
 - (BOOL) validateMenuItem: (NSMenuItem *) item
 {
@@ -318,7 +353,11 @@ didClearWindowObject: (WebScriptObject *) windowObject
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSLog(@"webLat = %@, webLng = %@", webLat, webLng);
-    [[tableView window] setDocumentEdited: YES];
+    NSInteger row = [tableView selectedRow];
+    if (row != -1) {
+	;;;
+	[[tableView window] setDocumentEdited: YES];
+    }
 }
 
 #pragma mark -
