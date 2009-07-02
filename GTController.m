@@ -54,21 +54,24 @@
 - (BOOL) saveOrDontSave: (NSWindow *) window
 {
     if ([window isDocumentEdited]) {
-	NSInteger choice = NSRunAlertPanel(NSLocalizedString(@"UNSAVED_TITLE", @"Unsaved Changes"),
-					   NSLocalizedString(@"UNSAVED_DESC", @"Unsaved Changes"),
-					   NSLocalizedString(@"SAVE", @"Save"),
-					   NSLocalizedString(@"DONT_SAVE", @"Don't Save"),
-					   NSLocalizedString(@"CANCEL", @"Cancel"));
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert addButtonWithTitle: NSLocalizedString(@"SAVE", @"Save")];
+	[alert addButtonWithTitle: NSLocalizedString(@"CANCEL", @"Cancel")];
+	[alert addButtonWithTitle: NSLocalizedString(@"DONT_SAVE", @"Don't Save")];
+	[alert setMessageText: NSLocalizedString(@"UNSAVED_TITLE", @"Unsaved Changes")];
+	[alert setInformativeText: NSLocalizedString(@"UNSAVED_DESC", @"Unsaved Changes")];
+	NSInteger choice = [alert runModal];
+
 	switch (choice) {
-	    case NSAlertDefaultReturn:
-		;;; // save data here
+	    case NSAlertFirstButtonReturn:
+		// Save
+		;;;
 		break;
-	    case NSAlertAlternateReturn:
-		// do not save data
-		break;
-	    case NSAlertOtherReturn:
+	    case NSAlertSecondButtonReturn:
+		// Cancel
 		return NO;
 	    default:
+		// Don't save
 		break;
 	}
     }
