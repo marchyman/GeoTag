@@ -115,6 +115,19 @@
 }
 
 #pragma mark -
+#pragma mark Menu item validation
+
+- (BOOL) validateMenuItem: (NSMenuItem *) item
+{
+    SEL action = [item action];
+    
+    if (action == @selector(saveLocations:) ||
+	action == @selector(revertToSaved:))
+	return [[tableView window] isDocumentEdited];
+    return YES;
+}
+
+#pragma mark -
 #pragma mark tableView datasource functions
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *) tv
