@@ -9,6 +9,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="57"/>
+			<integer value="372"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1144,14 +1145,12 @@
 											<int key="NSvFlags">256</int>
 											<string key="NSFrameSize">{529, 789}</string>
 											<reference key="NSSuperview" ref="17351869"/>
-											<reference key="NSWindow"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSTableHeaderView" key="NSHeaderView" id="138332707">
 												<reference key="NSNextResponder" ref="330246993"/>
 												<int key="NSvFlags">256</int>
 												<string key="NSFrameSize">{529, 17}</string>
 												<reference key="NSSuperview" ref="330246993"/>
-												<reference key="NSWindow"/>
 												<reference key="NSTableView" ref="504687421"/>
 											</object>
 											<object class="_NSCornerView" key="NSCornerView" id="82147723">
@@ -1159,7 +1158,6 @@
 												<int key="NSvFlags">-2147483392</int>
 												<string key="NSFrame">{{-26, 0}, {16, 17}}</string>
 												<reference key="NSSuperview" ref="640333295"/>
-												<reference key="NSWindow"/>
 											</object>
 											<object class="NSMutableArray" key="NSTableColumns">
 												<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1330,7 +1328,6 @@
 									</object>
 									<string key="NSFrame">{{1, 18}, {529, 789}}</string>
 									<reference key="NSSuperview" ref="640333295"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="504687421"/>
 									<reference key="NSDocView" ref="504687421"/>
 									<reference key="NSBGColor" ref="121856629"/>
@@ -1341,7 +1338,6 @@
 									<int key="NSvFlags">-2147483392</int>
 									<string key="NSFrame">{{515, 18}, {15, 789}}</string>
 									<reference key="NSSuperview" ref="640333295"/>
-									<reference key="NSWindow"/>
 									<reference key="NSTarget" ref="640333295"/>
 									<string key="NSAction">_doScroller:</string>
 									<double key="NSPercent">9.775785e-01</double>
@@ -1351,7 +1347,6 @@
 									<int key="NSvFlags">256</int>
 									<string key="NSFrame">{{-100, -100}, {529, 15}}</string>
 									<reference key="NSSuperview" ref="640333295"/>
-									<reference key="NSWindow"/>
 									<int key="NSsFlags">1</int>
 									<reference key="NSTarget" ref="640333295"/>
 									<string key="NSAction">_doScroller:</string>
@@ -1366,7 +1361,6 @@
 									</object>
 									<string key="NSFrame">{{1, 1}, {529, 17}}</string>
 									<reference key="NSSuperview" ref="640333295"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="138332707"/>
 									<reference key="NSDocView" ref="138332707"/>
 									<reference key="NSBGColor" ref="121856629"/>
@@ -1376,7 +1370,6 @@
 							</object>
 							<string key="NSFrame">{{20, 20}, {531, 808}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="17351869"/>
 							<int key="NSsFlags">529</int>
 							<reference key="NSVScroller" ref="774152473"/>
@@ -1412,7 +1405,6 @@
 							</object>
 							<string key="NSFrame">{{559, 20}, {600, 400}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView"/>
 							<string key="FrameName"/>
 							<string key="GroupName"/>
@@ -1454,7 +1446,6 @@
 							</object>
 							<string key="NSFrame">{{556, 425}, {606, 406}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSImageCell" key="NSCell" id="839815790">
 								<int key="NSCellFlags">130560</int>
@@ -1469,7 +1460,6 @@
 					</object>
 					<string key="NSFrameSize">{1179, 848}</string>
 					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
 				<string key="NSMinSize">{1179, 870}</string>
@@ -2065,6 +2055,30 @@
 						<reference key="destination" ref="331004398"/>
 					</object>
 					<int key="connectionID">482</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">frameLoadDelegate</string>
+						<reference key="source" ref="331004398"/>
+						<reference key="destination" ref="657427450"/>
+					</object>
+					<int key="connectionID">483</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">resourceLoadDelegate</string>
+						<reference key="source" ref="331004398"/>
+						<reference key="destination" ref="657427450"/>
+					</object>
+					<int key="connectionID">484</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">UIDelegate</string>
+						<reference key="source" ref="331004398"/>
+						<reference key="destination" ref="657427450"/>
+					</object>
+					<int key="connectionID">485</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3477,8 +3491,8 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{384, 71}, {1179, 848}}</string>
-					<string>{{384, 71}, {1179, 848}}</string>
+					<string>{{26, -54}, {1179, 848}}</string>
+					<string>{{26, -54}, {1179, 848}}</string>
 					<reference ref="9"/>
 					<string>{{33, 99}, {480, 360}}</string>
 					<boolean value="YES"/>
@@ -3608,7 +3622,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">482</int>
+			<int key="maxID">485</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -38,12 +38,7 @@
     [tableView registerForDraggedTypes:
      [NSArray arrayWithObject: NSFilenamesPboardType]];
     
-    // webview
-    /* set self as UI and Resource Load delegate for our WebView */
-    [webView setUIDelegate: self];
-    [webView setResourceLoadDelegate: self];
-    
-    /* Ask webKit to load the map.html file from our resources directory. */
+    // webview init
     [[webView mainFrame] loadRequest:
      [NSURLRequest requestWithURL:
       [NSURL fileURLWithPath:
@@ -118,7 +113,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 }
 
 #pragma mark -
-#pragma mark Drop functions
+#pragma mark tableView Drop functions
 
 // Drops are only allowed at the end of the table
 
@@ -245,6 +240,50 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 		     [image name], nil];
     [[webView windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
 					withArguments: args];
+}
+
+#pragma mark -
+#pragma mark webView delegate functions
+
+- (void) webView: (WebView *) sender
+didClearWindowObject: (WebScriptObject *) windowObject
+	forFrame: (WebFrame *) frame
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    [windowObject setValue:self forKey:@"controller"];
+    (void) sender;
+    (void) frame;
+}
+
+#pragma mark -
+#pragma mark WebScripting functions
++ (BOOL) isSelectorExcludedFromWebScript: (SEL) selector
+{
+    if (selector == @selector(report))
+	return NO;
+    return YES;
+}
+
++ (BOOL) isKeyExcludedFromWebScript: (const char *) property
+{
+    if ((strcmp(property, "webLat") == 0) ||
+	(strcmp(property, "webLng") == 0))
+        return NO;
+    return YES;
+    
+}
+
++ (NSString *) webScriptNameForSelector: (SEL) sel
+{
+    NSLog(@"%@ received %@ with sel='%@'", self, NSStringFromSelector(_cmd),
+	  NSStringFromSelector(sel));
+    return nil;
+}
+
+- (void) report
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    NSLog(@"webLat = %@, webLng = %@", webLat, webLng);
 }
 
 #pragma mark -

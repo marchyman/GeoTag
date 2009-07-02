@@ -13,9 +13,17 @@
     IBOutlet NSImageView *imageWell;
     IBOutlet WebView *webView;
     NSMutableArray *images;
+    NSString *webLat;
+    NSString *webLng;
 }
+
++ (BOOL) isSelectorExcludedFromWebScript: (SEL) selector;
++ (BOOL) isKeyExcludedFromWebScript: (const char *) property;
++ (NSString *) webScriptNameForSelector: (SEL) sel;
 
 - (IBAction) showOpenPanel: (id) sender;
 - (IBAction) showPreferencePanel: (id) sender;
+
+- (void) report;
 
 @end
