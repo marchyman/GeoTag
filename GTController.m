@@ -106,11 +106,19 @@
 }
 
 #pragma mark -
+#pragma mark accessors
+
+- (NSUndoManager *) undoManager
+{
+    return undoManager;
+}
+
+#pragma mark -
 #pragma mark window delegate functions
 
 - (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *) window
 {
-    return undoManager;
+    return [self undoManager];
     (void) window;
 }
 
@@ -169,7 +177,7 @@
 	[image saveLocation];
     [[tableView window] setDocumentEdited: NO];
     // can not undo past a save
-    [undoManager removeAllActions];
+    [[self undoManager] removeAllActions];
     (void) sender;
 }
 
@@ -182,7 +190,7 @@
     for (ImageInfo *image in images)
 	[image revertLocation];
     [[tableView window] setDocumentEdited: NO];
-    [undoManager removeAllActions];
+    [[self undoManager] removeAllActions];
     [tableView reloadData];
     (void) sender;
 }
@@ -404,15 +412,16 @@ didClearWindowObject: (WebScriptObject *) windowObject
     NSInteger row = [tableView selectedRow];
     if (row != -1) {
 	ImageInfo *image = [images objectAtIndex: row];
-	[undoManager beginUndoGrouping];
-	[[undoManager prepareWithInvocationTarget: tableView]
-	 selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
-	 byExtendingSelection: NO];
-	[[undoManager prepareWithInvocationTarget: tableView]
-	 deselectRow: row];
-	[[undoManager prepareWithInvocationTarget: image]
-	 setLocationToLat: [image latitude] lng: [image longitude]];
-	[undoManager endUndoGrouping];
+	NSUndoManager *undo = [self undoManager];
+	[undo beginUndoGrouping];
+	[[undo prepareWithInvocationTarget: tableView]
+	    selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
+	    byExtendingSelection: NO];
+	[[undo prepareWithInvocationTarget: tableView]
+	    deselectRow: row];
+	[[undo prepareWithInvocationTarget: image]
+	    setLocationToLat: [image latitude] lng: [image longitude]];
+	[undo endUndoGrouping];
 	[image setLocationToLat: webLat lng: webLng];
 	[tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
 	[[tableView window] setDocumentEdited: YES];
