@@ -19,6 +19,8 @@
 
 @interface ImageInfo : NSObject {
     NSMutableDictionary *infoDict;
+    NSString *originalLatitude;
+    NSString *originalLongitude;
     BOOL validImage;
 }
 @property BOOL validImage;
@@ -32,5 +34,7 @@
 + (id) imageInfoWithPath: (NSString *) path;
 
 - (void) setPostionAtLat: (NSString *) latitude lng: (NSString *) longitude;
+- (void) saveLocation;
+- (void) revertLocation;
 
 @end

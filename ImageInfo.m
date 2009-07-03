@@ -48,6 +48,8 @@ static NSArray *knownFileTypes;
 						      forKey: IIPathName];
 	[infoDict setObject: [path lastPathComponent] forKey: IIImageName];
 	validImage = [self getExifInfoForFileAt: path];
+	originalLatitude = [self latitude];
+	originalLongitude = [self longitude];
     }
     return self;
 }
@@ -82,8 +84,32 @@ static NSArray *knownFileTypes;
 
 - (void) setPostionAtLat: (NSString *) latitude lng: (NSString *) longitude
 {
-    [infoDict setObject: latitude forKey: IILatitude];
-    [infoDict setObject: longitude forKey: IILongitude];
+    if (latitude && longitude) {
+	[infoDict setObject: latitude forKey: IILatitude];
+	[infoDict setObject: longitude forKey: IILongitude];
+    } else
+	[infoDict removeObjectsForKeys: [NSArray arrayWithObjects:
+					 IILatitude, IILongitude, nil]];
+}
+
+#pragma mark -
+#pragma mark update files
+
+- (void) saveLocation
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    ;;;
+}
+
+- (void) revertLocation
+{
+    // NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    if (originalLatitude && originalLongitude) {
+	[infoDict setObject: originalLatitude forKey: IILatitude];
+	[infoDict setObject: originalLongitude forKey: IILongitude];
+    } else
+	[infoDict removeObjectsForKeys: [NSArray arrayWithObjects:
+					 IILatitude, IILongitude, nil]];
 }
 
 #pragma mark -
@@ -102,7 +128,7 @@ static NSArray *knownFileTypes;
 {
     BOOL ok = YES;
 
-    NSLog(@"tag %@: %@", tag, val);
+    // NSLog(@"tag %@: %@", tag, val);
     if ([tag caseInsensitiveCompare: @"filetype"] == NSOrderedSame)
 	ok = [self checkTypeWithValue: val];
     else if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)

@@ -64,7 +64,7 @@
     switch (choice) {
 	case NSAlertFirstButtonReturn:
 	    // Save
-	    ;;;
+	    [self saveLocations: self];
 	    break;
 	case NSAlertSecondButtonReturn:
 	    // Cancel
@@ -155,7 +155,8 @@
 - (IBAction) saveLocations: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    ;;;
+    for (ImageInfo *image in images)
+	[image saveLocation];
     [[tableView window] setDocumentEdited: NO];
     (void) sender;
 }
@@ -166,8 +167,11 @@
 - (IBAction) revertToSaved: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    ;;;
+    for (ImageInfo *image in images)
+	[image revertLocation];
     [[tableView window] setDocumentEdited: NO];
+    [tableView reloadData];
+    ;;;
     (void) sender;
 }
 
@@ -303,7 +307,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
 {
-    (void) notification;
     NSInteger row = [tableView selectedRow];
     NSImage *image = nil;
     if (row != -1) {
@@ -312,6 +315,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	[self adjustMapViewForRow: row];
     }
     [imageWell setImage: image];
+    (void) notification;
 }
 
 #pragma mark -
@@ -324,13 +328,20 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
  */
 - (void) adjustMapViewForRow: (NSInteger) row
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    // NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     ImageInfo * image = [images objectAtIndex: row];
-    NSArray* args = [NSArray arrayWithObjects:
-		     [image latitude], [image longitude],
-		     [image name], nil];
-    [[webView windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
-					withArguments: args];
+    NSString *lat = [image latitude];
+    NSString *lng = [image longitude];
+    
+    if (lat && lng) {
+	NSArray* args = [NSArray arrayWithObjects: lat, lng,
+			 [image name], nil];
+	[[webView windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
+					    withArguments: args];
+    } else
+	[[webView windowScriptObject] callWebScriptMethod: @"hideMarker"
+					    withArguments: nil];
+
 }
 
 #pragma mark -
@@ -341,6 +352,7 @@ didClearWindowObject: (WebScriptObject *) windowObject
 	forFrame: (WebFrame *) frame
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    // javascript will know this object as "controller".
     [windowObject setValue:self forKey:@"controller"];
     (void) sender;
     (void) frame;
@@ -379,7 +391,7 @@ didClearWindowObject: (WebScriptObject *) windowObject
     if (row != -1) {
 	ImageInfo *image = [images objectAtIndex: row];
 	[image setPostionAtLat: webLat lng: webLng];
-	[tableView reloadData];
+	[tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
 	[[tableView window] setDocumentEdited: YES];
     }
 }
