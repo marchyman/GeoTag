@@ -377,7 +377,9 @@ didClearWindowObject: (WebScriptObject *) windowObject
     NSLog(@"webLat = %@, webLng = %@", webLat, webLng);
     NSInteger row = [tableView selectedRow];
     if (row != -1) {
-	;;;
+	ImageInfo *image = [images objectAtIndex: row];
+	[image setPostionAtLat: webLat lng: webLng];
+	[tableView reloadData];
 	[[tableView window] setDocumentEdited: YES];
     }
 }

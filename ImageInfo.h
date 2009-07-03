@@ -31,6 +31,6 @@
 
 + (id) imageInfoWithPath: (NSString *) path;
 
-- (BOOL) getExifInfoForFileAt: (NSString *) path;
+- (void) setPostionAtLat: (NSString *) latitude lng: (NSString *) longitude;
 
 @end

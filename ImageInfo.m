@@ -10,6 +10,10 @@
 
 static NSArray *knownFileTypes;
 
+@interface ImageInfo ()
+- (BOOL) getExifInfoForFileAt: (NSString *) path;
+@end
+
 @implementation ImageInfo
 @synthesize validImage;
 
@@ -71,6 +75,15 @@ static NSArray *knownFileTypes;
 - (NSString *) longitude
 {
     return [infoDict objectForKey: IILongitude];
+}
+
+#pragma mark -
+#pragma mark update postion
+
+- (void) setPostionAtLat: (NSString *) latitude lng: (NSString *) longitude
+{
+    [infoDict setObject: latitude forKey: IILatitude];
+    [infoDict setObject: longitude forKey: IILongitude];
 }
 
 #pragma mark -
