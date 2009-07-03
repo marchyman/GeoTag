@@ -82,7 +82,7 @@ static NSArray *knownFileTypes;
 #pragma mark -
 #pragma mark update postion
 
-- (void) setPostionAtLat: (NSString *) latitude lng: (NSString *) longitude
+- (void) setLocationToLat: (NSString *) latitude lng: (NSString *) longitude
 {
     if (latitude && longitude) {
 	[infoDict setObject: latitude forKey: IILatitude];

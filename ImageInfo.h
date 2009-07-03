@@ -33,7 +33,7 @@
 
 + (id) imageInfoWithPath: (NSString *) path;
 
-- (void) setPostionAtLat: (NSString *) latitude lng: (NSString *) longitude;
+- (void) setLocationToLat: (NSString *) latitude lng: (NSString *) longitude;
 - (void) saveLocation;
 - (void) revertLocation;
 

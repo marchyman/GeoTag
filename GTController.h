@@ -13,6 +13,7 @@
     IBOutlet NSImageView *imageWell;
     IBOutlet WebView *webView;
     NSMutableArray *images;
+    NSUndoManager *undoManager;
     NSString *webLat;
     NSString *webLng;
 }

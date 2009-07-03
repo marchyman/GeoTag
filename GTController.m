@@ -24,7 +24,8 @@
 {
     if ((self = [super init])) {
 	images = [[NSMutableArray alloc] init];
-
+	undoManager = [[NSUndoManager alloc] init];
+	
 	// force app defaults and preferences initialization
 	[GTDefaultsController class];
     }
@@ -57,7 +58,7 @@
  * upon what button the user selects.
  */
 - (void) alertEnded: (NSAlert *) alert
-	 withCode: (NSInteger) choice
+	   withCode: (NSInteger) choice
 	    context: (void *) context
 {
     NSWindow *window = (NSWindow *) context;
@@ -77,6 +78,7 @@
     [window close];
     (void) alert;
 }
+
 - (BOOL) saveOrDontSave: (NSWindow *) window
 {
     if ([window isDocumentEdited]) {
@@ -92,7 +94,6 @@
 			    contextInfo: window];
 	return NO;
     }
-    [window setDocumentEdited: NO];
     return YES;
 }
 
@@ -158,6 +159,8 @@
     for (ImageInfo *image in images)
 	[image saveLocation];
     [[tableView window] setDocumentEdited: NO];
+    // can not undo past a save
+    [undoManager removeAllActions];
     (void) sender;
 }
 
@@ -170,8 +173,8 @@
     for (ImageInfo *image in images)
 	[image revertLocation];
     [[tableView window] setDocumentEdited: NO];
+    [undoManager removeAllActions];
     [tableView reloadData];
-    ;;;
     (void) sender;
 }
 
@@ -307,6 +310,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
 {
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSInteger row = [tableView selectedRow];
     NSImage *image = nil;
     if (row != -1) {
@@ -328,10 +332,11 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
  */
 - (void) adjustMapViewForRow: (NSInteger) row
 {
-    // NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     ImageInfo * image = [images objectAtIndex: row];
     NSString *lat = [image latitude];
     NSString *lng = [image longitude];
+    NSLog(@"%@ received %@ - lat %@ lng %@", self, NSStringFromSelector(_cmd),
+	  lat, lng);
     
     if (lat && lng) {
 	NSArray* args = [NSArray arrayWithObjects: lat, lng,
@@ -353,7 +358,7 @@ didClearWindowObject: (WebScriptObject *) windowObject
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     // javascript will know this object as "controller".
-    [windowObject setValue:self forKey:@"controller"];
+    [windowObject setValue: self forKey: @"controller"];
     (void) sender;
     (void) frame;
 }
@@ -390,7 +395,16 @@ didClearWindowObject: (WebScriptObject *) windowObject
     NSInteger row = [tableView selectedRow];
     if (row != -1) {
 	ImageInfo *image = [images objectAtIndex: row];
-	[image setPostionAtLat: webLat lng: webLng];
+	[undoManager beginUndoGrouping];
+	[[undoManager prepareWithInvocationTarget: tableView]
+	 selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
+	 byExtendingSelection: NO];
+	[[undoManager prepareWithInvocationTarget: tableView]
+	 deselectRow: row];
+	[[undoManager prepareWithInvocationTarget: image]
+	 setLocationToLat: [image latitude] lng: [image longitude]];
+	[undoManager endUndoGrouping];
+	[image setLocationToLat: webLat lng: webLng];
 	[tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
 	[[tableView window] setDocumentEdited: YES];
     }
@@ -409,4 +423,5 @@ didClearWindowObject: (WebScriptObject *) windowObject
     }
     return NO;
 }
+
 @end
