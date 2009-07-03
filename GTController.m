@@ -105,6 +105,15 @@
     return NSTerminateLater;
 }
 
+#pragma mark -
+#pragma mark window delegate functions
+
+- (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *) window
+{
+    return undoManager;
+    (void) window;
+}
+
 - (BOOL) windowShouldClose: (id) window
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
