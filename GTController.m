@@ -11,6 +11,10 @@
 
 @interface GTController ()
 - (void) adjustMapViewForRow: (NSInteger) row;
+- (void) updateLocationForImageAtRow: (NSInteger) row
+			    latitude: (NSString *) lat
+			   longitude: (NSString *) lng
+			    modified: (BOOL) mod;
 - (BOOL) isDuplicatePath: (NSString *) path;
 @end
 
@@ -405,31 +409,48 @@ didClearWindowObject: (WebScriptObject *) windowObject
     return nil;
 }
 
+
+// make this call a function that has all the params to simplify
+// undo.  Include isDocumentEdited to get it completely correct.
+
 - (void) report
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSLog(@"webLat = %@, webLng = %@", webLat, webLng);
     NSInteger row = [tableView selectedRow];
-    if (row != -1) {
-	ImageInfo *image = [images objectAtIndex: row];
-	NSUndoManager *undo = [self undoManager];
-	[undo beginUndoGrouping];
-	[[undo prepareWithInvocationTarget: tableView]
-	    selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
-	    byExtendingSelection: NO];
-	[[undo prepareWithInvocationTarget: tableView]
-	    deselectRow: row];
-	[[undo prepareWithInvocationTarget: image]
-	    setLocationToLat: [image latitude] lng: [image longitude]];
-	[undo endUndoGrouping];
-	[image setLocationToLat: webLat lng: webLng];
-	[tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
-	[[tableView window] setDocumentEdited: YES];
-    }
+    if (row != -1)
+	[self updateLocationForImageAtRow: row
+				 latitude: webLat
+				longitude: webLng
+				modified: [[tableView window] isDocumentEdited]];
 }
 
 #pragma mark -
 #pragma mark helper methods
+
+/*
+ * update stuff in one place for ease of undo/redo
+ */
+- (void) updateLocationForImageAtRow: (NSInteger) row
+			    latitude: (NSString *) lat
+			   longitude: (NSString *) lng
+			    modified: (BOOL) mod
+{
+    ImageInfo *image = [images objectAtIndex: row];
+    NSUndoManager *undo = [self undoManager];
+    [[undo prepareWithInvocationTarget: self]
+	updateLocationForImageAtRow: row
+			   latitude: [image latitude]
+			  longitude: [image longitude]
+			   modified: [[tableView window] isDocumentEdited]];
+    [tableView deselectRow: row];
+    [image setLocationToLat: lat lng: lng];
+    // webView updated in tableViewSelectionDidChange
+    [tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
+	   byExtendingSelection: NO];
+    [tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
+    [[tableView window] setDocumentEdited: mod];
+}
 
 - (BOOL) isDuplicatePath: (NSString *) path
 {
