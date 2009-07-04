@@ -19,6 +19,7 @@
 		495FBBDF0FE7350D00A7030E /* ImageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBBDE0FE7350D00A7030E /* ImageInfo.m */; };
 		49B205890FFBD13800C07B70 /* map.html in Resources */ = {isa = PBXBuildFile; fileRef = 49B205880FFBD13800C07B70 /* map.html */; };
 		49B2069D0FFD504900C07B70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49B2069B0FFD504900C07B70 /* Localizable.strings */; };
+		49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */ = {isa = PBXBuildFile; fileRef = 49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -50,6 +51,7 @@
 		495FBBDE0FE7350D00A7030E /* ImageInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageInfo.m; sourceTree = "<group>"; };
 		49B205880FFBD13800C07B70 /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = map.html; sourceTree = "<group>"; };
 		49B2069C0FFD504900C07B70 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GeoTag.icns; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -131,6 +133,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */,
 				49B205880FFBD13800C07B70 /* map.html */,
 				495974FC0FEC6AB200DD267E /* General.png */,
 				8D1107310486CEB800E47090 /* Info.plist */,
@@ -216,6 +219,7 @@
 				4959750A0FECB69B00DD267E /* Credits.rtf in Resources */,
 				49B205890FFBD13800C07B70 /* map.html in Resources */,
 				49B2069D0FFD504900C07B70 /* Localizable.strings in Resources */,
+				49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

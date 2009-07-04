@@ -409,28 +409,22 @@ didClearWindowObject: (WebScriptObject *) windowObject
     return nil;
 }
 
-
-// make this call a function that has all the params to simplify
-// undo.  Include isDocumentEdited to get it completely correct.
-
+// called from javascript when a marker is moved.
 - (void) report
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    NSLog(@"webLat = %@, webLng = %@", webLat, webLng);
     NSInteger row = [tableView selectedRow];
     if (row != -1)
 	[self updateLocationForImageAtRow: row
 				 latitude: webLat
 				longitude: webLng
-				modified: [[tableView window] isDocumentEdited]];
+				 modified: YES];
 }
 
 #pragma mark -
 #pragma mark helper methods
 
-/*
- * update stuff in one place for ease of undo/redo
- */
+// location update with undo/redo support
 - (void) updateLocationForImageAtRow: (NSInteger) row
 			    latitude: (NSString *) lat
 			   longitude: (NSString *) lng
@@ -443,11 +437,14 @@ didClearWindowObject: (WebScriptObject *) windowObject
 			   latitude: [image latitude]
 			  longitude: [image longitude]
 			   modified: [[tableView window] isDocumentEdited]];
-    [tableView deselectRow: row];
     [image setLocationToLat: lat lng: lng];
-    // webView updated in tableViewSelectionDidChange
-    [tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
-	   byExtendingSelection: NO];
+    // Only needed with undo/redo to force webView update
+    // (webView updated in tableViewSelectionDidChange)
+    if ([undo isUndoing] || [undo isRedoing]) {
+	[tableView deselectRow: row];
+	[tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
+	       byExtendingSelection: NO];
+    }
     [tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
     [[tableView window] setDocumentEdited: mod];
 }
