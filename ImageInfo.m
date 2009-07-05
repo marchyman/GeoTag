@@ -34,7 +34,7 @@ static NSArray *knownFileTypes;
 
 + (id) imageInfoWithPath: (NSString *) path
 {
-    return [[ImageInfo alloc] initWithPath: path];
+    return [[self alloc] initWithPath: path];
 }
 
 #pragma mark -

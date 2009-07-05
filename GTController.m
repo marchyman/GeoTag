@@ -16,6 +16,7 @@
 			   longitude: (NSString *) lng
 			    modified: (BOOL) mod;
 - (BOOL) isDuplicatePath: (NSString *) path;
+- (BOOL) isValidImageAtRow: (NSInteger) row;
 @end
 
 
@@ -199,6 +200,34 @@
     (void) sender;
 }
 
+- (IBAction) cut: (id) sender
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    ;;;
+    (void) sender;
+}
+
+- (IBAction) copy: (id) sender
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    ;;;
+    (void) sender;
+}
+
+- (IBAction) paste: (id) sender
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    ;;;
+    (void) sender;
+}
+
+- (IBAction) delete: (id) sender
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    ;;;
+    (void) sender;  
+}
+
 #pragma mark -
 #pragma mark menu item validation
 
@@ -209,6 +238,10 @@
     if (action == @selector(saveLocations:) ||
 	action == @selector(revertToSaved:))
 	return [[tableView window] isDocumentEdited];
+    if (action == @selector(copy:) ||
+	action == @selector(cut:) ||
+	action == @selector(paste:))
+	return [self isValidImageAtRow: [tableView selectedRow]];
     return YES;
 }
 
@@ -307,10 +340,8 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	       row: (NSInteger) rowIndex
 {
     if ([aCell respondsToSelector:@selector(setTextColor:)]) {
-	ImageInfo *anImage = [images objectAtIndex: rowIndex];
 	NSColor *textColor;
-
-	if ([anImage validImage])
+	if ([self isValidImageAtRow: rowIndex])
 	    textColor = [NSColor blackColor];
 	else
 	    textColor = [NSColor grayColor];
@@ -325,7 +356,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 - (BOOL) tableView: (NSTableView *) aTableView
    shouldSelectRow: (NSInteger) rowIndex
 {
-    return [[images objectAtIndex: rowIndex] validImage];
+    return [self isValidImageAtRow: rowIndex];
     (void) aTableView;
 }
 
@@ -456,6 +487,15 @@ didClearWindowObject: (WebScriptObject *) windowObject
 	    NSLog(@"duplicatePath: %@", path);
 	    return YES;
 	}
+    }
+    return NO;
+}
+
+- (BOOL) isValidImageAtRow: (NSInteger) row
+{
+    if (row != -1) {
+	ImageInfo *anImage = [images objectAtIndex: row];
+	return [anImage validImage];
     }
     return NO;
 }

@@ -26,6 +26,10 @@
 - (IBAction) saveLocations: (id) sender;
 - (IBAction) revertToSaved: (id) sender;
 - (IBAction) showPreferencePanel: (id) sender;
+- (IBAction) cut: (id)sender;
+- (IBAction) copy: (id) sender;
+- (IBAction) paste: (id) sender;
+- (IBAction) delete: (id) sender;
 
 - (void) report;
 
