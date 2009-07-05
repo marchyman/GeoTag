@@ -80,6 +80,47 @@ static NSArray *knownFileTypes;
 }
 
 #pragma mark -
+#pragma mark string representation methods
+
+- (NSString *) stringRepresentation
+{
+    NSString *lat;
+    NSString *lng;
+    
+    if ((lat = [self latitude]) && (lng = [self longitude]))
+	return [NSString stringWithFormat: @"%@ %@", lat, lng];
+    return @"";
+}
+
+- (BOOL) convertFromString: (NSString *) representation
+		       lat: (NSString **) latitude
+		       lng: (NSString **) longitude
+{
+    float latAsFloat, lngAsFloat;
+    NSScanner *scanner = [NSScanner scannerWithString: representation];
+    if (! [scanner scanFloat: &latAsFloat] ||
+	latAsFloat < -90.0 ||
+	latAsFloat > 90.0) {
+	NSLog(@"Bad lat: %f", latAsFloat);
+	return NO;
+    }
+    if (! [scanner scanFloat: &lngAsFloat] ||
+	lngAsFloat < -180.0 ||
+	lngAsFloat > 180.0) {
+	NSLog(@"Bad lng: %f", lngAsFloat);
+	return NO;
+    }
+    if (! [scanner isAtEnd]) {
+	NSLog(@"scanner not at end of string: %@", representation);
+	return NO;
+    }
+    *latitude = [NSString stringWithFormat: @"%f", latAsFloat];
+    *longitude = [NSString stringWithFormat: @"%f", lngAsFloat];
+    NSLog(@"in: %@ out: %@, %@", representation, *latitude, *longitude);
+    return YES;
+}
+
+#pragma mark -
 #pragma mark update postion
 
 - (void) setLocationToLat: (NSString *) latitude lng: (NSString *) longitude

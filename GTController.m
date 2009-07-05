@@ -203,28 +203,52 @@
 - (IBAction) cut: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    ;;;
+    [self copy: self];
+    [self delete: self];
     (void) sender;
 }
 
 - (IBAction) copy: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    ;;;
+    NSInteger row = [tableView selectedRow];
+    if ([self isValidImageAtRow: row]) {
+	NSPasteboard *pb = [NSPasteboard generalPasteboard];
+	[pb declareTypes: [NSArray arrayWithObject: NSStringPboardType]
+		   owner: self];
+	[pb setString: [[images objectAtIndex: row] stringRepresentation]
+	      forType: NSStringPboardType];
+    }
     (void) sender;
 }
 
 - (IBAction) paste: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    ;;;
+    NSInteger row = [tableView selectedRow];
+    if ([self isValidImageAtRow: row]) {
+	NSString *latitude;
+	NSString *longitude;
+	NSPasteboard *pb = [NSPasteboard generalPasteboard];
+	if ([[pb types] containsObject: NSStringPboardType]) {
+	    NSString *val = [pb stringForType: NSStringPboardType];
+	    if ([[images objectAtIndex: row]  convertFromString: val
+							    lat: &latitude
+							    lng: &longitude]) {
+		[self updateLocationForImageAtRow: row
+					 latitude: latitude
+					longitude: longitude
+					 modified: YES];
+		[self adjustMapViewForRow: row];
+	    }
+	    
+	}
+    }
     (void) sender;
 }
 
 - (IBAction) delete: (id) sender
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-
     NSInteger row = [tableView selectedRow];
     if ([self isValidImageAtRow: row]) {
 	[self updateLocationForImageAtRow: row

@@ -36,5 +36,9 @@
 - (void) setLocationToLat: (NSString *) latitude lng: (NSString *) longitude;
 - (void) saveLocation;
 - (void) revertLocation;
+- (NSString *) stringRepresentation;
+- (BOOL) convertFromString: (NSString *) representation
+		       lat: (NSString **) latitude
+		       lng: (NSString **) longitude;
 
 @end
