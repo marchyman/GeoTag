@@ -224,7 +224,15 @@
 - (IBAction) delete: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    ;;;
+
+    NSInteger row = [tableView selectedRow];
+    if ([self isValidImageAtRow: row]) {
+	[self updateLocationForImageAtRow: row
+				 latitude: nil
+				longitude: nil
+				 modified: YES];
+	[self adjustMapViewForRow: row];
+    }
     (void) sender;  
 }
 
@@ -240,7 +248,8 @@
 	return [[tableView window] isDocumentEdited];
     if (action == @selector(copy:) ||
 	action == @selector(cut:) ||
-	action == @selector(paste:))
+	action == @selector(paste:) ||
+	action == @selector(delete:))
 	return [self isValidImageAtRow: [tableView selectedRow]];
     return YES;
 }
@@ -469,7 +478,7 @@ didClearWindowObject: (WebScriptObject *) windowObject
 			  longitude: [image longitude]
 			   modified: [[tableView window] isDocumentEdited]];
     [image setLocationToLat: lat lng: lng];
-    // Only needed with undo/redo to force webView update
+    //  Needed with undo/redo to force webView update
     // (webView updated in tableViewSelectionDidChange)
     if ([undo isUndoing] || [undo isRedoing]) {
 	[tableView deselectRow: row];
@@ -493,7 +502,7 @@ didClearWindowObject: (WebScriptObject *) windowObject
 
 - (BOOL) isValidImageAtRow: (NSInteger) row
 {
-    if (row != -1) {
+    if ((row >= 0) && (row < (NSInteger) [images count])) {
 	ImageInfo *anImage = [images objectAtIndex: row];
 	return [anImage validImage];
     }
