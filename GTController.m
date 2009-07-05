@@ -148,11 +148,14 @@
 
 /*
  * Let the user select images or directories of images from an
- * open dialog box.  Don't allow duplicate paths.
+ * open dialog box.  Don't allow duplicate paths.  Spit out a
+ * notification if some files could not be opened.
  */
+
 - (IBAction) showOpenPanel: (id) sender
 {
     BOOL reloadNeeded = NO;
+    BOOL showWarning = NO;
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     [panel setAllowsMultipleSelection: YES];
     [panel setCanChooseFiles: YES];
@@ -164,10 +167,18 @@
 	    if (! [self isDuplicatePath: path]) {
 		[images addObject: [ImageInfo imageInfoWithPath: path]];
 		reloadNeeded = YES;
-	    }
+	    } else
+		showWarning = YES;
 	}
 	if (reloadNeeded)
 	    [tableView reloadData];
+	if (showWarning) {
+	    NSAlert *alert = [[NSAlert alloc] init];
+	    [alert addButtonWithTitle: NSLocalizedString(@"CLOSE", @"Close")];
+	    [alert setMessageText: NSLocalizedString(@"WARN_TITLE", @"Files not opened")];
+	    [alert setInformativeText: NSLocalizedString(@"WARN_DESC", @"Files not opened")];
+	    [alert runModal];
+	}
     }
     (void) sender;
 }

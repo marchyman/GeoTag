@@ -115,7 +115,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				49B2069B0FFD504900C07B70 /* Localizable.strings */,
 			);
 			name = GeoTag;
 			sourceTree = "<group>";
@@ -133,6 +132,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				49B2069B0FFD504900C07B70 /* Localizable.strings */,
 				49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */,
 				49B205880FFBD13800C07B70 /* map.html */,
 				495974FC0FEC6AB200DD267E /* General.png */,
