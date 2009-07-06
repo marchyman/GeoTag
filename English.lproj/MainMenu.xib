@@ -9,7 +9,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="501"/>
-			<integer value="450"/>
+			<integer value="371"/>
 			<integer value="205"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -1158,6 +1158,16 @@
 							</object>
 							<bool key="NSEditable">YES</bool>
 						</object>
+						<object class="NSProgressIndicator" id="224571875">
+							<reference key="NSNextResponder" ref="439893737"/>
+							<int key="NSvFlags">1292</int>
+							<object class="NSPSMatrix" key="NSDrawMatrix"/>
+							<string key="NSFrame">{{277, 620}, {16, 16}}</string>
+							<reference key="NSSuperview" ref="439893737"/>
+							<int key="NSpiFlags">28938</int>
+							<double key="NSMinValue">1.600000e+01</double>
+							<double key="NSMaxValue">1.000000e+02</double>
+						</object>
 					</object>
 					<string key="NSFrameSize">{1179, 848}</string>
 					<reference key="NSSuperview"/>
@@ -1728,6 +1738,14 @@
 					</object>
 					<int key="connectionID">513</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">progressIndicator</string>
+						<reference key="source" ref="657427450"/>
+						<reference key="destination" ref="224571875"/>
+					</object>
+					<int key="connectionID">515</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2084,6 +2102,7 @@
 							<reference ref="331004398"/>
 							<reference ref="82776230"/>
 							<reference ref="640333295"/>
+							<reference ref="224571875"/>
 						</object>
 						<reference key="parent" ref="972006081"/>
 					</object>
@@ -2559,6 +2578,11 @@
 						<reference key="object" ref="405726484"/>
 						<reference key="parent" ref="910727548"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">514</int>
+						<reference key="object" ref="224571875"/>
+						<reference key="parent" ref="439893737"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2727,6 +2751,7 @@
 					<string>504.IBPluginDependency</string>
 					<string>505.IBPluginDependency</string>
 					<string>506.IBPluginDependency</string>
+					<string>514.IBPluginDependency</string>
 					<string>56.IBPluginDependency</string>
 					<string>56.ImportedFromIB2</string>
 					<string>57.IBEditorWindowLastContentRect</string>
@@ -2909,7 +2934,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{1066, 953}, {99, 93}}</string>
+					<string>{{1127, 1063}, {99, 93}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2962,7 +2988,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">513</int>
+			<int key="maxID">515</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3000,12 +3026,14 @@
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>imageWell</string>
+							<string>progressIndicator</string>
 							<string>tableView</string>
 							<string>webView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSImageView</string>
+							<string>NSProgressIndicator</string>
 							<string>SSTableView</string>
 							<string>WebView</string>
 						</object>

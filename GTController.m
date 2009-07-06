@@ -118,6 +118,11 @@
     return undoManager;
 }
 
+- (NSProgressIndicator *) progressIndicator
+{
+    return progressIndicator;
+}
+
 #pragma mark -
 #pragma mark window delegate functions
 
@@ -162,6 +167,13 @@
     [panel setCanChooseDirectories: NO];
     NSInteger result = [panel runModalForDirectory: nil file: nil types: nil];
     if (result == NSOKButton) {
+	// this may take a while, let the user know we're busy
+	NSProgressIndicator* pi = [self progressIndicator];
+	[pi setUsesThreadedAnimation:YES];
+	[pi setHidden:NO];
+	[pi startAnimation:self];
+	[pi display];
+	
 	NSArray *filenames = [panel filenames];
 	for (NSString *path in filenames) {
 	    if (! [self isDuplicatePath: path]) {
@@ -170,6 +182,10 @@
 	    } else
 		showWarning = YES;
 	}
+
+	[pi stopAnimation:self];
+	[pi setHidden:YES];
+
 	if (reloadNeeded)
 	    [tableView reloadData];
 	if (showWarning) {

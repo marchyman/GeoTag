@@ -13,6 +13,8 @@
     IBOutlet SSTableView *tableView;
     IBOutlet NSImageView *imageWell;
     IBOutlet WebView *webView;
+    IBOutlet NSProgressIndicator *progressIndicator;
+    
     NSMutableArray *images;
     NSUndoManager *undoManager;
     NSString *webLat;
@@ -33,5 +35,7 @@
 - (IBAction) delete: (id) sender;
 
 - (void) report;
+
+- (NSProgressIndicator *) progressIndicator;
 
 @end
