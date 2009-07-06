@@ -220,18 +220,16 @@ static NSArray *knownFileTypes;
 	// The first tag must match "FileType"
 	validExif = [s hasPrefix: @"FileType"];
 	NSArray *a = [s componentsSeparatedByString:@"\n"];
-	if ([a count] > 0) {
-	    for (NSString *anEntry in a) {
-		if ([anEntry length] > 0) {
-		    NSArray *tagAndValue =
-			[anEntry componentsSeparatedByString:@": "];
-		    if ([tagAndValue count] == 2)
-			if (! [self checkTag: [tagAndValue objectAtIndex:0]
-				   withValue: [tagAndValue objectAtIndex:1]]) {
-			    validExif = NO;
-			    break;
-			}
-		}
+	for (NSString *anEntry in a) {
+	    if ([anEntry length] > 0) {
+		NSArray *tagAndValue =
+		    [anEntry componentsSeparatedByString:@": "];
+		if ([tagAndValue count] == 2)
+		    if (! [self checkTag: [tagAndValue objectAtIndex:0]
+			       withValue: [tagAndValue objectAtIndex:1]]) {
+			validExif = NO;
+			break;
+		    }
 	    }
 	}
     }
