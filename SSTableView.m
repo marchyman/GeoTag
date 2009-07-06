@@ -37,6 +37,7 @@
 	  byExtendingSelection: NO];
 	if (row != [self selectedRow])
 	    [self deselectAll: self];
+	[self reloadData];
     }
     [super rightMouseDown: event];
 }
