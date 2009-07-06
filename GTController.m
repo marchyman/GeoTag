@@ -419,7 +419,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 }
 
 #pragma mark -
-#pragma mark map view control functions
+#pragma mark web view and scripting methods
 
 /*
  * If there is a latitude and longitude associated with the
@@ -445,9 +445,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 
 }
 
-#pragma mark -
-#pragma mark webView delegate functions
-
 - (void) webView: (WebView *) sender
 didClearWindowObject: (WebScriptObject *) windowObject
 	forFrame: (WebFrame *) frame
@@ -459,8 +456,6 @@ didClearWindowObject: (WebScriptObject *) windowObject
     (void) frame;
 }
 
-#pragma mark -
-#pragma mark WebScripting functions
 + (BOOL) isSelectorExcludedFromWebScript: (SEL) selector
 {
     if (selector == @selector(report))

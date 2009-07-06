@@ -7,9 +7,10 @@
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
+#import "SSTableView.h"
 
 @interface GTController : NSObject {
-    IBOutlet NSTableView *tableView;
+    IBOutlet SSTableView *tableView;
     IBOutlet NSImageView *imageWell;
     IBOutlet WebView *webView;
     NSMutableArray *images;
