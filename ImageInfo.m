@@ -189,7 +189,6 @@ static NSArray *knownFileTypes;
 	[infoDict setObject: val forKey: IILongitude];
     } else
 	ok = NO;
-    NSLog(@"tag %@: %@ (%d)", tag, val, ok);
     return ok;
 }
 

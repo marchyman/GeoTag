@@ -32,10 +32,10 @@
     NSLog(@"row %ld", (long) row);
     // select the row if it is not selected and selection is allowed
     // otherwise deselect the current row
-    if (row != [self selectedRow]) {
+    if (! [self isRowSelected: row]) {
 	[self selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
 	  byExtendingSelection: NO];
-	if (row != [self selectedRow])
+	if (! [self isRowSelected: row])
 	    [self deselectAll: self];
 	[self reloadData];
     }

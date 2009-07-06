@@ -406,7 +406,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    // NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSInteger row = [tableView selectedRow];
     NSImage *image = nil;
     if (row != -1) {
@@ -416,6 +416,23 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     }
     [imageWell setImage: image];
     (void) notification;
+}
+
+- (NSString *) tableView: (NSTableView *) tv
+	  toolTipForCell: (NSCell *) aCell
+		    rect: (NSRectPointer) rect
+	     tableColumn: (NSTableColumn *) aTableColumn
+		     row: (NSInteger) row
+	   mouseLocation: (NSPoint) mouseLocation
+{
+    // NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    if ([[aTableColumn identifier] isEqual: @"name"])
+	return [[images objectAtIndex: row] path];
+    return nil;
+    (void) tv;
+    (void) aCell;
+    (void) rect;
+    (void) mouseLocation;
 }
 
 #pragma mark -
