@@ -140,6 +140,8 @@ static NSArray *knownFileTypes;
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     ;;;
+    originalLatitude = [self latitude];
+    originalLongitude = [self longitude];
 }
 
 - (void) revertLocation
@@ -148,21 +150,13 @@ static NSArray *knownFileTypes;
     if (originalLatitude && originalLongitude) {
 	[infoDict setObject: originalLatitude forKey: IILatitude];
 	[infoDict setObject: originalLongitude forKey: IILongitude];
-    } else
+    } else if ([self latitude] || [self longitude])
 	[infoDict removeObjectsForKeys: [NSArray arrayWithObjects:
 					 IILatitude, IILongitude, nil]];
 }
 
 #pragma mark -
 #pragma mark helper functions
-
-- (BOOL) checkTypeWithValue: (NSString *) val
-{
-    for (NSString *fileType in knownFileTypes)
-	if ([fileType isEqualToString: val])
-	    return YES;
-    return NO;
-}
 
 - (BOOL) checkTag: (NSString *) tag
 	withValue: (NSString *) val
@@ -171,7 +165,7 @@ static NSArray *knownFileTypes;
 
     // NSLog(@"tag %@: %@", tag, val);
     if ([tag caseInsensitiveCompare: @"filetype"] == NSOrderedSame)
-	ok = [self checkTypeWithValue: val];
+	ok = [knownFileTypes containsObject: val];
     else if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)
 	[infoDict setObject: val forKey: IIDateTime];
     else if ([tag caseInsensitiveCompare: @"datetimeoriginal"] == NSOrderedSame)
@@ -195,6 +189,7 @@ static NSArray *knownFileTypes;
 	[infoDict setObject: val forKey: IILongitude];
     } else
 	ok = NO;
+    NSLog(@"tag %@: %@ (%d)", tag, val, ok);
     return ok;
 }
 
@@ -222,19 +217,21 @@ static NSArray *knownFileTypes;
     if ([inData length]) {
 	NSString *s = [[NSString alloc] initWithData: inData
 					    encoding: NSASCIIStringEncoding];
+	// The first tag must match "FileType"
+	validExif = [s hasPrefix: @"FileType"];
 	NSArray *a = [s componentsSeparatedByString:@"\n"];
-	// at this point assume a valid image file until proven otherwise
-	validExif = YES;
-	for (NSString *anEntry in a) {
-	    if ([anEntry length] > 0) {
-		NSArray *tagAndValue =
-		    [anEntry componentsSeparatedByString:@": "];
-		if ([tagAndValue count] == 2)
-		    if (! [self checkTag: [tagAndValue objectAtIndex:0]
-			       withValue: [tagAndValue objectAtIndex:1]]) {
-			validExif = NO;
-			break;
-		    }
+	if ([a count] > 0) {
+	    for (NSString *anEntry in a) {
+		if ([anEntry length] > 0) {
+		    NSArray *tagAndValue =
+			[anEntry componentsSeparatedByString:@": "];
+		    if ([tagAndValue count] == 2)
+			if (! [self checkTag: [tagAndValue objectAtIndex:0]
+				   withValue: [tagAndValue objectAtIndex:1]]) {
+			    validExif = NO;
+			    break;
+			}
+		}
 	    }
 	}
     }
