@@ -155,24 +155,34 @@ static NSArray *knownFileTypes;
 	if ([GTDefaultsController makeBackupFiles])
 	    [self backupFile];
 
-	float lat = [[self latitude] floatValue];
-	NSString *latRefArg;
-	if (lat < 0) {
-	    latRefArg = @"-GPSLatitudeRef=S";
-	    lat = -lat;
-	} else
-	    latRefArg = @"-GPSLatitudeRef=N";
-	NSString *latArg = [NSString stringWithFormat:@"-GPSLatitude=%f", lat];
-	
-	float lng = [[self longitude] floatValue];
-	NSString *lngRefArg;
-	if (lng < 0) {
-	    lngRefArg = @"-GPSLongitudeRef=W";
-	    lng = -lng;
-	} else
-	    lngRefArg = @"-GPSLongitudeRef=E";
-	NSString *lngArg = [NSString stringWithFormat:@"-GPSLongitude=%f", lng];
-	
+	NSMutableString *latArg =
+	    [NSMutableString stringWithString: @"-GPSLatitude="];
+	NSMutableString *latRefArg =
+	    [NSMutableString stringWithString: @"-GPSLatitudeRef="];
+	if ([self latitude]) {
+	    float lat = [[self latitude] floatValue];
+	    if (lat < 0) {
+		[latRefArg appendString: @"S"];
+		lat = -lat;
+	    } else
+		[latRefArg appendString: @"N"];
+	    [latArg appendFormat: @"%f", lat];
+	}
+
+	NSMutableString *lngArg =
+	    [NSMutableString stringWithString: @"-GPSLongitude="];
+	NSMutableString *lngRefArg =
+	    [NSMutableString stringWithString: @"-GPSLongitudeRef="];
+	if ([self longitude]) {
+	    float lng = [[self longitude] floatValue];
+	    if (lng < 0) {
+		[lngRefArg appendString: @"W"];
+		lng = -lng;
+	    } else
+		[lngRefArg appendString: @"E"];
+	    [lngArg appendFormat: @"%f", lng];
+	}
+
 	NSTask *exiftool = [[NSTask alloc] init];
 	[exiftool setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
 	[exiftool setStandardError: [NSFileHandle fileHandleWithNullDevice]];
