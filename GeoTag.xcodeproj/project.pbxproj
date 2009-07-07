@@ -6,6 +6,21 @@
 	objectVersion = 45;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		49D3AAD31002F14A0059FCEF /* GeoTag.dmg */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 49D3AB051002F15C0059FCEF /* Build configuration list for PBXAggregateTarget "GeoTag.dmg" */;
+			buildPhases = (
+				49D3AAD21002F14A0059FCEF /* ShellScript */,
+			);
+			dependencies = (
+				49D3AAD71002F1560059FCEF /* PBXTargetDependency */,
+			);
+			name = GeoTag.dmg;
+			productName = GeoTag.dmg;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		4959729C0FE8E61E00DD267E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4959729B0FE8E61E00DD267E /* Preferences.xib */; };
@@ -25,6 +40,16 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		49D3AAD61002F1560059FCEF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = GeoTag;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -208,6 +233,7 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* GeoTag */,
+				49D3AAD31002F14A0059FCEF /* GeoTag.dmg */,
 			);
 		};
 /* End PBXProject section */
@@ -245,6 +271,21 @@
 			shellScript = "sed -e \"s/#.*#/#`/opt/local/bin/git describe`#/\" <Credits-input.rtf >Credits.rtf\n";
 			showEnvVarsInLog = 0;
 		};
+		49D3AAD21002F14A0059FCEF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/GeoTag.app",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/GeoTag.dmg",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here\nset -ex\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\ndir=\"$TEMP_FILES_DIR/disk\"\ndmg=\"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.dmg\"\n\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app\" \"$dir\"\nrm -f \"$dmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$PROJECT_NAME\" \"$dmg\"\nhdiutil internet-enable -yes \"$dmg\"\nrm -rf \"$dir\"\nexit 0";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -263,6 +304,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		49D3AAD71002F1560059FCEF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* GeoTag */;
+			targetProxy = 49D3AAD61002F1560059FCEF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
@@ -292,6 +341,27 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		49D3AAD41002F14A0059FCEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = GeoTag.dmg;
+			};
+			name = Debug;
+		};
+		49D3AAD51002F14A0059FCEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = GeoTag.dmg;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -383,6 +453,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		49D3AB051002F15C0059FCEF /* Build configuration list for PBXAggregateTarget "GeoTag.dmg" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49D3AAD41002F14A0059FCEF /* Debug */,
+				49D3AAD51002F14A0059FCEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "GeoTag" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
