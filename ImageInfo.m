@@ -136,12 +136,57 @@ static NSArray *knownFileTypes;
 #pragma mark -
 #pragma mark update files
 
+- (void) backupFile
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *dest = [[NSHomeDirectory()
+		       stringByAppendingPathComponent: @".Trash"]
+		      stringByAppendingPathComponent: [self name]];
+    if (! [fileManager fileExistsAtPath: dest])
+	[fileManager copyPath: [self path]
+		       toPath: dest
+		      handler: nil];
+}
 - (void) saveLocation
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    ;;;
-    originalLatitude = [self latitude];
-    originalLongitude = [self longitude];
+    if ((! [[self latitude] isEqualToString: originalLatitude]) ||
+	(! [[self longitude] isEqualToString: originalLongitude])) {
+
+	if ([GTDefaultsController makeBackupFiles])
+	    [self backupFile];
+
+	float lat = [[self latitude] floatValue];
+	NSString *latRefArg;
+	if (lat < 0) {
+	    latRefArg = @"-GPSLatitudeRef=S";
+	    lat = -lat;
+	} else
+	    latRefArg = @"-GPSLatitudeRef=N";
+	NSString *latArg = [NSString stringWithFormat:@"-GPSLatitude=%f", lat];
+	
+	float lng = [[self longitude] floatValue];
+	NSString *lngRefArg;
+	if (lng < 0) {
+	    lngRefArg = @"-GPSLongitudeRef=W";
+	    lng = -lng;
+	} else
+	    lngRefArg = @"-GPSLongitudeRef=E";
+	NSString *lngArg = [NSString stringWithFormat:@"-GPSLongitude=%f", lng];
+	
+	NSTask *exiftool = [[NSTask alloc] init];
+	[exiftool setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
+	[exiftool setStandardError: [NSFileHandle fileHandleWithNullDevice]];
+	[exiftool setLaunchPath:[GTDefaultsController exiftoolPath]];
+	[exiftool setArguments:[NSArray arrayWithObjects: @"-q", @"-m",
+				@"-overwrite_original", @"-gpsmapdatum=WGS-84",
+				latArg, latRefArg, lngArg, lngRefArg,
+				[self path], nil]];
+	[exiftool launch];
+	[exiftool waitUntilExit];
+	;;; // check for error?
+	originalLatitude = [self latitude];
+	originalLongitude = [self longitude];
+    }
 }
 
 - (void) revertLocation
