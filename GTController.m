@@ -17,6 +17,8 @@
 			    modified: (BOOL) mod;
 - (BOOL) isDuplicatePath: (NSString *) path;
 - (BOOL) isValidImageAtRow: (NSInteger) row;
+- (NSInteger) showProgressIndicator;
+- (void) hideProgressIndicator: (NSInteger) row;
 @end
 
 
@@ -161,7 +163,6 @@
 {
     BOOL reloadNeeded = NO;
     BOOL showWarning = NO;
-    NSInteger row;
 
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     [panel setAllowsMultipleSelection: YES];
@@ -170,15 +171,7 @@
     NSInteger result = [panel runModalForDirectory: nil file: nil types: nil];
     if (result == NSOKButton) {
 	// this may take a while, let the user know we're busy
-	row = [tableView selectedRow];
-	if (row != -1)
-	    [tableView deselectRow: row];
-	NSProgressIndicator* pi = [self progressIndicator];
-	[pi setUsesThreadedAnimation:YES];
-	[pi setHidden:NO];
-	[pi startAnimation:self];
-	[pi display];
-	
+	NSInteger row = [self showProgressIndicator];
 	NSArray *filenames = [panel filenames];
 	for (NSString *path in filenames) {
 	    if (! [self isDuplicatePath: path]) {
@@ -187,15 +180,10 @@
 	    } else
 		showWarning = YES;
 	}
-
-	[pi stopAnimation:self];
-	[pi setHidden:YES];
+	[self hideProgressIndicator: row];
 
 	if (reloadNeeded)
 	    [tableView reloadData];
-	if (row != -1)
-	    [tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
-		   byExtendingSelection: NO];
 	if (showWarning) {
 	    NSAlert *alert = [[NSAlert alloc] init];
 	    [alert addButtonWithTitle: NSLocalizedString(@"CLOSE", @"Close")];
@@ -530,6 +518,32 @@ didClearWindowObject: (WebScriptObject *) windowObject
 				 latitude: webLat
 				longitude: webLng
 				 modified: YES];
+}
+
+#pragma mark -
+#pragma mark progress indicator control
+- (NSInteger) showProgressIndicator
+{
+    NSInteger row = [tableView selectedRow];
+    if (row != -1)
+	[tableView deselectRow: row];
+    NSProgressIndicator* pi = [self progressIndicator];
+    [pi setUsesThreadedAnimation:YES];
+    [pi setHidden:NO];
+    [pi startAnimation:self];
+    [pi display];
+    return row;
+}
+
+- (void) hideProgressIndicator: (NSInteger) row
+{
+    NSProgressIndicator* pi = [self progressIndicator];
+    [pi stopAnimation:self];
+    [pi setHidden:YES];
+    
+    if (row != -1)
+	[tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
+	       byExtendingSelection: NO];
 }
 
 #pragma mark -
