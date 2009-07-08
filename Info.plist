@@ -20,6 +20,10 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>GeoTag Help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>GeoTag Help</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
