@@ -34,7 +34,7 @@
 		495FBBDF0FE7350D00A7030E /* ImageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 495FBBDE0FE7350D00A7030E /* ImageInfo.m */; };
 		49B205890FFBD13800C07B70 /* map.html in Resources */ = {isa = PBXBuildFile; fileRef = 49B205880FFBD13800C07B70 /* map.html */; };
 		49B2069D0FFD504900C07B70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49B2069B0FFD504900C07B70 /* Localizable.strings */; };
-		49C0612C10044BBE00A65EE2 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 49C0612910044BBE00A65EE2 /* GeoTag Help */; };
+		49C06A0110048F9C00A65EE2 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 49C069FA10048F9C00A65EE2 /* GeoTag Help */; };
 		49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */ = {isa = PBXBuildFile; fileRef = 49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */; };
 		49D3AA311001935E0059FCEF /* SSTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D3AA301001935E0059FCEF /* SSTableView.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -78,7 +78,7 @@
 		495FBBDE0FE7350D00A7030E /* ImageInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageInfo.m; sourceTree = "<group>"; };
 		49B205880FFBD13800C07B70 /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = map.html; sourceTree = "<group>"; };
 		49B2069C0FFD504900C07B70 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
-		49C0612910044BBE00A65EE2 /* GeoTag Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "GeoTag Help"; sourceTree = "<group>"; };
+		49C069FB10048F9C00A65EE2 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/GeoTag Help"; sourceTree = "<group>"; };
 		49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GeoTag.icns; sourceTree = "<group>"; };
 		49D3AA2F1001935E0059FCEF /* SSTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSTableView.h; sourceTree = "<group>"; };
 		49D3AA301001935E0059FCEF /* SSTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSTableView.m; sourceTree = "<group>"; };
@@ -164,7 +164,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				49C0612910044BBE00A65EE2 /* GeoTag Help */,
+				49C069FA10048F9C00A65EE2 /* GeoTag Help */,
 				49B2069B0FFD504900C07B70 /* Localizable.strings */,
 				49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */,
 				49B205880FFBD13800C07B70 /* map.html */,
@@ -254,7 +254,7 @@
 				49B205890FFBD13800C07B70 /* map.html in Resources */,
 				49B2069D0FFD504900C07B70 /* Localizable.strings in Resources */,
 				49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */,
-				49C0612C10044BBE00A65EE2 /* GeoTag Help in Resources */,
+				49C06A0110048F9C00A65EE2 /* GeoTag Help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +340,14 @@
 				49B2069C0FFD504900C07B70 /* English */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		49C069FA10048F9C00A65EE2 /* GeoTag Help */ = {
+			isa = PBXVariantGroup;
+			children = (
+				49C069FB10048F9C00A65EE2 /* English */,
+			);
+			name = "GeoTag Help";
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
