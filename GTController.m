@@ -201,11 +201,13 @@
 - (IBAction) saveLocations: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    NSInteger row = [self showProgressIndicator];
     for (ImageInfo *image in images)
 	[image saveLocation];
     [[tableView window] setDocumentEdited: NO];
     // can not undo past a save
     [[self undoManager] removeAllActions];
+    [self hideProgressIndicator: row];
     (void) sender;
 }
 
