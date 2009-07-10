@@ -35,6 +35,7 @@
 		49B205890FFBD13800C07B70 /* map.html in Resources */ = {isa = PBXBuildFile; fileRef = 49B205880FFBD13800C07B70 /* map.html */; };
 		49B2069D0FFD504900C07B70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49B2069B0FFD504900C07B70 /* Localizable.strings */; };
 		49C7E14A1006CE420010425E /* GeoTagHelp in Resources */ = {isa = PBXBuildFile; fileRef = 49C7E12F1006CE420010425E /* GeoTagHelp */; };
+		49C7E16810070FEE0010425E /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 49C7E16710070FEE0010425E /* Readme.txt */; };
 		49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */ = {isa = PBXBuildFile; fileRef = 49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */; };
 		49D3AA311001935E0059FCEF /* SSTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D3AA301001935E0059FCEF /* SSTableView.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -79,6 +80,7 @@
 		49B205880FFBD13800C07B70 /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = map.html; sourceTree = "<group>"; };
 		49B2069C0FFD504900C07B70 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		49C7E12F1006CE420010425E /* GeoTagHelp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GeoTagHelp; sourceTree = "<group>"; };
+		49C7E16710070FEE0010425E /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GeoTag.icns; sourceTree = "<group>"; };
 		49D3AA2F1001935E0059FCEF /* SSTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSTableView.h; sourceTree = "<group>"; };
 		49D3AA301001935E0059FCEF /* SSTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSTableView.m; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				495C85A30FF1AC1B00FA483C /* Credits-input.rtf */,
 				32CA4F630368D1EE00C91783 /* GeoTag_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				49C7E16710070FEE0010425E /* Readme.txt */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -255,6 +258,7 @@
 				49B2069D0FFD504900C07B70 /* Localizable.strings in Resources */,
 				49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */,
 				49C7E14A1006CE420010425E /* GeoTagHelp in Resources */,
+				49C7E16810070FEE0010425E /* Readme.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,14 +285,15 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/GeoTag.app",
+				"${SRCROOT}/Readme.txt",
+				"${BUILT_PRODUCTS_DIR}/${PROJECT_NAME}.app",
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/GeoTag.dmg",
+				"${DERIVED_FILE_DIR}/${PROJECT_NAME}.dmg",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# shell script goes here\nset -ex\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\ndir=\"$TEMP_FILES_DIR/disk\"\ndmg=\"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.dmg\"\n\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app\" \"$dir\"\nrm -f \"$dmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$PROJECT_NAME\" \"$dmg\"\nhdiutil internet-enable -yes \"$dmg\"\nrm -rf \"$dir\"\nexit 0";
+			shellScript = "# shell script goes here\nset -ex\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\ndir=${TEMP_FILES_DIR}/disk\ndmg=${BUILT_PRODUCTS_DIR}/${PROJECT_NAME}.dmg\n\nrm -rf ${dir}\nmkdir ${dir}\ncp ${SRCROOT}/Readme.txt ${DIR}\ncp -R ${BUILT_PRODUCTS_DIR}/${PROJECT_NAME}.app ${dir}\nln -s /Applications ${dir}\nrm -f ${dmg}\nhdiutil create -srcfolder ${dir} -volname ${PROJECT_NAME} ${dmg}\nhdiutil internet-enable -yes ${dmg}\nrm -rf ${dir}\nexit 0";
 		};
 /* End PBXShellScriptBuildPhase section */
 
