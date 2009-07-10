@@ -21,7 +21,7 @@
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>GeoTag Help</string>
+	<string>GeoTagHelp</string>
 	<key>CFBundleHelpBookName</key>
 	<string>GeoTag Help</string>
 	<key>NSMainNibFile</key>
