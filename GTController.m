@@ -285,6 +285,17 @@
     (void) sender;  
 }
 
+- (IBAction) clear: (id) sender
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    if (! [[tableView window] isDocumentEdited]) {
+	images = [[NSMutableArray alloc] init];
+	[[self undoManager] removeAllActions];
+	[tableView reloadData];
+    }
+    (void) sender;
+}
+
 #pragma mark -
 #pragma mark menu item validation
 
@@ -300,6 +311,9 @@
 	action == @selector(paste:) ||
 	action == @selector(delete:))
 	return [self isValidImageAtRow: [tableView selectedRow]];
+    if (action == @selector(clear:))
+	return ([images count] > 0) &&
+	       (! [[tableView window] isDocumentEdited]);
     return YES;
 }
 
