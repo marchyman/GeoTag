@@ -77,6 +77,7 @@
 		495FBAA10FE62D8900A7030E /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		495FBBDD0FE7350D00A7030E /* ImageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageInfo.h; sourceTree = "<group>"; };
 		495FBBDE0FE7350D00A7030E /* ImageInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageInfo.m; sourceTree = "<group>"; };
+		499FAEA1100E8AC500C2AADA /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		49B205880FFBD13800C07B70 /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = map.html; sourceTree = "<group>"; };
 		49B2069C0FFD504900C07B70 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		49C7E12F1006CE420010425E /* GeoTagHelp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GeoTagHelp; sourceTree = "<group>"; };
@@ -160,6 +161,7 @@
 				32CA4F630368D1EE00C91783 /* GeoTag_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				49C7E16710070FEE0010425E /* Readme.txt */,
+				499FAEA1100E8AC500C2AADA /* Makefile */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
