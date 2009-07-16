@@ -8,6 +8,10 @@
 #import "ImageInfo.h"
 #import "GTDefaultsController.h"
 
+#if GTDEBUG == 0
+#define NSLog(...)
+#endif
+
 static NSArray *knownFileTypes;
 
 @interface ImageInfo ()
@@ -15,6 +19,8 @@ static NSArray *knownFileTypes;
 @end
 
 @implementation ImageInfo
+@synthesize originalLatitude;
+@synthesize originalLongitude;
 @synthesize validImage;
 
 #pragma mark -
@@ -93,8 +99,8 @@ static NSArray *knownFileTypes;
 }
 
 - (BOOL) convertFromString: (NSString *) representation
-		       lat: (NSString **) latitude
-		       lng: (NSString **) longitude
+		  latitude: (NSString **) lat
+		 longitude: (NSString **) lng
 {
     float latAsFloat, lngAsFloat;
     NSScanner *scanner = [NSScanner scannerWithString: representation];
@@ -114,20 +120,20 @@ static NSArray *knownFileTypes;
 	NSLog(@"scanner not at end of string: %@", representation);
 	return NO;
     }
-    *latitude = [NSString stringWithFormat: @"%f", latAsFloat];
-    *longitude = [NSString stringWithFormat: @"%f", lngAsFloat];
-    NSLog(@"in: %@ out: %@, %@", representation, *latitude, *longitude);
+    *lat = [NSString stringWithFormat: @"%f", latAsFloat];
+    *lng = [NSString stringWithFormat: @"%f", lngAsFloat];
+    NSLog(@"in: %@ out: %@, %@", representation, *lat, *lng);
     return YES;
 }
 
 #pragma mark -
 #pragma mark update postion
 
-- (void) setLocationToLat: (NSString *) latitude lng: (NSString *) longitude
+- (void) setLocationToLatitude: (NSString *) lat longitude: (NSString *) lng
 {
-    if (latitude && longitude) {
-	[infoDict setObject: latitude forKey: IILatitude];
-	[infoDict setObject: longitude forKey: IILongitude];
+    if (lat && lng) {
+	[infoDict setObject: lat forKey: IILatitude];
+	[infoDict setObject: lng forKey: IILongitude];
     } else
 	[infoDict removeObjectsForKeys: [NSArray arrayWithObjects:
 					 IILatitude, IILongitude, nil]];
@@ -149,8 +155,8 @@ static NSArray *knownFileTypes;
 }
 - (void) saveLocation
 {
-    if ((! [[self latitude] isEqualToString: originalLatitude]) ||
-	(! [[self longitude] isEqualToString: originalLongitude])) {
+    if ((! [[self latitude] isEqualToString: [self originalLatitude]]) ||
+	(! [[self longitude] isEqualToString: [self originalLongitude]])) {
 
 	if ([GTDefaultsController makeBackupFiles])
 	    [self backupFile];
@@ -194,17 +200,17 @@ static NSArray *knownFileTypes;
 	[exiftool launch];
 	[exiftool waitUntilExit];
 	;;; // check for error?
-	originalLatitude = [self latitude];
-	originalLongitude = [self longitude];
+	[self setOriginalLatitude: [self latitude]];
+	[self setOriginalLongitude: [self longitude]];
     }
 }
 
 - (void) revertLocation
 {
-    // NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    if (originalLatitude && originalLongitude) {
-	[infoDict setObject: originalLatitude forKey: IILatitude];
-	[infoDict setObject: originalLongitude forKey: IILongitude];
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    if ([self originalLatitude] && [self originalLongitude]) {
+	[infoDict setObject: [self originalLatitude] forKey: IILatitude];
+	[infoDict setObject: [self originalLongitude] forKey: IILongitude];
     } else if ([self latitude] || [self longitude])
 	[infoDict removeObjectsForKeys: [NSArray arrayWithObjects:
 					 IILatitude, IILongitude, nil]];
@@ -218,7 +224,7 @@ static NSArray *knownFileTypes;
 {
     BOOL ok = YES;
 
-    // NSLog(@"tag %@: %@", tag, val);
+    NSLog(@"tag %@: %@", tag, val);
     if ([tag caseInsensitiveCompare: @"filetype"] == NSOrderedSame)
 	ok = [knownFileTypes containsObject: val];
     else if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)

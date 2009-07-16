@@ -9,6 +9,10 @@
 #import "ImageInfo.h"
 #import "GTDefaultscontroller.h"
 
+#if GTDEBUG == 0
+#define NSLog(...)
+#endif
+
 @interface GTController ()
 - (void) adjustMapViewForRow: (NSInteger) row;
 - (void) updateLocationForImageAtRow: (NSInteger) row
@@ -54,7 +58,6 @@
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) sender
 {
     return YES;
-    (void) sender;
 }
 
 /*
@@ -81,7 +84,6 @@
     }
     [window setDocumentEdited: NO];
     [window close];
-    (void) alert;
 }
 
 - (BOOL) saveOrDontSave: (NSWindow *) window
@@ -129,7 +131,6 @@
 - (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *) window
 {
     return [self undoManager];
-    (void) window;
 }
 
 - (BOOL) windowShouldClose: (id) window
@@ -148,7 +149,6 @@
 - (IBAction) showPreferencePanel: (id) sender
 {
     [[GTDefaultsController sharedPrefsWindowController] showWindow:nil];
-    (void)sender;
 }
 
 /*
@@ -190,7 +190,6 @@
 	    [alert runModal];
 	}
     }
-    (void) sender;
 }
 
 /*
@@ -206,7 +205,6 @@
     // can not undo past a save
     [[self undoManager] removeAllActions];
     [self hideProgressIndicator: row];
-    (void) sender;
 }
 
 /*
@@ -220,7 +218,6 @@
     [[tableView window] setDocumentEdited: NO];
     [[self undoManager] removeAllActions];
     [tableView reloadData];
-    (void) sender;
 }
 
 - (IBAction) cut: (id) sender
@@ -228,7 +225,6 @@
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     [self copy: self];
     [self delete: self];
-    (void) sender;
 }
 
 - (IBAction) copy: (id) sender
@@ -242,7 +238,6 @@
 	[pb setString: [[images objectAtIndex: row] stringRepresentation]
 	      forType: NSStringPboardType];
     }
-    (void) sender;
 }
 
 - (IBAction) paste: (id) sender
@@ -250,24 +245,23 @@
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSInteger row = [tableView selectedRow];
     if ([self isValidImageAtRow: row]) {
-	NSString *latitude;
-	NSString *longitude;
+	NSString *lat;
+	NSString *lng;
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	if ([[pb types] containsObject: NSStringPboardType]) {
 	    NSString *val = [pb stringForType: NSStringPboardType];
 	    if ([[images objectAtIndex: row]  convertFromString: val
-							    lat: &latitude
-							    lng: &longitude]) {
+						       latitude: &lat
+						      longitude: &lng]) {
 		[self updateLocationForImageAtRow: row
-					 latitude: latitude
-					longitude: longitude
+					 latitude: lat
+					longitude: lng
 					 modified: YES];
 		[self adjustMapViewForRow: row];
 	    }
 	    
 	}
     }
-    (void) sender;
 }
 
 - (IBAction) delete: (id) sender
@@ -280,7 +274,6 @@
 				 modified: YES];
 	[self adjustMapViewForRow: row];
     }
-    (void) sender;  
 }
 
 - (IBAction) clear: (id) sender
@@ -291,7 +284,6 @@
 	[[self undoManager] removeAllActions];
 	[tableView reloadData];
     }
-    (void) sender;
 }
 
 #pragma mark -
@@ -320,15 +312,13 @@
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *) tv
 {
-    (void) tv;
     return [images count];
 }
 
-- (id) tableView: (NSTableView *) tv
-objectValueForTableColumn: (NSTableColumn *) tableColumn
-	     row: (NSInteger) row
+- (id)            tableView: (NSTableView *) tv
+  objectValueForTableColumn: (NSTableColumn *) tableColumn
+			row: (NSInteger) row
 {
-    (void) tv;
     ImageInfo *imageInfo = [images objectAtIndex: row];
     SEL selector = NSSelectorFromString([tableColumn identifier]);
     return [imageInfo performSelector: selector];
@@ -366,9 +356,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	return NSDragOperationLink;
 
     return NSDragOperationNone;
-    (void) aTableView;
-    (void) row;
-    (void) op;
 }
 
 
@@ -395,9 +382,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     }
 
     return dropAccepted;
-
-    (void) aTableView;
-    (void) op;
 } 
 
 
@@ -418,16 +402,12 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     
 	[aCell setTextColor: textColor];
     }
-
-    (void) aTableView;
-    (void) aTableColumn;
 }
 
 - (BOOL) tableView: (NSTableView *) aTableView
    shouldSelectRow: (NSInteger) rowIndex
 {
     return [self isValidImageAtRow: rowIndex];
-    (void) aTableView;
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
@@ -441,7 +421,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	[self adjustMapViewForRow: row];
     }
     [imageWell setImage: image];
-    (void) notification;
 }
 
 - (NSString *) tableView: (NSTableView *) tv
@@ -455,20 +434,11 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
     if ([[aTableColumn identifier] isEqual: @"name"])
 	return [[images objectAtIndex: row] path];
     return nil;
-    (void) tv;
-    (void) aCell;
-    (void) rect;
-    (void) mouseLocation;
 }
 
 #pragma mark -
-#pragma mark web view and scripting methods
+#pragma mark map view control
 
-/*
- * If there is a latitude and longitude associated with the
- * data at the given row center the map and drop a marker
- * at that location.
- */
 - (void) adjustMapViewForRow: (NSInteger) row
 {
     ImageInfo * image = [images objectAtIndex: row];
@@ -494,6 +464,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 
 #pragma mark -
 #pragma mark progress indicator control
+
 - (NSInteger) showProgressIndicator
 {
     NSInteger row = [tableView selectedRow];
@@ -534,7 +505,7 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 			   latitude: [image latitude]
 			  longitude: [image longitude]
 			   modified: [[tableView window] isDocumentEdited]];
-    [image setLocationToLat: lat lng: lng];
+    [image setLocationToLatitude: lat longitude: lng];
     //  Needed with undo/redo to force mapView update
     // (mapView updated in tableViewSelectionDidChange)
     if ([undo isUndoing] || [undo isRedoing]) {

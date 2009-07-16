@@ -24,6 +24,9 @@
     BOOL validImage;
 }
 @property BOOL validImage;
+@property (copy) NSString *originalLatitude;
+@property (copy) NSString *originalLongitude;
+
 @property (readonly) NSString *path;
 @property (readonly) NSString *name;
 @property (readonly) NSString *date;
@@ -33,12 +36,13 @@
 
 + (id) imageInfoWithPath: (NSString *) path;
 
-- (void) setLocationToLat: (NSString *) latitude lng: (NSString *) longitude;
+- (void) setLocationToLatitude: (NSString *) lat
+		     longitude: (NSString *) lng;
 - (void) saveLocation;
 - (void) revertLocation;
 - (NSString *) stringRepresentation;
 - (BOOL) convertFromString: (NSString *) representation
-		       lat: (NSString **) latitude
-		       lng: (NSString **) longitude;
+		  latitude: (NSString **) lat
+		 longitude: (NSString **) lng;
 
 @end
