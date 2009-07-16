@@ -5,9 +5,9 @@
 //  Created by Marco S Hyman on 7/5/09.
 //
 
-#import "SSTableView.h"
+#import "GTTableView.h"
 
-@implementation SSTableView
+@implementation GTTableView
 
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];

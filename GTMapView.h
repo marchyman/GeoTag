@@ -22,6 +22,7 @@
 + (BOOL) isKeyExcludedFromWebScript: (const char *) property;
 + (NSString *) webScriptNameForSelector: (SEL) sel;
 
+- (void) loadMap;
 - (void) hideMarker;
 - (void) adjustMapForLatitude: (NSString *) lat
 		    longitude: (NSString *) lng

@@ -8,7 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface SSTableView : NSTableView {
+@interface GTTableView : NSTableView {
 
 }
 

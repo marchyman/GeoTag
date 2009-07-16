@@ -7,11 +7,11 @@
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
-#import "SSTableView.h"
+#import "GTTableView.h"
 #import "GTMapView.h"
 
 @interface GTController : NSObject {
-    IBOutlet SSTableView *tableView;
+    IBOutlet GTTableView *tableView;
     IBOutlet NSImageView *imageWell;
     IBOutlet GTMapView *mapView;
     IBOutlet NSProgressIndicator *progressIndicator;

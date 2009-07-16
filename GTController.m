@@ -48,10 +48,7 @@
     
     // mapview init
     [mapView setAppController: self];
-    [[mapView mainFrame] loadRequest:
-     [NSURLRequest requestWithURL:
-      [NSURL fileURLWithPath:
-       [[NSBundle mainBundle] pathForResource:@"map" ofType:@"html"]]]];
+    [mapView loadMap];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) sender

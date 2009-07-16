@@ -24,6 +24,7 @@
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		4956251A100F1AFF00082FB7 /* GTMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49562519100F1AFF00082FB7 /* GTMapView.m */; };
+		495625B4100FAE0400082FB7 /* GTTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 495625B3100FAE0400082FB7 /* GTTableView.m */; };
 		4959729C0FE8E61E00DD267E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4959729B0FE8E61E00DD267E /* Preferences.xib */; };
 		495973820FEB125C00DD267E /* GTDefaultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973810FEB125C00DD267E /* GTDefaultsController.m */; };
 		495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973C30FEB36D900DD267E /* PathToStringTransformer.m */; };
@@ -38,7 +39,6 @@
 		49C7E14A1006CE420010425E /* GeoTagHelp in Resources */ = {isa = PBXBuildFile; fileRef = 49C7E12F1006CE420010425E /* GeoTagHelp */; };
 		49C7E16810070FEE0010425E /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 49C7E16710070FEE0010425E /* Readme.txt */; };
 		49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */ = {isa = PBXBuildFile; fileRef = 49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */; };
-		49D3AA311001935E0059FCEF /* SSTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D3AA301001935E0059FCEF /* SSTableView.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -65,6 +65,8 @@
 		32CA4F630368D1EE00C91783 /* GeoTag_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoTag_Prefix.pch; sourceTree = "<group>"; };
 		49562518100F1AFF00082FB7 /* GTMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMapView.h; sourceTree = "<group>"; };
 		49562519100F1AFF00082FB7 /* GTMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMapView.m; sourceTree = "<group>"; };
+		495625B2100FAE0400082FB7 /* GTTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTTableView.h; sourceTree = "<group>"; };
+		495625B3100FAE0400082FB7 /* GTTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTTableView.m; sourceTree = "<group>"; };
 		4959729B0FE8E61E00DD267E /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		495973800FEB125C00DD267E /* GTDefaultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTDefaultsController.h; sourceTree = "<group>"; };
 		495973810FEB125C00DD267E /* GTDefaultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTDefaultsController.m; sourceTree = "<group>"; };
@@ -86,8 +88,6 @@
 		49C7E12F1006CE420010425E /* GeoTagHelp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GeoTagHelp; sourceTree = "<group>"; };
 		49C7E16710070FEE0010425E /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GeoTag.icns; sourceTree = "<group>"; };
-		49D3AA2F1001935E0059FCEF /* SSTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSTableView.h; sourceTree = "<group>"; };
-		49D3AA301001935E0059FCEF /* SSTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSTableView.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -112,8 +112,8 @@
 				495FBA270FE5D9F200A7030E /* GTController.m */,
 				495FBBDD0FE7350D00A7030E /* ImageInfo.h */,
 				495FBBDE0FE7350D00A7030E /* ImageInfo.m */,
-				49D3AA2F1001935E0059FCEF /* SSTableView.h */,
-				49D3AA301001935E0059FCEF /* SSTableView.m */,
+				495625B2100FAE0400082FB7 /* GTTableView.h */,
+				495625B3100FAE0400082FB7 /* GTTableView.m */,
 				49562518100F1AFF00082FB7 /* GTMapView.h */,
 				49562519100F1AFF00082FB7 /* GTMapView.m */,
 			);
@@ -315,8 +315,8 @@
 				495973820FEB125C00DD267E /* GTDefaultsController.m in Sources */,
 				495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */,
 				495974750FEC46C900DD267E /* DBPrefsWindowController.m in Sources */,
-				49D3AA311001935E0059FCEF /* SSTableView.m in Sources */,
 				4956251A100F1AFF00082FB7 /* GTMapView.m in Sources */,
+				495625B4100FAE0400082FB7 /* GTTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,6 +393,7 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = GeoTag_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "GTDEBUG=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -403,7 +404,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -433,7 +434,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
