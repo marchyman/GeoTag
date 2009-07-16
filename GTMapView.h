@@ -8,16 +8,21 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
 
-@interface GTMapView : NSObject {
-    IBOutlet WebView *webView;
-
+@interface GTMapView : WebView {
     id appController;
     NSString *mapLat;
     NSString *mapLng;
 }
 
-- (id) initWithController: (id) controller;
+@property (retain) id appController;
+@property (copy) NSString *mapLat;
+@property (copy) NSString *mapLng;
 
++ (BOOL) isSelectorExcludedFromWebScript: (SEL) selector;
++ (BOOL) isKeyExcludedFromWebScript: (const char *) property;
++ (NSString *) webScriptNameForSelector: (SEL) sel;
+
+- (void) hideMarker;
 - (void) adjustMapForLatitude: (NSString *) lat
 		    longitude: (NSString *) lng
 			 name: (NSString *) name;

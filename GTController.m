@@ -46,8 +46,9 @@
     [tableView registerForDraggedTypes:
      [NSArray arrayWithObject: NSFilenamesPboardType]];
     
-    // webview init
-    [[webView mainFrame] loadRequest:
+    // mapview init
+    [mapView setAppController: self];
+    [[mapView mainFrame] loadRequest:
      [NSURLRequest requestWithURL:
       [NSURL fileURLWithPath:
        [[NSBundle mainBundle] pathForResource:@"map" ofType:@"html"]]]];
@@ -474,65 +475,23 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 - (void) adjustMapViewForRow: (NSInteger) row
 {
     ImageInfo * image = [images objectAtIndex: row];
-    NSString *lat = [image latitude];
-    NSString *lng = [image longitude];
-    NSLog(@"%@ received %@ - lat %@ lng %@", self, NSStringFromSelector(_cmd),
-	  lat, lng);
-    
-    if (lat && lng) {
-	NSArray* args = [NSArray arrayWithObjects: lat, lng,
-			 [image name], nil];
-	[[webView windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
-					    withArguments: args];
-    } else
-	[[webView windowScriptObject] callWebScriptMethod: @"hideMarker"
-					    withArguments: nil];
-
+    if (image)
+	[mapView adjustMapForLatitude: [image latitude]
+			    longitude: [image longitude]
+				 name: [image name]];
+    else
+	[mapView hideMarker];
 }
 
-- (void) webView: (WebView *) sender
-didClearWindowObject: (WebScriptObject *) windowObject
-	forFrame: (WebFrame *) frame
+// called from the map view when a marker is moved.
+- (void) updateLatitude: (NSString *) lat
+	      longitude: (NSString *) lng
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    // javascript will know this object as "controller".
-    [windowObject setValue: self forKey: @"controller"];
-    (void) sender;
-    (void) frame;
-}
-
-+ (BOOL) isSelectorExcludedFromWebScript: (SEL) selector
-{
-    if (selector == @selector(report))
-	return NO;
-    return YES;
-}
-
-+ (BOOL) isKeyExcludedFromWebScript: (const char *) property
-{
-    if ((strcmp(property, "webLat") == 0) ||
-	(strcmp(property, "webLng") == 0))
-        return NO;
-    return YES;
-    
-}
-
-+ (NSString *) webScriptNameForSelector: (SEL) sel
-{
-    NSLog(@"%@ received %@ with sel='%@'", self, NSStringFromSelector(_cmd),
-	  NSStringFromSelector(sel));
-    return nil;
-}
-
-// called from javascript when a marker is moved.
-- (void) report
-{
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSInteger row = [tableView selectedRow];
     if (row != -1)
 	[self updateLocationForImageAtRow: row
-				 latitude: webLat
-				longitude: webLng
+				 latitude: lat
+				longitude: lng
 				 modified: YES];
 }
 
@@ -579,8 +538,8 @@ didClearWindowObject: (WebScriptObject *) windowObject
 			  longitude: [image longitude]
 			   modified: [[tableView window] isDocumentEdited]];
     [image setLocationToLat: lat lng: lng];
-    //  Needed with undo/redo to force webView update
-    // (webView updated in tableViewSelectionDidChange)
+    //  Needed with undo/redo to force mapView update
+    // (mapView updated in tableViewSelectionDidChange)
     if ([undo isUndoing] || [undo isRedoing]) {
 	[tableView deselectRow: row];
 	[tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]

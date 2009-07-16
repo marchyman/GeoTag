@@ -43,9 +43,9 @@
     function moveMarkerOnClick(location) {
 	marker.set_position(location);
 	if (controller) {
-	    controller.webLat = "" + location.lat();
-	    controller.webLng = "" + location.lng();
-	    controller.report();
+	    controller.mapLat = "" + location.lat();
+	    controller.mapLng = "" + location.lng();
+	    controller.reportPosition();
 	}
 	marker.set_visible(1);
     }

@@ -6,9 +6,13 @@
 //
 
 #import "GTMapView.h"
-
+#import "GTController.h"
 
 @implementation GTMapView
+
+@synthesize appController;
+@synthesize mapLat;
+@synthesize mapLng;
 
 #pragma mark -
 #pragma mark WebScripting Protocol methods
@@ -16,7 +20,7 @@
 // only the report selector can be called from the script
 + (BOOL) isSelectorExcludedFromWebScript: (SEL) selector
 {
-    if (selector == @selector(report))
+    if (selector == @selector(reportPosition))
 	return NO;
     return YES;
 }
@@ -38,19 +42,16 @@
     (void) sel;
 }
 
-#pragma mark -
-#pragma mark init
-
-- (id) initWithController: (id) controller
-{
-    self = [super init];
-    if (self)
-	appController = controller;
-    return self;
-}
 
 #pragma mark -
 #pragma mark script communication methods
+
+// hide any existing marker
+- (void) hideMarker
+{
+    [[self windowScriptObject] callWebScriptMethod: @"hideMarker"
+				     withArguments: nil];
+}
 
 // tell the map to hide or drop a marker
 - (void) adjustMapForLatitude: (NSString *) lat
@@ -59,18 +60,17 @@
 {
     if (lat && lng) {
 	NSArray* args = [NSArray arrayWithObjects: lat, lng, name, nil];
-	[[webView windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
-					    withArguments: args];
+	[[self windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
+					 withArguments: args];
     } else
-	[[webView windowScriptObject] callWebScriptMethod: @"hideMarker"
-					    withArguments: nil];
+	[self hideMarker];
 }
 
 // called from javascript when a marker is placed on the map.
 // The marker is at mapLat, mapLng.
 - (void) reportPosition
 {
-    [appController updateLatitude: mapLat longitude: mapLng];
+    [appController updateLatitude: [self mapLat] longitude: [self mapLng]];
 }
 
 #pragma mark -

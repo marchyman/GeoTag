@@ -8,22 +8,17 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
 #import "SSTableView.h"
+#import "GTMapView.h"
 
 @interface GTController : NSObject {
     IBOutlet SSTableView *tableView;
     IBOutlet NSImageView *imageWell;
-    IBOutlet WebView *webView;
+    IBOutlet GTMapView *mapView;
     IBOutlet NSProgressIndicator *progressIndicator;
     
     NSMutableArray *images;
     NSUndoManager *undoManager;
-    NSString *webLat;
-    NSString *webLng;
 }
-
-+ (BOOL) isSelectorExcludedFromWebScript: (SEL) selector;
-+ (BOOL) isKeyExcludedFromWebScript: (const char *) property;
-+ (NSString *) webScriptNameForSelector: (SEL) sel;
 
 - (IBAction) showOpenPanel: (id) sender;
 - (IBAction) saveLocations: (id) sender;
@@ -35,8 +30,8 @@
 - (IBAction) delete: (id) sender;
 - (IBAction) clear: (id) sender;
 
-- (void) report;
-
 - (NSProgressIndicator *) progressIndicator;
+- (void) updateLatitude: (NSString *) lat
+	      longitude: (NSString *) lng;
 
 @end
