@@ -86,6 +86,12 @@
 #pragma mark -
 #pragma mark Load initial map
 
+- (void) awakeFromNib
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    [self loadMap];
+}
+
 - (void) loadMap
 {
     [self setFrameLoadDelegate: self];

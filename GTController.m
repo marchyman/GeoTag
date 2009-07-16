@@ -49,10 +49,6 @@
     [NSApp setDelegate: self];
     [tableView registerForDraggedTypes:
      [NSArray arrayWithObject: NSFilenamesPboardType]];
-    
-    // mapview init
-    [mapView setAppController: self];
-    [mapView loadMap];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) sender
