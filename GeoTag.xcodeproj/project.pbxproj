@@ -23,6 +23,7 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
+		4956251A100F1AFF00082FB7 /* GTMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49562519100F1AFF00082FB7 /* GTMapView.m */; };
 		4959729C0FE8E61E00DD267E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4959729B0FE8E61E00DD267E /* Preferences.xib */; };
 		495973820FEB125C00DD267E /* GTDefaultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973810FEB125C00DD267E /* GTDefaultsController.m */; };
 		495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 495973C30FEB36D900DD267E /* PathToStringTransformer.m */; };
@@ -62,6 +63,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* GeoTag_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoTag_Prefix.pch; sourceTree = "<group>"; };
+		49562518100F1AFF00082FB7 /* GTMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMapView.h; sourceTree = "<group>"; };
+		49562519100F1AFF00082FB7 /* GTMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMapView.m; sourceTree = "<group>"; };
 		4959729B0FE8E61E00DD267E /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		495973800FEB125C00DD267E /* GTDefaultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTDefaultsController.h; sourceTree = "<group>"; };
 		495973810FEB125C00DD267E /* GTDefaultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTDefaultsController.m; sourceTree = "<group>"; };
@@ -111,6 +114,8 @@
 				495FBBDE0FE7350D00A7030E /* ImageInfo.m */,
 				49D3AA2F1001935E0059FCEF /* SSTableView.h */,
 				49D3AA301001935E0059FCEF /* SSTableView.m */,
+				49562518100F1AFF00082FB7 /* GTMapView.h */,
+				49562519100F1AFF00082FB7 /* GTMapView.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -311,6 +316,7 @@
 				495973C70FEB3A6100DD267E /* PathToStringTransformer.m in Sources */,
 				495974750FEC46C900DD267E /* DBPrefsWindowController.m in Sources */,
 				49D3AA311001935E0059FCEF /* SSTableView.m in Sources */,
+				4956251A100F1AFF00082FB7 /* GTMapView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
