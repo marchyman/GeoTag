@@ -28,7 +28,6 @@
 
 - (IBAction) clear: (id) sender;
 
-- (NSProgressIndicator *) progressIndicator;
 - (BOOL) isValidImageAtIndex: (NSInteger) ix;
 - (ImageInfo *) imageAtIndex: (NSInteger) ix;
 - (BOOL) addImageForPath: (NSString *) path;

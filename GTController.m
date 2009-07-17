@@ -15,6 +15,7 @@
 @interface GTController ()
 - (NSInteger) showProgressIndicator;
 - (void) hideProgressIndicator: (NSInteger) row;
+- (NSProgressIndicator *) progressIndicator;
 @end
 
 
