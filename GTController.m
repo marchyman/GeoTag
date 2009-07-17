@@ -233,6 +233,9 @@
     [[NSApp mainWindow] setDocumentEdited: NO];
     [[self undoManager] removeAllActions];
     [tableView reloadData];
+    NSInteger row = [tableView selectedRow];
+    if (row != -1)
+	[self adjustMapViewForRow: row];
 }
 
 - (IBAction) clear: (id) sender
