@@ -21,8 +21,6 @@
     NSUndoManager *undoManager;
 }
 
-@property (retain) NSWindow *mainWindow;
-
 - (IBAction) showOpenPanel: (id) sender;
 - (IBAction) saveLocations: (id) sender;
 - (IBAction) revertToSaved: (id) sender;
