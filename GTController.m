@@ -216,7 +216,7 @@
     NSInteger row = [self showProgressIndicator];
     for (ImageInfo *image in images)
 	[image saveLocation];
-    [[tableView window] setDocumentEdited: NO];
+    [[NSApp mainWindow] setDocumentEdited: NO];
     // can not undo past a save
     [[self undoManager] removeAllActions];
     [self hideProgressIndicator: row];
@@ -230,7 +230,7 @@
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     for (ImageInfo *image in images)
 	[image revertLocation];
-    [[tableView window] setDocumentEdited: NO];
+    [[NSApp mainWindow] setDocumentEdited: NO];
     [[self undoManager] removeAllActions];
     [tableView reloadData];
 }
@@ -238,7 +238,7 @@
 - (IBAction) clear: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    if (! [[tableView window] isDocumentEdited]) {
+    if (! [[NSApp mainWindow] isDocumentEdited]) {
 	images = [[NSMutableArray alloc] init];
 	[[self undoManager] removeAllActions];
 	[tableView reloadData];
@@ -254,10 +254,10 @@
     
     if (action == @selector(saveLocations:) ||
 	action == @selector(revertToSaved:))
-	return [[tableView window] isDocumentEdited];
+	return [[NSApp mainWindow] isDocumentEdited];
     if (action == @selector(clear:))
 	return ([images count] > 0) &&
-	       (! [[tableView window] isDocumentEdited]);
+	       (! [[NSApp mainWindow] isDocumentEdited]);
     return YES;
 }
 
@@ -422,7 +422,7 @@
 	updateLocationForImageAtRow: row
 			   latitude: [image latitude]
 			  longitude: [image longitude]
-			   modified: [[tableView window] isDocumentEdited]];
+			   modified: [[NSApp mainWindow] isDocumentEdited]];
     [image setLocationToLatitude: lat longitude: lng];
     //  Needed with undo/redo to force mapView update
     // (mapView updated in tableViewSelectionDidChange)
@@ -432,7 +432,7 @@
 	       byExtendingSelection: NO];
     }
     [tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
-    [[tableView window] setDocumentEdited: mod];
+    [[NSApp mainWindow] setDocumentEdited: mod];
 }
 
 @end

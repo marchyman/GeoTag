@@ -16,10 +16,12 @@
     IBOutlet NSImageView *imageWell;
     IBOutlet GTMapView *mapView;
     IBOutlet NSProgressIndicator *progressIndicator;
-    
+
     NSMutableArray *images;
     NSUndoManager *undoManager;
 }
+
+@property (retain) NSWindow *mainWindow;
 
 - (IBAction) showOpenPanel: (id) sender;
 - (IBAction) saveLocations: (id) sender;
