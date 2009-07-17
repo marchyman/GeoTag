@@ -9,7 +9,12 @@
 
 
 @interface GTTableView : NSTableView {
-
+    id appController;
 }
+
+- (IBAction) cut: (id)sender;
+- (IBAction) copy: (id) sender;
+- (IBAction) paste: (id) sender;
+- (IBAction) delete: (id) sender;
 
 @end

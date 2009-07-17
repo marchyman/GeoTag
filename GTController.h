@@ -9,6 +9,7 @@
 #import <WebKit/WebKit.h>
 #import "GTTableView.h"
 #import "GTMapView.h"
+#import "ImageInfo.h"
 
 @interface GTController : NSObject {
     IBOutlet GTTableView *tableView;
@@ -24,14 +25,23 @@
 - (IBAction) saveLocations: (id) sender;
 - (IBAction) revertToSaved: (id) sender;
 - (IBAction) showPreferencePanel: (id) sender;
-- (IBAction) cut: (id)sender;
-- (IBAction) copy: (id) sender;
-- (IBAction) paste: (id) sender;
-- (IBAction) delete: (id) sender;
+
 - (IBAction) clear: (id) sender;
 
 - (NSProgressIndicator *) progressIndicator;
+- (BOOL) isValidImageAtIndex: (NSInteger) ix;
+- (ImageInfo *) imageAtIndex: (NSInteger) ix;
+- (BOOL) addImageForPath: (NSString *) path;
+- (void) showImageForIndex: (NSInteger) ix;
+- (void) adjustMapViewForRow: (NSInteger) row;
+- (void) updateLocationForImageAtRow: (NSInteger) row
+			    latitude: (NSString *) lat
+			   longitude: (NSString *) lng
+			    modified: (BOOL) mod;
+
 - (void) updateLatitude: (NSString *) lat
 	      longitude: (NSString *) lng;
+
+- (BOOL) isDuplicatePath: (NSString *) path;
 
 @end

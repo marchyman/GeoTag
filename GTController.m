@@ -6,7 +6,6 @@
 //
 
 #import "GTController.h"
-#import "ImageInfo.h"
 #import "GTDefaultscontroller.h"
 
 #if GTDEBUG == 0
@@ -14,13 +13,6 @@
 #endif
 
 @interface GTController ()
-- (void) adjustMapViewForRow: (NSInteger) row;
-- (void) updateLocationForImageAtRow: (NSInteger) row
-			    latitude: (NSString *) lat
-			   longitude: (NSString *) lng
-			    modified: (BOOL) mod;
-- (BOOL) isDuplicatePath: (NSString *) path;
-- (BOOL) isValidImageAtRow: (NSInteger) row;
 - (NSInteger) showProgressIndicator;
 - (void) hideProgressIndicator: (NSInteger) row;
 @end
@@ -108,33 +100,59 @@
     return NSTerminateLater;
 }
 
-#pragma mark -
-#pragma mark accessors
-
-- (NSUndoManager *) undoManager
-{
-    return undoManager;
-}
-
-- (NSProgressIndicator *) progressIndicator
-{
-    return progressIndicator;
-}
-
-#pragma mark -
-#pragma mark window delegate functions
-
-- (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *) window
-{
-    return [self undoManager];
-}
-
 - (BOOL) windowShouldClose: (id) window
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     return [self saveOrDontSave: window];
 }
 
+#pragma mark -
+#pragma mark image related methods
+
+- (ImageInfo *) imageAtIndex: (NSInteger) ix
+{
+    return [images objectAtIndex: ix];
+}
+
+- (BOOL) isValidImageAtIndex: (NSInteger) ix
+{
+    if ((ix >= 0) && (ix < (NSInteger) [images count]))
+	return [[self imageAtIndex: ix] validImage];
+    return NO;
+}
+
+- (BOOL) addImageForPath: (NSString *) path
+{
+    if (! [self isDuplicatePath: path]) {
+	[images addObject: [ImageInfo imageInfoWithPath: path]];
+	return YES;
+    }
+    return NO;
+}
+
+- (BOOL) isDuplicatePath: (NSString *) path
+{
+    for (ImageInfo *image in images) {
+	if ([[image path] isEqualToString: path]) {
+	    NSLog(@"duplicatePath: %@", path);
+	    return YES;
+	}
+    }
+    return NO;
+}
+
+#pragma mark -
+#pragma mark undo related methods
+
+- (NSUndoManager *) undoManager
+{
+    return undoManager;
+}
+
+- (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *) window
+{
+    return [self undoManager];
+}
 
 #pragma mark -
 #pragma mark IB Actions
@@ -216,62 +234,6 @@
     [tableView reloadData];
 }
 
-- (IBAction) cut: (id) sender
-{
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    [self copy: self];
-    [self delete: self];
-}
-
-- (IBAction) copy: (id) sender
-{
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    NSInteger row = [tableView selectedRow];
-    if ([self isValidImageAtRow: row]) {
-	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	[pb declareTypes: [NSArray arrayWithObject: NSStringPboardType]
-		   owner: self];
-	[pb setString: [[images objectAtIndex: row] stringRepresentation]
-	      forType: NSStringPboardType];
-    }
-}
-
-- (IBAction) paste: (id) sender
-{
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    NSInteger row = [tableView selectedRow];
-    if ([self isValidImageAtRow: row]) {
-	NSString *lat;
-	NSString *lng;
-	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	if ([[pb types] containsObject: NSStringPboardType]) {
-	    NSString *val = [pb stringForType: NSStringPboardType];
-	    if ([[images objectAtIndex: row]  convertFromString: val
-						       latitude: &lat
-						      longitude: &lng]) {
-		[self updateLocationForImageAtRow: row
-					 latitude: lat
-					longitude: lng
-					 modified: YES];
-		[self adjustMapViewForRow: row];
-	    }
-	    
-	}
-    }
-}
-
-- (IBAction) delete: (id) sender
-{
-    NSInteger row = [tableView selectedRow];
-    if ([self isValidImageAtRow: row]) {
-	[self updateLocationForImageAtRow: row
-				 latitude: nil
-				longitude: nil
-				 modified: YES];
-	[self adjustMapViewForRow: row];
-    }
-}
-
 - (IBAction) clear: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
@@ -292,11 +254,6 @@
     if (action == @selector(saveLocations:) ||
 	action == @selector(revertToSaved:))
 	return [[tableView window] isDocumentEdited];
-    if (action == @selector(copy:) ||
-	action == @selector(cut:) ||
-	action == @selector(paste:) ||
-	action == @selector(delete:))
-	return [self isValidImageAtRow: [tableView selectedRow]];
     if (action == @selector(clear:))
 	return ([images count] > 0) &&
 	       (! [[tableView window] isDocumentEdited]);
@@ -304,7 +261,7 @@
 }
 
 #pragma mark -
-#pragma mark tableView datasource functions
+#pragma mark tableView datasource and drop methods
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *) tv
 {
@@ -315,30 +272,27 @@
   objectValueForTableColumn: (NSTableColumn *) tableColumn
 			row: (NSInteger) row
 {
-    ImageInfo *imageInfo = [images objectAtIndex: row];
+    ImageInfo *imageInfo = [self imageAtIndex: row];
     SEL selector = NSSelectorFromString([tableColumn identifier]);
     return [imageInfo performSelector: selector];
 }
 
-#pragma mark -
-#pragma mark tableView Drop functions
-
 // Drops are only allowed at the end of the table
-
 - (NSDragOperation) tableView: (NSTableView *) aTableView
 		 validateDrop: (id < NSDraggingInfo >) info
 		  proposedRow: (NSInteger) row
 	proposedDropOperation: (NSTableViewDropOperation) op
 {
     BOOL dropValid = YES;
-
+    
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSPasteboard* pboard = [info draggingPasteboard];
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
 	if (row < [aTableView numberOfRows])
 	    dropValid = NO;
 	else {
 	    NSArray *pathArray =
-		    [pboard propertyListForType:NSFilenamesPboardType];
+		[pboard propertyListForType:NSFilenamesPboardType];
 	    NSFileManager *fileManager = [NSFileManager defaultManager];
 	    BOOL dir;
 	    for (NSString *path in pathArray) {
@@ -350,7 +304,7 @@
     }
     if (dropValid)
 	return NSDragOperationLink;
-
+    
     return NSDragOperationNone;
 }
 
@@ -361,75 +315,37 @@
      dropOperation: (NSTableViewDropOperation) op 
 {
     BOOL dropAccepted = NO;
+    
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSPasteboard* pboard = [info draggingPasteboard];
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
 	NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
-	for (NSString *path in pathArray) {
-	    if (! [self isDuplicatePath: path]) {
-		[images addObject: [ImageInfo imageInfoWithPath: path]];
+	for (NSString *path in pathArray)
+	    if ([self addImageForPath: path])
 		dropAccepted = YES;
-	    }
-	}
     }
     if (dropAccepted) {
 	[tableView reloadData];
 	[tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
-	       byExtendingSelection: NO];
+	  byExtendingSelection: NO];
     }
 
     return dropAccepted;
 } 
 
-
 #pragma mark -
-#pragma mark tableView delegate functions
+#pragma mark image well control
 
-- (void) tableView: (NSTableView *) aTableView
-   willDisplayCell: (id) aCell
-    forTableColumn: (NSTableColumn *) aTableColumn
-	       row: (NSInteger) rowIndex
+- (void) showImageForIndex: (NSInteger) ix
 {
-    if ([aCell respondsToSelector:@selector(setTextColor:)]) {
-	NSColor *textColor;
-	if ([self isValidImageAtRow: rowIndex])
-	    textColor = [NSColor blackColor];
-	else
-	    textColor = [NSColor grayColor];
-    
-	[aCell setTextColor: textColor];
-    }
-}
-
-- (BOOL) tableView: (NSTableView *) aTableView
-   shouldSelectRow: (NSInteger) rowIndex
-{
-    return [self isValidImageAtRow: rowIndex];
-}
-
-- (void) tableViewSelectionDidChange: (NSNotification *)notification
-{
-    // NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    NSInteger row = [tableView selectedRow];
     NSImage *image = nil;
-    if (row != -1) {
+    if (ix != -1) {
 	image = [[NSImage alloc] initWithContentsOfFile:
-		 [[images objectAtIndex: row] path]];
-	[self adjustMapViewForRow: row];
+		 [[self imageAtIndex: ix] path]];
+	[self adjustMapViewForRow: ix];
     }
     [imageWell setImage: image];
-}
-
-- (NSString *) tableView: (NSTableView *) tv
-	  toolTipForCell: (NSCell *) aCell
-		    rect: (NSRectPointer) rect
-	     tableColumn: (NSTableColumn *) aTableColumn
-		     row: (NSInteger) row
-	   mouseLocation: (NSPoint) mouseLocation
-{
-    // NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    if ([[aTableColumn identifier] isEqual: @"name"])
-	return [[images objectAtIndex: row] path];
-    return nil;
+    
 }
 
 #pragma mark -
@@ -461,6 +377,11 @@
 #pragma mark -
 #pragma mark progress indicator control
 
+- (NSProgressIndicator *) progressIndicator
+{
+    return progressIndicator;
+}
+
 - (NSInteger) showProgressIndicator
 {
     NSInteger row = [tableView selectedRow];
@@ -486,7 +407,7 @@
 }
 
 #pragma mark -
-#pragma mark helper methods
+#pragma mark undoable image update
 
 // location update with undo/redo support
 - (void) updateLocationForImageAtRow: (NSInteger) row
@@ -511,26 +432,6 @@
     }
     [tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
     [[tableView window] setDocumentEdited: mod];
-}
-
-- (BOOL) isDuplicatePath: (NSString *) path
-{
-    for (ImageInfo *image in images) {
-	if ([[image path] isEqualToString: path]) {
-	    NSLog(@"duplicatePath: %@", path);
-	    return YES;
-	}
-    }
-    return NO;
-}
-
-- (BOOL) isValidImageAtRow: (NSInteger) row
-{
-    if ((row >= 0) && (row < (NSInteger) [images count])) {
-	ImageInfo *anImage = [images objectAtIndex: row];
-	return [anImage validImage];
-    }
-    return NO;
 }
 
 @end
