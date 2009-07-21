@@ -6,3 +6,4 @@ all:
 
 clean:
 	xcodebuild -configuration Release -alltargets clean
+	xcodebuild -configuration Debug -alltargets clean
