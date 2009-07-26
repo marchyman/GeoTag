@@ -6,10 +6,6 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleHelpBookFolder</key>
-	<string>GeoTagHelp</string>
-	<key>CFBundleHelpBookName</key>
-	<string>GeoTag Help</string>
 	<key>CFBundleIconFile</key>
 	<string>GeoTag.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -24,6 +20,10 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.1</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>GeoTagHelp</string>
+	<key>CFBundleHelpBookName</key>
+	<string>GeoTag Help</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
