@@ -82,7 +82,7 @@
 		495C85A30FF1AC1B00FA483C /* Credits-input.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = "Credits-input.rtf"; sourceTree = "<group>"; };
 		495FBAA10FE62D8900A7030E /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		495FBBDD0FE7350D00A7030E /* ImageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageInfo.h; sourceTree = "<group>"; };
-		499FAEA1100E8AC500C2AADA /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		499FAEA1100E8AC500C2AADA /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = SOURCE_ROOT; };
 		49B205880FFBD13800C07B70 /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = map.html; sourceTree = "<group>"; };
 		49B2069C0FFD504900C07B70 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		49C7E12F1006CE420010425E /* GeoTagHelp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GeoTagHelp; sourceTree = "<group>"; };
@@ -299,7 +299,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# shell script goes here\nset -ex\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\ndir=${TEMP_FILES_DIR}/disk\ndmg=${BUILT_PRODUCTS_DIR}/${PROJECT_NAME}.dmg\n\nrm -rf ${dir}\nmkdir ${dir}\nln -s /Applications ${dir}\ncp -R ${BUILT_PRODUCTS_DIR}/${PROJECT_NAME}.app ${dir}\ncp ${SRCROOT}/Readme.txt ${dir}\n\nrm -f ${dmg}\nhdiutil create -srcfolder ${dir} -volname ${PROJECT_NAME} ${dmg}\n\nrm -rf ${dir}\n\nexit 0";
+			shellScript = "# shell script goes here\nset -ex\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\ndir=${TEMP_FILES_DIR}/disk\ndmg=${BUILT_PRODUCTS_DIR}/${PROJECT_NAME}.dmg\n\nrm -rf ${dir}\nmkdir ${dir}\nln -s /Applications ${dir}\ncp -R ${BUILT_PRODUCTS_DIR}/${PROJECT_NAME}.app ${dir}\ncp ${SRCROOT}/Sources/Readme.txt ${dir}\n\nrm -f ${dmg}\nhdiutil create -srcfolder ${dir} -volname ${PROJECT_NAME} ${dmg}\n\nrm -rf ${dir}\n\nexit 0";
 		};
 /* End PBXShellScriptBuildPhase section */
 
