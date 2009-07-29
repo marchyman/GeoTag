@@ -38,7 +38,6 @@
 		49B205890FFBD13800C07B70 /* map.html in Resources */ = {isa = PBXBuildFile; fileRef = 49B205880FFBD13800C07B70 /* map.html */; };
 		49B2069D0FFD504900C07B70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49B2069B0FFD504900C07B70 /* Localizable.strings */; };
 		49C7E14A1006CE420010425E /* GeoTagHelp in Resources */ = {isa = PBXBuildFile; fileRef = 49C7E12F1006CE420010425E /* GeoTagHelp */; };
-		49C7E16810070FEE0010425E /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 49C7E16710070FEE0010425E /* Readme.txt */; };
 		49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */ = {isa = PBXBuildFile; fileRef = 49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -55,10 +54,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		089C165DFE840E0CC02AAC07 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
-		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1DDD58150DA1D0A300B32029 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* GeoTag_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoTag_Prefix.pch; sourceTree = "<group>"; };
@@ -79,15 +78,14 @@
 		495974730FEC46C900DD267E /* DBPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBPrefsWindowController.h; sourceTree = "<group>"; };
 		495974740FEC46C900DD267E /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBPrefsWindowController.m; sourceTree = "<group>"; };
 		495974FC0FEC6AB200DD267E /* General.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = General.png; sourceTree = "<group>"; };
-		495975090FECB69B00DD267E /* Credits.rtf */ = {isa = PBXFileReference; explicitFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		495975090FECB69B00DD267E /* Credits.rtf */ = {isa = PBXFileReference; explicitFileType = text.rtf; name = Credits.rtf; path = ../Credits.rtf; sourceTree = "<group>"; };
 		495C85A30FF1AC1B00FA483C /* Credits-input.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = "Credits-input.rtf"; sourceTree = "<group>"; };
 		495FBAA10FE62D8900A7030E /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		495FBBDD0FE7350D00A7030E /* ImageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageInfo.h; sourceTree = "<group>"; };
 		499FAEA1100E8AC500C2AADA /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		49B205880FFBD13800C07B70 /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = map.html; sourceTree = "<group>"; };
-		49B2069C0FFD504900C07B70 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		49B2069C0FFD504900C07B70 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		49C7E12F1006CE420010425E /* GeoTagHelp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GeoTagHelp; sourceTree = "<group>"; };
-		49C7E16710070FEE0010425E /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		49D3A90B0FFEFFAB0059FCEF /* GeoTag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GeoTag.icns; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -118,6 +116,7 @@
 				49562519100F1AFF00082FB7 /* GTMapView.m */,
 			);
 			name = Classes;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
@@ -165,10 +164,10 @@
 				495C85A30FF1AC1B00FA483C /* Credits-input.rtf */,
 				32CA4F630368D1EE00C91783 /* GeoTag_Prefix.pch */,
 				49026A111020043400EE4FFB /* main.m */,
-				49C7E16710070FEE0010425E /* Readme.txt */,
 				499FAEA1100E8AC500C2AADA /* Makefile */,
 			);
 			name = "Other Sources";
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
@@ -185,7 +184,7 @@
 				4959729B0FE8E61E00DD267E /* Preferences.xib */,
 				495975090FECB69B00DD267E /* Credits.rtf */,
 			);
-			name = Resources;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
@@ -209,6 +208,7 @@
 				495973810FEB125C00DD267E /* GTDefaultsController.m */,
 			);
 			name = Preferences;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -265,7 +265,6 @@
 				49B2069D0FFD504900C07B70 /* Localizable.strings in Resources */,
 				49D3A90C0FFEFFAB0059FCEF /* GeoTag.icns in Resources */,
 				49C7E14A1006CE420010425E /* GeoTagHelp in Resources */,
-				49C7E16810070FEE0010425E /* Readme.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,7 +282,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sed -e \"s/#.*#/#`/opt/local/bin/git describe`#/\" <Credits-input.rtf >Credits.rtf\n";
+			shellScript = "sed -e \"s/#.*#/#`/opt/local/bin/git describe`#/\" <Sources/Credits-input.rtf >Credits.rtf\n";
 			showEnvVarsInLog = 0;
 		};
 		49D3AAD21002F14A0059FCEF /* ShellScript */ = {
@@ -334,7 +333,7 @@
 		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				089C165DFE840E0CC02AAC07 /* English */,
+				089C165DFE840E0CC02AAC07 /* InfoPlist.strings */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -342,7 +341,7 @@
 		1DDD58140DA1D0A300B32029 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1DDD58150DA1D0A300B32029 /* English */,
+				1DDD58150DA1D0A300B32029 /* MainMenu.xib */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -350,9 +349,10 @@
 		49B2069B0FFD504900C07B70 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				49B2069C0FFD504900C07B70 /* English */,
+				49B2069C0FFD504900C07B70 /* Localizable.strings */,
 			);
 			name = Localizable.strings;
+			path = English.lproj;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -385,14 +385,14 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.0;
+				CURRENT_PROJECT_VERSION = 1.1;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = GeoTag_Prefix.pch;
+				GCC_PREFIX_HEADER = Sources/GeoTag_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "GTDEBUG=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -406,7 +406,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = GeoTag;
 			};
@@ -417,13 +417,13 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				CURRENT_PROJECT_VERSION = 1.0;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = GeoTag_Prefix.pch;
+				GCC_PREFIX_HEADER = Sources/GeoTag_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -436,7 +436,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = GeoTag;
 			};
