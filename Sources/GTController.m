@@ -20,6 +20,7 @@
 
 
 @implementation GTController
+@synthesize currentLatitude, currentLongitude;
 
 #pragma mark -
 #pragma mark Startup and teardown
@@ -29,7 +30,8 @@
     if ((self = [super init])) {
 	images = [[NSMutableArray alloc] init];
 	undoManager = [[NSUndoManager alloc] init];
-	
+	currentLatitude = @"";
+	currentLongitude = @"";
 	// force app defaults and preferences initialization
 	[GTDefaultsController class];
     }
@@ -340,12 +342,45 @@
 #pragma mark -
 #pragma mark image well control
 
+/*
+ * A slightly modified version of code found on the net.  I do not understand
+ * why drawInRect: is sent to the original image, but it works.  I need
+ * to read the Cocoa Drawing Guide.
+ */
+- (NSImage *) rotateImage: (NSImage *) anImage
+	      orientation: (CGFloat) degrees
+{
+    // create an image for the rotated size
+    NSSize originalSize = [anImage size];
+    NSSize rotatedSize = NSMakeSize(originalSize.height, originalSize.width);
+    NSImage *rotatedImage = [[NSImage alloc] initWithSize: rotatedSize];
+
+    [rotatedImage lockFocus];
+    
+    NSAffineTransform* transform = [NSAffineTransform transform];
+    NSPoint centerPoint = NSMakePoint(rotatedSize.width / 2,
+				      rotatedSize.height / 2);
+    [transform translateXBy: centerPoint.x yBy: centerPoint.y];
+    [transform rotateByDegrees: degrees];
+    [transform translateXBy: -centerPoint.y yBy: -centerPoint.x];
+    [transform concat];
+
+    NSRect rect = NSMakeRect(0, 0, rotatedSize.height, rotatedSize.width);
+    [[anImage bestRepresentationForDevice:nil] drawInRect: rect];
+
+    [rotatedImage unlockFocus];
+    return rotatedImage;
+}
+
 - (void) showImageForIndex: (NSInteger) ix
 {
     NSImage *image = nil;
     if (ix != -1) {
 	image = [[NSImage alloc] initWithContentsOfFile:
 		 [[self imageAtIndex: ix] path]];
+	CGFloat rotateDegrees = [[self imageAtIndex: ix] orientation];
+	if (rotateDegrees != 0.0)
+	    image = [self rotateImage: image orientation: rotateDegrees];
 	[self adjustMapViewForRow: ix];
     }
     [imageWell setImage: image];
@@ -357,13 +392,24 @@
 
 - (void) adjustMapViewForRow: (NSInteger) row
 {
-    ImageInfo * image = [images objectAtIndex: row];
-    if (image)
-	[mapView adjustMapForLatitude: [image latitude]
-			    longitude: [image longitude]
-				 name: [image name]];
-    else
+    ImageInfo * image = [self imageAtIndex: row];
+    if (image) {
+	NSString* lat = [image latitude];
+	NSString* lng = [image longitude];
+	if (! [[self currentLatitude] isEqualToString: lat] ||
+	    ! [[self currentLongitude] isEqualToString: lng]) {
+	    [self setCurrentLatitude: lat];
+	    [self setCurrentLongitude: lng];
+	    [mapView adjustMapForLatitude: lat
+				longitude: lng
+				     name: [image name]];
+	}
+    } else {
 	[mapView hideMarker];
+	[self setCurrentLatitude: @""];
+	[self setCurrentLongitude: @""];
+    }
+
 }
 
 // called from the map view when a marker is moved.
@@ -419,7 +465,7 @@
 			   longitude: (NSString *) lng
 			    modified: (BOOL) mod
 {
-    ImageInfo *image = [images objectAtIndex: row];
+    ImageInfo *image = [self imageAtIndex: row];
     NSUndoManager *undo = [self undoManager];
     [[undo prepareWithInvocationTarget: self]
 	updateLocationForImageAtRow: row

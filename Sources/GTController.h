@@ -17,9 +17,13 @@
     IBOutlet GTMapView *mapView;
     IBOutlet NSProgressIndicator *progressIndicator;
 
+    NSString *currentLatitude;
+    NSString *currentLongitude;
     NSMutableArray *images;
     NSUndoManager *undoManager;
 }
+@property (copy) NSString *currentLatitude;
+@property (copy) NSString *currentLongitude;
 
 - (IBAction) showOpenPanel: (id) sender;
 - (IBAction) saveLocations: (id) sender;

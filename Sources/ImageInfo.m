@@ -57,6 +57,7 @@ static NSArray *knownFileTypes;
 	validImage = [self getExifInfoForFileAt: path];
 	originalLatitude = [self latitude];
 	originalLongitude = [self longitude];
+	NSLog(@"Orientation %f", [self orientation]);
     }
     return self;
 }
@@ -225,7 +226,7 @@ static NSArray *knownFileTypes;
 {
     BOOL ok = YES;
 
-    NSLog(@"tag %@: %@", tag, val);
+    // NSLog(@"tag %@: %@", tag, val);
     if ([tag caseInsensitiveCompare: @"filetype"] == NSOrderedSame)
 	ok = [knownFileTypes containsObject: val];
     else if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)
@@ -251,9 +252,12 @@ static NSArray *knownFileTypes;
 	[infoDict setObject: val forKey: IILongitude];
     } else if ([tag caseInsensitiveCompare:@"orientation"] == NSOrderedSame) {
 	NSArray *a = [val componentsSeparatedByString:@" "];
-	if ([a count] == 3)
-	    [self setOrientation: [[a objectAtIndex: 1] floatValue]];
-	NSLog(@"Orientation %f", [self orientation]);
+	if ([a count] == 3) {
+	    CGFloat rotateValue = [[a objectAtIndex: 1] floatValue];
+	    if ([[a objectAtIndex: 2] compare: @"CW"] == NSOrderedSame)
+		rotateValue = -rotateValue;
+	    [self setOrientation: rotateValue];
+	}
     } else
 	ok = NO;
     return ok;
