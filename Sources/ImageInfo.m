@@ -22,6 +22,7 @@ static NSArray *knownFileTypes;
 @synthesize originalLatitude;
 @synthesize originalLongitude;
 @synthesize validImage;
+@synthesize orientation;
 
 #pragma mark -
 #pragma mark Class methods
@@ -248,6 +249,11 @@ static NSArray *knownFileTypes;
 	else
 	    val = [a objectAtIndex: 0];
 	[infoDict setObject: val forKey: IILongitude];
+    } else if ([tag caseInsensitiveCompare:@"orientation"] == NSOrderedSame) {
+	NSArray *a = [val componentsSeparatedByString:@" "];
+	if ([a count] == 3)
+	    [self setOrientation: [[a objectAtIndex: 1] floatValue]];
+	NSLog(@"Orientation %f", [self orientation]);
     } else
 	ok = NO;
     return ok;
@@ -269,7 +275,7 @@ static NSArray *knownFileTypes;
 			    @"-filetype", @"-filemodifydate",
 			    @"-datetimeoriginal",
 			    @"-GPSLatitude", @"-GPSLongitude",
-			    path, nil]];
+			    @"-Orientation", path, nil]];
     [exiftool launch];
     
     inData = [readHandle readDataToEndOfFile];

@@ -21,8 +21,10 @@
     NSMutableDictionary *infoDict;
     NSString *originalLatitude;
     NSString *originalLongitude;
+    CGFloat orientation;
     BOOL validImage;
 }
+@property CGFloat orientation;
 @property BOOL validImage;
 @property (copy) NSString *originalLatitude;
 @property (copy) NSString *originalLongitude;
