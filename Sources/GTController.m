@@ -20,7 +20,6 @@
 
 
 @implementation GTController
-@synthesize currentLatitude, currentLongitude;
 
 #pragma mark -
 #pragma mark Startup and teardown
@@ -30,8 +29,6 @@
     if ((self = [super init])) {
 	images = [[NSMutableArray alloc] init];
 	undoManager = [[NSUndoManager alloc] init];
-	currentLatitude = @"";
-	currentLongitude = @"";
 	// force app defaults and preferences initialization
 	[GTDefaultsController class];
     }
@@ -393,23 +390,12 @@
 - (void) adjustMapViewForRow: (NSInteger) row
 {
     ImageInfo * image = [self imageAtIndex: row];
-    if (image) {
-	NSString* lat = [image latitude];
-	NSString* lng = [image longitude];
-	if (! [[self currentLatitude] isEqualToString: lat] ||
-	    ! [[self currentLongitude] isEqualToString: lng]) {
-	    [self setCurrentLatitude: lat];
-	    [self setCurrentLongitude: lng];
-	    [mapView adjustMapForLatitude: lat
-				longitude: lng
-				     name: [image name]];
-	}
-    } else {
+    if (image)
+	[mapView adjustMapForLatitude: [image latitude]
+			    longitude: [image longitude]
+				 name: [image name]];
+    else
 	[mapView hideMarker];
-	[self setCurrentLatitude: @""];
-	[self setCurrentLongitude: @""];
-    }
-
 }
 
 // called from the map view when a marker is moved.

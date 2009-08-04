@@ -68,9 +68,14 @@
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (lat && lng) {
-	NSArray* args = [NSArray arrayWithObjects: lat, lng, name, nil];
-	[[self windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
-					 withArguments: args];
+	if (! [[self mapLat] isEqualToString: lat] ||
+	    ! [[self mapLng] isEqualToString: lng]) {
+	    NSArray* args = [NSArray arrayWithObjects: lat, lng, name, nil];
+	    [[self windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
+					     withArguments: args];
+	    [self setMapLat: lat];
+	    [self setMapLng: lng];
+	}
     } else
 	[self hideMarker];
 }
