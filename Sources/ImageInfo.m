@@ -104,27 +104,28 @@ static NSArray *knownFileTypes;
 		  latitude: (NSString **) lat
 		 longitude: (NSString **) lng
 {
-    float latAsFloat, lngAsFloat;
+    double latAsDouble, lngAsDouble;
     NSScanner *scanner = [NSScanner scannerWithString: representation];
-    if (! [scanner scanFloat: &latAsFloat] ||
-	latAsFloat < -90.0 ||
-	latAsFloat > 90.0) {
-	NSLog(@"Bad lat: %f", latAsFloat);
+    if (! [scanner scanDouble: &latAsDouble] ||
+	latAsDouble < -90.0 ||
+	latAsDouble > 90.0) {
+	NSLog(@"Bad lat: %f", latAsDouble);
 	return NO;
     }
-    if (! [scanner scanFloat: &lngAsFloat] ||
-	lngAsFloat < -180.0 ||
-	lngAsFloat > 180.0) {
-	NSLog(@"Bad lng: %f", lngAsFloat);
+    if (! [scanner scanDouble: &lngAsDouble] ||
+	lngAsDouble < -180.0 ||
+	lngAsDouble > 180.0) {
+	NSLog(@"Bad lng: %f", lngAsDouble);
 	return NO;
     }
     if (! [scanner isAtEnd]) {
 	NSLog(@"scanner not at end of string: %@", representation);
 	return NO;
     }
-    *lat = [NSString stringWithFormat: @"%f", latAsFloat];
-    *lng = [NSString stringWithFormat: @"%f", lngAsFloat];
-    NSLog(@"in: %@ out: %@, %@", representation, *lat, *lng);
+    *lat = [NSString stringWithFormat: @"%f", latAsDouble];
+    *lng = [NSString stringWithFormat: @"%f", lngAsDouble];
+    NSLog(@"in: %@ out: %@, %@, scanned: %f, %f", representation, *lat, *lng,
+	  latAsDouble, lngAsDouble);
     return YES;
 }
 
