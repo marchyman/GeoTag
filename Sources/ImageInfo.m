@@ -95,6 +95,7 @@ static NSArray *knownFileTypes;
     NSString *lat;
     NSString *lng;
     
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if ((lat = [self latitude]) && (lng = [self longitude]))
 	return [NSString stringWithFormat: @"%@ %@", lat, lng];
     return @"";
@@ -104,6 +105,7 @@ static NSArray *knownFileTypes;
 		  latitude: (NSString **) lat
 		 longitude: (NSString **) lng
 {
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     double latAsDouble, lngAsDouble;
     NSScanner *scanner = [NSScanner scannerWithString: representation];
     if (! [scanner scanDouble: &latAsDouble] ||
@@ -134,6 +136,7 @@ static NSArray *knownFileTypes;
 
 - (void) setLocationToLatitude: (NSString *) lat longitude: (NSString *) lng
 {
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (lat && lng) {
 	[infoDict setObject: lat forKey: IILatitude];
 	[infoDict setObject: lng forKey: IILongitude];
@@ -147,6 +150,7 @@ static NSArray *knownFileTypes;
 
 - (void) backupFile
 {
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *dest = [[NSHomeDirectory()
 		       stringByAppendingPathComponent: @".Trash"]
@@ -158,6 +162,7 @@ static NSArray *knownFileTypes;
 }
 - (void) saveLocation
 {
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if ((! [[self latitude] isEqualToString: [self originalLatitude]]) ||
 	(! [[self longitude] isEqualToString: [self originalLongitude]])) {
 
@@ -227,7 +232,7 @@ static NSArray *knownFileTypes;
 {
     BOOL ok = YES;
 
-    // NSLog(@"tag %@: %@", tag, val);
+    NSLog(@"tag %@: %@", tag, val);
     if ([tag caseInsensitiveCompare: @"filetype"] == NSOrderedSame)
 	ok = [knownFileTypes containsObject: val];
     else if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)
