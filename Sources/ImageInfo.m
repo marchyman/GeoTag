@@ -69,12 +69,18 @@
 
 - (NSString *) latitudeAsString
 {
-    return [NSString stringWithFormat: @"%f", [self latitude]];
+    CGFloat lat = [self latitude];
+    if (lat == 0.0)
+	return @"";
+    return [NSString stringWithFormat: @"%f", lat];
 }
 
 - (NSString *) longitudeAsString
 {
-    return [NSString stringWithFormat: @"%f", [self longitude]];
+    CGFloat lng = [self longitude];
+    if (lng == 0.0)
+	return @"";
+    return [NSString stringWithFormat: @"%f", lng];
 }
 
 #pragma mark -
@@ -250,35 +256,39 @@
     // image creation date/time
     NSDictionary *exifdata = (NSDictionary *)
 	[metadata objectForKey: (NSString *) kCGImagePropertyExifDictionary];
-    NSString *dateTime =
-	[exifdata objectForKey: (NSString *) kCGImagePropertyExifDateTimeOriginal];
-    if (dateTime)
-	[infoDict setObject: [NSString stringWithString: dateTime]
-		     forKey: IIDateTime];
+    if (exifdata) {
+	NSString *date = [exifdata objectForKey: 
+			  (NSString *) kCGImagePropertyExifDateTimeOriginal];
+	if (date)
+	    [infoDict setObject: [NSString stringWithString: date]
+			 forKey: IIDateTime];
+    }
 
     // latitude and longitude
     NSDictionary *gpsdata = (NSDictionary *)
 	[metadata objectForKey: (NSString *) kCGImagePropertyGPSDictionary];
-    NSString *lat =
-	[gpsdata objectForKey: (NSString *) kCGImagePropertyGPSLatitude];
-    if (lat) {
-	NSString *latRef=
-	    [gpsdata objectForKey: (NSString *) kCGImagePropertyGPSLatitudeRef];
-	if (latRef && [latRef isEqualToString: @"N"])
-	    [self setLatitude: [lat doubleValue]];
-	else
-	    [self setLatitude: -[lat doubleValue]];
-    }
+    if (gpsdata) {
+	NSString *lat = [gpsdata objectForKey:
+			 (NSString *) kCGImagePropertyGPSLatitude];
+	if (lat) {
+	    NSString *latRef = [gpsdata objectForKey:
+				(NSString *) kCGImagePropertyGPSLatitudeRef];
+	    if (latRef && [latRef isEqualToString: @"N"])
+		[self setLatitude: [lat doubleValue]];
+	    else
+		[self setLatitude: -[lat doubleValue]];
+	}
     
-    NSString *lng =
-	[gpsdata objectForKey: (NSString *) kCGImagePropertyGPSLongitude];
-    if (lng) {
-	NSString *lngRef=
-	    [gpsdata objectForKey: (NSString *) kCGImagePropertyGPSLongitudeRef];
-	if (lngRef && [lngRef isEqualToString: @"E"])
-	    [self setLongitude: [lng doubleValue]];
-	else
-	    [self setLongitude: -[lng doubleValue]];
+	NSString *lng = [gpsdata objectForKey:
+			 (NSString *) kCGImagePropertyGPSLongitude];
+	if (lng) {
+	    NSString *lngRef = [gpsdata objectForKey:
+				(NSString *) kCGImagePropertyGPSLongitudeRef];
+	    if (lngRef && [lngRef isEqualToString: @"E"])
+		[self setLongitude: [lng doubleValue]];
+	    else
+		[self setLongitude: -[lng doubleValue]];
+	}
     }
     return YES;
 }

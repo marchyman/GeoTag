@@ -54,11 +54,12 @@
 #pragma mark script communication methods
 
 // hide any existing marker
-- (void) hideMarker
+- (void) hideMarker: (NSString *) name;
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    NSArray *args = [NSArray arrayWithObject: name];
     [[self windowScriptObject] callWebScriptMethod: @"hideMarker"
-				     withArguments: nil];
+				     withArguments: args];
 }
 
 // tell the map to hide or drop a marker
@@ -80,7 +81,7 @@
 	    [self setMapLng: lngStr];
 	}
     } else {
-	[self hideMarker];
+	[self hideMarker: name];
 	[self setMapLat: @""];
 	[self setMapLng: @""];
     }
