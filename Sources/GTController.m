@@ -177,10 +177,13 @@
     BOOL showWarning = NO;
 
     NSOpenPanel *panel = [NSOpenPanel openPanel];
+    NSArray *typeIds = (NSArray*) CGImageSourceCopyTypeIdentifiers();
     [panel setAllowsMultipleSelection: YES];
     [panel setCanChooseFiles: YES];
     [panel setCanChooseDirectories: NO];
-    NSInteger result = [panel runModalForDirectory: nil file: nil types: nil];
+    NSInteger result = [panel runModalForDirectory: nil
+					      file: nil
+					     types: typeIds];
     if (result == NSOKButton) {
 	// this may take a while, let the user know we're busy
 	NSInteger row = [self showProgressIndicator];

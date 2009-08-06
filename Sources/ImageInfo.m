@@ -12,10 +12,8 @@
 #define NSLog(...)
 #endif
 
-static NSArray *knownFileTypes;
-
 @interface ImageInfo ()
-- (BOOL) getExifInfoForFileAt: (NSString *) path;
+- (BOOL) getInfoForFileAt: (NSString *) path;
 @end
 
 @implementation ImageInfo
@@ -26,18 +24,6 @@ static NSArray *knownFileTypes;
 
 #pragma mark -
 #pragma mark Class methods
-
-+ (void) initialize
-{
-    if (! knownFileTypes)
-	knownFileTypes = [NSArray arrayWithObjects: @"JPEG", @"CR2", @"CRW",
-			    @"CS1", @"DCP", @"DNG", @"EPS", @"ERF", @"EXIF",
-			    @"GIF", @"HDP", @"ICC", @"JNG", @"JP2", @"MEF",
-			    @"MIE", @"MNG", @"MOS", @"MRW", @"NEF", @"NRW",
-			    @"ORF", @"PBM", @"PDF", @"PEF", @"PGM", @"PNG",
-			    @"PPM", @"PS", @"PSD", @"RAF", @"RAW", @"THM",
-			    @"TIFF", @"WDP", @"XMP", nil];
-}
 
 + (id) imageInfoWithPath: (NSString *) path
 {
@@ -54,9 +40,11 @@ static NSArray *knownFileTypes;
 	infoDict = [NSMutableDictionary dictionaryWithObject: path
 						      forKey: IIPathName];
 	[infoDict setObject: [path lastPathComponent] forKey: IIImageName];
-	validImage = [self getExifInfoForFileAt: path];
-	originalLatitude = [self latitude];
-	originalLongitude = [self longitude];
+	validImage = [self getInfoForFileAt: path];
+	if (validImage) {
+	    originalLatitude = [self latitude];
+	    originalLongitude = [self longitude];
+	}
 	NSLog(@"Orientation %f", [self orientation]);
     }
     return self;
@@ -233,9 +221,7 @@ static NSArray *knownFileTypes;
     BOOL ok = YES;
 
     NSLog(@"tag %@: %@", tag, val);
-    if ([tag caseInsensitiveCompare: @"filetype"] == NSOrderedSame)
-	ok = [knownFileTypes containsObject: val];
-    else if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)
+    if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)
 	[infoDict setObject: val forKey: IIDateTime];
     else if ([tag caseInsensitiveCompare: @"datetimeoriginal"] == NSOrderedSame)
 	// yes, this is supposed to overwrite filemodifydate
@@ -269,49 +255,33 @@ static NSArray *knownFileTypes;
     return ok;
 }
 
-- (BOOL) getExifInfoForFileAt: (NSString *) path
+- (BOOL) getInfoForFileAt: (NSString *) path
 {
-    BOOL validExif = NO;
-    NSTask *exiftool = [[NSTask alloc] init];
-    NSPipe *newPipe = [NSPipe pipe];
-    NSFileHandle *readHandle = [newPipe fileHandleForReading];
-    NSData *inData = nil;
-    
-    [exiftool setStandardOutput: newPipe];
-    [exiftool setStandardError: [NSFileHandle fileHandleWithNullDevice]];
-    [exiftool setLaunchPath:[GTDefaultsController exiftoolPath]];
-    [exiftool setArguments:[NSArray arrayWithObjects: @"-S",
-			    @"-coordFormat", @"%.6f",
-			    @"-filetype", @"-filemodifydate",
-			    @"-datetimeoriginal",
-			    @"-GPSLatitude", @"-GPSLongitude",
-			    @"-Orientation", path, nil]];
-    [exiftool launch];
-    
-    inData = [readHandle readDataToEndOfFile];
-    [readHandle closeFile];
-    if ([inData length]) {
-	NSString *s = [[NSString alloc] initWithData: inData
-					    encoding: NSASCIIStringEncoding];
-	// The first tag must match "FileType"
-	validExif = [s hasPrefix: @"FileType"];
-	NSArray *a = [s componentsSeparatedByString:@"\n"];
-	for (NSString *anEntry in a) {
-	    if ([anEntry length] > 0) {
-		NSArray *tagAndValue =
-		    [anEntry componentsSeparatedByString:@": "];
-		if ([tagAndValue count] == 2)
-		    if (! [self checkTag: [tagAndValue objectAtIndex:0]
-			       withValue: [tagAndValue objectAtIndex:1]]) {
-			validExif = NO;
-			break;
-		    }
-	    }
-	}
+    NSURL *url = [NSURL fileURLWithPath: path];
+    CGImageSourceRef image = CGImageSourceCreateWithURL((CFURLRef) url, NULL);
+    if (! image)
+	return NO;
+    NSDictionary *metadata = 
+	(NSDictionary*) CGImageSourceCopyPropertiesAtIndex(image, 0, NULL);
+    CFRelease(image);
+    NSNumber *rotate =
+	[metadata objectForKey: (NSString *) kCGImagePropertyOrientation];
+    switch ([rotate integerValue]) {
+	case 1:
+	    [self setOrientation: 0.0];
+	    break;
+	case 8:
+	    [self setOrientation: 90.0];
+	    break;
+	case 3:
+	    [self setOrientation: 180.0];
+	    break;
+	case 6:
+	    [self setOrientation: -90.0];
+	    break;
     }
-    [exiftool waitUntilExit];
-    return validExif;
+    // NSLog(@"Dictionary for %@: %@", path, metadata);
+    return YES;
 }
-
 
 @end
