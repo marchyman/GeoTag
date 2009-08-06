@@ -62,22 +62,28 @@
 }
 
 // tell the map to hide or drop a marker
-- (void) adjustMapForLatitude: (NSString *) lat
-		    longitude: (NSString *) lng
+- (void) adjustMapForLatitude: (CGFloat) lat
+		    longitude: (CGFloat) lng
 			 name: (NSString *) name;
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (lat && lng) {
-	if (! [[self mapLat] isEqualToString: lat] ||
-	    ! [[self mapLng] isEqualToString: lng]) {
-	    NSArray* args = [NSArray arrayWithObjects: lat, lng, name, nil];
+	NSString *latStr = [NSString stringWithFormat: @"%f", lat];
+	NSString *lngStr = [NSString stringWithFormat: @"%f", lng];
+	if (! [[self mapLat] isEqualToString: latStr] ||
+	    ! [[self mapLng] isEqualToString: lngStr]) {
+	    NSArray* args =
+		[NSArray arrayWithObjects: latStr, lngStr, name, nil];
 	    [[self windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
 					     withArguments: args];
-	    [self setMapLat: lat];
-	    [self setMapLng: lng];
+	    [self setMapLat: latStr];
+	    [self setMapLng: lngStr];
 	}
-    } else
+    } else {
 	[self hideMarker];
+	[self setMapLat: @""];
+	[self setMapLng: @""];
+    }
 }
 
 // called from javascript when a marker is placed on the map.

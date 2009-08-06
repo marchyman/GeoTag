@@ -24,8 +24,8 @@
 
 - (void) loadMap;
 - (void) hideMarker;
-- (void) adjustMapForLatitude: (NSString *) lat
-		    longitude: (NSString *) lng
+- (void) adjustMapForLatitude: (CGFloat) lat
+		    longitude: (CGFloat) lng
 			 name: (NSString *) name;
 
 - (void) reportPosition;

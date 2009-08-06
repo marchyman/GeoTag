@@ -352,7 +352,11 @@
 {
     // create an image for the rotated size
     NSSize originalSize = [anImage size];
-    NSSize rotatedSize = NSMakeSize(originalSize.height, originalSize.width);
+    NSSize rotatedSize;
+    if (degrees == 180.0)
+	rotatedSize = NSMakeSize(originalSize.width, originalSize.height);
+    else
+	rotatedSize = NSMakeSize(originalSize.height, originalSize.width);
     NSImage *rotatedImage = [[NSImage alloc] initWithSize: rotatedSize];
 
     [rotatedImage lockFocus];
@@ -365,7 +369,7 @@
     [transform translateXBy: -centerPoint.y yBy: -centerPoint.x];
     [transform concat];
 
-    NSRect rect = NSMakeRect(0, 0, rotatedSize.height, rotatedSize.width);
+    NSRect rect = NSMakeRect(0, 0, originalSize.width, originalSize.height);
     [[anImage bestRepresentationForDevice:nil] drawInRect: rect];
 
     [rotatedImage unlockFocus];
@@ -393,13 +397,11 @@
 - (void) adjustMapViewForRow: (NSInteger) row
 {
     ImageInfo * image = [self imageAtIndex: row];
-    if (image) {
-	NSString *lat = [NSString stringWithFormat: @"%f", [image latitude]];
-	NSString *lng = [NSString stringWithFormat: @"%f", [image longitude]];
-	[mapView adjustMapForLatitude: lat
-			    longitude: lng
+    if (image)
+	[mapView adjustMapForLatitude: [image latitude]
+			    longitude: [image longitude]
 				 name: [image name]];
-    } else
+    else
 	[mapView hideMarker];
 }
 

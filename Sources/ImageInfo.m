@@ -218,6 +218,22 @@
 #pragma mark -
 #pragma mark helper functions
 
+- (CGFloat) getOrientationFromMetadata: (NSDictionary *) metadata
+{
+    NSNumber *rotate =
+	[metadata objectForKey: (NSString *) kCGImagePropertyOrientation];
+    NSLog(@"rotate %d", [rotate integerValue]);
+    switch ([rotate integerValue]) {
+	case 8:
+	    return 90.0;
+	case 3:
+	    return 180.0;
+	case 6:
+	    return -90.0;
+    }
+    return 0.0;
+}
+
 - (BOOL) getInfoForFileAt: (NSString *) path
 {
     NSURL *url = [NSURL fileURLWithPath: path];
@@ -225,26 +241,11 @@
     if (! image)
 	return NO;
     NSDictionary *metadata = 
-	(NSDictionary *) CGImageSourceCopyPropertiesAtIndex(image, 0, NULL);
+	NSMakeCollectable(CGImageSourceCopyPropertiesAtIndex(image, 0, NULL));
     CFRelease(image);
 
     // orientation
-    NSNumber *rotate =
-	[metadata objectForKey: (NSString *) kCGImagePropertyOrientation];
-    switch ([rotate integerValue]) {
-	case 1:
-	    [self setOrientation: 0.0];
-	    break;
-	case 8:
-	    [self setOrientation: 90.0];
-	    break;
-	case 3:
-	    [self setOrientation: 180.0];
-	    break;
-	case 6:
-	    [self setOrientation: -90.0];
-	    break;
-    }
+    [self setOrientation: [self getOrientationFromMetadata: metadata]];
 
     // image creation date/time
     NSDictionary *exifdata = (NSDictionary *)
