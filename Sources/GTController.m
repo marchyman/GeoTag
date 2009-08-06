@@ -393,11 +393,13 @@
 - (void) adjustMapViewForRow: (NSInteger) row
 {
     ImageInfo * image = [self imageAtIndex: row];
-    if (image)
-	[mapView adjustMapForLatitude: [image latitude]
-			    longitude: [image longitude]
+    if (image) {
+	NSString *lat = [NSString stringWithFormat: @"%f", [image latitude]];
+	NSString *lng = [NSString stringWithFormat: @"%f", [image longitude]];
+	[mapView adjustMapForLatitude: lat
+			    longitude: lng
 				 name: [image name]];
-    else
+    } else
 	[mapView hideMarker];
 }
 
@@ -455,11 +457,13 @@
 			    modified: (BOOL) mod
 {
     ImageInfo *image = [self imageAtIndex: row];
+    NSString *curLat = [NSString stringWithFormat: @"%f", [image latitude]];
+    NSString *curLng = [NSString stringWithFormat: @"%f", [image longitude]];
     NSUndoManager *undo = [self undoManager];
     [[undo prepareWithInvocationTarget: self]
 	updateLocationForImageAtRow: row
-			   latitude: [image latitude]
-			  longitude: [image longitude]
+			   latitude: curLat
+			  longitude: curLng
 			   modified: [[NSApp mainWindow] isDocumentEdited]];
     [image setLocationToLatitude: lat longitude: lng];
     //  Needed with undo/redo to force mapView update

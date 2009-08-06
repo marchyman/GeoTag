@@ -2,15 +2,15 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9J61</string>
+		<string key="IBDocument.SystemVersion">9L30</string>
 		<string key="IBDocument.InterfaceBuilderVersion">677</string>
-		<string key="IBDocument.AppKitVersion">949.46</string>
+		<string key="IBDocument.AppKitVersion">949.54</string>
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="372"/>
-			<integer value="501"/>
 			<integer value="81"/>
+			<integer value="371"/>
+			<integer value="501"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -939,7 +939,7 @@
 													<reference key="NSTableView" ref="504687421"/>
 												</object>
 												<object class="NSTableColumn" id="266193996">
-													<string key="NSIdentifier">latitude</string>
+													<string key="NSIdentifier">latitudeAsString</string>
 													<double key="NSWidth">6.500000e+01</double>
 													<double key="NSMinWidth">1.000000e+01</double>
 													<double key="NSMaxWidth">3.402823e+38</double>
@@ -973,7 +973,7 @@
 													<reference key="NSTableView" ref="504687421"/>
 												</object>
 												<object class="NSTableColumn" id="626046179">
-													<string key="NSIdentifier">longitude</string>
+													<string key="NSIdentifier">longitudeAsString</string>
 													<double key="NSWidth">7.900000e+01</double>
 													<double key="NSMinWidth">1.000000e+01</double>
 													<double key="NSMaxWidth">3.402823e+38</double>
@@ -3040,7 +3040,7 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">GTController.h</string>
+						<string key="minorKey">Sources/GTController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3052,7 +3052,7 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">GTMapView.h</string>
+						<string key="minorKey">Sources/GTMapView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3081,13 +3081,13 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">GTTableView.h</string>
+						<string key="minorKey">Sources/GTTableView.h</string>
 					</object>
 				</object>
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
-		<string key="IBDocument.LastKnownRelativeProjectPath">../GeoTag.xcodeproj</string>
+		<string key="IBDocument.LastKnownRelativeProjectPath">../../GeoTag.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 	</data>
 </archive>

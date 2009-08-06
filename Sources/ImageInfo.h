@@ -13,28 +13,29 @@
 #define IIPathName @"path"
 #define IIImageName @"fn"
 #define IIDateTime @"dt"
-#define IILatitude @"lat"
-#define IILongitude @"lon"
-#define IICapacity 6
+#define IICapacity 4
 
 @interface ImageInfo : NSObject {
     NSMutableDictionary *infoDict;
-    NSString *originalLatitude;
-    NSString *originalLongitude;
+    CGFloat latitude;
+    CGFloat longitude;
+    CGFloat originalLatitude;
+    CGFloat originalLongitude;
     CGFloat orientation;
     BOOL validImage;
 }
+@property CGFloat latitude;
+@property CGFloat longitude;
+@property CGFloat originalLatitude;
+@property CGFloat originalLongitude;
 @property CGFloat orientation;
 @property BOOL validImage;
-@property (copy) NSString *originalLatitude;
-@property (copy) NSString *originalLongitude;
 
 @property (readonly) NSString *path;
 @property (readonly) NSString *name;
 @property (readonly) NSString *date;
-@property (readonly) NSString *latitude;
-@property (readonly) NSString *longitude;
-
+@property (readonly) NSString *latitudeAsString;
+@property (readonly) NSString *longitudeAsString;
 
 + (id) imageInfoWithPath: (NSString *) path;
 

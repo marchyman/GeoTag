@@ -17,6 +17,8 @@
 @end
 
 @implementation ImageInfo
+@synthesize latitude;
+@synthesize longitude;
 @synthesize originalLatitude;
 @synthesize originalLongitude;
 @synthesize validImage;
@@ -42,8 +44,8 @@
 	[infoDict setObject: [path lastPathComponent] forKey: IIImageName];
 	validImage = [self getInfoForFileAt: path];
 	if (validImage) {
-	    originalLatitude = [self latitude];
-	    originalLongitude = [self longitude];
+	    [self setOriginalLatitude: [self latitude]];
+	    [self setOriginalLongitude: [self longitude]];
 	}
 	NSLog(@"Orientation %f", [self orientation]);
     }
@@ -65,14 +67,14 @@
     return [infoDict objectForKey: IIDateTime];
 }
 
-- (NSString *) latitude
+- (NSString *) latitudeAsString
 {
-    return [infoDict objectForKey: IILatitude];
+    return [NSString stringWithFormat: @"%f", [self latitude]];
 }
 
-- (NSString *) longitude
+- (NSString *) longitudeAsString
 {
-    return [infoDict objectForKey: IILongitude];
+    return [NSString stringWithFormat: @"%f", [self longitude]];
 }
 
 #pragma mark -
@@ -80,12 +82,11 @@
 
 - (NSString *) stringRepresentation
 {
-    NSString *lat;
-    NSString *lng;
+    CGFloat lat, lng;
     
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if ((lat = [self latitude]) && (lng = [self longitude]))
-	return [NSString stringWithFormat: @"%@ %@", lat, lng];
+	return [NSString stringWithFormat: @"%f %f", lat, lng];
     return @"";
 }
 
@@ -126,11 +127,12 @@
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (lat && lng) {
-	[infoDict setObject: lat forKey: IILatitude];
-	[infoDict setObject: lng forKey: IILongitude];
-    } else
-	[infoDict removeObjectsForKeys: [NSArray arrayWithObjects:
-					 IILatitude, IILongitude, nil]];
+	[self setLatitude: [lat doubleValue]];
+	[self setLongitude: [lng doubleValue]];
+    } else {
+	[self setLatitude: 0.0];
+    	[self setLongitude: 0.0];
+    }
 }
 
 #pragma mark -
@@ -151,8 +153,8 @@
 - (void) saveLocation
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    if ((! [[self latitude] isEqualToString: [self originalLatitude]]) ||
-	(! [[self longitude] isEqualToString: [self originalLongitude]])) {
+    if (([self latitude] != [self originalLatitude]) ||
+	([self longitude] != [self originalLongitude])) {
 
 	if ([GTDefaultsController makeBackupFiles])
 	    [self backupFile];
@@ -162,7 +164,7 @@
 	NSMutableString *latRefArg =
 	    [NSMutableString stringWithString: @"-GPSLatitudeRef="];
 	if ([self latitude]) {
-	    float lat = [[self latitude] floatValue];
+	    CGFloat lat = [self latitude];
 	    if (lat < 0) {
 		[latRefArg appendString: @"S"];
 		lat = -lat;
@@ -176,7 +178,7 @@
 	NSMutableString *lngRefArg =
 	    [NSMutableString stringWithString: @"-GPSLongitudeRef="];
 	if ([self longitude]) {
-	    float lng = [[self longitude] floatValue];
+	    CGFloat lng = [self longitude];
 	    if (lng < 0) {
 		[lngRefArg appendString: @"W"];
 		lng = -lng;
@@ -205,55 +207,16 @@
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if ([self originalLatitude] && [self originalLongitude]) {
-	[infoDict setObject: [self originalLatitude] forKey: IILatitude];
-	[infoDict setObject: [self originalLongitude] forKey: IILongitude];
-    } else if ([self latitude] || [self longitude])
-	[infoDict removeObjectsForKeys: [NSArray arrayWithObjects:
-					 IILatitude, IILongitude, nil]];
+	[self setLatitude: [self originalLatitude]];
+	[self setLongitude: [self originalLongitude]];
+    } else {
+	[self setLatitude: 0.0];
+	[self setLongitude: 0.0];
+    }
 }
 
 #pragma mark -
 #pragma mark helper functions
-
-- (BOOL) checkTag: (NSString *) tag
-	withValue: (NSString *) val
-{
-    BOOL ok = YES;
-
-    NSLog(@"tag %@: %@", tag, val);
-    if ([tag caseInsensitiveCompare: @"filemodifydate"] == NSOrderedSame)
-	[infoDict setObject: val forKey: IIDateTime];
-    else if ([tag caseInsensitiveCompare: @"datetimeoriginal"] == NSOrderedSame)
-	// yes, this is supposed to overwrite filemodifydate
-	[infoDict setObject: val forKey: IIDateTime];
-    else if ([tag caseInsensitiveCompare: @"gpslatitude"] == NSOrderedSame) {
-	NSArray *a = [val componentsSeparatedByString:@" "];
-	if (([a count] == 2) &&
-	    ([[a objectAtIndex: 1] compare: @"S"] == NSOrderedSame))
-	    val = [@"-" stringByAppendingString: [a objectAtIndex: 0]];
-	else
-	    val = [a objectAtIndex: 0];
-	[infoDict setObject: val forKey: IILatitude];
-    } else if ([tag caseInsensitiveCompare:@"gpslongitude"] == NSOrderedSame) {
-	NSArray *a = [val componentsSeparatedByString:@" "];
-	if (([a count] == 2) &&
-	    ([[a objectAtIndex: 1] compare: @"W"] == NSOrderedSame))
-	    val = [@"-" stringByAppendingString: [a objectAtIndex: 0]];
-	else
-	    val = [a objectAtIndex: 0];
-	[infoDict setObject: val forKey: IILongitude];
-    } else if ([tag caseInsensitiveCompare:@"orientation"] == NSOrderedSame) {
-	NSArray *a = [val componentsSeparatedByString:@" "];
-	if ([a count] == 3) {
-	    CGFloat rotateValue = [[a objectAtIndex: 1] floatValue];
-	    if ([[a objectAtIndex: 2] compare: @"CW"] == NSOrderedSame)
-		rotateValue = -rotateValue;
-	    [self setOrientation: rotateValue];
-	}
-    } else
-	ok = NO;
-    return ok;
-}
 
 - (BOOL) getInfoForFileAt: (NSString *) path
 {
@@ -262,8 +225,10 @@
     if (! image)
 	return NO;
     NSDictionary *metadata = 
-	(NSDictionary*) CGImageSourceCopyPropertiesAtIndex(image, 0, NULL);
+	(NSDictionary *) CGImageSourceCopyPropertiesAtIndex(image, 0, NULL);
     CFRelease(image);
+
+    // orientation
     NSNumber *rotate =
 	[metadata objectForKey: (NSString *) kCGImagePropertyOrientation];
     switch ([rotate integerValue]) {
@@ -280,7 +245,40 @@
 	    [self setOrientation: -90.0];
 	    break;
     }
-    // NSLog(@"Dictionary for %@: %@", path, metadata);
+
+    // image creation date/time
+    NSDictionary *exifdata = (NSDictionary *)
+	[metadata objectForKey: (NSString *) kCGImagePropertyExifDictionary];
+    NSString *dateTime =
+	[exifdata objectForKey: (NSString *) kCGImagePropertyExifDateTimeOriginal];
+    if (dateTime)
+	[infoDict setObject: [NSString stringWithString: dateTime]
+		     forKey: IIDateTime];
+
+    // latitude and longitude
+    NSDictionary *gpsdata = (NSDictionary *)
+	[metadata objectForKey: (NSString *) kCGImagePropertyGPSDictionary];
+    NSString *lat =
+	[gpsdata objectForKey: (NSString *) kCGImagePropertyGPSLatitude];
+    if (lat) {
+	NSString *latRef=
+	    [gpsdata objectForKey: (NSString *) kCGImagePropertyGPSLatitudeRef];
+	if (latRef && [latRef isEqualToString: @"N"])
+	    [self setLatitude: [lat doubleValue]];
+	else
+	    [self setLatitude: -[lat doubleValue]];
+    }
+    
+    NSString *lng =
+	[gpsdata objectForKey: (NSString *) kCGImagePropertyGPSLongitude];
+    if (lng) {
+	NSString *lngRef=
+	    [gpsdata objectForKey: (NSString *) kCGImagePropertyGPSLongitudeRef];
+	if (lngRef && [lngRef isEqualToString: @"E"])
+	    [self setLongitude: [lng doubleValue]];
+	else
+	    [self setLongitude: -[lng doubleValue]];
+    }
     return YES;
 }
 
