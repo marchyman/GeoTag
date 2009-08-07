@@ -22,7 +22,9 @@
 @synthesize originalLatitude;
 @synthesize originalLongitude;
 @synthesize validImage;
-@synthesize orientation;
+@synthesize validLocation;
+@synthesize validOriginalLocation;
+@synthesize rotateBy;
 
 #pragma mark -
 #pragma mark Class methods
@@ -44,10 +46,11 @@
 	[infoDict setObject: [path lastPathComponent] forKey: IIImageName];
 	validImage = [self getInfoForFileAt: path];
 	if (validImage) {
+	    [self setValidOriginalLocation: [self validLocation]];
 	    [self setOriginalLatitude: [self latitude]];
 	    [self setOriginalLongitude: [self longitude]];
 	}
-	NSLog(@"Orientation %f", [self orientation]);
+	NSLog(@"Orientation %f", [self rotateBy]);
     }
     return self;
 }
@@ -69,18 +72,17 @@
 
 - (NSString *) latitudeAsString
 {
-    CGFloat lat = [self latitude];
-    if (lat == 0.0)
-	return @"";
-    return [NSString stringWithFormat: @"%f", lat];
+    if ([self validLocation])
+	return [NSString stringWithFormat: @"%f", [self latitude]];
+    return @"";
+
 }
 
 - (NSString *) longitudeAsString
 {
-    CGFloat lng = [self longitude];
-    if (lng == 0.0)
-	return @"";
-    return [NSString stringWithFormat: @"%f", lng];
+    if ([self validLocation])
+	return [NSString stringWithFormat: @"%f", [self longitude]];
+    return @"";
 }
 
 #pragma mark -
@@ -88,11 +90,10 @@
 
 - (NSString *) stringRepresentation
 {
-    CGFloat lat, lng;
-    
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    if ((lat = [self latitude]) && (lng = [self longitude]))
-	return [NSString stringWithFormat: @"%f %f", lat, lng];
+    if ([self validLocation])
+	return [NSString stringWithFormat: @"%f %f", [self latitude],
+		[self longitude]];
     return @"";
 }
 
@@ -121,24 +122,24 @@
     }
     *lat = [NSString stringWithFormat: @"%f", latAsDouble];
     *lng = [NSString stringWithFormat: @"%f", lngAsDouble];
-    NSLog(@"in: %@ out: %@, %@, scanned: %f, %f", representation, *lat, *lng,
-	  latAsDouble, lngAsDouble);
     return YES;
 }
 
 #pragma mark -
 #pragma mark update postion
 
+/*
+ * A null lat/lng will mark the image as not having a valid location
+ */
 - (void) setLocationToLatitude: (NSString *) lat longitude: (NSString *) lng
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (lat && lng) {
 	[self setLatitude: [lat doubleValue]];
 	[self setLongitude: [lng doubleValue]];
-    } else {
-	[self setLatitude: 0.0];
-    	[self setLongitude: 0.0];
-    }
+	[self setValidLocation: YES];
+    } else
+	[self setValidLocation: NO];
 }
 
 #pragma mark -
@@ -156,10 +157,17 @@
 		       toPath: dest
 		      handler: nil];
 }
+
+/*
+ * re-write to not use exiftool...
+ * handle a removed lat/lng and a new lat/lng as well as changed values
+ * ;;;
+ */
 - (void) saveLocation
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    if (([self latitude] != [self originalLatitude]) ||
+    if (([self validLocation] != [self validOriginalLocation]) ||
+	([self latitude] != [self originalLatitude]) ||
 	([self longitude] != [self originalLongitude])) {
 
 	if ([GTDefaultsController makeBackupFiles])
@@ -212,29 +220,25 @@
 - (void) revertLocation
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    if ([self originalLatitude] && [self originalLongitude]) {
-	[self setLatitude: [self originalLatitude]];
-	[self setLongitude: [self originalLongitude]];
-    } else {
-	[self setLatitude: 0.0];
-	[self setLongitude: 0.0];
-    }
+    [self setValidLocation: [self validOriginalLocation]];
+    [self setLatitude: [self originalLatitude]];
+    [self setLongitude: [self originalLongitude]];
 }
 
 #pragma mark -
 #pragma mark helper functions
 
-- (CGFloat) getOrientationFromMetadata: (NSDictionary *) metadata
+- (CGFloat) convertOrientationFromMetadata: (NSDictionary *) metadata
 {
     NSNumber *rotate =
 	[metadata objectForKey: (NSString *) kCGImagePropertyOrientation];
     NSLog(@"rotate %d", [rotate integerValue]);
     switch ([rotate integerValue]) {
-	case 8:
+	case 8: // 0,0 at left,bottom
 	    return 90.0;
-	case 3:
+	case 3: // 0,0 at bottom,right
 	    return 180.0;
-	case 6:
+	case 6: // 0,0 at right,top
 	    return -90.0;
     }
     return 0.0;
@@ -251,7 +255,7 @@
     CFRelease(image);
 
     // orientation
-    [self setOrientation: [self getOrientationFromMetadata: metadata]];
+    [self setRotateBy: [self convertOrientationFromMetadata: metadata]];
 
     // image creation date/time
     NSDictionary *exifdata = (NSDictionary *)
@@ -277,6 +281,7 @@
 		[self setLatitude: [lat doubleValue]];
 	    else
 		[self setLatitude: -[lat doubleValue]];
+	    [self setValidLocation: YES];
 	}
     
 	NSString *lng = [gpsdata objectForKey:
@@ -288,6 +293,7 @@
 		[self setLongitude: [lng doubleValue]];
 	    else
 		[self setLongitude: -[lng doubleValue]];
+	    [self setValidLocation: YES];
 	}
     }
     return YES;

@@ -23,7 +23,7 @@
 + (NSString *) webScriptNameForSelector: (SEL) sel;
 
 - (void) loadMap;
-- (void) hideMarker;
+- (void) hideMarker: (NSString *) name;
 - (void) adjustMapForLatitude: (CGFloat) lat
 		    longitude: (CGFloat) lng
 			 name: (NSString *) name;

@@ -348,7 +348,7 @@
  * to read the Cocoa Drawing Guide.
  */
 - (NSImage *) rotateImage: (NSImage *) anImage
-	      orientation: (CGFloat) degrees
+	      byDegrees: (CGFloat) degrees
 {
     // create an image for the rotated size
     NSSize originalSize = [anImage size];
@@ -382,9 +382,9 @@
     if (ix != -1) {
 	image = [[NSImage alloc] initWithContentsOfFile:
 		 [[self imageAtIndex: ix] path]];
-	CGFloat rotateDegrees = [[self imageAtIndex: ix] orientation];
+	CGFloat rotateDegrees = [[self imageAtIndex: ix] rotateBy];
 	if (rotateDegrees != 0.0)
-	    image = [self rotateImage: image orientation: rotateDegrees];
+	    image = [self rotateImage: image byDegrees: rotateDegrees];
 	[self adjustMapViewForRow: ix];
     }
     [imageWell setImage: image];
@@ -397,12 +397,12 @@
 - (void) adjustMapViewForRow: (NSInteger) row
 {
     ImageInfo * image = [self imageAtIndex: row];
-    if (image)
+    if ([image validLocation])
 	[mapView adjustMapForLatitude: [image latitude]
 			    longitude: [image longitude]
 				 name: [image name]];
     else
-	[mapView hideMarker];
+	[mapView hideMarker: @""];
 }
 
 // called from the map view when a marker is moved.
@@ -458,15 +458,20 @@
 			   longitude: (NSString *) lng
 			    modified: (BOOL) mod
 {
+    NSString *curLat = NULL;
+    NSString *curLng = NULL;
     ImageInfo *image = [self imageAtIndex: row];
-    NSString *curLat = [NSString stringWithFormat: @"%f", [image latitude]];
-    NSString *curLng = [NSString stringWithFormat: @"%f", [image longitude]];
+    if ([image validLocation]) {
+	curLat = [NSString stringWithFormat: @"%f", [image latitude]];
+	curLng = [NSString stringWithFormat: @"%f", [image longitude]];
+    }
     NSUndoManager *undo = [self undoManager];
     [[undo prepareWithInvocationTarget: self]
 	updateLocationForImageAtRow: row
 			   latitude: curLat
 			  longitude: curLng
 			   modified: [[NSApp mainWindow] isDocumentEdited]];
+    NSLog(@"lat %@, lng %@", lat, lng);
     [image setLocationToLatitude: lat longitude: lng];
     //  Needed with undo/redo to force mapView update
     // (mapView updated in tableViewSelectionDidChange)
