@@ -159,9 +159,13 @@
 }
 
 /*
- * re-write to not use exiftool...
- * handle a removed lat/lng and a new lat/lng as well as changed values
- * ;;;
+ * I was going to re-write to not use exiftool but...
+ * when using core graphics functions to do this I discovered that
+ * the image changed as well as the metadata.  Also, some metadata
+ * was lost unless explicitly saved even though it didn't change.
+ * (Conjecture: I didn't actually try to save it).
+ *
+ * I'll stick with exiftool for now.
  */
 - (void) saveLocation
 {
@@ -177,7 +181,7 @@
 	    [NSMutableString stringWithString: @"-GPSLatitude="];
 	NSMutableString *latRefArg =
 	    [NSMutableString stringWithString: @"-GPSLatitudeRef="];
-	if ([self latitude]) {
+	if ([self validLocation]) {
 	    CGFloat lat = [self latitude];
 	    if (lat < 0) {
 		[latRefArg appendString: @"S"];
@@ -191,7 +195,7 @@
 	    [NSMutableString stringWithString: @"-GPSLongitude="];
 	NSMutableString *lngRefArg =
 	    [NSMutableString stringWithString: @"-GPSLongitudeRef="];
-	if ([self longitude]) {
+	if ([self validLocation]) {
 	    CGFloat lng = [self longitude];
 	    if (lng < 0) {
 		[lngRefArg appendString: @"W"];
