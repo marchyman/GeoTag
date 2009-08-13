@@ -19,15 +19,19 @@
 	}
 	map = new google.maps.Map(document.getElementById("map_canvas"),
 				  mapOptions);
+	google.maps.event.addListener(map, 'click', function(event) {
+				      showMarkerOnClick(event.latLng);
+				      });
 				  
 	var markerOpts = {
 	    position: locn,
 	    map: map,
+	    draggable: 1,
 	    visible: 0
 	}
 	marker = new google.maps.Marker(markerOpts);
-	google.maps.event.addListener(map, 'click', function(event) {
-				      moveMarkerOnClick(event.latLng);
+	google.maps.event.addListener(marker, 'mouseup', function() {
+				      updateMarkerLocation();
 				      });
      }
     
@@ -40,11 +44,18 @@
 	marker.set_visible(1);
     }
 
-    function moveMarkerOnClick(location) {
-	marker.set_position(location);
+    function showMarkerOnClick(location) {
+	if (! marker.visible) {
+	    marker.set_position(location);
+	    updateMarkerLocation();
+	}
+    }
+
+    function updateMarkerLocation() {
+	locn = marker.position;
 	if (controller) {
-	    controller.mapLat = "" + location.lat();
-	    controller.mapLng = "" + location.lng();
+	    controller.mapLat = "" + locn.lat();
+	    controller.mapLng = "" + locn.lng();
 	    controller.reportPosition();
 	}
 	marker.set_visible(1);
