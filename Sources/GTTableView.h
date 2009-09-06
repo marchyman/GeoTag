@@ -8,7 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface GTTableView : NSTableView {
+@interface GTTableView : NSTableView <NSTableViewDelegate> {
     id appController;
 }
 

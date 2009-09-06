@@ -350,7 +350,7 @@
 	      byDegrees: (CGFloat) degrees
 {
     // create an image for the rotated size
-    NSSize originalSize = [[anImage bestRepresentationForDevice:nil] size];
+    NSSize originalSize = [anImage size];
     NSSize rotatedSize;
     if (degrees == 180.0)
 	rotatedSize = NSMakeSize(originalSize.width, originalSize.height);

@@ -153,9 +153,9 @@
 		       stringByAppendingPathComponent: @".Trash"]
 		      stringByAppendingPathComponent: [self name]];
     if (! [fileManager fileExistsAtPath: dest])
-	[fileManager copyPath: [self path]
-		       toPath: dest
-		      handler: nil];
+	[fileManager copyItemAtPath: [self path]
+			     toPath: dest
+			      error: NULL];
 }
 
 /*
