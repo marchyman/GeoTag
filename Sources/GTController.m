@@ -279,8 +279,7 @@
 			row: (NSInteger) row
 {
     ImageInfo *imageInfo = [self imageAtIndex: row];
-    SEL selector = NSSelectorFromString([tableColumn identifier]);
-    return [imageInfo performSelector: selector];
+    return [imageInfo valueForKey: [tableColumn identifier]];
 }
 
 // Drops are only allowed at the end of the table

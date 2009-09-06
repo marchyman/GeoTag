@@ -408,6 +408,7 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = GeoTag;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -437,6 +438,7 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = GeoTag;
+				SDKROOT = macosx10.6;
 			};
 			name = Release;
 		};

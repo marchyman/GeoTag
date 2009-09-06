@@ -26,8 +26,8 @@
 	var markerOpts = {
 	    position: locn,
 	    map: map,
-	    draggable: 1,
-	    visible: 0
+	    draggable: true,
+	    visible: false
 	}
 	marker = new google.maps.Marker(markerOpts);
 	google.maps.event.addListener(marker, 'mouseup', function() {
@@ -41,7 +41,7 @@
 	map.set_zoom(15);
 	marker.set_position(locn);
 	marker.set_title(title);
-	marker.set_visible(1);
+	marker.set_visible(true);
     }
 
     function showMarkerOnClick(location) {
@@ -56,12 +56,12 @@
 	    controller.mapLng = "" + locn.lng();
 	    controller.reportPosition();
 	}
-	marker.set_visible(1);
+	marker.set_visible(true);
     }
     
     function hideMarker(title) {
     	marker.set_title(title);
-	marker.set_visible(0);
+	marker.set_visible(false);
     }
 
     function initialize() {

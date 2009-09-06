@@ -21,10 +21,23 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
  */
 + (void) initialize
 {
+    if (self != [GTDefaultsController class])
+	return;
+
     NSValueTransformer *transformer = [[PathToStringTransformer alloc] init];
     [NSValueTransformer setValueTransformer: transformer
 				    forName: @"PathToStringTransformer"];
 
+    /*
+     * posible change: get defaults from plist in bundle
+     ------------
+    NSMutableDictionary *defaultValues =
+      [NSDictionary dictionaryWithContentsOfFile: 
+         [[NSBundle mainBundle] pathForResource: @"RegistrationDefaults"
+					 ofType: @"plist"]]];
+    [[NSUserDefaults standardUserDefaults] registerDefaults: defaultValues];
+     -------------
+    */
     NSMutableDictionary *defaultValues = [NSMutableDictionary dictionary];
     [defaultValues setObject: [NSNumber numberWithBool: YES]
 		      forKey: SSMakeBackupFilesKey];
