@@ -342,9 +342,8 @@
 #pragma mark image well control
 
 /*
- * A slightly modified version of code found on the net.  I do not understand
- * why drawInRect: is sent to the original image, but it works.  I need
- * to read the Cocoa Drawing Guide.
+ * A slightly modified version of code found on the net.  Assumes
+ * rotation in 90˚ increments.
  */
 - (NSImage *) rotateImage: (NSImage *) anImage
 	      byDegrees: (CGFloat) degrees
@@ -357,8 +356,6 @@
     else
 	rotatedSize = NSMakeSize(originalSize.height, originalSize.width);
     NSImage *rotatedImage = [[NSImage alloc] initWithSize: rotatedSize];
-
-    [rotatedImage lockFocus];
     
     NSAffineTransform* transform = [NSAffineTransform transform];
     NSPoint centerPoint = NSMakePoint(rotatedSize.width / 2,
@@ -369,9 +366,11 @@
     [transform concat];
 
     NSRect rect = NSMakeRect(0, 0, originalSize.width, originalSize.height);
+    
+    [rotatedImage lockFocus];
     [[anImage bestRepresentationForDevice:nil] drawInRect: rect];
-
     [rotatedImage unlockFocus];
+
     return rotatedImage;
 }
 
