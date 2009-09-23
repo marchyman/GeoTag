@@ -24,7 +24,6 @@
 @synthesize validImage;
 @synthesize validLocation;
 @synthesize validOriginalLocation;
-@synthesize rotateBy;
 
 #pragma mark -
 #pragma mark Class methods
@@ -50,7 +49,6 @@
 	    [self setOriginalLatitude: [self latitude]];
 	    [self setOriginalLongitude: [self longitude]];
 	}
-	NSLog(@"Orientation %f", [self rotateBy]);
     }
     return self;
 }
@@ -232,22 +230,6 @@
 #pragma mark -
 #pragma mark helper functions
 
-- (CGFloat) convertOrientationFromMetadata: (NSDictionary *) metadata
-{
-    NSNumber *rotate =
-	[metadata objectForKey: (NSString *) kCGImagePropertyOrientation];
-    NSLog(@"rotate %d", [rotate integerValue]);
-    switch ([rotate integerValue]) {
-	case 8: // 0,0 at left,bottom
-	    return 90.0;
-	case 3: // 0,0 at bottom,right
-	    return 180.0;
-	case 6: // 0,0 at right,top
-	    return -90.0;
-    }
-    return 0.0;
-}
-
 - (BOOL) getInfoForFileAt: (NSString *) path
 {
     NSURL *url = [NSURL fileURLWithPath: path];
@@ -257,9 +239,6 @@
     NSDictionary *metadata = 
 	NSMakeCollectable(CGImageSourceCopyPropertiesAtIndex(image, 0, NULL));
     CFRelease(image);
-
-    // orientation
-    [self setRotateBy: [self convertOrientationFromMetadata: metadata]];
 
     // image creation date/time
     NSDictionary *exifdata = (NSDictionary *)

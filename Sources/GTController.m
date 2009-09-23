@@ -341,48 +341,16 @@
 #pragma mark -
 #pragma mark image well control
 
+
 /*
- * A slightly modified version of code found on the net.  Assumes
- * rotation in 90˚ increments.
+ * starting with 10.6 the image will be in the proper orientation.
  */
-- (NSImage *) rotateImage: (NSImage *) anImage
-	      byDegrees: (CGFloat) degrees
-{
-    // create an image for the rotated size
-    NSSize originalSize = [anImage size];
-    NSSize rotatedSize;
-    if (degrees == 180.0)
-	rotatedSize = NSMakeSize(originalSize.width, originalSize.height);
-    else
-	rotatedSize = NSMakeSize(originalSize.height, originalSize.width);
-    NSImage *rotatedImage = [[NSImage alloc] initWithSize: rotatedSize];
-    
-    NSAffineTransform* transform = [NSAffineTransform transform];
-    NSPoint centerPoint = NSMakePoint(rotatedSize.width / 2,
-				      rotatedSize.height / 2);
-    [transform translateXBy: centerPoint.x yBy: centerPoint.y];
-    [transform rotateByDegrees: degrees];
-    [transform translateXBy: -centerPoint.y yBy: -centerPoint.x];
-    [transform concat];
-
-    NSRect rect = NSMakeRect(0, 0, originalSize.width, originalSize.height);
-    
-    [rotatedImage lockFocus];
-    [[anImage bestRepresentationForDevice:nil] drawInRect: rect];
-    [rotatedImage unlockFocus];
-
-    return rotatedImage;
-}
-
 - (void) showImageForIndex: (NSInteger) ix
 {
     NSImage *image = nil;
     if (ix != -1) {
 	image = [[NSImage alloc] initWithContentsOfFile:
 		 [[self imageAtIndex: ix] path]];
-	CGFloat rotateDegrees = [[self imageAtIndex: ix] rotateBy];
-	if (rotateDegrees != 0.0)
-	    image = [self rotateImage: image byDegrees: rotateDegrees];
 	[self adjustMapViewForRow: ix];
     }
     [imageWell setImage: image];

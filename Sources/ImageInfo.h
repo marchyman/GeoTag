@@ -21,7 +21,6 @@
     CGFloat longitude;
     CGFloat originalLatitude;
     CGFloat originalLongitude;
-    CGFloat rotateBy;
     BOOL validLocation;
     BOOL validOriginalLocation;
     BOOL validImage;
@@ -30,7 +29,6 @@
 @property CGFloat longitude;
 @property CGFloat originalLatitude;
 @property CGFloat originalLongitude;
-@property CGFloat rotateBy;
 @property BOOL validLocation;
 @property BOOL validOriginalLocation;
 @property BOOL validImage;
