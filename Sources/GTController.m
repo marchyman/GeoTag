@@ -177,7 +177,9 @@
     BOOL showWarning = NO;
 
     NSOpenPanel *panel = [NSOpenPanel openPanel];
-    [panel setAllowedFileTypes: (NSArray*) CGImageSourceCopyTypeIdentifiers()];
+    CFArrayRef types = CGImageSourceCopyTypeIdentifiers();
+    CFMakeCollectable(types);
+    [panel setAllowedFileTypes: (NSArray*) types];
     [panel setAllowsMultipleSelection: YES];
     [panel setCanChooseFiles: YES];
     [panel setCanChooseDirectories: NO];
