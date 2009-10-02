@@ -371,6 +371,7 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 	
 		// This is our visible view. Just get past it.
 	subview = [subviewsEnum nextObject];
+	(void) subview;
 
 		// Remove everything else. There should be just one, but
 		// if the user does a lot of fast clicking, we might have
