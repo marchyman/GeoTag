@@ -37,15 +37,15 @@
     
     function addMarkerToMapAt(latitude, longitude, title) {
 	locn = new google.maps.LatLng(latitude, longitude);
-	map.set_center(locn);
-	map.set_zoom(15);
-	marker.set_position(locn);
-	marker.set_title(title);
-	marker.set_visible(true);
+	map.setCenter(locn);
+	map.setZoom(15);
+	marker.setPosition(locn);
+	marker.setTitle(title);
+	marker.setVisible(true);
     }
 
     function showMarkerOnClick(location) {
-	marker.set_position(location);
+	marker.setPosition(location);
 	updateMarkerLocation();
     }
 
@@ -56,12 +56,12 @@
 	    controller.mapLng = "" + locn.lng();
 	    controller.reportPosition();
 	}
-	marker.set_visible(true);
+	marker.setVisible(true);
     }
     
     function hideMarker(title) {
-    	marker.set_title(title);
-	marker.set_visible(false);
+    	marker.setTitle(title);
+	marker.setVisible(false);
     }
 
     function initialize() {
