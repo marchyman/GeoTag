@@ -80,7 +80,7 @@
 	    if ([[appController imageAtIndex: row] convertFromString: val
 							    latitude: &lat
 							   longitude: &lng]) {
-		NSLog(@"paste at row %d, %@ %@", row, lat, lng);
+		NSLog(@"paste at row %d, %@ %@", (int) row, lat, lng);
 		[appController updateLocationForImageAtRow: row
 						  latitude: lat
 						 longitude: lng
