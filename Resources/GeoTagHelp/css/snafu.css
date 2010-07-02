@@ -12,7 +12,7 @@ body {
 	padding: 0px;
 	font-family: serif;
 	font-size: 1.0em;
-	background-color: #eef7ff;
+	background-color: #d0d0d0;
 	color: black;
 }
 
@@ -22,7 +22,7 @@ body {
 #header {
 	margin: 1.2em .5em .6em;
 	padding: 0.5em;
-	background-color: #99ccff;
+	background-color: #d0d0d0;
 }
 
 #header a {
@@ -36,7 +36,7 @@ body {
 	position: absolute;
 	top: 5.3em;
 	left: 0.5em;
-	border: 1px solid #99ccff;
+	border: 1px solid white;
 	padding: 0.5em;
 	width: 125px;
 }
@@ -83,7 +83,7 @@ body {
 #main {
 	font: 1.0em/1.2em serif;
 	margin: 0.8em 0.5em 0em 160px;
-	background-color: white;
+	background-color: #e0e0e0;
 }
 
 #main h1 {
