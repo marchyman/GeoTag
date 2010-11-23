@@ -17,7 +17,7 @@
     IBOutlet GTMapView *mapView;
     IBOutlet NSProgressIndicator *progressIndicator;
 
-    NSMutableArray *images;
+    NSMutableArray *imageInfos;
     NSUndoManager *undoManager;
 }
 

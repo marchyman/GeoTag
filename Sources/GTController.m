@@ -27,7 +27,7 @@
 - (id) init
 {
     if ((self = [super init])) {
-	images = [[NSMutableArray alloc] init];
+	imageInfos = [[NSMutableArray alloc] init];
 	undoManager = [[NSUndoManager alloc] init];
 	// force app defaults and preferences initialization
 	[GTDefaultsController class];
@@ -111,12 +111,12 @@
 
 - (ImageInfo *) imageAtIndex: (NSInteger) ix
 {
-    return [images objectAtIndex: ix];
+    return [imageInfos objectAtIndex: ix];
 }
 
 - (BOOL) isValidImageAtIndex: (NSInteger) ix
 {
-    if ((ix >= 0) && (ix < (NSInteger) [images count]))
+    if ((ix >= 0) && (ix < (NSInteger) [imageInfos count]))
 	return [[self imageAtIndex: ix] validImage];
     return NO;
 }
@@ -124,7 +124,7 @@
 - (BOOL) addImageForPath: (NSString *) path
 {
     if (! [self isDuplicatePath: path]) {
-	[images addObject: [ImageInfo imageInfoWithPath: path]];
+	[imageInfos addObject: [ImageInfo imageInfoWithPath: path]];
 	return YES;
     }
     return NO;
@@ -132,8 +132,8 @@
 
 - (BOOL) isDuplicatePath: (NSString *) path
 {
-    for (ImageInfo *image in images) {
-	if ([[image path] isEqualToString: path]) {
+    for (ImageInfo *imageInfo in imageInfos) {
+	if ([[imageInfo path] isEqualToString: path]) {
 	    NSLog(@"duplicatePath: %@", path);
 	    return YES;
 	}
@@ -190,7 +190,7 @@
 	NSArray *filenames = [panel filenames];
 	for (NSString *path in filenames) {
 	    if (! [self isDuplicatePath: path]) {
-		[images addObject: [ImageInfo imageInfoWithPath: path]];
+		[imageInfos addObject: [ImageInfo imageInfoWithPath: path]];
 		reloadNeeded = YES;
 	    } else
 		showWarning = YES;
@@ -216,8 +216,8 @@
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSInteger row = [self showProgressIndicator];
-    for (ImageInfo *image in images)
-	[image saveLocation];
+    for (ImageInfo *imageInfo in imageInfos)
+	[imageInfo saveLocation];
     [[NSApp mainWindow] setDocumentEdited: NO];
     // can not undo past a save
     [[self undoManager] removeAllActions];
@@ -230,8 +230,8 @@
 - (IBAction) revertToSaved: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    for (ImageInfo *image in images)
-	[image revertLocation];
+    for (ImageInfo *imageInfo in imageInfos)
+	[imageInfo revertLocation];
     [[NSApp mainWindow] setDocumentEdited: NO];
     [[self undoManager] removeAllActions];
     [tableView reloadData];
@@ -244,7 +244,7 @@
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (! [[NSApp mainWindow] isDocumentEdited]) {
-	images = [[NSMutableArray alloc] init];
+	imageInfos = [[NSMutableArray alloc] init];
 	[[self undoManager] removeAllActions];
 	[tableView reloadData];
     }
@@ -261,7 +261,7 @@
 	action == @selector(revertToSaved:))
 	return [[NSApp mainWindow] isDocumentEdited];
     if (action == @selector(clear:))
-	return ([images count] > 0) &&
+	return ([imageInfos count] > 0) &&
 	       (! [[NSApp mainWindow] isDocumentEdited]);
     return YES;
 }
@@ -271,7 +271,7 @@
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *) tv
 {
-    return [images count];
+    return [imageInfos count];
 }
 
 - (id)            tableView: (NSTableView *) tv
