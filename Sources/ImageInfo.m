@@ -17,6 +17,7 @@
 @end
 
 @implementation ImageInfo
+@synthesize image;
 @synthesize latitude;
 @synthesize longitude;
 @synthesize originalLatitude;
@@ -48,6 +49,8 @@
 	    [self setValidOriginalLocation: [self validLocation]];
 	    [self setOriginalLatitude: [self latitude]];
 	    [self setOriginalLongitude: [self longitude]];
+	    [self setImage: [[NSImage alloc] initWithContentsOfFile: path]];
+	    /* ;;; make the above a concurrent operation */
 	}
     }
     return self;
@@ -233,12 +236,12 @@
 - (BOOL) getInfoForFileAt: (NSString *) path
 {
     NSURL *url = [NSURL fileURLWithPath: path];
-    CGImageSourceRef image = CGImageSourceCreateWithURL((CFURLRef) url, NULL);
-    if (! image)
+    CGImageSourceRef iRef = CGImageSourceCreateWithURL((CFURLRef) url, NULL);
+    if (! iRef)
 	return NO;
     NSDictionary *metadata = 
-	NSMakeCollectable(CGImageSourceCopyPropertiesAtIndex(image, 0, NULL));
-    CFRelease(image);
+	NSMakeCollectable(CGImageSourceCopyPropertiesAtIndex(iRef, 0, NULL));
+    CFRelease(iRef);
 
     // image creation date/time
     NSDictionary *exifdata = (NSDictionary *)

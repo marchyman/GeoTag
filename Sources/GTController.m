@@ -349,12 +349,10 @@
 {
     NSImage *image = nil;
     if (ix != -1) {
-	image = [[NSImage alloc] initWithContentsOfFile:
-		 [[self imageAtIndex: ix] path]];
+	image = [[self imageAtIndex: ix] image];
 	[self adjustMapViewForRow: ix];
     }
     [imageWell setImage: image];
-    
 }
 
 #pragma mark -
