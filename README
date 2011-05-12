@@ -1,0 +1,17 @@
+GeoTag
+
+OS X program (Leopard or later) to add or edit geolocation information
+in images by dragging a marker on a google map.   The code was written
+before such ability was built in to Aperture and iPhoto.
+
+Xcode 3.x used for project.  Has not been tested with Xcode 4.
+A Makefile exists for those, like me, who find some things easier
+to do with the command line.
+
+To remove all targets for both the Release and Debug configurations use
+
+    make clean
+    
+To build a dmg and move it to your desktop use
+
+    make
