@@ -187,8 +187,9 @@
     if (result == NSOKButton) {
 	// this may take a while, let the user know we're busy
 	NSInteger row = [self showProgressIndicator];
-	NSArray *filenames = [panel filenames];
-	for (NSString *path in filenames) {
+	NSArray *urls = [panel URLs];
+	for (NSURL *url in urls) {
+        NSString *path = [url path];
 	    if (! [self isDuplicatePath: path]) {
 		[imageInfos addObject: [ImageInfo imageInfoWithPath: path]];
 		reloadNeeded = YES;
