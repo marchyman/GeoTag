@@ -1,8 +1,17 @@
 # generated file
 Credits.rtf
 
-# xcode noise
-build/*
+# auto backup files
+*~.nib
+*.swp
+*~
+
+# Xcode 4 noise
+xcuserdata/
+*.xcworkspace/
+
+# Xcode 3 noise
+build/
 *.pbxuser
 *.mode1v3
 *.mode2v3
