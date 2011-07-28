@@ -4,10 +4,14 @@ OS X program (Leopard or later) to add or edit geolocation information
 in images by dragging a marker on a google map.   The code was written
 before such ability was built in to Aperture and iPhoto.
 
-Xcode 3.x used for project.  Has not been tested with Xcode 4.
-A Makefile exists for those, like me, who find some things easier
-to do with the command line.
+The project file was auto converted for use with Xcode 4.1.
 
+A Makefile exists for those, like me, who find some things easier
+to do on the command line.  However... the use of the Makefile under
+Xcode 4.1 seems to work but I see some nasty stuff logged to the console.
+I don't yet trust using the Makefile with Xcode 4.1
+
+The Makefile works fine for those still using Xcode 3.x.
 To remove all targets for both the Release and Debug configurations use
 
     make clean
