@@ -37,8 +37,7 @@
     
     function addMarkerToMapAt(latitude, longitude, title) {
 	locn = new google.maps.LatLng(latitude, longitude);
-	map.setCenter(locn);
-	map.setZoom(15);
+        map.setCenter(locn);
 	marker.setPosition(locn);
 	marker.setTitle(title);
 	marker.setVisible(true);
