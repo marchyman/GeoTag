@@ -5,6 +5,9 @@ in images by dragging a marker on a google map.   The code was written
 before such ability was built in to Aperture and iPhoto.
 
 The project file was auto converted for use with Xcode 4.1.
+It compiles, but doesn't work correctly under Xcode 4.2.1.  In
+debug mode the program halts on the auto_refcount_underflow_error
+breakpoint, even though the application uses garbage collection.
 
 A Makefile exists for those, like me, who find some things easier
 to do on the command line.  However... the use of the Makefile under
