@@ -12,11 +12,13 @@
     id appController;
     NSString *mapLat;
     NSString *mapLng;
+    BOOL hiddenMarker;
 }
 
 @property (retain) id appController;
 @property (copy) NSString *mapLat;
 @property (copy) NSString *mapLng;
+@property (assign) BOOL hiddenMarker;
 
 + (BOOL) isSelectorExcludedFromWebScript: (SEL) selector;
 + (BOOL) isKeyExcludedFromWebScript: (const char *) property;

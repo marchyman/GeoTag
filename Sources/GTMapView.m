@@ -17,6 +17,7 @@
 @synthesize appController;
 @synthesize mapLat;
 @synthesize mapLng;
+@synthesize hiddenMarker;
 
 #pragma mark -
 #pragma mark WebScripting Protocol methods
@@ -60,6 +61,7 @@
     NSArray *args = [NSArray arrayWithObject: name];
     [[self windowScriptObject] callWebScriptMethod: @"hideMarker"
 				     withArguments: args];
+    [self setHiddenMarker: YES];
 }
 
 // tell the map to hide or drop a marker
@@ -71,7 +73,8 @@
     if (lat && lng) {
 	NSString *latStr = [NSString stringWithFormat: @"%f", lat];
 	NSString *lngStr = [NSString stringWithFormat: @"%f", lng];
-	if (! [[self mapLat] isEqualToString: latStr] ||
+	if ([self hiddenMarker] ||
+	    ! [[self mapLat] isEqualToString: latStr] ||
 	    ! [[self mapLng] isEqualToString: lngStr]) {
 	    NSArray* args =
 		[NSArray arrayWithObjects: latStr, lngStr, name, nil];
@@ -79,6 +82,7 @@
 					     withArguments: args];
 	    [self setMapLat: latStr];
 	    [self setMapLng: lngStr];
+	    [self setHiddenMarker: NO];
 	}
     } else {
 	[self hideMarker: name];
