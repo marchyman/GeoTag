@@ -58,13 +58,15 @@
 - (void) hideMarker: (NSString *) name;
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    NSArray *args = [NSArray arrayWithObject: name];
-    [[self windowScriptObject] callWebScriptMethod: @"hideMarker"
-				     withArguments: args];
-    [self setHiddenMarker: YES];
+    if (! [self isHiddenMarker]) {
+        NSArray *args = [NSArray arrayWithObject: name];
+        [[self windowScriptObject] callWebScriptMethod: @"hideMarker"
+                                         withArguments: args];
+        [self setHiddenMarker: YES];
+    }
 }
 
-// tell the map to hide or drop a marker
+// tell the map to drop a marker
 - (void) adjustMapForLatitude: (CGFloat) lat
 		    longitude: (CGFloat) lng
 			 name: (NSString *) name;
@@ -73,7 +75,7 @@
     if (lat && lng) {
 	NSString *latStr = [NSString stringWithFormat: @"%f", lat];
 	NSString *lngStr = [NSString stringWithFormat: @"%f", lng];
-	if ([self hiddenMarker] ||
+	if ([self isHiddenMarker] ||
 	    ! [[self mapLat] isEqualToString: latStr] ||
 	    ! [[self mapLng] isEqualToString: lngStr]) {
 	    NSArray* args =
@@ -84,10 +86,6 @@
 	    [self setMapLng: lngStr];
 	    [self setHiddenMarker: NO];
 	}
-    } else {
-	[self hideMarker: name];
-	[self setMapLat: @""];
-	[self setMapLng: @""];
     }
 }
 
@@ -96,6 +94,7 @@
 - (void) reportPosition
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    [self setHiddenMarker: NO];
     [appController updateLatitude: [self mapLat] longitude: [self mapLng]];
 }
 
