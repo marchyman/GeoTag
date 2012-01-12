@@ -97,7 +97,7 @@
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if ([self saveOrDontSave: [app mainWindow]])
 	return NSTerminateNow;
-    return NSTerminateLater;
+    return NSTerminateCancel;
 }
 
 - (BOOL) windowShouldClose: (id) window
