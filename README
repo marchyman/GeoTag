@@ -4,17 +4,21 @@ OS X program (Leopard or later) to add or edit geolocation information
 in images by dragging a marker on a google map.   The code was written
 before such ability was built in to Aperture and iPhoto.
 
-The project file was auto converted for use with Xcode 4.1.
-It compiles, but doesn't work correctly under Xcode 4.2.1.  In
-debug mode the program halts on the auto_refcount_underflow_error
-breakpoint, even though the application uses garbage collection.
+The project file was auto converted for use with Xcode 4.1.   Some
+bug fixes and one changed feature was added for release 1.8... the
+map will no longer change zoom levels when a marker is dropped.
+
+Warning for any playing with the code.  In debug you may find the
+program stopped on a breakpoint due to auto_refcount_underflow_error.
+Strange, as this is a garbage collected program :)  The issue seems
+to be a bug in apple code and only occurs when you try to select
+multiple items in an open panel by dragging.  In the release code the
+"error" is ignored; normal users won't know an issue exists.
 
 A Makefile exists for those, like me, who find some things easier
-to do on the command line.  However... the use of the Makefile under
-Xcode 4.1 seems to work but I see some nasty stuff logged to the console.
-I don't yet trust using the Makefile with Xcode 4.1
-
+to do on the command line.  It seems to work OK with Xcode 4.2.
 The Makefile works fine for those still using Xcode 3.x.
+
 To remove all targets for both the Release and Debug configurations use
 
     make clean
