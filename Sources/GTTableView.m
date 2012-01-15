@@ -97,14 +97,16 @@
 - (IBAction) delete: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    NSInteger row = [self selectedRow];
-    if ([appController isValidImageAtIndex: row]) {
-	[appController updateLocationForImageAtRow: row
-					  latitude: nil
-					 longitude: nil
-					  modified: YES];
-	[appController adjustMapViewForRow: row];
-    }
+    NSIndexSet *rows = [self selectedRowIndexes];
+    [rows enumerateIndexesUsingBlock: ^(NSUInteger row, BOOL *stop) {
+        if ([appController isValidImageAtIndex: row]) {
+            [appController updateLocationForImageAtRow: row
+                                              latitude: nil
+                                             longitude: nil
+                                              modified: YES];
+            [appController adjustMapViewForRow: row];
+        }
+    }];
 }
 
 #pragma mark -
