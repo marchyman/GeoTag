@@ -70,25 +70,27 @@
 - (IBAction) paste: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    NSInteger row = [self selectedRow];
-    if ([appController isValidImageAtIndex: row]) {
-	NSString *lat;
-	NSString *lng;
-	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	if ([[pb types] containsObject: NSStringPboardType]) {
-	    NSString *val = [pb stringForType: NSStringPboardType];
-	    if ([[appController imageAtIndex: row] convertFromString: val
-							    latitude: &lat
-							   longitude: &lng]) {
-		NSLog(@"paste at row %d, %@ %@", (int) row, lat, lng);
-		[appController updateLocationForImageAtRow: row
-						  latitude: lat
-						 longitude: lng
-						  modified: YES];
-		[appController adjustMapViewForRow: row];
-	    }
-	    
-	}
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    if ([[pb types] containsObject: NSStringPboardType]) {
+        NSString *val = [pb stringForType: NSStringPboardType];
+        NSIndexSet *rows = [self selectedRowIndexes];
+        [rows enumerateIndexesUsingBlock: ^(NSUInteger row, BOOL *stop) {
+            if ([appController isValidImageAtIndex: row]) {
+                NSString *lat;
+                NSString *lng;
+                if ([[appController imageAtIndex: row] convertFromString: val
+                                                                latitude: &lat
+                                                               longitude: &lng]) {
+                    NSLog(@"paste at row %d, %@ %@", (int) row, lat, lng);
+                    [appController updateLocationForImageAtRow: row
+                                                      latitude: lat
+                                                     longitude: lng
+                                                      modified: YES];
+                    [appController adjustMapViewForRow: row];
+                }
+                
+            }
+        }];
     }
 }
 

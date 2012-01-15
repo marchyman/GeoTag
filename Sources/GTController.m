@@ -374,12 +374,14 @@
 - (void) updateLatitude: (NSString *) lat
 	      longitude: (NSString *) lng
 {
-    NSInteger row = [tableView selectedRow];
-    if (row != -1)
-	[self updateLocationForImageAtRow: row
-				 latitude: lat
-				longitude: lng
-				 modified: YES];
+    NSIndexSet *rows = [tableView selectedRowIndexes];
+    [rows enumerateIndexesUsingBlock: ^(NSUInteger row, BOOL *stop) {
+        NSLog(@"update loc at row %d, %@ %@", (int) row, lat, lng);
+        [self updateLocationForImageAtRow: row
+                                 latitude: lat
+                                longitude: lng
+                                 modified: YES];
+    }];
 }
 
 #pragma mark -
