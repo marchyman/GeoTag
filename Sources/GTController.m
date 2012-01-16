@@ -13,8 +13,8 @@
 #endif
 
 @interface GTController ()
-- (NSInteger) showProgressIndicator;
-- (void) hideProgressIndicator: (NSInteger) row;
+- (void) showProgressIndicator;
+- (void) hideProgressIndicator;
 - (NSProgressIndicator *) progressIndicator;
 @end
 
@@ -186,7 +186,7 @@
     NSInteger result = [panel runModal];
     if (result == NSOKButton) {
 	// this may take a while, let the user know we're busy
-	NSInteger row = [self showProgressIndicator];
+	[self showProgressIndicator];
 	NSArray *urls = [panel URLs];
 	for (NSURL *url in urls) {
         NSString *path = [url path];
@@ -196,7 +196,7 @@
 	    } else
 		showWarning = YES;
 	}
-	[self hideProgressIndicator: row];
+	[self hideProgressIndicator];
 
 	if (reloadNeeded)
 	    [tableView reloadData];
@@ -216,13 +216,19 @@
 - (IBAction) saveLocations: (id) sender
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
-    NSInteger row = [self showProgressIndicator];
+    [self showProgressIndicator];
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    dispatch_queue_t dispatchQueue =
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     for (ImageInfo *imageInfo in imageInfos)
-	[imageInfo saveLocation];
+        dispatch_group_async(dispatchGroup, dispatchQueue, ^{
+            [imageInfo saveLocation];
+        });
+    dispatch_group_wait(dispatchGroup, DISPATCH_TIME_FOREVER);
     [[NSApp mainWindow] setDocumentEdited: NO];
     // can not undo past a save
     [[self undoManager] removeAllActions];
-    [self hideProgressIndicator: row];
+    [self hideProgressIndicator];
 }
 
 /*
@@ -392,28 +398,20 @@
     return progressIndicator;
 }
 
-- (NSInteger) showProgressIndicator
+- (void) showProgressIndicator
 {
-    NSInteger row = [tableView selectedRow];
-    if (row != -1)
-	[tableView deselectRow: row];
     NSProgressIndicator* pi = [self progressIndicator];
     [pi setUsesThreadedAnimation:YES];
     [pi setHidden:NO];
     [pi startAnimation:self];
     [pi display];
-    return row;
 }
 
-- (void) hideProgressIndicator: (NSInteger) row
+- (void) hideProgressIndicator
 {
     NSProgressIndicator* pi = [self progressIndicator];
     [pi stopAnimation:self];
     [pi setHidden:YES];
-    
-    if (row != -1)
-	[tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
-	       byExtendingSelection: NO];
 }
 
 #pragma mark -
