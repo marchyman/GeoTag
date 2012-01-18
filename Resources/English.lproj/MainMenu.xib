@@ -857,15 +857,13 @@
 											<int key="NSvFlags">274</int>
 											<string key="NSFrameSize">{475, 709}</string>
 											<reference key="NSSuperview" ref="17351869"/>
-											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="774152473"/>
+											<reference key="NSNextKeyView" ref="778179834"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSTableHeaderView" key="NSHeaderView" id="138332707">
 												<reference key="NSNextResponder" ref="330246993"/>
 												<int key="NSvFlags">256</int>
 												<string key="NSFrameSize">{475, 17}</string>
 												<reference key="NSSuperview" ref="330246993"/>
-												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="17351869"/>
 												<reference key="NSTableView" ref="504687421"/>
 											</object>
@@ -1047,7 +1045,6 @@
 									</object>
 									<string key="NSFrame">{{1, 18}, {475, 709}}</string>
 									<reference key="NSSuperview" ref="640333295"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="504687421"/>
 									<reference key="NSDocView" ref="504687421"/>
 									<reference key="NSBGColor" ref="121856629"/>
@@ -1058,7 +1055,6 @@
 									<int key="NSvFlags">-2147483392</int>
 									<string key="NSFrame">{{515, 18}, {15, 789}}</string>
 									<reference key="NSSuperview" ref="640333295"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="82776230"/>
 									<reference key="NSTarget" ref="640333295"/>
 									<string key="NSAction">_doScroller:</string>
@@ -1069,7 +1065,6 @@
 									<int key="NSvFlags">-2147483392</int>
 									<string key="NSFrame">{{-100, -100}, {529, 15}}</string>
 									<reference key="NSSuperview" ref="640333295"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="330246993"/>
 									<int key="NSsFlags">1</int>
 									<reference key="NSTarget" ref="640333295"/>
@@ -1085,7 +1080,6 @@
 									</object>
 									<string key="NSFrame">{{1, 1}, {475, 17}}</string>
 									<reference key="NSSuperview" ref="640333295"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="138332707"/>
 									<reference key="NSDocView" ref="138332707"/>
 									<reference key="NSBGColor" ref="121856629"/>
@@ -1094,8 +1088,7 @@
 							</object>
 							<string key="NSFrame">{{20, 20}, {477, 728}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="778179834"/>
+							<reference key="NSNextKeyView" ref="17351869"/>
 							<int key="NSsFlags">133649</int>
 							<reference key="NSVScroller" ref="774152473"/>
 							<reference key="NSHScroller" ref="778179834"/>
@@ -1129,7 +1122,6 @@
 							</object>
 							<string key="NSFrame">{{505, 20}, {499, 394}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView"/>
 							<string key="FrameName"/>
 							<string key="GroupName"/>
@@ -1171,7 +1163,6 @@
 							</object>
 							<string key="NSFrame">{{502, 419}, {505, 332}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="224571875"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSImageCell" key="NSCell" id="839815790">
@@ -1190,7 +1181,6 @@
 							<object class="NSPSMatrix" key="NSDrawMatrix"/>
 							<string key="NSFrame">{{544, 578}, {421, 20}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="331004398"/>
 							<int key="NSpiFlags">24586</int>
 							<double key="NSMinValue">16</double>
@@ -1199,7 +1189,6 @@
 					</object>
 					<string key="NSFrameSize">{1024, 768}</string>
 					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="640333295"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
