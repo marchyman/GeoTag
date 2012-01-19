@@ -222,9 +222,9 @@
             [exiftool launch];
             [exiftool waitUntilExit];
             ;;; // check for error?
-            [self setOriginalLatitude: [self latitude]];
-            [self setOriginalLongitude: [self longitude]];
         });
+        [self setOriginalLatitude: [self latitude]];
+        [self setOriginalLongitude: [self longitude]];
     }
 }
 
