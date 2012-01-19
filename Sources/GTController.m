@@ -218,12 +218,8 @@
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     [self showProgressIndicator];
     dispatch_group_t dispatchGroup = dispatch_group_create();
-    dispatch_queue_t dispatchQueue =
-        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     for (ImageInfo *imageInfo in imageInfos)
-        dispatch_group_async(dispatchGroup, dispatchQueue, ^{
-            [imageInfo saveLocation];
-        });
+        [imageInfo saveLocationWithGroup: dispatchGroup];
     dispatch_group_wait(dispatchGroup, DISPATCH_TIME_FOREVER);
     [[NSApp mainWindow] setDocumentEdited: NO];
     // can not undo past a save

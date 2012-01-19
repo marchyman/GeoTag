@@ -45,7 +45,7 @@
 
 - (void) setLocationToLatitude: (NSString *) lat
 		     longitude: (NSString *) lng;
-- (void) saveLocation;
+- (void) saveLocationWithGroup: (dispatch_group_t) dispatchGroup;
 - (void) revertLocation;
 - (NSString *) stringRepresentation;
 - (BOOL) convertFromString: (NSString *) representation

@@ -168,7 +168,7 @@
  *
  * I'll stick with exiftool for now.
  */
-- (void) saveLocation
+- (void) saveLocationWithGroup: (dispatch_group_t) dispatchGroup
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (([self validLocation] != [self validOriginalLocation]) ||
@@ -206,19 +206,25 @@
 	    [lngArg appendFormat: @"%f", lng];
 	}
 
-	NSTask *exiftool = [[NSTask alloc] init];
-	[exiftool setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
-	[exiftool setStandardError: [NSFileHandle fileHandleWithNullDevice]];
-	[exiftool setLaunchPath:[GTDefaultsController exiftoolPath]];
-	[exiftool setArguments:[NSArray arrayWithObjects: @"-q", @"-m",
-				@"-overwrite_original", @"-gpsmapdatum=WGS-84",
-				latArg, latRefArg, lngArg, lngRefArg,
-				[self path], nil]];
-	[exiftool launch];
-	[exiftool waitUntilExit];
-	;;; // check for error?
-	[self setOriginalLatitude: [self latitude]];
-	[self setOriginalLongitude: [self longitude]];
+        dispatch_queue_t dispatchQueue =
+            dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+	dispatch_group_async(dispatchGroup, dispatchQueue, ^{
+            NSTask *exiftool = [[NSTask alloc] init];
+            [exiftool setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
+            [exiftool setStandardError: [NSFileHandle fileHandleWithNullDevice]];
+            [exiftool setLaunchPath:[GTDefaultsController exiftoolPath]];
+            [exiftool setArguments:[NSArray arrayWithObjects:
+                                    @"-q", @"-m",
+                                    @"-overwrite_original",
+                                    @"-gpsmapdatum=WGS-84",
+                                    latArg, latRefArg, lngArg,
+                                    lngRefArg, [self path], nil]];
+            [exiftool launch];
+            [exiftool waitUntilExit];
+            ;;; // check for error?
+            [self setOriginalLatitude: [self latitude]];
+            [self setOriginalLongitude: [self longitude]];
+        });
     }
 }
 
