@@ -178,12 +178,12 @@
 
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     CFArrayRef types = CGImageSourceCopyTypeIdentifiers();
-    CFMakeCollectable(types);
     [panel setAllowedFileTypes: (NSArray*) types];
     [panel setAllowsMultipleSelection: YES];
     [panel setCanChooseFiles: YES];
     [panel setCanChooseDirectories: NO];
     NSInteger result = [panel runModal];
+    CFRelease(types);
     if (result == NSOKButton) {
 	// this may take a while, let the user know we're busy
 	[self showProgressIndicator];
