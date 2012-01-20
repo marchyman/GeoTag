@@ -293,7 +293,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sed -e \"s/#.*#/#`/opt/local/bin/git describe`#/\" <Sources/Credits-input.rtf >Credits.rtf\n";
+			shellScript = "sed -e \"s/#.*#/#`/opt/local/bin/git describe`#/\" <Sources/Credits-input.rtf >Credits.rtf\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $(git describe --abbrev=0 | cut -b 2-)\" \"${TARGET_BUILD_DIR}\"/${INFOPLIST_PATH}\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $(git log --pretty=oneline --abbrev-commit -1 | cut -b 1-7)\" \"${TARGET_BUILD_DIR}\"/${INFOPLIST_PATH}\n";
 			showEnvVarsInLog = 0;
 		};
 		49D3AAD21002F14A0059FCEF /* ShellScript */ = {
@@ -403,6 +403,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "GTDEBUG=1";
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = GeoTag;
 			};
 			name = Debug;
@@ -419,6 +420,7 @@
 				GCC_PREFIX_HEADER = Sources/GeoTag_Prefix.pch;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = GeoTag;
 			};
 			name = Release;

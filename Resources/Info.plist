@@ -6,6 +6,10 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>GeoTagHelp</string>
+	<key>CFBundleHelpBookName</key>
+	<string>GeoTag Help</string>
 	<key>CFBundleIconFile</key>
 	<string>GeoTag.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -16,14 +20,14 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>${CURRENT_PROJECT_VERSION}</string>
-	<key>CFBundleHelpBookFolder</key>
-	<string>GeoTagHelp</string>
-	<key>CFBundleHelpBookName</key>
-	<string>GeoTag Help</string>
+	<string>unknown</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.photography</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
