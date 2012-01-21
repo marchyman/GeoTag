@@ -39,6 +39,8 @@
 {
     NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     SEL action = [item action];
+    if (action == @selector(selectAll:))
+        return [appController numberOfRowsInTableView: self] != 0;
     if (action == @selector(copy:) ||
 	action == @selector(cut:) ||
 	action == @selector(paste:) ||
@@ -107,6 +109,14 @@
             [appController adjustMapViewForRow: row];
         }
     }];
+}
+
+- (IBAction) selectAll: (id)sender
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    NSRange range = {0, [appController numberOfRowsInTableView: self]};
+    NSIndexSet *allItems = [NSIndexSet indexSetWithIndexesInRange: range];
+    [self selectRowIndexes: allItems byExtendingSelection: NO];
 }
 
 #pragma mark -

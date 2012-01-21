@@ -16,5 +16,6 @@
 - (IBAction) copy: (id) sender;
 - (IBAction) paste: (id) sender;
 - (IBAction) delete: (id) sender;
+- (IBAction) selectAll: (id)sender;
 
 @end
