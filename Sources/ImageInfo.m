@@ -242,11 +242,12 @@
 - (BOOL) getInfoForFileAt: (NSString *) path
 {
     NSURL *url = [NSURL fileURLWithPath: path];
-    CGImageSourceRef iRef = CGImageSourceCreateWithURL((CFURLRef) url, NULL);
+    CGImageSourceRef iRef =
+        CGImageSourceCreateWithURL((__bridge CFURLRef) url, NULL);
     if (! iRef)
 	return NO;
     NSDictionary *metadata = 
-	NSMakeCollectable(CGImageSourceCopyPropertiesAtIndex(iRef, 0, NULL));
+        (__bridge_transfer NSDictionary *) CGImageSourceCopyPropertiesAtIndex(iRef, 0, NULL);
     CFRelease(iRef);
 
     // image creation date/time

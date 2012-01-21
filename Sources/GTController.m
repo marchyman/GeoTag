@@ -57,7 +57,7 @@
 	   withCode: (NSInteger) choice
 	    context: (void *) context
 {
-    NSWindow *window = (NSWindow *) context;
+    NSWindow *window = (__bridge_transfer NSWindow *) context;
     switch (choice) {
 	case NSAlertFirstButtonReturn:
 	    // Save
@@ -86,7 +86,7 @@
 	[alert beginSheetModalForWindow: window
 			  modalDelegate: self
 			 didEndSelector: @selector(alertEnded:withCode:context:)
-			    contextInfo: window];
+			    contextInfo: (__bridge_retained void *) window];
 	return NO;
     }
     return YES;
@@ -178,7 +178,7 @@
 
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     CFArrayRef types = CGImageSourceCopyTypeIdentifiers();
-    [panel setAllowedFileTypes: (NSArray*) types];
+    [panel setAllowedFileTypes: (__bridge NSArray*) types];
     [panel setAllowsMultipleSelection: YES];
     [panel setCanChooseFiles: YES];
     [panel setCanChooseDirectories: NO];

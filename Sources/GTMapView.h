@@ -15,7 +15,7 @@
     BOOL hiddenMarker;
 }
 
-@property (retain) id appController;
+@property (strong) id appController;
 @property (copy) NSString *mapLat;
 @property (copy) NSString *mapLng;
 @property (assign, getter=isHiddenMarker) BOOL hiddenMarker;

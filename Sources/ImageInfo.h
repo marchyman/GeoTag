@@ -26,7 +26,7 @@
     BOOL validOriginalLocation;
     BOOL validImage;
 }
-@property (retain) NSImage *image;
+@property (strong) NSImage *image;
 @property CGFloat latitude;
 @property CGFloat longitude;
 @property CGFloat originalLatitude;
@@ -35,11 +35,11 @@
 @property BOOL validOriginalLocation;
 @property BOOL validImage;
 
-@property (readonly) NSString *path;
-@property (readonly) NSString *name;
-@property (readonly) NSString *date;
-@property (readonly) NSString *latitudeAsString;
-@property (readonly) NSString *longitudeAsString;
+@property (unsafe_unretained, readonly) NSString *path;
+@property (unsafe_unretained, readonly) NSString *name;
+@property (unsafe_unretained, readonly) NSString *date;
+@property (unsafe_unretained, readonly) NSString *latitudeAsString;
+@property (unsafe_unretained, readonly) NSString *longitudeAsString;
 
 + (id) imageInfoWithPath: (NSString *) path;
 
