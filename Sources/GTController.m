@@ -177,13 +177,13 @@
     BOOL showWarning = NO;
 
     NSOpenPanel *panel = [NSOpenPanel openPanel];
-    CFArrayRef types = CGImageSourceCopyTypeIdentifiers();
-    [panel setAllowedFileTypes: (__bridge NSArray*) types];
+    NSArray *types =
+        (__bridge_transfer NSArray *)CGImageSourceCopyTypeIdentifiers();
+    [panel setAllowedFileTypes: types];
     [panel setAllowsMultipleSelection: YES];
     [panel setCanChooseFiles: YES];
     [panel setCanChooseDirectories: NO];
     NSInteger result = [panel runModal];
-    CFRelease(types);
     if (result == NSOKButton) {
 	// this may take a while, let the user know we're busy
 	[self showProgressIndicator];
