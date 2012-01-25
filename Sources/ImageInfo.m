@@ -8,10 +8,6 @@
 #import "ImageInfo.h"
 #import "GTDefaultsController.h"
 
-#if GTDEBUG == 0
-#define NSLog(...)
-#endif
-
 @interface ImageInfo ()
 - (BOOL) getInfoForFileAt: (NSString *) path;
 @end
@@ -91,7 +87,6 @@
 
 - (NSString *) stringRepresentation
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if ([self validLocation])
 	return [NSString stringWithFormat: @"%f %f", [self latitude],
 		[self longitude]];
@@ -102,25 +97,18 @@
 		  latitude: (NSString **) lat
 		 longitude: (NSString **) lng
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     double latAsDouble, lngAsDouble;
     NSScanner *scanner = [NSScanner scannerWithString: representation];
     if (! [scanner scanDouble: &latAsDouble] ||
 	latAsDouble < -90.0 ||
-	latAsDouble > 90.0) {
-	NSLog(@"Bad lat: %f", latAsDouble);
+	latAsDouble > 90.0)
 	return NO;
-    }
     if (! [scanner scanDouble: &lngAsDouble] ||
 	lngAsDouble < -180.0 ||
-	lngAsDouble > 180.0) {
-	NSLog(@"Bad lng: %f", lngAsDouble);
+	lngAsDouble > 180.0)
 	return NO;
-    }
-    if (! [scanner isAtEnd]) {
-	NSLog(@"scanner not at end of string: %@", representation);
+    if (! [scanner isAtEnd])
 	return NO;
-    }
     *lat = [NSString stringWithFormat: @"%f", latAsDouble];
     *lng = [NSString stringWithFormat: @"%f", lngAsDouble];
     return YES;
@@ -134,7 +122,6 @@
  */
 - (void) setLocationToLatitude: (NSString *) lat longitude: (NSString *) lng
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (lat && lng) {
 	[self setLatitude: [lat doubleValue]];
 	[self setLongitude: [lng doubleValue]];
@@ -148,7 +135,6 @@
 
 - (void) backupFile
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *dest = [[NSHomeDirectory()
 		       stringByAppendingPathComponent: @".Trash"]
@@ -170,7 +156,6 @@
  */
 - (void) saveLocationWithGroup: (dispatch_group_t) dispatchGroup
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (([self validLocation] != [self validOriginalLocation]) ||
 	([self latitude] != [self originalLatitude]) ||
 	([self longitude] != [self originalLongitude])) {
@@ -230,7 +215,6 @@
 
 - (void) revertLocation
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     [self setValidLocation: [self validOriginalLocation]];
     [self setLatitude: [self originalLatitude]];
     [self setLongitude: [self originalLongitude]];

@@ -44,7 +44,6 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
     [defaultValues setObject: @"/usr/bin/exiftool"
 		      forKey: SSExiftoolPathKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults: defaultValues];
-    NSLog(@"Registered defaults %@", defaultValues);
 }
 
 + (NSString *) exiftoolPath
@@ -76,13 +75,11 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
 
 - (IBAction) checkExiftoolValidity: (id) sender
 {
-    NSLog(@"checkExiftoolValidity:");
     (void) sender;
 }
 
 - (IBAction) resetExiftoolPath: (id) sender
 {
-    NSLog(@"resetExiftoolPath:");
     [[NSUserDefaults standardUserDefaults]
      removeObjectForKey:SSExiftoolPathKey];
     (void) sender;
@@ -91,7 +88,6 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
 - (void)    pathCell: (NSPathCell *) pathCell
 willDisplayOpenPanel: (NSOpenPanel *) openPanel
 {
-    NSLog(@"pathCell:willDisplayOpenPanel:");
     [openPanel setCanChooseDirectories:NO];
     [openPanel setCanChooseFiles:YES];
     [openPanel setAllowsMultipleSelection:NO];

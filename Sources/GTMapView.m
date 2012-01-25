@@ -8,10 +8,6 @@
 #import "GTMapView.h"
 #import "GTController.h"
 
-#if GTDEBUG == 0
-#define NSLog(...)
-#endif
-
 @implementation GTMapView
 
 @synthesize appController;
@@ -25,7 +21,6 @@
 // only the report selector can be called from the script
 + (BOOL) isSelectorExcludedFromWebScript: (SEL) selector
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (selector == @selector(reportPosition))
 	return NO;
     return YES;
@@ -34,8 +29,6 @@
 // the script has access to mapLat and mapLng variables
 + (BOOL) isKeyExcludedFromWebScript: (const char *) property
 {
-    NSLog(@"%@ received %@ for property %s", self, NSStringFromSelector(_cmd),
-	  property);
     if ((strcmp(property, "mapLat") == 0) ||
 	(strcmp(property, "mapLng") == 0))
         return NO;
@@ -46,7 +39,6 @@
 // no script-to-selector name translation needed
 + (NSString *) webScriptNameForSelector: (SEL) sel
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     return nil;
 }
 
@@ -57,7 +49,6 @@
 // hide any existing marker
 - (void) hideMarker: (NSString *) name;
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (! [self isHiddenMarker]) {
         NSArray *args = [NSArray arrayWithObject: name];
         [[self windowScriptObject] callWebScriptMethod: @"hideMarker"
@@ -71,7 +62,6 @@
 		    longitude: (CGFloat) lng
 			 name: (NSString *) name;
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (lat && lng) {
 	NSString *latStr = [NSString stringWithFormat: @"%f", lat];
 	NSString *lngStr = [NSString stringWithFormat: @"%f", lng];
@@ -93,7 +83,6 @@
 // The marker is at mapLat, mapLng.
 - (void) reportPosition
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     [self setHiddenMarker: NO];
     [appController updateLatitude: [self mapLat] longitude: [self mapLng]];
 }
@@ -103,7 +92,6 @@
 
 - (void) awakeFromNib
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     [self loadMap];
 }
 
@@ -123,7 +111,6 @@
   didClearWindowObject: (WebScriptObject *) windowObject
 	      forFrame: (WebFrame *) frame
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     // javascript will know this object as "controller".
     [windowObject setValue: self forKey: @"controller"];
 }

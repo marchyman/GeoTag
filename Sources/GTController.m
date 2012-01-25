@@ -8,10 +8,6 @@
 #import "GTController.h"
 #import "GTDefaultscontroller.h"
 
-#if GTDEBUG == 0
-#define NSLog(...)
-#endif
-
 @interface GTController ()
 - (void) showProgressIndicator;
 - (void) hideProgressIndicator;
@@ -37,7 +33,6 @@
 
 - (void) awakeFromNib
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     [NSApp setDelegate: self];
     [tableView registerForDraggedTypes:
      [NSArray arrayWithObject: NSFilenamesPboardType]];
@@ -94,7 +89,6 @@
 
 - (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication *) app
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if ([self saveOrDontSave: [app mainWindow]])
 	return NSTerminateNow;
     return NSTerminateCancel;
@@ -102,7 +96,6 @@
 
 - (BOOL) windowShouldClose: (id) window
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     return [self saveOrDontSave: window];
 }
 
@@ -133,10 +126,8 @@
 - (BOOL) isDuplicatePath: (NSString *) path
 {
     for (ImageInfo *imageInfo in imageInfos) {
-	if ([[imageInfo path] isEqualToString: path]) {
-	    NSLog(@"duplicatePath: %@", path);
+	if ([[imageInfo path] isEqualToString: path])
 	    return YES;
-	}
     }
     return NO;
 }
@@ -215,7 +206,6 @@
  */
 - (IBAction) saveLocations: (id) sender
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     [self showProgressIndicator];
     dispatch_group_t dispatchGroup = dispatch_group_create();
     for (ImageInfo *imageInfo in imageInfos)
@@ -232,7 +222,6 @@
  */
 - (IBAction) revertToSaved: (id) sender
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     for (ImageInfo *imageInfo in imageInfos)
 	[imageInfo revertLocation];
     [[NSApp mainWindow] setDocumentEdited: NO];
@@ -245,7 +234,6 @@
 
 - (IBAction) clear: (id) sender
 {
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     if (! [[NSApp mainWindow] isDocumentEdited]) {
 	imageInfos = [[NSMutableArray alloc] init];
 	[[self undoManager] removeAllActions];
@@ -293,7 +281,6 @@
 {
     BOOL dropValid = YES;
     
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSPasteboard* pboard = [info draggingPasteboard];
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
 	if (row < [aTableView numberOfRows])
@@ -324,7 +311,6 @@
 {
     BOOL dropAccepted = NO;
     
-    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     NSPasteboard* pboard = [info draggingPasteboard];
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
 	NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
@@ -378,7 +364,6 @@
 {
     NSIndexSet *rows = [tableView selectedRowIndexes];
     [rows enumerateIndexesUsingBlock: ^(NSUInteger row, BOOL *stop) {
-        NSLog(@"update loc at row %d, %@ %@", (int) row, lat, lng);
         [self updateLocationForImageAtRow: row
                                  latitude: lat
                                 longitude: lng
@@ -432,7 +417,6 @@
 			   latitude: curLat
 			  longitude: curLng
 			   modified: [[NSApp mainWindow] isDocumentEdited]];
-    NSLog(@"lat %@, lng %@", lat, lng);
     [image setLocationToLatitude: lat longitude: lng];
     //  Needed with undo/redo to force mapView update
     // (mapView updated in tableViewSelectionDidChange)
