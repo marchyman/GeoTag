@@ -34,12 +34,12 @@
 - (void) showImageForIndex: (NSInteger) ix;
 - (void) adjustMapViewForRow: (NSInteger) row;
 - (void) updateLocationForImageAtRow: (NSInteger) row
-			    latitude: (NSString *) lat
-			   longitude: (NSString *) lng
-			    modified: (BOOL) mod;
+                            latitude: (NSString *) lat
+                           longitude: (NSString *) lng
+                            modified: (BOOL) mod;
 
 - (void) updateLatitude: (NSString *) lat
-	      longitude: (NSString *) lng;
+              longitude: (NSString *) lng;
 
 - (BOOL) isDuplicatePath: (NSString *) path;
 

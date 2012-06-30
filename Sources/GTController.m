@@ -23,10 +23,10 @@
 - (id) init
 {
     if ((self = [super init])) {
-	imageInfos = [[NSMutableArray alloc] init];
-	undoManager = [[NSUndoManager alloc] init];
-	// force app defaults and preferences initialization
-	[GTDefaultsController class];
+        imageInfos = [[NSMutableArray alloc] init];
+        undoManager = [[NSUndoManager alloc] init];
+        // force app defaults and preferences initialization
+        [GTDefaultsController class];
     }
     return self;
 }
@@ -35,7 +35,7 @@
 {
     [NSApp setDelegate: self];
     [tableView registerForDraggedTypes:
-     [NSArray arrayWithObject: NSFilenamesPboardType]];
+    [NSArray arrayWithObject: NSFilenamesPboardType]];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) sender
@@ -49,21 +49,21 @@
  * upon what button the user selects.
  */
 - (void) alertEnded: (NSAlert *) alert
-	   withCode: (NSInteger) choice
-	    context: (void *) context
+           withCode: (NSInteger) choice
+            context: (void *) context
 {
     NSWindow *window = (__bridge_transfer NSWindow *) context;
     switch (choice) {
-	case NSAlertFirstButtonReturn:
-	    // Save
-	    [self saveLocations: self];
-	    break;
-	case NSAlertSecondButtonReturn:
-	    // Cancel
-	    return;
-	default:
-	    // Don't save
-	    break;
+        case NSAlertFirstButtonReturn:
+            // Save
+            [self saveLocations: self];
+            break;
+        case NSAlertSecondButtonReturn:
+            // Cancel
+            return;
+        default:
+            // Don't save
+            break;
     }
     [window setDocumentEdited: NO];
     [window close];
@@ -72,17 +72,17 @@
 - (BOOL) saveOrDontSave: (NSWindow *) window
 {
     if ([window isDocumentEdited]) {
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert addButtonWithTitle: NSLocalizedString(@"SAVE", @"Save")];
-	[alert addButtonWithTitle: NSLocalizedString(@"CANCEL", @"Cancel")];
-	[alert addButtonWithTitle: NSLocalizedString(@"DONT_SAVE", @"Don't Save")];
-	[alert setMessageText: NSLocalizedString(@"UNSAVED_TITLE", @"Unsaved Changes")];
-	[alert setInformativeText: NSLocalizedString(@"UNSAVED_DESC", @"Unsaved Changes")];
-	[alert beginSheetModalForWindow: window
-			  modalDelegate: self
-			 didEndSelector: @selector(alertEnded:withCode:context:)
-			    contextInfo: (__bridge_retained void *) window];
-	return NO;
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert addButtonWithTitle: NSLocalizedString(@"SAVE", @"Save")];
+        [alert addButtonWithTitle: NSLocalizedString(@"CANCEL", @"Cancel")];
+        [alert addButtonWithTitle: NSLocalizedString(@"DONT_SAVE", @"Don't Save")];
+        [alert setMessageText: NSLocalizedString(@"UNSAVED_TITLE", @"Unsaved Changes")];
+        [alert setInformativeText: NSLocalizedString(@"UNSAVED_DESC", @"Unsaved Changes")];
+        [alert beginSheetModalForWindow: window
+                          modalDelegate: self
+                         didEndSelector: @selector(alertEnded:withCode:context:)
+                            contextInfo: (__bridge_retained void *) window];
+        return NO;
     }
     return YES;
 }
@@ -90,7 +90,7 @@
 - (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication *) app
 {
     if ([self saveOrDontSave: [app mainWindow]])
-	return NSTerminateNow;
+        return NSTerminateNow;
     return NSTerminateCancel;
 }
 
@@ -110,15 +110,15 @@
 - (BOOL) isValidImageAtIndex: (NSInteger) ix
 {
     if ((ix >= 0) && (ix < (NSInteger) [imageInfos count]))
-	return [[self imageAtIndex: ix] validImage];
+        return [[self imageAtIndex: ix] validImage];
     return NO;
 }
 
 - (BOOL) addImageForPath: (NSString *) path
 {
     if (! [self isDuplicatePath: path]) {
-	[imageInfos addObject: [ImageInfo imageInfoWithPath: path]];
-	return YES;
+        [imageInfos addObject: [ImageInfo imageInfoWithPath: path]];
+        return YES;
     }
     return NO;
 }
@@ -126,8 +126,8 @@
 - (BOOL) isDuplicatePath: (NSString *) path
 {
     for (ImageInfo *imageInfo in imageInfos) {
-	if ([[imageInfo path] isEqualToString: path])
-	    return YES;
+        if ([[imageInfo path] isEqualToString: path])
+            return YES;
     }
     return NO;
 }
@@ -176,28 +176,28 @@
     [panel setCanChooseDirectories: NO];
     NSInteger result = [panel runModal];
     if (result == NSOKButton) {
-	// this may take a while, let the user know we're busy
-	[self showProgressIndicator];
-	NSArray *urls = [panel URLs];
-	for (NSURL *url in urls) {
+        // this may take a while, let the user know we're busy
+        [self showProgressIndicator];
+        NSArray *urls = [panel URLs];
+        for (NSURL *url in urls) {
         NSString *path = [url path];
-	    if (! [self isDuplicatePath: path]) {
-		[imageInfos addObject: [ImageInfo imageInfoWithPath: path]];
-		reloadNeeded = YES;
-	    } else
-		showWarning = YES;
-	}
-	[self hideProgressIndicator];
+            if (! [self isDuplicatePath: path]) {
+                [imageInfos addObject: [ImageInfo imageInfoWithPath: path]];
+                reloadNeeded = YES;
+            } else
+                showWarning = YES;
+        }
+        [self hideProgressIndicator];
 
-	if (reloadNeeded)
-	    [tableView reloadData];
-	if (showWarning) {
-	    NSAlert *alert = [[NSAlert alloc] init];
-	    [alert addButtonWithTitle: NSLocalizedString(@"CLOSE", @"Close")];
-	    [alert setMessageText: NSLocalizedString(@"WARN_TITLE", @"Files not opened")];
-	    [alert setInformativeText: NSLocalizedString(@"WARN_DESC", @"Files not opened")];
-	    [alert runModal];
-	}
+        if (reloadNeeded)
+            [tableView reloadData];
+        if (showWarning) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert addButtonWithTitle: NSLocalizedString(@"CLOSE", @"Close")];
+            [alert setMessageText: NSLocalizedString(@"WARN_TITLE", @"Files not opened")];
+            [alert setInformativeText: NSLocalizedString(@"WARN_DESC", @"Files not opened")];
+            [alert runModal];
+        }
     }
 }
 
@@ -223,21 +223,21 @@
 - (IBAction) revertToSaved: (id) sender
 {
     for (ImageInfo *imageInfo in imageInfos)
-	[imageInfo revertLocation];
+        [imageInfo revertLocation];
     [[NSApp mainWindow] setDocumentEdited: NO];
     [[self undoManager] removeAllActions];
     [tableView reloadData];
     NSInteger row = [tableView selectedRow];
     if (row != -1)
-	[self adjustMapViewForRow: row];
+        [self adjustMapViewForRow: row];
 }
 
 - (IBAction) clear: (id) sender
 {
     if (! [[NSApp mainWindow] isDocumentEdited]) {
-	imageInfos = [[NSMutableArray alloc] init];
-	[[self undoManager] removeAllActions];
-	[tableView reloadData];
+        imageInfos = [[NSMutableArray alloc] init];
+        [[self undoManager] removeAllActions];
+        [tableView reloadData];
     }
 }
 
@@ -249,11 +249,11 @@
     SEL action = [item action];
     
     if (action == @selector(saveLocations:) ||
-	action == @selector(revertToSaved:))
-	return [[NSApp mainWindow] isDocumentEdited];
+        action == @selector(revertToSaved:))
+        return [[NSApp mainWindow] isDocumentEdited];
     if (action == @selector(clear:))
-	return ([imageInfos count] > 0) &&
-	       (! [[NSApp mainWindow] isDocumentEdited]);
+        return ([imageInfos count] > 0) &&
+               (! [[NSApp mainWindow] isDocumentEdited]);
     return YES;
 }
 
@@ -267,7 +267,7 @@
 
 - (id)            tableView: (NSTableView *) tv
   objectValueForTableColumn: (NSTableColumn *) tableColumn
-			row: (NSInteger) row
+                        row: (NSInteger) row
 {
     ImageInfo *imageInfo = [self imageAtIndex: row];
     return [imageInfo valueForKey: [tableColumn identifier]];
@@ -275,53 +275,53 @@
 
 // Drops are only allowed at the end of the table
 - (NSDragOperation) tableView: (NSTableView *) aTableView
-		 validateDrop: (id < NSDraggingInfo >) info
-		  proposedRow: (NSInteger) row
-	proposedDropOperation: (NSTableViewDropOperation) op
+                 validateDrop: (id < NSDraggingInfo >) info
+                  proposedRow: (NSInteger) row
+        proposedDropOperation: (NSTableViewDropOperation) op
 {
     BOOL dropValid = YES;
     
     NSPasteboard* pboard = [info draggingPasteboard];
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
-	if (row < [aTableView numberOfRows])
-	    dropValid = NO;
-	else {
-	    NSArray *pathArray =
-		[pboard propertyListForType:NSFilenamesPboardType];
-	    NSFileManager *fileManager = [NSFileManager defaultManager];
-	    BOOL dir;
-	    for (NSString *path in pathArray) {
-		[fileManager fileExistsAtPath: path isDirectory: &dir];
-		if (dir || [self isDuplicatePath: path])
-		    dropValid = NO;
-	    }
-	}
+        if (row < [aTableView numberOfRows])
+            dropValid = NO;
+        else {
+            NSArray *pathArray =
+                [pboard propertyListForType:NSFilenamesPboardType];
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            BOOL dir;
+            for (NSString *path in pathArray) {
+                [fileManager fileExistsAtPath: path isDirectory: &dir];
+                if (dir || [self isDuplicatePath: path])
+                    dropValid = NO;
+            }
+        }
     }
     if (dropValid)
-	return NSDragOperationLink;
+        return NSDragOperationLink;
     
     return NSDragOperationNone;
 }
 
 
 - (BOOL) tableView: (NSTableView *) aTableView
-	acceptDrop: (id <NSDraggingInfo>) info
-	       row: (NSInteger) row
+        acceptDrop: (id <NSDraggingInfo>) info
+               row: (NSInteger) row
      dropOperation: (NSTableViewDropOperation) op 
 {
     BOOL dropAccepted = NO;
     
     NSPasteboard* pboard = [info draggingPasteboard];
     if ([[pboard types] containsObject: NSFilenamesPboardType]) {
-	NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
-	for (NSString *path in pathArray)
-	    if ([self addImageForPath: path])
-		dropAccepted = YES;
+        NSArray *pathArray = [pboard propertyListForType:NSFilenamesPboardType];
+        for (NSString *path in pathArray)
+            if ([self addImageForPath: path])
+                dropAccepted = YES;
     }
     if (dropAccepted) {
-	[tableView reloadData];
-	[tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
-	  byExtendingSelection: NO];
+        [tableView reloadData];
+        [tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
+          byExtendingSelection: NO];
     }
 
     return dropAccepted;
@@ -338,8 +338,8 @@
 {
     NSImage *image = nil;
     if (ix != -1) {
-	image = [[self imageAtIndex: ix] image];
-	[self adjustMapViewForRow: ix];
+        image = [[self imageAtIndex: ix] image];
+        [self adjustMapViewForRow: ix];
     }
     [imageWell setImage: image];
 }
@@ -351,16 +351,16 @@
 {
     ImageInfo * image = [self imageAtIndex: row];
     if ([image validLocation])
-	[mapView adjustMapForLatitude: [image latitude]
-			    longitude: [image longitude]
-				 name: [image name]];
+        [mapView adjustMapForLatitude: [image latitude]
+                            longitude: [image longitude]
+                                 name: [image name]];
     else
-	[mapView hideMarker: @""];
+        [mapView hideMarker: @""];
 }
 
 // called from the map view when a marker is moved.
 - (void) updateLatitude: (NSString *) lat
-	      longitude: (NSString *) lng
+              longitude: (NSString *) lng
 {
     NSIndexSet *rows = [tableView selectedRowIndexes];
     [rows enumerateIndexesUsingBlock: ^(NSUInteger row, BOOL *stop) {
@@ -400,30 +400,30 @@
 
 // location update with undo/redo support
 - (void) updateLocationForImageAtRow: (NSInteger) row
-			    latitude: (NSString *) lat
-			   longitude: (NSString *) lng
-			    modified: (BOOL) mod
+                            latitude: (NSString *) lat
+                           longitude: (NSString *) lng
+                            modified: (BOOL) mod
 {
     NSString *curLat = NULL;
     NSString *curLng = NULL;
     ImageInfo *image = [self imageAtIndex: row];
     if ([image validLocation]) {
-	curLat = [NSString stringWithFormat: @"%f", [image latitude]];
-	curLng = [NSString stringWithFormat: @"%f", [image longitude]];
+        curLat = [NSString stringWithFormat: @"%f", [image latitude]];
+        curLng = [NSString stringWithFormat: @"%f", [image longitude]];
     }
     NSUndoManager *undo = [self undoManager];
     [[undo prepareWithInvocationTarget: self]
-	updateLocationForImageAtRow: row
-			   latitude: curLat
-			  longitude: curLng
-			   modified: [[NSApp mainWindow] isDocumentEdited]];
+        updateLocationForImageAtRow: row
+                           latitude: curLat
+                          longitude: curLng
+                           modified: [[NSApp mainWindow] isDocumentEdited]];
     [image setLocationToLatitude: lat longitude: lng];
     //  Needed with undo/redo to force mapView update
     // (mapView updated in tableViewSelectionDidChange)
     if ([undo isUndoing] || [undo isRedoing]) {
-	[tableView deselectRow: row];
-	[tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
-	       byExtendingSelection: NO];
+        [tableView deselectRow: row];
+        [tableView selectRowIndexes: [NSIndexSet indexSetWithIndex: row]
+               byExtendingSelection: NO];
     }
     [tableView setNeedsDisplayInRect: [tableView rectOfRow: row]];
     [[NSApp mainWindow] setDocumentEdited: mod];
