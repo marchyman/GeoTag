@@ -1,7 +1,6 @@
-GeoTag 2.0
+GeoTag 2.1
 
-**GeoTag is reported to crash when run under Mountain Lion (10.8)
-I'm looking into the issue.**
+**Appears to work correctly on Mountain Lion (10.8)**
 
 OS X program (Snow Leopard or later) to add or edit geolocation information
 in images by dragging a marker on a google map.   The code was written
