@@ -34,8 +34,7 @@
 - (void) awakeFromNib
 {
     [NSApp setDelegate: self];
-    [tableView registerForDraggedTypes:
-    [NSArray arrayWithObject: NSFilenamesPboardType]];
+    [tableView registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) sender
