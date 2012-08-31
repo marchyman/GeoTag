@@ -397,11 +397,10 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/GeoTag_Prefix.pch;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
+				INSTALL_PATH = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = GeoTag;
 			};
@@ -416,7 +415,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/GeoTag_Prefix.pch;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
+				INSTALL_PATH = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = GeoTag;
 			};
@@ -426,6 +425,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -446,6 +447,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
