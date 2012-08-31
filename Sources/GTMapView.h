@@ -8,12 +8,7 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
 
-@interface GTMapView : WebView {
-    id appController;
-    NSString *mapLat;
-    NSString *mapLng;
-    BOOL hiddenMarker;
-}
+@interface GTMapView : WebView
 
 @property (strong) id appController;
 @property (copy) NSString *mapLat;

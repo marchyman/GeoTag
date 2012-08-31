@@ -79,7 +79,7 @@
 - (void) reportPosition
 {
     [self setHiddenMarker: NO];
-    [appController updateLatitude: [self mapLat] longitude: [self mapLng]];
+    [self.appController updateLatitude: [self mapLat] longitude: [self mapLng]];
 }
 
 #pragma mark -
