@@ -10,11 +10,6 @@
 
 @implementation GTMapView
 
-@synthesize appController;
-@synthesize mapLat;
-@synthesize mapLng;
-@synthesize hiddenMarker;
-
 #pragma mark -
 #pragma mark WebScripting Protocol methods
 

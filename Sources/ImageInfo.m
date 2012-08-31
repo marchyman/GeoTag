@@ -13,14 +13,6 @@
 @end
 
 @implementation ImageInfo
-@synthesize image;
-@synthesize latitude;
-@synthesize longitude;
-@synthesize originalLatitude;
-@synthesize originalLongitude;
-@synthesize validImage;
-@synthesize validLocation;
-@synthesize validOriginalLocation;
 
 #pragma mark -
 #pragma mark Class methods
