@@ -16,16 +16,9 @@
 #define IICapacity 4
 
 @interface ImageInfo : NSObject {
-    NSImage *image;
-    NSMutableDictionary *infoDict;
-    CGFloat latitude;
-    CGFloat longitude;
-    CGFloat originalLatitude;
-    CGFloat originalLongitude;
-    BOOL validLocation;
-    BOOL validOriginalLocation;
-    BOOL validImage;
+    NSMutableDictionary *_infoDict;
 }
+
 @property (strong) NSImage *image;
 @property CGFloat latitude;
 @property CGFloat longitude;

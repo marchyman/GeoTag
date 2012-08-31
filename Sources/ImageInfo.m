@@ -29,16 +29,16 @@
 {
     self = [super init];
     if (self) {
-	infoDict = [NSMutableDictionary dictionaryWithObject: path
-						      forKey: IIPathName];
-	infoDict[IIImageName] = [path lastPathComponent];
-	validImage = [self getInfoForFileAt: path];
-	if (validImage) {
+	_infoDict = [NSMutableDictionary dictionaryWithObject: path
+						       forKey: IIPathName];
+	_infoDict[IIImageName] = [path lastPathComponent];
+	_validImage = [self getInfoForFileAt: path];
+	if (self.validImage) {
 	    [self setValidOriginalLocation: [self validLocation]];
 	    [self setOriginalLatitude: [self latitude]];
 	    [self setOriginalLongitude: [self longitude]];
 	    [self setImage: [[NSImage alloc] initWithContentsOfFile: path]];
-	    /* ;;; make the above a concurrent operation */
+	    /* ;;; make the above a concurrent operation ??? */
 	}
     }
     return self;
@@ -46,17 +46,17 @@
 
 - (NSString *) path
 {
-    return infoDict[IIPathName];
+    return _infoDict[IIPathName];
 }
 
 - (NSString *) name
 {
-    return infoDict[IIImageName];
+    return _infoDict[IIImageName];
 }
 
 - (NSString *) date
 {
-    return infoDict[IIDateTime];
+    return _infoDict[IIDateTime];
 }
 
 - (NSString *) latitudeAsString
@@ -231,7 +231,7 @@
     if (exifdata) {
 	NSString *date = exifdata[(NSString *) kCGImagePropertyExifDateTimeOriginal];
 	if (date)
-	    infoDict[IIDateTime] = [NSString stringWithString: date];
+	    _infoDict[IIDateTime] = [NSString stringWithString: date];
     }
 
     // latitude and longitude
