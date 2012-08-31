@@ -50,7 +50,7 @@
 - (void) hideMarker: (NSString *) name;
 {
     if (! [self isHiddenMarker]) {
-        NSArray *args = [NSArray arrayWithObject: name];
+        NSArray *args = @[name];
         [[self windowScriptObject] callWebScriptMethod: @"hideMarker"
                                          withArguments: args];
         [self setHiddenMarker: YES];
@@ -69,7 +69,7 @@
 	    ! [[self mapLat] isEqualToString: latStr] ||
 	    ! [[self mapLng] isEqualToString: lngStr]) {
 	    NSArray* args =
-		[NSArray arrayWithObjects: latStr, lngStr, name, nil];
+		@[latStr, lngStr, name];
 	    [[self windowScriptObject] callWebScriptMethod: @"addMarkerToMapAt"
 					     withArguments: args];
 	    [self setMapLat: latStr];

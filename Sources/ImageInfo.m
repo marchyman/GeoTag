@@ -39,7 +39,7 @@
     if (self) {
 	infoDict = [NSMutableDictionary dictionaryWithObject: path
 						      forKey: IIPathName];
-	[infoDict setObject: [path lastPathComponent] forKey: IIImageName];
+	infoDict[IIImageName] = [path lastPathComponent];
 	validImage = [self getInfoForFileAt: path];
 	if (validImage) {
 	    [self setValidOriginalLocation: [self validLocation]];
@@ -54,17 +54,17 @@
 
 - (NSString *) path
 {
-    return [infoDict objectForKey: IIPathName];
+    return infoDict[IIPathName];
 }
 
 - (NSString *) name
 {
-    return [infoDict objectForKey: IIImageName];
+    return infoDict[IIImageName];
 }
 
 - (NSString *) date
 {
-    return [infoDict objectForKey: IIDateTime];
+    return infoDict[IIDateTime];
 }
 
 - (NSString *) latitudeAsString
@@ -198,12 +198,11 @@
             [exiftool setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
             [exiftool setStandardError: [NSFileHandle fileHandleWithNullDevice]];
             [exiftool setLaunchPath:[GTDefaultsController exiftoolPath]];
-            [exiftool setArguments:[NSArray arrayWithObjects:
-                                    @"-q", @"-m",
+            [exiftool setArguments:@[@"-q", @"-m",
                                     @"-overwrite_original",
                                     @"-gpsmapdatum=WGS-84",
                                     latArg, latRefArg, lngArg,
-                                    lngRefArg, [self path], nil]];
+                                    lngRefArg, [self path]]];
             [exiftool launch];
             [exiftool waitUntilExit];
             ;;; // check for error?
@@ -236,24 +235,20 @@
 
     // image creation date/time
     NSDictionary *exifdata = (NSDictionary *)
-	[metadata objectForKey: (NSString *) kCGImagePropertyExifDictionary];
+	metadata[(NSString *) kCGImagePropertyExifDictionary];
     if (exifdata) {
-	NSString *date = [exifdata objectForKey: 
-			  (NSString *) kCGImagePropertyExifDateTimeOriginal];
+	NSString *date = exifdata[(NSString *) kCGImagePropertyExifDateTimeOriginal];
 	if (date)
-	    [infoDict setObject: [NSString stringWithString: date]
-			 forKey: IIDateTime];
+	    infoDict[IIDateTime] = [NSString stringWithString: date];
     }
 
     // latitude and longitude
     NSDictionary *gpsdata = (NSDictionary *)
-	[metadata objectForKey: (NSString *) kCGImagePropertyGPSDictionary];
+	metadata[(NSString *) kCGImagePropertyGPSDictionary];
     if (gpsdata) {
-	NSString *lat = [gpsdata objectForKey:
-			 (NSString *) kCGImagePropertyGPSLatitude];
+	NSString *lat = gpsdata[(NSString *) kCGImagePropertyGPSLatitude];
 	if (lat) {
-	    NSString *latRef = [gpsdata objectForKey:
-				(NSString *) kCGImagePropertyGPSLatitudeRef];
+	    NSString *latRef = gpsdata[(NSString *) kCGImagePropertyGPSLatitudeRef];
 	    if (latRef && [latRef isEqualToString: @"N"])
 		[self setLatitude: [lat doubleValue]];
 	    else
@@ -261,11 +256,9 @@
 	    [self setValidLocation: YES];
 	}
     
-	NSString *lng = [gpsdata objectForKey:
-			 (NSString *) kCGImagePropertyGPSLongitude];
+	NSString *lng = gpsdata[(NSString *) kCGImagePropertyGPSLongitude];
 	if (lng) {
-	    NSString *lngRef = [gpsdata objectForKey:
-				(NSString *) kCGImagePropertyGPSLongitudeRef];
+	    NSString *lngRef = gpsdata[(NSString *) kCGImagePropertyGPSLongitudeRef];
 	    if (lngRef && [lngRef isEqualToString: @"E"])
 		[self setLongitude: [lng doubleValue]];
 	    else

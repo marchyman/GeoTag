@@ -39,10 +39,8 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
      -------------
     */
     NSMutableDictionary *defaultValues = [NSMutableDictionary dictionary];
-    [defaultValues setObject: [NSNumber numberWithBool: YES]
-		      forKey: SSMakeBackupFilesKey];
-    [defaultValues setObject: @"/usr/bin/exiftool"
-		      forKey: SSExiftoolPathKey];
+    defaultValues[SSMakeBackupFilesKey] = @YES;
+    defaultValues[SSExiftoolPathKey] = @"/usr/bin/exiftool";
     [[NSUserDefaults standardUserDefaults] registerDefaults: defaultValues];
 }
 

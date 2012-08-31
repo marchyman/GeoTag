@@ -53,7 +53,7 @@
     NSInteger row = [self selectedRow];
     if ([appController isValidImageAtIndex: row]) {
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	[pb declareTypes: [NSArray arrayWithObject: NSStringPboardType]
+	[pb declareTypes: @[NSStringPboardType]
 		   owner: self];
 	[pb setString: [[appController imageAtIndex: row] stringRepresentation]
 	      forType: NSStringPboardType];

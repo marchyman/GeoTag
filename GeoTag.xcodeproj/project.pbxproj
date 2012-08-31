@@ -401,7 +401,7 @@
 				GCC_PREFIX_HEADER = Sources/GeoTag_Prefix.pch;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.6.8;
 				PRODUCT_NAME = GeoTag;
 			};
 			name = Debug;
@@ -416,7 +416,7 @@
 				GCC_PREFIX_HEADER = Sources/GeoTag_Prefix.pch;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.6.8;
 				PRODUCT_NAME = GeoTag;
 			};
 			name = Release;

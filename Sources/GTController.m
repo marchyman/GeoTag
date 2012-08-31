@@ -34,7 +34,7 @@
 - (void) awakeFromNib
 {
     [NSApp setDelegate: self];
-    [tableView registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];
+    [tableView registerForDraggedTypes: @[NSFilenamesPboardType]];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) sender
@@ -103,7 +103,7 @@
 
 - (ImageInfo *) imageAtIndex: (NSInteger) ix
 {
-    return [imageInfos objectAtIndex: ix];
+    return imageInfos[ix];
 }
 
 - (BOOL) isValidImageAtIndex: (NSInteger) ix
