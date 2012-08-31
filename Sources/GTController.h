@@ -11,15 +11,7 @@
 #import "GTMapView.h"
 #import "ImageInfo.h"
 
-@interface GTController : NSObject {
-    IBOutlet GTTableView *tableView;
-    IBOutlet NSImageView *imageWell;
-    IBOutlet GTMapView *mapView;
-    IBOutlet NSProgressIndicator *progressIndicator;
-
-    NSMutableArray *imageInfos;
-    NSUndoManager *undoManager;
-}
+@interface GTController : NSObject
 
 - (IBAction) showOpenPanel: (id) sender;
 - (IBAction) saveLocations: (id) sender;

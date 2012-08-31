@@ -15,9 +15,7 @@
 #define IIDateTime @"dt"
 #define IICapacity 4
 
-@interface ImageInfo : NSObject {
-    NSMutableDictionary *_infoDict;
-}
+@interface ImageInfo : NSObject
 
 @property (strong) NSImage *image;
 @property CGFloat latitude;

@@ -12,7 +12,9 @@
 - (BOOL) getInfoForFileAt: (NSString *) path;
 @end
 
-@implementation ImageInfo
+@implementation ImageInfo {
+    NSMutableDictionary *_infoDict;
+}
 
 #pragma mark -
 #pragma mark Class methods

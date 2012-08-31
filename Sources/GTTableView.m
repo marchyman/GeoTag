@@ -8,7 +8,10 @@
 #import "GTTableView.h"
 #import "GTController.h"
 
-@implementation GTTableView
+@implementation GTTableView {
+    id appController;
+}
+
 
 #pragma mark -
 #pragma mark init and setup

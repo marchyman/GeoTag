@@ -8,9 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface GTTableView : NSTableView <NSTableViewDelegate> {
-    id appController;
-}
+@interface GTTableView : NSTableView <NSTableViewDelegate>
 
 - (IBAction) cut: (id)sender;
 - (IBAction) copy: (id) sender;

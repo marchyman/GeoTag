@@ -15,7 +15,16 @@
 @end
 
 
-@implementation GTController
+@implementation GTController {
+    IBOutlet GTTableView *tableView;
+    IBOutlet NSImageView *imageWell;
+    IBOutlet GTMapView *mapView;
+    IBOutlet NSProgressIndicator *progressIndicator;
+    
+    NSMutableArray *imageInfos;
+    NSUndoManager *undoManager;
+}
+
 
 #pragma mark -
 #pragma mark Startup and teardown
