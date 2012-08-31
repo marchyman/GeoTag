@@ -1,5 +1,5 @@
 //
-//  SSTableView.m
+//  GTTableView.m
 //  GeoTag
 //
 //  Created by Marco S Hyman on 7/5/09.
@@ -8,10 +8,7 @@
 #import "GTTableView.h"
 #import "GTController.h"
 
-@implementation GTTableView {
-    id appController;
-}
-
+@implementation GTTableView
 
 #pragma mark -
 #pragma mark init and setup
