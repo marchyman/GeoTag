@@ -42,7 +42,7 @@
 #pragma mark script communication methods
 
 // hide any existing marker
-- (void) hideMarker: (NSString *) name;
+- (void) hideMarker: (NSString *) name
 {
     if (! [self isHiddenMarker]) {
         NSArray *args = @[name];
@@ -55,7 +55,7 @@
 // tell the map to drop a marker
 - (void) adjustMapForLatitude: (CGFloat) lat
 		    longitude: (CGFloat) lng
-			 name: (NSString *) name;
+			 name: (NSString *) name
 {
     if (lat && lng) {
 	NSString *latStr = [NSString stringWithFormat: @"%f", lat];
