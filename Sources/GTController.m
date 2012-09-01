@@ -389,18 +389,18 @@
 
 - (void) showProgressIndicator
 {
-    NSProgressIndicator* pi = [self progressIndicator];
-    [pi setUsesThreadedAnimation:YES];
-    [pi setHidden:NO];
-    [pi startAnimation:self];
-    [pi display];
+    NSProgressIndicator* pind = [self progressIndicator];
+    [pind setUsesThreadedAnimation:YES];
+    [pind setHidden:NO];
+    [pind startAnimation:self];
+    [pind display];
 }
 
 - (void) hideProgressIndicator
 {
-    NSProgressIndicator* pi = [self progressIndicator];
-    [pi stopAnimation:self];
-    [pi setHidden:YES];
+    NSProgressIndicator* pind = [self progressIndicator];
+    [pind stopAnimation:self];
+    [pind setHidden:YES];
 }
 
 #pragma mark -

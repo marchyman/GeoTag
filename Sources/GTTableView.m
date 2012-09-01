@@ -33,12 +33,12 @@
 {
     SEL action = [item action];
     if (action == @selector(selectAll:))
-        return [appController numberOfRowsInTableView: self] != 0;
+        return [self.appController numberOfRowsInTableView: self] != 0;
     if (action == @selector(copy:) ||
 	action == @selector(cut:) ||
 	action == @selector(paste:) ||
 	action == @selector(delete:))
-	return [appController isValidImageAtIndex: [self selectedRow]];
+	return [self.appController isValidImageAtIndex: [self selectedRow]];
     return YES;
 }
 
@@ -51,11 +51,11 @@
 - (IBAction) copy: (id) sender
 {
     NSInteger row = [self selectedRow];
-    if ([appController isValidImageAtIndex: row]) {
+    if ([self.appController isValidImageAtIndex: row]) {
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	[pb declareTypes: @[NSStringPboardType]
 		   owner: self];
-	[pb setString: [[appController imageAtIndex: row] stringRepresentation]
+	[pb setString: [[self.appController imageAtIndex: row] stringRepresentation]
 	      forType: NSStringPboardType];
     }
 }
@@ -67,17 +67,17 @@
         NSString *val = [pb stringForType: NSStringPboardType];
         NSIndexSet *rows = [self selectedRowIndexes];
         [rows enumerateIndexesUsingBlock: ^(NSUInteger row, BOOL *stop) {
-            if ([appController isValidImageAtIndex: row]) {
+            if ([self.appController isValidImageAtIndex: row]) {
                 NSString *lat;
                 NSString *lng;
-                if ([[appController imageAtIndex: row] convertFromString: val
+                if ([[self.appController imageAtIndex: row] convertFromString: val
                                                                 latitude: &lat
                                                                longitude: &lng]) {
-                    [appController updateLocationForImageAtRow: row
+                    [self.appController updateLocationForImageAtRow: row
                                                       latitude: lat
                                                      longitude: lng
                                                       modified: YES];
-                    [appController adjustMapViewForRow: row];
+                    [self.appController adjustMapViewForRow: row];
                 }
                 
             }
@@ -89,19 +89,19 @@
 {
     NSIndexSet *rows = [self selectedRowIndexes];
     [rows enumerateIndexesUsingBlock: ^(NSUInteger row, BOOL *stop) {
-        if ([appController isValidImageAtIndex: row]) {
-            [appController updateLocationForImageAtRow: row
+        if ([self.appController isValidImageAtIndex: row]) {
+            [self.appController updateLocationForImageAtRow: row
                                               latitude: nil
                                              longitude: nil
                                               modified: YES];
-            [appController adjustMapViewForRow: row];
+            [self.appController adjustMapViewForRow: row];
         }
     }];
 }
 
 - (IBAction) selectAll: (id)sender
 {
-    NSRange range = {0, [appController numberOfRowsInTableView: self]};
+    NSRange range = {0, [self.appController numberOfRowsInTableView: self]};
     NSIndexSet *allItems = [NSIndexSet indexSetWithIndexesInRange: range];
     [self selectRowIndexes: allItems byExtendingSelection: NO];
 }
@@ -116,7 +116,7 @@
 {
     if ([aCell respondsToSelector:@selector(setTextColor:)]) {
 	NSColor *textColor;
-	if ([appController isValidImageAtIndex: rowIndex])
+	if ([self.appController isValidImageAtIndex: rowIndex])
 	    textColor = [NSColor blackColor];
 	else
 	    textColor = [NSColor grayColor];
@@ -128,12 +128,12 @@
 - (BOOL) tableView: (NSTableView *) aTableView
    shouldSelectRow: (NSInteger) rowIndex
 {
-    return [appController isValidImageAtIndex: rowIndex];
+    return [self.appController isValidImageAtIndex: rowIndex];
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notification
 {
-    [appController showImageForIndex: [self selectedRow]];
+    [self.appController showImageForIndex: [self selectedRow]];
 }
 
 - (NSString *) tableView: (NSTableView *) tv
@@ -144,7 +144,7 @@
 	   mouseLocation: (NSPoint) mouseLocation
 {
     if ([[aTableColumn identifier] isEqual: @"name"])
-	return [[appController imageAtIndex: row] path];
+	return [[self.appController imageAtIndex: row] path];
     return nil;
 }
 
