@@ -26,11 +26,11 @@
 @property BOOL validOriginalLocation;
 @property BOOL validImage;
 
-@property (unsafe_unretained, readonly) NSString *path;
-@property (unsafe_unretained, readonly) NSString *name;
-@property (unsafe_unretained, readonly) NSString *date;
-@property (unsafe_unretained, readonly) NSString *latitudeAsString;
-@property (unsafe_unretained, readonly) NSString *longitudeAsString;
+@property (readonly, nonatomic) NSString *path;
+@property (readonly, nonatomic) NSString *name;
+@property (readonly, nonatomic) NSString *date;
+@property (readonly, nonatomic) NSString *latitudeAsString;
+@property (readonly, nonatomic) NSString *longitudeAsString;
 
 + (id) imageInfoWithPath: (NSString *) path;
 
