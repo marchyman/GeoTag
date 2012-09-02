@@ -10,9 +10,9 @@
 extern NSString * const SSExiftoolPathKey;
 extern NSString * const SSMakeBackupFilesKey;
 
-@interface GTDefaultsController : DBPrefsWindowController {
-    IBOutlet NSView *generalPreferenceView;
-}
+@interface GTDefaultsController : DBPrefsWindowController
+
+@property IBOutlet NSView *generalPreferenceView;
 
 + (NSString *) exiftoolPath;
 + (BOOL) makeBackupFiles;

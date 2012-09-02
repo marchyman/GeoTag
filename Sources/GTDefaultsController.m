@@ -46,15 +46,13 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
 
 + (NSString *) exiftoolPath
 {
-    return [[NSUserDefaults standardUserDefaults]
-	    stringForKey: SSExiftoolPathKey];
+    return [[NSUserDefaults standardUserDefaults] stringForKey: SSExiftoolPathKey];
 
 }
 
 + (BOOL) makeBackupFiles
 {
-    return [[NSUserDefaults standardUserDefaults]
-	    boolForKey: SSMakeBackupFilesKey];
+    return [[NSUserDefaults standardUserDefaults] boolForKey: SSMakeBackupFilesKey];
 }
 
 #pragma mark -
@@ -62,7 +60,7 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
 
 - (void) setupToolbar
 {
-    [self addView:generalPreferenceView label:@"General"];
+    [self addView:[self generalPreferenceView] label:@"General"];
 
     [self setCrossFade: YES];
     [self setShiftSlowsAnimation: NO];
@@ -73,14 +71,12 @@ NSString * const SSMakeBackupFilesKey = @"makeBackupFiles";
 
 - (IBAction) checkExiftoolValidity: (id) sender
 {
-    (void) sender;
+    // why did I add this?
 }
 
 - (IBAction) resetExiftoolPath: (id) sender
 {
-    [[NSUserDefaults standardUserDefaults]
-     removeObjectForKey:SSExiftoolPathKey];
-    (void) sender;
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:SSExiftoolPathKey];
 }
 
 - (void)    pathCell: (NSPathCell *) pathCell
@@ -90,8 +86,6 @@ willDisplayOpenPanel: (NSOpenPanel *) openPanel
     [openPanel setCanChooseFiles:YES];
     [openPanel setAllowsMultipleSelection:NO];
     [openPanel setTreatsFilePackagesAsDirectories:YES];
-    
-    (void) pathCell;
 }
 
 @end

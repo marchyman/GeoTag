@@ -5,13 +5,7 @@
 #import "DBPrefsWindowController.h"
 
 
-static DBPrefsWindowController *_sharedPrefsWindowController = nil;
-
-
 @implementation DBPrefsWindowController
-
-
-
 
 #pragma mark -
 #pragma mark Class Methods
@@ -19,9 +13,12 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 
 + (DBPrefsWindowController *)sharedPrefsWindowController
 {
-    if (!_sharedPrefsWindowController) {
-	_sharedPrefsWindowController = [[self alloc] initWithWindowNibName:[self nibName]];
-    }
+    static DBPrefsWindowController *_sharedPrefsWindowController = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedPrefsWindowController =
+            [[self alloc] initWithWindowNibName:[self nibName]];
+    });
     return _sharedPrefsWindowController;
 }
 
@@ -39,19 +36,19 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 {
     self = [super initWithWindow:nil];
     if (self != nil) {
-	// Set up an array and some dictionaries to keep track
-	// of the views we'll be displaying.
-	toolbarIdentifiers = [[NSMutableArray alloc] init];
-	toolbarViews = [[NSMutableDictionary alloc] init];
-	toolbarItems = [[NSMutableDictionary alloc] init];
+        // Set up an array and some dictionaries to keep track
+        // of the views we'll be displaying.
+        toolbarIdentifiers = [[NSMutableArray alloc] init];
+        toolbarViews = [[NSMutableDictionary alloc] init];
+        toolbarItems = [[NSMutableDictionary alloc] init];
 
-	// Set up an NSViewAnimation to animate the transitions.
-	viewAnimation = [[NSViewAnimation alloc] init];
-	[viewAnimation setAnimationBlockingMode:NSAnimationNonblocking];
-	[viewAnimation setAnimationCurve:NSAnimationEaseInOut];
-	[viewAnimation setDelegate:self];
-	[self setCrossFade:YES];
-	[self setShiftSlowsAnimation:YES];
+        // Set up an NSViewAnimation to animate the transitions.
+        viewAnimation = [[NSViewAnimation alloc] init];
+        [viewAnimation setAnimationBlockingMode:NSAnimationNonblocking];
+        [viewAnimation setAnimationCurve:NSAnimationEaseInOut];
+        [viewAnimation setDelegate:self];
+        [self setCrossFade:YES];
+        [self setShiftSlowsAnimation:YES];
     }
     return self;
 }
@@ -61,12 +58,13 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
     // Create a new window to display the preference views.
     // If the developer attached a window to this controller
     // in Interface Builder, it gets replaced with this one.
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,1000,1000)
-						   styleMask:(NSTitledWindowMask |
-							      NSClosableWindowMask |
-							      NSMiniaturizableWindowMask)
-						     backing:NSBackingStoreBuffered
-						       defer:YES];
+    NSWindow *window =
+        [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,1000,1000)
+                                    styleMask:(NSTitledWindowMask |
+                                               NSClosableWindowMask |
+                                               NSMiniaturizableWindowMask)
+                                      backing:NSBackingStoreBuffered
+                                        defer:YES];
     [self setWindow:window];
     contentSubview = [[NSView alloc] initWithFrame:[[[self window] contentView] frame]];
     [contentSubview setAutoresizingMask:(NSViewMinYMargin | NSViewWidthSizable)];
@@ -77,31 +75,24 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 #pragma mark -
 #pragma mark Configuration
 
-
 - (void)setupToolbar
 {
     // Subclasses must override this method to add items to the
     // toolbar by calling -addView:label: or -addView:label:image:.
 }
 
-
-
-
 - (void)addView:(NSView *)view label:(NSString *)label
 {
     [self addView:view
-	    label:label
-	    image:[NSImage imageNamed:label]];
+            label:label
+            image:[NSImage imageNamed:label]];
 }
-
-
-
 
 - (void)addView:(NSView *)view label:(NSString *)label image:(NSImage *)image
 {
     NSAssert (view != nil,
-	      @"Attempted to add a nil view when calling -addView:label:image:.",
-	      nil);
+              @"Attempted to add a nil view when calling -addView:label:image:.",
+              nil);
 	
     NSString *identifier = [label copy];
 	
@@ -115,33 +106,6 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
     [item setAction:@selector(toggleActivePreferenceView:)];
 	
     toolbarItems[identifier] = item;
-}
-
-
-
-
-#pragma mark -
-#pragma mark Accessor Methods
-
-
-- (BOOL)crossFade
-{
-    return _crossFade;
-}
-
-- (void)setCrossFade:(BOOL)fade
-{
-    _crossFade = fade;
-}
-
-- (BOOL)shiftSlowsAnimation
-{
-    return _shiftSlowsAnimation;
-}
-
-- (void)setShiftSlowsAnimation:(BOOL)slows
-{
-    _shiftSlowsAnimation = slows;
 }
 
 #pragma mark -
@@ -162,13 +126,13 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 	      @"No items were added to the toolbar in -setupToolbar.", nil);
 
     if ([[self window] toolbar] == nil) {
-	NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"DBPreferencesToolbar"];
-	[toolbar setAllowsUserCustomization:NO];
-	[toolbar setAutosavesConfiguration:NO];
-	[toolbar setSizeMode:NSToolbarSizeModeDefault];
-	[toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
-	[toolbar setDelegate:self];
-	[[self window] setToolbar:toolbar];
+        NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"DBPreferencesToolbar"];
+        [toolbar setAllowsUserCustomization:NO];
+        [toolbar setAutosavesConfiguration:NO];
+        [toolbar setSizeMode:NSToolbarSizeModeDefault];
+        [toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
+        [toolbar setDelegate:self];
+        [[self window] setToolbar:toolbar];
     }
 	
     NSString *firstIdentifier = toolbarIdentifiers[0];
@@ -218,37 +182,37 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
     // See if there are any visible views.
     NSView *oldView = nil;
     if ([[contentSubview subviews] count] > 0) {
-	// Get a list of all of the views in the window. Usually at this
-	// point there is just one visible view. But if the last fade
-	// hasn't finished, we need to get rid of it now before we move on.
-	NSEnumerator *subviewsEnum = [[contentSubview subviews] reverseObjectEnumerator];
+        // Get a list of all of the views in the window. Usually at this
+        // point there is just one visible view. But if the last fade
+        // hasn't finished, we need to get rid of it now before we move on.
+        NSEnumerator *subviewsEnum = [[contentSubview subviews] reverseObjectEnumerator];
 		
-	// The first one (last one added) is our visible view.
-	oldView = [subviewsEnum nextObject];
+        // The first one (last one added) is our visible view.
+        oldView = [subviewsEnum nextObject];
 		
-	// Remove any others.
-	NSView *reallyOldView = nil;
-	while ((reallyOldView = [subviewsEnum nextObject]) != nil) {
-	    [reallyOldView removeFromSuperviewWithoutNeedingDisplay];
-	}
+        // Remove any others.
+        NSView *reallyOldView = nil;
+        while ((reallyOldView = [subviewsEnum nextObject]) != nil) {
+            [reallyOldView removeFromSuperviewWithoutNeedingDisplay];
+        }
     }
 	
     if (![newView isEqualTo:oldView]) {
-	NSRect frame = [newView bounds];
-	frame.origin.y = NSHeight([contentSubview frame]) - NSHeight([newView bounds]);
-	[newView setFrame:frame];
-	[contentSubview addSubview:newView];
-	[[self window] setInitialFirstResponder:newView];
+        NSRect frame = [newView bounds];
+        frame.origin.y = NSHeight([contentSubview frame]) - NSHeight([newView bounds]);
+        [newView setFrame:frame];
+        [contentSubview addSubview:newView];
+        [[self window] setInitialFirstResponder:newView];
 
-	if (animate && [self crossFade])
-	    [self crossFadeView:oldView withView:newView];
-	else {
-	    [oldView removeFromSuperviewWithoutNeedingDisplay];
-	    [newView setHidden:NO];
-	    [[self window] setFrame:[self frameForView:newView] display:YES animate:animate];
-	}
+        if (animate && [self crossFade])
+            [self crossFadeView:oldView withView:newView];
+        else {
+            [oldView removeFromSuperviewWithoutNeedingDisplay];
+            [newView setHidden:NO];
+            [[self window] setFrame:[self frameForView:newView] display:YES animate:animate];
+        }
 
-	[[self window] setTitle:[toolbarItems[identifier] label]];
+        [[self window] setTitle:[toolbarItems[identifier] label]];
     }
 }
 
@@ -260,25 +224,24 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
     [viewAnimation stopAnimation];
 	
     if ([self shiftSlowsAnimation] && [[[self window] currentEvent] modifierFlags] & NSShiftKeyMask)
-	[viewAnimation setDuration:1.25];
+        [viewAnimation setDuration:1.25];
     else
-	[viewAnimation setDuration:0.25];
+        [viewAnimation setDuration:0.25];
 	
     NSDictionary *fadeOutDictionary =
-	@{NSViewAnimationTargetKey: oldView,
+        @{NSViewAnimationTargetKey: oldView,
 	  NSViewAnimationEffectKey: NSViewAnimationFadeOutEffect};
 
     NSDictionary *fadeInDictionary =
-	@{NSViewAnimationTargetKey: newView,
-	  NSViewAnimationEffectKey: NSViewAnimationFadeInEffect};
+        @{NSViewAnimationTargetKey: newView,
+          NSViewAnimationEffectKey: NSViewAnimationFadeInEffect};
 
     NSDictionary *resizeDictionary =
-	@{NSViewAnimationTargetKey: [self window],
-	  NSViewAnimationStartFrameKey: [NSValue valueWithRect:[[self window] frame]],
-	  NSViewAnimationEndFrameKey: [NSValue valueWithRect:[self frameForView:newView]]};
+        @{NSViewAnimationTargetKey: [self window],
+          NSViewAnimationStartFrameKey: [NSValue valueWithRect:[[self window] frame]],
+          NSViewAnimationEndFrameKey: [NSValue valueWithRect:[self frameForView:newView]]};
 	
-    NSArray *animationArray = @[fadeOutDictionary, fadeInDictionary,
-			        resizeDictionary];
+    NSArray *animationArray = @[fadeOutDictionary, fadeInDictionary, resizeDictionary];
 	
     [viewAnimation setViewAnimations:animationArray];
     [viewAnimation startAnimation];
@@ -300,16 +263,13 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
     // if the user does a lot of fast clicking, we might have
     // more than one to remove.
     while ((subview = [subviewsEnum nextObject]) != nil) {
-	[subview removeFromSuperviewWithoutNeedingDisplay];
+        [subview removeFromSuperviewWithoutNeedingDisplay];
     }
 
     // This is a work-around that prevents the first
     // toolbar icon from becoming highlighted.
     [[self window] makeFirstResponder:nil];
 }
-
-
-
 
 // Calculate the window size for the new view.
 - (NSRect)frameForView:(NSView *)view

@@ -42,19 +42,17 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface DBPrefsWindowController : NSWindowController <NSAnimationDelegate,
-							 NSToolbarDelegate> {
-	NSMutableArray *toolbarIdentifiers;
-	NSMutableDictionary *toolbarViews;
-	NSMutableDictionary *toolbarItems;
+@interface DBPrefsWindowController : NSWindowController <NSAnimationDelegate, NSToolbarDelegate> {
+    NSMutableArray *toolbarIdentifiers;
+    NSMutableDictionary *toolbarViews;
+    NSMutableDictionary *toolbarItems;
 	
-	BOOL _crossFade;
-	BOOL _shiftSlowsAnimation;
-	
-	NSView *contentSubview;
-	NSViewAnimation *viewAnimation;
+    NSView *contentSubview;
+    NSViewAnimation *viewAnimation;
 }
 
+@property BOOL crossFade;
+@property BOOL shiftSlowsAnimation;
 
 + (DBPrefsWindowController *)sharedPrefsWindowController;
 + (NSString *)nibName;
@@ -71,6 +69,5 @@
 - (void)displayViewForIdentifier:(NSString *)identifier animate:(BOOL)animate;
 - (void)crossFadeView:(NSView *)oldView withView:(NSView *)newView;
 - (NSRect)frameForView:(NSView *)view;
-
 
 @end
