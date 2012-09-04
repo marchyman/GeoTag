@@ -38,6 +38,7 @@
         _infoDict = [NSMutableDictionary dictionaryWithObject: path
                                                        forKey: IIPathName];
         _infoDict[IIImageName] = [path lastPathComponent];
+        _image = nil;
         _latitude = 0.0;
         _longitude = 0.0;
         _originalLatitude = 0.0;
@@ -49,7 +50,6 @@
             _validOriginalLocation = _validLocation;
             _originalLatitude = _latitude;
             _originalLongitude = _longitude;
-            _image = [[NSImage alloc] initWithContentsOfFile: path];
         }
     }
     return self;
@@ -232,8 +232,27 @@
         CGImageSourceCreateWithURL((__bridge CFURLRef) url, NULL);
     if (! iRef)
 	return NO;
-    NSDictionary *metadata = 
+
+    // get metadata
+    NSDictionary *metadata =
         (__bridge_transfer NSDictionary *) CGImageSourceCopyPropertiesAtIndex(iRef, 0, NULL);
+
+    // get a reasonable sized thumbnail
+    NSDictionary *opts = [NSDictionary dictionaryWithObjectsAndKeys:
+        (id) kCFBooleanTrue, (id)kCGImageSourceCreateThumbnailWithTransform,
+        (id)kCFBooleanTrue, (id)kCGImageSourceCreateThumbnailFromImageIfAbsent,
+        [NSNumber numberWithInt:1024], kCGImageSourceThumbnailMaxPixelSize,
+        nil];
+    CGImageRef preview = CGImageSourceCreateThumbnailAtIndex(iRef, 0, (__bridge CFDictionaryRef) opts);
+    NSRect imageRect= NSMakeRect(0.0, 0.0, 0.0, 0.0);
+    imageRect.size.height = CGImageGetHeight(preview);
+    imageRect.size.width = CGImageGetWidth(preview);
+    self.image = [[NSImage alloc] initWithSize:imageRect.size];
+    [self.image lockFocus];
+    CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort],
+                       *(CGRect*)&imageRect, preview);
+    [self.image unlockFocus];
+    CGImageRelease(preview);
     CFRelease(iRef);
 
     // image creation date/time
