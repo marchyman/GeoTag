@@ -8,9 +8,13 @@
 #import "ImageInfo.h"
 #import "GTDefaultsController.h"
 
-@interface ImageInfo ()
-- (BOOL) getInfoForFileAt: (NSString *) path;
-@end
+/*
+ * info dictionary keys
+ */
+#define IIPathName @"path"
+#define IIImageName @"fn"
+#define IIDateTime @"dt"
+#define IICapacity 4
 
 @implementation ImageInfo {
     NSMutableDictionary *_infoDict;
@@ -31,17 +35,22 @@
 {
     self = [super init];
     if (self) {
-	_infoDict = [NSMutableDictionary dictionaryWithObject: path
-						       forKey: IIPathName];
-	_infoDict[IIImageName] = [path lastPathComponent];
-	_validImage = [self getInfoForFileAt: path];
-	if (self.validImage) {
-	    [self setValidOriginalLocation: [self validLocation]];
-	    [self setOriginalLatitude: [self latitude]];
-	    [self setOriginalLongitude: [self longitude]];
-	    [self setImage: [[NSImage alloc] initWithContentsOfFile: path]];
-	    /* ;;; make the above a concurrent operation ??? */
-	}
+        _infoDict = [NSMutableDictionary dictionaryWithObject: path
+                                                       forKey: IIPathName];
+        _infoDict[IIImageName] = [path lastPathComponent];
+        _latitude = 0.0;
+        _longitude = 0.0;
+        _originalLatitude = 0.0;
+        _originalLongitude = 0.0;
+        _validLocation = NO;
+        _validOriginalLocation = NO;
+        _validImage = [self getInfoForFileAt: path];
+        if (_validImage) {
+            _validOriginalLocation = _validLocation;
+            _originalLatitude = _latitude;
+            _originalLongitude = _longitude;
+            _image = [[NSImage alloc] initWithContentsOfFile: path];
+        }
     }
     return self;
 }
@@ -63,7 +72,7 @@
 
 - (NSString *) latitudeAsString
 {
-    if ([self validLocation])
+    if (self.validLocation)
 	return [NSString stringWithFormat: @"%f", [self latitude]];
     return @"";
 
@@ -71,7 +80,7 @@
 
 - (NSString *) longitudeAsString
 {
-    if ([self validLocation])
+    if (self.validLocation)
 	return [NSString stringWithFormat: @"%f", [self longitude]];
     return @"";
 }
@@ -81,7 +90,7 @@
 
 - (NSString *) stringRepresentation
 {
-    if ([self validLocation])
+    if (self.validLocation)
 	return [NSString stringWithFormat: @"%f %f", [self latitude],
 		[self longitude]];
     return @"";
@@ -117,11 +126,11 @@
 - (void) setLocationToLatitude: (NSString *) lat longitude: (NSString *) lng
 {
     if (lat && lng) {
-	[self setLatitude: [lat doubleValue]];
-	[self setLongitude: [lng doubleValue]];
-	[self setValidLocation: YES];
+	self.latitude = [lat doubleValue];
+	self.longitude = [lng doubleValue];
+	self.validLocation = YES;
     } else
-	[self setValidLocation: NO];
+	self.validLocation = NO;
 }
 
 #pragma mark -
@@ -150,9 +159,9 @@
  */
 - (void) saveLocationWithGroup: (dispatch_group_t) dispatchGroup
 {
-    if (([self validLocation] != [self validOriginalLocation]) ||
-	([self latitude] != [self originalLatitude]) ||
-	([self longitude] != [self originalLongitude])) {
+    if ((self.validLocation != self.validOriginalLocation) ||
+	(self.latitude != self.originalLatitude) ||
+	(self.longitude != self.originalLongitude)) {
 
 	if ([GTDefaultsController makeBackupFiles])
 	    [self backupFile];
@@ -161,8 +170,8 @@
 	    [NSMutableString stringWithString: @"-GPSLatitude="];
 	NSMutableString *latRefArg =
 	    [NSMutableString stringWithString: @"-GPSLatitudeRef="];
-	if ([self validLocation]) {
-	    CGFloat lat = [self latitude];
+	if (self.validLocation) {
+	    CGFloat lat = self.latitude;
 	    if (lat < 0) {
 		[latRefArg appendString: @"S"];
 		lat = -lat;
@@ -175,7 +184,7 @@
 	    [NSMutableString stringWithString: @"-GPSLongitude="];
 	NSMutableString *lngRefArg =
 	    [NSMutableString stringWithString: @"-GPSLongitudeRef="];
-	if ([self validLocation]) {
+	if (self.validLocation) {
 	    CGFloat lng = [self longitude];
 	    if (lng < 0) {
 		[lngRefArg appendString: @"W"];
@@ -201,16 +210,16 @@
             [exiftool waitUntilExit];
             ;;; // check for error?
         });
-        [self setOriginalLatitude: [self latitude]];
-        [self setOriginalLongitude: [self longitude]];
+        self.originalLatitude = self.latitude;
+        self.originalLongitude = self.longitude;
     }
 }
 
 - (void) revertLocation
 {
-    [self setValidLocation: [self validOriginalLocation]];
-    [self setLatitude: [self originalLatitude]];
-    [self setLongitude: [self originalLongitude]];
+    self.validLocation = self.validOriginalLocation;
+    self.latitude = self.originalLatitude;
+    self.longitude = self.originalLongitude;
 }
 
 #pragma mark -
@@ -244,20 +253,20 @@
 	if (lat) {
 	    NSString *latRef = gpsdata[(NSString *) kCGImagePropertyGPSLatitudeRef];
 	    if (latRef && [latRef isEqualToString: @"N"])
-		[self setLatitude: [lat doubleValue]];
+		self.latitude = [lat doubleValue];
 	    else
-		[self setLatitude: -[lat doubleValue]];
-	    [self setValidLocation: YES];
+                self.latitude = -[lat doubleValue];
+	    self.validLocation = YES;
 	}
     
 	NSString *lng = gpsdata[(NSString *) kCGImagePropertyGPSLongitude];
 	if (lng) {
 	    NSString *lngRef = gpsdata[(NSString *) kCGImagePropertyGPSLongitudeRef];
 	    if (lngRef && [lngRef isEqualToString: @"E"])
-		[self setLongitude: [lng doubleValue]];
+                self.longitude = [lng doubleValue];
 	    else
-		[self setLongitude: -[lng doubleValue]];
-	    [self setValidLocation: YES];
+                self.longitude = -[lng doubleValue];
+            self.validLocation = YES;
 	}
     }
     return YES;

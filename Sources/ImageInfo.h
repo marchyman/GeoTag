@@ -7,14 +7,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-/*
- * info dictionary keys
- */
-#define IIPathName @"path"
-#define IIImageName @"fn"
-#define IIDateTime @"dt"
-#define IICapacity 4
-
 @interface ImageInfo : NSObject
 
 @property (strong) NSImage *image;
