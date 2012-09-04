@@ -45,7 +45,7 @@
         _originalLongitude = 0.0;
         _validLocation = NO;
         _validOriginalLocation = NO;
-        _validImage = [self getInfoForFileAt: path];
+        _validImage = [self getImageFromFileAt: path];
         if (_validImage) {
             _validOriginalLocation = _validLocation;
             _originalLatitude = _latitude;
@@ -225,7 +225,7 @@
 #pragma mark -
 #pragma mark helper functions
 
-- (BOOL) getInfoForFileAt: (NSString *) path
+- (BOOL) getImageFromFileAt: (NSString *) path
 {
     NSURL *url = [NSURL fileURLWithPath: path];
     CGImageSourceRef iRef =
@@ -237,13 +237,15 @@
     NSDictionary *metadata =
         (__bridge_transfer NSDictionary *) CGImageSourceCopyPropertiesAtIndex(iRef, 0, NULL);
 
-    // get a reasonable sized thumbnail
+    // extract/create a reasonable sized thumbnail (fit within 1024x1024)
     NSDictionary *opts = [NSDictionary dictionaryWithObjectsAndKeys:
-        (id) kCFBooleanTrue, (id)kCGImageSourceCreateThumbnailWithTransform,
+        (id)kCFBooleanTrue, (id)kCGImageSourceCreateThumbnailWithTransform,
         (id)kCFBooleanTrue, (id)kCGImageSourceCreateThumbnailFromImageIfAbsent,
         [NSNumber numberWithInt:1024], kCGImageSourceThumbnailMaxPixelSize,
         nil];
-    CGImageRef preview = CGImageSourceCreateThumbnailAtIndex(iRef, 0, (__bridge CFDictionaryRef) opts);
+    CGImageRef preview =
+        CGImageSourceCreateThumbnailAtIndex(iRef, 0,
+                                            (__bridge CFDictionaryRef) opts);
     NSRect imageRect= NSMakeRect(0.0, 0.0, 0.0, 0.0);
     imageRect.size.height = CGImageGetHeight(preview);
     imageRect.size.width = CGImageGetWidth(preview);
