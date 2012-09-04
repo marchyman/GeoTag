@@ -51,8 +51,8 @@
     function updateMarkerLocation() {
 	locn = marker.position;
 	if (controller) {
-	    controller.mapLat = "" + locn.lat();
-	    controller.mapLng = "" + locn.lng();
+	    controller._mapLat = "" + locn.lat();
+	    controller._mapLng = "" + locn.lng();
 	    controller.reportPosition();
 	}
 	marker.setVisible(true);

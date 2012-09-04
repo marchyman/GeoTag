@@ -24,8 +24,8 @@
 // the script has access to mapLat and mapLng variables
 + (BOOL) isKeyExcludedFromWebScript: (const char *) property
 {
-    if ((strcmp(property, "mapLat") == 0) ||
-	(strcmp(property, "mapLng") == 0))
+    if ((strcmp(property, "_mapLat") == 0) ||
+	(strcmp(property, "_mapLng") == 0))
         return NO;
     return YES;
     
