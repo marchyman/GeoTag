@@ -237,11 +237,11 @@
     NSDictionary *metadata =
         (__bridge_transfer NSDictionary *) CGImageSourceCopyPropertiesAtIndex(iRef, 0, NULL);
 
-    // extract/create a reasonable sized thumbnail (fit within 1024x1024)
+    // extract/create a reasonable sized thumbnail (fit within 512x512)
     NSDictionary *opts = [NSDictionary dictionaryWithObjectsAndKeys:
         (id)kCFBooleanTrue, (id)kCGImageSourceCreateThumbnailWithTransform,
-        (id)kCFBooleanTrue, (id)kCGImageSourceCreateThumbnailFromImageIfAbsent,
-        [NSNumber numberWithInt:1024], kCGImageSourceThumbnailMaxPixelSize,
+        (id)kCFBooleanTrue, (id)kCGImageSourceCreateThumbnailFromImageAlways,
+        [NSNumber numberWithInt:512], kCGImageSourceThumbnailMaxPixelSize,
         nil];
     CGImageRef preview =
         CGImageSourceCreateThumbnailAtIndex(iRef, 0,
