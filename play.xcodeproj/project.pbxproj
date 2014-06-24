@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		491198391959434500F304CB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 491198381959434500F304CB /* MapKit.framework */; };
 		49B0EEBA19495FB100293C73 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEB919495FB100293C73 /* main.swift */; };
 		49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEBB19495FB100293C73 /* AppDelegate.swift */; };
 		49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0EEBD19495FB100293C73 /* Images.xcassets */; };
@@ -25,6 +26,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		491198381959434500F304CB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		4911983A1959434500F304CB /* play.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = play.entitlements; sourceTree = "<group>"; };
 		49B0EEB419495FB100293C73 /* play.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = play.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B0EEB819495FB100293C73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49B0EEB919495FB100293C73 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -41,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				491198391959434500F304CB /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +61,7 @@
 		49B0EEAB19495FB100293C73 = {
 			isa = PBXGroup;
 			children = (
+				491198381959434500F304CB /* MapKit.framework */,
 				49B0EEB619495FB100293C73 /* play */,
 				49B0EEC919495FB100293C73 /* playTests */,
 				49B0EEB519495FB100293C73 /* Products */,
@@ -75,6 +80,7 @@
 		49B0EEB619495FB100293C73 /* play */ = {
 			isa = PBXGroup;
 			children = (
+				4911983A1959434500F304CB /* play.entitlements */,
 				49B0EEBB19495FB100293C73 /* AppDelegate.swift */,
 				49B0EEBD19495FB100293C73 /* Images.xcassets */,
 				49B0EEBF19495FB100293C73 /* MainMenu.xib */,
@@ -158,6 +164,12 @@
 				TargetAttributes = {
 					49B0EEB319495FB100293C73 = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = A3UXBEBE8Z;
+						SystemCapabilities = {
+							com.apple.Maps.Mac = {
+								enabled = 1;
+							};
+						};
 					};
 					49B0EEC519495FB100293C73 = {
 						CreatedOnToolsVersion = 6.0;
@@ -324,10 +336,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = play/play.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = play/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -335,10 +351,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = play/play.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = play/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -399,6 +419,7 @@
 				49B0EED219495FB100293C73 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		49B0EED319495FB100293C73 /* Build configuration list for PBXNativeTarget "playTests" */ = {
 			isa = XCConfigurationList;
@@ -407,6 +428,7 @@
 				49B0EED519495FB100293C73 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
