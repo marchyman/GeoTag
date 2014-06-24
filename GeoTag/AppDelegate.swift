@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  play
+//  GeoTag (3rd version)
 //
 //  Created by Marco S Hyman on 6/11/14.
 //  Copyright (c) 2014 Marco S Hyman. All rights reserved.
