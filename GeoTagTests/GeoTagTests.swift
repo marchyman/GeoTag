@@ -8,7 +8,7 @@
 
 import XCTest
 
-class playTests: XCTestCase {
+class GeoTagTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
