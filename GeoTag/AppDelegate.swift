@@ -8,19 +8,69 @@
 
 import Cocoa
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                             
     @IBOutlet var window: NSWindow
 
 
     func applicationDidFinishLaunching(aNotification: NSNotification?) {
         // Insert code here to initialize your application
+        window.delegate = self
+    }
+
+    /*
+     * app termination
+     */
+    func applicationShouldTerminateAfterLastWindowClosed(theApplication: NSApplication!) -> Bool {
+        return true
+    }
+    
+    func saveOrDontSave(window: NSWindow) -> Bool {
+        if window.documentEdited {
+            var alert = NSAlert()
+            alert.addButtonWithTitle(NSLocalizedString("SAVE", comment: "Save"))
+            alert.addButtonWithTitle(NSLocalizedString("CANCEL", comment: "Cancel"))
+            alert.addButtonWithTitle(NSLocalizedString("DONT_SAVE", comment: "Don't Save"))
+            alert.messageText = NSLocalizedString("UNSAVED_TITLE", comment: "Unsaved Changes")
+            alert.informativeText = NSLocalizedString("UNSAVED_DESC", comment: "Unsaved Changes")
+            alert.beginSheetModalForWindow(window) {
+                (response: NSModalResponse) -> Void in
+                println("Modal response is \(response)")
+                switch response {
+                case 1000:
+                    println("initiate save here")
+                case 1001:
+                    println("Close/terminate cancelled")
+                    return
+                default:
+                    println("Don't bother saving")
+                    break
+                }
+                window.documentEdited = false
+                window.close()
+            }
+            return false
+        }
+        return true
+    }
+
+    func applicationShouldTerminate(sender: NSApplication!) -> NSApplicationTerminateReply {
+        println("applicationShouldTerminate called")
+        if saveOrDontSave(window) {
+            return .TerminateNow
+        }
+        return .TerminateCancel
     }
 
     func applicationWillTerminate(aNotification: NSNotification?) {
         // Insert code here to tear down your application
     }
 
-
+    /*
+     * Window delegate functions
+     */
+    func windowShouldClose(window: NSWindow) -> Bool {
+        println("windowShouldClose: \(window)")
+        return saveOrDontSave(window)
+    }
 }
-
