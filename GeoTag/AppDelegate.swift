@@ -28,18 +28,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func saveOrDontSave(window: NSWindow) -> Bool {
         if window.documentEdited {
             var alert = NSAlert()
-            alert.addButtonWithTitle(NSLocalizedString("SAVE", comment: "Save"))
-            alert.addButtonWithTitle(NSLocalizedString("CANCEL", comment: "Cancel"))
-            alert.addButtonWithTitle(NSLocalizedString("DONT_SAVE", comment: "Don't Save"))
-            alert.messageText = NSLocalizedString("UNSAVED_TITLE", comment: "Unsaved Changes")
-            alert.informativeText = NSLocalizedString("UNSAVED_DESC", comment: "Unsaved Changes")
+            alert.addButtonWithTitle(NSLocalizedString("SAVE",
+                                                       comment: "Save"))
+            alert.addButtonWithTitle(NSLocalizedString("CANCEL",
+                                                       comment: "Cancel"))
+            alert.addButtonWithTitle(NSLocalizedString("DONT_SAVE",
+                                                       comment: "Don't Save"))
+            alert.messageText = NSLocalizedString("UNSAVED_TITLE",
+                                                  comment: "Unsaved Changes")
+            alert.informativeText = NSLocalizedString("UNSAVED_DESC",
+                                                      comment: "Unsaved Changes")
             alert.beginSheetModalForWindow(window) {
                 (response: NSModalResponse) -> Void in
                 println("Modal response is \(response)")
                 switch response {
-                case 1000:
+                case NSAlertFirstButtonReturn:      // Save
                     println("initiate save here")
-                case 1001:
+                case NSAlertSecondButtonReturn:     // Cancel
                     println("Close/terminate cancelled")
                     return
                 default:
