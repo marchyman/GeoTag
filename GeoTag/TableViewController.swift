@@ -11,24 +11,27 @@ import Cocoa
 @objc(TableViewController)
 class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
 
-    // MARK: startup
+    @IBOutlet var tableView: NSTableView
+    
+    // startup
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
-    // MARK: data source functions
+    // data source functions
     
     func numberOfRowsInTableView(tableView: NSTableView!) -> Int {
         // Number of active rows
+        println(__FUNCTION__ + ": for table view \(tableView)")
         return 0
     }
 
-    func tableView(aTableView: NSTableView!,
-                   objectValueForTableColumn aTableColumn: NSTableColumn!,
-                   row rowIndex: Int) -> AnyObject! {
-        // cell allocation stuff
+    func tableView(tableView: NSTableView!,
+                 tableColumn: NSTableColumn!,
+                         row: Int) -> NSView! {
+
         return nil
     }
 }
