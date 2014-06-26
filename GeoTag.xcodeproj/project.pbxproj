@@ -63,14 +63,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		497EE5D0195BBFB200306283 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		497EE5D1195BBFC000306283 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
 		49B0EEAB19495FB100293C73 = {
 			isa = PBXGroup;
 			children = (
 				49BC3D06195A14D2009BEC94 /* GeoTagPlay.playground */,
-				491198381959434500F304CB /* MapKit.framework */,
 				49B0EEB619495FB100293C73 /* GeoTag */,
 				49B0EEC919495FB100293C73 /* GeoTagTests */,
 				49B0EEB519495FB100293C73 /* Products */,
+				491198381959434500F304CB /* MapKit.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -86,13 +101,11 @@
 		49B0EEB619495FB100293C73 /* GeoTag */ = {
 			isa = PBXGroup;
 			children = (
-				49BC3D0B195A62F2009BEC94 /* Localizable.strings */,
-				4911983A1959434500F304CB /* GeoTag.entitlements */,
 				49B0EEBB19495FB100293C73 /* AppDelegate.swift */,
-				49B0EEBD19495FB100293C73 /* Images.xcassets */,
+				497EE5D1195BBFC000306283 /* Controllers */,
+				497EE5D0195BBFB200306283 /* Model */,
 				49B0EEBF19495FB100293C73 /* MainMenu.xib */,
 				49B0EEB719495FB100293C73 /* Supporting Files */,
-				49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */,
 			);
 			path = GeoTag;
 			sourceTree = "<group>";
@@ -100,7 +113,10 @@
 		49B0EEB719495FB100293C73 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4911983A1959434500F304CB /* GeoTag.entitlements */,
+				49B0EEBD19495FB100293C73 /* Images.xcassets */,
 				49B0EEB819495FB100293C73 /* Info.plist */,
+				49BC3D0B195A62F2009BEC94 /* Localizable.strings */,
 				49B0EEB919495FB100293C73 /* main.swift */,
 			);
 			name = "Supporting Files";
