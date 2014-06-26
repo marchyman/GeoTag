@@ -25,13 +25,33 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
     func numberOfRowsInTableView(tableView: NSTableView!) -> Int {
         // Number of active rows
         println(__FUNCTION__ + ": for table view \(tableView)")
-        return 0
+        return 1
     }
 
     func tableView(tableView: NSTableView!,
-                 tableColumn: NSTableColumn!,
-                         row: Int) -> NSView! {
+        viewForTableColumn tableColumn: NSTableColumn!,
+        row: Int) -> NSView! {
+        if let id = tableColumn.identifier {
+            switch id {
+                case "imageName":
+                     println("imageName")
 
+                case "dateTime":
+                    println("dateTime")
+
+                case "latitude":
+                    println("latitude")
+                
+                case "longitude":
+                    println("longitude")
+
+            default:
+                    println("unknown id")
+            }
+            var colView = tableView.makeViewWithIdentifier(id, owner: nil) as NSTableCellView
+            colView.textField.stringValue = "Test " + id;    // test code
+            return colView
+        }
         return nil
     }
 }

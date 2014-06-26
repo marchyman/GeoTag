@@ -695,7 +695,7 @@
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn identifier="image name" editable="NO" width="181" minWidth="40" maxWidth="1000" id="gce-uz-HJd">
+                                        <tableColumn identifier="imageName" editable="NO" width="181" minWidth="40" maxWidth="1000" id="gce-uz-HJd">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Image Name">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -708,7 +708,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
-                                                <tableCellView id="hmU-7m-8FG">
+                                                <tableCellView identifier="imageName" id="hmU-7m-8FG">
                                                     <rect key="frame" x="1" y="1" width="181" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
@@ -727,7 +727,7 @@
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn identifier="date time" editable="NO" width="138" minWidth="40" maxWidth="1000" id="QOH-5Z-eM4">
+                                        <tableColumn identifier="dateTime" editable="NO" width="138" minWidth="40" maxWidth="1000" id="QOH-5Z-eM4">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Date/Time">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -740,7 +740,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
-                                                <tableCellView id="J4a-hA-T1u">
+                                                <tableCellView identifier="dateTime" id="J4a-hA-T1u">
                                                     <rect key="frame" x="185" y="1" width="138" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
@@ -772,7 +772,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
-                                                <tableCellView id="JX3-4H-ItO">
+                                                <tableCellView identifier="latitude" id="JX3-4H-ItO">
                                                     <rect key="frame" x="326" y="1" width="65" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
@@ -804,7 +804,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
-                                                <tableCellView id="4Km-RM-P0Q">
+                                                <tableCellView identifier="longitude" id="4Km-RM-P0Q">
                                                     <rect key="frame" x="394" y="1" width="79" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
