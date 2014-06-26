@@ -18,6 +18,7 @@
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+        <viewController id="er7-2A-M57" customClass="TableViewController"/>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
                 <menuItem title="GeoTag" id="1Xt-HY-uBw">
@@ -690,7 +691,7 @@
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn identifier="AutomaticTableColumnIdentifier.0" editable="NO" width="181" minWidth="40" maxWidth="1000" id="gce-uz-HJd">
+                                        <tableColumn identifier="image name" editable="NO" width="181" minWidth="40" maxWidth="1000" id="gce-uz-HJd">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Image Name">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -703,7 +704,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn identifier="AutomaticTableColumnIdentifier.1" editable="NO" width="138" minWidth="40" maxWidth="1000" id="QOH-5Z-eM4">
+                                        <tableColumn identifier="date time" editable="NO" width="138" minWidth="40" maxWidth="1000" id="QOH-5Z-eM4">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Date/Time">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -716,7 +717,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn editable="NO" width="65" minWidth="10" maxWidth="3.4028234663852886e+38" id="EGN-Ry-sij">
+                                        <tableColumn identifier="latitude" editable="NO" width="65" minWidth="10" maxWidth="3.4028234663852886e+38" id="EGN-Ry-sij">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Latitude">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -729,7 +730,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn editable="NO" width="79" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
+                                        <tableColumn identifier="longitude" editable="NO" width="79" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Longitude">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -743,6 +744,10 @@
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
                                     </tableColumns>
+                                    <connections>
+                                        <outlet property="dataSource" destination="er7-2A-M57" id="0J5-bl-kmR"/>
+                                        <outlet property="delegate" destination="er7-2A-M57" id="R4s-C2-eCu"/>
+                                    </connections>
                                 </tableView>
                             </subviews>
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -760,7 +765,7 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
-                    <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="EPQ-AX-2v2">
+                    <mapView canDrawConcurrently="YES" mapType="hybrid" rotateEnabled="NO" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EPQ-AX-2v2">
                         <rect key="frame" x="505" y="20" width="499" height="391"/>
                     </mapView>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xuH-yg-55o">
@@ -793,7 +798,7 @@
                     <constraint firstAttribute="trailing" secondItem="xuH-yg-55o" secondAttribute="trailing" constant="20" symbolic="YES" id="leJ-FC-ddj"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="-3" y="150"/>
+            <point key="canvasLocation" x="345" y="153"/>
         </window>
     </objects>
 </document>
