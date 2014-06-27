@@ -10,3 +10,4 @@ var opts: Dictionary<String, AnyObject> = [kCGImageSourceCreateThumbnailWithTran
 
 opts[kCGImageSourceThumbnailMaxPixelSize] = NSNumber.numberWithInt(512)
 
+Void

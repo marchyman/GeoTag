@@ -23,7 +23,7 @@ class ImageData: NSObject {
     var latitude = 0.0, originalLatitude = 0.0
     var longitude = 0.0, originalLongitude = 0.0
 
-    var image: NSImage?
+    var image: NSImage!
     var validImage: Bool = false
 
     init(path: NSURL) {
@@ -49,17 +49,43 @@ class ImageData: NSObject {
          * arbitrary limit.   Thumbnail generation is used to work around a
          * performance hit when using large raw images
          */
-        var height = imgProps["PixelHeight"] as Int!
-        var width = imgProps["PixelWidth"] as Int!
         var imgOpts: NSMutableDictionary =
             [kCGImageSourceCreateThumbnailWithTransform : kCFBooleanTrue as AnyObject,
-             kCGImageSourceCreateThumbnailFromImageAlways : kCFBooleanTrue as AnyObject]
+            kCGImageSourceCreateThumbnailFromImageAlways : kCFBooleanTrue as AnyObject]
+        var height = imgProps["PixelHeight"] as Int!
+        var width = imgProps["PixelWidth"] as Int!
         if height > 512 || width > 512 {
+            // add a max pixel size to the dictionary of options
             imgOpts[kCGImageSourceThumbnailMaxPixelSize] = NSNumber.numberWithInt(512) as AnyObject
         }
         var imgPreview = CGImageSourceCreateThumbnailAtIndex (imgRef, 0, imgOpts).takeRetainedValue()
+
+        /*
+         * Create an NSImage from the preview
+         */
+        let imgHeight = Double(CGImageGetHeight(imgPreview))
+        let imgWidth = Double(CGImageGetWidth(imgPreview))
+        var imgRect = NSMakeRect(0.0, 0.0, imgHeight, imgWidth)
+        image = NSImage(size: imgRect.size)
+        let cgcontext = NSGraphicsContext.currentContext().cgcontext
+        image.lockFocus()
+        CGContextDrawImage(cgcontext, imgRect, imgPreview);
+        image.unlockFocus()
+
         ///
         return true
+    }
+}
+
+/*
+ * extension found on stackoverflow to grab the graphics context.
+ * fromOpaque turns a COpaquePointer to an Unmanaged<T>
+ * takeUnretainedValue turns the Unmanaged<T> to an unretained T
+ * It seems to work.
+ */
+extension NSGraphicsContext {
+    var cgcontext: CGContext {
+        return Unmanaged<CGContext>.fromOpaque(self.graphicsPort()).takeUnretainedValue()
     }
 }
 
