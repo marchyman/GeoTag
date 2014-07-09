@@ -22,23 +22,27 @@ class ImageData: NSObject {
     var date: String = ""
     var latitude = 0.0, originalLatitude = 0.0
     var longitude = 0.0, originalLongitude = 0.0
+    var validLocation = false
 
     var image: NSImage!
-    var validImage: Bool = false
+    var validImage = false
 
     init(path: NSURL) {
         self.path = path;
         super.init()
         validImage = loadImageData()
-        // more init here
+        if validLocation {
+            originalLatitude = latitude
+            originalLongitude = longitude
+        }
     }
 
     func loadImageData() -> Bool {
         if let imgRef = CGImageSourceCreateWithURL(path, nil)?.takeRetainedValue() {
             /// grab the image properties
             let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil).takeUnretainedValue() as NSDictionary
-            let height = imgProps["PixelHeight"] as Int!
-            let width = imgProps["PixelWidth"] as Int!
+            let height = imgProps[kCGImagePropertyPixelHeight] as Int!
+            let width = imgProps[kCGImagePropertyPixelWidth] as Int!
 
             /// Create a "preview" of the image. If the image is larger than
             /// 512x512 constrain the preview to that size.  512x512 is an
@@ -57,11 +61,43 @@ class ImageData: NSObject {
                 /// Create an NSImage from the preview
                 let imgHeight = Double(CGImageGetHeight(imgPreview))
                 let imgWidth = Double(CGImageGetWidth(imgPreview))
-                var imgRect = NSMakeRect(0.0, 0.0, imgHeight, imgWidth)
+                let imgRect = NSMakeRect(0.0, 0.0, imgHeight, imgWidth)
                 image = NSImage(size: imgRect.size)
                 image.lockFocus()
                 CGContextDrawImage(NSGraphicsContext.currentContext().cgcontext, imgRect, imgPreview);
                 image.unlockFocus()
+
+
+                /// image date/time created
+                if let exifData = imgProps[kCGImagePropertyExifDictionary] as? NSDictionary! {
+                    if let dto = exifData[kCGImagePropertyExifDateTimeOriginal] as? String! {
+                        date = dto
+                    }
+                }
+
+                /// image existing gps info
+                if let gpsData = imgProps[kCGImagePropertyGPSDictionary] as NSDictionary! {
+                    if let lat = gpsData[kCGImagePropertyGPSLatitude] as Double! {
+                        if let latRef = gpsData[kCGImagePropertyGPSLatitudeRef] as String! {
+                            if latRef == "N" {
+                                latitude = lat
+                            } else {
+                                latitude = -lat
+                            }
+                        }
+                    }
+                    if let lon = gpsData[kCGImagePropertyGPSLongitude] as Double! {
+                        if let lonRef = gpsData[kCGImagePropertyGPSLongitudeRef] as String! {
+                            if lonRef == "E" {
+                                longitude = lon
+                            } else {
+                                longitude = -lon
+                            }
+                        }
+                    }
+                    validLocation = true
+                }
+
                 return true
             }
         }
@@ -77,15 +113,12 @@ class ImageData: NSObject {
  * It seems to work.
  */
 extension NSGraphicsContext {
-    var cgcontext: CGContext {
-        let graphicsPort = NSGraphicsContext.currentContext().graphicsPort()
-        let context = COpaquePointer(graphicsPort)
-        println("context \(context)")
-        let uValue = Unmanaged<CGContext>.fromOpaque(context)
-        println("uValue \(uValue)")
-        let value = uValue.takeUnretainedValue()
-        println("value \(value)")
-        return value
+    var cgcontext: CGContext! {
+        if let graphicsPort = NSGraphicsContext.currentContext()?.graphicsPort() {
+            let opaqueContext = COpaquePointer(graphicsPort)
+            return Unmanaged<CGContext>.fromOpaque(opaqueContext).takeUnretainedValue()
+        }
+        return nil
     }
 }
 
