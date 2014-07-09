@@ -16,7 +16,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationDidFinishLaunching(aNotification: NSNotification?) {
         // Insert code here to initialize your application
         window.delegate = self
-        let id = ImageData(path: NSURL(string: "file:///Users/marc/Desktop/p-141711415-1432.jpg"))
+        // debug code
+        let id1 = ImageData(path: NSURL(string: "file:///Users/marc/Desktop/p-141711415-1432.jpg"))
+        let id2 = ImageData(path: NSURL(string: "file:///Users/marc/Desktop/p-141660942-1403.raf"))
     }
 
     /*
