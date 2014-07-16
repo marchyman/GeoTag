@@ -13,18 +13,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @IBOutlet var window: NSWindow
     @IBOutlet var tableViewController: TableViewController
 
+    /// App start up
+
     func applicationDidFinishLaunching(aNotification: NSNotification?) {
         // Insert code here to initialize your application
         window.delegate = self
-        // debug: add a few images
-        tableViewController.addImageNamed("file:///Users/marc/Desktop/p-141711415-1432.jpg")
-        tableViewController.addImageNamed("file:///Users/marc/Desktop/p-141660942-1403.raf")
-        tableViewController.reloadData()
     }
 
-    /*
-     * app termination
-     */
+    /// open panel handling
+
+    @IBAction func showOpenPanel(AnyObject) {
+        var panel = NSOpenPanel()
+        panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers()?.takeUnretainedValue()
+        panel.allowsMultipleSelection = true
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        if panel.runModal() == NSFileHandlingPanelOKButton {
+            var reloadNeeded = false
+            for url in panel.URLs as [NSURL] {
+                tableViewController.addImage(url)
+                reloadNeeded = true
+            }
+            if reloadNeeded {
+                tableViewController.reloadData()
+            }
+        }
+    }
+
+    /// app termination
+
     func applicationShouldTerminateAfterLastWindowClosed(theApplication: NSApplication!) -> Bool {
         return true
     }
@@ -64,7 +81,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationShouldTerminate(sender: NSApplication!) -> NSApplicationTerminateReply {
-        println("applicationShouldTerminate called")
         if saveOrDontSave(window) {
             return .TerminateNow
         }
@@ -75,11 +91,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Insert code here to tear down your application
     }
 
-    /*
-     * Window delegate functions
-     */
+
+    /// Window delegate functions
+
     func windowShouldClose(window: NSWindow) -> Bool {
-        println("windowShouldClose: \(window)")
         return saveOrDontSave(window)
     }
 }

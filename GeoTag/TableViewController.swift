@@ -20,8 +20,8 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         super.viewDidLoad()
     }
 
-    func addImageNamed(name: String) {
-        images.append(ImageData(path: NSURL(string: name)))
+    func addImage(url: NSURL) {
+        images.append(ImageData(path: url))
     }
 
     func reloadData() {
