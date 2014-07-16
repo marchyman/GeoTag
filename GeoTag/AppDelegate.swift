@@ -11,11 +11,15 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                             
     @IBOutlet var window: NSWindow
-
+    @IBOutlet var tableViewController: TableViewController
 
     func applicationDidFinishLaunching(aNotification: NSNotification?) {
         // Insert code here to initialize your application
         window.delegate = self
+        // debug: add a few images
+        tableViewController.addImageNamed("file:///Users/marc/Desktop/p-141711415-1432.jpg")
+        tableViewController.addImageNamed("file:///Users/marc/Desktop/p-141660942-1403.raf")
+        tableViewController.reloadData()
     }
 
     /*

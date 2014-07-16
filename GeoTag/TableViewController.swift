@@ -24,14 +24,14 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         images.append(ImageData(path: NSURL(string: name)))
     }
 
+    func reloadData() {
+        tableView.reloadData()
+    }
+
     // data source functions
     
     func numberOfRowsInTableView(tableView: NSTableView!) -> Int {
-        addImageNamed("file:///Users/marc/Desktop/p-141711415-1432.jpg")
-        addImageNamed("file:///Users/marc/Desktop/p-141660942-1403.raf")
         // Number of active rows
-        println("\(images.count) active rows")
-        println("arg: \(tableView) outlet: \(self.tableView)")
         return images.count
     }
 
