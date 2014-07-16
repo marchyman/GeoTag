@@ -14,6 +14,7 @@
         <customObject id="-3" userLabel="Application"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="GeoTag" customModuleProvider="target">
             <connections>
+                <outlet property="progressIndicator" destination="Leb-gI-5bq" id="QDo-c7-wEB"/>
                 <outlet property="tableViewController" destination="er7-2A-M57" id="Bon-5R-vH6"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
@@ -21,6 +22,7 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <viewController id="er7-2A-M57" customClass="TableViewController">
             <connections>
+                <outlet property="imageWell" destination="xuH-yg-55o" id="Syk-7u-GRh"/>
                 <outlet property="tableView" destination="skl-pj-P9m" id="B2P-VY-BEo"/>
                 <outlet property="view" destination="skl-pj-P9m" id="HqZ-en-HFJ"/>
             </connections>

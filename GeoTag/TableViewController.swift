@@ -12,7 +12,9 @@ import Cocoa
 class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
 
     @IBOutlet var tableView: NSTableView
-    var images: [ImageData] = []
+    @IBOutlet var imageWell: NSImageView
+
+    var images = [ImageData]()
 
     // startup
 
@@ -20,18 +22,30 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         super.viewDidLoad()
     }
 
-    func addImage(url: NSURL) {
-        images.append(ImageData(path: url))
+    func addImages(urls: [NSURL]) {
+        for url in urls {
+            // check for dup
+            images += ImageData(path: url)
+        }
+        tableView.reloadData()
     }
 
-    func reloadData() {
-        tableView.reloadData()
+    // delegate functions
+
+//    func tableView(tableView: NSTableView!,
+//        selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet!) -> NSIndexSet! {
+//        println("\(proposedSelectionIndexes)")
+//        return proposedSelectionIndexes
+//    }
+
+    func tableViewSelectionDidChange(notification: NSNotification!) {
+        let row = tableView.selectedRow
+        imageWell.image = row < 0 ? nil : images[row].image
     }
 
     // data source functions
     
     func numberOfRowsInTableView(tableView: NSTableView!) -> Int {
-        // Number of active rows
         return images.count
     }
 

@@ -12,6 +12,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                             
     @IBOutlet var window: NSWindow
     @IBOutlet var tableViewController: TableViewController
+    @IBOutlet var progressIndicator: NSProgressIndicator
 
     /// App start up
 
@@ -29,14 +30,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         if panel.runModal() == NSFileHandlingPanelOKButton {
-            var reloadNeeded = false
-            for url in panel.URLs as [NSURL] {
-                tableViewController.addImage(url)
-                reloadNeeded = true
-            }
-            if reloadNeeded {
-                tableViewController.reloadData()
-            }
+            progressIndicator.startAnimation(self)
+            tableViewController.addImages(panel.URLs as [NSURL])
+            progressIndicator.stopAnimation(self)
         }
     }
 
