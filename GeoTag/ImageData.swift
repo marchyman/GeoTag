@@ -61,7 +61,7 @@ class ImageData: NSObject {
                 // Create an NSImage from the preview
                 let imgHeight = Double(CGImageGetHeight(imgPreview))
                 let imgWidth = Double(CGImageGetWidth(imgPreview))
-                let imgRect = NSMakeRect(0.0, 0.0, imgHeight, imgWidth)
+                let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
                 image = NSImage(size: imgRect.size)
                 image.lockFocus()
                 CGContextDrawImage(NSGraphicsContext.currentContext().cgcontext, imgRect, imgPreview);
