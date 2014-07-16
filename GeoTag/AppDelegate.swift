@@ -31,8 +31,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         panel.canChooseDirectories = false
         if panel.runModal() == NSFileHandlingPanelOKButton {
             progressIndicator.startAnimation(self)
-            tableViewController.addImages(panel.URLs as [NSURL])
+            let dups = tableViewController.addImages(panel.URLs as [NSURL])
             progressIndicator.stopAnimation(self)
+            if dups {
+                let alert = NSAlert()
+                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                alert.messageText = NSLocalizedString("WARN_TITLE", comment: "Files not opened")
+                alert.informativeText = NSLocalizedString("WARN_DESC", comment: "Files not opened")
+                alert.runModal()
+            }
         }
     }
 

@@ -11,11 +11,15 @@ import Cocoa
 @objc(ImageData)
 class ImageData: NSObject {
 
-    let path: NSURL
-
+    let url: NSURL
+    var path: String {
+        get {
+            return url.path
+        }
+    }
     var name: String {
         get {
-            return path.lastPathComponent
+            return url.lastPathComponent
         }
     }
 
@@ -25,8 +29,8 @@ class ImageData: NSObject {
     var image: NSImage!
     var validImage = false
 
-    init(path: NSURL) {
-        self.path = path;
+    init(url: NSURL) {
+        self.url = url;
         super.init()
         validImage = loadImageData()
         if latitude {
@@ -38,7 +42,7 @@ class ImageData: NSObject {
     }
 
     func loadImageData() -> Bool {
-        if let imgRef = CGImageSourceCreateWithURL(path, nil)?.takeRetainedValue() {
+        if let imgRef = CGImageSourceCreateWithURL(url, nil)?.takeRetainedValue() {
             // grab the image properties
             let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil).takeUnretainedValue() as NSDictionary
             let height = imgProps[kCGImagePropertyPixelHeight] as Int!

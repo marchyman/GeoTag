@@ -22,12 +22,30 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         super.viewDidLoad()
     }
 
-    func addImages(urls: [NSURL]) {
-        for url in urls {
-            // check for dup
-            images += ImageData(path: url)
+    func isDuplicateImage(url: NSURL) -> Bool {
+        for image in images {
+            if url.path == image.path {
+                return true
+            }
         }
-        tableView.reloadData()
+        return false
+    }
+
+    func addImages(urls: [NSURL]) -> Bool {
+        var reloadNeeded = false
+        var duplicateFound = false
+        for url in urls {
+            if isDuplicateImage(url) {
+                duplicateFound = true
+            } else {
+                images += ImageData(url: url)
+                reloadNeeded = true
+            }
+        }
+        if reloadNeeded {
+            tableView.reloadData()
+        }
+        return duplicateFound
     }
 
     // delegate functions
