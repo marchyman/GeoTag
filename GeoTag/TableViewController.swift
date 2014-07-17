@@ -52,6 +52,18 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
 
     // table menu items
 
+    override func validateMenuItem(menuItem: NSMenuItem!) -> Bool {
+        switch menuItem.action {
+        case Selector("selectAll:"), Selector("clear:"):
+            return images.count > 0
+        case Selector("cut:"), Selector("copy:"), Selector("paste:"), Selector("delete:"):
+            return tableView.selectedRow != -1
+        default:
+            println("default for item \(menuItem)")
+        }
+        return false
+    }
+
     @IBAction func cut(AnyObject) {
         println(__FUNCTION__)
     }
@@ -114,5 +126,26 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
             return colView
         }
         return nil
+    }
+}
+
+/// in a table a right click will bring up a context menu.  I prefer that
+/// the menu pertain to the row that was clicked. Do that by selecting the
+/// row the mouse is on assuming the row is populated.  Once the row is
+/// selected send the event to the super class for processing.  This is done
+/// in a TableView extension.
+
+extension NSTableView {
+    override func rightMouseDown(theEvent: NSEvent!) {
+        let localPoint = convertPoint(theEvent.locationInWindow, fromView: nil)
+        let row = rowAtPoint(localPoint)
+        if row >= 0 {
+            if !isRowSelected(row) {
+                selectRowIndexes(NSIndexSet(index: row), byExtendingSelection: false)
+            }
+        } else {
+            deselectAll(self)
+        }
+        super.rightMouseDown(theEvent)
     }
 }
