@@ -11,6 +11,7 @@ import Cocoa
 @objc(TableViewController)
 class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
 
+    @IBOutlet var appDelegate: AppDelegate
     @IBOutlet var tableView: NSTableView
     @IBOutlet var imageWell: NSImageView
 
@@ -45,17 +46,21 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
             }
         }
         if reloadNeeded {
-            tableView.reloadData()
+            reload()
         }
         return duplicateFound
     }
 
-    // table menu items
+    // menu actions
 
     override func validateMenuItem(menuItem: NSMenuItem!) -> Bool {
         switch menuItem.action {
-        case Selector("selectAll:"), Selector("clear:"):
+        case Selector("selectAll:"):
             return images.count > 0
+        case Selector("clear:"):
+            return images.count > 0 && !appDelegate.isModified()
+        case Selector("discard:"):
+            return appDelegate.isModified()
         case Selector("cut:"), Selector("copy:"), Selector("paste:"), Selector("delete:"):
             return tableView.selectedRow != -1
         default:
@@ -64,20 +69,55 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         return false
     }
 
+    @IBAction func discard(AnyObject) {
+        for image in images {
+            image.revertLocation()
+        }
+        appDelegate.modified(false)
+        reload()
+    }
+
     @IBAction func cut(AnyObject) {
         println(__FUNCTION__)
     }
+
     @IBAction func copy(AnyObject) {
         println(__FUNCTION__)
     }
+
     @IBAction func paste(AnyObject) {
         println(__FUNCTION__)
     }
+
     @IBAction func delete(AnyObject) {
-        println(__FUNCTION__)
+        // range 2, 2 is that start col and number of cols for the location
+        // hardcoding is (hopefully) a temporary thing ;;;
+        let cols = NSIndexSet(indexesInRange: NSMakeRange(2, 2))
+        let rows = tableView.selectedRowIndexes
+        rows.enumerateIndexesUsingBlock {
+            (row: Int, stop: UnsafePointer<ObjCBool>) -> Void in
+            // remove marker from map ;;;
+            self.images[row].clearLocation()
+            self.tableView.reloadDataForRowIndexes(NSIndexSet(index: row),
+                columnIndexes: cols)
+            self.appDelegate.modified(true)
+        }
     }
+
     @IBAction func clear(AnyObject) {
-        println(__FUNCTION__)
+        if !appDelegate.isModified() {
+            images = []
+            reload()
+        }
+    }
+
+    // reload the table, clear the image well and remove any markers
+    // from the map view
+
+    func reload() {
+        tableView.reloadData()
+        imageWell.image = nil
+        // update map here
     }
 
     // delegate functions
