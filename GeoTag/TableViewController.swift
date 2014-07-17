@@ -22,6 +22,8 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         super.viewDidLoad()
     }
 
+    // poulating the table
+
     func isDuplicateImage(url: NSURL) -> Bool {
         for image in images {
             if url.path == image.path {
@@ -46,6 +48,24 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
             tableView.reloadData()
         }
         return duplicateFound
+    }
+
+    // table menu items
+
+    @IBAction func cut(AnyObject) {
+        println(__FUNCTION__)
+    }
+    @IBAction func copy(AnyObject) {
+        println(__FUNCTION__)
+    }
+    @IBAction func paste(AnyObject) {
+        println(__FUNCTION__)
+    }
+    @IBAction func delete(AnyObject) {
+        println(__FUNCTION__)
+    }
+    @IBAction func clear(AnyObject) {
+        println(__FUNCTION__)
     }
 
     // delegate functions

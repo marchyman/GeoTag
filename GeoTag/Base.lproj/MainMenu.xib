@@ -154,29 +154,23 @@
                             <menuItem isSeparatorItem="YES" id="WRV-NI-Exz"/>
                             <menuItem title="Cut" keyEquivalent="x" id="uRl-iY-unG">
                                 <connections>
-                                    <action selector="cut:" target="-1" id="YJe-68-I9s"/>
+                                    <action selector="cut:" target="er7-2A-M57" id="VAM-fx-8HD"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Copy" keyEquivalent="c" id="x3v-GG-iWU">
                                 <connections>
-                                    <action selector="copy:" target="-1" id="G1f-GL-Joy"/>
+                                    <action selector="copy:" target="er7-2A-M57" id="V5J-oJ-dAK"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Paste" keyEquivalent="v" id="gVA-U4-sdL">
                                 <connections>
-                                    <action selector="paste:" target="-1" id="UvS-8e-Qdg"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Paste and Match Style" keyEquivalent="V" id="WeT-3V-zwk">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="pasteAsPlainText:" target="-1" id="cEh-KX-wJQ"/>
+                                    <action selector="paste:" target="er7-2A-M57" id="dEP-o7-Ltd"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Delete" id="pa3-QI-u2k">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="delete:" target="-1" id="0Mk-Ml-PaM"/>
+                                    <action selector="delete:" target="er7-2A-M57" id="evw-5b-gkr"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Select All" keyEquivalent="a" id="Ruw-6m-B2m">
@@ -867,6 +861,9 @@
                             <rect key="frame" x="0.0" y="0.0" width="238" height="17"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
+                        <connections>
+                            <outlet property="menu" destination="RI2-ul-n9D" id="UiU-Uc-fNS"/>
+                        </connections>
                     </scrollView>
                     <mapView canDrawConcurrently="YES" mapType="hybrid" rotateEnabled="NO" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EPQ-AX-2v2">
                         <rect key="frame" x="532" y="20" width="499" height="391"/>
@@ -903,5 +900,41 @@
             </view>
             <point key="canvasLocation" x="73.5" y="156"/>
         </window>
+        <menu title="Table Menu" id="RI2-ul-n9D">
+            <items>
+                <menuItem title="Cut" id="7HJ-N3-yTm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="cut:" target="er7-2A-M57" id="Ia6-AK-nLS"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Copy" id="AV7-FD-24k">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="copy:" target="er7-2A-M57" id="ChE-6O-PRd"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Paste" id="nWD-VV-7or">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="paste:" target="er7-2A-M57" id="gPr-Kn-DgO"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="4tj-aa-mGk"/>
+                <menuItem title="Delete" id="tcS-DY-Zsm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="delete:" target="er7-2A-M57" id="70g-Hd-mNX"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="Aie-jX-Muf"/>
+                <menuItem title="Clear image list" id="Q8s-0g-bd6">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="clear:" target="er7-2A-M57" id="bcK-JF-SFi"/>
+                    </connections>
+                </menuItem>
+            </items>
+        </menu>
     </objects>
 </document>
