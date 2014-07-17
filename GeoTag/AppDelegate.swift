@@ -21,6 +21,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window.delegate = self
     }
 
+    /// window status as a proxy for modifications
+
+    func isModified() -> Bool {
+        return window.documentEdited
+    }
+
+    func modified(value: Bool) {
+        window.documentEdited = value
+    }
+
     /// open panel handling
 
     @IBAction func showOpenPanel(AnyObject) {
@@ -64,15 +74,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                       comment: "Unsaved Changes")
             alert.beginSheetModalForWindow(window) {
                 (response: NSModalResponse) -> Void in
-                println("Modal response is \(response)")
                 switch response {
                 case NSAlertFirstButtonReturn:      // Save
+                    // initiate save ;;;
                     println("initiate save here")
                 case NSAlertSecondButtonReturn:     // Cancel
-                    println("Close/terminate cancelled")
+                    // Close/terminate cancelled
                     return
                 default:
-                    println("Don't bother saving")
+                    // Don't bother saving
                     break
                 }
                 window.documentEdited = false
