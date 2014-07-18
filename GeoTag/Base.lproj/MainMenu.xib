@@ -511,7 +511,7 @@ CA
                             <rect key="frame" x="1" y="17" width="238" height="117"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="acu-99-iMm" viewBased="YES" id="skl-pj-P9m">
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="acu-99-iMm" viewBased="YES" id="skl-pj-P9m">
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -723,6 +723,10 @@ CA
                     <constraint firstAttribute="trailing" secondItem="xuH-yg-55o" secondAttribute="trailing" constant="20" symbolic="YES" id="leJ-FC-ddj"/>
                 </constraints>
             </view>
+            <connections>
+                <outlet property="delegate" destination="Voe-Tx-rLC" id="YQK-Qt-HzN"/>
+                <outlet property="initialFirstResponder" destination="skl-pj-P9m" id="GqC-fX-aCl"/>
+            </connections>
             <point key="canvasLocation" x="73.5" y="156"/>
         </window>
         <menu title="Table Menu" id="RI2-ul-n9D">

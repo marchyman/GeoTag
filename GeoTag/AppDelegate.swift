@@ -14,11 +14,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @IBOutlet var tableViewController: TableViewController
     @IBOutlet var progressIndicator: NSProgressIndicator
 
+    var undoManager: NSUndoManager!
+
     /// App start up
 
     func applicationDidFinishLaunching(aNotification: NSNotification?) {
         // Insert code here to initialize your application
         window.delegate = self
+        undoManager = NSUndoManager()
+    }
+
+    /// window delegate undo handling
+
+    func windowWillReturnUndoManager(window: NSWindow!) -> NSUndoManager! {
+        return undoManager
     }
 
     /// window status as a proxy for modifications

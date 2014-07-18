@@ -21,6 +21,7 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
 
     override func viewDidLoad() {       // 10.10 and later
         super.viewDidLoad()
+        // this would be a good place to initialize an undo manager
     }
 
     // poulating the table
@@ -46,9 +47,41 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
             }
         }
         if reloadNeeded {
-            reload()
+            reloadAllRows()
         }
         return duplicateFound
+    }
+
+    // location update with undo/redo support.
+    // Note: The system can not handle optional types when used with
+    // prepareWithInvocationTarget.  A tuple will not work, either.  Both
+    // will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
+
+    func updateLocationAtRow(row: Int, validLocation: Bool, latitude: Double, longitude: Double, modified: Bool) {
+        var oldValidLocation: Bool
+        var oldLatitude: Double
+        var oldLongitude: Double
+        let image = images[row]
+        if image.latitude && image.longitude {
+            oldValidLocation = true
+            oldLatitude = image.latitude!
+            oldLongitude = image.longitude!
+        } else {
+            oldValidLocation = false
+            oldLatitude = 0
+            oldLongitude = 0
+        }
+        let undo = appDelegate.undoManager
+        undo.prepareWithInvocationTarget(self).updateLocationAtRow(row,
+            validLocation: oldValidLocation, latitude: oldLatitude,
+            longitude: oldLongitude, modified: appDelegate.isModified())
+        if validLocation {
+            image.setLatitude(latitude, longitude: longitude)
+        } else {
+            image.setLatitude(nil, longitude: nil)
+        }
+        reloadRow(row)
+        appDelegate.modified(modified)
     }
 
     // menu actions
@@ -74,7 +107,7 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
             image.revertLocation()
         }
         appDelegate.modified(false)
-        reload()
+        reloadAllRows()
     }
 
     @IBAction func cut(AnyObject) {
@@ -90,34 +123,44 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
     }
 
     @IBAction func delete(AnyObject) {
-        // range 2, 2 is that start col and number of cols for the location
-        // hardcoding is (hopefully) a temporary thing ;;;
-        let cols = NSIndexSet(indexesInRange: NSMakeRange(2, 2))
         let rows = tableView.selectedRowIndexes
+        appDelegate.undoManager.beginUndoGrouping()
         rows.enumerateIndexesUsingBlock {
             (row: Int, stop: UnsafePointer<ObjCBool>) -> Void in
             // remove marker from map ;;;
-            self.images[row].clearLocation()
-            self.tableView.reloadDataForRowIndexes(NSIndexSet(index: row),
-                columnIndexes: cols)
-            self.appDelegate.modified(true)
+            self.updateLocationAtRow(row, validLocation: false, latitude: 0,
+                longitude: 0, modified: true)
         }
+        appDelegate.undoManager.endUndoGrouping()
+        appDelegate.undoManager.setActionName("delete")
     }
 
     @IBAction func clear(AnyObject) {
         if !appDelegate.isModified() {
             images = []
-            reload()
+            reloadAllRows()
         }
     }
 
-    // reload the table, clear the image well and remove any markers
-    // from the map view
+    // Functions to reload the table
 
-    func reload() {
+    // Reload all rows.  Clear the image well and remove any markers
+    // from the map view.  Reloading all rows always clears undo
+    // actions.
+    func reloadAllRows() {
+        appDelegate.undoManager.removeAllActions()
         tableView.reloadData()
         imageWell.image = nil
         // update map here
+    }
+
+    // Reloading a specific row.  Only the latitude and longitude columns
+    // will need refreshing
+    func reloadRow(row: Int) {
+        let latColumn = tableView.columnWithIdentifier("latitude")
+        let columns = 2 // latitude and longitude
+        let cols = NSIndexSet(indexesInRange: NSMakeRange(latColumn, columns))
+        tableView.reloadDataForRowIndexes(NSIndexSet(index: row), columnIndexes: cols)
     }
 
     // delegate functions
