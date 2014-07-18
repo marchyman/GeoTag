@@ -14,6 +14,7 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
     @IBOutlet var appDelegate: AppDelegate
     @IBOutlet var tableView: NSTableView
     @IBOutlet var imageWell: NSImageView
+    @IBOutlet var mapViewController: MapViewController
 
     var images = [ImageData]()
 
@@ -155,7 +156,7 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         appDelegate.undoManager.removeAllActions()
         tableView.reloadData()
         imageWell.image = nil
-        // update map here
+        // ;;; remove marker from map
     }
 
     // Reloading a specific row.  Only the latitude and longitude columns
@@ -177,7 +178,18 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
 
     func tableViewSelectionDidChange(notification: NSNotification!) {
         let row = tableView.selectedRow
-        imageWell.image = row < 0 ? nil : images[row].image
+        if row < 0 {
+            imageWell.image = nil
+            // ;;; remove marker from map
+        } else {
+            let image = images[row]
+            imageWell.image = image.image
+            if image.latitude && image.longitude {
+                mapViewController.displayMapAtLatitude(image.latitude!, longitude: image.longitude!)
+            } else {
+                // ;;; remove marker from map
+            }
+        }
     }
 
     // data source functions

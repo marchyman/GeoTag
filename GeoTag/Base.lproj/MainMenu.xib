@@ -24,8 +24,14 @@
             <connections>
                 <outlet property="appDelegate" destination="Voe-Tx-rLC" id="ubm-GD-tva"/>
                 <outlet property="imageWell" destination="xuH-yg-55o" id="Syk-7u-GRh"/>
+                <outlet property="mapViewController" destination="tlW-4s-NGN" id="xEG-Sk-hib"/>
                 <outlet property="tableView" destination="skl-pj-P9m" id="B2P-VY-BEo"/>
                 <outlet property="view" destination="skl-pj-P9m" id="HqZ-en-HFJ"/>
+            </connections>
+        </viewController>
+        <viewController id="tlW-4s-NGN" userLabel="Map View Controller" customClass="MapViewController">
+            <connections>
+                <outlet property="mapView" destination="EPQ-AX-2v2" id="rGQ-M8-nwZ"/>
             </connections>
         </viewController>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -692,6 +698,9 @@ CA
                     </scrollView>
                     <mapView canDrawConcurrently="YES" mapType="hybrid" rotateEnabled="NO" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EPQ-AX-2v2">
                         <rect key="frame" x="532" y="20" width="499" height="391"/>
+                        <connections>
+                            <outlet property="delegate" destination="tlW-4s-NGN" id="g2V-Ft-zQA"/>
+                        </connections>
                     </mapView>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xuH-yg-55o">
                         <rect key="frame" x="529" y="426" width="505" height="325"/>
