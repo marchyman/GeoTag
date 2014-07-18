@@ -41,15 +41,19 @@ class ImageData: NSObject {
         }
     }
 
-    func clearLocation() {
-        latitude = nil
-        longitude = nil
+    // set/revert latitude and longitude for an image
+
+    func setLatitude(latitude: Double?, longitude: Double?) {
+        self.latitude = latitude
+        self.longitude = longitude
     }
 
     func revertLocation() {
         latitude = originalLatitude
         longitude = originalLongitude
     }
+
+    // extract image metadata and build thumbnail preview
 
     func loadImageData() -> Bool {
         if let imgRef = CGImageSourceCreateWithURL(url, nil)?.takeRetainedValue() {
