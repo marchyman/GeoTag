@@ -29,6 +29,15 @@ class ImageData: NSObject {
     var image: NSImage!
     var validImage = false
 
+    var stringRepresentation: String {
+        get {
+            if latitude && longitude {
+                return "\(latitude) \(longitude)"
+            }
+            return ""
+        }
+    }
+
     init(url: NSURL) {
         self.url = url;
         super.init()

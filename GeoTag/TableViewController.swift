@@ -110,12 +110,16 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         reloadAllRows()
     }
 
-    @IBAction func cut(AnyObject) {
-        println(__FUNCTION__)
+    @IBAction func cut(obj: AnyObject) {
+        copy(obj)
+        delete(obj)
     }
 
     @IBAction func copy(AnyObject) {
-        println(__FUNCTION__)
+        let row = tableView.selectedRow
+        let pb = NSPasteboard.generalPasteboard()
+        pb.declareTypes([NSPasteboardTypeString], owner: self)
+        pb.setString(images[row].stringRepresentation, forType: NSPasteboardTypeString)
     }
 
     @IBAction func paste(AnyObject) {
