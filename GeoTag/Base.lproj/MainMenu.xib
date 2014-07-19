@@ -715,7 +715,7 @@ CA
                             <constraint firstAttribute="width" constant="200" id="8Bq-ba-kic"/>
                         </constraints>
                     </progressIndicator>
-                    <mapView canDrawConcurrently="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="EPQ-AX-2v2">
+                    <mapView canDrawConcurrently="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="EPQ-AX-2v2" customClass="MapView" customModule="GeoTag" customModuleProvider="target">
                         <rect key="frame" x="529" y="20" width="501" height="364"/>
                         <connections>
                             <outlet property="delegate" destination="tlW-4s-NGN" id="g2V-Ft-zQA"/>

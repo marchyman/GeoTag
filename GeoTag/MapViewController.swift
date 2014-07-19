@@ -9,9 +9,25 @@
 import Cocoa
 import MapKit
 
+/// Subclass MKMapView to hook into mouse up events to extract the
+/// location of single click events.  I couldn't do this in an extension
+/// without breaking three finger drags on a touch pad.
+
+class MapView: MKMapView {
+    override func mouseUp(theEvent: NSEvent!) {
+        super.mouseUp(theEvent)
+        if theEvent.clickCount == 1 {
+            let point = convertPoint(theEvent.locationInWindow, fromView: nil)
+            let location = convertPoint(point, toCoordinateFromView: self)
+            println("Click at \(location.latitude), \(location.longitude)")
+            // single click
+        }
+    }
+}
+
 @objc(MapViewController)
 class MapViewController: NSViewController, MKMapViewDelegate {
-    @IBOutlet var mapView: MKMapView
+    @IBOutlet var mapView: MapView
     @IBOutlet var mapTypeControl: NSSegmentedControl
 
     // user defaults keys for map configuration
