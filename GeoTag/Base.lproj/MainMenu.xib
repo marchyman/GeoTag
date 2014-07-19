@@ -740,8 +740,8 @@ CA
                             <font key="font" metaFont="system"/>
                             <segments>
                                 <segment label="Standard" width="92"/>
-                                <segment label="Satellite" width="91" selected="YES" tag="1"/>
-                                <segment label="Hybrid" width="91"/>
+                                <segment label="Hybrid" width="91" selected="YES" tag="1"/>
+                                <segment label="Satellite" width="91"/>
                             </segments>
                         </segmentedCell>
                         <connections>

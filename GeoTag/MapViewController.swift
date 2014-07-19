@@ -54,9 +54,9 @@ class MapViewController: NSViewController, MKMapViewDelegate {
         case 0:
             mapView.mapType = .Standard
         case 1:
-            mapView.mapType = .Satellite
-        case 2:
             mapView.mapType = .Hybrid
+        case 2:
+            mapView.mapType = .Satellite
         case let type:
             println("Unknown segment item \(type), sender \(sender)")
         }
@@ -69,9 +69,9 @@ class MapViewController: NSViewController, MKMapViewDelegate {
         switch mapView.mapType {
         case .Standard:
             mapTypeAsInt = 0
-        case .Satellite:
-            mapTypeAsInt = 1
         case .Hybrid:
+            mapTypeAsInt = 1
+        case .Satellite:
             mapTypeAsInt = 2
         case let type:
             println("Unknown map type \(type)")
