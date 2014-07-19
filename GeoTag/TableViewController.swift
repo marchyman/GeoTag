@@ -7,9 +7,11 @@
 //
 
 import Cocoa
+import MapKit
 
 @objc(TableViewController)
-class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
+class TableViewController: NSViewController, NSTableViewDelegate,
+    NSTableViewDataSource, MapViewDelegate {
 
     @IBOutlet var appDelegate: AppDelegate
     @IBOutlet var tableView: NSTableView
@@ -23,6 +25,12 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
     override func viewDidLoad() {       // 10.10 and later
         super.viewDidLoad()
         // this would be a good place to initialize an undo manager
+    }
+
+    override func awakeFromNib() {
+        // can't make clickDelegate an @IBOutlet; wire it up here
+
+        mapViewController.mapView.clickDelegate = self
     }
 
     // poulating the table
@@ -167,6 +175,24 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         let cols = NSIndexSet(indexesInRange: NSMakeRange(latColumn, columns))
         tableView.reloadDataForRowIndexes(NSIndexSet(index: row), columnIndexes: cols)
     }
+
+    // MapView delegate functions
+    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D) {
+        let rows = tableView.selectedRowIndexes
+        appDelegate.undoManager.beginUndoGrouping()
+        rows.enumerateIndexesUsingBlock {
+            (row: Int, stop: UnsafePointer<ObjCBool>) -> Void in
+            let image = self.images[row]
+            self.updateLocationAtRow(row, validLocation: true,
+                latitude: location.latitude, longitude: location.longitude,
+                modified: true)
+            self.mapViewController.pinMapAtLatitude(image.latitude!,
+                longitude: image.longitude!)
+        }
+        appDelegate.undoManager.endUndoGrouping()
+        appDelegate.undoManager.setActionName("set location")
+    }
+
 
     // delegate functions
 
