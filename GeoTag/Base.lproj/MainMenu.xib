@@ -778,26 +778,26 @@ CA
         </window>
         <menu title="Table Menu" id="RI2-ul-n9D">
             <items>
-                <menuItem title="Cut" keyEquivalent="x" id="7HJ-N3-yTm">
+                <menuItem title="Cut" id="7HJ-N3-yTm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="cut:" target="er7-2A-M57" id="Ia6-AK-nLS"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Copy" keyEquivalent="c" id="AV7-FD-24k">
+                <menuItem title="Copy" id="AV7-FD-24k">
+                    <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="copy:" target="er7-2A-M57" id="ChE-6O-PRd"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Paste" keyEquivalent="v" id="nWD-VV-7or">
+                <menuItem title="Paste" id="nWD-VV-7or">
+                    <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="paste:" target="er7-2A-M57" id="gPr-Kn-DgO"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="4tj-aa-mGk"/>
                 <menuItem title="Delete" id="tcS-DY-Zsm">
-                    <string key="keyEquivalent" base64-UTF8="YES">
-CA
-</string>
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="delete:" target="er7-2A-M57" id="70g-Hd-mNX"/>

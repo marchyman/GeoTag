@@ -103,8 +103,15 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             return images.count > 0 && !appDelegate.isModified()
         case Selector("discard:"):
             return appDelegate.isModified()
-        case Selector("cut:"), Selector("copy:"), Selector("paste:"), Selector("delete:"):
-            return tableView.selectedRow != -1
+        case Selector("cut:"), Selector("copy:"):
+            if tableView.numberOfSelectedRows == 1 {
+                let image = images[tableView.selectedRow]
+                if (image.latitude && image.longitude) {
+                    return true
+                }
+            }
+        case Selector("paste:"), Selector("delete:"):
+            return tableView.numberOfSelectedRows > 0
         default:
             println("default for item \(menuItem)")
         }

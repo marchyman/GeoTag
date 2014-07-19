@@ -1,9 +1,9 @@
 Drag and Drop into table view
-Copy -- only enable is single row selected and row contains a location
-Cut -- same limits as copy
+Paste -- only enable if pasteboard has something in it
 Validate selections
 Save data.  Try native functions first
 - save with exiftool
 - save with native functions
 App Icons
 Help
+Drag map pins
