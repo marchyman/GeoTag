@@ -9,27 +9,6 @@
 import Cocoa
 import MapKit
 
-/// Subclass MKMapView to hook into mouse up events to extract the
-/// location of single click events.  I couldn't do this in an extension
-/// without breaking three finger drags on a touch pad.
-
-protocol MapViewDelegate: NSObjectProtocol {
-    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D)
-}
-
-class MapView: MKMapView {
-    var clickDelegate: MapViewDelegate!
-
-    override func mouseUp(theEvent: NSEvent!) {
-        super.mouseUp(theEvent)
-        if theEvent.clickCount == 1 {
-            let point = convertPoint(theEvent.locationInWindow, fromView: nil)
-            let location = convertPoint(point, toCoordinateFromView: self)
-            clickDelegate?.mapViewMouseClicked(self, location: location)
-        }
-    }
-}
-
 @objc(MapViewController)
 class MapViewController: NSViewController, MKMapViewDelegate, MapViewDelegate {
     @IBOutlet var mapView: MapView
@@ -43,7 +22,7 @@ class MapViewController: NSViewController, MKMapViewDelegate, MapViewDelegate {
 
     // Only one point on the map at a time (for now, anyway)
     // This is the point
-    var mapPoint: MKPointAnnotation?
+    var mapPin: MKPointAnnotation?
 
     /// startup
 
@@ -123,21 +102,29 @@ class MapViewController: NSViewController, MKMapViewDelegate, MapViewDelegate {
 
     // center the map as the given latitude/longitude and drop
     // a pin at that location
-    func centerMapAtLatitude(latitude: Double, longitude: Double) {
-        let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        mapView.setCenterCoordinate(center, animated: false)
-        removeMapPoint()
-        mapPoint = MKPointAnnotation()
-        if let point = mapPoint {
-            point.coordinate = center;
-            mapView.addAnnotation(point)
+    func pinMapAtLatitude(latitude: Double, longitude: Double) {
+        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        // center the map on the given location if necessary
+        if !mapView.mouse(mapView.convertCoordinate(location, toPointToView: mapView),
+            inRect: mapView.bounds) {
+            mapView.setCenterCoordinate(location, animated: false)
+        }
+        // if a pin exists, move it.  Otherwise create a new pin
+        if let pin = mapPin {
+            pin.coordinate = location;
+        } else {
+            mapPin = MKPointAnnotation()
+            if let pin = mapPin {
+                pin.coordinate = location;
+                mapView.addAnnotation(pin)
+            }
         }
     }
 
-    func removeMapPoint() {
-        if mapPoint {
-            mapView.removeAnnotation(mapPoint)
-            mapPoint = nil
+    func removeMapPin() {
+        if mapPin {
+            mapView.removeAnnotation(mapPin)
+            mapPin = nil
         }
 
     }

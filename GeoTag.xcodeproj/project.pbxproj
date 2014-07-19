@@ -17,6 +17,7 @@
 		49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49BC3D0B195A62F2009BEC94 /* Localizable.strings */; };
 		49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */; };
 		49C943A71978E7F700F70F3F /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C943A61978E7F700F70F3F /* MapViewController.swift */; };
+		49C943A9197AF5E800F70F3F /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C943A8197AF5E800F70F3F /* MapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		49BC3D0A195A62F2009BEC94 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		49C943A61978E7F700F70F3F /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		49C943A8197AF5E800F70F3F /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				497EE5D2195CAE6300306283 /* ImageData.swift */,
 				49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */,
 				49C943A61978E7F700F70F3F /* MapViewController.swift */,
+				49C943A8197AF5E800F70F3F /* MapView.swift */,
 				49B0EEBF19495FB100293C73 /* MainMenu.xib */,
 				49B0EEB719495FB100293C73 /* Supporting Files */,
 			);
@@ -236,6 +239,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */,
+				49C943A9197AF5E800F70F3F /* MapView.swift in Sources */,
 				49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */,
 				49B0EEBA19495FB100293C73 /* main.swift in Sources */,
 				49C943A71978E7F700F70F3F /* MapViewController.swift in Sources */,
