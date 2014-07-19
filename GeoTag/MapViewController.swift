@@ -13,20 +13,25 @@ import MapKit
 /// location of single click events.  I couldn't do this in an extension
 /// without breaking three finger drags on a touch pad.
 
+protocol MapViewDelegate: NSObjectProtocol {
+    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D)
+}
+
 class MapView: MKMapView {
+    var clickDelegate: MapViewDelegate!
+
     override func mouseUp(theEvent: NSEvent!) {
         super.mouseUp(theEvent)
         if theEvent.clickCount == 1 {
             let point = convertPoint(theEvent.locationInWindow, fromView: nil)
             let location = convertPoint(point, toCoordinateFromView: self)
-            println("Click at \(location.latitude), \(location.longitude)")
-            // single click
+            clickDelegate?.mapViewMouseClicked(self, location: location)
         }
     }
 }
 
 @objc(MapViewController)
-class MapViewController: NSViewController, MKMapViewDelegate {
+class MapViewController: NSViewController, MKMapViewDelegate, MapViewDelegate {
     @IBOutlet var mapView: MapView
     @IBOutlet var mapTypeControl: NSSegmentedControl
 
@@ -48,6 +53,9 @@ class MapViewController: NSViewController, MKMapViewDelegate {
 
     /// Map set-up
     func mapSetup() {
+        // can't make clickDelegate an @IBOutlet; wire it up here
+
+        mapView.clickDelegate = self
         let defaults = NSUserDefaults.standardUserDefaults()
         mapTypeControl.selectedSegment = defaults.integerForKey(mapTypeKey)
         changeMapType(mapTypeControl)
@@ -64,6 +72,11 @@ class MapViewController: NSViewController, MKMapViewDelegate {
             center = CLLocationCoordinate2D(latitude: 37.7244, longitude: -122.4381)
         }
         mapView.camera = MKMapCamera(lookingAtCenterCoordinate: center, fromEyeCoordinate: center, eyeAltitude: altitude)
+    }
+
+    /// MapView delegate functions
+    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D) {
+        println("Click at \(location.latitude), \(location.longitude)")
     }
 
     /// Map control actions
