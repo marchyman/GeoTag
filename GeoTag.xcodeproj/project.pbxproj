@@ -18,6 +18,7 @@
 		49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */; };
 		49C943A71978E7F700F70F3F /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C943A61978E7F700F70F3F /* MapViewController.swift */; };
 		49C943A9197AF5E800F70F3F /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C943A8197AF5E800F70F3F /* MapView.swift */; };
+		49C943AB197B170900F70F3F /* To Do in Resources */ = {isa = PBXBuildFile; fileRef = 49C943AA197B170900F70F3F /* To Do */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		49C943A61978E7F700F70F3F /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		49C943A8197AF5E800F70F3F /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		49C943AA197B170900F70F3F /* To Do */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "To Do"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 		49B0EEAB19495FB100293C73 = {
 			isa = PBXGroup;
 			children = (
+				49C943AA197B170900F70F3F /* To Do */,
 				49BC3D06195A14D2009BEC94 /* GeoTagPlay.playground */,
 				49B0EEB619495FB100293C73 /* GeoTag */,
 				49B0EEC919495FB100293C73 /* GeoTagTests */,
@@ -221,6 +224,7 @@
 				49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */,
 				49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */,
 				49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */,
+				49C943AB197B170900F70F3F /* To Do in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

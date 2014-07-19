@@ -132,7 +132,16 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     @IBAction func paste(AnyObject) {
-        println(__FUNCTION__)
+        let pb = NSPasteboard.generalPasteboard()
+        if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
+            // val should look like "lat lon"
+            let values = pasteVal.componentsSeparatedByString(" ")
+            if values.count == 2 {
+                let latitude = values[0].doubleValue
+                let longitude = values[1].doubleValue
+                updateSelectedRows(latitude, longitude: longitude)
+            }
+        }
     }
 
     @IBAction func delete(AnyObject) {
@@ -176,21 +185,26 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         tableView.reloadDataForRowIndexes(NSIndexSet(index: row), columnIndexes: cols)
     }
 
-    // MapView delegate functions
-    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D) {
+    // Update all selected rows with the given latitude and longitude
+    func updateSelectedRows(latitude: Double, longitude: Double) {
         let rows = tableView.selectedRowIndexes
         appDelegate.undoManager.beginUndoGrouping()
         rows.enumerateIndexesUsingBlock {
             (row: Int, stop: UnsafePointer<ObjCBool>) -> Void in
             let image = self.images[row]
             self.updateLocationAtRow(row, validLocation: true,
-                latitude: location.latitude, longitude: location.longitude,
+                latitude: latitude, longitude: longitude,
                 modified: true)
             self.mapViewController.pinMapAtLatitude(image.latitude!,
                 longitude: image.longitude!)
         }
         appDelegate.undoManager.endUndoGrouping()
         appDelegate.undoManager.setActionName("set location")
+    }
+
+    // MapView delegate functions
+    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D) {
+        updateSelectedRows(location.latitude, longitude: location.longitude)
     }
 
 
@@ -272,5 +286,11 @@ extension NSTableView {
             deselectAll(self)
         }
         super.rightMouseDown(theEvent)
+    }
+}
+
+extension String {
+    var doubleValue: Double {
+    return (self as NSString).doubleValue
     }
 }

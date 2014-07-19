@@ -4,3 +4,8 @@ import Cocoa
 
 var str = "Hello, playground"
 
+let pb = NSPasteboard.generalPasteboard()
+
+if let val = pb.stringForType(NSPasteboardTypeString) {
+    val
+}
