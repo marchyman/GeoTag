@@ -1,5 +1,4 @@
 Drag and Drop into table view
-Paste -- only enable if pasteboard has something in it
 Validate selections
 Save data.  Try native functions first
 - save with exiftool

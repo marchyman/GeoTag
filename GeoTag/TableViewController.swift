@@ -98,19 +98,37 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     override func validateMenuItem(menuItem: NSMenuItem!) -> Bool {
         switch menuItem.action {
         case Selector("selectAll:"):
+            // OK as long as there is at least one entry in the table
             return images.count > 0
         case Selector("clear:"):
+            // OK if the table is populated and no changes pending
             return images.count > 0 && !appDelegate.isModified()
         case Selector("discard:"):
+            // OK if there are changes pending
             return appDelegate.isModified()
         case Selector("cut:"), Selector("copy:"):
+            // OK if only one row with a valid location selected
             if tableView.numberOfSelectedRows == 1 {
                 let image = images[tableView.selectedRow]
                 if (image.latitude && image.longitude) {
                     return true
                 }
             }
-        case Selector("paste:"), Selector("delete:"):
+        case Selector("paste:"):
+            // OK if there is at least one selected row and something that
+            // looks like a lat and lon in the pasteboard.
+            if tableView.numberOfSelectedRows > 0 {
+                let pb = NSPasteboard.generalPasteboard()
+                if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
+                    // pasteVal should look like "lat lon"
+                    let values = pasteVal.componentsSeparatedByString(" ")
+                    if values.count == 2 {
+                        return true
+                    }
+                }
+            }
+        case Selector("delete:"):
+            // OK if at least one row selected
             return tableView.numberOfSelectedRows > 0
         default:
             println("default for item \(menuItem)")
@@ -129,6 +147,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     @IBAction func cut(obj: AnyObject) {
         copy(obj)
         delete(obj)
+        appDelegate.undoManager.setActionName("cut")
     }
 
     @IBAction func copy(AnyObject) {
@@ -141,12 +160,13 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     @IBAction func paste(AnyObject) {
         let pb = NSPasteboard.generalPasteboard()
         if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
-            // val should look like "lat lon"
+            // pasteVal should look like "lat lon"
             let values = pasteVal.componentsSeparatedByString(" ")
             if values.count == 2 {
                 let latitude = values[0].doubleValue
                 let longitude = values[1].doubleValue
                 updateSelectedRows(latitude, longitude: longitude)
+                appDelegate.undoManager.setActionName("paste")
             }
         }
     }
@@ -155,7 +175,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         let rows = tableView.selectedRowIndexes
         appDelegate.undoManager.beginUndoGrouping()
         rows.enumerateIndexesUsingBlock {
-            (row: Int, stop: UnsafePointer<ObjCBool>) -> Void in
+            (row, _) -> Void in
             self.mapViewController.removeMapPin()
             self.updateLocationAtRow(row, validLocation: false, latitude: 0,
                 longitude: 0, modified: true)
@@ -197,7 +217,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         let rows = tableView.selectedRowIndexes
         appDelegate.undoManager.beginUndoGrouping()
         rows.enumerateIndexesUsingBlock {
-            (row: Int, stop: UnsafePointer<ObjCBool>) -> Void in
+            (row, _) -> Void in
             let image = self.images[row]
             self.updateLocationAtRow(row, validLocation: true,
                 latitude: latitude, longitude: longitude,
@@ -206,12 +226,12 @@ class TableViewController: NSViewController, NSTableViewDelegate,
                 longitude: image.longitude!)
         }
         appDelegate.undoManager.endUndoGrouping()
-        appDelegate.undoManager.setActionName("set location")
     }
 
     // MapView delegate functions
     func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D) {
         updateSelectedRows(location.latitude, longitude: location.longitude)
+        appDelegate.undoManager.setActionName("set location")
     }
 
 
