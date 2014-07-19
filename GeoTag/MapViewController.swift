@@ -14,11 +14,11 @@ class MapViewController: NSViewController, MKMapViewDelegate {
     @IBOutlet var mapView: MKMapView
     @IBOutlet var mapTypeControl: NSSegmentedControl
 
+    // user defaults keys for map configuration
     let mapTypeKey = "MapType"
-    let mapRegionCenterLatitudeKey = "MapRegionCenterLatitude"
-    let mapRegionCenterLongitudeKey = "MapRegionCenterLongitude"
-    let mapRegionSpanLatitudeDeltaKey = "MapRegionSpanLatitudeDelta"
-    let mapRegionSpanLongitudeDeltaKey = "MapRegionSpanLongitudeDelta"
+    let cameraCenterLatitudeKey = "CameraCenterLatitudeKey"
+    let cameraCenterLongitudeKey = "CameraCenterLongitudeKey"
+    let cameraAltitudeKey = "CameraAltitudeKey"
 
     /// startup
 
@@ -32,18 +32,18 @@ class MapViewController: NSViewController, MKMapViewDelegate {
         mapTypeControl.selectedSegment = defaults.integerForKey(mapTypeKey)
         changeMapType(mapTypeControl)
         // set up map from save info
-        let latitude = defaults.doubleForKey(mapRegionCenterLatitudeKey)
-        let longitude = defaults.doubleForKey(mapRegionCenterLongitudeKey)
-        let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        let latitudeDelta = defaults.doubleForKey(mapRegionSpanLatitudeDeltaKey)
-        let longitudeDelta = defaults.doubleForKey(mapRegionSpanLongitudeDeltaKey)
-        // if either latitude or longitude delta is 0 don't bother
-        if latitudeDelta == 0 || longitudeDelta == 0 {
-            return
+        var center: CLLocationCoordinate2D
+        var altitude = defaults.doubleForKey(cameraAltitudeKey)
+        if (altitude > 0) {
+            let latitude = defaults.doubleForKey(cameraCenterLatitudeKey)
+            let longitude = defaults.doubleForKey(cameraCenterLongitudeKey)
+            center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        } else {
+            // hard coded default location (SF peninsula)
+            altitude = 50000.0
+            center = CLLocationCoordinate2D(latitude: 37.7244, longitude: -122.4381)
         }
-        let span = MKCoordinateSpanMake(latitudeDelta, longitudeDelta)
-        let region = MKCoordinateRegionMake(center, span)
-        mapView.region = region
+        mapView.camera = MKMapCamera(lookingAtCenterCoordinate: center, fromEyeCoordinate: center, eyeAltitude: altitude)
     }
 
     /// Map control actions
@@ -80,14 +80,12 @@ class MapViewController: NSViewController, MKMapViewDelegate {
 
         // save the current region as its component parts
         let currentRegion = mapView.region
-        defaults.setDouble(currentRegion.center.latitude,
-            forKey: mapRegionCenterLatitudeKey)
-        defaults.setDouble(currentRegion.center.longitude,
-            forKey: mapRegionCenterLongitudeKey)
-        defaults.setDouble(currentRegion.span.latitudeDelta,
-            forKey: mapRegionSpanLatitudeDeltaKey)
-        defaults.setDouble(currentRegion.span.longitudeDelta, forKey:
-            mapRegionSpanLongitudeDeltaKey)
+        defaults.setDouble(mapView.camera.centerCoordinate.latitude,
+            forKey: cameraCenterLatitudeKey)
+        defaults.setDouble(mapView.camera.centerCoordinate.longitude,
+            forKey: cameraCenterLongitudeKey)
+        defaults.setDouble(mapView.camera.altitude,
+            forKey: cameraAltitudeKey)
     }
 
     // center the map as the given latitude/longitude and drop
