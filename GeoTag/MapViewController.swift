@@ -10,7 +10,7 @@ import Cocoa
 import MapKit
 
 @objc(MapViewController)
-class MapViewController: NSViewController, MKMapViewDelegate, MapViewDelegate {
+class MapViewController: NSViewController, MKMapViewDelegate {
     @IBOutlet var mapView: MapView
     @IBOutlet var mapTypeControl: NSSegmentedControl
 
@@ -30,11 +30,7 @@ class MapViewController: NSViewController, MKMapViewDelegate, MapViewDelegate {
         super.viewDidLoad()
     }
 
-    /// Map set-up
-    func mapSetup() {
-        // can't make clickDelegate an @IBOutlet; wire it up here
-
-        mapView.clickDelegate = self
+    override func awakeFromNib() {
         let defaults = NSUserDefaults.standardUserDefaults()
         mapTypeControl.selectedSegment = defaults.integerForKey(mapTypeKey)
         changeMapType(mapTypeControl)
@@ -51,11 +47,6 @@ class MapViewController: NSViewController, MKMapViewDelegate, MapViewDelegate {
             center = CLLocationCoordinate2D(latitude: 37.7244, longitude: -122.4381)
         }
         mapView.camera = MKMapCamera(lookingAtCenterCoordinate: center, fromEyeCoordinate: center, eyeAltitude: altitude)
-    }
-
-    /// MapView delegate functions
-    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D) {
-        println("Click at \(location.latitude), \(location.longitude)")
     }
 
     /// Map control actions

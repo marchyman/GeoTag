@@ -15,7 +15,6 @@
         <customObject id="-3" userLabel="Application"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="GeoTag" customModuleProvider="target">
             <connections>
-                <outlet property="mapViewController" destination="tlW-4s-NGN" id="muV-d2-ioT"/>
                 <outlet property="progressIndicator" destination="Leb-gI-5bq" id="QDo-c7-wEB"/>
                 <outlet property="tableViewController" destination="er7-2A-M57" id="Bon-5R-vH6"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
