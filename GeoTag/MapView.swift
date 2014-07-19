@@ -15,7 +15,7 @@ import MapKit
 /// function on a mouse).
 
 class MapView: MKMapView {
-    var clickDelegate: MapViewDelegate!
+    var clickDelegate: MapViewDelegate?
 
     override func mouseUp(theEvent: NSEvent!) {
         super.mouseUp(theEvent)
