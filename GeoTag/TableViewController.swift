@@ -132,7 +132,7 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         appDelegate.undoManager.beginUndoGrouping()
         rows.enumerateIndexesUsingBlock {
             (row: Int, stop: UnsafePointer<ObjCBool>) -> Void in
-            // remove marker from map ;;;
+            self.mapViewController.removeMapPoint()
             self.updateLocationAtRow(row, validLocation: false, latitude: 0,
                 longitude: 0, modified: true)
         }
@@ -156,7 +156,7 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         appDelegate.undoManager.removeAllActions()
         tableView.reloadData()
         imageWell.image = nil
-        // ;;; remove marker from map
+        mapViewController.removeMapPoint()
     }
 
     // Reloading a specific row.  Only the latitude and longitude columns
@@ -180,14 +180,14 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
         let row = tableView.selectedRow
         if row < 0 {
             imageWell.image = nil
-            // ;;; remove marker from map
+            mapViewController.removeMapPoint()
         } else {
             let image = images[row]
             imageWell.image = image.image
             if image.latitude && image.longitude {
                 mapViewController.centerMapAtLatitude(image.latitude!, longitude: image.longitude!)
             } else {
-                // ;;; remove marker from map
+                mapViewController.removeMapPoint()
             }
         }
     }

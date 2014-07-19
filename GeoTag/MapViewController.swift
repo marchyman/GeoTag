@@ -20,6 +20,10 @@ class MapViewController: NSViewController, MKMapViewDelegate {
     let cameraCenterLongitudeKey = "CameraCenterLongitudeKey"
     let cameraAltitudeKey = "CameraAltitudeKey"
 
+    // Only one point on the map at a time (for now, anyway)
+    // This is the point
+    var mapPoint: MKPointAnnotation?
+
     /// startup
 
     override func viewDidLoad() {       // 10.10 and later
@@ -92,8 +96,20 @@ class MapViewController: NSViewController, MKMapViewDelegate {
     // a pin at that location
     func centerMapAtLatitude(latitude: Double, longitude: Double) {
         let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        mapView.setCenterCoordinate(center, animated: true)
-        // ;;; drop a pin here
+        mapView.setCenterCoordinate(center, animated: false)
+        removeMapPoint()
+        mapPoint = MKPointAnnotation()
+        if let point = mapPoint {
+            point.coordinate = center;
+            mapView.addAnnotation(point)
+        }
     }
 
+    func removeMapPoint() {
+        if mapPoint {
+            mapView.removeAnnotation(mapPoint)
+            mapPoint = nil
+        }
+
+    }
 }
