@@ -13,6 +13,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @IBOutlet var window: NSWindow
     @IBOutlet var tableViewController: TableViewController
     @IBOutlet var progressIndicator: NSProgressIndicator
+    @IBOutlet var mapViewController: MapViewController
 
     var undoManager: NSUndoManager!
 
@@ -22,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Insert code here to initialize your application
         window.delegate = self
         undoManager = NSUndoManager()
+        mapViewController.mapSetup()
     }
 
     /// window delegate undo handling

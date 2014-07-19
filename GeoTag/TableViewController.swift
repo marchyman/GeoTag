@@ -185,7 +185,7 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
             let image = images[row]
             imageWell.image = image.image
             if image.latitude && image.longitude {
-                mapViewController.displayMapAtLatitude(image.latitude!, longitude: image.longitude!)
+                mapViewController.centerMapAtLatitude(image.latitude!, longitude: image.longitude!)
             } else {
                 // ;;; remove marker from map
             }
