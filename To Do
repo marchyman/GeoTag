@@ -1,4 +1,3 @@
-Drag and Drop into table view
 Validate selections
 Save data.  Try native functions first
 - save with exiftool
@@ -6,3 +5,4 @@ Save data.  Try native functions first
 App Icons
 Help
 Drag map pins
+Add tooltip to show column values in case truncated

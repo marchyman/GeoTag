@@ -31,6 +31,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         // can't make clickDelegate an @IBOutlet; wire it up here
 
         mapViewController.mapView.clickDelegate = self
+        tableView.registerForDraggedTypes([NSFilenamesPboardType]);
+
     }
 
     // poulating the table
@@ -293,6 +295,44 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         }
         return nil
     }
+
+    func tableView(aTableView: NSTableView!,
+        validateDrop info: NSDraggingInfo!,
+        proposedRow row: Int,
+        proposedDropOperation operation: NSTableViewDropOperation) -> NSDragOperation {
+
+        if row < images.count {
+            return .None
+        }
+        let pb = info.draggingPasteboard()
+        if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
+            let fileManager = NSFileManager.defaultManager()
+            for path in paths {
+                var dir: ObjCBool = false
+                if fileManager.fileExistsAtPath(path, isDirectory: &dir) {
+                    if dir == true || isDuplicateImage(NSURL(fileURLWithPath: path)) {
+                        return .None
+                    }
+                }
+            }
+        }
+        return .Link
+    }
+
+    func tableView(aTableView: NSTableView!,
+        acceptDrop info: NSDraggingInfo!,
+        row: Int,
+        dropOperation operation: NSTableViewDropOperation) -> Bool {
+        let pb = info.draggingPasteboard()
+        if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
+            var urls = [NSURL]()
+            for path in paths {
+                urls += NSURL(fileURLWithPath: path)
+            }
+            return !addImages(urls)
+        }
+        return false
+    }
 }
 
 /// in a table a right click will bring up a context menu.  I prefer that
@@ -315,6 +355,9 @@ extension NSTableView {
         super.rightMouseDown(theEvent)
     }
 }
+
+/// Convert a string to a double through a cast to NSString.
+/// Used in paste code to handle lat and lon as a string value.
 
 extension String {
     var doubleValue: Double {
