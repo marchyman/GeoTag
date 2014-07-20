@@ -243,6 +243,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     // delegate functions
 
+    // don't allow rows with non images to be selected while still allowing
+    // drags and ranges.
     func tableView(tableView: NSTableView!,
                 selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet!) -> NSIndexSet! {
         var selectionIndexes = NSMutableIndexSet()
@@ -283,10 +285,12 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         row: Int) -> NSView! {
         let image = images[row]
         var value = ""
+        var tip: String? = nil
         if let id = tableColumn.identifier {
             switch id {
             case "imageName":
                 value = image.name
+                tip = image.path
             case "dateTime":
                 value = image.date
             case "latitude":
@@ -303,11 +307,19 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             var colView =
                 tableView.makeViewWithIdentifier(id, owner: nil) as NSTableCellView
             colView.textField.stringValue = value;
+            if tip {
+                colView.textField.toolTip = tip!
+            }
             return colView
         }
         return nil
     }
-
+/*
+   NSTableCellView *result;
+    result = [aTableView makeViewWithIdentifier:@"entriesCellView" owner:self];
+    result.objectValue = [self.entryController entryForRow:row];
+    result.toolTip = @"Any ToolTip String here";
+*/
     func tableView(aTableView: NSTableView!,
                    validateDrop info: NSDraggingInfo!,
                    proposedRow row: Int,

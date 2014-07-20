@@ -1,9 +1,8 @@
-Validate selections
 Save data.  Try native functions first
 - save with exiftool
 - save with native functions
 App Icons
 Help
 Drag map pins
-Add tooltip to show column values in case truncated
-Animate map pins when map doesn't change ???
+Grey out invalid images
+Limit drag and drop to valid image types??
