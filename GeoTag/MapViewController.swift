@@ -40,13 +40,17 @@ class MapViewController: NSViewController, MKMapViewDelegate {
         if (altitude > 0) {
             let latitude = defaults.doubleForKey(cameraCenterLatitudeKey)
             let longitude = defaults.doubleForKey(cameraCenterLongitudeKey)
-            center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            center = CLLocationCoordinate2D(latitude: latitude,
+                                            longitude: longitude)
         } else {
             // hard coded default location (SF peninsula)
             altitude = 50000.0
-            center = CLLocationCoordinate2D(latitude: 37.7244, longitude: -122.4381)
+            center = CLLocationCoordinate2D(latitude: 37.7244,
+                                            longitude: -122.4381)
         }
-        mapView.camera = MKMapCamera(lookingAtCenterCoordinate: center, fromEyeCoordinate: center, eyeAltitude: altitude)
+        mapView.camera = MKMapCamera(lookingAtCenterCoordinate: center,
+                                     fromEyeCoordinate: center,
+                                     eyeAltitude: altitude)
     }
 
     /// Map control actions
@@ -94,10 +98,12 @@ class MapViewController: NSViewController, MKMapViewDelegate {
     // center the map as the given latitude/longitude and drop
     // a pin at that location
     func pinMapAtLatitude(latitude: Double, longitude: Double) {
-        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let location = CLLocationCoordinate2D(latitude: latitude,
+                                              longitude: longitude)
         // center the map on the given location if necessary
-        if !mapView.mouse(mapView.convertCoordinate(location, toPointToView: mapView),
-            inRect: mapView.bounds) {
+        if !mapView.mouse(mapView.convertCoordinate(location,
+                                                    toPointToView: mapView),
+                          inRect: mapView.bounds) {
             mapView.setCenterCoordinate(location, animated: false)
         }
         // if a pin exists, move it.  Otherwise create a new pin
