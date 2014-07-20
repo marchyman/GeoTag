@@ -312,6 +312,9 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             if tip {
                 colView.textField.toolTip = tip!
             }
+            if !image.validImage {
+                colView.textField.textColor = NSColor.grayColor()
+            }
             return colView
         }
         return nil
