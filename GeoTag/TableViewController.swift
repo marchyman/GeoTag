@@ -68,7 +68,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     // prepareWithInvocationTarget.  A tuple will not work, either.  Both
     // will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
 
-    func updateLocationAtRow(row: Int, validLocation: Bool, latitude: Double, longitude: Double, modified: Bool) {
+    func updateLocationAtRow(row: Int, validLocation: Bool, latitude: Double,
+                             longitude: Double, modified: Bool) {
         var oldValidLocation: Bool
         var oldLatitude: Double
         var oldLongitude: Double
@@ -156,7 +157,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         let row = tableView.selectedRow
         let pb = NSPasteboard.generalPasteboard()
         pb.declareTypes([NSPasteboardTypeString], owner: self)
-        pb.setString(images[row].stringRepresentation, forType: NSPasteboardTypeString)
+        pb.setString(images[row].stringRepresentation,
+                     forType: NSPasteboardTypeString)
     }
 
     @IBAction func paste(AnyObject) {
@@ -211,7 +213,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         let latColumn = tableView.columnWithIdentifier("latitude")
         let columns = 2 // latitude and longitude
         let cols = NSIndexSet(indexesInRange: NSMakeRange(latColumn, columns))
-        tableView.reloadDataForRowIndexes(NSIndexSet(index: row), columnIndexes: cols)
+        tableView.reloadDataForRowIndexes(NSIndexSet(index: row),
+                                          columnIndexes: cols)
     }
 
     // Update all selected rows with the given latitude and longitude
@@ -231,7 +234,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     // MapView delegate functions
-    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D) {
+    func mapViewMouseClicked(mapView: MapView!,
+                             location: CLLocationCoordinate2D) {
         updateSelectedRows(location.latitude, longitude: location.longitude)
         appDelegate.undoManager.setActionName("set location")
     }
@@ -254,7 +258,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             let image = images[row]
             imageWell.image = image.image
             if image.latitude && image.longitude {
-                mapViewController.pinMapAtLatitude(image.latitude!, longitude: image.longitude!)
+                mapViewController.pinMapAtLatitude(image.latitude!,
+                                                   longitude: image.longitude!)
             } else {
                 mapViewController.removeMapPin()
             }
@@ -289,7 +294,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             default:
                 break
             }
-            var colView = tableView.makeViewWithIdentifier(id, owner: nil) as NSTableCellView
+            var colView =
+                tableView.makeViewWithIdentifier(id, owner: nil) as NSTableCellView
             colView.textField.stringValue = value;
             return colView
         }
@@ -297,9 +303,9 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     func tableView(aTableView: NSTableView!,
-        validateDrop info: NSDraggingInfo!,
-        proposedRow row: Int,
-        proposedDropOperation operation: NSTableViewDropOperation) -> NSDragOperation {
+                   validateDrop info: NSDraggingInfo!,
+                   proposedRow row: Int,
+                   proposedDropOperation operation: NSTableViewDropOperation) -> NSDragOperation {
 
         if row < images.count {
             return .None
@@ -310,19 +316,21 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             for path in paths {
                 var dir: ObjCBool = false
                 if fileManager.fileExistsAtPath(path, isDirectory: &dir) {
-                    if dir == true || isDuplicateImage(NSURL(fileURLWithPath: path)) {
+                    if dir == true ||
+                       isDuplicateImage(NSURL(fileURLWithPath: path)) {
                         return .None
                     }
                 }
             }
+            return .Link
         }
-        return .Link
+        return .None
     }
 
     func tableView(aTableView: NSTableView!,
-        acceptDrop info: NSDraggingInfo!,
-        row: Int,
-        dropOperation operation: NSTableViewDropOperation) -> Bool {
+                   acceptDrop info: NSDraggingInfo!,
+                   row: Int,
+                   dropOperation operation: NSTableViewDropOperation) -> Bool {
         let pb = info.draggingPasteboard()
         if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
             var urls = [NSURL]()
@@ -347,7 +355,8 @@ extension NSTableView {
         let row = rowAtPoint(localPoint)
         if row >= 0 {
             if !isRowSelected(row) {
-                selectRowIndexes(NSIndexSet(index: row), byExtendingSelection: false)
+                selectRowIndexes(NSIndexSet(index: row),
+                                 byExtendingSelection: false)
             }
         } else {
             deselectAll(self)
