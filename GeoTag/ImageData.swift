@@ -65,11 +65,15 @@ class ImageData: NSObject {
     // extract image metadata and build thumbnail preview
 
     func loadImageData() -> Bool {
-        if let imgRef = CGImageSourceCreateWithURL(url, nil)?.takeRetainedValue() {
+        if let imgRef = CGImageSourceCreateWithURL(url,
+                                                   nil)?.takeRetainedValue() {
             // grab the image properties
             let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil).takeUnretainedValue() as NSDictionary
             let height = imgProps[kCGImagePropertyPixelHeight] as Int!
             let width = imgProps[kCGImagePropertyPixelWidth] as Int!
+            if !height || !width {
+                return false
+            }
 
             /// Create a "preview" of the image. If the image is larger than
             /// 512x512 constrain the preview to that size.  512x512 is an
@@ -91,9 +95,9 @@ class ImageData: NSObject {
                 let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
                 image = NSImage(size: imgRect.size)
                 image.lockFocus()
-                CGContextDrawImage(NSGraphicsContext.currentContext().cgcontext, imgRect, imgPreview);
+                CGContextDrawImage(NSGraphicsContext.currentContext().cgcontext,
+                                   imgRect, imgPreview);
                 image.unlockFocus()
-
 
                 // extract image date/time created
                 if let exifData = imgProps[kCGImagePropertyExifDictionary] as? NSDictionary! {

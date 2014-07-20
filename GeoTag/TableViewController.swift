@@ -243,11 +243,17 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     // delegate functions
 
-//    func tableView(tableView: NSTableView!,
-//        selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet!) -> NSIndexSet! {
-//        println("\(proposedSelectionIndexes)")
-//        return proposedSelectionIndexes
-//    }
+    func tableView(tableView: NSTableView!,
+                selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet!) -> NSIndexSet! {
+        var selectionIndexes = NSMutableIndexSet()
+        proposedSelectionIndexes.enumerateIndexesUsingBlock {
+            (row, _) -> Void in
+            if self.images[row].validImage {
+               selectionIndexes.addIndex(row)
+            }
+        }
+        return selectionIndexes
+    }
 
     func tableViewSelectionDidChange(notification: NSNotification!) {
         let row = tableView.selectedRow
