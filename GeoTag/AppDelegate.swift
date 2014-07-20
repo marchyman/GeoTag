@@ -49,9 +49,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         if panel.runModal() == NSFileHandlingPanelOKButton {
-            progressIndicator.startAnimation(self)
             let dups = tableViewController.addImages(panel.URLs as [NSURL])
-            progressIndicator.stopAnimation(self)
             if dups {
                 let alert = NSAlert()
                 alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))

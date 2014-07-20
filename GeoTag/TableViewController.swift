@@ -47,6 +47,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     func addImages(urls: [NSURL]) -> Bool {
+        appDelegate.progressIndicator.startAnimation(self)
         var reloadNeeded = false
         var duplicateFound = false
         for url in urls {
@@ -60,6 +61,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         if reloadNeeded {
             reloadAllRows()
         }
+        appDelegate.progressIndicator.stopAnimation(self)
         return duplicateFound
     }
 
