@@ -1,24 +1,5 @@
-# generated file
-Credits.rtf
-
-# auto backup files
-*~.nib
-*.swp
 *~
+.DS_Store
 
-# Xcode 4 noise
 xcuserdata/
 *.xcworkspace/
-
-# Xcode 3 noise
-build/
-*.pbxuser
-*.mode1v3
-*.mode2v3
-
-# old skool
-.svn
-
-# osx noise
-.DS_Store
-profile
