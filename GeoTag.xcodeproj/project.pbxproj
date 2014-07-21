@@ -34,6 +34,7 @@
 /* Begin PBXFileReference section */
 		491198381959434500F304CB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
+		4965C67B197DDC87005FC03F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
 		49B0EEB419495FB100293C73 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B0EEB819495FB100293C73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -75,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				49C943AA197B170900F70F3F /* To Do */,
+				4965C67B197DDC87005FC03F /* README */,
 				49BC3D06195A14D2009BEC94 /* GeoTagPlay.playground */,
 				49B0EEB619495FB100293C73 /* GeoTag */,
 				49B0EEC919495FB100293C73 /* GeoTagTests */,

@@ -1,29 +1,39 @@
-GeoTag 2.1
+## GeoTag 3.0
 
-**Appears to work correctly on Mountain Lion (10.8)**
+This is a complete re-write of GeoTag for Mavericks and later
 
-OS X program (Snow Leopard or later) to add or edit geolocation information
-in images by dragging a marker on a google map.   The code was written
-before such ability was built in to Aperture and iPhoto.
+* written in swift
+* uses Apple's MapKit instead of google maps
+* Compiled application signed with an Apple Developer Key
 
-Leopard (10.5) support was removed after 1.8.   Version 2.0 and later
-require Snow Leopard (10.6) or later.   Changes in 2.0 include
+Use version 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8
+(Mountain Lion).  Use version 1.8 if your Max is running OS X version 10.5
+(Leopard)  or earlier
 
-* May select and update multiple images at once
-* Map zoom level does not change when clicking from image to image (1.8)
-* Several misc bug fixes (most in 1.8, too).
+The functions provided by GeoTag exist in current versions of Photo, Aperture
+(RIP), and Lightroom.  Some still find the application useful for geolocation
+tagging photos in the field.
 
-For developers: the project now requires Xcode 4.x/Lion as it uses
-Automatic Reference Counting (ARC) instead of garbage collection.  This
-resolved the issue of messages spit out to the console regarding
-underflow when dragging to select in an open panel.
+See <http://www.snafu.org/GeoTag/> for more information
 
-A Makefile exists for those, like me, who find some things easier
-to do on the command line.  To remove all targets for both the
-Release and Debug configurations use
+### Operating Instructions
 
-    make clean
-    
-To build a dmg and move it to your desktop use
+Run Program.  Use the Open command from the menu or ⌘O to select files to
+modify. You can also drag files into the table on the left side of the
+application window.  File names shown in a light grey color can not be
+modified.
 
-    make
+Select on one or more rows.  If multiple rows are selected the row associated
+with the displayed map location (if the image has a location) will have
+a highlighted latitude and longitude.   Click on the map to set or change the
+location of all selected images. Existing location can also be changed by
+dragging the pin --- click on the pin and hold until drag mode is enabled.
+
+;;; add more here
+
+### Build Instructions
+
+* Open the project in Xcode (6.0 or later required)
+* ⌘R will build and run, ⌘B to build only
+
+Send all comments, bugs, requests, etc. to <marc@snafu.org>
