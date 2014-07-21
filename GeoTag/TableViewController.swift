@@ -92,8 +92,11 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             longitude: oldLongitude, modified: appDelegate.isModified())
         if validLocation {
             image.setLatitude(latitude, longitude: longitude)
+            mapViewController.pinMapAtLatitude(image.latitude!,
+                longitude: image.longitude!)
         } else {
             image.setLatitude(nil, longitude: nil)
+            mapViewController.removeMapPin()
         }
         reloadRow(row)
         appDelegate.modified(modified)
@@ -189,7 +192,6 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.undoManager.beginUndoGrouping()
         rows.enumerateIndexesUsingBlock {
             (row, _) -> Void in
-            self.mapViewController.removeMapPin()
             self.updateLocationAtRow(row, validLocation: false, latitude: 0,
                 longitude: 0, modified: true)
         }
@@ -233,12 +235,9 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.undoManager.beginUndoGrouping()
         rows.enumerateIndexesUsingBlock {
             (row, _) -> Void in
-            let image = self.images[row]
             self.updateLocationAtRow(row, validLocation: true,
                 latitude: latitude, longitude: longitude,
                 modified: true)
-            self.mapViewController.pinMapAtLatitude(image.latitude!,
-                longitude: image.longitude!)
         }
         appDelegate.undoManager.endUndoGrouping()
     }
