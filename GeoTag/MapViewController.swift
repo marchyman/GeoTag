@@ -100,10 +100,8 @@ class MapViewController: NSViewController, MKMapViewDelegate {
     func pinMapAtLatitude(latitude: Double, longitude: Double) {
         let location = CLLocationCoordinate2D(latitude: latitude,
                                               longitude: longitude)
-        // center the map on the given location if necessary
-        if !mapView.mouse(mapView.convertCoordinate(location,
-                                                    toPointToView: mapView),
-                          inRect: mapView.bounds) {
+        let point = MKMapPointForCoordinate(location);
+        if !MKMapRectContainsPoint(mapView.visibleMapRect, point) {
             mapView.setCenterCoordinate(location, animated: false)
         }
         // if a pin exists, move it.  Otherwise create a new pin
