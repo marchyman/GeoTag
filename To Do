@@ -5,4 +5,5 @@ App Icons
 Help
 Drag map pins
 GeoTag About menu
-Open recent
+double click on map moves point... should be ignored
+When multiple items are selected indicate which point is displayed

@@ -31,6 +31,9 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     // object initialization
     override func awakeFromNib() {
         // can't make clickDelegate an @IBOutlet; wire it up here
+        // mapViewController is a delegate to handle pin drag location changes
+        // mapViewController.mapview is a delegate to handle map clicks
+        mapViewController.clickDelegate = self
         mapViewController.mapView.clickDelegate = self
         tableView.registerForDraggedTypes([NSFilenamesPboardType]);
     }
@@ -242,11 +245,15 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.undoManager.endUndoGrouping()
     }
 
-    // MapView delegate functions
+    // MapView/MapViewController delegate function
     func mapViewMouseClicked(mapView: MapView!,
                              location: CLLocationCoordinate2D) {
         updateSelectedRows(location.latitude, longitude: location.longitude)
-        appDelegate.undoManager.setActionName("set location")
+        if mapView {
+            appDelegate.undoManager.setActionName("set location")
+        } else {
+            appDelegate.undoManager.setActionName("change location")
+        }
     }
 
 

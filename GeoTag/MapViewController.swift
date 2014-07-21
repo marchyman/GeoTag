@@ -11,6 +11,8 @@ import MapKit
 
 @objc(MapViewController)
 class MapViewController: NSViewController, MKMapViewDelegate {
+    var clickDelegate: MapViewDelegate?
+
     @IBOutlet var mapView: MapView
     @IBOutlet var mapTypeControl: NSSegmentedControl
 
@@ -26,10 +28,12 @@ class MapViewController: NSViewController, MKMapViewDelegate {
 
     /// startup
 
-    override func viewDidLoad() {       // 10.10 and later
+    // 10.10 and later
+    override func viewDidLoad() {
         super.viewDidLoad()
     }
 
+    // final initialization for the mapView
     override func awakeFromNib() {
         let defaults = NSUserDefaults.standardUserDefaults()
         mapTypeControl.selectedSegment = defaults.integerForKey(mapTypeKey)
@@ -116,11 +120,46 @@ class MapViewController: NSViewController, MKMapViewDelegate {
         }
     }
 
+    // remove the pin from the map
     func removeMapPin() {
         if mapPin {
             mapView.removeAnnotation(mapPin)
             mapPin = nil
         }
 
+    }
+
+    // Delegate functions
+
+    // return a pinAnnotationView for a red pin
+    func mapView(mapView: MKMapView!,
+                 viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+
+        let identifier = "pinAnnotation"
+        var annotationView: MKPinAnnotationView!
+        annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier) as? MKPinAnnotationView
+        if annotationView {
+            // is this correct?
+            annotationView.annotation = annotation
+        } else {
+            annotationView = MKPinAnnotationView(annotation: annotation,
+                                                 reuseIdentifier: identifier)
+        }
+        annotationView.pinColor = .Red;
+        annotationView.animatesDrop = false
+        annotationView.canShowCallout = false
+        annotationView.draggable = true
+        return annotationView
+    }
+
+    // A pin is being dragged.
+    func mapView(mapView: MKMapView!,
+                 annotationView: MKAnnotationView!,
+                 didChangeDragState newState: MKAnnotationViewDragState,
+                 fromOldState oldState: MKAnnotationViewDragState) {
+        if newState == .Ending {
+            clickDelegate?.mapViewMouseClicked(nil,
+                                               location: annotationView.annotation.coordinate)
+         }
     }
 }
