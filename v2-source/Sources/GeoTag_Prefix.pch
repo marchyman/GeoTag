@@ -1,7 +1,0 @@
-//
-// Prefix header for all source files of the 'GeoTag' target in the 'GeoTag' project
-//
-
-#ifdef __OBJC__
-    #import <Cocoa/Cocoa.h>
-#endif
