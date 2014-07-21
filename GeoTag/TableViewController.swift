@@ -22,21 +22,22 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     // startup
 
-    override func viewDidLoad() {       // 10.10 and later
+    // Alas, 10.10 and later
+    override func viewDidLoad() {
         super.viewDidLoad()
         // this would be a good place to initialize an undo manager
     }
 
+    // object initialization
     override func awakeFromNib() {
         // can't make clickDelegate an @IBOutlet; wire it up here
-
         mapViewController.mapView.clickDelegate = self
         tableView.registerForDraggedTypes([NSFilenamesPboardType]);
-
     }
 
     // poulating the table
 
+    // check if image is a duplicate
     func isDuplicateImage(url: NSURL) -> Bool {
         for image in images {
             if url.path == image.path {
@@ -46,6 +47,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         return false
     }
 
+    // add an image to our array of images unless it is a duplicate
     func addImages(urls: [NSURL]) -> Bool {
         appDelegate.progressIndicator.startAnimation(self)
         var reloadNeeded = false
@@ -69,7 +71,6 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     // Note: The system can not handle optional types when used with
     // prepareWithInvocationTarget.  A tuple will not work, either.  Both
     // will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
-
     func updateLocationAtRow(row: Int, validLocation: Bool, latitude: Double,
                              longitude: Double, modified: Bool) {
         var oldValidLocation: Bool
@@ -100,6 +101,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     // menu actions
 
+    // only enable various tableview related menu items when it makes sense
     override func validateMenuItem(menuItem: NSMenuItem!) -> Bool {
         switch menuItem.action {
         case Selector("selectAll:"):
@@ -141,6 +143,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         return false
     }
 
+    // discard location changes to the selected item
     @IBAction func discard(AnyObject) {
         for image in images {
             image.revertLocation()
@@ -149,12 +152,14 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         reloadAllRows()
     }
 
+    // copy the selected item location into the pasteboard then delete from item
     @IBAction func cut(obj: AnyObject) {
         copy(obj)
         delete(obj)
         appDelegate.undoManager.setActionName("cut")
     }
 
+    // copy the selected item location into the pasteboard
     @IBAction func copy(AnyObject) {
         let row = tableView.selectedRow
         let pb = NSPasteboard.generalPasteboard()
@@ -163,6 +168,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
                      forType: NSPasteboardTypeString)
     }
 
+    // paste item location from the pasteboard to all selected items
     @IBAction func paste(AnyObject) {
         let pb = NSPasteboard.generalPasteboard()
         if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
@@ -177,6 +183,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         }
     }
 
+    // remove item location from all selected items
     @IBAction func delete(AnyObject) {
         let rows = tableView.selectedRowIndexes
         appDelegate.undoManager.beginUndoGrouping()
@@ -190,6 +197,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.undoManager.setActionName("delete")
     }
 
+    // remove all items from the table
     @IBAction func clear(AnyObject) {
         if !appDelegate.isModified() {
             images = []
@@ -259,6 +267,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         return selectionIndexes
     }
 
+    // match the image to the selected row
     func tableViewSelectionDidChange(notification: NSNotification!) {
         let row = tableView.selectedRow
         if row < 0 {
@@ -277,11 +286,13 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     // data source functions
-    
+
+    // one row per image in the images array
     func numberOfRowsInTableView(tableView: NSTableView!) -> Int {
         return images.count
     }
 
+    // return view for requested column
     func tableView(tableView: NSTableView!,
         viewForTableColumn tableColumn: NSTableColumn!,
         row: Int) -> NSView! {
@@ -319,12 +330,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         }
         return nil
     }
-/*
-   NSTableCellView *result;
-    result = [aTableView makeViewWithIdentifier:@"entriesCellView" owner:self];
-    result.objectValue = [self.entryController entryForRow:row];
-    result.toolTip = @"Any ToolTip String here";
-*/
+
+    // validate a proposed drop
     func tableView(aTableView: NSTableView!,
                    validateDrop info: NSDraggingInfo!,
                    proposedRow row: Int,
@@ -350,6 +357,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         return .None
     }
 
+    // Add dropped files to the table
     func tableView(aTableView: NSTableView!,
                    acceptDrop info: NSDraggingInfo!,
                    row: Int,
