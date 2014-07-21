@@ -19,6 +19,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     @IBOutlet var mapViewController: MapViewController
 
     var images = [ImageData]()
+    var lastRow: Int?
 
     // startup
 
@@ -275,6 +276,10 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     // match the image to the selected row
     func tableViewSelectionDidChange(notification: NSNotification!) {
+        // redraw last selected row in normal colors
+        if let lastRow = self.lastRow {
+            reloadRow(lastRow)
+        }
         let row = tableView.selectedRow
         if row < 0 {
             imageWell.image = nil
@@ -283,6 +288,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             let image = images[row]
             imageWell.image = image.image
             if image.latitude && image.longitude {
+                lastRow = row
+                reloadRow(row) // change color of selected row
                 mapViewController.pinMapAtLatitude(image.latitude!,
                                                    longitude: image.longitude!)
             } else {
@@ -326,6 +333,11 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             var colView =
                 tableView.makeViewWithIdentifier(id, owner: nil) as NSTableCellView
             colView.textField.stringValue = value;
+            if row == tableView.selectedRow {
+                colView.textField.textColor = NSColor.yellowColor()
+            } else {
+                colView.textField.textColor = nil
+            }
             if tip {
                 colView.textField.toolTip = tip!
             }

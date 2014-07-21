@@ -3,7 +3,5 @@ Save data.  Try native functions first
 - save with native functions
 App Icons
 Help
-Drag map pins
 GeoTag About menu
-double click on map moves point... should be ignored
-When multiple items are selected indicate which point is displayed
+* double click on map moves point... accept it the way it is
