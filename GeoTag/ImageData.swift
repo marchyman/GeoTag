@@ -65,6 +65,38 @@ class ImageData: NSObject {
         longitude = originalLongitude
     }
 
+    //MARK: Backup and Save
+
+    // backup the image file by copying it to the trash
+    // return true if sucxessful
+    func backupImageFile() -> Bool {
+        var backupURL: NSURL?
+        let fileManager = NSFileManager.defaultManager()
+        //TODO: alert on error trashing item
+        fileManager.trashItemAtURL(url, resultingItemURL: &backupURL,
+                                   error: nil)
+        if (backupURL) {
+            //TODO: more error handling
+            fileManager.copyItemAtURL(backupURL!, toURL: url, error: nil)
+            return true
+        }
+        return false
+    }
+
+    // save the image if the location changed
+    func saveImageFile() {
+        if validImage &&
+           (latitude != originalLatitude || longitude != originalLongitude) {
+            if backupImageFile() {
+                println("Saving file \(url)")
+                //TODO: write the updated file to the original URL
+                originalLatitude = latitude
+                originalLongitude = longitude
+            }
+        }
+    }
+
+
     //MARK: extract image metadata and build thumbnail preview
 
     func loadImageData() -> Bool {
