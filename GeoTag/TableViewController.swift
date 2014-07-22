@@ -21,7 +21,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     var images = [ImageData]()
     var lastRow: Int?
 
-    // startup
+    //MARK: startup
 
     // Alas, 10.10 and later
     override func viewDidLoad() {
@@ -39,7 +39,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         tableView.registerForDraggedTypes([NSFilenamesPboardType]);
     }
 
-    // poulating the table
+    //MARK: populating the table
 
     // check if image is a duplicate
     func isDuplicateImage(url: NSURL) -> Bool {
@@ -70,6 +70,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.progressIndicator.stopAnimation(self)
         return duplicateFound
     }
+
+    //MARK: Image location change handling
 
     // location update with undo/redo support.
     // Note: The system can not handle optional types when used with
@@ -106,7 +108,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.modified(modified)
     }
 
-    // menu actions
+    //MARK: menu actions
 
     // only enable various tableview related menu items when it makes sense
     override func validateMenuItem(menuItem: NSMenuItem!) -> Bool {
@@ -211,7 +213,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         }
     }
 
-    // Functions to reload the table
+    //MARK: Functions to reload/update table rows
 
     // Reload all rows.  Clear the image well and remove any markers
     // from the map view.  Reloading all rows always clears undo
@@ -246,7 +248,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.undoManager.endUndoGrouping()
     }
 
-    // MapView/MapViewController delegate function
+    //MARK: MapView/MapViewController delegate function
+
     func mapViewMouseClicked(mapView: MapView!,
                              location: CLLocationCoordinate2D) {
         updateSelectedRows(location.latitude, longitude: location.longitude)
@@ -258,7 +261,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
 
-    // delegate functions
+    //MARK: TableView delegate functions
 
     // don't allow rows with non images to be selected while still allowing
     // drags and ranges.
@@ -298,7 +301,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         }
     }
 
-    // data source functions
+    //MARK: TableView data source functions
 
     // one row per image in the images array
     func numberOfRowsInTableView(tableView: NSTableView!) -> Int {
@@ -392,6 +395,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 }
 
+//MARK: TableView extenstion for right click
+
 /// in a table a right click will bring up a context menu.  I prefer that
 /// the menu pertain to the row that was clicked. Do that by selecting the
 /// row the mouse is on assuming the row is populated.  Once the row is
@@ -413,6 +418,8 @@ extension NSTableView {
         super.rightMouseDown(theEvent)
     }
 }
+
+//MARK: String extension -> Double
 
 /// Convert a string to a double through a cast to NSString.
 /// Used in paste code to handle lat and lon as a string value.
