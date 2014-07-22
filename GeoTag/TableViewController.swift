@@ -13,10 +13,10 @@ import MapKit
 class TableViewController: NSViewController, NSTableViewDelegate,
     NSTableViewDataSource, MapViewDelegate {
 
-    @IBOutlet var appDelegate: AppDelegate
-    @IBOutlet var tableView: NSTableView
-    @IBOutlet var imageWell: NSImageView
-    @IBOutlet var mapViewController: MapViewController
+    @IBOutlet var appDelegate: AppDelegate!
+    @IBOutlet var tableView: NSTableView!
+    @IBOutlet var imageWell: NSImageView!
+    @IBOutlet var mapViewController: MapViewController!
 
     var images = [ImageData]()
     var lastRow: Int?
@@ -364,7 +364,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             for path in paths {
                 var dir: ObjCBool = false
                 if fileManager.fileExistsAtPath(path, isDirectory: &dir) {
-                    if dir == true ||
+                    if dir.getLogicValue() ||
                        isDuplicateImage(NSURL(fileURLWithPath: path)) {
                         return .None
                     }
@@ -399,7 +399,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 /// in a TableView extension.
 
 extension NSTableView {
-    override func rightMouseDown(theEvent: NSEvent!) {
+    public override func rightMouseDown(theEvent: NSEvent!) {
         let localPoint = convertPoint(theEvent.locationInWindow, fromView: nil)
         let row = rowAtPoint(localPoint)
         if row >= 0 {

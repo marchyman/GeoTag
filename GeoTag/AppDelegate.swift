@@ -10,9 +10,9 @@ import Cocoa
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                             
-    @IBOutlet var window: NSWindow
-    @IBOutlet var tableViewController: TableViewController
-    @IBOutlet var progressIndicator: NSProgressIndicator
+    @IBOutlet var window: NSWindow!
+    @IBOutlet var tableViewController: TableViewController!
+    @IBOutlet var progressIndicator: NSProgressIndicator!
 
     var undoManager: NSUndoManager!
 

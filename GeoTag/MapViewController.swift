@@ -13,8 +13,8 @@ import MapKit
 class MapViewController: NSViewController, MKMapViewDelegate {
     var clickDelegate: MapViewDelegate?
 
-    @IBOutlet var mapView: MapView
-    @IBOutlet var mapTypeControl: NSSegmentedControl
+    @IBOutlet var mapView: MapView!
+    @IBOutlet var mapTypeControl: NSSegmentedControl!
 
     // user defaults keys for map configuration
     let mapTypeKey = "MapType"

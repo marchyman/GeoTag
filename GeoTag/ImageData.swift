@@ -8,8 +8,9 @@
 
 import Cocoa
 
-@objc(ImageData)
 class ImageData: NSObject {
+
+    //MARK: instance variables
 
     let url: NSURL
     var path: String {
@@ -38,6 +39,8 @@ class ImageData: NSObject {
         }
     }
 
+    //MARK: Init
+
     init(url: NSURL) {
         self.url = url;
         super.init()
@@ -50,7 +53,7 @@ class ImageData: NSObject {
         }
     }
 
-    // set/revert latitude and longitude for an image
+    //MARK: set/revert latitude and longitude for an image
 
     func setLatitude(latitude: Double?, longitude: Double?) {
         self.latitude = latitude
@@ -62,7 +65,7 @@ class ImageData: NSObject {
         longitude = originalLongitude
     }
 
-    // extract image metadata and build thumbnail preview
+    //MARK: extract image metadata and build thumbnail preview
 
     func loadImageData() -> Bool {
         if let imgRef = CGImageSourceCreateWithURL(url,
@@ -90,13 +93,24 @@ class ImageData: NSObject {
             }
             if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts)?.takeRetainedValue() {
                 // Create an NSImage from the preview
-                let imgHeight = Double(CGImageGetHeight(imgPreview))
-                let imgWidth = Double(CGImageGetWidth(imgPreview))
+                let imgHeight = CGFloat(CGImageGetHeight(imgPreview))
+                let imgWidth = CGFloat(CGImageGetWidth(imgPreview))
                 let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
                 image = NSImage(size: imgRect.size)
+                // 10.9 doesn't have CGContext
+                var context: CGContext! = nil
                 image.lockFocus()
-                CGContextDrawImage(NSGraphicsContext.currentContext().cgcontext,
-                                   imgRect, imgPreview);
+                if NSGraphicsContext.instancesRespondToSelector("CGContext") {
+                    context = NSGraphicsContext.currentContext()?.CGContext
+                } else {
+                    if let graphicsPort = NSGraphicsContext.currentContext()?.graphicsPort {
+                        // graphicsPort is type UnsafePointer<()>
+                        context = reinterpretCast(graphicsPort)
+                    }
+                }
+                if context {
+                    CGContextDrawImage(context, imgRect, imgPreview)
+                }
                 image.unlockFocus()
 
                 // extract image date/time created
@@ -135,18 +149,18 @@ class ImageData: NSObject {
     }
 }
 
-
+/// Required to run under 10.9...
 /// Convert the graphicsPort to a COpaquePointer
 /// fromOpaque turns the COpaquePointer to an Unmanaged<T>
 /// takeUnretainedValue turns the Unmanaged<T> to an unretained T
 /// It seems to work.
-extension NSGraphicsContext {
-    var cgcontext: CGContext! {
-        if let graphicsPort = NSGraphicsContext.currentContext()?.graphicsPort() {
-            let opaqueContext = COpaquePointer(graphicsPort)
-            return Unmanaged<CGContext>.fromOpaque(opaqueContext).takeUnretainedValue()
-        }
-        return nil
-    }
-}
-
+//extension NSGraphicsContext {
+//    var cgcontext: AnyObject! {
+//        if let graphicsPort = NSGraphicsContext.currentContext()?.graphicsPort {
+//            let opaqueContext = COpaquePointer(graphicsPort.RawPointer)
+//            return Unmanaged<AnyObject>.fromOpaque(opaqueContext).takeUnretainedValue()
+//        }
+//        return nil
+//    }
+//}
+//
