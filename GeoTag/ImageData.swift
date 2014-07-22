@@ -84,7 +84,7 @@ class ImageData: NSObject {
     }
 
     // save the image if the location changed
-    func saveImageFile() {
+    func saveImageFile() -> Bool {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
             if backupImageFile() {
@@ -94,6 +94,7 @@ class ImageData: NSObject {
                 originalLongitude = longitude
             }
         }
+        return true
     }
 
 

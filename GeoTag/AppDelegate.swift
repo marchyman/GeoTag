@@ -16,7 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     var undoManager: NSUndoManager!
 
-    /// App start up
+    //MARK: App start up
 
     func applicationDidFinishLaunching(aNotification: NSNotification?) {
         // Insert code here to initialize your application
@@ -24,13 +24,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         undoManager = NSUndoManager()
     }
 
-    /// window delegate undo handling
+    //MARK: window delegate undo handling
 
     func windowWillReturnUndoManager(window: NSWindow!) -> NSUndoManager! {
         return undoManager
     }
 
-    /// window status as a proxy for modifications
+    //MARK: window status as a proxy for modifications
 
     func isModified() -> Bool {
         return window.documentEdited
@@ -40,7 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window.documentEdited = value
     }
 
-    /// open panel handling
+    //MARK: open panel handling
 
     @IBAction func showOpenPanel(AnyObject) {
         var panel = NSOpenPanel()
@@ -60,7 +60,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
 
-    /// app termination
+    //MARK: Save image changes (if any)
+
+    override func validateMenuItem(menuItem: NSMenuItem!) -> Bool {
+        switch menuItem.action {
+        case Selector("showOpenPanel:"):
+            return true
+        case Selector("save:"):
+            return isModified()
+        default:
+            println("default for item \(menuItem)")
+        }
+        return false
+    }
+
+    @IBAction func save(AnyObject!) {
+        if tableViewController.saveAllImages() {
+            modified(false)
+        }
+    }
+
+    //MARK: app termination
 
     func applicationShouldTerminateAfterLastWindowClosed(theApplication: NSApplication!) -> Bool {
         return true
@@ -83,8 +103,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 (response: NSModalResponse) -> Void in
                 switch response {
                 case NSAlertFirstButtonReturn:      // Save
-                    // initiate save ;;;
-                    println("initiate save here")
+                    self.save(nil)
                 case NSAlertSecondButtonReturn:     // Cancel
                     // Close/terminate cancelled
                     return

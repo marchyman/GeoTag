@@ -71,6 +71,16 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         return duplicateFound
     }
 
+    // ask each image in the table to save itself
+
+    func saveAllImages() -> Bool {
+        var allImagesSaved = true
+        for image in images {
+            allImagesSaved = image.saveImageFile() && allImagesSaved
+        }
+        return allImagesSaved
+    }
+
     //MARK: Image location change handling
 
     // location update with undo/redo support.

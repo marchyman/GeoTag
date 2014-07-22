@@ -104,7 +104,7 @@
                             </menuItem>
                             <menuItem title="Save" keyEquivalent="s" id="pxx-59-PXV">
                                 <connections>
-                                    <action selector="saveDocument:" target="-1" id="teZ-XB-qJY"/>
+                                    <action selector="save:" target="Voe-Tx-rLC" id="y2A-2U-oNP"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Discard changes" id="KaW-ft-85H">
