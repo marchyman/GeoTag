@@ -20,14 +20,34 @@ See <http://www.snafu.org/GeoTag/> for more information
 
 Run Program.  Use the Open command from the menu or ⌘O to select files to
 modify. You can also drag files into the table on the left side of the
-application window.  File names shown in a light grey color can not be
-modified.
+application window.  File names shown in a light grey color are not
+recognized as valid image files that can be modified.
 
-Select on one or more rows.  If multiple rows are selected the row associated
-with the displayed map location (if the image has a location) will have
-a highlighted latitude and longitude.   Click on the map to set or change the
-location of all selected images. Existing location can also be changed by
-dragging the pin --- click on the pin and hold until drag mode is enabled.
+Select on one or more rows. When selecting multiple rows the last row selected
+has its location (if any) shown on the map.  When multiple rows are selected the
+latitude and longitude of the row associated with the map location will be
+shown in a yellow.
+
+Click on the map to set or change the location of all selected images. Existing
+location can also be changed by dragging the pin --- click on the pin and hold
+until drag mode is enabled.  You may double click on the map to zoom but
+pinching (mouse pad) or using the zoom controls may be preferred. The first
+click of a double click will always drop a pin at the clicked location,
+something that may not be desired.  It this happens you can undo the location
+change.
+
+Three map types --- Standard, Hybrid, and Satellite --- are supported.
+When using the Standard map type you can pitch the map for a 3D view.
+Pitch changes are not available in Hybrid and Satellite views.  Drag the cursor
+over the compass control to change the direction and the pitch.  The amount
+of available pitch depends upon the current zoom level.
+
+I you find yourself working in a specific area of a map you can save
+the maptype, location, and zoom level by clicking on the Save Map Location
+button.   When GeoTag is launched the map will load to the last saved
+location.  Note, however, the that map will always be initialized with North
+up and zero pitch regardless of the rotation and pitch when the location
+was saved.
 
 ;;; add more here
 
