@@ -98,18 +98,18 @@ class ImageData: NSObject {
                 let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
                 image = NSImage(size: imgRect.size)
                 // 10.9 doesn't have CGContext
-                var context: CGContext! = nil
                 image.lockFocus()
-                if NSGraphicsContext.instancesRespondToSelector("CGContext") {
-                    context = NSGraphicsContext.currentContext()?.CGContext
-                } else {
-                    if let graphicsPort = NSGraphicsContext.currentContext()?.graphicsPort {
+                if let currentContext = NSGraphicsContext.currentContext() {
+                    var context: CGContext! = nil
+                    if currentContext.respondsToSelector("CGContext") {
+                        context = currentContext.CGContext
+                    } else {
                         // graphicsPort is type UnsafePointer<()>
-                        context = reinterpretCast(graphicsPort)
+                        context = reinterpretCast(currentContext.graphicsPort)
                     }
-                }
-                if context {
-                    CGContextDrawImage(context, imgRect, imgPreview)
+                    if context {
+                        CGContextDrawImage(context, imgRect, imgPreview)
+                    }
                 }
                 image.unlockFocus()
 
@@ -148,19 +148,3 @@ class ImageData: NSObject {
         return false
     }
 }
-
-/// Required to run under 10.9...
-/// Convert the graphicsPort to a COpaquePointer
-/// fromOpaque turns the COpaquePointer to an Unmanaged<T>
-/// takeUnretainedValue turns the Unmanaged<T> to an unretained T
-/// It seems to work.
-//extension NSGraphicsContext {
-//    var cgcontext: AnyObject! {
-//        if let graphicsPort = NSGraphicsContext.currentContext()?.graphicsPort {
-//            let opaqueContext = COpaquePointer(graphicsPort.RawPointer)
-//            return Unmanaged<AnyObject>.fromOpaque(opaqueContext).takeUnretainedValue()
-//        }
-//        return nil
-//    }
-//}
-//
