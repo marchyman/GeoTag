@@ -84,31 +84,9 @@ class ImageData: NSObject {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
             if backupImageFile() {
-                if let imgSrc = CGImageSourceCreateWithURL(url,
-                                                           nil)?.takeRetainedValue() {
-                    let imgType = CGImageSourceGetType(imgSrc)?.takeRetainedValue()
-                    let imgCnt = CGImageSourceGetCount(imgSrc)
-                    println("imgType \(imgType) imgCnt \(imgCnt)")
-
-                    // create the destination
-                    let imgDest =
-                        CGImageDestinationCreateWithURL(url, imgType,
-                                                        imgCnt, nil).takeRetainedValue()
-                    //TODO: create dictionary of options to change
-
-                    // copy the source to the destination with dictionary overrides
-                    for cnt in 0..<imgCnt {
-                        CGImageDestinationAddImageFromSource(imgDest, imgSrc,
-                                                             cnt, nil)
-                    }
-                    if CGImageDestinationFinalize(imgDest) {
-                        originalLatitude = latitude
-                        originalLongitude = longitude
-                        return true
-                    }
-                } else {
-                    return false
-                }
+                //TODO: save using exiftool here
+                originalLatitude = latitude
+                originalLongitude = longitude
             } else {
                 return false
             }
