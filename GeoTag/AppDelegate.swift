@@ -8,14 +8,27 @@
 
 import Cocoa
 
+// stored class variable workaround
+struct Statics {
+    static var exiftoolPath: String!
+}
+
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
-                            
+    // this should be a stored class variable
+    class var exiftoolPath: String! {
+        get {
+            return Statics.exiftoolPath
+        }
+        set {
+            Statics.exiftoolPath = newValue
+        }
+    }
+
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
     @IBOutlet var progressIndicator: NSProgressIndicator!
 
     var undoManager: NSUndoManager!
-    var exifToolPath: String?
 
     //MARK: App start up
 
@@ -31,9 +44,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let paths = ["/usr/bin", "/usr/local/bin", "/opt/bin"]
         let fileManager = NSFileManager.defaultManager()
         for path in paths {
-            let exifToolPath = path + "/exiftool"
-            if fileManager.fileExistsAtPath(exifToolPath) {
-                self.exifToolPath = exifToolPath
+            let exiftoolPath = path + "/exiftool"
+            if fileManager.fileExistsAtPath(exiftoolPath) {
+                AppDelegate.exiftoolPath = exiftoolPath
                 return
             }
         }
@@ -100,6 +113,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @IBAction func save(AnyObject!) {
         if tableViewController.saveAllImages() {
             modified(false)
+            undoManager.removeAllActions()
         }
     }
 

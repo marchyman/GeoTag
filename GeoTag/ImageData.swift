@@ -84,7 +84,40 @@ class ImageData: NSObject {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
             if backupImageFile() {
-                //TODO: save using exiftool here
+                // latitude exiftool args
+                var latArg = "-GPSLatitude="
+                var latRefArg = "-GPSLatitudeRef="
+                if var lat = latitude {
+                    if lat < 0 {
+                        latRefArg += "S"
+                        lat = -lat
+                    } else {
+                        latRefArg += "N"
+                    }
+                    latArg += "\(lat)"
+                }
+                // longitude exiftool args
+                var lonArg = "-GPSLongitude="
+                var lonRefArg = "-GPSLongitudeRef="
+                if var lon = longitude {
+                    if lon < 0 {
+                        lonRefArg += "W"
+                        lon = -lon
+                    } else {
+                        lonRefArg += "E"
+                    }
+                    lonArg += "\(lon)"
+                }
+
+                let exiftool = NSTask()
+                exiftool.standardOutput = NSFileHandle.fileHandleWithNullDevice()
+                exiftool.standardError = NSFileHandle.fileHandleWithNullDevice()
+                exiftool.launchPath = AppDelegate.exiftoolPath
+                exiftool.arguments = ["-q", "-m", "-overwrite_original",
+                    "-gpsmapdatum=WGS-84", latArg, latRefArg, lonArg, lonRefArg,
+                    path]
+                exiftool.launch()
+                exiftool.waitUntilExit()
                 originalLatitude = latitude
                 originalLongitude = longitude
             } else {
