@@ -45,12 +45,8 @@ class ImageData: NSObject {
         self.url = url;
         super.init()
         validImage = loadImageData()
-        if latitude {
-            originalLatitude = latitude
-        }
-        if longitude {
-            originalLongitude = longitude
-        }
+        originalLatitude = latitude
+        originalLongitude = longitude
     }
 
     //MARK: set/revert latitude and longitude for an image
@@ -68,7 +64,7 @@ class ImageData: NSObject {
     //MARK: Backup and Save
 
     // backup the image file by copying it to the trash
-    // return true if sucxessful
+    // return true if successful
     func backupImageFile() -> Bool {
         var backupURL: NSURL?
         let fileManager = NSFileManager.defaultManager()
@@ -88,10 +84,33 @@ class ImageData: NSObject {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
             if backupImageFile() {
-                println("Saving file \(url)")
-                //TODO: write the updated file to the original URL
-                originalLatitude = latitude
-                originalLongitude = longitude
+                if let imgSrc = CGImageSourceCreateWithURL(url,
+                                                           nil)?.takeRetainedValue() {
+                    let imgType = CGImageSourceGetType(imgSrc)?.takeRetainedValue()
+                    let imgCnt = CGImageSourceGetCount(imgSrc)
+                    println("imgType \(imgType) imgCnt \(imgCnt)")
+
+                    // create the destination
+                    let imgDest =
+                        CGImageDestinationCreateWithURL(url, imgType,
+                                                        imgCnt, nil).takeRetainedValue()
+                    //TODO: create dictionary of options to change
+
+                    // copy the source to the destination with dictionary overrides
+                    for cnt in 0..<imgCnt {
+                        CGImageDestinationAddImageFromSource(imgDest, imgSrc,
+                                                             cnt, nil)
+                    }
+                    if CGImageDestinationFinalize(imgDest) {
+                        originalLatitude = latitude
+                        originalLongitude = longitude
+                        return true
+                    }
+                } else {
+                    return false
+                }
+            } else {
+                return false
             }
         }
         return true
