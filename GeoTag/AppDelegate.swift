@@ -8,13 +8,13 @@
 
 import Cocoa
 
-// stored class variable workaround
+// storage for stored class variable
 struct Statics {
     static var exiftoolPath: String!
 }
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
-    // this should be a stored class variable
+    // stored class variables not supported, do this trick
     class var exiftoolPath: String! {
         get {
             return Statics.exiftoolPath
