@@ -15,6 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @IBOutlet var progressIndicator: NSProgressIndicator!
 
     var undoManager: NSUndoManager!
+    var exifToolPath: String?
 
     //MARK: App start up
 
@@ -22,6 +23,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Insert code here to initialize your application
         window.delegate = self
         undoManager = NSUndoManager()
+        checkForExiftool()
+    }
+
+    // let the user know if ExifTool can't be found
+    func checkForExiftool() {
+        let paths = ["/usr/bin", "/usr/local/bin", "/opt/bin"]
+        let fileManager = NSFileManager.defaultManager()
+        for path in paths {
+            let exifToolPath = path + "/exiftool"
+            if fileManager.fileExistsAtPath(exifToolPath) {
+                self.exifToolPath = exifToolPath
+                return
+            }
+        }
+        let alert = NSAlert()
+        alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+        alert.messageText = NSLocalizedString("NO_EXIFTOOL_TITLE",
+                                              comment: "can't find exiftool")
+        alert.informativeText = NSLocalizedString("NO_EXIFTOOL_DESC",
+                                                  comment: "can't find exiftool")
+        alert.runModal()
+        window.close()
     }
 
     //MARK: window delegate undo handling
