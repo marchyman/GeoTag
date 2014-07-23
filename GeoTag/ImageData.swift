@@ -14,14 +14,10 @@ class ImageData: NSObject {
 
     let url: NSURL
     var path: String {
-        get {
-            return url.path
-        }
+        return url.path
     }
     var name: String {
-        get {
-            return url.lastPathComponent
-        }
+        return url.lastPathComponent
     }
 
     var date: String = ""
@@ -31,12 +27,10 @@ class ImageData: NSObject {
     var validImage = false
 
     var stringRepresentation: String {
-        get {
-            if latitude && longitude {
-                return "\(latitude) \(longitude)"
-            }
-            return ""
+        if latitude && longitude {
+            return "\(latitude) \(longitude)"
         }
+        return ""
     }
 
     //MARK: Init
