@@ -1,10 +1,16 @@
-## GeoTag 3.0
+## GeoTag 3.0 -- almost
+
+I'll bump the version to 3.0 and create a binary for release once I've written
+the help pages.  In the mean while I think all planned functionality is working
+correctly.
 
 This is a complete re-write of GeoTag for Mavericks and later
 
 * written in swift
 * uses Apple's MapKit instead of google maps
 * Compiled application signed with an Apple Developer Key
+* Assumes exiftool exists in your run path
+* Starting map location/zoom level may be saved
 
 Use version 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8
 (Mountain Lion).  Use version 1.8 if your Max is running OS X version 10.5
