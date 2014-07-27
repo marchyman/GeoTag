@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		491198391959434500F304CB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 491198381959434500F304CB /* MapKit.framework */; };
+		492978901984B48D00BE0706 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 4929788F1984B48D00BE0706 /* GeoTag Help */; };
 		497EE5D3195CAE6300306283 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497EE5D2195CAE6300306283 /* ImageData.swift */; };
 		49B0EEBA19495FB100293C73 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEB919495FB100293C73 /* main.swift */; };
 		49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEBB19495FB100293C73 /* AppDelegate.swift */; };
@@ -33,6 +34,7 @@
 /* Begin PBXFileReference section */
 		491198381959434500F304CB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
+		4929788F1984B48D00BE0706 /* GeoTag Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "GeoTag Help"; sourceTree = "<group>"; };
 		4965C67B197DDC87005FC03F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
 		4990F0AE19818AA4001CA437 /* icon.pxm */ = {isa = PBXFileReference; lastKnownFileType = file; path = icon.pxm; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				49B0EEB819495FB100293C73 /* Info.plist */,
 				49BC3D0B195A62F2009BEC94 /* Localizable.strings */,
 				49B0EEB919495FB100293C73 /* main.swift */,
+				4929788F1984B48D00BE0706 /* GeoTag Help */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -228,6 +231,7 @@
 				49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */,
 				49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */,
 				49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */,
+				492978901984B48D00BE0706 /* GeoTag Help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
