@@ -33,5 +33,9 @@ http://creativecommons.org/licenses/by-nc/4.0/</string>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>GeoTag Help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>GeoTag Help</string>
 </dict>
 </plist>
