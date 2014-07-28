@@ -11,12 +11,12 @@ import MapKit
 
 @objc(TableViewController)
 class TableViewController: NSViewController, NSTableViewDelegate,
-    NSTableViewDataSource, MapViewDelegate {
+    NSTableViewDataSource {
 
     @IBOutlet var appDelegate: AppDelegate!
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var imageWell: NSImageView!
-    @IBOutlet var mapViewController: MapViewController!
+    @IBOutlet var webViewController: WebViewController!
 
     var images = [ImageData]()
     var lastRow: Int?
@@ -34,8 +34,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         // can't make clickDelegate an @IBOutlet; wire it up here
         // mapViewController is a delegate to handle pin drag location changes
         // mapViewController.mapview is a delegate to handle map clicks
-        mapViewController.clickDelegate = self
-        mapViewController.mapView.clickDelegate = self
+//        mapViewController.clickDelegate = self
+//        mapViewController.mapView.clickDelegate = self
         tableView.registerForDraggedTypes([NSFilenamesPboardType]);
     }
 
@@ -110,11 +110,11 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             longitude: oldLongitude, modified: appDelegate.isModified())
         if validLocation {
             image.setLatitude(latitude, longitude: longitude)
-            mapViewController.pinMapAtLatitude(image.latitude!,
-                longitude: image.longitude!)
+//            mapViewController.pinMapAtLatitude(image.latitude!,
+//                longitude: image.longitude!)
         } else {
             image.setLatitude(nil, longitude: nil)
-            mapViewController.removeMapPin()
+//            mapViewController.removeMapPin()
         }
         reloadRow(row)
         appDelegate.modified(modified)
@@ -234,7 +234,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.undoManager.removeAllActions()
         tableView.reloadData()
         imageWell.image = nil
-        mapViewController.removeMapPin()
+//        mapViewController.removeMapPin()
     }
 
     // Reloading a specific row.  Only the latitude and longitude columns
@@ -262,15 +262,15 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     //MARK: MapView/MapViewController delegate function
 
-    func mapViewMouseClicked(mapView: MapView!,
-                             location: CLLocationCoordinate2D) {
-        updateSelectedRows(location.latitude, longitude: location.longitude)
-        if mapView {
-            appDelegate.undoManager.setActionName("set location")
-        } else {
-            appDelegate.undoManager.setActionName("change location")
-        }
-    }
+//    func mapViewMouseClicked(mapView: MapView!,
+//                             location: CLLocationCoordinate2D) {
+//        updateSelectedRows(location.latitude, longitude: location.longitude)
+//        if mapView {
+//            appDelegate.undoManager.setActionName("set location")
+//        } else {
+//            appDelegate.undoManager.setActionName("change location")
+//        }
+//    }
 
 
     //MARK: TableView delegate functions
@@ -298,17 +298,17 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         let row = tableView.selectedRow
         if row < 0 {
             imageWell.image = nil
-            mapViewController.removeMapPin()
+//            mapViewController.removeMapPin()
         } else {
             let image = images[row]
             imageWell.image = image.image
             if image.latitude && image.longitude {
                 lastRow = row
                 reloadRow(row) // change color of selected row
-                mapViewController.pinMapAtLatitude(image.latitude!,
-                                                   longitude: image.longitude!)
+//                mapViewController.pinMapAtLatitude(image.latitude!,
+//                                                   longitude: image.longitude!)
             } else {
-                mapViewController.removeMapPin()
+//                mapViewController.removeMapPin()
             }
         }
     }
