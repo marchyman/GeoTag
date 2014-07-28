@@ -62,13 +62,20 @@ class ImageData: NSObject {
     func backupImageFile() -> Bool {
         var backupURL: NSURL?
         let fileManager = NSFileManager.defaultManager()
-        //TODO: alert on error trashing item
-        fileManager.trashItemAtURL(url, resultingItemURL: &backupURL,
-                                   error: nil)
-        if (backupURL) {
-            //TODO: more error handling
-            fileManager.copyItemAtURL(backupURL!, toURL: url, error: nil)
-            return true
+        var errorRet: NSError?
+        if fileManager.trashItemAtURL(url, resultingItemURL: &backupURL,
+                                      error: &errorRet) {
+            if fileManager.copyItemAtURL(backupURL!, toURL: url,
+                                         error: &errorRet) {
+                return true
+            }
+            if let error = errorRet {
+                // TODO: alert on error copying file
+            }
+        } else {
+            if let error = errorRet {
+                // TODO: alert on error trashing item
+            }
         }
         return false
     }
