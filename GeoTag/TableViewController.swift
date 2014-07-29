@@ -11,7 +11,7 @@ import MapKit
 
 @objc(TableViewController)
 class TableViewController: NSViewController, NSTableViewDelegate,
-    NSTableViewDataSource {
+    NSTableViewDataSource, WebViewControllerDelegate {
 
     @IBOutlet var appDelegate: AppDelegate!
     @IBOutlet var tableView: NSTableView!
@@ -32,10 +32,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     // object initialization
     override func awakeFromNib() {
         // can't make clickDelegate an @IBOutlet; wire it up here
-        // mapViewController is a delegate to handle pin drag location changes
-        // mapViewController.mapview is a delegate to handle map clicks
-//        mapViewController.clickDelegate = self
-//        mapViewController.mapView.clickDelegate = self
+        // webViewController is a delegate to handle location changes
+        webViewController.clickDelegate = self
         tableView.registerForDraggedTypes([NSFilenamesPboardType]);
     }
 
@@ -110,11 +108,11 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             longitude: oldLongitude, modified: appDelegate.isModified())
         if validLocation {
             image.setLatitude(latitude, longitude: longitude)
-//            mapViewController.pinMapAtLatitude(image.latitude!,
-//                longitude: image.longitude!)
+            webViewController.pinMapAtLatitude(image.latitude!,
+                                               longitude: image.longitude!)
         } else {
             image.setLatitude(nil, longitude: nil)
-//            mapViewController.removeMapPin()
+            webViewController.removeMapPin()
         }
         reloadRow(row)
         appDelegate.modified(modified)
@@ -234,7 +232,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.undoManager.removeAllActions()
         tableView.reloadData()
         imageWell.image = nil
-//        mapViewController.removeMapPin()
+        webViewController.removeMapPin()
     }
 
     // Reloading a specific row.  Only the latitude and longitude columns
@@ -262,15 +260,10 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     //MARK: MapView/MapViewController delegate function
 
-//    func mapViewMouseClicked(mapView: MapView!,
-//                             location: CLLocationCoordinate2D) {
-//        updateSelectedRows(location.latitude, longitude: location.longitude)
-//        if mapView {
-//            appDelegate.undoManager.setActionName("set location")
-//        } else {
-//            appDelegate.undoManager.setActionName("change location")
-//        }
-//    }
+    func webViewMouseClicked(latitude: Double, longitude: Double) {
+        updateSelectedRows(latitude, longitude: longitude)
+        appDelegate.undoManager.setActionName("location change")
+    }
 
 
     //MARK: TableView delegate functions
@@ -298,17 +291,17 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         let row = tableView.selectedRow
         if row < 0 {
             imageWell.image = nil
-//            mapViewController.removeMapPin()
+            webViewController.removeMapPin()
         } else {
             let image = images[row]
             imageWell.image = image.image
             if image.latitude && image.longitude {
                 lastRow = row
                 reloadRow(row) // change color of selected row
-//                mapViewController.pinMapAtLatitude(image.latitude!,
-//                                                   longitude: image.longitude!)
+                webViewController.pinMapAtLatitude(image.latitude!,
+                                                   longitude: image.longitude!)
             } else {
-//                mapViewController.removeMapPin()
+                webViewController.removeMapPin()
             }
         }
     }
