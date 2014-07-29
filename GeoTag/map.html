@@ -4,37 +4,70 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <title>GeoTag Picture Location Map</title>
 <script type="text/javascript"
-    src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    src="http://maps.google.com/maps/api/js"></script>
 <script type="text/javascript">
     var map
-
-    function newMapCenteredAtLatLon(latitude, longitude) {
-        var myLatlng = new google.maps.LatLng(latitude, longitude);
-        var myOptions = {
-            zoom: 10,
-            center: myLatlng,
-            mapTypeControl: false
-        }
-        map = new google.maps.Map(document.getElementById("map_canvas"),
-                                  myOptions);
-    }
+    var loc
 
     function initialize() {
-        newMapCenteredAtLatLon(37.512994,-122.33963);
+        loc = new google.maps.LatLng(controller.mapLatitude,
+                                     controller.mapLongitude);
+        var initialTypeId
+        switch (controller.mapType) {
+        case 0:
+            initialTypeId = google.maps.MapTypeId.ROADMAP;
+            break;
+        case 1:
+            initialTypeId = google.maps.MapTypeId.HYBRID;
+            break;
+        case 2:
+            initialTypeId = google.maps.MapTypeId.SATELLITE;
+            break;
+         }
+        var mapOptions = {
+            zoom: controller.mapZoom,
+            center: loc,
+            mapTypeId: initialTypeId,
+            mapTypeControl: false
+        };
+        map = new google.maps.Map(document.getElementById("map_canvas"),
+                                  mapOptions);
+
+        google.maps.event.addListener(map, 'center_changed', function() {
+            var position = map.getCenter();
+            controller.mapLatitude = position.lat();
+            controller.mapLongitude = position.lng();
+        });
+
+        google.maps.event.addListener(map, 'zoom_changed', function() {
+            controller.mapZoom = map.getZoom();
+        });
     }
 
-    function setMapTypeRoadmap() {
-        map.setMapTypeId(google.maps.MapTypeId.ROADMAP)
+    function setMapTypeId(typeId) {
+        controller.mapType = typeId
+        switch (typeId) {
+        case 0:
+            map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+            break;
+        case 1:
+            map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+            break;
+        case 2:
+            map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+            break;
+        }
     }
-    function setMapTypeHybrid() {
-        map.setMapTypeId(google.maps.MapTypeId.HYBRID)
+
+    function setMapLocation(latitude, longitude) {
+        loc = new google.maps.LatLng(latitude, longitude);
+        map.setCenter(loc);
     }
-    function setMapTypeSatellite() {
-        map.setMapTypeId(google.maps.MapTypeId.SATELLITE)
-    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
 </script>
 </head>
-<body style="margin:0px; padding:0px;" onload="initialize()">
+<body style="margin:0px; padding:0px;">
 <div id="map_canvas" style="width:100%; height:100%"></div>
 </body>
 </html>

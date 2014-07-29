@@ -424,6 +424,9 @@ CA
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="saveMapSetting:" target="262-AH-8IW" id="D0z-vR-wGg"/>
+                        </connections>
                     </button>
                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
                         <rect key="frame" x="527" y="390" width="282" height="24"/>
@@ -445,8 +448,7 @@ CA
                             <nil key="identifier"/>
                         </webPreferences>
                         <connections>
-                            <outlet property="UIDelegate" destination="262-AH-8IW" id="b9i-Le-IcR"/>
-                            <outlet property="resourceLoadDelegate" destination="262-AH-8IW" id="UYT-Qd-Tjj"/>
+                            <outlet property="frameLoadDelegate" destination="262-AH-8IW" id="wc9-Ph-uhq"/>
                         </connections>
                     </webView>
                 </subviews>

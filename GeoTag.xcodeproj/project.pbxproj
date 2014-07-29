@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		491446D1198707C800D4E697 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491446D0198707C800D4E697 /* WebViewController.swift */; };
 		491446D3198717ED00D4E697 /* map.html in Resources */ = {isa = PBXBuildFile; fileRef = 491446D2198717ED00D4E697 /* map.html */; };
+		491446D51987575C00D4E697 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 491446D41987575C00D4E697 /* WebKit.framework */; };
 		492978901984B48D00BE0706 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 4929788F1984B48D00BE0706 /* GeoTag Help */; };
 		497EE5D3195CAE6300306283 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497EE5D2195CAE6300306283 /* ImageData.swift */; };
 		49B0EEBA19495FB100293C73 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEB919495FB100293C73 /* main.swift */; };
@@ -34,6 +35,7 @@
 		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
 		491446D0198707C800D4E697 /* WebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		491446D2198717ED00D4E697 /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = map.html; sourceTree = "<group>"; };
+		491446D41987575C00D4E697 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		4929788F1984B48D00BE0706 /* GeoTag Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "GeoTag Help"; sourceTree = "<group>"; };
 		4965C67B197DDC87005FC03F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				491446D51987575C00D4E697 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +81,7 @@
 				4965C67B197DDC87005FC03F /* README */,
 				49BC3D06195A14D2009BEC94 /* GeoTagPlay.playground */,
 				49B0EEB619495FB100293C73 /* GeoTag */,
+				491446D41987575C00D4E697 /* WebKit.framework */,
 				49B0EEC919495FB100293C73 /* GeoTagTests */,
 				49B0EEB519495FB100293C73 /* Products */,
 			);
