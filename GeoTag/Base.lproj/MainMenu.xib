@@ -32,6 +32,7 @@
         </viewController>
         <viewController id="262-AH-8IW" userLabel="Web View Controller" customClass="WebViewController" customModule="GeoTag" customModuleProvider="target">
             <connections>
+                <outlet property="mapTypeControl" destination="UAa-bh-Wko" id="krE-aN-fyA"/>
                 <outlet property="webView" destination="OQ7-ya-zM7" id="urJ-WK-9jW"/>
             </connections>
         </viewController>
@@ -267,7 +268,7 @@ CA
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn identifier="dateTime" editable="NO" width="144" minWidth="40" maxWidth="1000" id="QOH-5Z-eM4">
+                                        <tableColumn identifier="dateTime" editable="NO" width="148" minWidth="40" maxWidth="1000" id="QOH-5Z-eM4">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Date/Time">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -281,7 +282,7 @@ CA
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView identifier="dateTime" id="J4a-hA-T1u">
-                                                    <rect key="frame" x="166.5" y="1" width="144.5" height="17"/>
+                                                    <rect key="frame" x="166" y="1" width="148" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gmo-tg-1MM">
@@ -336,7 +337,7 @@ CA
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn identifier="longitude" editable="NO" width="99.5" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
+                                        <tableColumn identifier="longitude" editable="NO" width="95.5" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Longitude">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -350,11 +351,11 @@ CA
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView identifier="longitude" id="4Km-RM-P0Q">
-                                                    <rect key="frame" x="398" y="1" width="97" height="17"/>
+                                                    <rect key="frame" x="402" y="1" width="96" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fNU-Jf-yeQ">
-                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="17"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="92" height="17"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="-122.123456" id="e4b-z8-Hnu">
                                                                 <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -434,12 +435,19 @@ CA
                                 <segment label="Satellite" width="91"/>
                             </segments>
                         </segmentedCell>
+                        <connections>
+                            <action selector="changeMapType:" target="262-AH-8IW" id="kyQ-9f-zxi"/>
+                        </connections>
                     </segmentedControl>
                     <webView translatesAutoresizingMaskIntoConstraints="NO" id="OQ7-ya-zM7">
                         <rect key="frame" x="532" y="20" width="498" height="364"/>
                         <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12">
                             <nil key="identifier"/>
                         </webPreferences>
+                        <connections>
+                            <outlet property="UIDelegate" destination="262-AH-8IW" id="b9i-Le-IcR"/>
+                            <outlet property="resourceLoadDelegate" destination="262-AH-8IW" id="UYT-Qd-Tjj"/>
+                        </connections>
                     </webView>
                 </subviews>
                 <constraints>
@@ -466,7 +474,7 @@ CA
                 <outlet property="delegate" destination="Voe-Tx-rLC" id="YQK-Qt-HzN"/>
                 <outlet property="initialFirstResponder" destination="skl-pj-P9m" id="GqC-fX-aCl"/>
             </connections>
-            <point key="canvasLocation" x="355" y="115.5"/>
+            <point key="canvasLocation" x="73" y="80.5"/>
         </window>
         <menu title="Table Menu" id="RI2-ul-n9D">
             <items>
