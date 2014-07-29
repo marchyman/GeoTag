@@ -12,22 +12,10 @@
     function initialize() {
         loc = new google.maps.LatLng(controller.mapLatitude,
                                      controller.mapLongitude);
-        var initialTypeId
-        switch (controller.mapType) {
-        case 0:
-            initialTypeId = google.maps.MapTypeId.ROADMAP;
-            break;
-        case 1:
-            initialTypeId = google.maps.MapTypeId.HYBRID;
-            break;
-        case 2:
-            initialTypeId = google.maps.MapTypeId.SATELLITE;
-            break;
-         }
         var mapOptions = {
             zoom: controller.mapZoom,
             center: loc,
-            mapTypeId: initialTypeId,
+            mapTypeId: segmentToMapTypeId(controller.mapType),
             mapTypeControl: false
         };
         map = new google.maps.Map(document.getElementById("map_canvas"),
@@ -44,19 +32,24 @@
         });
     }
 
-    function setMapTypeId(typeId) {
-        controller.mapType = typeId
-        switch (typeId) {
-        case 0:
-            map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-            break;
+    /*
+        Map type is selected by the user using a segmented control.
+        This function converts a segment number to a MapTypeId
+    */
+    function segmentToMapTypeId(segmentNumber) {
+        switch (segmentNumber) {
         case 1:
-            map.setMapTypeId(google.maps.MapTypeId.HYBRID);
-            break;
+            return google.maps.MapTypeId.HYBRID;
         case 2:
-            map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-            break;
+            return google.maps.MapTypeId.SATELLITE;
         }
+        // assume ROADMAP
+        return google.maps.MapTypeId.ROADMAP;
+    }
+
+    function setMapTypeId(segmentNumber) {
+        controller.mapType = segmentNumber
+        map.setMapTypeId(segmentToMapTypeId(segmentNumber));
     }
 
     function setMapLocation(latitude, longitude) {
