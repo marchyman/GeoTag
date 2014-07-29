@@ -1,0 +1,33 @@
+#!/bin/sh
+
+set -ex
+
+BUILD_VERSION=$(git describe --tags --always --dirty=+)
+LATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG="HEAD"
+if [ $LATEST_TAG = "HEAD" ]; then
+    SHORT_VERSION="0.0.$BUNDLE_VERSION"
+else
+    COMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..HEAD)
+    if [ ${COMMIT_COUNT_SINCE_TAG} -eq 0 ]; then
+        SHORT_VERSION=${LATEST_TAG##v}
+    else
+        SHORT_VERSION=${LATEST_TAG##v}.${COMMIT_COUNT_SINCE_TAG}
+    fi
+fi
+NAME=GeoTag-${SHORT_VERSION}
+DIR=~/Desktop/${NAME}
+DMG=~/Desktop/${NAME}.dmg
+
+rm -rf ${DIR}
+mkdir ${DIR}
+
+ln -s /Applications ${DIR}
+cp -R ~/Desktop/GeoTag.app ${DIR}
+cp README ${DIR}/Readme.txt
+echo ${BUILD_VERSION} > ${DIR}/Version.txt
+
+rm -f ${DMG}
+hdiutil create -srcfolder ${DIR} -volname ${NAME} ${DMG}
+rm -rf ${DIR}
+
+exit 0"
