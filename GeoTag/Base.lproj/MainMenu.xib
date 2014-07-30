@@ -442,9 +442,9 @@ CA
                             <action selector="changeMapType:" target="262-AH-8IW" id="kyQ-9f-zxi"/>
                         </connections>
                     </segmentedControl>
-                    <webView translatesAutoresizingMaskIntoConstraints="NO" id="OQ7-ya-zM7">
+                    <webView maintainsBackForwardList="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OQ7-ya-zM7">
                         <rect key="frame" x="532" y="20" width="498" height="364"/>
-                        <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12">
+                        <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12" plugInsEnabled="NO" javaEnabled="NO" javaScriptCanOpenWindowsAutomatically="NO" allowsAnimatedImages="NO" allowsAnimatedImageLooping="NO">
                             <nil key="identifier"/>
                         </webPreferences>
                         <connections>
@@ -474,7 +474,7 @@ CA
             </view>
             <connections>
                 <outlet property="delegate" destination="Voe-Tx-rLC" id="YQK-Qt-HzN"/>
-                <outlet property="initialFirstResponder" destination="skl-pj-P9m" id="GqC-fX-aCl"/>
+                <outlet property="initialFirstResponder" destination="ARi-Ei-bTG" id="Jxz-i1-P4S"/>
             </connections>
             <point key="canvasLocation" x="73" y="80.5"/>
         </window>

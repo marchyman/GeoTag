@@ -1,6 +1,3 @@
 Buglets:
-* table as first responder as cursor as exit map view
-  Map grabs first responder on cursor entry.  I want to have it resign
-  first responder on exit.  Or maybe more... copy/cut/delete/paste wont
-  work if the map is active, either.
+* Cursor change upon exiting map?
 * double click on map moves point... Can I do anything about that?
