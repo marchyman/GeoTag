@@ -45,9 +45,11 @@
 
         // Unhide the marker at the clicked location
         google.maps.event.addListener(map, 'click', function(event) {
-            marker.setPosition(event.latLng)
-            marker.setVisible(true)
-            updateMarkerPosition()
+            if (controller.itemSelected) {
+                marker.setPosition(event.latLng)
+                marker.setVisible(true)
+                updateMarkerPosition()
+            }
         })
 
         google.maps.event.addListener(marker, 'mouseup', function(event) {

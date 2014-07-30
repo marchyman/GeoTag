@@ -18,6 +18,9 @@ class WebViewController: NSViewController {
     var mapZoom = 10
     var mapType = 0
 
+    // pass selection state to the javescript code
+    var itemSelected = false
+
     // keys to save map state in user defaults
     let mapLatitudeKey = "MapLatitudeKey"
     let mapLongitudeKey = "MapLongitudeKey"
@@ -41,7 +44,7 @@ class WebViewController: NSViewController {
         let key = NSString(CString: keyPtr, encoding: NSUTF8StringEncoding)
         switch key {
         case "mapLatitude", "mapLongitude", "mapZoom", "mapType",
-            "markerLatitude", "markerLongitude":
+            "itemSelected", "markerLatitude", "markerLongitude":
             return false
         default:
             return true
@@ -84,7 +87,7 @@ class WebViewController: NSViewController {
             mapLatitude = latitude
         }
         let longitude = defaults.doubleForKey(mapLongitudeKey)
-        if longitude != 0 {
+        if longitude != 0.0 {
             mapLongitude = longitude
         }
         let zoom = defaults.integerForKey(mapZoomKey)

@@ -292,6 +292,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         if row < 0 {
             imageWell.image = nil
             webViewController.removeMapPin()
+            webViewController.itemSelected = false
         } else {
             let image = images[row]
             imageWell.image = image.image
@@ -303,6 +304,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             } else {
                 webViewController.removeMapPin()
             }
+            webViewController.itemSelected = true
         }
     }
 
