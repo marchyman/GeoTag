@@ -30,4 +30,4 @@ rm -f ${DMG}
 hdiutil create -srcfolder ${DIR} -volname ${NAME} ${DMG}
 rm -rf ${DIR}
 
-exit 0"
+exit 0
