@@ -28,7 +28,7 @@ class ImageData: NSObject {
 
     var stringRepresentation: String {
         if latitude && longitude {
-            return "\(latitude) \(longitude)"
+            return "\(latitude!) \(longitude!)"
         }
         return ""
     }
