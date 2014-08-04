@@ -27,7 +27,7 @@ class ImageData: NSObject {
     var validImage = false
 
     var stringRepresentation: String {
-        if latitude && longitude {
+        if latitude != nil && longitude != nil {
             return "\(latitude!) \(longitude!)"
         }
         return ""
@@ -168,7 +168,8 @@ class ImageData: NSObject {
                         context = currentContext.CGContext
                     } else {
                         // graphicsPort is type UnsafePointer<()>
-                        context = reinterpretCast(currentContext.graphicsPort)
+                        context = unsafeBitCast(currentContext.graphicsPort,
+                                                CGContext.self)
                     }
                     if context {
                         CGContextDrawImage(context, imgRect, imgPreview)

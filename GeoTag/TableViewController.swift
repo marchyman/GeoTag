@@ -58,7 +58,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             if isDuplicateImage(url) {
                 duplicateFound = true
             } else {
-                images += ImageData(url: url)
+                images.append(ImageData(url: url))
                 reloadNeeded = true
             }
         }
@@ -93,7 +93,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         var oldLatitude: Double
         var oldLongitude: Double
         let image = images[row]
-        if image.latitude && image.longitude {
+        if image.latitude != nil && image.longitude != nil {
             oldValidLocation = true
             oldLatitude = image.latitude!
             oldLongitude = image.longitude!
@@ -136,7 +136,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             // OK if only one row with a valid location selected
             if tableView.numberOfSelectedRows == 1 {
                 let image = images[tableView.selectedRow]
-                if (image.latitude && image.longitude) {
+                if (image.latitude != nil && image.longitude != nil ) {
                     return true
                 }
             }
@@ -296,7 +296,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         } else {
             let image = images[row]
             imageWell.image = image.image
-            if image.latitude && image.longitude {
+            if image.latitude != nil && image.longitude != nil {
                 lastRow = row
                 reloadRow(row) // change color of selected row
                 webViewController.pinMapAtLatitude(image.latitude!,
@@ -348,7 +348,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             } else {
                 colView.textField.textColor = nil
             }
-            if tip {
+            if tip != nil {
                 colView.textField.toolTip = tip!
             }
             if !image.validImage {
@@ -374,7 +374,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             for path in paths {
                 var dir: ObjCBool = false
                 if fileManager.fileExistsAtPath(path, isDirectory: &dir) {
-                    if dir.getLogicValue() ||
+                    if dir.boolValue ||
                        isDuplicateImage(NSURL(fileURLWithPath: path)) {
                         return .None
                     }
@@ -394,7 +394,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
             var urls = [NSURL]()
             for path in paths {
-                urls += NSURL(fileURLWithPath: path)
+                urls.append(NSURL(fileURLWithPath: path))
             }
             return !addImages(urls)
         }
