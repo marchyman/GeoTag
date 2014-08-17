@@ -331,11 +331,11 @@ class TableViewController: NSViewController, NSTableViewDelegate,
                 value = image.date
             case "latitude":
                 if let lat = image.latitude {
-                    value = NSString(format: "% 2.6f", lat)
+                    value = String(format: "% 2.6f", lat)
                 }
             case "longitude":
                 if let lon = image.longitude {
-                    value = NSString(format: "% 2.6f", lon)
+                    value = String(format: "% 2.6f", lon)
                 }
             default:
                 break
@@ -433,6 +433,6 @@ extension NSTableView {
 
 extension String {
     var doubleValue: Double {
-    return (self as NSString).doubleValue
+        return (self as NSString).doubleValue
     }
 }
