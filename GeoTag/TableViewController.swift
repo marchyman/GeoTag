@@ -9,7 +9,6 @@
 import Cocoa
 import MapKit
 
-@objc(TableViewController)
 class TableViewController: NSViewController, NSTableViewDelegate,
     NSTableViewDataSource, WebViewControllerDelegate {
 

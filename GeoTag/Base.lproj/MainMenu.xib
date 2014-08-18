@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6185.11" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6205" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6185.11"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="6185.11"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6205"/>
+        <plugIn identifier="com.apple.WebKitIBPlugin" version="6205"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
@@ -21,7 +21,7 @@
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
-        <viewController id="er7-2A-M57" customClass="TableViewController">
+        <viewController id="er7-2A-M57" customClass="TableViewController" customModule="GeoTag" customModuleProvider="target">
             <connections>
                 <outlet property="appDelegate" destination="Voe-Tx-rLC" id="ubm-GD-tva"/>
                 <outlet property="imageWell" destination="xuH-yg-55o" id="Syk-7u-GRh"/>
@@ -110,7 +110,7 @@
                             <menuItem title="Discard changes" id="KaW-ft-85H">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="discard:" target="er7-2A-M57" id="Jqt-xM-xUs"/>
+                                    <action selector="discard:" target="er7-2A-M57" id="yAT-hQ-gUp"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="aJh-i4-bef"/>
@@ -140,17 +140,17 @@
                             <menuItem isSeparatorItem="YES" id="WRV-NI-Exz"/>
                             <menuItem title="Cut" keyEquivalent="x" id="uRl-iY-unG">
                                 <connections>
-                                    <action selector="cut:" target="er7-2A-M57" id="VAM-fx-8HD"/>
+                                    <action selector="cut:" target="er7-2A-M57" id="RBD-Vm-Fbp"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Copy" keyEquivalent="c" id="x3v-GG-iWU">
                                 <connections>
-                                    <action selector="copy:" target="er7-2A-M57" id="V5J-oJ-dAK"/>
+                                    <action selector="copy:" target="er7-2A-M57" id="1Hk-Va-Hlk"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Paste" keyEquivalent="v" id="gVA-U4-sdL">
                                 <connections>
-                                    <action selector="paste:" target="er7-2A-M57" id="dEP-o7-Ltd"/>
+                                    <action selector="paste:" target="er7-2A-M57" id="oCx-FV-LOj"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Delete" id="pa3-QI-u2k">
@@ -483,19 +483,19 @@ CA
                 <menuItem title="Cut" id="7HJ-N3-yTm">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="cut:" target="er7-2A-M57" id="Ia6-AK-nLS"/>
+                        <action selector="cut:" target="er7-2A-M57" id="Hkn-sK-nDH"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Copy" id="AV7-FD-24k">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="copy:" target="er7-2A-M57" id="ChE-6O-PRd"/>
+                        <action selector="copy:" target="er7-2A-M57" id="qjJ-Em-yYl"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Paste" id="nWD-VV-7or">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="paste:" target="er7-2A-M57" id="gPr-Kn-DgO"/>
+                        <action selector="paste:" target="er7-2A-M57" id="qBQ-ZB-Aw5"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="4tj-aa-mGk"/>
@@ -509,7 +509,7 @@ CA
                 <menuItem title="Clear image list" id="Q8s-0g-bd6">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="clear:" target="er7-2A-M57" id="bcK-JF-SFi"/>
+                        <action selector="clear:" target="er7-2A-M57" id="sb6-qZ-Uln"/>
                     </connections>
                 </menuItem>
             </items>
