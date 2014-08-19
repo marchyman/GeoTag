@@ -13,7 +13,7 @@ class ImageData: NSObject {
     //MARK: instance variables
 
     let url: NSURL
-    var path: String {
+    var path: String! {
         return url.path
     }
     var name: String {
@@ -131,13 +131,12 @@ class ImageData: NSObject {
     //MARK: extract image metadata and build thumbnail preview
 
     func loadImageData() -> Bool {
-        if let imgRef = CGImageSourceCreateWithURL(url,
-                                                   nil)?.takeRetainedValue() {
+        if let imgRef = CGImageSourceCreateWithURL(url, nil) {
             // grab the image properties
-            let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil).takeUnretainedValue() as NSDictionary
+            let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary
             let height = imgProps[kCGImagePropertyPixelHeight] as Int!
             let width = imgProps[kCGImagePropertyPixelWidth] as Int!
-            if !height || !width {
+            if height == nil || width == nil {
                 return false
             }
 
@@ -154,7 +153,7 @@ class ImageData: NSObject {
                 // add a max pixel size to the dictionary of options
                 imgOpts[kCGImageSourceThumbnailMaxPixelSize] = maxDimension as AnyObject
             }
-            if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts)?.takeRetainedValue() {
+            if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts) {
                 // Create an NSImage from the preview
                 let imgHeight = CGFloat(CGImageGetHeight(imgPreview))
                 let imgWidth = CGFloat(CGImageGetWidth(imgPreview))
@@ -171,7 +170,7 @@ class ImageData: NSObject {
                         context = unsafeBitCast(currentContext.graphicsPort,
                                                 CGContext.self)
                     }
-                    if context {
+                    if context != nil {
                         CGContextDrawImage(context, imgRect, imgPreview)
                     }
                 }

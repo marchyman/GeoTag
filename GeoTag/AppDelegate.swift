@@ -80,7 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     @IBAction func showOpenPanel(AnyObject) {
         var panel = NSOpenPanel()
-        panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers()?.takeUnretainedValue()
+        panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as NSArray
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = false

@@ -71,7 +71,7 @@ class WebViewController: NSViewController {
         // Ask webKit to load the map.html file from our resources directory.
         let mapPath = NSBundle.mainBundle().pathForResource("map",
                                                             ofType: "html")
-        let mapURL = NSURL(fileURLWithPath: mapPath, isDirectory: false)
+        let mapURL = NSURL(fileURLWithPath: mapPath!, isDirectory: false)
         let map = NSURLRequest(URL: mapURL)
         webView.mainFrame.loadRequest(map)
     }
