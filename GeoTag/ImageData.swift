@@ -134,8 +134,8 @@ class ImageData: NSObject {
         if let imgRef = CGImageSourceCreateWithURL(url, nil) {
             // grab the image properties
             let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary
-            let height = imgProps[kCGImagePropertyPixelHeight] as Int!
-            let width = imgProps[kCGImagePropertyPixelWidth] as Int!
+            let height = imgProps[kCGImagePropertyPixelHeight as String!] as Int!
+            let width = imgProps[kCGImagePropertyPixelWidth as String!] as Int!
             if height == nil || width == nil {
                 return false
             }
@@ -146,12 +146,12 @@ class ImageData: NSObject {
             /// performance hit when using large raw images
             let maxDimension = 512
             var imgOpts: NSMutableDictionary = [
-                kCGImageSourceCreateThumbnailWithTransform : kCFBooleanTrue as AnyObject,
-                kCGImageSourceCreateThumbnailFromImageAlways : kCFBooleanTrue as AnyObject
+                kCGImageSourceCreateThumbnailWithTransform as String! : kCFBooleanTrue as AnyObject,
+                kCGImageSourceCreateThumbnailFromImageAlways as String! : kCFBooleanTrue as AnyObject
             ]
             if height > maxDimension || width > maxDimension {
                 // add a max pixel size to the dictionary of options
-                imgOpts[kCGImageSourceThumbnailMaxPixelSize] = maxDimension as AnyObject
+                imgOpts[kCGImageSourceThumbnailMaxPixelSize as String!] = maxDimension as AnyObject
             }
             if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts) {
                 // Create an NSImage from the preview
@@ -177,16 +177,16 @@ class ImageData: NSObject {
                 image.unlockFocus()
 
                 // extract image date/time created
-                if let exifData = imgProps[kCGImagePropertyExifDictionary] as? NSDictionary! {
-                    if let dto = exifData[kCGImagePropertyExifDateTimeOriginal] as? String! {
+                if let exifData = imgProps[kCGImagePropertyExifDictionary as String!] as? NSDictionary! {
+                    if let dto = exifData[kCGImagePropertyExifDateTimeOriginal as String!] as? String! {
                         date = dto
                     }
                 }
 
                 // extract image existing gps info
-                if let gpsData = imgProps[kCGImagePropertyGPSDictionary] as NSDictionary! {
-                    if let lat = gpsData[kCGImagePropertyGPSLatitude] as Double! {
-                        if let latRef = gpsData[kCGImagePropertyGPSLatitudeRef] as String! {
+                if let gpsData = imgProps[kCGImagePropertyGPSDictionary as String!] as NSDictionary! {
+                    if let lat = gpsData[kCGImagePropertyGPSLatitude as String!] as Double! {
+                        if let latRef = gpsData[kCGImagePropertyGPSLatitudeRef as String!] as String! {
                             if latRef == "N" {
                                 latitude = lat
                             } else {
@@ -194,8 +194,8 @@ class ImageData: NSObject {
                             }
                         }
                     }
-                    if let lon = gpsData[kCGImagePropertyGPSLongitude] as Double! {
-                        if let lonRef = gpsData[kCGImagePropertyGPSLongitudeRef] as String! {
+                    if let lon = gpsData[kCGImagePropertyGPSLongitude as String!] as Double! {
+                        if let lonRef = gpsData[kCGImagePropertyGPSLongitudeRef as String!] as String! {
                             if lonRef == "E" {
                                 longitude = lon
                             } else {
