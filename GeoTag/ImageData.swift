@@ -132,10 +132,24 @@ class ImageData: NSObject {
 
     func loadImageData() -> Bool {
         if let imgRef = CGImageSourceCreateWithURL(url, nil) {
+            // CFString! to String! conversions (for Xcode 6.1 beta)
+            let pixelHeight = kCGImagePropertyPixelHeight as String!
+            let pixelWidth = kCGImagePropertyPixelWidth as String!
+            let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String!
+            let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String!
+            let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String!
+            let exifDictionary = kCGImagePropertyExifDictionary as String!
+            let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String!
+            let GPSDictionary = kCGImagePropertyGPSDictionary as String!
+            let GPSLatitude = kCGImagePropertyGPSLatitude as String!
+            let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String!
+            let GPSLongitude = kCGImagePropertyGPSLongitude as String!
+            let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String!
+
             // grab the image properties
             let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary
-            let height = imgProps[kCGImagePropertyPixelHeight as String!] as Int!
-            let width = imgProps[kCGImagePropertyPixelWidth as String!] as Int!
+            let height = imgProps[pixelHeight] as Int!
+            let width = imgProps[pixelWidth] as Int!
             if height == nil || width == nil {
                 return false
             }
@@ -146,12 +160,12 @@ class ImageData: NSObject {
             /// performance hit when using large raw images
             let maxDimension = 512
             var imgOpts: NSMutableDictionary = [
-                kCGImageSourceCreateThumbnailWithTransform as String! : kCFBooleanTrue as AnyObject,
-                kCGImageSourceCreateThumbnailFromImageAlways as String! : kCFBooleanTrue as AnyObject
+                createThumbnailWithTransform : kCFBooleanTrue as AnyObject,
+                createThumbnailFromImageAlways : kCFBooleanTrue as AnyObject
             ]
             if height > maxDimension || width > maxDimension {
                 // add a max pixel size to the dictionary of options
-                imgOpts[kCGImageSourceThumbnailMaxPixelSize as String!] = maxDimension as AnyObject
+                imgOpts[thumbnailMaxPixelSize] = maxDimension as AnyObject
             }
             if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts) {
                 // Create an NSImage from the preview
@@ -177,16 +191,16 @@ class ImageData: NSObject {
                 image.unlockFocus()
 
                 // extract image date/time created
-                if let exifData = imgProps[kCGImagePropertyExifDictionary as String!] as? NSDictionary! {
-                    if let dto = exifData[kCGImagePropertyExifDateTimeOriginal as String!] as? String! {
+                if let exifData = imgProps[exifDictionary] as? NSDictionary! {
+                    if let dto = exifData[exifDateTimeOriginal] as? String! {
                         date = dto
                     }
                 }
 
                 // extract image existing gps info
-                if let gpsData = imgProps[kCGImagePropertyGPSDictionary as String!] as NSDictionary! {
-                    if let lat = gpsData[kCGImagePropertyGPSLatitude as String!] as Double! {
-                        if let latRef = gpsData[kCGImagePropertyGPSLatitudeRef as String!] as String! {
+                if let gpsData = imgProps[GPSDictionary] as NSDictionary! {
+                    if let lat = gpsData[GPSLatitude] as Double! {
+                        if let latRef = gpsData[GPSLatitudeRef] as String! {
                             if latRef == "N" {
                                 latitude = lat
                             } else {
@@ -194,8 +208,8 @@ class ImageData: NSObject {
                             }
                         }
                     }
-                    if let lon = gpsData[kCGImagePropertyGPSLongitude as String!] as Double! {
-                        if let lonRef = gpsData[kCGImagePropertyGPSLongitudeRef as String!] as String! {
+                    if let lon = gpsData[GPSLongitude] as Double! {
+                        if let lonRef = gpsData[GPSLongitudeRef] as String! {
                             if lonRef == "E" {
                                 longitude = lon
                             } else {
