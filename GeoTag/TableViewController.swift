@@ -39,10 +39,12 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     //MARK: populating the table
 
     // check if image is a duplicate
-    func isDuplicateImage(url: NSURL) -> Bool {
-        for image in images {
-            if url.path == image.path {
-                return true
+    func isDuplicateImage(url: NSURL?) -> Bool {
+        if let imageURL = url {
+            for image in images {
+                if imageURL.path == image.path {
+                    return true
+                }
             }
         }
         return false
@@ -393,7 +395,9 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
             var urls = [NSURL]()
             for path in paths {
-                urls.append(NSURL(fileURLWithPath: path))
+                if let fileURL = NSURL(fileURLWithPath: path) {
+                    urls.append(fileURL)
+                }
             }
             return !addImages(urls)
         }

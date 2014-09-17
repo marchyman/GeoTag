@@ -41,14 +41,16 @@ class WebViewController: NSViewController {
 
     // limit access from javascript to the map state variables
     class override func isKeyExcludedFromWebScript(keyPtr: UnsafePointer<Int8>) -> Bool {
-        let key = NSString(CString: keyPtr, encoding: NSUTF8StringEncoding)
-        switch key {
-        case "mapLatitude", "mapLongitude", "mapZoom", "mapType",
-            "itemSelected", "markerLatitude", "markerLongitude":
-            return false
-        default:
-            return true
+        if let key = NSString(CString: keyPtr, encoding: NSUTF8StringEncoding) {
+            switch key {
+            case "mapLatitude", "mapLongitude", "mapZoom", "mapType",
+                "itemSelected", "markerLatitude", "markerLongitude":
+                return false
+            default:
+                return true
+            }
         }
+        return true
     }
 
     // allow javascript to report position changes
