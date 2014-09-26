@@ -1,3 +1,8 @@
+## GeoTag 3.1
+
+Added ability to resize the image table, image, and map panes.  Otherwise
+the same as 3.0.
+
 ## GeoTag 3.0
 
 This is a complete re-write of GeoTag for Mavericks and later
@@ -66,7 +71,7 @@ a pop up menu by right clicking on an entry in the list.
 ### Build Instructions for developers
 
 * Get current sources from github -- https://github.com/marchyman/GeoTag
-* Open the project in Xcode (6.0 or later required)
+* Open the project in Xcode (6.1 or later required)
 * ⌘R will build and run, ⌘B to build only
 
 Send all comments, bugs, requests, etc. to <marc@snafu.org>
