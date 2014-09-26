@@ -219,15 +219,15 @@ CA
                 <rect key="frame" x="0.0" y="0.0" width="1100" height="816"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pMq-xL-Jwc">
+                    <splitView vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pMq-xL-Jwc">
                         <rect key="frame" x="20" y="20" width="1060" height="776"/>
                         <subviews>
                             <customView id="Gwc-9o-vlc" userLabel="Left Pane">
-                                <rect key="frame" x="0.0" y="0.0" width="529" height="776"/>
+                                <rect key="frame" x="0.0" y="0.0" width="530" height="776"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <scrollView borderType="line" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ARi-Ei-bTG">
-                                        <rect key="frame" x="0.0" y="3" width="529" height="776"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="530" height="776"/>
                                         <clipView key="contentView" id="gmY-qF-zsb">
                                             <rect key="frame" x="1" y="17" width="238" height="117"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -344,7 +344,7 @@ CA
                                                                 </tableCellView>
                                                             </prototypeCellViews>
                                                         </tableColumn>
-                                                        <tableColumn identifier="longitude" editable="NO" width="123" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
+                                                        <tableColumn identifier="longitude" editable="NO" width="124" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Longitude">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -358,7 +358,7 @@ CA
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="longitude" id="4Km-RM-P0Q">
-                                                                    <rect key="frame" x="402" y="1" width="123" height="17"/>
+                                                                    <rect key="frame" x="402" y="1" width="124" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fNU-Jf-yeQ">
@@ -371,9 +371,9 @@ CA
                                                                         </textField>
                                                                     </subviews>
                                                                     <constraints>
-                                                                        <constraint firstItem="fNU-Jf-yeQ" firstAttribute="centerY" secondItem="4Km-RM-P0Q" secondAttribute="centerY" id="FxL-6k-meu"/>
-                                                                        <constraint firstAttribute="trailing" secondItem="fNU-Jf-yeQ" secondAttribute="trailing" constant="19" id="dny-04-Twf"/>
-                                                                        <constraint firstItem="fNU-Jf-yeQ" firstAttribute="leading" secondItem="4Km-RM-P0Q" secondAttribute="leading" constant="2" id="vsb-Br-XAM"/>
+                                                                        <constraint firstItem="fNU-Jf-yeQ" firstAttribute="leading" secondItem="4Km-RM-P0Q" secondAttribute="leading" constant="2" id="Tno-tz-BQt"/>
+                                                                        <constraint firstItem="fNU-Jf-yeQ" firstAttribute="centerY" secondItem="4Km-RM-P0Q" secondAttribute="centerY" id="bFY-zH-DCx"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="fNU-Jf-yeQ" secondAttribute="trailing" constant="20" id="peg-F2-dTe"/>
                                                                     </constraints>
                                                                     <connections>
                                                                         <outlet property="textField" destination="fNU-Jf-yeQ" id="aRp-MU-wvo"/>
@@ -390,9 +390,6 @@ CA
                                             </subviews>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </clipView>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="500" id="OMG-yD-vZk"/>
-                                        </constraints>
                                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.5" horizontal="YES" id="yEh-tG-aR3">
                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
@@ -413,15 +410,15 @@ CA
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="ARi-Ei-bTG" secondAttribute="trailing" id="2a5-ab-uTm"/>
                                     <constraint firstItem="ARi-Ei-bTG" firstAttribute="leading" secondItem="Gwc-9o-vlc" secondAttribute="leading" id="Phx-zq-gKm"/>
-                                    <constraint firstAttribute="bottom" secondItem="ARi-Ei-bTG" secondAttribute="bottom" constant="3" id="XI4-Ob-InC"/>
-                                    <constraint firstItem="ARi-Ei-bTG" firstAttribute="top" secondItem="Gwc-9o-vlc" secondAttribute="top" constant="-3" id="kVb-Br-vmd"/>
+                                    <constraint firstAttribute="bottom" secondItem="ARi-Ei-bTG" secondAttribute="bottom" id="XI4-Ob-InC"/>
+                                    <constraint firstItem="ARi-Ei-bTG" firstAttribute="top" secondItem="Gwc-9o-vlc" secondAttribute="top" id="kVb-Br-vmd"/>
                                 </constraints>
                             </customView>
                             <customView id="v4A-KZ-PzD" userLabel="Right Pane">
                                 <rect key="frame" x="539" y="0.0" width="521" height="776"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
-                                    <splitView dividerStyle="paneSplitter" translatesAutoresizingMaskIntoConstraints="NO" id="Owq-8L-C5q">
+                                    <splitView translatesAutoresizingMaskIntoConstraints="NO" id="Owq-8L-C5q">
                                         <rect key="frame" x="0.0" y="0.0" width="521" height="776"/>
                                         <subviews>
                                             <customView id="VLF-DZ-LKW" userLabel="Image pane">
@@ -429,7 +426,7 @@ CA
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <imageView translatesAutoresizingMaskIntoConstraints="NO" id="xuH-yg-55o">
-                                                        <rect key="frame" x="0.0" y="0.0" width="521" height="346"/>
+                                                        <rect key="frame" x="-3" y="-3" width="527" height="352"/>
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" id="giZ-5r-50G"/>
                                                     </imageView>
                                                     <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Leb-gI-5bq">
@@ -440,21 +437,20 @@ CA
                                                     </progressIndicator>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="xuH-yg-55o" firstAttribute="leading" secondItem="VLF-DZ-LKW" secondAttribute="leading" constant="3" id="9yC-EC-h9V"/>
-                                                    <constraint firstAttribute="trailing" secondItem="xuH-yg-55o" secondAttribute="trailing" constant="3" id="ACq-Gi-pl1"/>
+                                                    <constraint firstItem="xuH-yg-55o" firstAttribute="leading" secondItem="VLF-DZ-LKW" secondAttribute="leading" id="9yC-EC-h9V"/>
+                                                    <constraint firstAttribute="trailing" secondItem="xuH-yg-55o" secondAttribute="trailing" id="ACq-Gi-pl1"/>
                                                     <constraint firstItem="Leb-gI-5bq" firstAttribute="centerY" secondItem="VLF-DZ-LKW" secondAttribute="centerY" id="Ixh-VJ-TXd"/>
-                                                    <constraint firstItem="Leb-gI-5bq" firstAttribute="centerY" secondItem="xuH-yg-55o" secondAttribute="centerY" id="OAN-m1-ZU5"/>
-                                                    <constraint firstItem="xuH-yg-55o" firstAttribute="centerX" secondItem="Leb-gI-5bq" secondAttribute="centerX" id="mHf-Hr-U6e"/>
-                                                    <constraint firstItem="xuH-yg-55o" firstAttribute="top" secondItem="VLF-DZ-LKW" secondAttribute="top" constant="3" id="pqC-Od-MUL"/>
+                                                    <constraint firstAttribute="bottom" secondItem="xuH-yg-55o" secondAttribute="bottom" id="Jnv-Uo-roo"/>
+                                                    <constraint firstItem="xuH-yg-55o" firstAttribute="top" secondItem="VLF-DZ-LKW" secondAttribute="top" id="pqC-Od-MUL"/>
                                                     <constraint firstAttribute="centerX" secondItem="Leb-gI-5bq" secondAttribute="centerX" id="rHJ-rN-MCW"/>
                                                 </constraints>
                                             </customView>
                                             <customView id="mR8-Yl-B58" userLabel="Map pane">
-                                                <rect key="frame" x="0.0" y="356" width="521" height="420"/>
+                                                <rect key="frame" x="0.0" y="355" width="521" height="421"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jOB-Xu-ExJ">
-                                                        <rect key="frame" x="362" y="380" width="165" height="32"/>
+                                                        <rect key="frame" x="342" y="381" width="165" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="153" id="SvS-X7-UYa"/>
                                                         </constraints>
@@ -467,7 +463,7 @@ CA
                                                         </connections>
                                                     </button>
                                                     <webView maintainsBackForwardList="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OQ7-ya-zM7">
-                                                        <rect key="frame" x="3" y="0.0" width="521" height="373"/>
+                                                        <rect key="frame" x="3" y="0.0" width="521" height="374"/>
                                                         <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12" plugInsEnabled="NO" javaEnabled="NO" javaScriptCanOpenWindowsAutomatically="NO" allowsAnimatedImages="NO" allowsAnimatedImageLooping="NO">
                                                             <nil key="identifier"/>
                                                         </webPreferences>
@@ -476,7 +472,7 @@ CA
                                                         </connections>
                                                     </webView>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
-                                                        <rect key="frame" x="-2" y="385" width="282" height="24"/>
+                                                        <rect key="frame" x="18" y="386" width="282" height="24"/>
                                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="248-FW-Avl">
                                                             <font key="font" metaFont="system"/>
                                                             <segments>
@@ -492,13 +488,13 @@ CA
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="OQ7-ya-zM7" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="47" id="15v-mG-YMW"/>
-                                                    <constraint firstAttribute="trailing" secondItem="jOB-Xu-ExJ" secondAttribute="trailing" id="5rg-Nu-woP"/>
+                                                    <constraint firstAttribute="trailing" secondItem="jOB-Xu-ExJ" secondAttribute="trailing" constant="20" id="5rg-Nu-woP"/>
                                                     <constraint firstItem="OQ7-ya-zM7" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="3" id="Als-IL-2ld"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="IBD-aM-s8A"/>
                                                     <constraint firstAttribute="trailing" secondItem="OQ7-ya-zM7" secondAttribute="trailing" constant="-3" id="Nsp-ms-rTM"/>
                                                     <constraint firstAttribute="bottom" secondItem="OQ7-ya-zM7" secondAttribute="bottom" id="Zcs-bO-OeP"/>
                                                     <constraint firstItem="jOB-Xu-ExJ" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="xrB-Bz-x8a"/>
-                                                    <constraint firstItem="UAa-bh-Wko" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" id="zgJ-sW-cGB"/>
+                                                    <constraint firstItem="UAa-bh-Wko" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" id="zgJ-sW-cGB"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
