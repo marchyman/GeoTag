@@ -74,7 +74,7 @@ class WebViewController: NSViewController {
         let mapPath = NSBundle.mainBundle().pathForResource("map",
                                                             ofType: "html")
         let mapURL = NSURL(fileURLWithPath: mapPath!, isDirectory: false)
-        let map = NSURLRequest(URL: mapURL)
+        let map = NSURLRequest(URL: mapURL!)
         webView.mainFrame.loadRequest(map)
     }
 

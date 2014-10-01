@@ -122,7 +122,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     //MARK: menu actions
 
     // only enable various tableview related menu items when it makes sense
-    override func validateMenuItem(menuItem: NSMenuItem!) -> Bool {
+    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         switch menuItem.action {
         case Selector("selectAll:"):
             // OK as long as there is at least one entry in the table
@@ -343,17 +343,17 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             }
             var colView =
                 tableView.makeViewWithIdentifier(id, owner: nil) as NSTableCellView
-            colView.textField.stringValue = value;
+            colView.textField?.stringValue = value;
             if row == tableView.selectedRow {
-                colView.textField.textColor = NSColor.yellowColor()
+                colView.textField?.textColor = NSColor.yellowColor()
             } else {
-                colView.textField.textColor = nil
+                colView.textField?.textColor = nil
             }
             if tip != nil {
-                colView.textField.toolTip = tip!
+                colView.textField?.toolTip = tip!
             }
             if !image.validImage {
-                colView.textField.textColor = NSColor.grayColor()
+                colView.textField?.textColor = NSColor.grayColor()
             }
             return colView
         }
@@ -414,7 +414,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 /// in a TableView extension.
 
 extension NSTableView {
-    public override func rightMouseDown(theEvent: NSEvent!) {
+    public override func rightMouseDown(theEvent: NSEvent) {
         let localPoint = convertPoint(theEvent.locationInWindow, fromView: nil)
         let row = rowAtPoint(localPoint)
         if row >= 0 {

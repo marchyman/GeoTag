@@ -98,7 +98,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     //MARK: Save image changes (if any)
 
-    override func validateMenuItem(menuItem: NSMenuItem!) -> Bool {
+    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         switch menuItem.action {
         case Selector("showOpenPanel:"):
             return true
