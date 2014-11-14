@@ -16,7 +16,7 @@ class ImageData: NSObject {
     var path: String! {
         return url.path
     }
-    var name: String {
+    var name: String? {
         return url.lastPathComponent
     }
 

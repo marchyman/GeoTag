@@ -326,7 +326,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         if let id = tableColumn.identifier {
             switch id {
             case "imageName":
-                value = image.name
+                value = image.name ?? "Unknown"
                 tip = image.path
             case "dateTime":
                 value = image.date
