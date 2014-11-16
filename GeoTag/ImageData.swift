@@ -192,7 +192,7 @@ class ImageData: NSObject {
 
                 // extract image date/time created
                 if let exifData = imgProps[exifDictionary] as? NSDictionary! {
-                    if let dto = exifData[exifDateTimeOriginal] as? String! {
+                    if let dto = exifData[exifDateTimeOriginal] as? String {
                         date = dto
                     }
                 }
