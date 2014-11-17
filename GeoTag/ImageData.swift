@@ -191,16 +191,16 @@ class ImageData: NSObject {
                 image.unlockFocus()
 
                 // extract image date/time created
-                if let exifData = imgProps[exifDictionary] as? NSDictionary! {
+                if let exifData = imgProps[exifDictionary] as? NSDictionary {
                     if let dto = exifData[exifDateTimeOriginal] as? String {
                         date = dto
                     }
                 }
 
                 // extract image existing gps info
-                if let gpsData = imgProps[GPSDictionary] as NSDictionary! {
-                    if let lat = gpsData[GPSLatitude] as Double! {
-                        if let latRef = gpsData[GPSLatitudeRef] as String! {
+                if let gpsData = imgProps[GPSDictionary] as? NSDictionary {
+                    if let lat = gpsData[GPSLatitude] as? Double {
+                        if let latRef = gpsData[GPSLatitudeRef] as? String {
                             if latRef == "N" {
                                 latitude = lat
                             } else {
@@ -208,8 +208,8 @@ class ImageData: NSObject {
                             }
                         }
                     }
-                    if let lon = gpsData[GPSLongitude] as Double! {
-                        if let lonRef = gpsData[GPSLongitudeRef] as String! {
+                    if let lon = gpsData[GPSLongitude] as? Double {
+                        if let lonRef = gpsData[GPSLongitudeRef] as? String {
                             if lonRef == "E" {
                                 longitude = lon
                             } else {

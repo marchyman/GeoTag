@@ -1,3 +1,8 @@
+## GeoTag 3.2
+
+Fix a class of bugs that would cause a crash when decoding optional image
+properties than weren't present.
+
 ## GeoTag 3.1
 
 Added ability to resize the image table, image, and map panes.  Otherwise
