@@ -160,8 +160,8 @@ class ImageData: NSObject {
             /// performance hit when using large raw images
             let maxDimension = 512
             var imgOpts: NSMutableDictionary = [
-                createThumbnailWithTransform : kCFBooleanTrue as! AnyObject,
-                createThumbnailFromImageAlways : kCFBooleanTrue as! AnyObject
+                createThumbnailWithTransform : kCFBooleanTrue,
+                createThumbnailFromImageAlways : kCFBooleanTrue
             ]
             if height > maxDimension || width > maxDimension {
                 // add a max pixel size to the dictionary of options
@@ -191,30 +191,27 @@ class ImageData: NSObject {
                 image.unlockFocus()
 
                 // extract image date/time created
-                if let exifData = imgProps[exifDictionary] as? NSDictionary {
-                    if let dto = exifData[exifDateTimeOriginal] as? String {
-                        date = dto
-                    }
+                if let exifData = imgProps[exifDictionary] as? NSDictionary,
+                            dto = exifData[exifDateTimeOriginal] as? String {
+                    date = dto
                 }
 
                 // extract image existing gps info
                 if let gpsData = imgProps[GPSDictionary] as? NSDictionary {
-                    if let lat = gpsData[GPSLatitude] as? Double {
-                        if let latRef = gpsData[GPSLatitudeRef] as? String {
-                            if latRef == "N" {
-                                latitude = lat
-                            } else {
-                                latitude = -lat
-                            }
+                    if let lat = gpsData[GPSLatitude] as? Double,
+                        latRef = gpsData[GPSLatitudeRef] as? String {
+                        if latRef == "N" {
+                            latitude = lat
+                        } else {
+                            latitude = -lat
                         }
                     }
-                    if let lon = gpsData[GPSLongitude] as? Double {
-                        if let lonRef = gpsData[GPSLongitudeRef] as? String {
-                            if lonRef == "E" {
-                                longitude = lon
-                            } else {
-                                longitude = -lon
-                            }
+                    if let lon = gpsData[GPSLongitude] as? Double,
+                        lonRef = gpsData[GPSLongitudeRef] as? String {
+                        if lonRef == "E" {
+                            longitude = lon
+                        } else {
+                            longitude = -lon
                         }
                     }
                 }
