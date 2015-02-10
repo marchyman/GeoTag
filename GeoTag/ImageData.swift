@@ -148,8 +148,8 @@ class ImageData: NSObject {
 
             // grab the image properties
             let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary
-            let height = imgProps[pixelHeight] as Int!
-            let width = imgProps[pixelWidth] as Int!
+            let height = imgProps[pixelHeight] as! Int!
+            let width = imgProps[pixelWidth] as! Int!
             if height == nil || width == nil {
                 return false
             }
@@ -160,8 +160,8 @@ class ImageData: NSObject {
             /// performance hit when using large raw images
             let maxDimension = 512
             var imgOpts: NSMutableDictionary = [
-                createThumbnailWithTransform : kCFBooleanTrue as AnyObject,
-                createThumbnailFromImageAlways : kCFBooleanTrue as AnyObject
+                createThumbnailWithTransform : kCFBooleanTrue as! AnyObject,
+                createThumbnailFromImageAlways : kCFBooleanTrue as! AnyObject
             ]
             if height > maxDimension || width > maxDimension {
                 // add a max pixel size to the dictionary of options
