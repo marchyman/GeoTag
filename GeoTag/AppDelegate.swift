@@ -8,21 +8,9 @@
 
 import Cocoa
 
-// storage for stored class variable
-struct Statics {
-    static var exiftoolPath: String!
-}
-
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
-    // stored class variables not supported, do this trick
-    class var exiftoolPath: String! {
-        get {
-            return Statics.exiftoolPath
-        }
-        set {
-            Statics.exiftoolPath = newValue
-        }
-    }
+    // class variable holds path to exiftool
+    static var exiftoolPath: String!
 
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
@@ -47,6 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let exiftoolPath = path + "/exiftool"
             if fileManager.fileExistsAtPath(exiftoolPath) {
                 AppDelegate.exiftoolPath = exiftoolPath
+                println("exiftool path = \(exiftoolPath)")
                 return
             }
         }
