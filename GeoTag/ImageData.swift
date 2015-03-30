@@ -74,7 +74,20 @@ class ImageData: NSObject {
             }
         } else {
             if let error = errorRet {
-                // TODO: alert on error trashing item
+                let alert = NSAlert()
+                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
+                                                      comment: "can't trash file")
+                alert.informativeText = path
+                alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
+                                                            comment: "can't trash file")
+                if let reason = error.localizedFailureReason {
+                    alert.informativeText! += reason
+                } else {
+                    alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
+                                                                comment: "unknown error reason")
+                }
+                alert.runModal()
             }
         }
         return false
