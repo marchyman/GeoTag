@@ -74,7 +74,20 @@ class ImageData: NSObject {
             }
         } else {
             if let error = errorRet {
-                // TODO: alert on error trashing item
+                let alert = NSAlert()
+                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
+                                                      comment: "can't trash file")
+                alert.informativeText = path
+                alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
+                                                            comment: "can't trash file")
+                if let reason = error.localizedFailureReason {
+                    alert.informativeText! += reason
+                } else {
+                    alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
+                                                                comment: "unknown error reason")
+                }
+                alert.runModal()
             }
         }
         return false
@@ -148,8 +161,8 @@ class ImageData: NSObject {
 
             // grab the image properties
             let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary
-            let height = imgProps[pixelHeight] as Int!
-            let width = imgProps[pixelWidth] as Int!
+            let height = imgProps[pixelHeight] as! Int!
+            let width = imgProps[pixelWidth] as! Int!
             if height == nil || width == nil {
                 return false
             }
@@ -160,8 +173,8 @@ class ImageData: NSObject {
             /// performance hit when using large raw images
             let maxDimension = 512
             var imgOpts: NSMutableDictionary = [
-                createThumbnailWithTransform : kCFBooleanTrue as AnyObject,
-                createThumbnailFromImageAlways : kCFBooleanTrue as AnyObject
+                createThumbnailWithTransform : kCFBooleanTrue,
+                createThumbnailFromImageAlways : kCFBooleanTrue
             ]
             if height > maxDimension || width > maxDimension {
                 // add a max pixel size to the dictionary of options
@@ -191,30 +204,27 @@ class ImageData: NSObject {
                 image.unlockFocus()
 
                 // extract image date/time created
-                if let exifData = imgProps[exifDictionary] as? NSDictionary {
-                    if let dto = exifData[exifDateTimeOriginal] as? String {
-                        date = dto
-                    }
+                if let exifData = imgProps[exifDictionary] as? NSDictionary,
+                            dto = exifData[exifDateTimeOriginal] as? String {
+                    date = dto
                 }
 
                 // extract image existing gps info
                 if let gpsData = imgProps[GPSDictionary] as? NSDictionary {
-                    if let lat = gpsData[GPSLatitude] as? Double {
-                        if let latRef = gpsData[GPSLatitudeRef] as? String {
-                            if latRef == "N" {
-                                latitude = lat
-                            } else {
-                                latitude = -lat
-                            }
+                    if let lat = gpsData[GPSLatitude] as? Double,
+                        latRef = gpsData[GPSLatitudeRef] as? String {
+                        if latRef == "N" {
+                            latitude = lat
+                        } else {
+                            latitude = -lat
                         }
                     }
-                    if let lon = gpsData[GPSLongitude] as? Double {
-                        if let lonRef = gpsData[GPSLongitudeRef] as? String {
-                            if lonRef == "E" {
-                                longitude = lon
-                            } else {
-                                longitude = -lon
-                            }
+                    if let lon = gpsData[GPSLongitude] as? Double,
+                        lonRef = gpsData[GPSLongitudeRef] as? String {
+                        if lonRef == "E" {
+                            longitude = lon
+                        } else {
+                            longitude = -lon
                         }
                     }
                 }

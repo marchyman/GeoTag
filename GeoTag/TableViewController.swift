@@ -271,8 +271,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     // don't allow rows with non images to be selected while still allowing
     // drags and ranges.
-    func tableView(tableView: NSTableView!,
-                selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet!) -> NSIndexSet! {
+    func tableView(tableView: NSTableView,
+                selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet) -> NSIndexSet {
         var selectionIndexes = NSMutableIndexSet()
         proposedSelectionIndexes.enumerateIndexesUsingBlock {
             (row, _) -> Void in
@@ -284,7 +284,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     // match the image to the selected row
-    func tableViewSelectionDidChange(notification: NSNotification!) {
+    func tableViewSelectionDidChange(notification: NSNotification) {
         // redraw last selected row in normal colors
         if let lastRow = self.lastRow {
             reloadRow(lastRow)
@@ -312,18 +312,18 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     //MARK: TableView data source functions
 
     // one row per image in the images array
-    func numberOfRowsInTableView(tableView: NSTableView!) -> Int {
+    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return images.count
     }
 
     // return view for requested column
-    func tableView(tableView: NSTableView!,
-        viewForTableColumn tableColumn: NSTableColumn!,
-        row: Int) -> NSView! {
+    func tableView(tableView: NSTableView,
+        viewForTableColumn tableColumn: NSTableColumn?,
+        row: Int) -> NSView? {
         let image = images[row]
         var value = ""
         var tip: String? = nil
-        if let id = tableColumn.identifier {
+        if let id = tableColumn?.identifier {
             switch id {
             case "imageName":
                 value = image.name ?? "Unknown"
@@ -342,7 +342,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
                 break
             }
             var colView =
-                tableView.makeViewWithIdentifier(id, owner: nil) as NSTableCellView
+                tableView.makeViewWithIdentifier(id, owner: nil) as! NSTableCellView
             colView.textField?.stringValue = value;
             if row == tableView.selectedRow {
                 colView.textField?.textColor = NSColor.yellowColor()
@@ -361,8 +361,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     // validate a proposed drop
-    func tableView(aTableView: NSTableView!,
-                   validateDrop info: NSDraggingInfo!,
+    func tableView(aTableView: NSTableView,
+                   validateDrop info: NSDraggingInfo,
                    proposedRow row: Int,
                    proposedDropOperation operation: NSTableViewDropOperation) -> NSDragOperation {
 
@@ -387,8 +387,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     // Add dropped files to the table
-    func tableView(aTableView: NSTableView!,
-                   acceptDrop info: NSDraggingInfo!,
+    func tableView(aTableView: NSTableView,
+                   acceptDrop info: NSDraggingInfo,
                    row: Int,
                    dropOperation operation: NSTableViewDropOperation) -> Bool {
         let pb = info.draggingPasteboard()

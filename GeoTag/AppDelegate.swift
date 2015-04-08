@@ -8,21 +8,9 @@
 
 import Cocoa
 
-// storage for stored class variable
-struct Statics {
-    static var exiftoolPath: String!
-}
-
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
-    // stored class variables not supported, do this trick
-    class var exiftoolPath: String! {
-        get {
-            return Statics.exiftoolPath
-        }
-        set {
-            Statics.exiftoolPath = newValue
-        }
-    }
+    // class variable holds path to exiftool
+    static var exiftoolPath: String!
 
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
@@ -32,7 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     //MARK: App start up
 
-    func applicationDidFinishLaunching(aNotification: NSNotification?) {
+    func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
         window.delegate = self
         undoManager = NSUndoManager()
@@ -47,6 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let exiftoolPath = path + "/exiftool"
             if fileManager.fileExistsAtPath(exiftoolPath) {
                 AppDelegate.exiftoolPath = exiftoolPath
+                println("exiftool path = \(exiftoolPath)")
                 return
             }
         }
@@ -62,7 +51,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     //MARK: window delegate undo handling
 
-    func windowWillReturnUndoManager(window: NSWindow!) -> NSUndoManager! {
+    func windowWillReturnUndoManager(window: NSWindow) -> NSUndoManager? {
         return undoManager
     }
 
@@ -80,12 +69,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     @IBAction func showOpenPanel(AnyObject) {
         var panel = NSOpenPanel()
-        panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as NSArray
+        panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as [AnyObject]
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         if panel.runModal() == NSFileHandlingPanelOKButton {
-            let dups = tableViewController.addImages(panel.URLs as [NSURL])
+            let dups = tableViewController.addImages(panel.URLs as! [NSURL])
             if dups {
                 let alert = NSAlert()
                 alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
@@ -119,7 +108,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     //MARK: app termination
 
-    func applicationShouldTerminateAfterLastWindowClosed(theApplication: NSApplication!) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(theApplication: NSApplication) -> Bool {
         return true
     }
     
@@ -156,21 +145,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
 
-    func applicationShouldTerminate(sender: NSApplication!) -> NSApplicationTerminateReply {
+    func applicationShouldTerminate(sender: NSApplication) -> NSApplicationTerminateReply {
         if saveOrDontSave(window) {
             return .TerminateNow
         }
         return .TerminateCancel
     }
 
-    func applicationWillTerminate(aNotification: NSNotification?) {
+    func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
     }
 
 
     /// Window delegate functions
 
-    func windowShouldClose(window: NSWindow) -> Bool {
-        return saveOrDontSave(window)
+    func windowShouldClose(window: AnyObject) -> Bool {
+        return saveOrDontSave(window as! NSWindow)
     }
 }
