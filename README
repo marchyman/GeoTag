@@ -1,3 +1,12 @@
+## GeoTag 3.3
+
+Add a search field to the map.   Entering the name of a location and then
+hitting enter or clicking on the find button will center the map on the
+searched for location.
+
+Internal changes to match the requirements/features of Swift 1.2.  Xcode
+version 6.3 or later required to build from source.
+
 ## GeoTag 3.2
 
 Fix a class of bugs that would cause a crash when decoding optional image
@@ -76,7 +85,7 @@ a pop up menu by right clicking on an entry in the list.
 ### Build Instructions for developers
 
 * Get current sources from github -- https://github.com/marchyman/GeoTag
-* Open the project in Xcode (6.1 or later required)
+* Open the project in Xcode (6.3 or later required)
 * ⌘R will build and run, ⌘B to build only
 
 Send all comments, bugs, requests, etc. to <marc@snafu.org>
