@@ -40,6 +40,9 @@ class ImageData: NSObject {
         return ""
     }
 
+    // user defaults key for optional save directory
+    let saveDirectoryKey = "SaveDirectoryKey"
+
     //MARK: Init
 
     init(url: NSURL) {
@@ -73,6 +76,16 @@ class ImageData: NSObject {
         var errorRet: NSError?
         if fileManager.trashItemAtURL(url, resultingItemURL: &backupURL,
                                       error: &errorRet) {
+            // if an optional save directory is specified link the file
+            // to the named directory ignoring errors.  If the fileexists
+            // at the save location it will not be overwritten.
+            let defaults = NSUserDefaults.standardUserDefaults()
+            if let saveDirURL = defaults.URLForKey(saveDirectoryKey) {
+                let saveFileURL = saveDirURL.URLByAppendingPathComponent(name!,
+                    isDirectory: false)
+                fileManager.linkItemAtURL(backupURL!, toURL: saveFileURL,
+                                          error: nil)
+            }
             if fileManager.copyItemAtURL(backupURL!, toURL: url,
                                          error: &errorRet) {
                 return true
