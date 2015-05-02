@@ -160,7 +160,10 @@ class ImageData: NSObject {
             let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String!
 
             // grab the image properties
-            let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary
+            let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary!
+            if imgProps == nil {
+                return false
+            }
             let height = imgProps[pixelHeight] as! Int!
             let width = imgProps[pixelWidth] as! Int!
             if height == nil || width == nil {
