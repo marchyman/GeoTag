@@ -1,5 +1,10 @@
 ## GeoTag 3.?
 
+When using drag-and-drop GeoTag enabled the drop only when the cursor was
+beyond the end of the table.  It will now allow a drop anywhere in the table.
+HOWEVER: the added images will still be appended to the end of the table,
+not placed at the cursor location.
+
 Add command-K as a shortcut for the Clear image list menu option.  The command
 is ignored if any of the items in the list have been edited and not saved.
 

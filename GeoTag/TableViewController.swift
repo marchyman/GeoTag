@@ -366,9 +366,6 @@ class TableViewController: NSViewController, NSTableViewDelegate,
                    proposedRow row: Int,
                    proposedDropOperation operation: NSTableViewDropOperation) -> NSDragOperation {
 
-        if row < images.count {
-            return .None
-        }
         let pb = info.draggingPasteboard()
         if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
             let fileManager = NSFileManager.defaultManager()

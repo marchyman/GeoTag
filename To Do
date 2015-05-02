@@ -2,16 +2,12 @@ Buglets:
 * Cursor change upon exiting map?
 * double click on map moves point... Can I do anything about that?
 * Crash reported dragging and dropping video
+* drag-and-drop to table should disable table row/inter-row selection.
 
 Feature Requests:
 * drag and drop folders... add all images in the folders (and sub-folders)
   Should apply to FIle->Open, too
 
 * Copy originals to a specified backup folder in addition to the trash.
-
+
 * Handle location display of video files.  Exiftool does not allow updates.
-
-* when appending the file list from several folders an the file names fill
-  the list’s space in geotags window, its difficult to append more files if
-  there is no more space left below the last file in the list view. maybe you
-  can improve geotags drag and drop behaviour.
