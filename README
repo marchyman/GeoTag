@@ -32,7 +32,8 @@ Use version 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8
 
 The functions provided by GeoTag exist in current versions of Photo, Aperture
 (RIP), and Lightroom.  Some still find the application useful for geolocation
-tagging photos in the field.
+tagging photos in the field.  I have not played with Photos (OSX 10.10.3)
+enough to know how GeoTag fits with that application.
 
 See <http://www.snafu.org/GeoTag/> for more information
 
