@@ -1,3 +1,8 @@
+## GeoTag 3.?
+
+Add command-K as a shortcut for the Clear image list menu option.  The command
+is ignored if any of the items in the list have been edited and not saved.
+
 ## GeoTag 3.3
 
 Add a search field to the map.   Entering the name of a location and then

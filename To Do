@@ -11,8 +11,6 @@ Feature Requests:
 
 * Handle location display of video files.  Exiftool does not allow updates.
 
-* a keyboard shortcut for the „clear list“ command would be nice.
-
 * when appending the file list from several folders an the file names fill
   the list’s space in geotags window, its difficult to append more files if
   there is no more space left below the last file in the list view. maybe you
