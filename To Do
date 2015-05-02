@@ -2,7 +2,6 @@ Buglets:
 * Cursor change upon exiting map?
 * double click on map moves point... Can I do anything about that?
 * Crash reported dragging and dropping video
-* drag-and-drop to table should disable table row/inter-row selection.
 
 Feature Requests:
 * drag and drop folders... add all images in the folders (and sub-folders)

@@ -34,6 +34,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         // webViewController is a delegate to handle location changes
         webViewController.clickDelegate = self
         tableView.registerForDraggedTypes([NSFilenamesPboardType]);
+        tableView.draggingDestinationFeedbackStyle = .None
     }
 
     //MARK: populating the table
