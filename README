@@ -1,3 +1,21 @@
+### GeoTag for OS X
+
+GeoTag is a free OS X single window application that allows you to update image
+metadata with geolocation tags by selecting one or more images then panning and
+zooming within a google map to the place the image was recorded. Clicking on
+the map will add the location to the selected photos using the free exiftool
+utility.  Existing location information can be fine tuned by dragging a marker
+representing the location in the map.  In either case only image metadata is
+changed.
+
+The functions provided by GeoTag exist in current versions of Photo, Aperture
+(RIP), and Lightroom.  Some still find the application useful for geolocation
+tagging photos in the field.  I have not played with Photos (OSX 10.10.3)
+enough to know how GeoTag fits with that application.
+
+See <http://www.snafu.org/GeoTag/> for more information
+
+
 ## GeoTag 3.?
 
 When using drag-and-drop GeoTag enabled the drop only when the cursor was
@@ -41,13 +59,6 @@ This is a complete re-write of GeoTag for Mavericks and later
 Use version 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8
 (Mountain Lion).  Use version 1.8 if your Max is running OS X version 10.5
 (Leopard)  or earlier
-
-The functions provided by GeoTag exist in current versions of Photo, Aperture
-(RIP), and Lightroom.  Some still find the application useful for geolocation
-tagging photos in the field.  I have not played with Photos (OSX 10.10.3)
-enough to know how GeoTag fits with that application.
-
-See <http://www.snafu.org/GeoTag/> for more information
 
 ### Operating Instructions
 
