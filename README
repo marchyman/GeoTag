@@ -8,10 +8,12 @@ utility.  Existing location information can be fine tuned by dragging a marker
 representing the location in the map.  In either case only image metadata is
 changed.
 
-The functions provided by GeoTag exist in current versions of Photo, Aperture
+The functions provided by GeoTag exist in current versions of iPhoto, Aperture
 (RIP), and Lightroom.  Some still find the application useful for geolocation
-tagging photos in the field.  I have not played with Photos (OSX 10.10.3)
-enough to know how GeoTag fits with that application.
+tagging photos in the field.  Photos (OSX 10.10.3) looks like it will let you
+modify existing location metadata but not add location data to an image.
+If necessary use GeoTag to add location metadata before importing the images
+into Photos.
 
 See <http://www.snafu.org/GeoTag/> for more information
 
@@ -23,7 +25,7 @@ beyond the end of the table.  It will now allow a drop anywhere in the table.
 The added images will still be appended to the end of the table, not placed
 at the cursor location.
 
-Add command-K as a shortcut for the Clear image list menu option.  The command
+Add ⌘K as a shortcut for the Clear image list menu option.  The command
 is ignored if any of the items in the list have been edited and not saved.
 
 Fixed crash that would occur when dragging movie files into GeoTag
