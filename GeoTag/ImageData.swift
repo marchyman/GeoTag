@@ -8,7 +8,14 @@
 
 import Cocoa
 
+
 class ImageData: NSObject {
+    /*
+     * if we can't trash the file fall back to letting exiftool create
+     * backup files.   Only display a warning that this will happen once
+     * per program run.
+     */
+    static var firstWarning = true
 
     //MARK: instance variables
 
@@ -60,6 +67,7 @@ class ImageData: NSObject {
     // backup the image file by copying it to the trash
     // return true if successful
     func backupImageFile() -> Bool {
+        var firstWarning = true
         var backupURL: NSURL?
         let fileManager = NSFileManager.defaultManager()
         var errorRet: NSError?
@@ -74,20 +82,23 @@ class ImageData: NSObject {
             }
         } else {
             if let error = errorRet {
-                let alert = NSAlert()
-                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
-                alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
-                                                      comment: "can't trash file")
-                alert.informativeText = path
-                alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
-                                                            comment: "can't trash file")
-                if let reason = error.localizedFailureReason {
-                    alert.informativeText! += reason
-                } else {
-                    alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
-                                                                comment: "unknown error reason")
+                if ImageData.firstWarning {
+                    ImageData.firstWarning = false
+                    let alert = NSAlert()
+                    alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                    alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
+                                                          comment: "can't trash file")
+                    alert.informativeText = path
+                    alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
+                                                                comment: "can't trash file")
+                    if let reason = error.localizedFailureReason {
+                        alert.informativeText! += reason
+                    } else {
+                        alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
+                                                                    comment: "unknown error reason")
+                    }
+                    alert.runModal()
                 }
-                alert.runModal()
             }
         }
         return false
@@ -97,8 +108,12 @@ class ImageData: NSObject {
     func saveImageFile() -> Bool {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
-            if !backupImageFile() {
-                return false
+            let overwrite: String
+            if backupImageFile() {
+                overwrite = "-overwrite_original"
+            } else {
+                // don't overwrite. A second -q is benign
+                overwrite = "-q"
             }
             // latitude exiftool args
             var latArg = "-GPSLatitude="
@@ -129,7 +144,7 @@ class ImageData: NSObject {
             exiftool.standardOutput = NSFileHandle.fileHandleWithNullDevice()
             exiftool.standardError = NSFileHandle.fileHandleWithNullDevice()
             exiftool.launchPath = AppDelegate.exiftoolPath
-            exiftool.arguments = ["-q", "-m", "-overwrite_original",
+            exiftool.arguments = ["-q", "-m", overwrite,
                 "-DateTimeOriginal>FileModifyDate", latArg, latRefArg,
                 lonArg, lonRefArg, path]
             exiftool.launch()

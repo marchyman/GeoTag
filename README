@@ -30,6 +30,11 @@ is ignored if any of the items in the list have been edited and not saved.
 
 Fixed crash that would occur when dragging movie files into GeoTag
 
+When the original version of an edited file can not be moved to the trash
+GeoTag will now display a warning and leave the original file in its
+original folder with '_original' appended to its name.   The warning will
+only be displayed once per GeoTag execution.
+
 ## GeoTag 3.3
 
 Add a search field to the map.   Entering the name of a location and then
