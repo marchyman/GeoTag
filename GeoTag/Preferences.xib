@@ -5,38 +5,37 @@
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-2" userLabel="File's Owner" customClass="Preferences" customModule="GeoTag" customModuleProvider="target">
+            <connections>
+                <outlet property="saveDirPath" destination="WPF-AV-Z7i" id="VbA-Ic-l3k"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="RD0-Rv-tXN"/>
+            </connections>
+        </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="GeoTag Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="564" height="393"/>
+            <rect key="contentRect" x="196" y="240" width="564" height="240"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="564" height="393"/>
+                <rect key="frame" x="0.0" y="5" width="564" height="240"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box autoresizesSubviews="NO" title="Please read" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="mB3-is-Hvp">
-                        <rect key="frame" x="17" y="69" width="530" height="304"/>
+                        <rect key="frame" x="17" y="61" width="530" height="159"/>
                         <view key="contentView">
-                            <rect key="frame" x="1" y="1" width="528" height="288"/>
+                            <rect key="frame" x="1" y="1" width="528" height="143"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Usk-Sa-0th">
-                                    <rect key="frame" x="16" y="14" width="496" height="264"/>
+                                    <rect key="frame" x="16" y="14" width="496" height="119"/>
                                     <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" id="DKh-Hh-nMB">
                                         <font key="font" metaFont="system"/>
-                                        <mutableString key="title">GeoTag moves the original version of images that have been changed and saved to the system Trash.  Opening the Trash and using control-click on a file allows the file to be restored using the Put back option.
+                                        <string key="title">GeoTag moves the original version of images that have been changed and saved to the system Trash.  Opening the Trash and using control-click on a file allows the file to be restored using the Put back option.
 
 If you prefer to permanently save unmodified image files in a directory (in addition to the system Trash) you can specify that directory here.
-
-CAVEATS:
-1) The save directory must be on the same file system as the original photos.
-2) Files of the same name in the save directory will not be overwritten.
-3) Errors saving files to this directory are not reported.
-
-Use this feature at your own risk.</mutableString>
+</string>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
@@ -67,6 +66,9 @@ Use this feature at your own risk.</mutableString>
                                             <string>public.folder</string>
                                         </allowedTypes>
                                     </pathCell>
+                                    <connections>
+                                        <action selector="pickSaveFolder:" target="-2" id="qHy-8h-Bku"/>
+                                    </connections>
                                 </pathControl>
                             </subviews>
                         </view>
@@ -84,24 +86,31 @@ Use this feature at your own risk.</mutableString>
                         <buttonCell key="cell" type="push" title="No Save Folder" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kYX-Rj-z4j">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="smallSystem"/>
+                            <connections>
+                                <action selector="clearSaveDir:" target="-2" id="yE0-1c-9E9"/>
+                            </connections>
                         </buttonCell>
                     </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="16" id="8M5-PE-kME"/>
                     <constraint firstItem="cYX-WU-h9f" firstAttribute="trailing" secondItem="mB3-is-Hvp" secondAttribute="trailing" id="9dC-03-4Zh"/>
-                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="centerY" secondItem="cYX-WU-h9f" secondAttribute="centerY" id="Cox-8X-4cz"/>
+                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="centerY" secondItem="cYX-WU-h9f" secondAttribute="centerY" id="A0X-qI-Qc5"/>
                     <constraint firstAttribute="trailing" secondItem="mB3-is-Hvp" secondAttribute="trailing" constant="20" symbolic="YES" id="Cxg-L3-bjR"/>
-                    <constraint firstAttribute="bottom" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="20" symbolic="YES" id="SQq-dx-vYp"/>
-                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="336" id="YCq-6t-2mw"/>
-                    <constraint firstItem="cYX-WU-h9f" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="25" id="aG8-RX-NPV"/>
+                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="8" symbolic="YES" id="Ja0-Qw-QaV"/>
+                    <constraint firstItem="cYX-WU-h9f" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="17" id="aG8-RX-NPV"/>
+                    <constraint firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="139" id="cEa-Sc-EYE"/>
+                    <constraint firstAttribute="bottom" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="20" symbolic="YES" id="ckU-15-SeQ"/>
                     <constraint firstItem="mB3-is-Hvp" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="iy0-gW-KpC"/>
                     <constraint firstItem="mB3-is-Hvp" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="kVW-8m-BBi"/>
-                    <constraint firstItem="mB3-is-Hvp" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="leading" id="m6S-rJ-Drh"/>
                     <constraint firstItem="cYX-WU-h9f" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="8" symbolic="YES" id="nKG-S9-xpC"/>
+                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="leading" secondItem="mB3-is-Hvp" secondAttribute="leading" id="uIo-3J-BQd"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="793" y="617.5"/>
+            <connections>
+                <outlet property="delegate" destination="-2" id="arP-ts-3v3"/>
+            </connections>
+            <point key="canvasLocation" x="793" y="541"/>
         </window>
+        <userDefaultsController representsSharedInstance="YES" id="Zvz-jD-4SQ"/>
     </objects>
 </document>

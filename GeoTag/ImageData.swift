@@ -40,9 +40,6 @@ class ImageData: NSObject {
         return ""
     }
 
-    // user defaults key for optional save directory
-    let saveDirectoryKey = "SaveDirectoryKey"
-
     //MARK: Init
 
     init(url: NSURL) {
@@ -75,8 +72,7 @@ class ImageData: NSObject {
         // if an optional save directory is specified link the file
         // to the named directory ignoring errors.  If the fileexists
         // at the save location it will not be overwritten.
-        let defaults = NSUserDefaults.standardUserDefaults()
-        if let saveDirURL = defaults.URLForKey(saveDirectoryKey) {
+        if let saveDirURL = Preferences.saveDirectory() {
             let fileManager = NSFileManager.defaultManager()
             let saveFileURL =
                 saveDirURL.URLByAppendingPathComponent(name!,
