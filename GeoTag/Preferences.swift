@@ -16,7 +16,15 @@ class Preferences : NSWindowController {
 
     class func saveDirectory() -> NSURL? {
         let defaults = NSUserDefaults.standardUserDefaults()
-        return defaults.URLForKey(saveDirectoryKey)
+        var saveDirectory = defaults.URLForKey(saveDirectoryKey)
+        if saveDirectory != nil {
+            let fileManager = NSFileManager.defaultManager()
+            if !fileManager.fileExistsAtPath(saveDirectory!.path!) {
+                // TODO warn user
+                saveDirectory = nil
+            }
+        }
+        return saveDirectory
     }
 
     @IBOutlet var saveDirPath: NSPathControl!

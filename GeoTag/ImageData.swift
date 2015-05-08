@@ -64,32 +64,42 @@ class ImageData: NSObject {
 
     //MARK: Backup and Save
 
-    // Link given backup file name to an optional specified save directory
-    // If the link fails (different filesystem?) fall back to a copy.
-    // Note: paths are used instead of URLs because linkItemAtURL fails
-    // trying to link foo.jpg_original to somedir/foo.jpg.
+    /*
+     * Link given backup file name to an optional specified save directory
+     * If the link fails (different filesystem?) fall back to a copy.
+     * Note: paths are used instead of URLs because linkItemAtURL fails
+     * trying to link foo.jpg_original to somedir/foo.jpg.
+     */
     func saveOriginalFile(sourceName: String) {
-        // if an optional save directory is specified link the file
-        // to the named directory ignoring errors.  If the fileexists
-        // at the save location it will not be overwritten.
+        /*
+         * If an optional save directory is specified link the file
+         * to the named directory ignoring errors.  If a file with the same
+         * file exists at the save location it will not be overwritten.
+         * If the file can not be linked it will be copied.
+         */
         if let saveDirURL = Preferences.saveDirectory() {
+            var errorRet: NSError?      // used to see errors in the debugger
             let fileManager = NSFileManager.defaultManager()
             let saveFileURL =
                 saveDirURL.URLByAppendingPathComponent(name!,
                                                        isDirectory: false)
-            if !fileManager.linkItemAtPath(sourceName,
-                                           toPath: saveFileURL.path!,
-                                           error: nil) {
-                // couldn't create hard link, copy file instead
-                fileManager.copyItemAtPath(sourceName,
-                                           toPath: saveFileURL.path!,
-                                           error: nil)
+            if !fileManager.fileExistsAtPath(saveFileURL.path!) {
+                if !fileManager.linkItemAtPath(sourceName,
+                                               toPath: saveFileURL.path!,
+                                               error: &errorRet) {
+                    // couldn't create hard link, copy file instead
+                    fileManager.copyItemAtPath(sourceName,
+                                               toPath: saveFileURL.path!,
+                                               error: &errorRet)
+                }
             }
         }
     }
 
-    // backup the image file by copying it to the trash.
-    // return true if successful
+    /*
+     * backup the image file by copying it to the trash.
+     * return true if successful
+     */
     func backupImageFile() -> Bool {
         var firstWarning = true
         var backupURL: NSURL?
@@ -129,17 +139,13 @@ class ImageData: NSObject {
         return false
     }
 
-    // save the image if the location changed
+    /*
+     * save the image if the location changed
+     */
     func saveImageFile() -> Bool {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
-            let overwrite: String
-            if backupImageFile() {
-                overwrite = "-overwrite_original"
-            } else {
-                // don't overwrite. A second -q is benign
-                overwrite = "-q"
-            }
+            let overwriteOriginal = backupImageFile()
             // latitude exiftool args
             var latArg = "-GPSLatitude="
             var latRefArg = "-GPSLatitudeRef="
@@ -169,12 +175,18 @@ class ImageData: NSObject {
             exiftool.standardOutput = NSFileHandle.fileHandleWithNullDevice()
             exiftool.standardError = NSFileHandle.fileHandleWithNullDevice()
             exiftool.launchPath = AppDelegate.exiftoolPath
-            exiftool.arguments = ["-q", "-m", overwrite,
+            exiftool.arguments = ["-q", "-m",
                 "-DateTimeOriginal>FileModifyDate", latArg, latRefArg,
                 lonArg, lonRefArg, path]
+
+            // add -overwrite_original option if we can
+            if overwriteOriginal {
+                exiftool.arguments.insert("-overwrite_original", atIndex: 2)
+            }
+            println("exiftool args \(exiftool.arguments)")
             exiftool.launch()
             exiftool.waitUntilExit()
-            if overwrite == "-q" {
+            if !overwriteOriginal {
                 saveOriginalFile(path + "_original")
             }
             originalLatitude = latitude
