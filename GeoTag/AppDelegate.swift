@@ -11,6 +11,7 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // class variable holds path to exiftool
     static var exiftoolPath: String!
+    lazy var preferences = Preferences(windowNibName: Preferences.nibName)
 
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
@@ -93,6 +94,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             return true
         case Selector("save:"):
             return isModified()
+        case Selector("openPreferencesWindow:"):
+            return true
         default:
             println("default for item \(menuItem)")
         }
@@ -104,6 +107,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             modified(false)
             undoManager.removeAllActions()
         }
+    }
+
+    @IBAction func openPreferencesWindow(sender: AnyObject!) {
+        preferences.showWindow(sender)
     }
 
     //MARK: app termination

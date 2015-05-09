@@ -35,6 +35,10 @@ GeoTag will now display a warning and leave the original file in its
 original folder with '_original' appended to its name.   The warning will
 only be displayed once per GeoTag execution.
 
+Added a GeoTag preference to select a directory where original files will be
+saved. ;;; add notes about overwrites here
+
+
 ## GeoTag 3.3
 
 Add a search field to the map.   Entering the name of a location and then

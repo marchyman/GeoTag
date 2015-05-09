@@ -64,8 +64,45 @@ class ImageData: NSObject {
 
     //MARK: Backup and Save
 
-    // backup the image file by copying it to the trash
-    // return true if successful
+    /*
+     * Link given backup file name to an optional specified save directory
+     * If the link fails (different filesystem?) fall back to a copy.
+     * Note: paths are used instead of URLs because linkItemAtURL fails
+     * trying to link foo.jpg_original to somedir/foo.jpg.
+     */
+    func saveOriginalFile(sourceName: String) {
+        /*
+         * If an optional save directory is specified link the file
+         * to the named directory ignoring errors.  If a file with the same
+         * file exists at the save location it will not be overwritten.
+         * If the file can not be linked it will be copied.
+         */
+        if let saveDirURL = Preferences.saveDirectory() {
+            var errorRet: NSError?
+            let fileManager = NSFileManager.defaultManager()
+            let saveFileURL =
+                saveDirURL.URLByAppendingPathComponent(name!,
+                                                       isDirectory: false)
+            if !fileManager.fileExistsAtPath(saveFileURL.path!) {
+                if !fileManager.linkItemAtPath(sourceName,
+                                               toPath: saveFileURL.path!,
+                                               error: &errorRet) {
+                    // couldn't create hard link, copy file instead
+                    if !fileManager.copyItemAtPath(sourceName,
+                                                   toPath: saveFileURL.path!,
+                                                   error: &errorRet) {
+                        unexpectedError(errorRet,
+                                        "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * backup the image file by copying it to the trash.
+     * return true if successful
+     */
     func backupImageFile() -> Bool {
         var firstWarning = true
         var backupURL: NSURL?
@@ -73,48 +110,42 @@ class ImageData: NSObject {
         var errorRet: NSError?
         if fileManager.trashItemAtURL(url, resultingItemURL: &backupURL,
                                       error: &errorRet) {
+            saveOriginalFile(backupURL!.path!)
             if fileManager.copyItemAtURL(backupURL!, toURL: url,
                                          error: &errorRet) {
                 return true
             }
-            if let error = errorRet {
-                // TODO: alert on error copying file
-            }
-        } else {
-            if let error = errorRet {
-                if ImageData.firstWarning {
-                    ImageData.firstWarning = false
-                    let alert = NSAlert()
-                    alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
-                    alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
-                                                          comment: "can't trash file")
-                    alert.informativeText = path
-                    alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
-                                                                comment: "can't trash file")
-                    if let reason = error.localizedFailureReason {
-                        alert.informativeText! += reason
-                    } else {
-                        alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
-                                                                    comment: "unknown error reason")
-                    }
-                    alert.runModal()
+            unexpectedError(errorRet,
+                            "Cannot copy \(backupURL) to \(url) for update.\n\nReason: ")
+        } else if let error = errorRet {
+            if ImageData.firstWarning {
+                ImageData.firstWarning = false
+                let alert = NSAlert()
+                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
+                                                      comment: "can't trash file")
+                alert.informativeText = path
+                alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
+                                                            comment: "can't trash file")
+                if let reason = error.localizedFailureReason {
+                    alert.informativeText! += reason
+                } else {
+                    alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
+                                                                comment: "unknown error reason")
                 }
+                alert.runModal()
             }
         }
-        return false
+    return false
     }
 
-    // save the image if the location changed
+    /*
+     * save the image if the location changed
+     */
     func saveImageFile() -> Bool {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
-            let overwrite: String
-            if backupImageFile() {
-                overwrite = "-overwrite_original"
-            } else {
-                // don't overwrite. A second -q is benign
-                overwrite = "-q"
-            }
+            let overwriteOriginal = backupImageFile()
             // latitude exiftool args
             var latArg = "-GPSLatitude="
             var latRefArg = "-GPSLatitudeRef="
@@ -144,11 +175,19 @@ class ImageData: NSObject {
             exiftool.standardOutput = NSFileHandle.fileHandleWithNullDevice()
             exiftool.standardError = NSFileHandle.fileHandleWithNullDevice()
             exiftool.launchPath = AppDelegate.exiftoolPath
-            exiftool.arguments = ["-q", "-m", overwrite,
+            exiftool.arguments = ["-q", "-m",
                 "-DateTimeOriginal>FileModifyDate", latArg, latRefArg,
                 lonArg, lonRefArg, path]
+
+            // add -overwrite_original option if we can
+            if overwriteOriginal {
+                exiftool.arguments.insert("-overwrite_original", atIndex: 2)
+            }
             exiftool.launch()
             exiftool.waitUntilExit()
+            if !overwriteOriginal {
+                saveOriginalFile(path + "_original")
+            }
             originalLatitude = latitude
             originalLongitude = longitude
         }
