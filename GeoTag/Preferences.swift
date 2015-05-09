@@ -61,6 +61,12 @@ class Preferences : NSWindowController {
 		return Preferences.nibName
 	}
 
+    override func windowDidLoad() {
+        if let saveDirURL = Preferences.saveDirectory() {
+            saveDirPath.URL = saveDirURL
+        }
+    }
+
     // window delegate function... orderOut instead of close
     func windowShouldClose(sender: AnyObject!) -> Bool {
         window!.orderOut(sender)

@@ -92,7 +92,7 @@ class ImageData: NSObject {
                                                    toPath: saveFileURL.path!,
                                                    error: &errorRet) {
                         unexpectedError(errorRet,
-                                        "Cannot copy \(sourceName) to \(saveFileURL.path)")
+                                        "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
                     }
                 }
             }
@@ -116,7 +116,7 @@ class ImageData: NSObject {
                 return true
             }
             unexpectedError(errorRet,
-                            "Cannot copy \(backupURL) to \(url) for update")
+                            "Cannot copy \(backupURL) to \(url) for update.\n\nReason: ")
         } else if let error = errorRet {
             if ImageData.firstWarning {
                 ImageData.firstWarning = false
@@ -183,7 +183,6 @@ class ImageData: NSObject {
             if overwriteOriginal {
                 exiftool.arguments.insert("-overwrite_original", atIndex: 2)
             }
-            println("exiftool args \(exiftool.arguments)")
             exiftool.launch()
             exiftool.waitUntilExit()
             if !overwriteOriginal {
