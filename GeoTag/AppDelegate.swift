@@ -11,7 +11,7 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // class variable holds path to exiftool
     static var exiftoolPath: String!
-    lazy var preferences = Preferences(windowNibName: preferencesNibName)
+    lazy var preferences = Preferences(windowNibName: Preferences.nibName)
 
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!

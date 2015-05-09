@@ -7,21 +7,28 @@
 //
 
 import Cocoa
-
-let preferencesNibName = "Preferences"
-let saveDirectoryKey = "SaveDirectoryKey"
+import AppKit
 
 class Preferences : NSWindowController {
+    static let nibName = "Preferences"
+    static let saveDirectoryKey = "SaveDirectoryKey"
+    static var checkDirectory = true
+
     // user defaults key for optional save directory
 
     class func saveDirectory() -> NSURL? {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        var saveDirectory = defaults.URLForKey(saveDirectoryKey)
-        if saveDirectory != nil {
-            let fileManager = NSFileManager.defaultManager()
-            if !fileManager.fileExistsAtPath(saveDirectory!.path!) {
-                unexpectedError(nil, "The specified Optional Save Directory is missing")
-                saveDirectory = nil
+        var saveDirectory: NSURL? = nil
+
+        if checkDirectory {
+            let defaults = NSUserDefaults.standardUserDefaults()
+            saveDirectory = defaults.URLForKey(Preferences.saveDirectoryKey)
+            if saveDirectory != nil {
+                let fileManager = NSFileManager.defaultManager()
+                if !fileManager.fileExistsAtPath(saveDirectory!.path!) {
+                    unexpectedError(nil, "The specified Optional Save Folder\n\n\t\(saveDirectory!.path!)\n\nis missing. Original image files will not be copied to that location.")
+                    saveDirectory = nil
+                    checkDirectory = false
+                }
             }
         }
         return saveDirectory
@@ -35,21 +42,23 @@ class Preferences : NSWindowController {
         panel.allowsMultipleSelection = false
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
+        panel.canCreateDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
             saveDirPath.URL = panel.URLs[0] as? NSURL
             let defaults = NSUserDefaults.standardUserDefaults()
-            defaults.setURL(saveDirPath.URL!, forKey: saveDirectoryKey)
+            defaults.setURL(saveDirPath.URL!,
+                            forKey: Preferences.saveDirectoryKey)
         }
     }
 
 	@IBAction func clearSaveDir(AnyObject!) {
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.removeObjectForKey(saveDirectoryKey)
+        defaults.removeObjectForKey(Preferences.saveDirectoryKey)
         saveDirPath.URL = nil
     }
 
 	override var windowNibName: String {
-		return preferencesNibName
+		return Preferences.nibName
 	}
 
     // window delegate function... orderOut instead of close
