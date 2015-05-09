@@ -78,7 +78,7 @@ class ImageData: NSObject {
          * If the file can not be linked it will be copied.
          */
         if let saveDirURL = Preferences.saveDirectory() {
-            var errorRet: NSError?      // used to see errors in the debugger
+            var errorRet: NSError?
             let fileManager = NSFileManager.defaultManager()
             let saveFileURL =
                 saveDirURL.URLByAppendingPathComponent(name!,
@@ -88,9 +88,12 @@ class ImageData: NSObject {
                                                toPath: saveFileURL.path!,
                                                error: &errorRet) {
                     // couldn't create hard link, copy file instead
-                    fileManager.copyItemAtPath(sourceName,
-                                               toPath: saveFileURL.path!,
-                                               error: &errorRet)
+                    if !fileManager.copyItemAtPath(sourceName,
+                                                   toPath: saveFileURL.path!,
+                                                   error: &errorRet) {
+                        unexpectedError(errorRet,
+                                        "Cannot copy \(sourceName) to \(saveFileURL.path)")
+                    }
                 }
             }
         }
@@ -112,31 +115,28 @@ class ImageData: NSObject {
                                          error: &errorRet) {
                 return true
             }
-            if let error = errorRet {
-                // TODO: alert on error copying file
-            }
-        } else {
-            if let error = errorRet {
-                if ImageData.firstWarning {
-                    ImageData.firstWarning = false
-                    let alert = NSAlert()
-                    alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
-                    alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
-                                                          comment: "can't trash file")
-                    alert.informativeText = path
-                    alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
-                                                                comment: "can't trash file")
-                    if let reason = error.localizedFailureReason {
-                        alert.informativeText! += reason
-                    } else {
-                        alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
-                                                                    comment: "unknown error reason")
-                    }
-                    alert.runModal()
+            unexpectedError(errorRet,
+                            "Cannot copy \(backupURL) to \(url) for update")
+        } else if let error = errorRet {
+            if ImageData.firstWarning {
+                ImageData.firstWarning = false
+                let alert = NSAlert()
+                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
+                                                      comment: "can't trash file")
+                alert.informativeText = path
+                alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
+                                                            comment: "can't trash file")
+                if let reason = error.localizedFailureReason {
+                    alert.informativeText! += reason
+                } else {
+                    alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
+                                                                comment: "unknown error reason")
                 }
+                alert.runModal()
             }
         }
-        return false
+    return false
     }
 
     /*

@@ -12,6 +12,7 @@
 		491446D51987575C00D4E697 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 491446D41987575C00D4E697 /* WebKit.framework */; };
 		492978901984B48D00BE0706 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 4929788F1984B48D00BE0706 /* GeoTag Help */; };
 		4966FAEF1AF07BE000CEE06E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4966FAEE1AF07BE000CEE06E /* Preferences.xib */; };
+		4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */; };
 		497EE5D3195CAE6300306283 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497EE5D2195CAE6300306283 /* ImageData.swift */; };
 		49B0EEBA19495FB100293C73 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEB919495FB100293C73 /* main.swift */; };
 		49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEBB19495FB100293C73 /* AppDelegate.swift */; };
@@ -41,6 +42,7 @@
 		4929788F1984B48D00BE0706 /* GeoTag Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "GeoTag Help"; sourceTree = "<group>"; };
 		4965C67B197DDC87005FC03F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		4966FAEE1AF07BE000CEE06E /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
+		4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
 		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
 		4990F0AE19818AA4001CA437 /* icon.pxm */ = {isa = PBXFileReference; lastKnownFileType = file; path = icon.pxm; sourceTree = "<group>"; };
 		49B0EEB419495FB100293C73 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +107,7 @@
 			children = (
 				49B0EEBB19495FB100293C73 /* AppDelegate.swift */,
 				497EE5D2195CAE6300306283 /* ImageData.swift */,
+				4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */,
 				49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */,
 				491446D0198707C800D4E697 /* WebViewController.swift */,
 				49B0EEBF19495FB100293C73 /* MainMenu.xib */,
@@ -279,6 +282,7 @@
 				49CE08821AFBF9370057E310 /* Preferences.swift in Sources */,
 				49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */,
 				49B0EEBA19495FB100293C73 /* main.swift in Sources */,
+				4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */,
 				497EE5D3195CAE6300306283 /* ImageData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

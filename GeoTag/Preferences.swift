@@ -20,7 +20,7 @@ class Preferences : NSWindowController {
         if saveDirectory != nil {
             let fileManager = NSFileManager.defaultManager()
             if !fileManager.fileExistsAtPath(saveDirectory!.path!) {
-                // TODO warn user
+                unexpectedError(nil, "The specified Optional Save Directory is missing")
                 saveDirectory = nil
             }
         }
