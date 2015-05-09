@@ -6,7 +6,5 @@ Feature Requests:
 * drag and drop folders... add all images in the folders (and sub-folders)
   Should apply to File->Open, too
 
-* Copy originals to a specified backup folder in addition to the trash.
-
 * Handle location display of video files.  Exiftool does not allow updates.
 
