@@ -361,6 +361,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         return nil
     }
 
+    //MARK: TableView drop functions
+
     // validate a proposed drop
     func tableView(aTableView: NSTableView,
                    validateDrop info: NSDraggingInfo,
@@ -371,12 +373,9 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
             let fileManager = NSFileManager.defaultManager()
             for path in paths {
-                var dir: ObjCBool = false
-                if fileManager.fileExistsAtPath(path, isDirectory: &dir) {
-                    if dir.boolValue ||
-                       isDuplicateImage(NSURL(fileURLWithPath: path)) {
-                        return .None
-                    }
+                if !fileManager.fileExistsAtPath(path) ||
+                   isDuplicateImage(NSURL(fileURLWithPath: path)) {
+                    return .None
                 }
             }
             return .Link
@@ -393,15 +392,28 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
             var urls = [NSURL]()
             for path in paths {
+                // directories are added to the table to help check for dups
                 if let fileURL = NSURL(fileURLWithPath: path) {
                     urls.append(fileURL)
                 }
+                addImagesFromDir(path!, &urls)
             }
             return !addImages(urls)
         }
         return false
     }
 }
+
+    // recurse through a directory looking for files
+    // returns false if the given path is not a directory
+    func addImagesFromDir(path: String, inout urls: [NSURL]) {
+        let fileManager = NSFileManager.defaultManager()
+        var dir: ObjCBool = false
+        if fileManager.fileExistsAtPath(path, isDirectory: &dir) && dir {
+            println("\(path) is a directory")
+            // ;;;
+        }
+    }
 
 //MARK: TableView extenstion for right click
 
