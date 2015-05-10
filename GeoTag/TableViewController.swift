@@ -417,9 +417,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
                                             options: .SkipsHiddenFiles,
                                             errorHandler: nil) {
                 while let fileURL = urlEnumerator.nextObject() as? NSURL {
-                    if !isDuplicateImage(fileURL) {
-                        urls.append(fileURL)
-                    }
+                    urls.append(fileURL)
                 }
             }
         }
