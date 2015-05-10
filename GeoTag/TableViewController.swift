@@ -395,25 +395,37 @@ class TableViewController: NSViewController, NSTableViewDelegate,
                 // directories are added to the table to help check for dups
                 if let fileURL = NSURL(fileURLWithPath: path) {
                     urls.append(fileURL)
+                    addImagesFromDir(fileURL, toURLs: &urls)
                 }
-                addImagesFromDir(path!, &urls)
+
             }
             return !addImages(urls)
         }
         return false
     }
-}
+
 
     // recurse through a directory looking for files
     // returns false if the given path is not a directory
-    func addImagesFromDir(path: String, inout urls: [NSURL]) {
+    func addImagesFromDir(url: NSURL, inout toURLs urls: [NSURL]) {
         let fileManager = NSFileManager.defaultManager()
         var dir: ObjCBool = false
-        if fileManager.fileExistsAtPath(path, isDirectory: &dir) && dir {
-            println("\(path) is a directory")
-            // ;;;
+        if fileManager.fileExistsAtPath(url.path!, isDirectory: &dir) && dir {
+            if let urlEnumerator =
+                fileManager.enumeratorAtURL(url,
+                                            includingPropertiesForKeys: nil,
+                                            options: .SkipsHiddenFiles,
+                                            errorHandler: nil) {
+                while let fileURL = urlEnumerator.nextObject() as? NSURL {
+                    if !isDuplicateImage(fileURL) {
+                        urls.append(fileURL)
+                    }
+                }
+            }
         }
     }
+
+}
 
 //MARK: TableView extenstion for right click
 
