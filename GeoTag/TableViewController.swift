@@ -211,6 +211,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     @IBAction func clear(AnyObject) {
         if !appDelegate.isModified() {
             images = []
+            imageURLs.removeAll()
             reloadAllRows()
         }
     }
