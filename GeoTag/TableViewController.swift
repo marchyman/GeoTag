@@ -18,6 +18,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
     @IBOutlet var webViewController: WebViewController!
 
     var images = [ImageData]()
+    var imageURLs = Set<NSURL>()
     var lastRow: Int?
 
     //MARK: startup
@@ -39,27 +40,16 @@ class TableViewController: NSViewController, NSTableViewDelegate,
 
     //MARK: populating the table
 
-    // check if image is a duplicate
-    func isDuplicateImage(url: NSURL?) -> Bool {
-        if let imageURL = url {
-            for image in images {
-                if imageURL.path == image.path {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
     // add an image to our array of images unless it is a duplicate
     func addImages(urls: [NSURL]) -> Bool {
         appDelegate.progressIndicator.startAnimation(self)
         var reloadNeeded = false
         var duplicateFound = false
         for url in urls {
-            if isDuplicateImage(url) {
+            if imageURLs.contains(url) {
                 duplicateFound = true
             } else {
+                imageURLs.insert(url)
                 images.append(ImageData(url: url))
                 reloadNeeded = true
             }
@@ -361,6 +351,8 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         return nil
     }
 
+    //MARK: TableView drop functions
+
     // validate a proposed drop
     func tableView(aTableView: NSTableView,
                    validateDrop info: NSDraggingInfo,
@@ -371,12 +363,9 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
             let fileManager = NSFileManager.defaultManager()
             for path in paths {
-                var dir: ObjCBool = false
-                if fileManager.fileExistsAtPath(path, isDirectory: &dir) {
-                    if dir.boolValue ||
-                       isDuplicateImage(NSURL(fileURLWithPath: path)) {
-                        return .None
-                    }
+                if !fileManager.fileExistsAtPath(path) ||
+                   imageURLs.contains(NSURL.fileURLWithPath(path)!) {
+                    return .None
                 }
             }
             return .Link
@@ -394,13 +383,46 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             var urls = [NSURL]()
             for path in paths {
                 if let fileURL = NSURL(fileURLWithPath: path) {
-                    urls.append(fileURL)
+                    if !filesAddedFromFolder(fileURL, toURLs: &urls) {
+                        urls.append(fileURL)
+                    }
                 }
+
             }
             return !addImages(urls)
         }
         return false
     }
+
+
+    // recurse through a directory looking for files
+    // returns false if the given path is not a directory
+    func filesAddedFromFolder(url: NSURL, inout toURLs urls: [NSURL]) -> Bool {
+        let fileManager = NSFileManager.defaultManager()
+        var dir: ObjCBool = false
+        if fileManager.fileExistsAtPath(url.path!, isDirectory: &dir) && dir {
+            if let urlEnumerator =
+                fileManager.enumeratorAtURL(url,
+                                            includingPropertiesForKeys: [NSURLIsDirectoryKey],
+                                            options: .SkipsHiddenFiles,
+                                            errorHandler: nil) {
+                while let fileURL = urlEnumerator.nextObject() as? NSURL {
+                    var resource: AnyObject?
+                    if fileURL.getResourceValue(&resource,
+                                                forKey: NSURLIsDirectoryKey,
+                                                error: nil) {
+                        if resource as? Int == 1 {
+                            continue
+                        }
+                    }
+                    urls.append(fileURL)
+                }
+                return true
+            }
+        }
+        return false
+    }
+
 }
 
 //MARK: TableView extenstion for right click
