@@ -20,6 +20,10 @@ See <http://www.snafu.org/GeoTag/> for more information
 
 ## GeoTag 3.?
 
+Folders can now be dragged and dropped into the table. All non-duplicate files
+in the folder (and sub folders) will be added to the table for geolocation
+editing.
+
 When using drag-and-drop GeoTag enabled the drop only when the cursor was
 beyond the end of the table.  It will now allow a drop anywhere in the table.
 The added images will still be appended to the end of the table, not placed

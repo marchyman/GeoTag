@@ -3,8 +3,6 @@ Buglets:
 * double click on map moves point... Can I do anything about that?
 
 Feature Requests:
-* drag and drop folders... add all images in the folders (and sub-folders)
-  Should apply to File->Open, too
+* Handle directory selection in File->Open
 
 * Handle location display of video files.  Exiftool does not allow updates.
-
