@@ -78,7 +78,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             // expand selected URLs that refer to a directory
             var urls = [NSURL]()
             for url in panel.URLs as! [NSURL] {
-                if !tableViewController.filesAddedFromFolder(url, toURLs: &urls) {
+                if !addURLsInFolder(url, toURLs: &urls) {
                     urls.append(url)
                 }
             }
