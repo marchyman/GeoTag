@@ -73,9 +73,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as [AnyObject]
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
-        panel.canChooseDirectories = false
+        panel.canChooseDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
-            let dups = tableViewController.addImages(panel.URLs as! [NSURL])
+            // expand selected URLs that refer to a directory
+            var urls = [NSURL]()
+            for url in panel.URLs as! [NSURL] {
+                if !addURLsInFolder(url, toURLs: &urls) {
+                    urls.append(url)
+                }
+            }
+            let dups = tableViewController.addImages(urls)
             if dups {
                 let alert = NSAlert()
                 alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))

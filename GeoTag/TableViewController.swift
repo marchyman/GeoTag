@@ -384,7 +384,7 @@ class TableViewController: NSViewController, NSTableViewDelegate,
             var urls = [NSURL]()
             for path in paths {
                 if let fileURL = NSURL(fileURLWithPath: path) {
-                    if !filesAddedFromFolder(fileURL, toURLs: &urls) {
+                    if !addURLsInFolder(fileURL, toURLs: &urls) {
                         urls.append(fileURL)
                     }
                 }
@@ -395,34 +395,6 @@ class TableViewController: NSViewController, NSTableViewDelegate,
         return false
     }
 
-
-    // recurse through a directory looking for files
-    // returns false if the given path is not a directory
-    func filesAddedFromFolder(url: NSURL, inout toURLs urls: [NSURL]) -> Bool {
-        let fileManager = NSFileManager.defaultManager()
-        var dir: ObjCBool = false
-        if fileManager.fileExistsAtPath(url.path!, isDirectory: &dir) && dir {
-            if let urlEnumerator =
-                fileManager.enumeratorAtURL(url,
-                                            includingPropertiesForKeys: [NSURLIsDirectoryKey],
-                                            options: .SkipsHiddenFiles,
-                                            errorHandler: nil) {
-                while let fileURL = urlEnumerator.nextObject() as? NSURL {
-                    var resource: AnyObject?
-                    if fileURL.getResourceValue(&resource,
-                                                forKey: NSURLIsDirectoryKey,
-                                                error: nil) {
-                        if resource as? Int == 1 {
-                            continue
-                        }
-                    }
-                    urls.append(fileURL)
-                }
-                return true
-            }
-        }
-        return false
-    }
 
 }
 
