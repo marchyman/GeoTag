@@ -28,6 +28,16 @@ final class ImageData: NSObject {
     }
 
     var date: String = ""
+    var dateFromEpoch: NSTimeInterval {
+        let format = NSDateFormatter()
+        format.dateFormat = "yyyy:MM:dd HH:mm:ss"
+        format.timeZone = NSTimeZone.localTimeZone()
+        if let convertedDate = format.dateFromString(date) {
+            return convertedDate.timeIntervalSince1970
+        }
+        return 0
+    }
+
     var latitude: Double?, originalLatitude: Double?
     var longitude: Double?, originalLongitude: Double?
     var image: NSImage!
