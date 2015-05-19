@@ -8,7 +8,7 @@
 
 import Cocoa
 
-func unexpectedError(errorInfo: NSError?, _ description: String = "") {
+public func unexpectedError(errorInfo: NSError?, _ description: String = "") {
     let alert = NSAlert()
     alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
     alert.messageText = NSLocalizedString("UNEXPECTED_ERROR",

@@ -9,7 +9,7 @@
 import Cocoa
 
 
-class ImageData: NSObject {
+final class ImageData: NSObject {
     /*
      * if we can't trash the file fall back to letting exiftool create
      * backup files.   Only display a warning that this will happen once

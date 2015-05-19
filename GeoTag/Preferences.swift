@@ -9,7 +9,7 @@
 import Cocoa
 import AppKit
 
-class Preferences : NSWindowController {
+final class Preferences : NSWindowController {
     static let nibName = "Preferences"
     static let saveDirectoryKey = "SaveDirectoryKey"
     static var checkDirectory = true

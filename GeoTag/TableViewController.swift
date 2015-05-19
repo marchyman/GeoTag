@@ -9,7 +9,7 @@
 import Cocoa
 import MapKit
 
-class TableViewController: NSViewController, NSTableViewDelegate,
+final class TableViewController: NSViewController, NSTableViewDelegate,
     NSTableViewDataSource, WebViewControllerDelegate {
 
     @IBOutlet var appDelegate: AppDelegate!

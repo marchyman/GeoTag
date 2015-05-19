@@ -12,7 +12,7 @@ import Foundation
  * If url is a folder add all the URLs in the folder to toURLs and
  * return true.  Return false if URL is not a directory
  */
-func addURLsInFolder(URL: NSURL, inout toURLs URLs: [NSURL]) -> Bool {
+public func addURLsInFolder(URL: NSURL, inout toURLs URLs: [NSURL]) -> Bool {
     let fileManager = NSFileManager.defaultManager()
     var dir: ObjCBool = false
     if fileManager.fileExistsAtPath(URL.path!, isDirectory: &dir) && dir {

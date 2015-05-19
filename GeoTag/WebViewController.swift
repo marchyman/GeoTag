@@ -9,7 +9,7 @@
 import Cocoa
 import WebKit
 
-class WebViewController: NSViewController {
+final class WebViewController: NSViewController {
     // MARK: Properties
 
     // current map state

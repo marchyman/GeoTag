@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // class variable holds path to exiftool
     static var exiftoolPath: String!
     lazy var preferences = Preferences(windowNibName: Preferences.nibName)
