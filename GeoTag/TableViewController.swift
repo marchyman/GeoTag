@@ -242,7 +242,66 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     // interpolate locations
     @IBAction func interpolate(AnyObject) {
-        // To Do
+        struct LocnInfo {
+            let lat: Double
+            let lon: Double
+            let timestamp: NSTimeInterval
+        }
+        var startInfo: LocnInfo!
+        var endInfo: LocnInfo!
+
+        // figure out our starting and ending points
+        let rows = tableView.selectedRowIndexes
+        rows.enumerateIndexesUsingBlock {
+            (row, _) -> Void in
+            let image = self.images[row]
+            if image.latitude != nil &&
+               image.longitude != nil {
+                let info = LocnInfo(lat: image.latitude!,
+                                    lon: image.longitude!,
+                                    timestamp: image.dateFromEpoch)
+                if startInfo == nil {
+                    startInfo = info
+                } else if startInfo.timestamp > info.timestamp {
+                    endInfo = startInfo
+                    startInfo = info
+                } else {
+                    endInfo = info
+                }
+            }
+        }
+        // if start and end have the same timestamp don't bother
+        if startInfo == nil || endInfo == nil ||
+           startInfo.timestamp == endInfo.timestamp {
+           return
+        }
+        // calculate the distance, bearing, and speed between the two points
+        let (distance, bearing) =
+            distanceAndBearing(startInfo.lat, startInfo.lon,
+                               endInfo.lat, endInfo.lon)
+        // enumerate over the rows again, calculating the approx position
+        // using the start point, bearing, and estimated distance
+        if distance > 0 {
+            let speed = distance / (endInfo.timestamp - startInfo.timestamp)
+            println("\(distance) meters \(bearing)º at \(speed) meters/sec")
+            appDelegate.undoManager.beginUndoGrouping()
+            rows.enumerateIndexesUsingBlock {
+                (row, _) -> Void in
+                let image = self.images[row]
+                let deltaTime = image.dateFromEpoch - startInfo.timestamp
+                if deltaTime > 0 && deltaTime <= endInfo.timestamp &&
+                   image.latitude == nil {
+                    let deltaDist = deltaTime * speed
+                    let (lat, lon) = destFromStart(startInfo.lat, startInfo.lon,
+                                                   deltaDist, bearing)
+                    self.updateLocationAtRow(row, validLocation: true,
+                                             latitude: lat, longitude: lon,
+                                             modified: true)
+                }
+            }
+            appDelegate.undoManager.endUndoGrouping()
+            appDelegate.undoManager.setActionName("interpolate locations")
+        }
     }
 
     //MARK: Functions to reload/update table rows
