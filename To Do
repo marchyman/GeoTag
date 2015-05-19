@@ -6,14 +6,6 @@ Feature Requests:
 
 * Handle location display of video files.  Exiftool does not allow updates.
 
-* Often I take a bunch of photos on a walk or a ride, and it is usually a good
-  approximation to interpolate the spatial location between the first and last
-  photo.  If the intermediate locations could be automatically added based on
-  that assumption, they can be tweaked on a finer scale much more easily than
-  trying to locate all of them manually.  The math is easy enough, though the
-  UI implementation may be a bit hard.  Would greatly appreciate it if you
-  could take a shot at it!
-
 * When the Photos app opens up for extensions, I hope GeoTag will be there to
   take advantage of it!  This has become my favorite program in just a few
   hours of use.  [Note: I expect apple to add a map interface to Photos.]

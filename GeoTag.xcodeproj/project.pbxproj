@@ -15,6 +15,7 @@
 		4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */; };
 		497EE5D3195CAE6300306283 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497EE5D2195CAE6300306283 /* ImageData.swift */; };
 		49A476081B0850B3006E05EA /* AddURLsInFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A476071B0850B3006E05EA /* AddURLsInFolder.swift */; };
+		49A89BC51B0BED7900578EA6 /* Interpolation in Resources */ = {isa = PBXBuildFile; fileRef = 49A89BC41B0BED7900578EA6 /* Interpolation */; };
 		49B0EEBA19495FB100293C73 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEB919495FB100293C73 /* main.swift */; };
 		49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEBB19495FB100293C73 /* AppDelegate.swift */; };
 		49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0EEBD19495FB100293C73 /* Images.xcassets */; };
@@ -48,6 +49,7 @@
 		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
 		4990F0AE19818AA4001CA437 /* icon.pxm */ = {isa = PBXFileReference; lastKnownFileType = file; path = icon.pxm; sourceTree = "<group>"; };
 		49A476071B0850B3006E05EA /* AddURLsInFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddURLsInFolder.swift; sourceTree = "<group>"; };
+		49A89BC41B0BED7900578EA6 /* Interpolation */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Interpolation; sourceTree = "<group>"; };
 		49B0EEB419495FB100293C73 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B0EEB819495FB100293C73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49B0EEB919495FB100293C73 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				49C943AA197B170900F70F3F /* To Do */,
+				49A89BC41B0BED7900578EA6 /* Interpolation */,
 				4965C67B197DDC87005FC03F /* README */,
 				49BC3D06195A14D2009BEC94 /* GeoTagPlay.playground */,
 				49B0EEB619495FB100293C73 /* GeoTag */,
@@ -246,6 +249,7 @@
 				49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */,
 				49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */,
 				491446D3198717ED00D4E697 /* map.html in Resources */,
+				49A89BC51B0BED7900578EA6 /* Interpolation in Resources */,
 				49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */,
 				4966FAEF1AF07BE000CEE06E /* Preferences.xib in Resources */,
 				492978901984B48D00BE0706 /* GeoTag Help in Resources */,
