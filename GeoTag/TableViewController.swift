@@ -148,6 +148,10 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         case Selector("delete:"):
             // OK if at least one row selected
             return tableView.numberOfSelectedRows > 0
+        case Selector("interpolate:"):
+            println("Interpolate item")
+            // To Do validate item
+            return false
         default:
             println("default for item \(menuItem)")
         }
@@ -214,6 +218,11 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             imageURLs.removeAll()
             reloadAllRows()
         }
+    }
+
+    // interpolate locations
+    @IBAction func interpolate(AnyObject) {
+        // To Do
     }
 
     //MARK: Functions to reload/update table rows
