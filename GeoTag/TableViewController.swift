@@ -112,6 +112,28 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     //MARK: menu actions
 
+    // The interpolation item requires at least three item in the table to
+    // be selected and exactly two of the items to have a location currently
+    // assigned.   Validate those requirements here
+
+    func validateForInterpolation() -> Bool {
+        if tableView.numberOfSelectedRows > 2 {
+            let rows = tableView.selectedRowIndexes
+            var count = 0
+            rows.enumerateIndexesUsingBlock {
+                (row, _) -> Void in
+                if self.images[row].latitude != nil &&
+                   self.images[row].longitude != nil {
+                   count += 1
+                }
+            }
+            if count == 2 {
+                return true
+            }
+        }
+        return false
+    }
+
     // only enable various tableview related menu items when it makes sense
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         switch menuItem.action {
@@ -149,9 +171,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             // OK if at least one row selected
             return tableView.numberOfSelectedRows > 0
         case Selector("interpolate:"):
-            println("Interpolate item")
-            // To Do validate item
-            return false
+            return validateForInterpolation()
         default:
             println("default for item \(menuItem)")
         }
