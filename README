@@ -17,8 +17,9 @@ into Photos.
 
 See <http://www.snafu.org/GeoTag/> for more information
 
-
 ## GeoTag 3.?
+
+### New Features:
 
 Folders can now be dragged and dropped into the table. All non-duplicate files
 in the folder (and sub folders) will be added to the table for geolocation
@@ -26,20 +27,8 @@ editing.
 
 Folders can also now be selected in the File -> Open dialog.
 
-When using drag-and-drop GeoTag enabled the drop only when the cursor was
-beyond the end of the table.  It will now allow a drop anywhere in the table.
-The added images will still be appended to the end of the table, not placed
-at the cursor location.
-
 Add ⌘K as a shortcut for the Clear image list menu option.  The command
 is ignored if any of the items in the list have been edited and not saved.
-
-Fixed crash that would occur when dragging movie files into GeoTag
-
-When the original version of an edited file can not be moved to the trash
-GeoTag will now display a warning and leave the original file in its
-original folder with '_original' appended to its name.   The warning will
-only be displayed once per GeoTag execution.
 
 Added a GeoTag preference to select a folder where original files will be
 saved in addition to the Trash. Files in the optional save folder with the same
@@ -47,6 +36,21 @@ name as an image to be saved will NOT be overwritten.
 
 GeoTag can assign locations to images by interpolating between two points.
 See the file named Interpolation for more info.
+
+### Bug fixes
+
+When using drag-and-drop GeoTag enabled the drop only when the cursor was
+beyond the end of the table.  It will now allow a drop anywhere in the table.
+The added images will still be appended to the end of the table, not placed
+at the cursor location.
+
+Fixed crash that would occur when dragging movie files into GeoTag
+
+Fix handling of file systems that do not support the trash.  When the original
+version of an edited file can not be moved to the trash GeoTag will now display
+a warning and leave the original file in its original folder with '_original'
+appended to its name.   The warning will only be displayed once per GeoTag
+execution.
 
 ## GeoTag 3.3
 
@@ -85,9 +89,10 @@ Use version 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8
 Run Program.  Use the Open command from the menu or ⌘O to select files to
 modify. You can also drag files from the finder into the table on the left side
 of the application window.  File names shown in a light grey color are not
-recognized as valid image files.  Such files can not be modified.
+recognized as valid image files.  Such files can not be modified.   Dragging
+or opening a folder will add all the files in the folder and any subfolders.
 
-Select on one or more images. When selecting multiple images the last image
+Select one or more images. When selecting multiple images the last image
 selected is displayed in the image well (upper right portion of the window).
 Its location (if any) is marked on the map.  When multiple rows are selected
 the latitude and longitude of the image displayed in the image well and marked
@@ -103,10 +108,22 @@ preferred as the first click of a double click will always set the image
 location to the clicked location, something you may not desire.  You can undo
 any undesired location changes.
 
+GeoTag can interpolate positions for images between two images with assigned
+locations.   This might be useful where you know starting and ending locations
+and would like to approximate where on the straight path between the two
+other images may have been taken.  To use this feature:
+
+* Load a series of images to be tagged into GeoTag
+* Assign a location to the first image in your series of images.
+* Assign a location to the last image in your series of images.
+* Select all images in the series from first to last.
+* Use the menu item "Edit -> Interpolate" to assign location to the
+  intermediate images in your series of images.
+
 Three map types --- Standard, Hybrid, and Satellite --- are supported. You
 can also use street view, but... the latitude and longitude of a map marker
 in street view do not match the same marker on one of the other three map
-view.
+views.
 
 If you find yourself working in a specific area of a map you can save
 the map type, location, and zoom level by clicking on the Save Map Location
@@ -120,10 +137,15 @@ undo/redo your changes. You can undo all changes to all images by selecting
 once changes are discarded or saved.
 
 The original versions of images that have been changed and saved are in your
-system trash.  You can restore them from the trash if necessary.  If there are
+system trash or in their original directory with '_original' appended to the
+file name. You can restore them from the trash if necessary.  If there are
 no changes pending the list of images can be cleared.
 
-Cut, Copy, Paste, Delete, and Clear Image List can be accessed from
+A preference item exists to name a folder where original images will be
+copied in addition to the trash.  Files in this folder will not be overwritten
+upon subsequent changes to the image.
+
+Cut, Copy, Paste, Delete, Interpolate, and Clear Image List can be accessed from
 a pop up menu by right clicking on an entry in the list.
 
 ### Build Instructions for developers

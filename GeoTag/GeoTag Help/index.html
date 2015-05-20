@@ -30,9 +30,10 @@
 <p>Run Program.  Use the Open command from the menu or ⌘O to select files to
 modify. You can also drag files from the finder into the table on the left side
 of the application window.  File names shown in a light grey color are not
-recognized as valid image files.  Such files can not be modified.</p>
+recognized as valid image files.  Such files can not be modified.  Dragging
+or opening a folder will add all the files in the folder and any subfolders.</p>
 
-<p>Select on one or more images. When selecting multiple images the last image
+<p>Select one or more images. When selecting multiple images the last image
 selected is displayed in the image well (upper right portion of the window).
 Its location (if any) is marked on the map.  When multiple rows are selected
 the latitude and longitude of the image displayed in the image well and marked
@@ -48,10 +49,23 @@ preferred as the first click of a double click will always set the image
 location to the clicked location, something you may not desire.  You can undo
 any undesired location changes.</p>
 
+<p>GeoTag can interpolate positions for images between two images with assigned
+locations.   This might be useful where you know starting and ending locations
+and would like to approximate where on the straight path between the two
+other images may have been taken.  To use this feature:</p>
+<ul>
+<li>Load a series of images to be tagged into GeoTag.</li>
+<li>Assign a location to the first image in your series of images.</li>
+<li>Assign a location to the last image in your series of images.</li>
+<li>Select all images in the series from first to last.</li>
+<li>Use the menu item "Edit -> Interpolate" to assign location to the
+  intermediate images in your series of images.</li>
+</ul>
+
 <p>Three map types --- Standard, Hybrid, and Satellite --- are supported. You
 can also use street view, but... the latitude and longitude of a map marker
 in street view do not match the same marker on one of the other three map
-view.</p>
+views.</p>
 
 <p>If you find yourself working in a specific area of a map you can save
 the map type, location, and zoom level by clicking on the Save Map Location
@@ -65,11 +79,16 @@ undo/redo your changes. You can undo all changes to all images by selecting
 once changes are discarded or saved.</p>
 
 <p>The original versions of images that have been changed and saved are in your
-system trash.  You can restore them from the trash if necessary.  If there are
+system trash or in their original directory with '_original' appended to the
+file name. You can restore them from the trash if necessary.  If there are
 no changes pending the list of images can be cleared.</p>
 
-<p>Cut, Copy, Paste, Delete, and Clear Image List can be accessed from
-a pop up menu by right clicking on an entry in the list.</p>
+<p>A preference item exists to name a folder where original images will be
+copied in addition to the trash.  Files in this folder will not be overwritten
+upon subsequent changes to the image.</p>
+
+<p>Cut, Copy, Paste, Delete, Interpolate, and Clear Image List can be accessed
+from a pop up menu by right clicking on an entry in the list.</p>
 
 <p>Please report any issues to
 &lt;<a href="mailto:marc@snafu.org">marc@snafu.org</a>&gt;.</p>
