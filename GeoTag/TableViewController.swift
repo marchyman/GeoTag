@@ -112,6 +112,28 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     //MARK: menu actions
 
+    // The interpolation item requires at least three item in the table to
+    // be selected and exactly two of the items to have a location currently
+    // assigned.   Validate those requirements here
+
+    func validateForInterpolation() -> Bool {
+        if tableView.numberOfSelectedRows > 2 {
+            let rows = tableView.selectedRowIndexes
+            var count = 0
+            rows.enumerateIndexesUsingBlock {
+                (row, _) -> Void in
+                if self.images[row].latitude != nil &&
+                   self.images[row].longitude != nil {
+                   count += 1
+                }
+            }
+            if count == 2 {
+                return true
+            }
+        }
+        return false
+    }
+
     // only enable various tableview related menu items when it makes sense
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         switch menuItem.action {
@@ -148,6 +170,8 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         case Selector("delete:"):
             // OK if at least one row selected
             return tableView.numberOfSelectedRows > 0
+        case Selector("interpolate:"):
+            return validateForInterpolation()
         default:
             println("default for item \(menuItem)")
         }
@@ -213,6 +237,70 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             images = []
             imageURLs.removeAll()
             reloadAllRows()
+        }
+    }
+
+    // interpolate locations
+    @IBAction func interpolate(AnyObject) {
+        struct LocnInfo {
+            let lat: Double
+            let lon: Double
+            let timestamp: NSTimeInterval
+        }
+        var startInfo: LocnInfo!
+        var endInfo: LocnInfo!
+
+        // figure out our starting and ending points
+        let rows = tableView.selectedRowIndexes
+        rows.enumerateIndexesUsingBlock {
+            (row, _) -> Void in
+            let image = self.images[row]
+            if image.latitude != nil &&
+               image.longitude != nil {
+                let info = LocnInfo(lat: image.latitude!,
+                                    lon: image.longitude!,
+                                    timestamp: image.dateFromEpoch)
+                if startInfo == nil {
+                    startInfo = info
+                } else if startInfo.timestamp > info.timestamp {
+                    endInfo = startInfo
+                    startInfo = info
+                } else {
+                    endInfo = info
+                }
+            }
+        }
+        // if start and end have the same timestamp don't bother
+        if startInfo == nil || endInfo == nil ||
+           startInfo.timestamp == endInfo.timestamp {
+           return
+        }
+        // calculate the distance, bearing, and speed between the two points
+        let (distance, bearing) =
+            distanceAndBearing(startInfo.lat, startInfo.lon,
+                               endInfo.lat, endInfo.lon)
+        // enumerate over the rows again, calculating the approx position
+        // using the start point, bearing, and estimated distance
+        if distance > 0 {
+            let speed = distance / (endInfo.timestamp - startInfo.timestamp)
+            println("\(distance) meters \(bearing)º at \(speed) meters/sec")
+            appDelegate.undoManager.beginUndoGrouping()
+            rows.enumerateIndexesUsingBlock {
+                (row, _) -> Void in
+                let image = self.images[row]
+                let deltaTime = image.dateFromEpoch - startInfo.timestamp
+                if deltaTime > 0 && deltaTime <= endInfo.timestamp &&
+                   image.latitude == nil {
+                    let deltaDist = deltaTime * speed
+                    let (lat, lon) = destFromStart(startInfo.lat, startInfo.lon,
+                                                   deltaDist, bearing)
+                    self.updateLocationAtRow(row, validLocation: true,
+                                             latitude: lat, longitude: lon,
+                                             modified: true)
+                }
+            }
+            appDelegate.undoManager.endUndoGrouping()
+            appDelegate.undoManager.setActionName("interpolate locations")
         }
     }
 
