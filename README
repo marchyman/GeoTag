@@ -39,6 +39,8 @@ See the file named Interpolation for more info.
 
 ### Bug fixes
 
+Save window size and split pane locations.
+
 When using drag-and-drop GeoTag enabled the drop only when the cursor was
 beyond the end of the table.  It will now allow a drop anywhere in the table.
 The added images will still be appended to the end of the table, not placed
