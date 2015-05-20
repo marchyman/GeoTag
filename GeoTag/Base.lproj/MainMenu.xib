@@ -212,7 +212,7 @@ CA
                 </menuItem>
             </items>
         </menu>
-        <window title="GeoTag" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
+        <window title="GeoTag" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="GeoTagMain" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="1100" height="816"/>
@@ -222,7 +222,7 @@ CA
                 <rect key="frame" x="0.0" y="0.0" width="1100" height="816"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <splitView vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pMq-xL-Jwc">
+                    <splitView autosaveName="GeoTagLeftRight" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pMq-xL-Jwc">
                         <rect key="frame" x="20" y="20" width="1060" height="776"/>
                         <subviews>
                             <customView id="Gwc-9o-vlc" userLabel="Left Pane">
@@ -422,7 +422,7 @@ CA
                                 <rect key="frame" x="539" y="0.0" width="521" height="776"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
-                                    <splitView translatesAutoresizingMaskIntoConstraints="NO" id="Owq-8L-C5q">
+                                    <splitView autosaveName="GeoTagUpDown" translatesAutoresizingMaskIntoConstraints="NO" id="Owq-8L-C5q">
                                         <rect key="frame" x="0.0" y="0.0" width="521" height="776"/>
                                         <subviews>
                                             <customView id="VLF-DZ-LKW" userLabel="Image pane">
