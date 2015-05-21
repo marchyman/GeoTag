@@ -39,7 +39,7 @@ Undo/Redo works on the entire series of images, not one image at a time.
 For the nerds: the feature works like this
 
 * I added an menu item named “interpolate” to the edit menu and the right
-  click menu.   There is a keyboard shortcut -- ⌘I.
+  click menu.   There is also a keyboard shortcut -- ⇧⌘I.
 
 * The menu item is enabled ONLY when three or images are selected and only two
   of the images contain location information.

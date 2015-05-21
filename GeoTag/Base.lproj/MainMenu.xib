@@ -171,7 +171,7 @@ CA
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="5RZ-E2-PYq"/>
-                            <menuItem title="Interpolate" keyEquivalent="i" id="bga-UQ-Sqa">
+                            <menuItem title="Interpolate" keyEquivalent="I" id="bga-UQ-Sqa">
                                 <connections>
                                     <action selector="interpolate:" target="er7-2A-M57" id="9Os-AS-YeY"/>
                                 </connections>
