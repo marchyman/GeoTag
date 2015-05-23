@@ -1,0 +1,31 @@
+## GeoTag 3.3
+
+* Add a search field to the map.   Entering the name of a location and then
+  hitting enter or clicking on the find button will center the map on the
+  searched for location.
+
+* Internal changes to match the requirements/features of Swift 1.2.  Xcode
+  version 6.3 or later required to build from source.
+
+## GeoTag 3.2
+
+* Fix a class of bugs that would cause a crash when decoding optional image
+  properties than weren't present.
+
+## GeoTag 3.1
+
+* Added ability to resize the image table, image, and map panes.  Otherwise
+  the same as 3.0.
+
+## GeoTag 3.0
+
+This is a complete re-write of GeoTag for Mavericks and later
+
+* written in swift
+* Assumes exiftool exists in your run path
+* Starting map location/zoom level may be saved
+* Faster image loading
+
+Use version 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8
+(Mountain Lion).  Use version 1.8 if your Max is running OS X version 10.5
+(Leopard)  or earlier
