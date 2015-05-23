@@ -8,6 +8,10 @@ utility.  Existing location information can be fine tuned by dragging a marker
 representing the location in the map.  In either case only image metadata is
 changed.
 
+Image metadata modification is performed by the exiftool utility. Download
+exiftool from <http://www.sno.phy.queensu.ca/~phil/exiftool/> and install.
+GeoTag will check that the tool is installed at start-up.
+
 The functions provided by GeoTag exist in current versions of iPhoto, Aperture
 (RIP), and Lightroom.  Some still find the application useful for geolocation
 tagging photos in the field.  Photos (OSX 10.10.3) looks like it will let you
@@ -17,7 +21,7 @@ into Photos.
 
 Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later. Use version
 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8 (Mountain
-Lion). Use version 1.8 if your Max is running OS X version 10.5 (Leopard) or
+Lion). Use version 1.8 if your Mac is running OS X version 10.5 (Leopard) or
 earlier See <http://www.snafu.org/GeoTag/> for more information.
 
 ### New Features:
