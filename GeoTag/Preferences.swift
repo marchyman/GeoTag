@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import AppKit
 
 final class Preferences : NSWindowController {
     static let nibName = "Preferences"
