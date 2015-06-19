@@ -23,12 +23,14 @@ public func addURLsInFolder(URL: NSURL, inout toURLs URLs: [NSURL]) -> Bool {
                                         errorHandler: nil) {
             while let fileURL = urlEnumerator.nextObject() as? NSURL {
                 var resource: AnyObject?
-                if fileURL.getResourceValue(&resource,
-                                            forKey: NSURLIsDirectoryKey,
-                                            error: nil) {
+                do {
+                    try fileURL.getResourceValue(&resource,
+                                                 forKey: NSURLIsDirectoryKey)
                     if resource as? Int == 1 {
                         continue
                     }
+                } catch _ {
+                    // ;;; do something here?
                 }
                 URLs.append(fileURL)
             }

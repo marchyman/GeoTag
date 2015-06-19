@@ -88,20 +88,21 @@ final class ImageData: NSObject {
          * If the file can not be linked it will be copied.
          */
         if let saveDirURL = Preferences.saveDirectory() {
-            var errorRet: NSError?
             let fileManager = NSFileManager.defaultManager()
             let saveFileURL =
                 saveDirURL.URLByAppendingPathComponent(name!,
                                                        isDirectory: false)
             if !fileManager.fileExistsAtPath(saveFileURL.path!) {
-                if !fileManager.linkItemAtPath(sourceName,
-                                               toPath: saveFileURL.path!,
-                                               error: &errorRet) {
+                do {
+                    try fileManager.linkItemAtPath(sourceName,
+                                                   toPath: saveFileURL.path!)
+                } catch _ {
                     // couldn't create hard link, copy file instead
-                    if !fileManager.copyItemAtPath(sourceName,
-                                                   toPath: saveFileURL.path!,
-                                                   error: &errorRet) {
-                        unexpectedError(errorRet,
+                    do {
+                        try fileManager.copyItemAtPath(sourceName,
+                                                       toPath: saveFileURL.path!)
+                    } catch let error as NSError {
+                        unexpectedError(error,
                                         "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
                     }
                 }
@@ -114,20 +115,19 @@ final class ImageData: NSObject {
      * return true if successful
      */
     func backupImageFile() -> Bool {
-        var firstWarning = true
         var backupURL: NSURL?
         let fileManager = NSFileManager.defaultManager()
-        var errorRet: NSError?
-        if fileManager.trashItemAtURL(url, resultingItemURL: &backupURL,
-                                      error: &errorRet) {
+        do {
+            try fileManager.trashItemAtURL(url, resultingItemURL: &backupURL)
             saveOriginalFile(backupURL!.path!)
-            if fileManager.copyItemAtURL(backupURL!, toURL: url,
-                                         error: &errorRet) {
+            do {
+                try fileManager.copyItemAtURL(backupURL!, toURL: url)
                 return true
+            } catch let error as NSError {
+                unexpectedError(error,
+                                "Cannot copy \(backupURL) to \(url) for update.\n\nReason: ")
             }
-            unexpectedError(errorRet,
-                            "Cannot copy \(backupURL) to \(url) for update.\n\nReason: ")
-        } else if let error = errorRet {
+        } catch var error as NSError {
             if ImageData.firstWarning {
                 ImageData.firstWarning = false
                 let alert = NSAlert()
@@ -135,13 +135,13 @@ final class ImageData: NSObject {
                 alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
                                                       comment: "can't trash file")
                 alert.informativeText = path
-                alert.informativeText! += NSLocalizedString("NO_TRASH_DESC",
-                                                            comment: "can't trash file")
+                alert.informativeText += NSLocalizedString("NO_TRASH_DESC",
+                                                           comment: "can't trash file")
                 if let reason = error.localizedFailureReason {
-                    alert.informativeText! += reason
+                    alert.informativeText += reason
                 } else {
-                    alert.informativeText! += NSLocalizedString("NO_TRASH_REASON",
-                                                                comment: "unknown error reason")
+                    alert.informativeText += NSLocalizedString("NO_TRASH_REASON",
+                                                               comment: "unknown error reason")
                 }
                 alert.runModal()
             }
@@ -191,7 +191,7 @@ final class ImageData: NSObject {
 
             // add -overwrite_original option if we can
             if overwriteOriginal {
-                exiftool.arguments.insert("-overwrite_original", atIndex: 2)
+                exiftool.arguments?.insert("-overwrite_original", atIndex: 2)
             }
             exiftool.launch()
             exiftool.waitUntilExit()
@@ -239,7 +239,7 @@ final class ImageData: NSObject {
             /// arbitrary limit.   Preview generation is used to work around a
             /// performance hit when using large raw images
             let maxDimension = 512
-            var imgOpts: NSMutableDictionary = [
+            let imgOpts: NSMutableDictionary = [
                 createThumbnailWithTransform : kCFBooleanTrue,
                 createThumbnailFromImageAlways : kCFBooleanTrue
             ]
@@ -257,7 +257,7 @@ final class ImageData: NSObject {
                 image.lockFocus()
                 if let currentContext = NSGraphicsContext.currentContext() {
                     var context: CGContext! = nil
-                    if currentContext.respondsToSelector("CGContext") {
+                    if #available(OSX 10.10, *) {
                         context = currentContext.CGContext
                     } else {
                         // graphicsPort is type UnsafePointer<()>

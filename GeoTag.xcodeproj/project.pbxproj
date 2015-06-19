@@ -20,22 +20,11 @@
 		49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEBB19495FB100293C73 /* AppDelegate.swift */; };
 		49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0EEBD19495FB100293C73 /* Images.xcassets */; };
 		49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 49B0EEBF19495FB100293C73 /* MainMenu.xib */; };
-		49B0EECD19495FB100293C73 /* GeoTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EECC19495FB100293C73 /* GeoTagTests.swift */; };
 		49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49BC3D0B195A62F2009BEC94 /* Localizable.strings */; };
 		49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */; };
 		49CE08821AFBF9370057E310 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CE08811AFBF9370057E310 /* Preferences.swift */; };
 		49E0340D1B0BBBB700CC9768 /* Interpolate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E0340C1B0BBBB700CC9768 /* Interpolate.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		49B0EEC719495FB100293C73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 49B0EEAC19495FB100293C73 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 49B0EEB319495FB100293C73;
-			remoteInfo = play;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		490F7EAA1B339A6C00DB36B5 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
@@ -57,7 +46,6 @@
 		49B0EEBB19495FB100293C73 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		49B0EEBD19495FB100293C73 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		49B0EEC019495FB100293C73 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		49B0EEC619495FB100293C73 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B0EECB19495FB100293C73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49B0EECC19495FB100293C73 /* GeoTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagTests.swift; sourceTree = "<group>"; };
 		49BC3D06195A14D2009BEC94 /* GeoTagPlay.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = GeoTagPlay.playground; sourceTree = "<group>"; };
@@ -74,13 +62,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				491446D51987575C00D4E697 /* WebKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		49B0EEC319495FB100293C73 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +87,6 @@
 			isa = PBXGroup;
 			children = (
 				49B0EEB419495FB100293C73 /* GeoTag.app */,
-				49B0EEC619495FB100293C73 /* GeoTagTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -182,30 +162,13 @@
 			productReference = 49B0EEB419495FB100293C73 /* GeoTag.app */;
 			productType = "com.apple.product-type.application";
 		};
-		49B0EEC519495FB100293C73 /* GeoTagTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 49B0EED319495FB100293C73 /* Build configuration list for PBXNativeTarget "GeoTagTests" */;
-			buildPhases = (
-				49B0EEC219495FB100293C73 /* Sources */,
-				49B0EEC319495FB100293C73 /* Frameworks */,
-				49B0EEC419495FB100293C73 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				49B0EEC819495FB100293C73 /* PBXTargetDependency */,
-			);
-			name = GeoTagTests;
-			productName = playTests;
-			productReference = 49B0EEC619495FB100293C73 /* GeoTagTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		49B0EEAC19495FB100293C73 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = "Marco S Hyman";
 				TargetAttributes = {
@@ -217,10 +180,6 @@
 								enabled = 0;
 							};
 						};
-					};
-					49B0EEC519495FB100293C73 = {
-						CreatedOnToolsVersion = 6.0;
-						TestTargetID = 49B0EEB319495FB100293C73;
 					};
 				};
 			};
@@ -238,7 +197,6 @@
 			projectRoot = "";
 			targets = (
 				49B0EEB319495FB100293C73 /* GeoTag */,
-				49B0EEC519495FB100293C73 /* GeoTagTests */,
 			);
 		};
 /* End PBXProject section */
@@ -255,13 +213,6 @@
 				49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */,
 				4966FAEF1AF07BE000CEE06E /* Preferences.xib in Resources */,
 				492978901984B48D00BE0706 /* GeoTag Help in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		49B0EEC419495FB100293C73 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,23 +252,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49B0EEC219495FB100293C73 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49B0EECD19495FB100293C73 /* GeoTagTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		49B0EEC819495FB100293C73 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 49B0EEB319495FB100293C73 /* GeoTag */;
-			targetProxy = 49B0EEC719495FB100293C73 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		49B0EEBF19495FB100293C73 /* MainMenu.xib */ = {
@@ -444,44 +379,6 @@
 			};
 			name = Release;
 		};
-		49B0EED419495FB100293C73 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/play.app/Contents/MacOS/play";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = playTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				METAL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = GeoTagTests;
-				TEST_HOST = "$(BUNDLE_LOADER)";
-			};
-			name = Debug;
-		};
-		49B0EED519495FB100293C73 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/play.app/Contents/MacOS/play";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = playTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				METAL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = GeoTagTests;
-				TEST_HOST = "$(BUNDLE_LOADER)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -499,15 +396,6 @@
 			buildConfigurations = (
 				49B0EED119495FB100293C73 /* Debug */,
 				49B0EED219495FB100293C73 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		49B0EED319495FB100293C73 /* Build configuration list for PBXNativeTarget "GeoTagTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				49B0EED419495FB100293C73 /* Debug */,
-				49B0EED519495FB100293C73 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

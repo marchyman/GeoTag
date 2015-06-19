@@ -63,18 +63,13 @@ final class WebViewController: NSViewController {
 
     // MARK: startup
 
-    // Alas, 10.10 and later
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
     // object initialization
     override func awakeFromNib() {
         // Ask webKit to load the map.html file from our resources directory.
         let mapPath = NSBundle.mainBundle().pathForResource("map",
                                                             ofType: "html")
         let mapURL = NSURL(fileURLWithPath: mapPath!, isDirectory: false)
-        let map = NSURLRequest(URL: mapURL!)
+        let map = NSURLRequest(URL: mapURL)
         webView.mainFrame.loadRequest(map)
     }
 
