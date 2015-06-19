@@ -3,7 +3,7 @@
 //  GeoTag (3rd version)
 //
 //  Created by Marco S Hyman on 6/11/14.
-//  Copyright (c) 2014 Marco S Hyman. All rights reserved.
+//  Copyright (c) 2014, 2015 Marco S Hyman, CC-BY-NC
 //
 
 import Cocoa
@@ -77,7 +77,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if panel.runModal() == NSFileHandlingPanelOKButton {
             // expand selected URLs that refer to a directory
             var urls = [NSURL]()
-            for url in panel.URLs as [NSURL] {
+            for url in panel.URLs {
                 if !addURLsInFolder(url, toURLs: &urls) {
                     urls.append(url)
                 }
