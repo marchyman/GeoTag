@@ -38,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		490F7EAA1B339A6C00DB36B5 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
 		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
 		491446D0198707C800D4E697 /* WebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		491446D2198717ED00D4E697 /* map.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = map.html; sourceTree = "<group>"; };
@@ -89,6 +90,7 @@
 		49B0EEAB19495FB100293C73 = {
 			isa = PBXGroup;
 			children = (
+				490F7EAA1B339A6C00DB36B5 /* History */,
 				49C943AA197B170900F70F3F /* To Do */,
 				49A89BC41B0BED7900578EA6 /* Interpolation */,
 				4965C67B197DDC87005FC03F /* README */,
