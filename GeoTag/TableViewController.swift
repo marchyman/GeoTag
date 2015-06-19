@@ -23,12 +23,6 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     //MARK: startup
 
-    // Alas, 10.10 and later
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // this would be a good place to initialize an undo manager
-    }
-
     // object initialization
     override func awakeFromNib() {
         // can't make clickDelegate an @IBOutlet; wire it up here
@@ -173,7 +167,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         case Selector("interpolate:"):
             return validateForInterpolation()
         default:
-            println("default for item \(menuItem)")
+            print("default for item \(menuItem)")
         }
         return false
     }
@@ -277,13 +271,13 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         }
         // calculate the distance, bearing, and speed between the two points
         let (distance, bearing) =
-            distanceAndBearing(startInfo.lat, startInfo.lon,
-                               endInfo.lat, endInfo.lon)
+            distanceAndBearing(lat1: startInfo.lat, lon1: startInfo.lon,
+                               lat2: endInfo.lat, lon2: endInfo.lon)
         // enumerate over the rows again, calculating the approx position
         // using the start point, bearing, and estimated distance
         if distance > 0 {
             let speed = distance / (endInfo.timestamp - startInfo.timestamp)
-            println("\(distance) meters \(bearing)º at \(speed) meters/sec")
+            print("\(distance) meters \(bearing)º at \(speed) meters/sec")
             appDelegate.undoManager.beginUndoGrouping()
             rows.enumerateIndexesUsingBlock {
                 (row, _) -> Void in
@@ -292,8 +286,8 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                 if deltaTime > 0 && deltaTime <= endInfo.timestamp &&
                    image.latitude == nil {
                     let deltaDist = deltaTime * speed
-                    let (lat, lon) = destFromStart(startInfo.lat, startInfo.lon,
-                                                   deltaDist, bearing)
+                    let (lat, lon) = destFromStart(lat: startInfo.lat, lon: startInfo.lon,
+                                                   distance: deltaDist, bearing: bearing)
                     self.updateLocationAtRow(row, validLocation: true,
                                              latitude: lat, longitude: lon,
                                              modified: true)
@@ -353,7 +347,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     // drags and ranges.
     func tableView(tableView: NSTableView,
                 selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet) -> NSIndexSet {
-        var selectionIndexes = NSMutableIndexSet()
+        let selectionIndexes = NSMutableIndexSet()
         proposedSelectionIndexes.enumerateIndexesUsingBlock {
             (row, _) -> Void in
             if self.images[row].validImage {
@@ -421,7 +415,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             default:
                 break
             }
-            var colView =
+            let colView =
                 tableView.makeViewWithIdentifier(id, owner: nil) as! NSTableCellView
             colView.textField?.stringValue = value;
             if row == tableView.selectedRow {
@@ -453,7 +447,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             let fileManager = NSFileManager.defaultManager()
             for path in paths {
                 if !fileManager.fileExistsAtPath(path) ||
-                   imageURLs.contains(NSURL.fileURLWithPath(path)!) {
+                   imageURLs.contains(NSURL.fileURLWithPath(path)) {
                     return .None
                 }
             }
@@ -471,12 +465,10 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
             var urls = [NSURL]()
             for path in paths {
-                if let fileURL = NSURL(fileURLWithPath: path) {
-                    if !addURLsInFolder(fileURL, toURLs: &urls) {
-                        urls.append(fileURL)
-                    }
+                let fileURL = NSURL(fileURLWithPath: path)
+                if !addURLsInFolder(fileURL, toURLs: &urls) {
+                    urls.append(fileURL)
                 }
-
             }
             return !addImages(urls)
         }

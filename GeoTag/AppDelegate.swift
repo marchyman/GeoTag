@@ -11,7 +11,7 @@ import Cocoa
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // class variable holds path to exiftool
     static var exiftoolPath: String!
-    lazy var preferences = Preferences(windowNibName: Preferences.nibName)
+    lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
 
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
@@ -36,7 +36,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let exiftoolPath = path + "/exiftool"
             if fileManager.fileExistsAtPath(exiftoolPath) {
                 AppDelegate.exiftoolPath = exiftoolPath
-                println("exiftool path = \(exiftoolPath)")
+                print("exiftool path = \(exiftoolPath)")
                 return
             }
         }
@@ -69,15 +69,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     //MARK: open panel handling
 
     @IBAction func showOpenPanel(AnyObject) {
-        var panel = NSOpenPanel()
-        panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as [AnyObject]
+        let panel = NSOpenPanel()
+        panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as? [String]
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
             // expand selected URLs that refer to a directory
             var urls = [NSURL]()
-            for url in panel.URLs as! [NSURL] {
+            for url in panel.URLs as [NSURL] {
                 if !addURLsInFolder(url, toURLs: &urls) {
                     urls.append(url)
                 }
@@ -104,7 +104,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         case Selector("openPreferencesWindow:"):
             return true
         default:
-            println("default for item \(menuItem)")
+            print("default for item \(menuItem)")
         }
         return false
     }
@@ -128,7 +128,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     func saveOrDontSave(window: NSWindow) -> Bool {
         if window.documentEdited {
-            var alert = NSAlert()
+            let alert = NSAlert()
             alert.addButtonWithTitle(NSLocalizedString("SAVE",
                                                        comment: "Save"))
             alert.addButtonWithTitle(NSLocalizedString("CANCEL",

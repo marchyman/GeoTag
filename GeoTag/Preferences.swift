@@ -36,14 +36,14 @@ final class Preferences : NSWindowController {
     @IBOutlet var saveDirPath: NSPathControl!
 
     @IBAction func pickSaveFolder(sender: AnyObject) {
-        println("Pick Save Folder")
-        var panel = NSOpenPanel()
+        print("Pick Save Folder")
+        let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
-            saveDirPath.URL = panel.URLs[0] as? NSURL
+            saveDirPath.URL = panel.URLs[0]
             let defaults = NSUserDefaults.standardUserDefaults()
             defaults.setURL(saveDirPath.URL!,
                             forKey: Preferences.saveDirectoryKey)

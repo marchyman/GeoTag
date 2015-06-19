@@ -25,7 +25,7 @@ private func radiansToDegrees(radians: Double) -> Double {
 // return distance in meters and bearing between two lat/lon pairs
 // distance calculated using the haversine formula
 
-public func distanceAndBearing(lat1:Double, lon1:Double,
+public func distanceAndBearing(lat1 lat1:Double, lon1:Double,
                                lat2:Double, lon2:Double) -> (Double, Double) {
     let lat1R = degreesToRadians(lat1)
     let lon1R = degreesToRadians(lon1)
@@ -46,7 +46,7 @@ public func distanceAndBearing(lat1:Double, lon1:Double,
 // return lat/lon of a destination point point a given distance and bearing
 // from a starting point
 
-public func destFromStart(lat: Double, lon: Double,
+public func destFromStart(lat lat: Double, lon: Double,
                           distance: Double, bearing: Double) -> (Double, Double) {
     let latR = degreesToRadians(lat)
     let lonR = degreesToRadians(lon)
