@@ -91,7 +91,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         let undo = appDelegate.undoManager
         undo.prepareWithInvocationTarget(self).updateLocationAtRow(row,
             validLocation: oldValidLocation, latitude: oldLatitude,
-            longitude: oldLongitude, modified: appDelegate.isModified())
+            longitude: oldLongitude, modified: appDelegate.modified)
         if validLocation {
             image.setLatitude(latitude, longitude: longitude)
             webViewController.pinMapAtLatitude(image.latitude!,
@@ -101,7 +101,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             webViewController.removeMapPin()
         }
         reloadRow(row)
-        appDelegate.modified(modified)
+        appDelegate.modified = modified
     }
 
     //MARK: menu actions
@@ -136,10 +136,10 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             return images.count > 0
         case Selector("clear:"):
             // OK if the table is populated and no changes pending
-            return images.count > 0 && !appDelegate.isModified()
+            return images.count > 0 && !appDelegate.modified
         case Selector("discard:"):
             // OK if there are changes pending
-            return appDelegate.isModified()
+            return appDelegate.modified
         case Selector("cut:"), Selector("copy:"):
             // OK if only one row with a valid location selected
             if tableView.numberOfSelectedRows == 1 {
@@ -177,7 +177,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         for image in images {
             image.revertLocation()
         }
-        appDelegate.modified(false)
+        appDelegate.modified = false
         reloadAllRows()
     }
 
@@ -227,7 +227,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     // remove all items from the table
     @IBAction func clear(AnyObject) {
-        if !appDelegate.isModified() {
+        if !appDelegate.modified {
             images = []
             imageURLs.removeAll()
             reloadAllRows()
