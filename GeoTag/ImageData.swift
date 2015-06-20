@@ -3,7 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 6/26/14.
-//  Copyright (c) 2014 Marco S Hyman. All rights reserved.
+//  Copyright (c) 2014, 2015 Marco S Hyman, CC-BY-NC
 //
 
 import Cocoa
@@ -17,7 +17,7 @@ final class ImageData: NSObject {
      */
     static var firstWarning = true
 
-    //MARK: instance variables
+    // MARK: instance variables
 
     let url: NSURL
     var path: String! {
@@ -43,6 +43,8 @@ final class ImageData: NSObject {
     var image: NSImage!
     var validImage = false
 
+    // return the string representation of the location of an image for copy
+    // and paste.
     var stringRepresentation: String {
         if latitude != nil && longitude != nil {
             return "\(latitude!) \(longitude!)"
@@ -50,8 +52,14 @@ final class ImageData: NSObject {
         return ""
     }
 
-    //MARK: Init
+    // MARK: Init
 
+    /// instantiate an instance of the class
+    /// - Parameter url: image file this instance represents
+    ///
+    /// Extract geo location metadata and build a preview image for
+    /// the given URL.  If the URL isn't recognized as an image mark this
+    /// instance as not being valid.
     init(url: NSURL) {
         self.url = url;
         super.init()
@@ -60,61 +68,66 @@ final class ImageData: NSObject {
         originalLongitude = longitude
     }
 
-    //MARK: set/revert latitude and longitude for an image
+    // MARK: set/revert latitude and longitude for an image
 
+    /// set the latitude and longitude of an image
+    /// - Parameter latitude: the new latitude
+    /// - Parameter longitude: the new longitude
+    ///
+    /// The location may be set to nil to delete location information from
+    /// an image.
     func setLatitude(latitude: Double?, longitude: Double?) {
         self.latitude = latitude
         self.longitude = longitude
     }
 
+    /// restore latitude and longitude to their initial values
+    ///
+    /// Image location is restored to the value when location information
+    /// was last saved. If the image has not been saved the restored values
+    /// will be those in the image when first read.
     func revertLocation() {
         latitude = originalLatitude
         longitude = originalLongitude
     }
 
-    //MARK: Backup and Save
+    // MARK: Backup and Save
 
-    /*
-     * Link given backup file name to an optional specified save directory
-     * If the link fails (different filesystem?) fall back to a copy.
-     * Note: paths are used instead of URLs because linkItemAtURL fails
-     * trying to link foo.jpg_original to somedir/foo.jpg.
-     */
-    func saveOriginalFile(sourceName: String) {
-        /*
-         * If an optional save directory is specified link the file
-         * to the named directory ignoring errors.  If a file with the same
-         * file exists at the save location it will not be overwritten.
-         * If the file can not be linked it will be copied.
-         */
-        if let saveDirURL = Preferences.saveDirectory() {
-            let fileManager = NSFileManager.defaultManager()
-            let saveFileURL =
-                saveDirURL.URLByAppendingPathComponent(name!,
-                                                       isDirectory: false)
-            if !fileManager.fileExistsAtPath(saveFileURL.path!) {
+    /// link or copy a file into a save directory
+    /// Parameter sourceName: path to image file to be copied or linked
+    ///
+    /// Link the named file into an optional save directory.  If the link fails
+    /// (different filesystem?) copy the file instead.  If a file with the
+    /// same name exists in the save directory it is **not** overwritten.
+    ///
+    /// Note: paths are used instead of URLs because linkItemAtURL fails
+    /// trying to link foo.jpg_original to somedir/foo.jpg.
+    private func saveOriginalFile(sourceName: String) {
+        guard let saveDirURL = Preferences.saveDirectory() else { return }
+        let fileManager = NSFileManager.defaultManager()
+        let saveFileURL = saveDirURL.URLByAppendingPathComponent(name!, isDirectory: false)
+        if !fileManager.fileExistsAtPath(saveFileURL.path!) {
+            do {
+                try fileManager.linkItemAtPath(sourceName, toPath: saveFileURL.path!)
+            } catch {
+                // couldn't create hard link, copy file instead
                 do {
-                    try fileManager.linkItemAtPath(sourceName,
+                    try fileManager.copyItemAtPath(sourceName,
                                                    toPath: saveFileURL.path!)
-                } catch _ {
-                    // couldn't create hard link, copy file instead
-                    do {
-                        try fileManager.copyItemAtPath(sourceName,
-                                                       toPath: saveFileURL.path!)
-                    } catch let error as NSError {
-                        unexpectedError(error,
-                                        "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
-                    }
+                } catch let error as NSError {
+                    unexpectedError(error,
+                                    "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
                 }
             }
         }
     }
 
-    /*
-     * backup the image file by copying it to the trash.
-     * return true if successful
-     */
-    func backupImageFile() -> Bool {
+    /// backup the image file by copying it to the trash.
+    /// - Returns: true if the backup was succcesful
+    ///
+    /// The first time backup to the trash fails an alert is shown to the user
+    /// letting them know an alternate backup method is being used.
+    private func backupImageFile() -> Bool {
         var backupURL: NSURL?
         let fileManager = NSFileManager.defaultManager()
         do {
@@ -127,7 +140,8 @@ final class ImageData: NSObject {
                 unexpectedError(error,
                                 "Cannot copy \(backupURL) to \(url) for update.\n\nReason: ")
             }
-        } catch var error as NSError {
+        } catch let error as NSError {
+            // couldn't trash file, warn user of alternate backup location
             if ImageData.firstWarning {
                 ImageData.firstWarning = false
                 let alert = NSAlert()
@@ -146,13 +160,19 @@ final class ImageData: NSObject {
                 alert.runModal()
             }
         }
-    return false
+        return false
     }
 
-    /*
-     * save the image if the location changed
-     */
-    func saveImageFile() -> Bool {
+    /// save image file if location has changed
+    ///
+    /// Invokes exiftool to update image metadata with the current
+    /// latitude and longitude.  Non valid images and images that have not
+    /// had their location changed do not invoke exiftool.
+    ///
+    /// The updated file will overwrite the original file if a backup file
+    /// was created.  If a backup could not be created exiftool will rename
+    /// the original file.
+    func saveImageFile() {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
             let overwriteOriginal = backupImageFile()
@@ -189,116 +209,125 @@ final class ImageData: NSObject {
                 "-DateTimeOriginal>FileModifyDate", latArg, latRefArg,
                 lonArg, lonRefArg, path]
 
-            // add -overwrite_original option if we can
+            // add -overwrite_original option to the exiftool args if we were
+            // able to create a backup.
             if overwriteOriginal {
                 exiftool.arguments?.insert("-overwrite_original", atIndex: 2)
             }
             exiftool.launch()
             exiftool.waitUntilExit()
+
+            // if a backup could not be created prior to running exiftool
+            // copy the exiftool created original to the save directory.
             if !overwriteOriginal {
                 saveOriginalFile(path + "_original")
             }
             originalLatitude = latitude
             originalLongitude = longitude
         }
-        return true
     }
 
 
-    //MARK: extract image metadata and build thumbnail preview
+    // MARK: extract image metadata and build thumbnail preview
 
-    func loadImageData() -> Bool {
-        if let imgRef = CGImageSourceCreateWithURL(url, nil) {
-            // CFString! to String! conversions (for Xcode 6.1 beta)
-            let pixelHeight = kCGImagePropertyPixelHeight as String!
-            let pixelWidth = kCGImagePropertyPixelWidth as String!
-            let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String!
-            let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String!
-            let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String!
-            let exifDictionary = kCGImagePropertyExifDictionary as String!
-            let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String!
-            let GPSDictionary = kCGImagePropertyGPSDictionary as String!
-            let GPSLatitude = kCGImagePropertyGPSLatitude as String!
-            let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String!
-            let GPSLongitude = kCGImagePropertyGPSLongitude as String!
-            let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String!
+    /// obtain image metadata and build thumbnail
+    /// - Returns: true if successful
+    ///
+    /// If image propertied can not be accessed or if needed properties
+    /// do not exist the file is assumed to be a non-image file and a preview
+    /// is not created.
+    private func loadImageData() -> Bool {
+        guard let imgRef = CGImageSourceCreateWithURL(url, nil) else {
+            return false
+        }
 
-            // grab the image properties
-            let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary!
-            if imgProps == nil {
-                return false
-            }
-            let height = imgProps[pixelHeight] as! Int!
-            let width = imgProps[pixelWidth] as! Int!
-            if height == nil || width == nil {
-                return false
-            }
+        // CFString to String conversions
+        let pixelHeight = kCGImagePropertyPixelHeight as String
+        let pixelWidth = kCGImagePropertyPixelWidth as String
+        let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
+        let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
+        let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
+        let exifDictionary = kCGImagePropertyExifDictionary as String
+        let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
+        let GPSDictionary = kCGImagePropertyGPSDictionary as String
+        let GPSLatitude = kCGImagePropertyGPSLatitude as String
+        let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
+        let GPSLongitude = kCGImagePropertyGPSLongitude as String
+        let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
 
-            /// Create a "preview" of the image. If the image is larger than
-            /// 512x512 constrain the preview to that size.  512x512 is an
-            /// arbitrary limit.   Preview generation is used to work around a
-            /// performance hit when using large raw images
-            let maxDimension = 512
-            let imgOpts: NSMutableDictionary = [
-                createThumbnailWithTransform : kCFBooleanTrue,
-                createThumbnailFromImageAlways : kCFBooleanTrue
-            ]
-            if height > maxDimension || width > maxDimension {
-                // add a max pixel size to the dictionary of options
-                imgOpts[thumbnailMaxPixelSize] = maxDimension as AnyObject
-            }
-            if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts) {
-                // Create an NSImage from the preview
-                let imgHeight = CGFloat(CGImageGetHeight(imgPreview))
-                let imgWidth = CGFloat(CGImageGetWidth(imgPreview))
-                let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
-                image = NSImage(size: imgRect.size)
+        // grab the image properties
+        let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary!
+        if imgProps == nil {
+            return false
+        }
+        let height = imgProps[pixelHeight] as! Int!
+        let width = imgProps[pixelWidth] as! Int!
+        if height == nil || width == nil {
+            return false
+        }
+
+        // Create a "preview" of the image. If the image is larger than
+        // 512x512 constrain the preview to that size.  512x512 is an
+        // arbitrary limit.   Preview generation is used to work around a
+        // performance hit when using large raw images
+        let maxDimension = 512
+        let imgOpts: NSMutableDictionary = [
+            createThumbnailWithTransform : kCFBooleanTrue,
+            createThumbnailFromImageAlways : kCFBooleanTrue
+        ]
+        if height > maxDimension || width > maxDimension {
+            // add a max pixel size to the dictionary of options
+            imgOpts[thumbnailMaxPixelSize] = maxDimension as AnyObject
+        }
+        if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts) {
+            // Create an NSImage from the preview
+            let imgHeight = CGFloat(CGImageGetHeight(imgPreview))
+            let imgWidth = CGFloat(CGImageGetWidth(imgPreview))
+            let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
+            image = NSImage(size: imgRect.size)
+            image.lockFocus()
+            if let currentContext = NSGraphicsContext.currentContext() {
+                var context: CGContext! = nil
                 // 10.9 doesn't have CGContext
-                image.lockFocus()
-                if let currentContext = NSGraphicsContext.currentContext() {
-                    var context: CGContext! = nil
-                    if #available(OSX 10.10, *) {
-                        context = currentContext.CGContext
-                    } else {
-                        // graphicsPort is type UnsafePointer<()>
-                        context = unsafeBitCast(currentContext.graphicsPort,
-                                                CGContext.self)
-                    }
-                    if context != nil {
-                        CGContextDrawImage(context, imgRect, imgPreview)
-                    }
+                if #available(OSX 10.10, *) {
+                    context = currentContext.CGContext
+                } else {
+                    // graphicsPort is type UnsafePointer<()>
+                    context = unsafeBitCast(currentContext.graphicsPort,
+                                            CGContext.self)
                 }
-                image.unlockFocus()
-
-                // extract image date/time created
-                if let exifData = imgProps[exifDictionary] as? NSDictionary,
-                            dto = exifData[exifDateTimeOriginal] as? String {
-                    date = dto
+                if context != nil {
+                    CGContextDrawImage(context, imgRect, imgPreview)
                 }
+            }
+            image.unlockFocus()
+        }
 
-                // extract image existing gps info
-                if let gpsData = imgProps[GPSDictionary] as? NSDictionary {
-                    if let lat = gpsData[GPSLatitude] as? Double,
-                        latRef = gpsData[GPSLatitudeRef] as? String {
-                        if latRef == "N" {
-                            latitude = lat
-                        } else {
-                            latitude = -lat
-                        }
-                    }
-                    if let lon = gpsData[GPSLongitude] as? Double,
-                        lonRef = gpsData[GPSLongitudeRef] as? String {
-                        if lonRef == "E" {
-                            longitude = lon
-                        } else {
-                            longitude = -lon
-                        }
-                    }
+        // extract image date/time created
+        if let exifData = imgProps[exifDictionary] as? NSDictionary,
+                    dto = exifData[exifDateTimeOriginal] as? String {
+            date = dto
+        }
+
+        // extract image existing gps info
+        if let gpsData = imgProps[GPSDictionary] as? NSDictionary {
+            if let lat = gpsData[GPSLatitude] as? Double,
+                latRef = gpsData[GPSLatitudeRef] as? String {
+                if latRef == "N" {
+                    latitude = lat
+                } else {
+                    latitude = -lat
                 }
-
-                return true
+            }
+            if let lon = gpsData[GPSLongitude] as? Double,
+                lonRef = gpsData[GPSLongitudeRef] as? String {
+                if lonRef == "E" {
+                    longitude = lon
+                } else {
+                    longitude = -lon
+                }
             }
         }
-        return false
+        return true
     }
 }
