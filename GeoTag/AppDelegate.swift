@@ -123,10 +123,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     /// Save all images with updated geolocation information and clear all
     /// undo actions.
     @IBAction func save(AnyObject?) {
-        if tableViewController.saveAllImages() {
-            modified = false
-            undoManager.removeAllActions()
-        }
+        tableViewController.saveAllImages()
+        modified = false
+        undoManager.removeAllActions()
     }
 
     @IBAction func openPreferencesWindow(sender: AnyObject!) {

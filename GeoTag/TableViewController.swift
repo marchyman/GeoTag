@@ -57,14 +57,12 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     // ask each image in the table to save itself
 
-    func saveAllImages() -> Bool {
+    func saveAllImages() {
         appDelegate.progressIndicator.startAnimation(self)
-        var allImagesSaved = true
         for image in images {
-            allImagesSaved = image.saveImageFile() && allImagesSaved
+            image.saveImageFile()
         }
         appDelegate.progressIndicator.stopAnimation(self)
-        return allImagesSaved
     }
 
     //MARK: Image location change handling
