@@ -13,6 +13,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     static var exiftoolPath: String!
     lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
 
+    var modified: Bool {
+        get {
+            return window.documentEdited
+        }
+        set {
+            window.documentEdited = newValue
+        }
+    }
+
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
     @IBOutlet var progressIndicator: NSProgressIndicator!
@@ -28,7 +37,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         checkForExiftool()
     }
 
-    // let the user know if ExifTool can't be found
+    /// verify that exiftool can be found.  If exiftool can not be found in one
+    /// of the normal locations put up an alert and terminate the program.
     func checkForExiftool() {
         let paths = ["/usr/bin", "/usr/local/bin", "/opt/bin"]
         let fileManager = NSFileManager.defaultManager()
@@ -56,18 +66,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return undoManager
     }
 
-    //MARK: window status as a proxy for modifications
-
-    func isModified() -> Bool {
-        return window.documentEdited
-    }
-
-    func modified(value: Bool) {
-        window.documentEdited = value
-    }
-
     //MARK: open panel handling
 
+    /// action bound to File -> Open
+    /// - Parameter AnyObject: unused
+    ///
+    /// Allows selection of image files and/or directories.  If a directory
+    /// is selected all files within the directory and any enclosed sub-directories
+    /// will be added to the table of images.  The same file can not be added
+    /// to the table multiple times.   If duplicates are detected the user
+    /// will be alerted that some files were not opened.
     @IBAction func showOpenPanel(AnyObject) {
         let panel = NSOpenPanel()
         panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as? [String]
@@ -100,7 +108,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         case Selector("showOpenPanel:"):
             return true
         case Selector("save:"):
-            return isModified()
+            return modified
         case Selector("openPreferencesWindow:"):
             return true
         default:
@@ -109,9 +117,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return false
     }
 
-    @IBAction func save(AnyObject!) {
+    /// action bound to File -> Save
+    /// - Parameter AnyObject: unused
+    ///
+    /// Save all images with updated geolocation information and clear all
+    /// undo actions.
+    @IBAction func save(AnyObject?) {
         if tableViewController.saveAllImages() {
-            modified(false)
+            modified = false
             undoManager.removeAllActions()
         }
     }
@@ -125,9 +138,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(theApplication: NSApplication) -> Bool {
         return true
     }
-    
-    func saveOrDontSave(window: NSWindow) -> Bool {
-        if window.documentEdited {
+
+    /// Give the user a chance to save changes
+    /// - Returns: true if all changes have been saved, false otherwise
+    ///
+    /// Alert the user if there are unsaved geo location changes and allow
+    /// the user to save or discard the changes before terminating the
+    /// application. The user can also cancel program termination without
+    /// saving any changes.
+    func saveOrDontSave() -> Bool {
+        if modified {
             let alert = NSAlert()
             alert.addButtonWithTitle(NSLocalizedString("SAVE",
                                                        comment: "Save"))
@@ -151,8 +171,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     // Don't bother saving
                     break
                 }
-                window.documentEdited = false
-                window.close()
+                self.modified = false
+                self.window.close()
             }
             return false
         }
@@ -160,7 +180,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationShouldTerminate(sender: NSApplication) -> NSApplicationTerminateReply {
-        if saveOrDontSave(window) {
+        if saveOrDontSave() {
             return .TerminateNow
         }
         return .TerminateCancel
@@ -173,7 +193,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     /// Window delegate functions
 
-    func windowShouldClose(window: AnyObject) -> Bool {
-        return saveOrDontSave(window as! NSWindow)
+    func windowShouldClose(AnyObject) -> Bool {
+        return saveOrDontSave()
     }
 }
