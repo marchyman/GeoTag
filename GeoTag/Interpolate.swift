@@ -3,7 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 5/19/15.
-//  Copyright (c) 2015 Marco S Hyman. All rights reserved.
+//  Copyright (c) 2015 Marco S Hyman, CC-BY-NC
 //
 
 import Foundation
@@ -22,11 +22,17 @@ private func radiansToDegrees(radians: Double) -> Double {
     return radians * r2d
 }
 
-// return distance in meters and bearing between two lat/lon pairs
-// distance calculated using the haversine formula
+/// return distance in meters and bearing between two lat/lon pairs
+/// - Parameter lat1: latitude of starting point
+/// - Parameter lon1: longitude of starting point
+/// - Parameter lat2: latitude of ending point
+/// - Parameter lon2: longitude of ending point
+/// - Returns: tuple containg distance and bearing from starting point to ending point
+///
+/// distance and bearing calculated using the haversine formula
 
-public func distanceAndBearing(lat1 lat1:Double, lon1:Double,
-                               lat2:Double, lon2:Double) -> (Double, Double) {
+public func distanceAndBearing(lat1 lat1: Double, lon1: Double,
+                               lat2: Double, lon2: Double) -> (Double, Double) {
     let lat1R = degreesToRadians(lat1)
     let lon1R = degreesToRadians(lon1)
     let lat2R = degreesToRadians(lat2)
@@ -43,8 +49,13 @@ public func distanceAndBearing(lat1 lat1:Double, lon1:Double,
     return (distance, bearing)
 }
 
-// return lat/lon of a destination point point a given distance and bearing
-// from a starting point
+/// return lat/lon of a destination point point a given distance and bearing
+/// from a starting point
+/// - Parameter lat: latitude of starting point
+/// - Parameter lon: longitude of starting point
+/// - Parameter distance: distance to destination point
+/// - Parameter bearing: bearing to destination point
+/// - Returns: tuple containing the latitude and longitude of the destination
 
 public func destFromStart(lat lat: Double, lon: Double,
                           distance: Double, bearing: Double) -> (Double, Double) {
