@@ -29,15 +29,9 @@ earlier See <http://www.snafu.org/GeoTag/> for more information.
 
 ### Bug fixes:
 
-* Window size and split pane locations are now saved.   Restarting GeoTag
-  should use the same layout as the previous invocation.
-
-* When using drag-and-drop GeoTag enabled the drop only when the cursor was
-  beyond the end of the table.  It will now allow a drop anywhere in the table.
-  The added images will still be appended to the end of the table, not placed
-  at the cursor location.
-
-* Fixed crash that would occur when dragging movie files into GeoTag
+* location highlighting error fixed.  When assigning a location and then
+  selecting another image the latitude and longitude are re-displayed in
+  the standard color.
 
 * map search box relocated such that it no longer covers the button used
   to exit street view.
