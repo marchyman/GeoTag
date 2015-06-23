@@ -103,7 +103,7 @@ final class ImageData: NSObject {
     /// Note: paths are used instead of URLs because linkItemAtURL fails
     /// trying to link foo.jpg_original to somedir/foo.jpg.
     private func saveOriginalFile(sourceName: String) {
-        guard let saveDirURL = Preferences.saveDirectory() else { return }
+        guard let saveDirURL = Preferences.saveFolder() else { return }
         let fileManager = NSFileManager.defaultManager()
         let saveFileURL = saveDirURL.URLByAppendingPathComponent(name!, isDirectory: false)
         if !fileManager.fileExistsAtPath(saveFileURL.path!) {
