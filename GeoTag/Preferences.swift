@@ -3,39 +3,52 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 5/7/15.
-//  Copyright (c) 2015 Marco S Hyman. All rights reserved.
+//  Copyright (c) 2015 Marco S Hyman, CC-BY-NC
 //
 
-import Cocoa
+import Foundation
+import AppKit
 
 final class Preferences : NSWindowController {
+    // class constants and a flag
     static let nibName = "Preferences"
-    static let saveDirectoryKey = "SaveDirectoryKey"
+    static let saveFolderKey = "saveDirectoryKey"
     static var checkDirectory = true
 
-    // user defaults key for optional save directory
+    /// fetch the URL of the optional extra save folder/directory
+    /// - Returns: the URL of the save directory if one has been specified
+    ///
+    /// If a save directory/folder has been specified but does not exist an
+    /// alert is shown once per execution to inform the user.
 
-    class func saveDirectory() -> NSURL? {
-        var saveDirectory: NSURL? = nil
+    class func saveFolder() -> NSURL? {
+        var saveFolder: NSURL? = nil
 
         if checkDirectory {
             let defaults = NSUserDefaults.standardUserDefaults()
-            saveDirectory = defaults.URLForKey(Preferences.saveDirectoryKey)
-            if saveDirectory != nil {
+            saveFolder = defaults.URLForKey(Preferences.saveFolderKey)
+            if saveFolder != nil {
                 let fileManager = NSFileManager.defaultManager()
-                if !fileManager.fileExistsAtPath(saveDirectory!.path!) {
-                    unexpectedError(nil, "The specified Optional Save Folder\n\n\t\(saveDirectory!.path!)\n\nis missing. Original image files will not be copied to that location.")
-                    saveDirectory = nil
+                if !fileManager.fileExistsAtPath(saveFolder!.path!) {
+                    unexpectedError(nil, "The specified Optional Save Folder\n\n\t\(saveFolder!.path!)\n\nis missing. Original image files will not be copied to that location.")
+                    saveFolder = nil
                     checkDirectory = false
                 }
             }
         }
-        return saveDirectory
+        return saveFolder
     }
 
-    @IBOutlet var saveDirPath: NSPathControl!
+    @IBOutlet var saveFolderPath: NSPathControl!
 
-    @IBAction func pickSaveFolder(sender: AnyObject) {
+    /// select a save folder
+    /// - Parameter AnyObject: unused
+    ///
+    /// Allow the user to pick or create a folder where the original
+    /// copies of updated images will be saved (in addition to moving
+    /// the file to the system trash.
+    
+    @IBAction func pickSaveFolder(AnyObject) {
         print("Pick Save Folder")
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
@@ -43,30 +56,38 @@ final class Preferences : NSWindowController {
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
-            saveDirPath.URL = panel.URLs[0]
+            saveFolderPath.URL = panel.URLs[0]
             let defaults = NSUserDefaults.standardUserDefaults()
-            defaults.setURL(saveDirPath.URL!,
-                            forKey: Preferences.saveDirectoryKey)
+            defaults.setURL(saveFolderPath.URL!,
+                            forKey: Preferences.saveFolderKey)
         }
     }
 
-	@IBAction func clearSaveDir(AnyObject!) {
+    /// remove the optional save folder from user preferences
+    /// - Parameter AnyObject: unused
+
+	@IBAction func clearSaveFolder(AnyObject) {
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.removeObjectForKey(Preferences.saveDirectoryKey)
-        saveDirPath.URL = nil
+        defaults.removeObjectForKey(Preferences.saveFolderKey)
+        saveFolderPath.URL = nil
     }
+
+    /// return the NIB name for this window
 
 	override var windowNibName: String {
 		return Preferences.nibName
 	}
 
+    /// initialize the saveFolderPath field from user preferences
+
     override func windowDidLoad() {
-        if let saveDirURL = Preferences.saveDirectory() {
-            saveDirPath.URL = saveDirURL
+        if let saveFolderURL = Preferences.saveFolder() {
+            saveFolderPath.URL = saveFolderURL
         }
     }
 
     // window delegate function... orderOut instead of close
+
     func windowShouldClose(sender: AnyObject!) -> Bool {
         window!.orderOut(sender)
         return false
