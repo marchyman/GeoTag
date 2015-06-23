@@ -26,21 +26,6 @@ earlier See <http://www.snafu.org/GeoTag/> for more information.
 
 ### New Features:
 
-* Folders can now be dragged and dropped into the table. All non-duplicate files
-  in the folder (and sub folders) will be added to the table for geolocation
-  editing.
-
-* Folders can also now be selected in the File -> Open dialog.
-
-* Add ⌘K as a shortcut for the Clear image list menu option.  The command
-  is ignored if any of the items in the list have been edited and not saved.
-
-* Added a GeoTag preference to select a folder where original files will be
-  saved in addition to the Trash. Files in the optional save folder with the same
-  name as an image to be saved will NOT be overwritten.
-
-* GeoTag can assign locations to images by interpolating between two points.
-  See the operating instructions for more info.
 
 ### Bug fixes:
 
@@ -54,11 +39,8 @@ earlier See <http://www.snafu.org/GeoTag/> for more information.
 
 * Fixed crash that would occur when dragging movie files into GeoTag
 
-* Fix handling of file systems that do not support the trash.  When the original
-  version of an edited file can not be moved to the trash GeoTag will now display
-  a warning and leave the original file in its original folder with '_original'
-  appended to its name.   The warning will only be displayed once per GeoTag
-  execution.
+* map search box relocated such that it no longer covers the button used
+  to exit street view.
 
 ### Operating Instructions:
 
