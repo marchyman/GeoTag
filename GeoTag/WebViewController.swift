@@ -3,16 +3,16 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 7/28/14.
-//  Copyright (c) 2014 Marco S Hyman. All rights reserved.
+//  Copyright (c) 2014 Marco S Hyman, CC-BY-NC
 //
 
-import Cocoa
+import Foundation
 import WebKit
 
 final class WebViewController: NSViewController {
     // MARK: Properties
 
-    // current map state
+    // current map state (default to SF Peninsula :)
     var mapLatitude = 37.512994
     var mapLongitude = -122.33963
     var mapZoom = 10
@@ -39,7 +39,8 @@ final class WebViewController: NSViewController {
 
     // MARK: Class methods
 
-    // limit access from javascript to the map state variables
+    /// limit property access from javascript to the map state variables
+
     class override func isKeyExcludedFromWebScript(keyPtr: UnsafePointer<Int8>) -> Bool {
         if let key = NSString(CString: keyPtr, encoding: NSUTF8StringEncoding) {
             switch key {
@@ -53,7 +54,9 @@ final class WebViewController: NSViewController {
         return true
     }
 
-    // allow javascript to report position changes
+    /// allow javascript to report position changes.  All other methods are
+    /// off limits.
+
     class override func isSelectorExcludedFromWebScript(sel: Selector) -> Bool {
         if sel == "reportPosition" {
             return false
@@ -63,7 +66,8 @@ final class WebViewController: NSViewController {
 
     // MARK: startup
 
-    // object initialization
+    /// object initialization
+
     override func awakeFromNib() {
         // Ask webKit to load the map.html file from our resources directory.
         let mapPath = NSBundle.mainBundle().pathForResource("map",
@@ -73,7 +77,8 @@ final class WebViewController: NSViewController {
         webView.mainFrame.loadRequest(map)
     }
 
-    // info needed to draw initial map
+    /// obtain info needed to draw initial map from user defaults
+
     override func webView(webView: WebView,
                           didClearWindowObject wso: WebScriptObject,
                           forFrame frame: WebFrame) {
@@ -99,12 +104,14 @@ final class WebViewController: NSViewController {
 
     // MARK: Map control targets
 
-    // select the desired map type
+    /// select the desired map type
+
     @IBAction func changeMapType(sender: NSSegmentedControl) {
         setMap("TypeId", values: [sender.selectedSegment])
     }
 
-    // save the current map type and displayed region
+    /// save the current map type and displayed region in user defaults
+
     @IBAction func saveMapSetting(AnyObject) {
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setDouble(mapLatitude, forKey: mapLatitudeKey)
@@ -115,9 +122,13 @@ final class WebViewController: NSViewController {
 
     // MARK: pin drop/clear interface
 
+    /// drop the pin at the given latitude and longitude
+
     func pinMapAtLatitude(latitude: Double, longitude: Double) {
          setMap("Pin", values: [latitude, longitude])
     }
+
+    /// hide the pin
 
     func removeMapPin() {
         setMap("PinHidden", values: nil)
@@ -125,11 +136,16 @@ final class WebViewController: NSViewController {
 
     // MARK: Javascript interface
 
-    // called when a marker is placed on the map or its position changed
+    /// Called when a marker is placed on the map or its position changed.
+    /// The delegate processes the position change.
+
     func reportPosition() {
         clickDelegate?.webViewMouseClicked(markerLatitude,
                                            longitude: markerLongitude)
     }
+
+    /// Call the javascript setMap function
+    /// - Parameter values: An array of arguments to pass to javascript
 
     func setMap(function: String, values: [AnyObject]!) {
         webView.windowScriptObject.callWebScriptMethod("setMap" + function,
@@ -137,9 +153,10 @@ final class WebViewController: NSViewController {
     }
 }
 
-// MARK: WebViewController Delegate
+// MARK: WebViewController Delegate Protocol
 
-// provide a way to deliver clicks
+/// The delegate handles the non map details of changing locations
+
 protocol WebViewControllerDelegate: NSObjectProtocol {
     func webViewMouseClicked(latitude: Double, longitude: Double)
 }
