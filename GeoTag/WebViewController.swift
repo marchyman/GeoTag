@@ -3,7 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 7/28/14.
-//  Copyright (c) 2014 Marco S Hyman, CC-BY-NC
+//  Copyright (c) 2014, 2015 Marco S Hyman, CC-BY-NC
 //
 
 import Foundation
