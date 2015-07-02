@@ -26,6 +26,7 @@ earlier See <http://www.snafu.org/GeoTag/> for more information.
 
 ### New Features:
 
+* (internal) update code to use Swift 2
 
 ### Bug fixes:
 
