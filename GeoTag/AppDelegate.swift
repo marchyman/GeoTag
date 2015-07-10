@@ -76,7 +76,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     /// will be added to the table of images.  The same file can not be added
     /// to the table multiple times.   If duplicates are detected the user
     /// will be alerted that some files were not opened.
-    @IBAction func showOpenPanel(AnyObject) {
+    @IBAction func showOpenPanel(_: AnyObject) {
         let panel = NSOpenPanel()
         panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as? [String]
         panel.allowsMultipleSelection = true
@@ -122,7 +122,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     ///
     /// Save all images with updated geolocation information and clear all
     /// undo actions.
-    @IBAction func save(AnyObject?) {
+    @IBAction func save(_: AnyObject?) {
         tableViewController.saveAllImages()
         modified = false
         undoManager.removeAllActions()
@@ -192,7 +192,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     /// Window delegate functions
 
-    func windowShouldClose(AnyObject) -> Bool {
+    func windowShouldClose(_: AnyObject) -> Bool {
         return saveOrDontSave()
     }
 }
