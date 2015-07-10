@@ -48,7 +48,7 @@ final class Preferences : NSWindowController {
     /// copies of updated images will be saved (in addition to moving
     /// the file to the system trash.
     
-    @IBAction func pickSaveFolder(AnyObject) {
+    @IBAction func pickSaveFolder(_: AnyObject) {
         print("Pick Save Folder")
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
@@ -66,7 +66,7 @@ final class Preferences : NSWindowController {
     /// remove the optional save folder from user preferences
     /// - Parameter AnyObject: unused
 
-	@IBAction func clearSaveFolder(AnyObject) {
+	@IBAction func clearSaveFolder(_: AnyObject) {
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.removeObjectForKey(Preferences.saveFolderKey)
         saveFolderPath.URL = nil

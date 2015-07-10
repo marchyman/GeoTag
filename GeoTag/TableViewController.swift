@@ -207,7 +207,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     ///
     /// Revert any geolocation changes made to all items in the table
 
-    @IBAction func discard(AnyObject) {
+    @IBAction func discard(_: AnyObject) {
         for image in images {
             image.revertLocation()
         }
@@ -235,7 +235,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     /// convert the location of the item in the selected row to its
     /// string representation and provide the string to the pasteboard.
 
-    @IBAction func copy(AnyObject) {
+    @IBAction func copy(_: AnyObject) {
         let row = tableView.selectedRow
         let pb = NSPasteboard.generalPasteboard()
         pb.declareTypes([NSPasteboardTypeString], owner: self)
@@ -251,7 +251,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     /// and convert it to a latitude and longitude.  Apply the location
     /// to all selected items in the table.
 
-    @IBAction func paste(AnyObject) {
+    @IBAction func paste(_: AnyObject) {
         let pb = NSPasteboard.generalPasteboard()
         if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
             // pasteVal should look like "lat lon"
@@ -271,7 +271,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     ///
     /// remove geolocation information from the selected items.
 
-    @IBAction func delete(AnyObject) {
+    @IBAction func delete(_: AnyObject) {
         let rows = tableView.selectedRowIndexes
         appDelegate.undoManager.beginUndoGrouping()
         rows.enumerateIndexesUsingBlock {
@@ -287,7 +287,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     ///
     /// - Parameter AnyObject: unused
 
-    @IBAction func clear(AnyObject) {
+    @IBAction func clear(_: AnyObject) {
         if !appDelegate.modified {
             images = []
             imageURLs.removeAll()
@@ -306,7 +306,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     /// distance.   Calculate an estimated location for the point to be
     /// interpolated using the start point, bearing, and estimated distance.
 
-    @IBAction func interpolate(AnyObject) {
+    @IBAction func interpolate(_: AnyObject) {
         struct LocnInfo {
             let lat: Double
             let lon: Double

@@ -79,9 +79,9 @@ final class WebViewController: NSViewController {
 
     /// obtain info needed to draw initial map from user defaults
 
-    override func webView(webView: WebView,
-                          didClearWindowObject wso: WebScriptObject,
-                          forFrame frame: WebFrame) {
+    func webView(webView: WebView,
+                 didClearWindowObject wso: WebScriptObject,
+                 forFrame frame: WebFrame) {
         // Initialize map state
         let defaults = NSUserDefaults.standardUserDefaults()
         let latitude = defaults.doubleForKey(mapLatitudeKey)
@@ -112,7 +112,7 @@ final class WebViewController: NSViewController {
 
     /// save the current map type and displayed region in user defaults
 
-    @IBAction func saveMapSetting(AnyObject) {
+    @IBAction func saveMapSetting(_: AnyObject) {
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setDouble(mapLatitude, forKey: mapLatitudeKey)
         defaults.setDouble(mapLongitude, forKey: mapLongitudeKey)
