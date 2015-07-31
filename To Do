@@ -12,3 +12,7 @@ Feature Requests:
   
 * Some of my photos don't have the correct Date/Time.  It would be nice if you
   could use GeoTag 3 to also update this for one or more photos.
+
+* Multithread load and save
+
+* Manual lat/long entry
