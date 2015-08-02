@@ -60,6 +60,8 @@ earlier See <http://www.snafu.org/GeoTag/> for more information.
   appended to its name.   The warning will only be displayed once per GeoTag
   execution.
 
+* Minimum window size reduced to fit on the smaller Macbook Air
+
 ### Operating Instructions:
 
 Run Program.  Use the Open command from the menu or ⌘O to select files to
