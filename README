@@ -30,16 +30,12 @@ earlier See <http://www.snafu.org/GeoTag/> for more information.
 
 ### Bug fixes:
 
-* allow for a smaller window (800x600) needed by the small Macbook Air.
-
 * location highlighting error fixed.  When assigning a location and then
   selecting another image the latitude and longitude are re-displayed in
   the standard color.
 
 * map search box relocated such that it no longer covers the button used
   to exit street view.
-
-* Minimum window size reduced to fit on the smaller Macbook Air
 
 ### Operating Instructions:
 
