@@ -24,6 +24,9 @@ Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later. Use version
 Lion). Use version 1.8 if your Mac is running OS X version 10.5 (Leopard) or
 earlier See <http://www.snafu.org/GeoTag/> for more information.
 
+GeoTag is now available as a [homebrew](http://brew.sh) cask.  Homebrew users
+can use the command `brew cask install geotag` to install.
+
 ### New Features:
 
 * Folders can now be dragged and dropped into the table. All non-duplicate files
