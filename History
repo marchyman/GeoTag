@@ -36,6 +36,8 @@
   appended to its name.   The warning will only be displayed once per GeoTag
   execution.
 
+* Minimum window size reduced to fit on the smaller Macbook Air
+
 ## GeoTag 3.3
 
 * Add a search field to the map.   Entering the name of a location and then
