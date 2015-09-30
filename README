@@ -33,6 +33,9 @@ can use the command `brew cask install geotag` to install.
 
 ### Bug fixes:
 
+* Disable App Transport Security so the maps will load in OS X 10.11
+  El Capitan
+
 * location highlighting error fixed.  When assigning a location and then
   selecting another image the latitude and longitude are re-displayed in
   the standard color.

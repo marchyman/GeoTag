@@ -1,3 +1,21 @@
+## GeoTag 3.5
+
+### New Features:
+
+* (internal) update code to use Swift 2
+
+### Bug fixes:
+
+* Disable App Transport Security so the maps will load in OS X 10.11
+  El Capitan
+
+* location highlighting error fixed.  When assigning a location and then
+  selecting another image the latitude and longitude are re-displayed in
+  the standard color.
+
+* map search box relocated such that it no longer covers the button used
+  to exit street view.
+
 ## GeoTag 3.4
 
 ### New Features:
