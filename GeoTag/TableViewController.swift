@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import MapKit
+import AppKit
 
 final class TableViewController: NSViewController, NSTableViewDelegate,
     NSTableViewDataSource, WebViewControllerDelegate {
