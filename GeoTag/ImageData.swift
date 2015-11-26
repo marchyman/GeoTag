@@ -102,24 +102,27 @@ final class ImageData: NSObject {
     ///
     /// Note: paths are used instead of URLs because linkItemAtURL fails
     /// trying to link foo.jpg_original to somedir/foo.jpg.
-    private func saveOriginalFile(sourceName: String) {
-        guard let saveDirURL = Preferences.saveFolder() else { return }
+    private func saveOriginalFile(sourceName: String) -> Bool {
+        guard let saveDirURL = Preferences.saveFolder() else { return false }
         let fileManager = NSFileManager.defaultManager()
         let saveFileURL = saveDirURL.URLByAppendingPathComponent(name!, isDirectory: false)
         if !fileManager.fileExistsAtPath(saveFileURL.path!) {
             do {
                 try fileManager.linkItemAtPath(sourceName, toPath: saveFileURL.path!)
+                return true
             } catch {
                 // couldn't create hard link, copy file instead
                 do {
                     try fileManager.copyItemAtPath(sourceName,
                                                    toPath: saveFileURL.path!)
+                    return true
                 } catch let error as NSError {
                     unexpectedError(error,
                                     "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
                 }
             }
         }
+        return false
     }
 
     /// backup the image file by copying it to the trash.
@@ -220,7 +223,16 @@ final class ImageData: NSObject {
             // if a backup could not be created prior to running exiftool
             // copy the exiftool created original to the save directory.
             if !overwriteOriginal {
-                saveOriginalFile(path + "_original")
+                let originalFile = path + "_original"
+                if saveOriginalFile(originalFile) {
+                    let fileManager = NSFileManager.defaultManager()
+                    do {
+                        try fileManager.removeItemAtPath(originalFile)
+                    } catch let error as NSError {
+                        unexpectedError(error,
+                                        "Cannot remove \(originalFile)\n\nReason: ")
+                    }
+                }
             }
             originalLatitude = latitude
             originalLongitude = longitude
