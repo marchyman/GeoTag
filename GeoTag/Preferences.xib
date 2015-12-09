@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
         <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
@@ -31,7 +31,6 @@
                             <subviews>
                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Usk-Sa-0th">
                                     <rect key="frame" x="16" y="14" width="496" height="119"/>
-                                    <animations/>
                                     <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" id="DKh-Hh-nMB">
                                         <font key="font" metaFont="system"/>
                                         <string key="title">GeoTag moves the original version of images that have been changed and saved to the system Trash.  Opening the Trash and using control-click on a file allows the file to be restored using the Put back option.
@@ -43,7 +42,6 @@ If you prefer to permanently save unmodified image files in a folder (in additio
                                     </textFieldCell>
                                 </textField>
                             </subviews>
-                            <animations/>
                         </view>
                         <constraints>
                             <constraint firstAttribute="height" constant="155" id="1h0-0F-v0o"/>
@@ -53,7 +51,6 @@ If you prefer to permanently save unmodified image files in a folder (in additio
                             <constraint firstAttribute="trailing" secondItem="Usk-Sa-0th" secondAttribute="trailing" constant="16" id="tks-Ez-OnB"/>
                             <constraint firstItem="Usk-Sa-0th" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="top" constant="25" id="u0e-kO-8Ry"/>
                         </constraints>
-                        <animations/>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <font key="titleFont" metaFont="smallSystemBold"/>
@@ -66,7 +63,6 @@ If you prefer to permanently save unmodified image files in a folder (in additio
                             <subviews>
                                 <pathControl horizontalHuggingPriority="249" verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WPF-AV-Z7i">
                                     <rect key="frame" x="2" y="14" width="404" height="17"/>
-                                    <animations/>
                                     <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" placeholderString="Pick Optional Save Folder" id="KgB-tz-k8k">
                                         <font key="font" metaFont="system"/>
                                         <allowedTypes>
@@ -78,7 +74,6 @@ If you prefer to permanently save unmodified image files in a folder (in additio
                                     </connections>
                                 </pathControl>
                             </subviews>
-                            <animations/>
                         </view>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="WPF-AV-Z7i" secondAttribute="bottom" constant="11" id="87E-JL-Cmj"/>
@@ -86,13 +81,11 @@ If you prefer to permanently save unmodified image files in a folder (in additio
                             <constraint firstItem="WPF-AV-Z7i" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="leading" id="XpK-bh-mYm"/>
                             <constraint firstItem="WPF-AV-Z7i" firstAttribute="centerX" secondItem="cFe-lV-Lzx" secondAttribute="centerX" id="ywQ-um-DEp"/>
                         </constraints>
-                        <animations/>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cYX-WU-h9f">
                         <rect key="frame" x="428" y="23" width="121" height="29"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="No Save Folder" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kYX-Rj-z4j">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="smallSystem"/>
@@ -115,7 +108,6 @@ If you prefer to permanently save unmodified image files in a folder (in additio
                     <constraint firstItem="cYX-WU-h9f" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="8" symbolic="YES" id="nKG-S9-xpC"/>
                     <constraint firstItem="cFe-lV-Lzx" firstAttribute="leading" secondItem="mB3-is-Hvp" secondAttribute="leading" id="uIo-3J-BQd"/>
                 </constraints>
-                <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="arP-ts-3v3"/>
