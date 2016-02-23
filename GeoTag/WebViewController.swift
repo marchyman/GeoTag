@@ -58,7 +58,7 @@ final class WebViewController: NSViewController {
     /// off limits.
 
     class override func isSelectorExcludedFromWebScript(sel: Selector) -> Bool {
-        if sel == "reportPosition" {
+        if sel == #selector(reportPosition) {
             return false
         }
         return true

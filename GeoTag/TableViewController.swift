@@ -160,16 +160,17 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         switch menuItem.action {
-        case Selector("selectAll:"):
+        case #selector(selectAll(_:)):
             // OK as long as there is at least one entry in the table
             return images.count > 0
-        case Selector("clear:"):
+        case #selector(clear(_:)):
             // OK if the table is populated and no changes pending
             return images.count > 0 && !appDelegate.modified
-        case Selector("discard:"):
+        case #selector(discard(_:)):
             // OK if there are changes pending
             return appDelegate.modified
-        case Selector("cut:"), Selector("copy:"):
+        case #selector(cut(_:)),
+             #selector(copy(_:)):
             // OK if only one row with a valid location selected
             if tableView.numberOfSelectedRows == 1 {
                 let image = images[tableView.selectedRow]
@@ -177,7 +178,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                     return true
                 }
             }
-        case Selector("paste:"):
+        case #selector(paste(_:)):
             // OK if there is at least one selected row and something that
             // looks like a lat and lon in the pasteboard.
             if tableView.numberOfSelectedRows > 0 {
@@ -190,10 +191,10 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                     }
                 }
             }
-        case Selector("delete:"):
+        case #selector(delete(_:)):
             // OK if at least one row selected
             return tableView.numberOfSelectedRows > 0
-        case Selector("interpolate:"):
+        case #selector(interpolate(_:)):
             return validateForInterpolation()
         default:
             print("default for item \(menuItem)")

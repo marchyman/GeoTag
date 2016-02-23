@@ -105,11 +105,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         switch menuItem.action {
-        case Selector("showOpenPanel:"):
+        case #selector(showOpenPanel(_:)):
             return true
-        case Selector("save:"):
+        case #selector(save(_:)):
             return modified
-        case Selector("openPreferencesWindow:"):
+        case #selector(openPreferencesWindow(_:)):
             return true
         default:
             print("default for item \(menuItem)")
