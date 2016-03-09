@@ -57,9 +57,9 @@ final class Preferences : NSWindowController {
         panel.canCreateDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
             saveFolderPath.URL = panel.URLs[0]
+            guard let url = saveFolderPath.URL else { return }
             let defaults = NSUserDefaults.standardUserDefaults()
-            defaults.setURL(saveFolderPath.URL!,
-                            forKey: Preferences.saveFolderKey)
+            defaults.setURL(url, forKey: Preferences.saveFolderKey)
         }
     }
 
