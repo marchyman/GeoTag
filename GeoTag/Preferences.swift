@@ -81,9 +81,8 @@ final class Preferences : NSWindowController {
     /// initialize the saveFolderPath field from user preferences
 
     override func windowDidLoad() {
-        if let saveFolderURL = Preferences.saveFolder() {
-            saveFolderPath.URL = saveFolderURL
-        }
+        let defaults = NSUserDefaults.standardUserDefaults()
+        saveFolderPath.URL = defaults.URLForKey(Preferences.saveFolderKey)
     }
 
     // window delegate function... orderOut instead of close
