@@ -10,7 +10,7 @@ import Cocoa
 
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // class variable holds path to exiftool
-    static var exiftoolPath: String!
+    static private(set) var exiftoolPath: String!
     lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
 
     var modified: Bool {
@@ -45,6 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         for path in paths {
             let exiftoolPath = path + "/exiftool"
             if fileManager.fileExistsAtPath(exiftoolPath) {
+                precondition (AppDelegate.exiftoolPath == nil)
                 AppDelegate.exiftoolPath = exiftoolPath
                 print("exiftool path = \(exiftoolPath)")
                 return
