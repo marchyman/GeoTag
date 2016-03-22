@@ -10,7 +10,7 @@ import Cocoa
 
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // class variable holds path to exiftool
-    static var exiftoolPath: String!
+    static private(set) var exiftoolPath: String!
     lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
 
     var modified: Bool {
@@ -44,6 +44,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         for path in exiftoolSearchPaths() {
             let exiftoolPath = path + "/exiftool"
             if fileManager.fileExistsAtPath(exiftoolPath) {
+                precondition (AppDelegate.exiftoolPath == nil)
                 AppDelegate.exiftoolPath = exiftoolPath
                 print("exiftool path = \(exiftoolPath)")
                 return
@@ -138,11 +139,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         switch menuItem.action {
-        case Selector("showOpenPanel:"):
+        case #selector(showOpenPanel(_:)):
             return true
-        case Selector("save:"):
+        case #selector(save(_:)):
             return modified
-        case Selector("openPreferencesWindow:"):
+        case #selector(openPreferencesWindow(_:)):
             return true
         default:
             print("default for item \(menuItem)")

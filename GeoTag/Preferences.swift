@@ -28,10 +28,10 @@ final class Preferences : NSWindowController {
         if checkDirectory {
             let defaults = NSUserDefaults.standardUserDefaults()
             saveFolder = defaults.URLForKey(Preferences.saveFolderKey)
-            if saveFolder != nil {
+            if let path = saveFolder?.path {
                 let fileManager = NSFileManager.defaultManager()
-                if !fileManager.fileExistsAtPath(saveFolder!.path!) {
-                    unexpectedError(nil, "The specified Optional Save Folder\n\n\t\(saveFolder!.path!)\n\nis missing. Original image files will not be copied to that location.")
+                if !fileManager.fileExistsAtPath(path) {
+                    unexpectedError(nil, "The specified Optional Save Folder\n\n\t\(path)\n\nis missing. Original image files will not be copied to that location.")
                     saveFolder = nil
                     checkDirectory = false
                 }
@@ -58,9 +58,9 @@ final class Preferences : NSWindowController {
         panel.canCreateDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
             saveFolderPath.URL = panel.URLs[0]
+            guard let url = saveFolderPath.URL else { return }
             let defaults = NSUserDefaults.standardUserDefaults()
-            defaults.setURL(saveFolderPath.URL!,
-                            forKey: Preferences.saveFolderKey)
+            defaults.setURL(url, forKey: Preferences.saveFolderKey)
         }
     }
 
@@ -82,9 +82,8 @@ final class Preferences : NSWindowController {
     /// initialize the saveFolderPath field from user preferences
 
     override func windowDidLoad() {
-        if let saveFolderURL = Preferences.saveFolder() {
-            saveFolderPath.URL = saveFolderURL
-        }
+        let defaults = NSUserDefaults.standardUserDefaults()
+        saveFolderPath.URL = defaults.URLForKey(Preferences.saveFolderKey)
     }
 
     // window delegate function... orderOut instead of close
