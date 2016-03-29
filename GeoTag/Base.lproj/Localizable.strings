@@ -7,20 +7,20 @@
 "UNSAVED_TITLE" = "Unsaved location changes";
 "UNSAVED_DESC" = "You have modified or assigned geographical location information to images that have not yet been saved.
 
-You may save your changes, throw away your changes, or cancel program termination.  What is your desire?";
+You may save your changes, throw away your changes, or cancel program termination. What is your desire?";
 "SAVE" = "Save";
 "DONT_SAVE" = "Don't Save";
 "CANCEL" = "Cancel";
 "CLOSE" = "Close";
 "SET_EXIFTOOL_PATH" = "Browse…";
 "WARN_TITLE" = "Some files not opened";
-"WARN_DESC" = "One or more files were not opened.  Unopened files were duplicates of files already opened for processing.";
+"WARN_DESC" = "One or more files were not opened. Unopened files were duplicates of files already opened for processing.";
 "NO_EXIFTOOL_TITLE" = "exiftool not found";
-"NO_EXIFTOOL_DESC" = "GeoTag requires the 3rd party application exiftool to update the geolocation information in your images.  Exiftool could not be found in its normal location.   Are you sure you have it installed?
+"NO_EXIFTOOL_DESC" = "GeoTag requires the 3rd party application exiftool to update the geolocation information in your images. Exiftool could not be found in its normal location. Are you sure you have it installed?
 
 http://www.sno.phy.queensu.ca/~phil/exiftool/
 
-The above address is the home page for exiftool.  It contains a link to a Mac OS X package.  Please download the package and install the tool.";
+The above address is the home page for exiftool. It contains a link to a OS X package. Please download the package and install the tool.";
 "NO_TRASH_TITLE" = "Cannot move file to Trash";
 "NO_TRASH_DESC" = "
 
