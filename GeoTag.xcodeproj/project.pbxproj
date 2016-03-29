@@ -54,6 +54,8 @@
 		49C943AA197B170900F70F3F /* To Do */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "To Do"; sourceTree = "<group>"; };
 		49CE08811AFBF9370057E310 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Preferences.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		49E0340C1B0BBBB700CC9768 /* Interpolate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interpolate.swift; sourceTree = "<group>"; };
+		8B9F6AD51CA485840080CEF0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		8B9F6AD61CA485840080CEF0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +192,7 @@
 			knownRegions = (
 				en,
 				Base,
+				es,
 			);
 			mainGroup = 49B0EEAB19495FB100293C73;
 			productRefGroup = 49B0EEB519495FB100293C73 /* Products */;
@@ -259,6 +262,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				49B0EEC019495FB100293C73 /* Base */,
+				8B9F6AD51CA485840080CEF0 /* es */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -267,6 +271,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				49BC3D0A195A62F2009BEC94 /* Base */,
+				8B9F6AD61CA485840080CEF0 /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

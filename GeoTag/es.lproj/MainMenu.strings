@@ -1,0 +1,183 @@
+
+/* Class = "NSTableColumn"; headerCell.title = "Longitude"; ObjectID = "0Bk-nM-nLV"; */
+"0Bk-nM-nLV.headerCell.title" = "Longitud";
+
+/* Class = "NSMenuItem"; title = "GeoTag"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "GeoTag";
+
+/* Class = "NSSegmentedCell"; 248-FW-Avl.ibShadowedLabels[0] = "Standard"; ObjectID = "248-FW-Avl"; */
+"248-FW-Avl.ibShadowedLabels[0]" = "Normal";
+
+/* Class = "NSSegmentedCell"; 248-FW-Avl.ibShadowedLabels[1] = "Hybrid"; ObjectID = "248-FW-Avl"; */
+"248-FW-Avl.ibShadowedLabels[1]" = "Híbrido";
+
+/* Class = "NSSegmentedCell"; 248-FW-Avl.ibShadowedLabels[2] = "Satellite"; ObjectID = "248-FW-Avl"; */
+"248-FW-Avl.ibShadowedLabels[2]" = "Satélite";
+
+/* Class = "NSMenuItem"; title = "Quit GeoTag"; ObjectID = "4sb-4s-VLi"; */
+"4sb-4s-VLi.title" = "Salir de GeoTag";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
+"5QF-Oa-p0T.title" = "Editar";
+
+/* Class = "NSMenuItem"; title = "About GeoTag"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "Acerca de GeoTag";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
+"6dh-zS-Vam.title" = "Rehacer";
+
+/* Class = "NSTextFieldCell"; title = "-47.123456"; ObjectID = "6ou-9x-wx5"; */
+"6ou-9x-wx5.title" = "-47.123456";
+
+/* Class = "NSButtonCell"; title = "Save Map Location"; ObjectID = "7D7-7V-JIv"; */
+"7D7-7V-JIv.title" = "Guardar localización";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "7HJ-N3-yTm"; */
+"7HJ-N3-yTm.title" = "Cortar";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "AV7-FD-24k"; */
+"AV7-FD-24k.title" = "Copiar";
+
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
+"AYu-sK-qS6.title" = "Menú principal";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Api-o3-5df"; */
+"Api-o3-5df.title" = "Text Cell";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
+"BOF-NM-1cW.title" = "Preferencias…";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "DMD-7Q-hhq"; */
+"DMD-7Q-hhq.title" = "Text Cell";
+
+/* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
+"DVo-aG-piG.title" = "Cerrar";
+
+/* Class = "NSTableColumn"; headerCell.title = "Latitude"; ObjectID = "EGN-Ry-sij"; */
+"EGN-Ry-sij.headerCell.title" = "Latitud";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
+"F2S-fz-NVQ.title" = "Ayuda";
+
+/* Class = "NSMenuItem"; title = "GeoTag Help"; ObjectID = "FKE-Sm-Kum"; */
+"FKE-Sm-Kum.title" = "Ayuda de GeoTag";
+
+/* Class = "NSMenuItem"; title = "Open…"; ObjectID = "IAo-SY-fd9"; */
+"IAo-SY-fd9.title" = "Abrir…";
+
+/* Class = "NSMenuItem"; title = "Discard changes"; ObjectID = "KaW-ft-85H"; */
+"KaW-ft-85H.title" = "Descartar cambios";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
+"Kd2-mp-pUS.title" = "Mostrar todos";
+
+/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
+"LE2-aR-0XJ.title" = "Traer todos al frente";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
+"NMo-om-nkz.title" = "Servicios";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
+"OY7-WF-poV.title" = "Minimizar";
+
+/* Class = "NSMenuItem"; title = "Hide GeoTag"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "Ocultar GeoTag";
+
+/* Class = "NSMenuItem"; title = "Clear image list"; ObjectID = "Q8s-0g-bd6"; */
+"Q8s-0g-bd6.title" = "Vaciar lista de imágenes";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "QKC-zj-mQf"; */
+"QKC-zj-mQf.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Date/Time"; ObjectID = "QOH-5Z-eM4"; */
+"QOH-5Z-eM4.headerCell.title" = "Fecha/Hora";
+
+/* Class = "NSWindow"; title = "GeoTag"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "GeoTag";
+
+/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
+"R4o-n2-Eq4.title" = "Zoom";
+
+/* Class = "NSMenu"; title = "Table Menu"; ObjectID = "RI2-ul-n9D"; */
+"RI2-ul-n9D.title" = "Table Menu";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
+"Ruw-6m-B2m.title" = "Seleccionar todos";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "TDF-Pk-UcQ"; */
+"TDF-Pk-UcQ.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "yyyy:mm:dd hh:mm:ss"; ObjectID = "TXL-1H-fom"; */
+"TXL-1H-fom.title" = "yyyy:mm:dd hh:mm:ss";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
+"Td7-aD-5lo.title" = "Ventana";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
+"Vdr-fp-XzO.title" = "Ocultar otros";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
+"W48-6f-4Dl.title" = "Editar";
+
+/* Class = "NSMenuItem"; title = "New"; ObjectID = "Was-JA-tGl"; */
+"Was-JA-tGl.title" = "Nuevo";
+
+/* Class = "NSMenuItem"; title = "Clear image list"; ObjectID = "aTl-1u-JFS"; */
+"aTl-1u-JFS.title" = "Vaciar lista de imágenes";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
+"aUF-d1-5bR.title" = "Ventana";
+
+/* Class = "NSMenuItem"; title = "Interpolate"; ObjectID = "bga-UQ-Sqa"; */
+"bga-UQ-Sqa.title" = "Interpolar";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
+"bib-Uj-vzu.title" = "Archivo";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "dMs-cI-mzQ"; */
+"dMs-cI-mzQ.title" = "Archivo";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Yzg"; */
+"dRJ-4n-Yzg.title" = "Deshacer";
+
+/* Class = "NSTextFieldCell"; title = "-122.123456"; ObjectID = "e4b-z8-Hnu"; */
+"e4b-z8-Hnu.title" = "-122.123456";
+
+/* Class = "NSTextFieldCell"; title = "p-yydddhhmm-nnnn.typ"; ObjectID = "eOy-hW-eGU"; */
+"eOy-hW-eGU.title" = "p-yydddhhmm-nnnn.typ";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
+"gVA-U4-sdL.title" = "Pegar";
+
+/* Class = "NSTableColumn"; headerCell.title = "Image Name"; ObjectID = "gce-uz-HJd"; */
+"gce-uz-HJd.headerCell.title" = "Nueva imagen";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
+"hz9-B4-Xy5.title" = "Servicios";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "nWD-VV-7or"; */
+"nWD-VV-7or.title" = "Pegar";
+
+/* Class = "NSMenuItem"; title = "Interpolate"; ObjectID = "oiR-b5-SPF"; */
+"oiR-b5-SPF.title" = "Interpolar";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "pa3-QI-u2k"; */
+"pa3-QI-u2k.title" = "Borrar";
+
+/* Class = "NSMenuItem"; title = "Save"; ObjectID = "pxx-59-PXV"; */
+"pxx-59-PXV.title" = "Guardar";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "tcS-DY-Zsm"; */
+"tcS-DY-Zsm.title" = "Borrar";
+
+/* Class = "NSMenu"; title = "GeoTag"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "GeoTag";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "uRl-iY-unG"; */
+"uRl-iY-unG.title" = "Cortar";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
+"wpr-3q-Mcd.title" = "Ayuda";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x3v-GG-iWU"; */
+"x3v-GG-iWU.title" = "Copiar";
