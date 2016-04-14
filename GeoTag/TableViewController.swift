@@ -586,21 +586,21 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 /// selected send the event to the super class for processing.  This is done
 /// in a TableView extension.
 
-//extension NSTableView {
-//    public override func rightMouseDown(_ theEvent: NSEvent) {
-//        let localPoint = convertPoint(theEvent.locationInWindow, fromView: nil)   /// FIXME: How should this line be coded in swift 3?
-//        let row = localPoint.row
-//        if row >= 0 {
-//            if !isRowSelected(row) {
-//                selectRowIndexes(NSIndexSet(index: row),
-//                                 byExtendingSelection: false)
-//            }
-//        } else {
-//            deselectAll(self)
-//        }
-//        super.rightMouseDown(theEvent)
-//    }
-//}
+extension NSTableView {
+    public override func rightMouseDown(_ theEvent: NSEvent) {
+        let localPoint = convert(theEvent.locationInWindow, from: nil)
+        let row = self.row(at: localPoint)
+        if row >= 0 {
+            if !isRowSelected(row) {
+                selectRowIndexes(NSIndexSet(index: row),
+                                 byExtendingSelection: false)
+            }
+        } else {
+            deselectAll(self)
+        }
+        super.rightMouseDown(theEvent)
+    }
+}
 
 //MARK: String extension -> Double
 
