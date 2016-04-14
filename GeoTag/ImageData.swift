@@ -31,8 +31,8 @@ final class ImageData: NSObject {
     var dateFromEpoch: NSTimeInterval {
         let format = NSDateFormatter()
         format.dateFormat = "yyyy:MM:dd HH:mm:ss"
-        format.timeZone = NSTimeZone.localTimeZone()
-        if let convertedDate = format.dateFromString(date) {
+        format.timeZone = NSTimeZone.local()
+        if let convertedDate = format.date(from: date) {
             return convertedDate.timeIntervalSince1970
         }
         return 0
@@ -104,21 +104,22 @@ final class ImageData: NSObject {
     /// trying to link foo.jpg_original to somedir/foo.jpg.
     private func saveOriginalFile(sourceName: String) -> Bool {
         guard let saveDirURL = Preferences.saveFolder() else { return false }
+        guard let name = name else { return false }
         let fileManager = NSFileManager.defaultManager()
-        let saveFileURL = saveDirURL.URLByAppendingPathComponent(name!, isDirectory: false)
-        if !fileManager.fileExistsAtPath(saveFileURL.path!) {
+        let saveFileURL = saveDirURL.appendingPathComponent(name, isDirectory: false)
+        if !fileManager.fileExists(atPath: saveFileURL.path!) {
             do {
-                try fileManager.linkItemAtPath(sourceName, toPath: saveFileURL.path!)
+                try fileManager.linkItem(atPath: sourceName, toPath: saveFileURL.path!)
                 return true
             } catch {
                 // couldn't create hard link, copy file instead
                 do {
-                    try fileManager.copyItemAtPath(sourceName,
-                                                   toPath: saveFileURL.path!)
+                    try fileManager.copyItem(atPath: sourceName,
+                                             toPath: saveFileURL.path!)
                     return true
                 } catch let error as NSError {
-                    unexpectedError(error,
-                                    "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
+                    unexpected(error: error,
+                               "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
                 }
             }
         }
@@ -134,21 +135,21 @@ final class ImageData: NSObject {
         var backupURL: NSURL?
         let fileManager = NSFileManager.defaultManager()
         do {
-            try fileManager.trashItemAtURL(url, resultingItemURL: &backupURL)
-            saveOriginalFile(backupURL!.path!)
+            try fileManager.trashItem(at: url, resultingItemURL: &backupURL)
+            saveOriginalFile(sourceName: backupURL!.path!)
             do {
-                try fileManager.copyItemAtURL(backupURL!, toURL: url)
+                try fileManager.copyItem(at: backupURL!, to: url)
                 return true
             } catch let error as NSError {
-                unexpectedError(error,
-                                "Cannot copy \(backupURL) to \(url) for update.\n\nReason: ")
+                unexpected(error: error,
+                           "Cannot copy \(backupURL) to \(url) for update.\n\nReason: ")
             }
         } catch let error as NSError {
             // couldn't trash file, warn user of alternate backup location
             if ImageData.firstWarning {
                 ImageData.firstWarning = false
                 let alert = NSAlert()
-                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
                 alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
                                                       comment: "can't trash file")
                 alert.informativeText = path
@@ -205,8 +206,8 @@ final class ImageData: NSObject {
             }
 
             let exiftool = NSTask()
-            exiftool.standardOutput = NSFileHandle.fileHandleWithNullDevice()
-            exiftool.standardError = NSFileHandle.fileHandleWithNullDevice()
+            exiftool.standardOutput = NSFileHandle.nullDevice()
+            exiftool.standardError = NSFileHandle.nullDevice()
             exiftool.launchPath = AppDelegate.exiftoolPath
             exiftool.arguments = ["-q", "-m",
                 "-DateTimeOriginal>FileModifyDate", latArg, latRefArg,
@@ -215,7 +216,7 @@ final class ImageData: NSObject {
             // add -overwrite_original option to the exiftool args if we were
             // able to create a backup.
             if overwriteOriginal {
-                exiftool.arguments?.insert("-overwrite_original", atIndex: 2)
+                exiftool.arguments?.insert("-overwrite_original", at: 2)
             }
             exiftool.launch()
             exiftool.waitUntilExit()
@@ -224,13 +225,13 @@ final class ImageData: NSObject {
             // copy the exiftool created original to the save directory.
             if !overwriteOriginal {
                 let originalFile = path + "_original"
-                if saveOriginalFile(originalFile) {
+                if saveOriginalFile(sourceName: originalFile) {
                     let fileManager = NSFileManager.defaultManager()
                     do {
-                        try fileManager.removeItemAtPath(originalFile)
+                        try fileManager.removeItem(atPath: originalFile)
                     } catch let error as NSError {
-                        unexpectedError(error,
-                                        "Cannot remove \(originalFile)\n\nReason: ")
+                        unexpected(error: error,
+                                   "Cannot remove \(originalFile)\n\nReason: ")
                     }
                 }
             }
@@ -293,23 +294,23 @@ final class ImageData: NSObject {
         }
         if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts) {
             // Create an NSImage from the preview
-            let imgHeight = CGFloat(CGImageGetHeight(imgPreview))
-            let imgWidth = CGFloat(CGImageGetWidth(imgPreview))
+            let imgHeight = CGFloat(imgPreview.height)
+            let imgWidth = CGFloat(imgPreview.width)
             let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
             image = NSImage(size: imgRect.size)
             image.lockFocus()
-            if let currentContext = NSGraphicsContext.currentContext() {
+            if let currentContext = NSGraphicsContext.current() {
                 var context: CGContext! = nil
                 // 10.9 doesn't have CGContext
                 if #available(OSX 10.10, *) {
-                    context = currentContext.CGContext
+                    context = currentContext.cgContext
                 } else {
                     // graphicsPort is type UnsafePointer<()>
                     context = unsafeBitCast(currentContext.graphicsPort,
-                                            CGContext.self)
+                                            to: CGContext.self)
                 }
                 if context != nil {
-                    CGContextDrawImage(context, imgRect, imgPreview)
+                    context.draw(in: imgRect, image: imgPreview)
                 }
             }
             image.unlockFocus()

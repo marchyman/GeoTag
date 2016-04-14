@@ -26,12 +26,12 @@ final class Preferences : NSWindowController {
         var saveFolder: NSURL? = nil
 
         if checkDirectory {
-            let defaults = NSUserDefaults.standardUserDefaults()
-            saveFolder = defaults.URLForKey(Preferences.saveFolderKey)
+            let defaults = NSUserDefaults.standard()
+            saveFolder = defaults.url(forKey: Preferences.saveFolderKey)
             if let path = saveFolder?.path {
                 let fileManager = NSFileManager.defaultManager()
-                if !fileManager.fileExistsAtPath(path) {
-                    unexpectedError(nil, "The specified Optional Save Folder\n\n\t\(path)\n\nis missing. Original image files will not be copied to that location.")
+                if !fileManager.fileExists(atPath: path) {
+                    unexpected(error: nil, "The specified Optional Save Folder\n\n\t\(path)\n\nis missing. Original image files will not be copied to that location.")
                     saveFolder = nil
                     checkDirectory = false
                 }
@@ -57,9 +57,9 @@ final class Preferences : NSWindowController {
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
-            saveFolderPath.URL = panel.URLs[0]
-            guard let url = saveFolderPath.URL else { return }
-            let defaults = NSUserDefaults.standardUserDefaults()
+            saveFolderPath.url = panel.urls[0]
+            guard let url = saveFolderPath.url else { return }
+            let defaults = NSUserDefaults.standard()
             defaults.setURL(url, forKey: Preferences.saveFolderKey)
         }
     }
@@ -68,9 +68,9 @@ final class Preferences : NSWindowController {
     /// - Parameter AnyObject: unused
 
 	@IBAction func clearSaveFolder(_: AnyObject) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.removeObjectForKey(Preferences.saveFolderKey)
-        saveFolderPath.URL = nil
+        let defaults = NSUserDefaults.standard()
+        defaults.removeObject(forKey: Preferences.saveFolderKey)
+        saveFolderPath.url = nil
     }
 
     /// return the NIB name for this window
@@ -82,8 +82,8 @@ final class Preferences : NSWindowController {
     /// initialize the saveFolderPath field from user preferences
 
     override func windowDidLoad() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        saveFolderPath.URL = defaults.URLForKey(Preferences.saveFolderKey)
+        let defaults = NSUserDefaults.standard()
+        saveFolderPath.url = defaults.url(forKey: Preferences.saveFolderKey)
     }
 
     // window delegate function... orderOut instead of close

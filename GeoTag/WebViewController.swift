@@ -41,8 +41,8 @@ final class WebViewController: NSViewController {
 
     /// limit property access from javascript to the map state variables
 
-    class override func isKeyExcludedFromWebScript(keyPtr: UnsafePointer<Int8>) -> Bool {
-        if let key = NSString(CString: keyPtr, encoding: NSUTF8StringEncoding) {
+    class func isKeyExcludedFromWebScript(keyPtr: UnsafePointer<Int8>) -> Bool {
+        if let key = NSString(cString: keyPtr, encoding: NSUTF8StringEncoding) {
             switch key {
             case "mapLatitude", "mapLongitude", "mapZoom", "mapType",
                 "itemSelected", "markerLatitude", "markerLongitude":
@@ -57,7 +57,7 @@ final class WebViewController: NSViewController {
     /// allow javascript to report position changes.  All other methods are
     /// off limits.
 
-    class override func isSelectorExcludedFromWebScript(sel: Selector) -> Bool {
+    class func isSelectorExcludedFromWebScript(sel: Selector) -> Bool {
         if sel == #selector(reportPosition) {
             return false
         }
@@ -70,11 +70,11 @@ final class WebViewController: NSViewController {
 
     override func awakeFromNib() {
         // Ask webKit to load the map.html file from our resources directory.
-        let mapPath = NSBundle.mainBundle().pathForResource("map",
-                                                            ofType: "html")
+        let mapPath = NSBundle.main().pathForResource("map",
+                                                      ofType: "html")
         let mapURL = NSURL(fileURLWithPath: mapPath!, isDirectory: false)
-        let map = NSURLRequest(URL: mapURL)
-        webView.mainFrame.loadRequest(map)
+        let map = NSURLRequest(url: mapURL)
+        webView.mainFrame.load(map)
     }
 
     /// obtain info needed to draw initial map from user defaults
@@ -83,20 +83,20 @@ final class WebViewController: NSViewController {
                  didClearWindowObject wso: WebScriptObject,
                  forFrame frame: WebFrame) {
         // Initialize map state
-        let defaults = NSUserDefaults.standardUserDefaults()
-        let latitude = defaults.doubleForKey(mapLatitudeKey)
+        let defaults = NSUserDefaults.standard()
+        let latitude = defaults.double(forKey: mapLatitudeKey)
         if latitude != 0.0 {
             mapLatitude = latitude
         }
-        let longitude = defaults.doubleForKey(mapLongitudeKey)
+        let longitude = defaults.double(forKey: mapLongitudeKey)
         if longitude != 0.0 {
             mapLongitude = longitude
         }
-        let zoom = defaults.integerForKey(mapZoomKey)
+        let zoom = defaults.integer(forKey: mapZoomKey)
         if zoom != 0 {
             mapZoom = zoom
         }
-        mapType = defaults.integerForKey(mapTypeKey)
+        mapType = defaults.integer(forKey: mapTypeKey)
         mapTypeControl.selectedSegment = mapType
 
         wso.setValue(self, forKey: "controller")
@@ -107,17 +107,17 @@ final class WebViewController: NSViewController {
     /// select the desired map type
 
     @IBAction func changeMapType(sender: NSSegmentedControl) {
-        setMap("TypeId", values: [sender.selectedSegment])
+        setMap(function: "TypeId", values: [sender.selectedSegment])
     }
 
     /// save the current map type and displayed region in user defaults
 
     @IBAction func saveMapSetting(_: AnyObject) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setDouble(mapLatitude, forKey: mapLatitudeKey)
-        defaults.setDouble(mapLongitude, forKey: mapLongitudeKey)
-        defaults.setInteger(mapZoom, forKey: mapZoomKey)
-        defaults.setInteger(mapType, forKey: mapTypeKey)
+        let defaults = NSUserDefaults.standard()
+        defaults.set(mapLatitude, forKey: mapLatitudeKey)
+        defaults.set(mapLongitude, forKey: mapLongitudeKey)
+        defaults.set(mapZoom, forKey: mapZoomKey)
+        defaults.set(mapType, forKey: mapTypeKey)
     }
 
     // MARK: pin drop/clear interface
@@ -125,13 +125,13 @@ final class WebViewController: NSViewController {
     /// drop the pin at the given latitude and longitude
 
     func pinMapAtLatitude(latitude: Double, longitude: Double) {
-         setMap("Pin", values: [latitude, longitude])
+         setMap(function: "Pin", values: [latitude, longitude])
     }
 
     /// hide the pin
 
     func removeMapPin() {
-        setMap("PinHidden", values: nil)
+        setMap(function: "PinHidden", values: nil)
     }
 
     // MARK: Javascript interface
@@ -140,7 +140,7 @@ final class WebViewController: NSViewController {
     /// The delegate processes the position change.
 
     func reportPosition() {
-        clickDelegate?.webViewMouseClicked(markerLatitude,
+        clickDelegate?.webViewMouseClicked(latitude: markerLatitude,
                                            longitude: markerLongitude)
     }
 

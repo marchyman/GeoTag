@@ -17,15 +17,15 @@ import Foundation
 /// and internal folders are not added to the array.  Internal folders are
 /// enumerated.
 
-public func addURLsInFolder(URL: NSURL, inout toURLs URLs: [NSURL]) -> Bool {
+public func addURLsInFolder(url: NSURL, toUrls urls: inout [NSURL]) -> Bool {
     let fileManager = NSFileManager.defaultManager()
     var dir: ObjCBool = false
-    if fileManager.fileExistsAtPath(URL.path!, isDirectory: &dir) && dir {
+    if fileManager.fileExists(atPath: url.path!, isDirectory: &dir) && dir {
         guard let urlEnumerator =
-            fileManager.enumeratorAtURL(URL,
-                                        includingPropertiesForKeys: [NSURLIsDirectoryKey],
-                                        options: .SkipsHiddenFiles,
-                                        errorHandler: nil) else { return false }
+            fileManager.enumerator(at: url,
+                                   includingPropertiesForKeys: [NSURLIsDirectoryKey],
+                                   options: .skipsHiddenFiles,
+                                   errorHandler: nil) else { return false }
         while let fileURL = urlEnumerator.nextObject() as? NSURL {
             var resource: AnyObject?
             do {
@@ -37,7 +37,7 @@ public func addURLsInFolder(URL: NSURL, inout toURLs URLs: [NSURL]) -> Bool {
             } catch {
                 // assume the fileURL is not a folder
             }
-            URLs.append(fileURL)
+            urls.append(fileURL)
         }
         return true
     }

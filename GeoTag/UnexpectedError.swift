@@ -17,12 +17,12 @@ import AppKit
 /// If errorInfo is not nil the system error description will be appended to the
 /// programmer provided description string.
 
-public func unexpectedError(errorInfo: NSError?, _ description: String = "") {
+public func unexpected(error: NSError?, _ description: String = "") {
     let alert = NSAlert()
-    alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+    alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
     alert.messageText = NSLocalizedString("UNEXPECTED_ERROR",
                                           comment: "unexpected error")
-    if let reason = errorInfo?.localizedFailureReason {
+    if let reason = error?.localizedFailureReason {
         alert.informativeText = description + reason
     } else {
         alert.informativeText = description

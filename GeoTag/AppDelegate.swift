@@ -15,10 +15,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     var modified: Bool {
         get {
-            return window.documentEdited
+            return window.isDocumentEdited
         }
         set {
-            window.documentEdited = newValue
+            window.isDocumentEdited = newValue
         }
     }
 
@@ -43,7 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let fileManager = NSFileManager.defaultManager()
         for path in exiftoolSearchPaths() {
             let exiftoolPath = path + "/exiftool"
-            if fileManager.fileExistsAtPath(exiftoolPath) {
+            if fileManager.fileExists(atPath: exiftoolPath) {
                 precondition (AppDelegate.exiftoolPath == nil)
                 AppDelegate.exiftoolPath = exiftoolPath
                 print("exiftool path = \(exiftoolPath)")
@@ -51,8 +51,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             }
         }
         let alert = NSAlert()
-        alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
-        alert.addButtonWithTitle(NSLocalizedString("SET_EXIFTOOL_PATH", comment: "Choose exiftool path"))
+        alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+        alert.addButton(withTitle: NSLocalizedString("SET_EXIFTOOL_PATH",
+                                                     comment: "Choose exiftool path"))
         alert.messageText = NSLocalizedString("NO_EXIFTOOL_TITLE",
                                               comment: "can't find exiftool")
         alert.informativeText = NSLocalizedString("NO_EXIFTOOL_DESC",
@@ -74,9 +75,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         openPanel.showsHiddenFiles = true
         switch (openPanel.runModal()) {
         case NSFileHandlingPanelOKButton:
-            if let path = openPanel.URL?.path {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.setObject(path, forKey: Preferences.exiftoolPathKey)
+            if let path = openPanel.url?.path {
+                let defaults = NSUserDefaults.standard()
+                defaults.set(path, forKey: Preferences.exiftoolPathKey)
                 defaults.synchronize()
             }
             checkForExiftool()
@@ -87,8 +88,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func exiftoolSearchPaths() -> [String] {
         var paths = ["/usr/bin", "/usr/local/bin", "/opt/bin"]
-        let defaults = NSUserDefaults.standardUserDefaults()
-        if let customPath = defaults.stringForKey(Preferences.exiftoolPathKey) {
+        let defaults = NSUserDefaults.standard()
+        if let customPath = defaults.string(forKey: Preferences.exiftoolPathKey) {
             paths.append(customPath)
         }
         return paths
@@ -119,15 +120,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if panel.runModal() == NSFileHandlingPanelOKButton {
             // expand selected URLs that refer to a directory
             var urls = [NSURL]()
-            for url in panel.URLs {
-                if !addURLsInFolder(url, toURLs: &urls) {
+            for url in panel.urls {
+                if !addURLsInFolder(url: url, toUrls: &urls) {
                     urls.append(url)
                 }
             }
-            let dups = tableViewController.addImages(urls)
+            let dups = tableViewController.addImages(urls: urls)
             if dups {
                 let alert = NSAlert()
-                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
                 alert.messageText = NSLocalizedString("WARN_TITLE", comment: "Files not opened")
                 alert.informativeText = NSLocalizedString("WARN_DESC", comment: "Files not opened")
                 alert.runModal()
@@ -137,8 +138,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     //MARK: Save image changes (if any)
 
-    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        switch menuItem.action {
+    func validateMenuItem(menuItem: NSMenuItem) -> Bool {
+        guard let action = menuItem.action else { return false }
+        switch action {
         case #selector(showOpenPanel(_:)):
             return true
         case #selector(save(_:)):
@@ -162,7 +164,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         undoManager.removeAllActions()
     }
 
-    @IBAction func openPreferencesWindow(sender: AnyObject!) {
+    @IBAction func openPreferencesWindow(_ sender: AnyObject!) {
         preferences.showWindow(sender)
     }
 
@@ -182,17 +184,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func saveOrDontSave() -> Bool {
         if modified {
             let alert = NSAlert()
-            alert.addButtonWithTitle(NSLocalizedString("SAVE",
-                                                       comment: "Save"))
-            alert.addButtonWithTitle(NSLocalizedString("CANCEL",
-                                                       comment: "Cancel"))
-            alert.addButtonWithTitle(NSLocalizedString("DONT_SAVE",
-                                                       comment: "Don't Save"))
+            alert.addButton(withTitle: NSLocalizedString("SAVE",
+                                                         comment: "Save"))
+            alert.addButton(withTitle: NSLocalizedString("CANCEL",
+                                                         comment: "Cancel"))
+            alert.addButton(withTitle: NSLocalizedString("DONT_SAVE",
+                                                         comment: "Don't Save"))
             alert.messageText = NSLocalizedString("UNSAVED_TITLE",
                                                   comment: "Unsaved Changes")
             alert.informativeText = NSLocalizedString("UNSAVED_DESC",
                                                       comment: "Unsaved Changes")
-            alert.beginSheetModalForWindow(window) {
+            alert.beginSheetModal(for: window) {
                 (response: NSModalResponse) -> Void in
                 switch response {
                 case NSAlertFirstButtonReturn:      // Save
@@ -214,9 +216,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func applicationShouldTerminate(sender: NSApplication) -> NSApplicationTerminateReply {
         if saveOrDontSave() {
-            return .TerminateNow
+            return .terminateNow
         }
-        return .TerminateCancel
+        return .terminateCancel
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {

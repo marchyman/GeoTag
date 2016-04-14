@@ -28,8 +28,8 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         // can't make clickDelegate an @IBOutlet; wire it up here
         // webViewController is a delegate to handle location changes
         webViewController.clickDelegate = self
-        tableView.registerForDraggedTypes([NSFilenamesPboardType]);
-        tableView.draggingDestinationFeedbackStyle = .None
+        tableView.register(forDraggedTypes: [NSFilenamesPboardType]);
+        tableView.draggingDestinationFeedbackStyle = .none
     }
 
     //MARK: populating the table
@@ -97,8 +97,8 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     /// will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
     /// The validLocation Boolean is used to mitigate this issue.
 
-    func updateLocationAtRow(row: Int, validLocation: Bool, latitude: Double,
-                             longitude: Double, modified: Bool = true) {
+    func updateLocation(row: Int, validLocation: Bool, latitude: Double,
+                        longitude: Double, modified: Bool = true) {
         var oldValidLocation: Bool
         var oldLatitude: Double
         var oldLongitude: Double
@@ -113,18 +113,18 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             oldLongitude = 0
         }
         let undo = appDelegate.undoManager
-        undo.prepareWithInvocationTarget(self).updateLocationAtRow(row,
+        undo.prepare(withInvocationTarget: self).updateLocation(row: row,
             validLocation: oldValidLocation, latitude: oldLatitude,
             longitude: oldLongitude, modified: appDelegate.modified)
         if validLocation {
-            image.setLatitude(latitude, longitude: longitude)
-            webViewController.pinMapAtLatitude(image.latitude!,
+            image.setLatitude(latitude: latitude, longitude: longitude)
+            webViewController.pinMapAtLatitude(latitude: image.latitude!,
                                                longitude: image.longitude!)
         } else {
-            image.setLatitude(nil, longitude: nil)
+            image.setLatitude(latitude: nil, longitude: nil)
             webViewController.removeMapPin()
         }
-        reloadRow(row)
+        reloadRow(row: row)
         appDelegate.modified = modified
     }
 
@@ -142,13 +142,15 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         if tableView.numberOfSelectedRows > 2 {
             let rows = tableView.selectedRowIndexes
             var count = 0
-            rows.enumerateIndexesUsingBlock {
+            // trailing closure form of the following (without parens)
+            // return an error in the 2016-04-12 snapshot
+            rows.enumerate({
                 (row, _) -> Void in
                 if self.images[row].latitude != nil &&
                    self.images[row].longitude != nil {
                    count += 1
                 }
-            }
+            })
             if count == 2 {
                 return true
             }
@@ -158,8 +160,9 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     // only enable various tableview related menu items when it makes sense
 
-    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        switch menuItem.action {
+    func validateMenuItem(menuItem: NSMenuItem) -> Bool {
+        guard let action = menuItem.action else { return false }
+        switch action {
         case #selector(selectAll(_:)):
             // OK as long as there is at least one entry in the table
             return images.count > 0
@@ -182,10 +185,10 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             // OK if there is at least one selected row and something that
             // looks like a lat and lon in the pasteboard.
             if tableView.numberOfSelectedRows > 0 {
-                let pb = NSPasteboard.generalPasteboard()
-                if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
+                let pb = NSPasteboard.general()
+                if let pasteVal = pb.string(forType: NSPasteboardTypeString) {
                     // pasteVal should look like "lat lon"
-                    let values = pasteVal.componentsSeparatedByString(" ")
+                    let values = pasteVal.components(separatedBy: " ")
                     if values.count == 2 {
                         return true
                     }
@@ -223,7 +226,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     /// cut is implemented as a copy followed by a delete.  The obj parameter
     /// is forwarded to copy and delete.
 
-    @IBAction func cut(obj: AnyObject) {
+    @IBAction func cut(_ obj: AnyObject) {
         copy(obj)
         delete(obj)
         appDelegate.undoManager.setActionName("cut")
@@ -238,7 +241,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
     @IBAction func copy(_: AnyObject) {
         let row = tableView.selectedRow
-        let pb = NSPasteboard.generalPasteboard()
+        let pb = NSPasteboard.general()
         pb.declareTypes([NSPasteboardTypeString], owner: self)
         pb.setString(images[row].stringRepresentation,
                      forType: NSPasteboardTypeString)
@@ -253,10 +256,10 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     /// to all selected items in the table.
 
     @IBAction func paste(_: AnyObject) {
-        let pb = NSPasteboard.generalPasteboard()
-        if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
+        let pb = NSPasteboard.general()
+        if let pasteVal = pb.string(forType: NSPasteboardTypeString) {
             // pasteVal should look like "lat lon"
-            let values = pasteVal.componentsSeparatedByString(" ")
+            let values = pasteVal.components(separatedBy: " ")
             if values.count == 2 {
                 let latitude = values[0].doubleValue
                 let longitude = values[1].doubleValue
@@ -275,11 +278,11 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     @IBAction func delete(_: AnyObject) {
         let rows = tableView.selectedRowIndexes
         appDelegate.undoManager.beginUndoGrouping()
-        rows.enumerateIndexesUsingBlock {
+        rows.enumerate( {
             (row, _) -> Void in
-            self.updateLocationAtRow(row, validLocation: false, latitude: 0,
+            self.updateLocation(row: row, validLocation: false, latitude: 0,
                 longitude: 0)
-        }
+        } )
         appDelegate.undoManager.endUndoGrouping()
         appDelegate.undoManager.setActionName("delete")
     }
@@ -318,7 +321,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 
         // figure out our starting and ending points
         let rows = tableView.selectedRowIndexes
-        rows.enumerateIndexesUsingBlock {
+        rows.enumerate( {
             (row, _) -> Void in
             let image = self.images[row]
             if image.latitude != nil &&
@@ -335,7 +338,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                     endInfo = info
                 }
             }
-        }
+        } )
 
         // if start and end have the same timestamp don't bother
 
@@ -357,7 +360,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             let speed = distance / (endInfo.timestamp - startInfo.timestamp)
             print("\(distance) meters \(bearing)º at \(speed) meters/sec")
             appDelegate.undoManager.beginUndoGrouping()
-            rows.enumerateIndexesUsingBlock {
+            rows.enumerate( {
                 (row, _) -> Void in
                 let image = self.images[row]
                 let deltaTime = image.dateFromEpoch - startInfo.timestamp
@@ -366,10 +369,10 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                     let deltaDist = deltaTime * speed
                     let (lat, lon) = destFromStart(lat: startInfo.lat, lon: startInfo.lon,
                                                    distance: deltaDist, bearing: bearing)
-                    self.updateLocationAtRow(row, validLocation: true,
+                    self.updateLocation(row: row, validLocation: true,
                                              latitude: lat, longitude: lon)
                 }
-            }
+            } )
             appDelegate.undoManager.endUndoGrouping()
             appDelegate.undoManager.setActionName("interpolate locations")
         }
@@ -396,11 +399,11 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     /// Update the latitude and longitude columns for the given row.
 
     func reloadRow(row: Int) {
-        let latColumn = tableView.columnWithIdentifier("latitude")
+        let latColumn = tableView.column(withIdentifier: "latitude")
         let columns = 2 // latitude and longitude
-        let cols = NSIndexSet(indexesInRange: NSMakeRange(latColumn, columns))
-        tableView.reloadDataForRowIndexes(NSIndexSet(index: row),
-                                          columnIndexes: cols)
+        let cols = NSIndexSet(indexesIn: NSMakeRange(latColumn, columns))
+        tableView.reloadData(forRowIndexes: NSIndexSet(index: row),
+                             columnIndexes: cols)
     }
 
     /// Update all selected rows with the given latitude and longitude
@@ -410,14 +413,14 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     ///
     /// Update all selected rows as a single undo group.
 
-    func updateSelectedRows(latitude latitude: Double, longitude: Double) {
+    func updateSelectedRows(latitude: Double, longitude: Double) {
         let rows = tableView.selectedRowIndexes
         appDelegate.undoManager.beginUndoGrouping()
-        rows.enumerateIndexesUsingBlock {
+        rows.enumerate( {
             (row, _) -> Void in
-            self.updateLocationAtRow(row, validLocation: true,
+            self.updateLocation(row: row, validLocation: true,
                 latitude: latitude, longitude: longitude)
-        }
+        } )
         appDelegate.undoManager.endUndoGrouping()
     }
 
@@ -437,12 +440,12 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     func tableView(tableView: NSTableView,
                    selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet) -> NSIndexSet {
         let selectionIndexes = NSMutableIndexSet()
-        proposedSelectionIndexes.enumerateIndexesUsingBlock {
+        proposedSelectionIndexes.enumerate( {
             (row, _) -> Void in
             if self.images[row].validImage {
-               selectionIndexes.addIndex(row)
+               selectionIndexes.add(row)
             }
-        }
+        } )
         return selectionIndexes
     }
 
@@ -453,7 +456,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         // redraw last selected row in normal colors
 
         if let lastSelectedRow = self.lastSelectedRow {
-            reloadRow(lastSelectedRow)
+            reloadRow(row: lastSelectedRow)
         }
         let row = tableView.selectedRow
         if row < 0 {
@@ -464,8 +467,8 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             let image = images[row]
             imageWell.image = image.image
             if image.latitude != nil && image.longitude != nil {
-                reloadRow(row) // change color of selected row
-                webViewController.pinMapAtLatitude(image.latitude!,
+                reloadRow(row: row) // change color of selected row
+                webViewController.pinMapAtLatitude(latitude: image.latitude!,
                                                    longitude: image.longitude!)
             } else {
                 webViewController.removeMapPin()
@@ -509,11 +512,11 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                 break
             }
             let colView =
-                tableView.makeViewWithIdentifier(id, owner: nil) as! NSTableCellView
+                tableView.make(withIdentifier: id, owner: nil) as! NSTableCellView
             colView.textField?.stringValue = value;
             if row == tableView.selectedRow {
                 lastSelectedRow = row
-                colView.textField?.textColor = NSColor.yellowColor()
+                colView.textField?.textColor = NSColor.yellow()
             } else {
                 lastSelectedRow = nil
                 colView.textField?.textColor = nil
@@ -522,7 +525,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                 colView.textField?.toolTip = tip!
             }
             if !image.validImage {
-                colView.textField?.textColor = NSColor.grayColor()
+                colView.textField?.textColor = NSColor.gray()
             }
             return colView
         }
@@ -539,17 +542,17 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                    proposedDropOperation operation: NSTableViewDropOperation) -> NSDragOperation {
 
         let pb = info.draggingPasteboard()
-        if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
+        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String!] {
             let fileManager = NSFileManager.defaultManager()
             for path in paths {
-                if !fileManager.fileExistsAtPath(path) ||
-                   imageURLs.contains(NSURL.fileURLWithPath(path)) {
-                    return .None
+                if !fileManager.fileExists(atPath: path) ||
+                   imageURLs.contains(NSURL.fileURL(withPath: path)) {
+                    return []
                 }
             }
-            return .Link
+            return .link
         }
-        return .None
+        return []
     }
 
     // Add dropped files to the table
@@ -559,15 +562,15 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
                    row: Int,
                    dropOperation operation: NSTableViewDropOperation) -> Bool {
         let pb = info.draggingPasteboard()
-        if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
+        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String!] {
             var urls = [NSURL]()
             for path in paths {
                 let fileURL = NSURL(fileURLWithPath: path)
-                if !addURLsInFolder(fileURL, toURLs: &urls) {
+                if !addURLsInFolder(url: fileURL, toUrls: &urls) {
                     urls.append(fileURL)
                 }
             }
-            return !addImages(urls)
+            return !addImages(urls: urls)
         }
         return false
     }
@@ -583,21 +586,21 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
 /// selected send the event to the super class for processing.  This is done
 /// in a TableView extension.
 
-extension NSTableView {
-    public override func rightMouseDown(theEvent: NSEvent) {
-        let localPoint = convertPoint(theEvent.locationInWindow, fromView: nil)
-        let row = rowAtPoint(localPoint)
-        if row >= 0 {
-            if !isRowSelected(row) {
-                selectRowIndexes(NSIndexSet(index: row),
-                                 byExtendingSelection: false)
-            }
-        } else {
-            deselectAll(self)
-        }
-        super.rightMouseDown(theEvent)
-    }
-}
+//extension NSTableView {
+//    public override func rightMouseDown(_ theEvent: NSEvent) {
+//        let localPoint = convertPoint(theEvent.locationInWindow, fromView: nil)   /// FIXME: How should this line be coded in swift 3?
+//        let row = localPoint.row
+//        if row >= 0 {
+//            if !isRowSelected(row) {
+//                selectRowIndexes(NSIndexSet(index: row),
+//                                 byExtendingSelection: false)
+//            }
+//        } else {
+//            deselectAll(self)
+//        }
+//        super.rightMouseDown(theEvent)
+//    }
+//}
 
 //MARK: String extension -> Double
 
