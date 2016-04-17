@@ -439,6 +439,7 @@ final class TableViewController: NSViewController, WebViewControllerDelegate {
 extension TableViewController: NSTableViewDelegate {
 
     // return view for requested column.
+    @objc(tableView:viewForTableColumn:row:)
     func tableView(_ tableView: NSTableView,
                    viewFor tableColumn: NSTableColumn?,
                    row: Int) -> NSView? {
@@ -487,6 +488,7 @@ extension TableViewController: NSTableViewDelegate {
     // don't allow rows with non images to be selected while still allowing
     // drags and ranges.
 
+    @objc(tableView:selectionIndexesForProposedSelection:)
     func tableView(_ tableView: NSTableView,
                    selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet) -> NSIndexSet {
         let selectionIndexes = NSMutableIndexSet()
@@ -499,8 +501,8 @@ extension TableViewController: NSTableViewDelegate {
         return selectionIndexes
     }
 
-    // match the image to the selected row
 
+    /// match the image to the selected row
     func tableViewSelectionDidChange(_ notification: NSNotification) {
 
         // redraw last selected row in normal colors
@@ -531,8 +533,7 @@ extension TableViewController: NSTableViewDelegate {
 // MARK: TableView data source functions
 
 extension TableViewController: NSTableViewDataSource {
-    // one row per image in the images array
-
+    /// table size is one row per image in the images array
     @objc(numberOfRowsInTableView:)
     func numberOfRows(in tableView: NSTableView) -> Int {
         return images.count
@@ -546,6 +547,7 @@ extension TableViewController {
 
     // validate a proposed drop
 
+    @objc(tableView:validateDrop:proposedRow:proposedDropOperation:)
     func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo,
                    proposedRow row: Int,
                    proposedDropOperation dropOperation: NSTableViewDropOperation) -> NSDragOperation {
@@ -564,6 +566,7 @@ extension TableViewController {
     }
 
     // Add dropped files to the table
+    @objc(tableView:acceptDrop:row:dropOperation:)
     func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo,
                    row: Int, dropOperation: NSTableViewDropOperation) -> Bool {
         let pb = info.draggingPasteboard()

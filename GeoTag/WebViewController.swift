@@ -37,33 +37,6 @@ final class WebViewController: NSViewController {
 
     var clickDelegate: WebViewControllerDelegate?
 
-    // MARK: Class methods
-
-    /// limit property access from javascript to the map state variables
-
-    class func isKeyExcludedFromWebScript(keyPtr: UnsafePointer<Int8>) -> Bool {
-        if let key = NSString(cString: keyPtr, encoding: NSUTF8StringEncoding) {
-            switch key {
-            case "mapLatitude", "mapLongitude", "mapZoom", "mapType",
-                "itemSelected", "markerLatitude", "markerLongitude":
-                return false
-            default:
-                return true
-            }
-        }
-        return true
-    }
-
-    /// allow javascript to report position changes.  All other methods are
-    /// off limits.
-
-    class func isSelectorExcludedFromWebScript(sel: Selector) -> Bool {
-        if sel == #selector(reportPosition) {
-            return false
-        }
-        return true
-    }
-
     // MARK: startup
 
     /// object initialization
@@ -79,6 +52,7 @@ final class WebViewController: NSViewController {
 
     /// obtain info needed to draw initial map from user defaults
 
+    @objc(webView:didClearWindowObject:forFrame:)
     func webView(webView: WebView,
                  didClearWindowObject wso: WebScriptObject,
                  forFrame frame: WebFrame) {
@@ -150,6 +124,37 @@ final class WebViewController: NSViewController {
     func setMap(function: String, values: [AnyObject]!) {
         webView.windowScriptObject.callWebScriptMethod("setMap" + function,
                                                        withArguments: values)
+    }
+}
+
+// MARK: WebScripting access control
+
+extension WebViewController {
+    /// limit property access from javascript to the map state variables
+
+    @objc(isKeyExcludedFromWebScript:)
+    override class func isKeyExcluded(fromWebScript name: UnsafePointer<Int8>!) -> Bool {
+        if let key = NSString(cString: name, encoding: NSUTF8StringEncoding) {
+            switch key {
+            case "mapLatitude", "mapLongitude", "mapZoom", "mapType",
+                "itemSelected", "markerLatitude", "markerLongitude":
+                return false
+            default:
+                return true
+            }
+        }
+        return true
+    }
+
+    /// allow javascript to report position changes.  All other methods are
+    /// off limits.
+
+    @objc(isSelectorExcludedFromWebScript:)
+    override class func isSelectorExcluded(fromWebScript selector: Selector!) -> Bool {
+        if selector == #selector(reportPosition) {
+            return false
+        }
+        return true
     }
 }
 
