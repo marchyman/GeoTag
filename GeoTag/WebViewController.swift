@@ -106,7 +106,7 @@ final class WebViewController: NSViewController {
 
     /// select the desired map type
 
-    @IBAction func changeMapType(sender: NSSegmentedControl) {
+    @IBAction func changeMapType(_ sender: NSSegmentedControl) {
         setMap(function: "TypeId", values: [sender.selectedSegment])
     }
 
