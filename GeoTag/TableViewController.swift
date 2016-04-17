@@ -118,8 +118,8 @@ final class TableViewController: NSViewController, WebViewControllerDelegate {
                             modified: appDelegate.modified)
         if validLocation {
             image.setLatitude(latitude: latitude, longitude: longitude)
-            webViewController.pinMapAtLatitude(latitude: image.latitude!,
-                                               longitude: image.longitude!)
+            webViewController.dropMapPin(latitude: image.latitude!,
+                                         longitude: image.longitude!)
         } else {
             image.setLatitude(latitude: nil, longitude: nil)
             webViewController.removeMapPin()
@@ -520,8 +520,8 @@ extension TableViewController: NSTableViewDelegate {
             imageWell.image = image.image
             if image.latitude != nil && image.longitude != nil {
                 reload(row: row) // change color of selected row
-                webViewController.pinMapAtLatitude(latitude: image.latitude!,
-                                                   longitude: image.longitude!)
+                webViewController.dropMapPin(latitude: image.latitude!,
+                                             longitude: image.longitude!)
             } else {
                 webViewController.removeMapPin()
             }

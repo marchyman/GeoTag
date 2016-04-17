@@ -43,14 +43,16 @@ final class WebViewController: NSViewController {
 
     override func awakeFromNib() {
         // Ask webKit to load the map.html file from our resources directory.
-        let mapPath = NSBundle.main().pathForResource("map",
-                                                      ofType: "html")
-        let mapURL = NSURL(fileURLWithPath: mapPath!, isDirectory: false)
+        guard let mapPath = NSBundle.main()
+            .pathForResource("map", ofType: "html")
+            else { fatalError("can't find map.html resource") }
+        let mapURL = NSURL(fileURLWithPath: mapPath, isDirectory: false)
         let map = NSURLRequest(url: mapURL)
         webView.mainFrame.load(map)
     }
 
     /// obtain info needed to draw initial map from user defaults
+    /// make self the "controller" for the web script object
 
     @objc(webView:didClearWindowObject:forFrame:)
     func webView(webView: WebView,
@@ -81,7 +83,7 @@ final class WebViewController: NSViewController {
     /// select the desired map type
 
     @IBAction func changeMapType(_ sender: NSSegmentedControl) {
-        setMap(function: "TypeId", values: [sender.selectedSegment])
+        setMap("TypeId", values: [sender.selectedSegment])
     }
 
     /// save the current map type and displayed region in user defaults
@@ -98,14 +100,14 @@ final class WebViewController: NSViewController {
 
     /// drop the pin at the given latitude and longitude
 
-    func pinMapAtLatitude(latitude: Double, longitude: Double) {
-         setMap(function: "Pin", values: [latitude, longitude])
+    func dropMapPin(latitude: Double, longitude: Double) {
+         setMap("Pin", values: [latitude, longitude])
     }
 
     /// hide the pin
 
     func removeMapPin() {
-        setMap(function: "PinHidden", values: nil)
+        setMap("PinHidden", values: nil)
     }
 
     // MARK: Javascript interface
@@ -121,7 +123,7 @@ final class WebViewController: NSViewController {
     /// Call the javascript setMap function
     /// - Parameter values: An array of arguments to pass to javascript
 
-    func setMap(function: String, values: [AnyObject]!) {
+    func setMap(_ function: String, values: [AnyObject]!) {
         webView.windowScriptObject.callWebScriptMethod("setMap" + function,
                                                        withArguments: values)
     }
@@ -130,10 +132,13 @@ final class WebViewController: NSViewController {
 // MARK: WebScripting access control
 
 extension WebViewController {
+
     /// limit property access from javascript to the map state variables
+    /// Override of function defined on NSObject
 
     @objc(isKeyExcludedFromWebScript:)
     override class func isKeyExcluded(fromWebScript name: UnsafePointer<Int8>!) -> Bool {
+        guard name != nil else { return true }
         if let key = NSString(cString: name, encoding: NSUTF8StringEncoding) {
             switch key {
             case "mapLatitude", "mapLongitude", "mapZoom", "mapType",
@@ -148,9 +153,11 @@ extension WebViewController {
 
     /// allow javascript to report position changes.  All other methods are
     /// off limits.
+    /// Override of function defined on NSObject
 
     @objc(isSelectorExcludedFromWebScript:)
     override class func isSelectorExcluded(fromWebScript selector: Selector!) -> Bool {
+        guard selector != nil else { return true }
         if selector == #selector(reportPosition) {
             return false
         }
