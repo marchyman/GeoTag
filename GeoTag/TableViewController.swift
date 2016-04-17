@@ -533,6 +533,7 @@ extension TableViewController: NSTableViewDelegate {
 extension TableViewController: NSTableViewDataSource {
     // one row per image in the images array
 
+    @objc(numberOfRowsInTableView:)
     func numberOfRows(in tableView: NSTableView) -> Int {
         return images.count
     }
