@@ -8,7 +8,7 @@
 
 import Cocoa
 
-final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate {
     // class variable holds path to exiftool
     static private(set) var exiftoolPath: String!
     lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
@@ -30,7 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     //MARK: App start up
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: NSNotification) {
         // Insert code here to initialize your application
         window.delegate = self
         undoManager = NSUndoManager()
@@ -136,10 +136,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
 
-    //MARK: Save image changes (if any)
+    // MARK: Save image changes (if any)
 
-    func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        guard let action = menuItem.action else { return false }
+    func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
+        guard let action = anItem?.action() else { return false }
         switch action {
         case #selector(showOpenPanel(_:)):
             return true
@@ -148,7 +148,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         case #selector(openPreferencesWindow(_:)):
             return true
         default:
-            print("default for item \(menuItem)")
+            print("default for item \(anItem)")
         }
         return false
     }
@@ -224,10 +224,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
     }
+}
 
+/// Window delegate functions
 
-    /// Window delegate functions
-
+extension AppDelegate: NSWindowDelegate {
     func windowShouldClose(_: AnyObject) -> Bool {
         return saveOrDontSave()
     }

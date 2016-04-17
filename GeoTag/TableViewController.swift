@@ -160,8 +160,8 @@ final class TableViewController: NSViewController, WebViewControllerDelegate {
 
     // only enable various tableview related menu items when it makes sense
 
-    func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        guard let action = menuItem.action else { return false }
+    func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
+        guard let action = anItem.action() else { return false }
         switch action {
         case #selector(selectAll(_:)):
             // OK as long as there is at least one entry in the table
@@ -200,7 +200,7 @@ final class TableViewController: NSViewController, WebViewControllerDelegate {
         case #selector(interpolate(_:)):
             return validateForInterpolation()
         default:
-            print("default for item \(menuItem)")
+            print("default for item \(anItem)")
         }
         return false
     }
