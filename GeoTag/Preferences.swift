@@ -29,7 +29,7 @@ final class Preferences : NSWindowController {
             let defaults = NSUserDefaults.standard()
             saveFolder = defaults.url(forKey: Preferences.saveFolderKey)
             if let path = saveFolder?.path {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = NSFileManager.default()
                 if !fileManager.fileExists(atPath: path) {
                     unexpected(error: nil, "The specified Optional Save Folder\n\n\t\(path)\n\nis missing. Original image files will not be copied to that location.")
                     saveFolder = nil

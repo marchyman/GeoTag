@@ -18,7 +18,7 @@ import Foundation
 /// enumerated.
 
 public func addURLsInFolder(url: NSURL, toUrls urls: inout [NSURL]) -> Bool {
-    let fileManager = NSFileManager.defaultManager()
+    let fileManager = NSFileManager.default()
     var dir: ObjCBool = false
     if fileManager.fileExists(atPath: url.path!, isDirectory: &dir) && dir {
         guard let urlEnumerator =

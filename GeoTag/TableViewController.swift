@@ -439,7 +439,7 @@ final class TableViewController: NSViewController, WebViewControllerDelegate {
 extension TableViewController: NSTableViewDelegate {
 
     // return view for requested column.
-    @objc(tableView:viewForTableColumn:row:)
+//    @objc(tableView:viewForTableColumn:row:)
     func tableView(_ tableView: NSTableView,
                    viewFor tableColumn: NSTableColumn?,
                    row: Int) -> NSView? {
@@ -488,7 +488,7 @@ extension TableViewController: NSTableViewDelegate {
     // don't allow rows with non images to be selected while still allowing
     // drags and ranges.
 
-    @objc(tableView:selectionIndexesForProposedSelection:)
+//    @objc(tableView:selectionIndexesForProposedSelection:)
     func tableView(_ tableView: NSTableView,
                    selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet) -> NSIndexSet {
         let selectionIndexes = NSMutableIndexSet()
@@ -534,7 +534,7 @@ extension TableViewController: NSTableViewDelegate {
 
 extension TableViewController: NSTableViewDataSource {
     /// table size is one row per image in the images array
-    @objc(numberOfRowsInTableView:)
+//    @objc(numberOfRowsInTableView:)
     func numberOfRows(in tableView: NSTableView) -> Int {
         return images.count
     }
@@ -547,13 +547,13 @@ extension TableViewController {
 
     // validate a proposed drop
 
-    @objc(tableView:validateDrop:proposedRow:proposedDropOperation:)
+//    @objc(tableView:validateDrop:proposedRow:proposedDropOperation:)
     func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo,
                    proposedRow row: Int,
                    proposedDropOperation dropOperation: NSTableViewDropOperation) -> NSDragOperation {
         let pb = info.draggingPasteboard()
-        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String!] {
-            let fileManager = NSFileManager.defaultManager()
+        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String] {
+            let fileManager = NSFileManager.default()
             for path in paths {
                 if !fileManager.fileExists(atPath: path) ||
                    imageUrls.contains(NSURL.fileURL(withPath: path)) {
@@ -566,11 +566,11 @@ extension TableViewController {
     }
 
     // Add dropped files to the table
-    @objc(tableView:acceptDrop:row:dropOperation:)
+//    @objc(tableView:acceptDrop:row:dropOperation:)
     func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo,
                    row: Int, dropOperation: NSTableViewDropOperation) -> Bool {
         let pb = info.draggingPasteboard()
-        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String!] {
+        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String] {
             var urls = [NSURL]()
             for path in paths {
                 let fileURL = NSURL(fileURLWithPath: path)

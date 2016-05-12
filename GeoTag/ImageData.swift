@@ -9,6 +9,20 @@
 import Foundation
 import AppKit
 
+// CFString to (NS])*String conversions
+let pixelHeight = kCGImagePropertyPixelHeight as NSString
+let pixelWidth = kCGImagePropertyPixelWidth as NSString
+let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
+let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
+let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
+let exifDictionary = kCGImagePropertyExifDictionary as NSString
+let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
+let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
+let GPSLatitude = kCGImagePropertyGPSLatitude as String
+let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
+let GPSLongitude = kCGImagePropertyGPSLongitude as String
+let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
+
 final class ImageData: NSObject {
     /*
      * if we can't trash the file fall back to letting exiftool create
@@ -105,7 +119,7 @@ final class ImageData: NSObject {
     private func saveOriginalFile(sourceName: String) -> Bool {
         guard let saveDirURL = Preferences.saveFolder() else { return false }
         guard let name = name else { return false }
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = NSFileManager.default()
         let saveFileURL = saveDirURL.appendingPathComponent(name, isDirectory: false)
         if !fileManager.fileExists(atPath: saveFileURL.path!) {
             do {
@@ -133,7 +147,7 @@ final class ImageData: NSObject {
     /// letting them know an alternate backup method is being used.
     private func backupImageFile() -> Bool {
         var backupURL: NSURL?
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = NSFileManager.default()
         do {
             try fileManager.trashItem(at: url, resultingItemURL: &backupURL)
             saveOriginalFile(sourceName: backupURL!.path!)
@@ -226,7 +240,7 @@ final class ImageData: NSObject {
             if !overwriteOriginal {
                 let originalFile = path + "_original"
                 if saveOriginalFile(sourceName: originalFile) {
-                    let fileManager = NSFileManager.defaultManager()
+                    let fileManager = NSFileManager.default()
                     do {
                         try fileManager.removeItem(atPath: originalFile)
                     } catch let error as NSError {
@@ -251,31 +265,19 @@ final class ImageData: NSObject {
     /// is not created.
     private func loadImageData() -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(url, nil) else {
+            print("Failed CGImageSourceCreateWithURL \(url)")
             return false
         }
-
-        // CFString to String conversions
-        let pixelHeight = kCGImagePropertyPixelHeight as String
-        let pixelWidth = kCGImagePropertyPixelWidth as String
-        let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
-        let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
-        let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
-        let exifDictionary = kCGImagePropertyExifDictionary as String
-        let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
-        let GPSDictionary = kCGImagePropertyGPSDictionary as String
-        let GPSLatitude = kCGImagePropertyGPSLatitude as String
-        let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
-        let GPSLongitude = kCGImagePropertyGPSLongitude as String
-        let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
 
         // grab the image properties
-        let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary!
-        if imgProps == nil {
+        guard let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary! else {
+            print("Failed to get image properties for URL \(url)")
             return false
         }
-        let height = imgProps[pixelHeight] as! Int!
-        let width = imgProps[pixelWidth] as! Int!
+        let height = imgProps[pixelHeight] as? Int
+        let width = imgProps[pixelWidth] as? Int
         if height == nil || width == nil {
+            print("Nil width or height \(width) x \(height)")
             return false
         }
 
@@ -284,7 +286,7 @@ final class ImageData: NSObject {
         // arbitrary limit.   Preview generation is used to work around a
         // performance hit when using large raw images
         let maxDimension = 512
-        let imgOpts: NSMutableDictionary = [
+        var imgOpts: [String: AnyObject] = [
             createThumbnailWithTransform : kCFBooleanTrue,
             createThumbnailFromImageAlways : kCFBooleanTrue
         ]
@@ -292,7 +294,7 @@ final class ImageData: NSObject {
             // add a max pixel size to the dictionary of options
             imgOpts[thumbnailMaxPixelSize] = maxDimension as AnyObject
         }
-        if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts) {
+        if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts as NSDictionary) {
             // Create an NSImage from the preview
             let imgHeight = CGFloat(imgPreview.height)
             let imgWidth = CGFloat(imgPreview.width)
@@ -317,13 +319,13 @@ final class ImageData: NSObject {
         }
 
         // extract image date/time created
-        if let exifData = imgProps[exifDictionary] as? NSDictionary,
+        if let exifData = imgProps[exifDictionary] as? [String: AnyObject],
                     dto = exifData[exifDateTimeOriginal] as? String {
             date = dto
         }
 
         // extract image existing gps info
-        if let gpsData = imgProps[GPSDictionary] as? NSDictionary {
+        if let gpsData = imgProps[GPSDictionary] as? [String : AnyObject] {
             if let lat = gpsData[GPSLatitude] as? Double,
                 latRef = gpsData[GPSLatitudeRef] as? String {
                 if latRef == "N" {

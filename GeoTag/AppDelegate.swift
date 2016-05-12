@@ -40,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// verify that exiftool can be found.  If exiftool can not be found in one
     /// of the normal locations put up an alert and terminate the program.
     func checkForExiftool() {
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = NSFileManager.default()
         for path in exiftoolSearchPaths() {
             let exiftoolPath = path + "/exiftool"
             if fileManager.fileExists(atPath: exiftoolPath) {
@@ -77,7 +77,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case NSFileHandlingPanelOKButton:
             if let path = openPanel.url?.path {
                 let defaults = NSUserDefaults.standard()
-                defaults.set(path, forKey: Preferences.exiftoolPathKey)
+                defaults.set(path as AnyObject, forKey: Preferences.exiftoolPathKey)
                 defaults.synchronize()
             }
             checkForExiftool()
@@ -170,7 +170,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     //MARK: app termination
 
-    func applicationShouldTerminateAfterLastWindowClosed(theApplication: NSApplication) -> Bool {
+//    @objc(applicationShouldTerminateAfterLastWindowClosed:)
+    func applicationShouldTerminate(afterLastWindowClosed theApplication: NSApplication) -> Bool {
         return true
     }
 
@@ -214,7 +215,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-    func applicationShouldTerminate(sender: NSApplication) -> NSApplicationTerminateReply {
+//    @objc(applicationShouldTerminate:)
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplicationTerminateReply {
         if saveOrDontSave() {
             return .terminateNow
         }

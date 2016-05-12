@@ -83,7 +83,7 @@ final class WebViewController: NSViewController {
     /// select the desired map type
 
     @IBAction func changeMapType(_ sender: NSSegmentedControl) {
-        setMap("TypeId", values: [sender.selectedSegment])
+        setMap("TypeId", values: [sender.selectedSegment as AnyObject])
     }
 
     /// save the current map type and displayed region in user defaults
@@ -101,7 +101,7 @@ final class WebViewController: NSViewController {
     /// drop the pin at the given latitude and longitude
 
     func dropMapPin(latitude: Double, longitude: Double) {
-         setMap("Pin", values: [latitude, longitude])
+         setMap("Pin", values: [latitude as AnyObject, longitude as AnyObject])
     }
 
     /// hide the pin
