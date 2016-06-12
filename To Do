@@ -20,4 +20,10 @@ Feature Requests:
 * Multithread load and save
 
 * Manual lat/long entry
-
+
+* Preference option for lat/long output format.
+  d.ddddddd # degrees and fractions of a degree (current format)
+  d m.mmmmm # degrees and minutes
+  d m s     # degrees, minutes, and seconds
+
+* Apply location from a GPS track log
