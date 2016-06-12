@@ -39,13 +39,15 @@ public func distanceAndBearing(lat1: Double, lon1: Double,
     let lon2R = degreesToRadians(degrees: lon2)
     let deltaLat = lat2R - lat1R
     let deltaLon = lon2R - lon1R
-    let a = sin(deltaLat/2) * sin(deltaLat/2) + 
-            sin(deltaLon/2) * sin(deltaLon/2) * cos(lat1R) * cos(lat2R)
+    let sinDeltaLat2 = sin(deltaLat/2)
+    let sinDeltaLon2 = sin(deltaLon/2)
+    let a = sinDeltaLat2 * sinDeltaLat2 +
+            sinDeltaLon2 * sinDeltaLon2 * cos(lat1R) * cos(lat2R)
     let distance = 2 * asin(sqrt(a)) * R
 
     let b = atan2(sin(deltaLon) * cos(lat2R),
                   cos(lat1R) * sin(lat2R) - sin(lat1R) * cos(lat2R) * cos(deltaLon))
-    let bearing = (radiansToDegrees(radians: b) + 360.0) % 360.0
+    let bearing = (radiansToDegrees(radians: b) + 360.0).truncatingRemainder(dividingBy: 360.0)
     return (distance, bearing)
 }
 

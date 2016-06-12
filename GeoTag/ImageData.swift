@@ -150,7 +150,7 @@ final class ImageData: NSObject {
         let fileManager = NSFileManager.default()
         do {
             try fileManager.trashItem(at: url, resultingItemURL: &backupURL)
-            saveOriginalFile(sourceName: backupURL!.path!)
+            let _ = saveOriginalFile(sourceName: backupURL!.path!)
             do {
                 try fileManager.copyItem(at: backupURL!, to: url)
                 return true
