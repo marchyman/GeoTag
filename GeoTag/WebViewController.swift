@@ -43,11 +43,11 @@ final class WebViewController: NSViewController {
 
     override func awakeFromNib() {
         // Ask webKit to load the map.html file from our resources directory.
-        guard let mapPath = NSBundle.main()
+        guard let mapPath = Bundle.main()
             .pathForResource("map", ofType: "html")
             else { fatalError("can't find map.html resource") }
-        let mapURL = NSURL(fileURLWithPath: mapPath, isDirectory: false)
-        let map = NSURLRequest(url: mapURL)
+        let mapURL = URL(fileURLWithPath: mapPath, isDirectory: false)
+        let map = URLRequest(url: mapURL)
         webView.mainFrame.load(map)
     }
 
@@ -59,7 +59,7 @@ final class WebViewController: NSViewController {
                  didClearWindowObject wso: WebScriptObject,
                  forFrame frame: WebFrame) {
         // Initialize map state
-        let defaults = NSUserDefaults.standard()
+        let defaults = UserDefaults.standard()
         let latitude = defaults.double(forKey: mapLatitudeKey)
         if latitude != 0.0 {
             mapLatitude = latitude
@@ -89,7 +89,7 @@ final class WebViewController: NSViewController {
     /// save the current map type and displayed region in user defaults
 
     @IBAction func saveMapSetting(_: AnyObject) {
-        let defaults = NSUserDefaults.standard()
+        let defaults = UserDefaults.standard()
         defaults.set(mapLatitude, forKey: mapLatitudeKey)
         defaults.set(mapLongitude, forKey: mapLongitudeKey)
         defaults.set(mapZoom, forKey: mapZoomKey)
@@ -139,7 +139,7 @@ extension WebViewController {
     @objc(isKeyExcludedFromWebScript:)
     override class func isKeyExcluded(fromWebScript name: UnsafePointer<Int8>!) -> Bool {
         guard name != nil else { return true }
-        if let key = NSString(cString: name, encoding: NSUTF8StringEncoding) {
+        if let key = NSString(cString: name, encoding: String.Encoding.utf8.rawValue) {
             switch key {
             case "mapLatitude", "mapLongitude", "mapZoom", "mapType",
                 "itemSelected", "markerLatitude", "markerLongitude":

@@ -12,6 +12,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // class variable holds path to exiftool
     static private(set) var exiftoolPath: String!
     lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
+    lazy var undoManager: UndoManager = UndoManager()
 
     var modified: Bool {
         get {
@@ -26,21 +27,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet var tableViewController: TableViewController!
     @IBOutlet var progressIndicator: NSProgressIndicator!
 
-    var undoManager: NSUndoManager!
-
     //MARK: App start up
 
-    func applicationDidFinishLaunching(_ aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         window.delegate = self
-        undoManager = NSUndoManager()
         checkForExiftool()
     }
 
     /// verify that exiftool can be found.  If exiftool can not be found in one
     /// of the normal locations put up an alert and terminate the program.
     func checkForExiftool() {
-        let fileManager = NSFileManager.default()
+        let fileManager = FileManager.default()
         for path in exiftoolSearchPaths() {
             let exiftoolPath = path + "/exiftool"
             if fileManager.fileExists(atPath: exiftoolPath) {
@@ -76,7 +74,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         switch (openPanel.runModal()) {
         case NSFileHandlingPanelOKButton:
             if let path = openPanel.url?.path {
-                let defaults = NSUserDefaults.standard()
+                let defaults = UserDefaults.standard()
                 defaults.set(path as AnyObject, forKey: Preferences.exiftoolPathKey)
                 defaults.synchronize()
             }
@@ -88,7 +86,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func exiftoolSearchPaths() -> [String] {
         var paths = ["/usr/bin", "/usr/local/bin", "/opt/bin"]
-        let defaults = NSUserDefaults.standard()
+        let defaults = UserDefaults.standard()
         if let customPath = defaults.string(forKey: Preferences.exiftoolPathKey) {
             paths.append(customPath)
         }
@@ -97,7 +95,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     //MARK: window delegate undo handling
 
-    func windowWillReturnUndoManager(window: NSWindow) -> NSUndoManager? {
+    func windowWillReturnUndoManager(window: NSWindow) -> UndoManager? {
         return undoManager
     }
 
@@ -119,7 +117,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.canChooseDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
             // expand selected URLs that refer to a directory
-            var urls = [NSURL]()
+            var urls = [URL]()
             for url in panel.urls {
                 if !addURLsInFolder(url: url, toUrls: &urls) {
                     urls.append(url)
@@ -139,7 +137,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: Save image changes (if any)
 
     func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
-        guard let action = anItem?.action() else { return false }
+        guard let action = anItem?.action else { return false }
         switch action {
         case #selector(showOpenPanel(_:)):
             return true
@@ -170,8 +168,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     //MARK: app termination
 
-//    @objc(applicationShouldTerminateAfterLastWindowClosed:)
-    func applicationShouldTerminate(afterLastWindowClosed theApplication: NSApplication) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(_ theApplication: NSApplication) -> Bool {
         return true
     }
 

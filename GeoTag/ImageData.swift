@@ -42,10 +42,10 @@ final class ImageData: NSObject {
     }
 
     var date: String = ""
-    var dateFromEpoch: NSTimeInterval {
-        let format = NSDateFormatter()
+    var dateFromEpoch: TimeInterval {
+        let format = DateFormatter()
         format.dateFormat = "yyyy:MM:dd HH:mm:ss"
-        format.timeZone = NSTimeZone.local()
+        format.timeZone = TimeZone.local()
         if let convertedDate = format.date(from: date) {
             return convertedDate.timeIntervalSince1970
         }
@@ -119,21 +119,21 @@ final class ImageData: NSObject {
     private func saveOriginalFile(sourceName: String) -> Bool {
         guard let saveDirURL = Preferences.saveFolder() else { return false }
         guard let name = name else { return false }
-        let fileManager = NSFileManager.default()
+        let fileManager = FileManager.default()
         let saveFileURL = saveDirURL.appendingPathComponent(name, isDirectory: false)
-        if !fileManager.fileExists(atPath: saveFileURL.path!) {
+        if !fileManager.fileExists(atPath: (saveFileURL?.path!)!) {
             do {
-                try fileManager.linkItem(atPath: sourceName, toPath: saveFileURL.path!)
+                try fileManager.linkItem(atPath: sourceName, toPath: (saveFileURL?.path!)!)
                 return true
             } catch {
                 // couldn't create hard link, copy file instead
                 do {
                     try fileManager.copyItem(atPath: sourceName,
-                                             toPath: saveFileURL.path!)
+                                             toPath: (saveFileURL?.path!)!)
                     return true
                 } catch let error as NSError {
                     unexpected(error: error,
-                               "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
+                               "Cannot copy \(sourceName) to \(saveFileURL?.path)\n\nReason: ")
                 }
             }
         }
@@ -147,12 +147,12 @@ final class ImageData: NSObject {
     /// letting them know an alternate backup method is being used.
     private func backupImageFile() -> Bool {
         var backupURL: NSURL?
-        let fileManager = NSFileManager.default()
+        let fileManager = FileManager.default()
         do {
-            try fileManager.trashItem(at: url, resultingItemURL: &backupURL)
+            try fileManager.trashItem(at: url as URL, resultingItemURL: &backupURL)
             let _ = saveOriginalFile(sourceName: backupURL!.path!)
             do {
-                try fileManager.copyItem(at: backupURL!, to: url)
+                try fileManager.copyItem(at: backupURL! as URL, to: url as URL)
                 return true
             } catch let error as NSError {
                 unexpected(error: error,
@@ -219,9 +219,9 @@ final class ImageData: NSObject {
                 lonArg += "\(lon)"
             }
 
-            let exiftool = NSTask()
-            exiftool.standardOutput = NSFileHandle.nullDevice()
-            exiftool.standardError = NSFileHandle.nullDevice()
+            let exiftool = Task()
+            exiftool.standardOutput = FileHandle.nullDevice()
+            exiftool.standardError = FileHandle.nullDevice()
             exiftool.launchPath = AppDelegate.exiftoolPath
             exiftool.arguments = ["-q", "-m",
                 "-DateTimeOriginal>FileModifyDate", latArg, latRefArg,
@@ -240,7 +240,7 @@ final class ImageData: NSObject {
             if !overwriteOriginal {
                 let originalFile = path + "_original"
                 if saveOriginalFile(sourceName: originalFile) {
-                    let fileManager = NSFileManager.default()
+                    let fileManager = FileManager.default()
                     do {
                         try fileManager.removeItem(atPath: originalFile)
                     } catch let error as NSError {
