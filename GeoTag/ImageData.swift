@@ -339,6 +339,12 @@ final class ImageData: NSObject {
                     longitude = -lon
                 }
             }
+            // At least one version of leica firmware uses a latitude and
+            // longitude of 0 for no gps info
+            if latitude == 0.0 && longitude == 0.0 {
+                latitude = nil
+                longitude = nil
+            }
         }
         return true
     }
