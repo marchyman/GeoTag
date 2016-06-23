@@ -6,7 +6,8 @@
 //  Copyright (c) 2014, 2015 Marco S Hyman, CC-BY-NC
 //
 
-import Cocoa
+import Foundation
+import AppKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // class variable holds path to exiftool
