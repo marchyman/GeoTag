@@ -3,11 +3,12 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 6/24/14.
-//  Copyright (c) 2014, 2015 Marco S Hyman, CC-BY-NC
+//  Copyright (c) 2014-2016 Marco S Hyman, CC-BY-NC
 //
 
 import Foundation
 import AppKit
+import MapKit
 
 final class TableViewController: NSViewController, NSTableViewDelegate,
     NSTableViewDataSource {
@@ -15,6 +16,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     @IBOutlet var appDelegate: AppDelegate!
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var imageWell: NSImageView!
+//  @IBOutlet var mapView: MapView!
 
     var images = [ImageData]()
     var imageURLs = Set<NSURL>()
@@ -420,13 +422,6 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         appDelegate.undoManager.endUndoGrouping()
     }
 
-    // MARK: WebView/WebViewController delegate function
-
-    func webViewMouseClicked(latitude: Double, longitude: Double) {
-        updateSelectedRows(latitude: latitude, longitude: longitude)
-        appDelegate.undoManager.setActionName("location change")
-    }
-
 
     // MARK: TableView delegate functions
 
@@ -572,6 +567,16 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
 
+}
+
+extension TableViewController: MapViewDelegate {
+
+    func mapViewMouseClicked(mapView: MapView!,
+                             location: CLLocationCoordinate2D) {
+        updateSelectedRows(latitude: location.latitude,
+                            longitude: location.longitude)
+        appDelegate.undoManager.setActionName("location change")
+    }
 }
 
 //MARK: TableView extenstion for right click
