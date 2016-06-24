@@ -23,6 +23,7 @@
 		49E0340D1B0BBBB700CC9768 /* Interpolate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E0340C1B0BBBB700CC9768 /* Interpolate.swift */; };
 		49F928721D1CB14D00D49F08 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49F928711D1CB14D00D49F08 /* MapKit.framework */; };
 		49F928741D1CB34E00D49F08 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F928731D1CB34E00D49F08 /* MapView.swift */; };
+		49F928761D1CF94B00D49F08 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F928751D1CF94B00D49F08 /* MapViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		49E0340C1B0BBBB700CC9768 /* Interpolate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interpolate.swift; sourceTree = "<group>"; };
 		49F928711D1CB14D00D49F08 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		49F928731D1CB34E00D49F08 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		49F928751D1CF94B00D49F08 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		8B9F6AD51CA485840080CEF0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		8B9F6AD61CA485840080CEF0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -97,6 +99,7 @@
 				49B0EEBB19495FB100293C73 /* AppDelegate.swift */,
 				497EE5D2195CAE6300306283 /* ImageData.swift */,
 				49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */,
+				49F928751D1CF94B00D49F08 /* MapViewController.swift */,
 				49A476071B0850B3006E05EA /* AddURLsInFolder.swift */,
 				4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */,
 				49E0340C1B0BBBB700CC9768 /* Interpolate.swift */,
@@ -245,6 +248,7 @@
 				49E0340D1B0BBBB700CC9768 /* Interpolate.swift in Sources */,
 				49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */,
 				49CE08821AFBF9370057E310 /* Preferences.swift in Sources */,
+				49F928761D1CF94B00D49F08 /* MapViewController.swift in Sources */,
 				49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */,
 				49A476081B0850B3006E05EA /* AddURLsInFolder.swift in Sources */,
 				49B0EEBA19495FB100293C73 /* main.swift in Sources */,
