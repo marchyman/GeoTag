@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11129.15" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11129.15"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="11129.15"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -27,13 +26,6 @@
                 <outlet property="imageWell" destination="xuH-yg-55o" id="Syk-7u-GRh"/>
                 <outlet property="tableView" destination="skl-pj-P9m" id="B2P-VY-BEo"/>
                 <outlet property="view" destination="skl-pj-P9m" id="HqZ-en-HFJ"/>
-                <outlet property="webViewController" destination="262-AH-8IW" id="7co-VA-PXg"/>
-            </connections>
-        </viewController>
-        <viewController id="262-AH-8IW" userLabel="Web View Controller" customClass="WebViewController" customModule="GeoTag" customModuleProvider="target">
-            <connections>
-                <outlet property="mapTypeControl" destination="UAa-bh-Wko" id="krE-aN-fyA"/>
-                <outlet property="webView" destination="OQ7-ya-zM7" id="urJ-WK-9jW"/>
             </connections>
         </viewController>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -304,7 +296,6 @@ CA
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gmo-tg-1MM">
                                                                             <rect key="frame" x="0.0" y="0.0" width="142" height="17"/>
-                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="yyyy:mm:dd hh:mm:ss" id="TXL-1H-fom">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -469,19 +460,7 @@ CA
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
-                                                        <connections>
-                                                            <action selector="saveMapSetting:" target="262-AH-8IW" id="D0z-vR-wGg"/>
-                                                        </connections>
                                                     </button>
-                                                    <webView maintainsBackForwardList="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OQ7-ya-zM7">
-                                                        <rect key="frame" x="3" y="0.0" width="521" height="374"/>
-                                                        <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12" plugInsEnabled="NO" javaEnabled="NO" javaScriptCanOpenWindowsAutomatically="NO" allowsAnimatedImages="NO" allowsAnimatedImageLooping="NO">
-                                                            <nil key="identifier"/>
-                                                        </webPreferences>
-                                                        <connections>
-                                                            <outlet property="frameLoadDelegate" destination="262-AH-8IW" id="wc9-Ph-uhq"/>
-                                                        </connections>
-                                                    </webView>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
                                                         <rect key="frame" x="18" y="386" width="282" height="24"/>
                                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="248-FW-Avl">
@@ -492,18 +471,11 @@ CA
                                                                 <segment label="Satellite" width="91"/>
                                                             </segments>
                                                         </segmentedCell>
-                                                        <connections>
-                                                            <action selector="changeMapType:" target="262-AH-8IW" id="kyQ-9f-zxi"/>
-                                                        </connections>
                                                     </segmentedControl>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="OQ7-ya-zM7" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="47" id="15v-mG-YMW"/>
                                                     <constraint firstAttribute="trailing" secondItem="jOB-Xu-ExJ" secondAttribute="trailing" constant="20" id="5rg-Nu-woP"/>
-                                                    <constraint firstItem="OQ7-ya-zM7" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="3" id="Als-IL-2ld"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="IBD-aM-s8A"/>
-                                                    <constraint firstAttribute="trailing" secondItem="OQ7-ya-zM7" secondAttribute="trailing" constant="-3" id="Nsp-ms-rTM"/>
-                                                    <constraint firstAttribute="bottom" secondItem="OQ7-ya-zM7" secondAttribute="bottom" id="Zcs-bO-OeP"/>
                                                     <constraint firstItem="jOB-Xu-ExJ" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="xrB-Bz-x8a"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" id="zgJ-sW-cGB"/>
                                                 </constraints>
