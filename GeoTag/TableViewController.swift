@@ -16,7 +16,7 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     @IBOutlet var appDelegate: AppDelegate!
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var imageWell: NSImageView!
-//  @IBOutlet var mapView: MapView!
+    @IBOutlet var mapView: MapView!
 
     var images = [ImageData]()
     var imageURLs = Set<NSURL>()

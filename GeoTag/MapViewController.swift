@@ -9,7 +9,7 @@
 import Cocoa
 import MapKit
 
-@objc(MapViewController)
+@objc
 class MapViewController: NSViewController {
     var clickDelegate: MapViewDelegate?
 

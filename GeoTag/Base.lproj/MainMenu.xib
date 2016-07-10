@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -24,8 +25,15 @@
             <connections>
                 <outlet property="appDelegate" destination="Voe-Tx-rLC" id="ubm-GD-tva"/>
                 <outlet property="imageWell" destination="xuH-yg-55o" id="Syk-7u-GRh"/>
+                <outlet property="mapView" destination="Zwv-MK-4Du" id="lB0-q2-j0Y"/>
                 <outlet property="tableView" destination="skl-pj-P9m" id="B2P-VY-BEo"/>
                 <outlet property="view" destination="skl-pj-P9m" id="HqZ-en-HFJ"/>
+            </connections>
+        </viewController>
+        <viewController id="Go6-yP-GH9" customClass="MapViewController" customModule="GeoTag" customModuleProvider="target">
+            <connections>
+                <outlet property="mapTypeControl" destination="UAa-bh-Wko" id="8Ar-sO-rpi"/>
+                <outlet property="mapView" destination="Zwv-MK-4Du" id="zEq-nz-0pQ"/>
             </connections>
         </viewController>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -323,7 +331,7 @@ CA
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="latitude" id="JX3-4H-ItO">
-                                                                    <rect key="frame" x="317" y="1" width="82" height="17"/>
+                                                                    <rect key="frame" x="323" y="1" width="82" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tyW-mI-5bT">
@@ -392,8 +400,8 @@ CA
                                             </subviews>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.5" horizontal="YES" id="yEh-tG-aR3">
-                                            <rect key="frame" x="1" y="119" width="223" height="15"/>
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.25" horizontal="YES" id="yEh-tG-aR3">
+                                            <rect key="frame" x="1" y="760" width="528" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="ty6-8n-qbD">
@@ -460,6 +468,9 @@ CA
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
+                                                        <connections>
+                                                            <action selector="saveMapSetting:" target="Go6-yP-GH9" id="BMB-0r-9Ss"/>
+                                                        </connections>
                                                     </button>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
                                                         <rect key="frame" x="18" y="386" width="282" height="24"/>
@@ -471,13 +482,26 @@ CA
                                                                 <segment label="Satellite" width="91"/>
                                                             </segments>
                                                         </segmentedCell>
+                                                        <connections>
+                                                            <action selector="changeMapType:" target="Go6-yP-GH9" id="3Ly-Dz-fL1"/>
+                                                        </connections>
                                                     </segmentedControl>
+                                                    <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zwv-MK-4Du" customClass="MapView" customModule="GeoTag" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="521" height="380"/>
+                                                        <connections>
+                                                            <outlet property="delegate" destination="Go6-yP-GH9" id="xhZ-dn-nDA"/>
+                                                        </connections>
+                                                    </mapView>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="jOB-Xu-ExJ" secondAttribute="trailing" constant="20" id="5rg-Nu-woP"/>
+                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="41" id="9FX-y0-0J7"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Zwv-MK-4Du" secondAttribute="bottom" id="AbC-aA-sh4"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="IBD-aM-s8A"/>
+                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" id="kuE-Rp-GKs"/>
                                                     <constraint firstItem="jOB-Xu-ExJ" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="xrB-Bz-x8a"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" id="zgJ-sW-cGB"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Zwv-MK-4Du" secondAttribute="trailing" id="ziW-xO-3nP"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
