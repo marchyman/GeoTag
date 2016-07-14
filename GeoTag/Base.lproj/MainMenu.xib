@@ -25,7 +25,7 @@
             <connections>
                 <outlet property="appDelegate" destination="Voe-Tx-rLC" id="ubm-GD-tva"/>
                 <outlet property="imageWell" destination="xuH-yg-55o" id="Syk-7u-GRh"/>
-                <outlet property="mapView" destination="Zwv-MK-4Du" id="lB0-q2-j0Y"/>
+                <outlet property="mapViewController" destination="Go6-yP-GH9" id="lar-5L-hff"/>
                 <outlet property="tableView" destination="skl-pj-P9m" id="B2P-VY-BEo"/>
                 <outlet property="view" destination="skl-pj-P9m" id="HqZ-en-HFJ"/>
             </connections>

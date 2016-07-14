@@ -10,13 +10,12 @@ import Foundation
 import AppKit
 import MapKit
 
-final class TableViewController: NSViewController, NSTableViewDelegate,
-    NSTableViewDataSource {
+final class TableViewController: NSViewController {
 
     @IBOutlet var appDelegate: AppDelegate!
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var imageWell: NSImageView!
-    @IBOutlet var mapView: MapView!
+    @IBOutlet var mapViewController: MapViewController!
 
     var images = [ImageData]()
     var imageURLs = Set<NSURL>()
@@ -27,8 +26,10 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     // object initialization
     override func awakeFromNib() {
         // can't make clickDelegate an @IBOutlet; wire it up here
-        // webViewController is a delegate to handle location changes
-//        webViewController.clickDelegate = self
+        // mapViewController is a delegate to handle pin drag location changes
+        // mapViewController.mapview is a delegate to handle map clicks
+        mapViewController.clickDelegate = self
+        mapViewController.mapView.clickDelegate = self
         tableView.registerForDraggedTypes([NSFilenamesPboardType]);
         tableView.draggingDestinationFeedbackStyle = .None
     }
@@ -119,11 +120,11 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
             longitude: oldLongitude, modified: appDelegate.modified)
         if validLocation {
             image.setLatitude(latitude, longitude: longitude)
-//            webViewController.pinMapAtLatitude(image.latitude!,
-//                                               longitude: image.longitude!)
+            mapViewController.pinMapAt(latitude: image.latitude!,
+                                       longitude: image.longitude!)
         } else {
             image.setLatitude(nil, longitude: nil)
-//            webViewController.removeMapPin()
+            mapViewController.removeMapPin()
         }
         reloadRow(row)
         appDelegate.modified = modified
@@ -423,61 +424,14 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
 
-    // MARK: TableView delegate functions
+}
 
-    // don't allow rows with non images to be selected while still allowing
-    // drags and ranges.
 
-    func tableView(tableView: NSTableView,
-                   selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet) -> NSIndexSet {
-        let selectionIndexes = NSMutableIndexSet()
-        proposedSelectionIndexes.enumerateIndexesUsingBlock {
-            (row, _) -> Void in
-            if self.images[row].validImage {
-               selectionIndexes.addIndex(row)
-            }
-        }
-        return selectionIndexes
-    }
+// MARK: TableView delegate functions
 
-    // match the image to the selected row
-
-    func tableViewSelectionDidChange(notification: NSNotification) {
-
-        // redraw last selected row in normal colors
-
-        if let lastSelectedRow = self.lastSelectedRow {
-            reloadRow(lastSelectedRow)
-        }
-        let row = tableView.selectedRow
-        if row < 0 {
-            imageWell.image = nil
-//            webViewController.removeMapPin()
-//            webViewController.itemSelected = false
-        } else {
-            let image = images[row]
-            imageWell.image = image.image
-            if image.latitude != nil && image.longitude != nil {
-                reloadRow(row) // change color of selected row
-//                webViewController.pinMapAtLatitude(image.latitude!,
-//                                                   longitude: image.longitude!)
-            } else {
-//                webViewController.removeMapPin()
-            }
-//            webViewController.itemSelected = true
-        }
-    }
-
-    //MARK: TableView data source functions
-
-    // one row per image in the images array
-
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        return images.count
-    }
+extension TableViewController: NSTableViewDelegate {
 
     // return view for requested column.
-
     func tableView(tableView: NSTableView,
                    viewForTableColumn tableColumn: NSTableColumn?,
                    row: Int) -> NSView? {
@@ -523,10 +477,58 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         return nil
     }
 
-    //MARK: TableView drop functions
+    // don't allow rows with non images to be selected while still allowing
+    // drags and ranges.
+    func tableView(tableView: NSTableView,
+                   selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet) -> NSIndexSet {
+        let selectionIndexes = NSMutableIndexSet()
+        proposedSelectionIndexes.enumerateIndexesUsingBlock {
+            (row, _) -> Void in
+            if self.images[row].validImage {
+               selectionIndexes.addIndex(row)
+            }
+        }
+        return selectionIndexes
+    }
+
+    // match the image to the selected row
+    func tableViewSelectionDidChange(notification: NSNotification) {
+
+        // redraw last selected row in normal colors
+
+        if let lastSelectedRow = self.lastSelectedRow {
+            reloadRow(lastSelectedRow)
+        }
+        let row = tableView.selectedRow
+        if row < 0 {
+            imageWell.image = nil
+            mapViewController.removeMapPin()
+//          mapViewController.itemSelected = false
+        } else {
+            let image = images[row]
+            imageWell.image = image.image
+            if image.latitude != nil && image.longitude != nil {
+                reloadRow(row) // change color of selected row
+                mapViewController.pinMapAt(latitude: image.latitude!,
+                                           longitude: image.longitude!)
+            } else {
+                mapViewController.removeMapPin()
+            }
+//          mapViewController.itemSelected = true
+        }
+    }
+}
+
+// MARK: TableView data source functions
+
+extension TableViewController: NSTableViewDataSource {
+
+    // one row per image in the images array
+    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+        return images.count
+    }
 
     // validate a proposed drop
-
     func tableView(aTableView: NSTableView,
                    validateDrop info: NSDraggingInfo,
                    proposedRow row: Int,
@@ -547,7 +549,6 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
     }
 
     // Add dropped files to the table
-
     func tableView(aTableView: NSTableView,
                    acceptDrop info: NSDraggingInfo,
                    row: Int,
@@ -565,8 +566,6 @@ final class TableViewController: NSViewController, NSTableViewDelegate,
         }
         return false
     }
-
-
 }
 
 extension TableViewController: MapViewDelegate {
@@ -574,7 +573,7 @@ extension TableViewController: MapViewDelegate {
     func mapViewMouseClicked(mapView: MapView!,
                              location: CLLocationCoordinate2D) {
         updateSelectedRows(latitude: location.latitude,
-                            longitude: location.longitude)
+                           longitude: location.longitude)
         appDelegate.undoManager.setActionName("location change")
     }
 }

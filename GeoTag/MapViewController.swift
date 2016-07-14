@@ -22,6 +22,11 @@ class MapViewController: NSViewController {
     let cameraCenterLongitudeKey = "CameraCenterLongitudeKey"
     let cameraAltitudeKey = "CameraAltitudeKey"
 
+    // program mapping between MKMapType and segment control selected segment
+    let mapTypeStandard = 0
+    let mapTypeHybrid = 1
+    let mapTypeSatellite = 2
+
     // Only one point on the map at a time (for now, anyway)
     // This is the point
     var mapPin: MKPointAnnotation?
@@ -63,11 +68,11 @@ class MapViewController: NSViewController {
     // select the desired map type
     @IBAction func changeMapType(sender: NSSegmentedControl) {
         switch sender.selectedSegment {
-        case 0:
+        case mapTypeStandard:
             mapView.mapType = .Standard
-        case 1:
+        case mapTypeHybrid:
             mapView.mapType = .Hybrid
-        case 2:
+        case mapTypeSatellite:
             mapView.mapType = .Satellite
         case let type:
             print("Unknown segment item \(type), sender \(sender)")
@@ -80,29 +85,28 @@ class MapViewController: NSViewController {
         var mapTypeAsInt = 0
         switch mapView.mapType {
         case .Standard:
-            mapTypeAsInt = 0
+            mapTypeAsInt = mapTypeStandard
         case .Hybrid:
-            mapTypeAsInt = 1
+            mapTypeAsInt = mapTypeHybrid
         case .Satellite:
-            mapTypeAsInt = 2
+            mapTypeAsInt = mapTypeSatellite
         case let type:
             print("Unknown map type \(type)")
         }
         defaults.setInteger(mapTypeAsInt, forKey: mapTypeKey)
 
         // save the current region as its component parts
-//        let currentRegion = mapView.region
         defaults.setDouble(mapView.camera.centerCoordinate.latitude,
-            forKey: cameraCenterLatitudeKey)
+                           forKey: cameraCenterLatitudeKey)
         defaults.setDouble(mapView.camera.centerCoordinate.longitude,
-            forKey: cameraCenterLongitudeKey)
+                           forKey: cameraCenterLongitudeKey)
         defaults.setDouble(mapView.camera.altitude,
-            forKey: cameraAltitudeKey)
+                           forKey: cameraAltitudeKey)
     }
 
     // center the map as the given latitude/longitude and drop
     // a pin at that location
-    func pinMapAtLatitude(latitude: Double, longitude: Double) {
+    func pinMapAt(latitude latitude: Double, longitude: Double) {
         let location = CLLocationCoordinate2D(latitude: latitude,
                                               longitude: longitude)
         let point = MKMapPointForCoordinate(location);
