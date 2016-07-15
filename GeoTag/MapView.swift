@@ -17,17 +17,17 @@ import MapKit
 class MapView: MKMapView {
     var clickDelegate: MapViewDelegate?
 
-    override func mouseUp(theEvent: NSEvent) {
+    override func mouseUp(_ theEvent: NSEvent) {
         super.mouseUp(theEvent)
         if theEvent.clickCount == 1 {
-            let point = convertPoint(theEvent.locationInWindow, fromView: nil)
-            let location = convertPoint(point, toCoordinateFromView: self)
-            clickDelegate?.mapViewMouseClicked(self, location: location)
+            let point = convert(theEvent.locationInWindow, from: nil)
+            let location = convert(point, toCoordinateFrom: self)
+            clickDelegate?.mouseClicked(mapView: self, location: location)
         }
     }
 }
 
 /// The delegate receiving the mouse clicks must follow this protocol
 protocol MapViewDelegate: NSObjectProtocol {
-    func mapViewMouseClicked(mapView: MapView!, location: CLLocationCoordinate2D)
+    func mouseClicked(mapView: MapView!, location: CLLocationCoordinate2D)
 }

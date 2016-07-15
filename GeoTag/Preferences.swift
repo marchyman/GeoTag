@@ -26,10 +26,10 @@ final class Preferences : NSWindowController {
         var saveFolder: NSURL? = nil
 
         if checkDirectory {
-            let defaults = UserDefaults.standard()
+            let defaults = UserDefaults.standard
             saveFolder = defaults.url(forKey: Preferences.saveFolderKey)
             if let path = saveFolder?.path {
-                let fileManager = FileManager.default()
+                let fileManager = FileManager.default
                 if !fileManager.fileExists(atPath: path) {
                     unexpected(error: nil, "The specified Optional Save Folder\n\n\t\(path)\n\nis missing. Original image files will not be copied to that location.")
                     saveFolder = nil
@@ -59,7 +59,7 @@ final class Preferences : NSWindowController {
         if panel.runModal() == NSFileHandlingPanelOKButton {
             saveFolderPath.url = panel.urls[0]
             guard let url = saveFolderPath.url else { return }
-            let defaults = UserDefaults.standard()
+            let defaults = UserDefaults.standard
             defaults.setURL(url, forKey: Preferences.saveFolderKey)
         }
     }
@@ -68,7 +68,7 @@ final class Preferences : NSWindowController {
     /// - Parameter AnyObject: unused
 
 	@IBAction func clearSaveFolder(_: AnyObject) {
-        let defaults = UserDefaults.standard()
+        let defaults = UserDefaults.standard
         defaults.removeObject(forKey: Preferences.saveFolderKey)
         saveFolderPath.url = nil
     }
@@ -82,7 +82,7 @@ final class Preferences : NSWindowController {
     /// initialize the saveFolderPath field from user preferences
 
     override func windowDidLoad() {
-        let defaults = UserDefaults.standard()
+        let defaults = UserDefaults.standard
         saveFolderPath.url = defaults.url(forKey: Preferences.saveFolderKey)
     }
 

@@ -39,7 +39,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// verify that exiftool can be found.  If exiftool can not be found in one
     /// of the normal locations put up an alert and terminate the program.
     func checkForExiftool() {
-        let fileManager = FileManager.default()
+        let fileManager = FileManager.default
         for path in exiftoolSearchPaths() {
             let exiftoolPath = path + "/exiftool"
             if fileManager.fileExists(atPath: exiftoolPath) {
@@ -52,7 +52,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let alert = NSAlert()
         alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
         alert.addButton(withTitle: NSLocalizedString("SET_EXIFTOOL_PATH",
-                                                     comment: "Choose exiftool path"))
+                        comment: "Choose exiftool path"))
         alert.messageText = NSLocalizedString("NO_EXIFTOOL_TITLE",
                                               comment: "can't find exiftool")
         alert.informativeText = NSLocalizedString("NO_EXIFTOOL_DESC",
@@ -75,7 +75,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         switch (openPanel.runModal()) {
         case NSFileHandlingPanelOKButton:
             if let path = openPanel.url?.path {
-                let defaults = UserDefaults.standard()
+                let defaults = UserDefaults.standard
                 defaults.set(path as AnyObject, forKey: Preferences.exiftoolPathKey)
                 defaults.synchronize()
             }
@@ -87,7 +87,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func exiftoolSearchPaths() -> [String] {
         var paths = ["/usr/bin", "/usr/local/bin", "/opt/bin"]
-        let defaults = UserDefaults.standard()
+        let defaults = UserDefaults.standard
         if let customPath = defaults.string(forKey: Preferences.exiftoolPathKey) {
             paths.append(customPath)
         }
@@ -120,7 +120,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // expand selected URLs that refer to a directory
             var urls = [URL]()
             for url in panel.urls {
-                if !addURLsInFolder(url: url, toUrls: &urls) {
+                if !addUrlsInFolder(url: url, toUrls: &urls) {
                     urls.append(url)
                 }
             }
@@ -135,7 +135,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    // MARK: Save image changes (if any)
+    //MARK: Save image changes (if any)
 
     func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
         guard let action = anItem?.action else { return false }
@@ -184,11 +184,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if modified {
             let alert = NSAlert()
             alert.addButton(withTitle: NSLocalizedString("SAVE",
-                                                         comment: "Save"))
+                                                       comment: "Save"))
             alert.addButton(withTitle: NSLocalizedString("CANCEL",
-                                                         comment: "Cancel"))
+                                                       comment: "Cancel"))
             alert.addButton(withTitle: NSLocalizedString("DONT_SAVE",
-                                                         comment: "Don't Save"))
+                                                       comment: "Don't Save"))
             alert.messageText = NSLocalizedString("UNSAVED_TITLE",
                                                   comment: "Unsaved Changes")
             alert.informativeText = NSLocalizedString("UNSAVED_DESC",
@@ -213,7 +213,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-//    @objc(applicationShouldTerminate:)
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplicationTerminateReply {
         if saveOrDontSave() {
             return .terminateNow

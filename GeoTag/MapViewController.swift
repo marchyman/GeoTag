@@ -41,15 +41,15 @@ class MapViewController: NSViewController {
 
     // final initialization for the mapView
     override func awakeFromNib() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        mapTypeControl.selectedSegment = defaults.integerForKey(mapTypeKey)
+        let defaults = UserDefaults.standard
+        mapTypeControl.selectedSegment = defaults.integer(forKey: mapTypeKey)
         changeMapType(mapTypeControl)
         // set up map from save info
         var center: CLLocationCoordinate2D
-        var altitude = defaults.doubleForKey(cameraAltitudeKey)
+        var altitude = defaults.double(forKey: cameraAltitudeKey)
         if (altitude > 0) {
-            let latitude = defaults.doubleForKey(cameraCenterLatitudeKey)
-            let longitude = defaults.doubleForKey(cameraCenterLongitudeKey)
+            let latitude = defaults.double(forKey: cameraCenterLatitudeKey)
+            let longitude = defaults.double(forKey: cameraCenterLongitudeKey)
             center = CLLocationCoordinate2D(latitude: latitude,
                                             longitude: longitude)
         } else {
@@ -58,7 +58,7 @@ class MapViewController: NSViewController {
             center = CLLocationCoordinate2D(latitude: 37.7244,
                                             longitude: -122.4381)
         }
-        mapView.camera = MKMapCamera(lookingAtCenterCoordinate: center,
+        mapView.camera = MKMapCamera(lookingAtCenter: center,
                                      fromEyeCoordinate: center,
                                      eyeAltitude: altitude)
     }
@@ -66,14 +66,14 @@ class MapViewController: NSViewController {
     /// Map control actions
 
     // select the desired map type
-    @IBAction func changeMapType(sender: NSSegmentedControl) {
+    @IBAction func changeMapType(_ sender: NSSegmentedControl) {
         switch sender.selectedSegment {
         case mapTypeStandard:
-            mapView.mapType = .Standard
+            mapView.mapType = .standard
         case mapTypeHybrid:
-            mapView.mapType = .Hybrid
+            mapView.mapType = .hybrid
         case mapTypeSatellite:
-            mapView.mapType = .Satellite
+            mapView.mapType = .satellite
         case let type:
             print("Unknown segment item \(type), sender \(sender)")
         }
@@ -81,37 +81,37 @@ class MapViewController: NSViewController {
 
     // save the current map type and displayed region
     @IBAction func saveMapSetting(_: AnyObject) {
-        let defaults = NSUserDefaults.standardUserDefaults()
+        let defaults = UserDefaults.standard
         var mapTypeAsInt = 0
         switch mapView.mapType {
-        case .Standard:
+        case .standard:
             mapTypeAsInt = mapTypeStandard
-        case .Hybrid:
+        case .hybrid:
             mapTypeAsInt = mapTypeHybrid
-        case .Satellite:
+        case .satellite:
             mapTypeAsInt = mapTypeSatellite
         case let type:
             print("Unknown map type \(type)")
         }
-        defaults.setInteger(mapTypeAsInt, forKey: mapTypeKey)
+        defaults.set(mapTypeAsInt, forKey: mapTypeKey)
 
         // save the current region as its component parts
-        defaults.setDouble(mapView.camera.centerCoordinate.latitude,
-                           forKey: cameraCenterLatitudeKey)
-        defaults.setDouble(mapView.camera.centerCoordinate.longitude,
-                           forKey: cameraCenterLongitudeKey)
-        defaults.setDouble(mapView.camera.altitude,
-                           forKey: cameraAltitudeKey)
+        defaults.set(mapView.camera.centerCoordinate.latitude,
+                     forKey: cameraCenterLatitudeKey)
+        defaults.set(mapView.camera.centerCoordinate.longitude,
+                     forKey: cameraCenterLongitudeKey)
+        defaults.set(mapView.camera.altitude,
+                     forKey: cameraAltitudeKey)
     }
 
     // center the map as the given latitude/longitude and drop
     // a pin at that location
-    func pinMapAt(latitude latitude: Double, longitude: Double) {
+    func pinMapAt(latitude: Double, longitude: Double) {
         let location = CLLocationCoordinate2D(latitude: latitude,
                                               longitude: longitude)
         let point = MKMapPointForCoordinate(location);
         if !MKMapRectContainsPoint(mapView.visibleMapRect, point) {
-            mapView.setCenterCoordinate(location, animated: false)
+            mapView.setCenter(location, animated: false)
         }
         // if a pin exists, move it.  Otherwise create a new pin
         if let pin = mapPin {
@@ -141,12 +141,12 @@ class MapViewController: NSViewController {
 
 extension MapViewController: MKMapViewDelegate {
     // return a pinAnnotationView for a red pin
-    func mapView(mapView: MKMapView,
-                 viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView,
+                 viewFor annotation: MKAnnotation) -> MKAnnotationView? {
 
         let identifier = "pinAnnotation"
         var annotationView: MKPinAnnotationView!
-        annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier) as? MKPinAnnotationView
+        annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
         if (annotationView != nil) {
             // is this correct?
             annotationView.annotation = annotation
@@ -154,20 +154,20 @@ extension MapViewController: MKMapViewDelegate {
             annotationView = MKPinAnnotationView(annotation: annotation,
                                                  reuseIdentifier: identifier)
         }
-        annotationView.pinColor = .Red;
+        annotationView.pinColor = .red;
         annotationView.animatesDrop = false
         annotationView.canShowCallout = false
-        annotationView.draggable = true
+        annotationView.isDraggable = true
         return annotationView
     }
 
     // A pin is being dragged.
-    func mapView(mapView: MKMapView,
+    func mapView(_ mapView: MKMapView,
                  annotationView: MKAnnotationView,
-                 didChangeDragState newState: MKAnnotationViewDragState,
+                 didChange newState: MKAnnotationViewDragState,
                  fromOldState oldState: MKAnnotationViewDragState) {
-        if newState == .Ending {
-            clickDelegate?.mapViewMouseClicked(nil,
+        if newState == .ending {
+            clickDelegate?.mouseClicked(mapView: nil,
                                                location: annotationView.annotation!.coordinate)
          }
     }

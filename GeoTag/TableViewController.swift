@@ -18,7 +18,7 @@ final class TableViewController: NSViewController {
     @IBOutlet var mapViewController: MapViewController!
 
     var images = [ImageData]()
-    var imageURLs = Set<NSURL>()
+    var imageUrls = Set<URL>()
     var lastSelectedRow: Int?
 
     // MARK: startup
@@ -30,8 +30,8 @@ final class TableViewController: NSViewController {
         // mapViewController.mapview is a delegate to handle map clicks
         mapViewController.clickDelegate = self
         mapViewController.mapView.clickDelegate = self
-        tableView.registerForDraggedTypes([NSFilenamesPboardType]);
-        tableView.draggingDestinationFeedbackStyle = .None
+        tableView.register(forDraggedTypes: [NSFilenamesPboardType]);
+        tableView.draggingDestinationFeedbackStyle = .none
     }
 
     //MARK: populating the table
@@ -44,15 +44,15 @@ final class TableViewController: NSViewController {
     /// URL is added to an array of images.  Duplicate URLs are **not** added.
     /// A progress indicator is displayed while the operation is in progress.
 
-    func addImages(urls: [NSURL]) -> Bool {
+    func addImages(urls: [URL]) -> Bool {
         appDelegate.progressIndicator.startAnimation(self)
         var reloadNeeded = false
         var duplicateFound = false
         for url in urls {
-            if imageURLs.contains(url) {
+            if imageUrls.contains(url) {
                 duplicateFound = true
             } else {
-                imageURLs.insert(url)
+                imageUrls.insert(url)
                 images.append(ImageData(url: url))
                 reloadNeeded = true
             }
@@ -99,8 +99,8 @@ final class TableViewController: NSViewController {
     /// will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
     /// The validLocation Boolean is used to mitigate this issue.
 
-    func updateLocationAtRow(row: Int, validLocation: Bool, latitude: Double,
-                             longitude: Double, modified: Bool = true) {
+    func updateLocation(row: Int, validLocation: Bool, latitude: Double,
+                        longitude: Double, modified: Bool = true) {
         var oldValidLocation: Bool
         var oldLatitude: Double
         var oldLongitude: Double
@@ -115,18 +115,19 @@ final class TableViewController: NSViewController {
             oldLongitude = 0
         }
         let undo = appDelegate.undoManager
-        undo.prepareWithInvocationTarget(self).updateLocationAtRow(row,
-            validLocation: oldValidLocation, latitude: oldLatitude,
-            longitude: oldLongitude, modified: appDelegate.modified)
+        undo.prepare(withInvocationTarget: self)
+            .updateLocation(row: row, validLocation: oldValidLocation,
+                            latitude: oldLatitude, longitude: oldLongitude,
+                            modified: appDelegate.modified)
         if validLocation {
-            image.setLatitude(latitude, longitude: longitude)
+            image.setLocation(latitude: latitude, longitude: longitude)
             mapViewController.pinMapAt(latitude: image.latitude!,
                                        longitude: image.longitude!)
         } else {
-            image.setLatitude(nil, longitude: nil)
+            image.setLocation(latitude: nil, longitude: nil)
             mapViewController.removeMapPin()
         }
-        reloadRow(row)
+        reload(row: row)
         appDelegate.modified = modified
     }
 
@@ -142,10 +143,9 @@ final class TableViewController: NSViewController {
 
     func validateForInterpolation() -> Bool {
         if tableView.numberOfSelectedRows > 2 {
-            let rows = tableView.selectedRowIndexes
             var count = 0
-            rows.enumerateIndexesUsingBlock {
-                (row, _) -> Void in
+            tableView.selectedRowIndexes.forEach {
+                row in
                 if self.images[row].latitude != nil &&
                    self.images[row].longitude != nil {
                    count += 1
@@ -160,8 +160,9 @@ final class TableViewController: NSViewController {
 
     // only enable various tableview related menu items when it makes sense
 
-    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        switch menuItem.action {
+    func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
+        guard let action = anItem?.action else { return false }
+        switch action {
         case #selector(selectAll(_:)):
             // OK as long as there is at least one entry in the table
             return images.count > 0
@@ -184,10 +185,10 @@ final class TableViewController: NSViewController {
             // OK if there is at least one selected row and something that
             // looks like a lat and lon in the pasteboard.
             if tableView.numberOfSelectedRows > 0 {
-                let pb = NSPasteboard.generalPasteboard()
-                if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
+                let pb = NSPasteboard.general()
+                if let pasteVal = pb.string(forType: NSPasteboardTypeString) {
                     // pasteVal should look like "lat lon"
-                    let values = pasteVal.componentsSeparatedByString(" ")
+                    let values = pasteVal.components(separatedBy: " ")
                     if values.count == 2 {
                         return true
                     }
@@ -199,7 +200,7 @@ final class TableViewController: NSViewController {
         case #selector(interpolate(_:)):
             return validateForInterpolation()
         default:
-            print("default for item \(menuItem)")
+            print("default for item \(anItem)")
         }
         return false
     }
@@ -225,7 +226,7 @@ final class TableViewController: NSViewController {
     /// cut is implemented as a copy followed by a delete.  The obj parameter
     /// is forwarded to copy and delete.
 
-    @IBAction func cut(obj: AnyObject) {
+    @IBAction func cut(_ obj: AnyObject) {
         copy(obj)
         delete(obj)
         appDelegate.undoManager.setActionName("cut")
@@ -240,7 +241,7 @@ final class TableViewController: NSViewController {
 
     @IBAction func copy(_: AnyObject) {
         let row = tableView.selectedRow
-        let pb = NSPasteboard.generalPasteboard()
+        let pb = NSPasteboard.general()
         pb.declareTypes([NSPasteboardTypeString], owner: self)
         pb.setString(images[row].stringRepresentation,
                      forType: NSPasteboardTypeString)
@@ -255,10 +256,10 @@ final class TableViewController: NSViewController {
     /// to all selected items in the table.
 
     @IBAction func paste(_: AnyObject) {
-        let pb = NSPasteboard.generalPasteboard()
-        if let pasteVal = pb.stringForType(NSPasteboardTypeString) {
+        let pb = NSPasteboard.general()
+        if let pasteVal = pb.string(forType: NSPasteboardTypeString) {
             // pasteVal should look like "lat lon"
-            let values = pasteVal.componentsSeparatedByString(" ")
+            let values = pasteVal.components(separatedBy: " ")
             if values.count == 2 {
                 let latitude = values[0].doubleValue
                 let longitude = values[1].doubleValue
@@ -275,12 +276,10 @@ final class TableViewController: NSViewController {
     /// remove geolocation information from the selected items.
 
     @IBAction func delete(_: AnyObject) {
-        let rows = tableView.selectedRowIndexes
         appDelegate.undoManager.beginUndoGrouping()
-        rows.enumerateIndexesUsingBlock {
-            (row, _) -> Void in
-            self.updateLocationAtRow(row, validLocation: false, latitude: 0,
-                longitude: 0)
+        tableView.selectedRowIndexes.forEach {
+            self.updateLocation(row: $0, validLocation: false,
+                                latitude: 0, longitude: 0)
         }
         appDelegate.undoManager.endUndoGrouping()
         appDelegate.undoManager.setActionName("delete")
@@ -293,7 +292,7 @@ final class TableViewController: NSViewController {
     @IBAction func clear(_: AnyObject) {
         if !appDelegate.modified {
             images = []
-            imageURLs.removeAll()
+            imageUrls.removeAll()
             reloadAllRows()
         }
     }
@@ -313,16 +312,16 @@ final class TableViewController: NSViewController {
         struct LocnInfo {
             let lat: Double
             let lon: Double
-            let timestamp: NSTimeInterval
+            let timestamp: TimeInterval
         }
         var startInfo: LocnInfo!
         var endInfo: LocnInfo!
+        let rows = tableView.selectedRowIndexes
 
         // figure out our starting and ending points
-        let rows = tableView.selectedRowIndexes
-        rows.enumerateIndexesUsingBlock {
-            (row, _) -> Void in
-            let image = self.images[row]
+
+        rows.forEach {
+            let image = self.images[$0]
             if image.latitude != nil &&
                image.longitude != nil {
                 let info = LocnInfo(lat: image.latitude!,
@@ -359,17 +358,16 @@ final class TableViewController: NSViewController {
             let speed = distance / (endInfo.timestamp - startInfo.timestamp)
             print("\(distance) meters \(bearing)º at \(speed) meters/sec")
             appDelegate.undoManager.beginUndoGrouping()
-            rows.enumerateIndexesUsingBlock {
-                (row, _) -> Void in
-                let image = self.images[row]
+            rows.forEach {
+                let image = self.images[$0]
                 let deltaTime = image.dateFromEpoch - startInfo.timestamp
                 if deltaTime > 0 && deltaTime <= endInfo.timestamp &&
                    image.latitude == nil {
                     let deltaDist = deltaTime * speed
                     let (lat, lon) = destFromStart(lat: startInfo.lat, lon: startInfo.lon,
                                                    distance: deltaDist, bearing: bearing)
-                    self.updateLocationAtRow(row, validLocation: true,
-                                             latitude: lat, longitude: lon)
+                    self.updateLocation(row: $0, validLocation: true,
+                                        latitude: lat, longitude: lon)
                 }
             }
             appDelegate.undoManager.endUndoGrouping()
@@ -388,7 +386,7 @@ final class TableViewController: NSViewController {
         appDelegate.undoManager.removeAllActions()
         tableView.reloadData()
         imageWell.image = nil
-//        webViewController.removeMapPin()
+        mapViewController.removeMapPin()
     }
 
     /// Reload a specific row.
@@ -397,12 +395,11 @@ final class TableViewController: NSViewController {
     ///
     /// Update the latitude and longitude columns for the given row.
 
-    func reloadRow(row: Int) {
-        let latColumn = tableView.columnWithIdentifier("latitude")
-        let columns = 2 // latitude and longitude
-        let cols = NSIndexSet(indexesInRange: NSMakeRange(latColumn, columns))
-        tableView.reloadDataForRowIndexes(NSIndexSet(index: row),
-                                          columnIndexes: cols)
+    func reload(row: Int) {
+        let latColumn = tableView.column(withIdentifier: "latitude")
+        let cols = IndexSet(integersIn: latColumn..<latColumn+2)
+        tableView.reloadData(forRowIndexes: IndexSet(integer: row),
+                             columnIndexes: cols)
     }
 
     /// Update all selected rows with the given latitude and longitude
@@ -412,12 +409,10 @@ final class TableViewController: NSViewController {
     ///
     /// Update all selected rows as a single undo group.
 
-    func updateSelectedRows(latitude latitude: Double, longitude: Double) {
-        let rows = tableView.selectedRowIndexes
+    func updateSelectedRows(latitude: Double, longitude: Double) {
         appDelegate.undoManager.beginUndoGrouping()
-        rows.enumerateIndexesUsingBlock {
-            (row, _) -> Void in
-            self.updateLocationAtRow(row, validLocation: true,
+        tableView.selectedRowIndexes.forEach {
+            self.updateLocation(row: $0, validLocation: true,
                 latitude: latitude, longitude: longitude)
         }
         appDelegate.undoManager.endUndoGrouping()
@@ -432,8 +427,8 @@ final class TableViewController: NSViewController {
 extension TableViewController: NSTableViewDelegate {
 
     // return view for requested column.
-    func tableView(tableView: NSTableView,
-                   viewForTableColumn tableColumn: NSTableColumn?,
+    func tableView(_ tableView: NSTableView,
+                   viewFor tableColumn: NSTableColumn?,
                    row: Int) -> NSView? {
         let image = images[row]
         var value = ""
@@ -457,20 +452,20 @@ extension TableViewController: NSTableViewDelegate {
                 break
             }
             let colView =
-                tableView.makeViewWithIdentifier(id, owner: nil) as! NSTableCellView
+                tableView.make(withIdentifier: id, owner: nil) as! NSTableCellView
             colView.textField?.stringValue = value;
             if row == tableView.selectedRow {
                 lastSelectedRow = row
-                colView.textField?.textColor = NSColor.yellowColor()
+                colView.textField?.textColor = NSColor.yellow()
             } else {
                 lastSelectedRow = nil
                 colView.textField?.textColor = nil
             }
-            if tip != nil {
-                colView.textField?.toolTip = tip!
+            if let tooltip = tip {
+                colView.textField?.toolTip = tooltip
             }
             if !image.validImage {
-                colView.textField?.textColor = NSColor.grayColor()
+                colView.textField?.textColor = NSColor.gray()
             }
             return colView
         }
@@ -479,25 +474,24 @@ extension TableViewController: NSTableViewDelegate {
 
     // don't allow rows with non images to be selected while still allowing
     // drags and ranges.
-    func tableView(tableView: NSTableView,
-                   selectionIndexesForProposedSelection proposedSelectionIndexes: NSIndexSet) -> NSIndexSet {
-        let selectionIndexes = NSMutableIndexSet()
-        proposedSelectionIndexes.enumerateIndexesUsingBlock {
-            (row, _) -> Void in
-            if self.images[row].validImage {
-               selectionIndexes.addIndex(row)
+    func tableView(_ tableView: NSTableView,
+                   selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
+        var selectionIndexes = IndexSet()
+        proposedSelectionIndexes.forEach {
+            if self.images[$0].validImage {
+               selectionIndexes.insert($0)
             }
         }
         return selectionIndexes
     }
 
-    // match the image to the selected row
-    func tableViewSelectionDidChange(notification: NSNotification) {
+    /// match the image to the selected row
+    func tableViewSelectionDidChange(_ notification: Notification) {
 
         // redraw last selected row in normal colors
 
         if let lastSelectedRow = self.lastSelectedRow {
-            reloadRow(lastSelectedRow)
+            reload(row: lastSelectedRow)
         }
         let row = tableView.selectedRow
         if row < 0 {
@@ -508,7 +502,7 @@ extension TableViewController: NSTableViewDelegate {
             let image = images[row]
             imageWell.image = image.image
             if image.latitude != nil && image.longitude != nil {
-                reloadRow(row) // change color of selected row
+                reload(row: row) // change color of selected row
                 mapViewController.pinMapAt(latitude: image.latitude!,
                                            longitude: image.longitude!)
             } else {
@@ -523,46 +517,42 @@ extension TableViewController: NSTableViewDelegate {
 
 extension TableViewController: NSTableViewDataSource {
 
-    // one row per image in the images array
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+    /// table size is one row per image in the images array
+    func numberOfRows(in tableView: NSTableView) -> Int {
         return images.count
     }
 
     // validate a proposed drop
-    func tableView(aTableView: NSTableView,
-                   validateDrop info: NSDraggingInfo,
+    func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo,
                    proposedRow row: Int,
-                   proposedDropOperation operation: NSTableViewDropOperation) -> NSDragOperation {
-
+                   proposedDropOperation dropOperation: NSTableViewDropOperation) -> NSDragOperation {
         let pb = info.draggingPasteboard()
-        if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
-            let fileManager = NSFileManager.defaultManager()
+        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String] {
+            let fileManager = FileManager.default
             for path in paths {
-                if !fileManager.fileExistsAtPath(path) ||
-                   imageURLs.contains(NSURL.fileURLWithPath(path)) {
-                    return .None
+                if !fileManager.fileExists(atPath: path) ||
+                   imageUrls.contains(URL(fileURLWithPath: path)) {
+                    return []
                 }
             }
-            return .Link
+            return .link
         }
-        return .None
+        return []
     }
 
     // Add dropped files to the table
-    func tableView(aTableView: NSTableView,
-                   acceptDrop info: NSDraggingInfo,
-                   row: Int,
-                   dropOperation operation: NSTableViewDropOperation) -> Bool {
+    func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo,
+                   row: Int, dropOperation: NSTableViewDropOperation) -> Bool {
         let pb = info.draggingPasteboard()
-        if let paths = pb.propertyListForType(NSFilenamesPboardType) as? [String!] {
-            var urls = [NSURL]()
+        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String] {
+            var urls = [URL]()
             for path in paths {
-                let fileURL = NSURL(fileURLWithPath: path)
-                if !addURLsInFolder(fileURL, toURLs: &urls) {
+                let fileURL = URL(fileURLWithPath: path)
+                if !addUrlsInFolder(url: fileURL, toUrls: &urls) {
                     urls.append(fileURL)
                 }
             }
-            return !addImages(urls)
+            return !addImages(urls: urls)
         }
         return false
     }
@@ -570,8 +560,8 @@ extension TableViewController: NSTableViewDataSource {
 
 extension TableViewController: MapViewDelegate {
 
-    func mapViewMouseClicked(mapView: MapView!,
-                             location: CLLocationCoordinate2D) {
+    func mouseClicked(mapView: MapView!,
+                      location: CLLocationCoordinate2D) {
         updateSelectedRows(latitude: location.latitude,
                            longitude: location.longitude)
         appDelegate.undoManager.setActionName("location change")
@@ -587,12 +577,12 @@ extension TableViewController: MapViewDelegate {
 /// in a TableView extension.
 
 extension NSTableView {
-    public override func rightMouseDown(theEvent: NSEvent) {
-        let localPoint = convertPoint(theEvent.locationInWindow, fromView: nil)
-        let row = rowAtPoint(localPoint)
+    public override func rightMouseDown(_ theEvent: NSEvent) {
+        let localPoint = convert(theEvent.locationInWindow, from: nil)
+        let row = self.row(at: localPoint)
         if row >= 0 {
             if !isRowSelected(row) {
-                selectRowIndexes(NSIndexSet(index: row),
+                selectRowIndexes(IndexSet(integer: row),
                                  byExtendingSelection: false)
             }
         } else {

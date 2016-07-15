@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-// CFString to (NS])*String conversions
+// CFString to (NS)*String conversions
 let pixelHeight = kCGImagePropertyPixelHeight as NSString
 let pixelWidth = kCGImagePropertyPixelWidth as NSString
 let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
@@ -45,7 +45,7 @@ final class ImageData: NSObject {
     var dateFromEpoch: TimeInterval {
         let format = DateFormatter()
         format.dateFormat = "yyyy:MM:dd HH:mm:ss"
-        format.timeZone = TimeZone.local()
+        format.timeZone = TimeZone.local
         if let convertedDate = format.date(from: date) {
             return convertedDate.timeIntervalSince1970
         }
@@ -90,7 +90,7 @@ final class ImageData: NSObject {
     ///
     /// The location may be set to nil to delete location information from
     /// an image.
-    func setLatitude(latitude: Double?, longitude: Double?) {
+    func setLocation(latitude: Double?, longitude: Double?) {
         self.latitude = latitude
         self.longitude = longitude
     }
@@ -119,7 +119,7 @@ final class ImageData: NSObject {
     private func saveOriginalFile(sourceName: String) -> Bool {
         guard let saveDirURL = Preferences.saveFolder() else { return false }
         guard let name = name else { return false }
-        let fileManager = FileManager.default()
+        let fileManager = FileManager.default
         let saveFileURL = saveDirURL.appendingPathComponent(name, isDirectory: false)
         if !fileManager.fileExists(atPath: (saveFileURL?.path!)!) {
             do {
@@ -147,7 +147,7 @@ final class ImageData: NSObject {
     /// letting them know an alternate backup method is being used.
     private func backupImageFile() -> Bool {
         var backupURL: NSURL?
-        let fileManager = FileManager.default()
+        let fileManager = FileManager.default
         do {
             try fileManager.trashItem(at: url as URL, resultingItemURL: &backupURL)
             let _ = saveOriginalFile(sourceName: backupURL!.path!)
@@ -220,8 +220,8 @@ final class ImageData: NSObject {
             }
 
             let exiftool = Task()
-            exiftool.standardOutput = FileHandle.nullDevice()
-            exiftool.standardError = FileHandle.nullDevice()
+            exiftool.standardOutput = FileHandle.withNullDevice
+            exiftool.standardError = FileHandle.withNullDevice
             exiftool.launchPath = AppDelegate.exiftoolPath
             exiftool.arguments = ["-q", "-m",
                 "-DateTimeOriginal>FileModifyDate", latArg, latRefArg,
@@ -240,7 +240,7 @@ final class ImageData: NSObject {
             if !overwriteOriginal {
                 let originalFile = path + "_original"
                 if saveOriginalFile(sourceName: originalFile) {
-                    let fileManager = FileManager.default()
+                    let fileManager = FileManager.default
                     do {
                         try fileManager.removeItem(atPath: originalFile)
                     } catch let error as NSError {
@@ -268,6 +268,7 @@ final class ImageData: NSObject {
             print("Failed CGImageSourceCreateWithURL \(url)")
             return false
         }
+
 
         // grab the image properties
         guard let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary! else {
@@ -325,7 +326,7 @@ final class ImageData: NSObject {
         }
 
         // extract image existing gps info
-        if let gpsData = imgProps[GPSDictionary] as? [String : AnyObject] {
+        if let gpsData = imgProps[GPSDictionary] as? [String: AnyObject] {
             if let lat = gpsData[GPSLatitude] as? Double,
                 latRef = gpsData[GPSLatitudeRef] as? String {
                 if latRef == "N" {

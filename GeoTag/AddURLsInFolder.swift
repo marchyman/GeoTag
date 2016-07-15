@@ -9,16 +9,16 @@
 import Foundation
 
 /// enumerate the files in a folder adding URLs for all files found to an array
-/// - Parameter URL: a URL of the folder to enumerate
-/// - Parameter toURLs: the array to add the URL of found files
+/// - Parameter url: a URL of the folder to enumerate
+/// - Parameter toUrls: the array to add the url of found files
 /// - Returns: true if the URL was a folder, false otherwise
 ///
-/// Non-hidden files are added to the inout toURLs parameter. Hidden files
+/// Non-hidden files are added to the inout toUrls parameter. Hidden files
 /// and internal folders are not added to the array.  Internal folders are
 /// enumerated.
 
-public func addURLsInFolder(url: URL, toUrls urls: inout [URL]) -> Bool {
-    let fileManager = FileManager.default()
+public func addUrlsInFolder(url: URL, toUrls urls: inout [URL]) -> Bool {
+    let fileManager = FileManager.default
     var dir: ObjCBool = false
     if fileManager.fileExists(atPath: url.path!, isDirectory: &dir) && dir {
         guard let urlEnumerator =

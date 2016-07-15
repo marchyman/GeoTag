@@ -14,11 +14,11 @@ private let d2r = π / 180   // degrees to radians adjustment
 private let r2d = 180 / π   // radians to degrees adjustments
 private let R = 6372800.0	// approx average radius of the earth in meters
 
-private func degreesToRadians(degrees: Double) -> Double {
+private func degreesToRadians(_ degrees: Double) -> Double {
     return degrees * d2r
 }
 
-private func radiansToDegrees(radians: Double) -> Double {
+private func radiansToDegrees(_ radians: Double) -> Double {
     return radians * r2d
 }
 
@@ -33,10 +33,10 @@ private func radiansToDegrees(radians: Double) -> Double {
 
 public func distanceAndBearing(lat1: Double, lon1: Double,
                                lat2: Double, lon2: Double) -> (Double, Double) {
-    let lat1R = degreesToRadians(degrees: lat1)
-    let lon1R = degreesToRadians(degrees: lon1)
-    let lat2R = degreesToRadians(degrees: lat2)
-    let lon2R = degreesToRadians(degrees: lon2)
+    let lat1R = degreesToRadians(lat1)
+    let lon1R = degreesToRadians(lon1)
+    let lat2R = degreesToRadians(lat2)
+    let lon2R = degreesToRadians(lon2)
     let deltaLat = lat2R - lat1R
     let deltaLon = lon2R - lon1R
     let sinDeltaLat2 = sin(deltaLat/2)
@@ -47,7 +47,7 @@ public func distanceAndBearing(lat1: Double, lon1: Double,
 
     let b = atan2(sin(deltaLon) * cos(lat2R),
                   cos(lat1R) * sin(lat2R) - sin(lat1R) * cos(lat2R) * cos(deltaLon))
-    let bearing = (radiansToDegrees(radians: b) + 360.0).truncatingRemainder(dividingBy: 360.0)
+    let bearing = (radiansToDegrees(b) + 360.0).truncatingRemainder(dividingBy: 360.0)
     return (distance, bearing)
 }
 
@@ -61,16 +61,16 @@ public func distanceAndBearing(lat1: Double, lon1: Double,
 
 public func destFromStart(lat: Double, lon: Double,
                           distance: Double, bearing: Double) -> (Double, Double) {
-    let latR = degreesToRadians(degrees: lat)
-    let lonR = degreesToRadians(degrees: lon)
+    let latR = degreesToRadians(lat)
+    let lonR = degreesToRadians(lon)
     let angularDist = distance / R
-    let bearingR = degreesToRadians(degrees: bearing)
+    let bearingR = degreesToRadians(bearing)
 
     let lat2R = asin(sin(latR) * cos(angularDist) +
                      cos(latR) * sin(angularDist) * cos(bearingR))
     let lon2R = lonR +
                 atan2(sin(bearingR) * sin(angularDist) * cos(latR),
                       cos(angularDist) - sin(latR) * sin(lat2R))
-    return (radiansToDegrees(radians: lat2R), radiansToDegrees(radians: lon2R))
+    return (radiansToDegrees(lat2R), radiansToDegrees(lon2R))
 }
 
