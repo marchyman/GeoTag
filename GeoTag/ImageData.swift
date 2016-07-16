@@ -194,47 +194,7 @@ final class ImageData: NSObject {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
             let overwriteOriginal = backupImageFile()
-            // latitude exiftool args
-            var latArg = "-GPSLatitude="
-            var latRefArg = "-GPSLatitudeRef="
-            if var lat = latitude {
-                if lat < 0 {
-                    latRefArg += "S"
-                    lat = -lat
-                } else {
-                    latRefArg += "N"
-                }
-                latArg += "\(lat)"
-            }
-            // longitude exiftool args
-            var lonArg = "-GPSLongitude="
-            var lonRefArg = "-GPSLongitudeRef="
-            if var lon = longitude {
-                if lon < 0 {
-                    lonRefArg += "W"
-                    lon = -lon
-                } else {
-                    lonRefArg += "E"
-                }
-                lonArg += "\(lon)"
-            }
-
-            let exiftool = Task()
-            exiftool.standardOutput = FileHandle.withNullDevice
-            exiftool.standardError = FileHandle.withNullDevice
-            exiftool.launchPath = AppDelegate.exiftoolPath
-            exiftool.arguments = ["-q", "-m",
-                "-DateTimeOriginal>FileModifyDate", latArg, latRefArg,
-                lonArg, lonRefArg, path]
-
-            // add -overwrite_original option to the exiftool args if we were
-            // able to create a backup.
-            if overwriteOriginal {
-                exiftool.arguments?.insert("-overwrite_original", at: 2)
-            }
-            exiftool.launch()
-            exiftool.waitUntilExit()
-
+            AppDelegate.exiftool.updateLocation(from: self, overwriteOriginal: overwriteOriginal)
             // if a backup could not be created prior to running exiftool
             // copy the exiftool created original to the save directory.
             if !overwriteOriginal {

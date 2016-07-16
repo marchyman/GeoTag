@@ -11,7 +11,7 @@ import AppKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // class variable holds path to exiftool
-    static private(set) var exiftoolPath: String!
+    static private(set) var exiftool: Exiftool!
     lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
     lazy var undoManager: UndoManager = UndoManager()
 
@@ -33,68 +33,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         window.delegate = self
-        checkForExiftool()
-    }
-
-    /// verify that exiftool can be found.  If exiftool can not be found in one
-    /// of the normal locations put up an alert and terminate the program.
-    func checkForExiftool() {
-        let fileManager = FileManager.default
-        for path in exiftoolSearchPaths() {
-            let exiftoolPath = path + "/exiftool"
-            if fileManager.fileExists(atPath: exiftoolPath) {
-                precondition (AppDelegate.exiftoolPath == nil)
-                AppDelegate.exiftoolPath = exiftoolPath
-                print("exiftool path = \(exiftoolPath)")
-                return
-            }
-        }
-        let alert = NSAlert()
-        alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
-        alert.addButton(withTitle: NSLocalizedString("SET_EXIFTOOL_PATH",
-                        comment: "Choose exiftool path"))
-        alert.messageText = NSLocalizedString("NO_EXIFTOOL_TITLE",
-                                              comment: "can't find exiftool")
-        alert.informativeText = NSLocalizedString("NO_EXIFTOOL_DESC",
-                                                  comment: "can't find exiftool")
-        switch (alert.runModal()) {
-        case NSAlertSecondButtonReturn:
-            showSetExiftoolPathDialog()
-        default:
+        if let exiftool = Exiftool() {
+            AppDelegate.exiftool = exiftool
+        } else {
             window.close()
         }
     }
 
-    func showSetExiftoolPathDialog() {
-        let openPanel = NSOpenPanel()
-        openPanel.canChooseFiles = false
-        openPanel.canCreateDirectories = false
-        openPanel.canChooseDirectories = true
-        openPanel.allowsMultipleSelection = false
-        openPanel.showsHiddenFiles = true
-        switch (openPanel.runModal()) {
-        case NSFileHandlingPanelOKButton:
-            if let path = openPanel.url?.path {
-                let defaults = UserDefaults.standard
-                defaults.set(path as AnyObject, forKey: Preferences.exiftoolPathKey)
-                defaults.synchronize()
-            }
-            checkForExiftool()
-        default:
-            window.close()
-        }
-    }
-
-    func exiftoolSearchPaths() -> [String] {
-        var paths = ["/usr/bin", "/usr/local/bin", "/opt/bin"]
-        let defaults = UserDefaults.standard
-        if let customPath = defaults.string(forKey: Preferences.exiftoolPathKey) {
-            paths.append(customPath)
-        }
-        return paths
-    }
-
-    //MARK: window delegate undo handling
+   //MARK: window delegate undo handling
 
     func windowWillReturnUndoManager(window: NSWindow) -> UndoManager? {
         return undoManager
