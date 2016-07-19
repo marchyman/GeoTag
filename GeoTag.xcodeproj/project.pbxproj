@@ -180,6 +180,7 @@
 					49B0EEB319495FB100293C73 = {
 						CreatedOnToolsVersion = 6.0;
 						DevelopmentTeam = A3UXBEBE8Z;
+						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.Maps.Mac = {
 								enabled = 1;
@@ -377,6 +378,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.snafu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = GeoTag;
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -393,6 +395,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.snafu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = GeoTag;
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

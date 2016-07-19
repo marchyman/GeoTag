@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-// CFString to (NS)*String conversions
+// CFString to (NS)*String casts
 let pixelHeight = kCGImagePropertyPixelHeight as NSString
 let pixelWidth = kCGImagePropertyPixelWidth as NSString
 let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
@@ -281,14 +281,14 @@ final class ImageData: NSObject {
 
         // extract image date/time created
         if let exifData = imgProps[exifDictionary] as? [String: AnyObject],
-                    dto = exifData[exifDateTimeOriginal] as? String {
+           let dto = exifData[exifDateTimeOriginal] as? String {
             date = dto
         }
 
         // extract image existing gps info
         if let gpsData = imgProps[GPSDictionary] as? [String: AnyObject] {
             if let lat = gpsData[GPSLatitude] as? Double,
-                latRef = gpsData[GPSLatitudeRef] as? String {
+               let latRef = gpsData[GPSLatitudeRef] as? String {
                 if latRef == "N" {
                     latitude = lat
                 } else {
@@ -296,7 +296,7 @@ final class ImageData: NSObject {
                 }
             }
             if let lon = gpsData[GPSLongitude] as? Double,
-                lonRef = gpsData[GPSLongitudeRef] as? String {
+               let lonRef = gpsData[GPSLongitudeRef] as? String {
                 if lonRef == "E" {
                     longitude = lon
                 } else {
