@@ -1,5 +1,11 @@
 ## GeoTag for OS X
 
+**Note: The current version may not work due to google maps API
+changes.   The 'maps' branch is a conversion to Apple Maps.  That means
+Mac App store distribution.   That means sandboxing.  Accessing exiftool
+as I've done in the past is not allowed in a sandboxed app.  For that
+reason the 'map' branch does not work at this time**
+
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
 zooming within a google map to the place the image was recorded. Clicking on
