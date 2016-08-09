@@ -60,7 +60,7 @@ final class Preferences : NSWindowController {
             saveFolderPath.url = panel.urls[0]
             guard let url = saveFolderPath.url else { return }
             let defaults = UserDefaults.standard
-            defaults.setURL(url, forKey: Preferences.saveFolderKey)
+            defaults.set(url, forKey: Preferences.saveFolderKey)
         }
     }
 

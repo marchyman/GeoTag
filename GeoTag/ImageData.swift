@@ -45,7 +45,7 @@ final class ImageData: NSObject {
     var dateFromEpoch: TimeInterval {
         let format = DateFormatter()
         format.dateFormat = "yyyy:MM:dd HH:mm:ss"
-        format.timeZone = TimeZone.local
+        format.timeZone = TimeZone.current
         if let convertedDate = format.date(from: date) {
             return convertedDate.timeIntervalSince1970
         }
@@ -121,15 +121,15 @@ final class ImageData: NSObject {
         guard let name = name else { return false }
         let fileManager = FileManager.default
         let saveFileURL = saveDirURL.appendingPathComponent(name, isDirectory: false)
-        if !fileManager.fileExists(atPath: (saveFileURL?.path!)!) {
+        if !fileManager.fileExists(atPath: (saveFileURL?.path)!) {
             do {
-                try fileManager.linkItem(atPath: sourceName, toPath: (saveFileURL?.path!)!)
+                try fileManager.linkItem(atPath: sourceName, toPath: (saveFileURL?.path)!)
                 return true
             } catch {
                 // couldn't create hard link, copy file instead
                 do {
                     try fileManager.copyItem(atPath: sourceName,
-                                             toPath: (saveFileURL?.path!)!)
+                                             toPath: (saveFileURL?.path)!)
                     return true
                 } catch let error as NSError {
                     unexpected(error: error,

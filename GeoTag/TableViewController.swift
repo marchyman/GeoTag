@@ -456,7 +456,7 @@ extension TableViewController: NSTableViewDelegate {
             colView.textField?.stringValue = value;
             if row == tableView.selectedRow {
                 lastSelectedRow = row
-                colView.textField?.textColor = NSColor.yellow()
+                colView.textField?.textColor = NSColor.yellow
             } else {
                 lastSelectedRow = nil
                 colView.textField?.textColor = nil
@@ -465,7 +465,7 @@ extension TableViewController: NSTableViewDelegate {
                 colView.textField?.toolTip = tooltip
             }
             if !image.validImage {
-                colView.textField?.textColor = NSColor.gray()
+                colView.textField?.textColor = NSColor.gray
             }
             return colView
         }
@@ -577,7 +577,7 @@ extension TableViewController: MapViewDelegate {
 /// in a TableView extension.
 
 extension NSTableView {
-    public override func rightMouseDown(_ theEvent: NSEvent) {
+    public override func rightMouseDown(with theEvent: NSEvent) {
         let localPoint = convert(theEvent.locationInWindow, from: nil)
         let row = self.row(at: localPoint)
         if row >= 0 {
@@ -588,7 +588,7 @@ extension NSTableView {
         } else {
             deselectAll(self)
         }
-        super.rightMouseDown(theEvent)
+        super.rightMouseDown(with: theEvent)
     }
 }
 

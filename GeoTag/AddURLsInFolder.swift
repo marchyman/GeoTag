@@ -19,11 +19,11 @@ import Foundation
 
 public func addUrlsInFolder(url: URL, toUrls urls: inout [URL]) -> Bool {
     let fileManager = FileManager.default
-    var dir: ObjCBool = false
-    if fileManager.fileExists(atPath: url.path!, isDirectory: &dir) && dir {
+    var dir = ObjCBool(false)
+    if fileManager.fileExists(atPath: url.path, isDirectory: &dir) && dir.boolValue {
         guard let urlEnumerator =
             fileManager.enumerator(at: url,
-                                   includingPropertiesForKeys: [URLResourceKey.isDirectoryKey.rawValue],
+                                   includingPropertiesForKeys: [.isDirectoryKey],
                                    options: [.skipsHiddenFiles],
                                    errorHandler: nil) else { return false }
         while let fileUrl = urlEnumerator.nextObject() as? URL {

@@ -144,8 +144,8 @@ struct Exiftool {
         }
 
         let exiftool = Task()
-        exiftool.standardOutput = FileHandle.withNullDevice
-        exiftool.standardError = FileHandle.withNullDevice
+        exiftool.standardOutput = FileHandle.nullDevice
+        exiftool.standardError = FileHandle.nullDevice
         exiftool.launchPath = url.path
         exiftool.arguments = ["-q", "-m", "-DateTimeOriginal>FileModifyDate",
             latArg, latRefArg, lonArg, lonRefArg, imageData.path]

@@ -17,8 +17,8 @@ import MapKit
 class MapView: MKMapView {
     var clickDelegate: MapViewDelegate?
 
-    override func mouseUp(_ theEvent: NSEvent) {
-        super.mouseUp(theEvent)
+    override func mouseUp(with theEvent: NSEvent) {
+        super.mouseUp(with: theEvent)
         if theEvent.clickCount == 1 {
             let point = convert(theEvent.locationInWindow, from: nil)
             let location = convert(point, toCoordinateFrom: self)
