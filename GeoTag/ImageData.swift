@@ -33,7 +33,7 @@ final class ImageData: NSObject {
 
     // MARK: instance variables
 
-    let url: NSURL
+    let url: URL
     var path: String! {
         return url.path
     }
@@ -74,7 +74,7 @@ final class ImageData: NSObject {
     /// Extract geo location metadata and build a preview image for
     /// the given URL.  If the URL isn't recognized as an image mark this
     /// instance as not being valid.
-    init(url: NSURL) {
+    init(url: URL) {
         self.url = url;
         super.init()
         validImage = loadImageData()
@@ -121,19 +121,19 @@ final class ImageData: NSObject {
         guard let name = name else { return false }
         let fileManager = FileManager.default
         let saveFileURL = saveDirURL.appendingPathComponent(name, isDirectory: false)
-        if !fileManager.fileExists(atPath: (saveFileURL?.path)!) {
+        if !fileManager.fileExists(atPath: (saveFileURL.path)) {
             do {
-                try fileManager.linkItem(atPath: sourceName, toPath: (saveFileURL?.path)!)
+                try fileManager.linkItem(atPath: sourceName, toPath: (saveFileURL.path))
                 return true
             } catch {
                 // couldn't create hard link, copy file instead
                 do {
                     try fileManager.copyItem(atPath: sourceName,
-                                             toPath: (saveFileURL?.path)!)
+                                             toPath: (saveFileURL.path))
                     return true
                 } catch let error as NSError {
                     unexpected(error: error,
-                               "Cannot copy \(sourceName) to \(saveFileURL?.path)\n\nReason: ")
+                               "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
                 }
             }
         }
@@ -149,7 +149,7 @@ final class ImageData: NSObject {
         var backupURL: NSURL?
         let fileManager = FileManager.default
         do {
-            try fileManager.trashItem(at: url as URL, resultingItemURL: &backupURL)
+            try fileManager.trashItem(at: url, resultingItemURL: &backupURL)
             let _ = saveOriginalFile(sourceName: backupURL!.path!)
             do {
                 try fileManager.copyItem(at: backupURL! as URL, to: url as URL)
@@ -224,21 +224,21 @@ final class ImageData: NSObject {
     /// do not exist the file is assumed to be a non-image file and a preview
     /// is not created.
     private func loadImageData() -> Bool {
-        guard let imgRef = CGImageSourceCreateWithURL(url, nil) else {
+        guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
             print("Failed CGImageSourceCreateWithURL \(url)")
             return false
         }
 
 
-        // grab the image properties
+        // grab the image properties and extract height and width
         guard let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary! else {
             print("Failed to get image properties for URL \(url)")
             return false
         }
-        let height = imgProps[pixelHeight] as? Int
-        let width = imgProps[pixelWidth] as? Int
-        if height == nil || width == nil {
-            print("Nil width or height \(width) x \(height)")
+        let imgHeight = imgProps[pixelHeight] as? Int
+        let imgWidth = imgProps[pixelWidth] as? Int
+        guard let height = imgHeight, let width = imgWidth else {
+            print("Nil width or height \(imgWidth) x \(imgHeight)")
             return false
         }
 
@@ -273,7 +273,7 @@ final class ImageData: NSObject {
                                             to: CGContext.self)
                 }
                 if context != nil {
-                    context.draw(in: imgRect, image: imgPreview)
+                    context.draw(imgPreview, in: imgRect)
                 }
             }
             image.unlockFocus()

@@ -115,7 +115,7 @@ final class TableViewController: NSViewController {
             oldLongitude = 0
         }
         let undo = appDelegate.undoManager
-        undo.prepare(withInvocationTarget: self)
+        (undo.prepare(withInvocationTarget: self) as AnyObject)
             .updateLocation(row: row, validLocation: oldValidLocation,
                             latitude: oldLatitude, longitude: oldLongitude,
                             modified: appDelegate.modified)
@@ -577,7 +577,7 @@ extension TableViewController: MapViewDelegate {
 /// in a TableView extension.
 
 extension NSTableView {
-    public override func rightMouseDown(with theEvent: NSEvent) {
+    open override func rightMouseDown(with theEvent: NSEvent) {
         let localPoint = convert(theEvent.locationInWindow, from: nil)
         let row = self.row(at: localPoint)
         if row >= 0 {

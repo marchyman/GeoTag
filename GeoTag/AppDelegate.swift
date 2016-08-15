@@ -9,6 +9,7 @@
 import Foundation
 import AppKit
 
+@NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // class variable holds path to exiftool
     static private(set) var exiftool: Exiftool!
@@ -174,7 +175,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 /// Window delegate functions
 
 extension AppDelegate: NSWindowDelegate {
-    func windowShouldClose(_: AnyObject) -> Bool {
+    func windowShouldClose(_: Any) -> Bool {
         return saveOrDontSave()
     }
 }

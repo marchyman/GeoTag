@@ -22,8 +22,8 @@ final class Preferences : NSWindowController {
     /// If a save directory/folder has been specified but does not exist an
     /// alert is shown once per execution to inform the user.
 
-    class func saveFolder() -> NSURL? {
-        var saveFolder: NSURL? = nil
+    class func saveFolder() -> URL? {
+        var saveFolder: URL? = nil
 
         if checkDirectory {
             let defaults = UserDefaults.standard

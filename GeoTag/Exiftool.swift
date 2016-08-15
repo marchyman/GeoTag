@@ -143,7 +143,7 @@ struct Exiftool {
             lonArg += "\(lon)"
         }
 
-        let exiftool = Task()
+        let exiftool = Process()
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = FileHandle.nullDevice
         exiftool.launchPath = url.path
