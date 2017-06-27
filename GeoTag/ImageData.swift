@@ -156,7 +156,7 @@ final class ImageData: NSObject {
                 return true
             } catch let error as NSError {
                 unexpected(error: error,
-                           "Cannot copy \(backupURL) to \(url) for update.\n\nReason: ")
+                           "Cannot copy \(String(describing: backupURL)) to \(url) for update.\n\nReason: ")
             }
         } catch let error as NSError {
             // couldn't trash file, warn user of alternate backup location
@@ -194,7 +194,7 @@ final class ImageData: NSObject {
         if validImage &&
            (latitude != originalLatitude || longitude != originalLongitude) {
             let overwriteOriginal = backupImageFile()
-            AppDelegate.exiftool.updateLocation(from: self, overwriteOriginal: overwriteOriginal)
+            Exiftool.helper.updateLocation(from: self, overwriteOriginal: overwriteOriginal)
             // if a backup could not be created prior to running exiftool
             // copy the exiftool created original to the save directory.
             if !overwriteOriginal {
@@ -238,7 +238,7 @@ final class ImageData: NSObject {
         let imgHeight = imgProps[pixelHeight] as? Int
         let imgWidth = imgProps[pixelWidth] as? Int
         guard let height = imgHeight, let width = imgWidth else {
-            print("Nil width or height \(imgWidth) x \(imgHeight)")
+            print("Nil width or height \(String(describing: imgWidth)) x \(String(describing: imgHeight))")
             return false
         }
 

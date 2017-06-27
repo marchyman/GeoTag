@@ -9,7 +9,7 @@
 import Foundation
 
 // constants used in this file
-private let π = M_PI
+private let π = Double.pi
 private let d2r = π / 180   // degrees to radians adjustment
 private let r2d = 180 / π   // radians to degrees adjustments
 private let R = 6372800.0	// approx average radius of the earth in meters

@@ -12,7 +12,6 @@ import AppKit
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // class variable holds path to exiftool
-    static private(set) var exiftool: Exiftool!
     lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
     lazy var undoManager: UndoManager = UndoManager()
 
@@ -34,11 +33,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         window.delegate = self
-        if let exiftool = Exiftool() {
-            AppDelegate.exiftool = exiftool
-        } else {
-            window.close()
-        }
     }
 
    //MARK: window delegate undo handling

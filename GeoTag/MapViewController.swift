@@ -168,7 +168,7 @@ extension MapViewController: MKMapViewDelegate {
                  fromOldState oldState: MKAnnotationViewDragState) {
         if newState == .ending {
             clickDelegate?.mouseClicked(mapView: nil,
-                                               location: annotationView.annotation!.coordinate)
+                                        location: annotationView.annotation!.coordinate)
          }
     }
 }

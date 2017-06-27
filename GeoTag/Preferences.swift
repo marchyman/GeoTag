@@ -13,7 +13,6 @@ final class Preferences : NSWindowController {
     // class constants and a flag
     static let nibName = "Preferences"
     static let saveFolderKey = "saveDirectoryKey"
-    static let exiftoolPathKey = "exiftoolPathKey"
     static var checkDirectory = true
 
     /// fetch the URL of the optional extra save folder/directory
