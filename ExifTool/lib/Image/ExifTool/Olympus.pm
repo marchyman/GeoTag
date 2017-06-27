@@ -39,7 +39,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::APP12;
 
-$VERSION = '2.42';
+$VERSION = '2.49';
 
 sub PrintLensInfo($$$);
 
@@ -98,6 +98,9 @@ my %olympusLensTypes = (
     '0 24 00' => 'Olympus Zuiko Digital ED 40-150mm F4.0-5.6', #PH
     '0 24 10' => 'Olympus M.Zuiko Digital ED 300mm F4.0 IS Pro', #NJ
     '0 25 10' => 'Olympus M.Zuiko Digital ED 8mm F1.8 Fisheye Pro', #NJ
+    '0 26 10' => 'Olympus M.Zuiko Digital ED 12-100mm F4.0 IS Pro', #IB/NJ
+    '0 27 10' => 'Olympus M.Zuiko Digital ED 30mm F3.5 Macro', #IB/NJ
+    '0 28 10' => 'Olympus M.Zuiko Digital ED 25mm F1.2 Pro', #IB/NJ
     '0 30 00' => 'Olympus Zuiko Digital ED 50-200mm F2.8-3.5 SWD', #7
     '0 31 00' => 'Olympus Zuiko Digital ED 12-60mm F2.8-4.0 SWD', #7
     '0 32 00' => 'Olympus Zuiko Digital ED 14-35mm F2.0 SWD', #PH
@@ -356,6 +359,7 @@ my %olympusCameraTypes = (
     D4586 => 'TG-4',
     D4587 => 'TG-860',
     D4591 => 'TG-870',
+    D4593 => 'TG-5', #IB
     D4809 => 'C2500L',
     D4842 => 'E-10',
     D4856 => 'C-1',
@@ -395,6 +399,8 @@ my %olympusCameraTypes = (
     S0052 => 'E-M5MarkII', #IB
     S0059 => 'E-M10MarkII',
     S0061 => 'PEN-F', #forum7005
+    S0065 => 'E-PL8',
+    S0067 => 'E-M1MarkII',
     SR45 => 'D220',
     SR55 => 'D320L',
     SR83 => 'D340L',
@@ -1051,6 +1057,7 @@ my %indexInfo = (
         OffsetPair => 0x1037, # point to associated byte count
         DataTag => 'PreviewImage',
         Writable => 'int32u',
+        WriteGroup => 'MakerNotes',
         Protected => 2,
     },
     0x1037 => { #6
@@ -1059,6 +1066,7 @@ my %indexInfo = (
         OffsetPair => 0x1036, # point to associated offset
         DataTag => 'PreviewImage',
         Writable => 'int32u',
+        WriteGroup => 'MakerNotes',
         Protected => 2,
     },
     0x1038 => { Name => 'AFResult',             Writable => 'int16u' }, #11
@@ -1718,6 +1726,7 @@ my %indexInfo = (
         OffsetPair => 0x102,
         DataTag => 'PreviewImage',
         Writable => 'int32u',
+        WriteGroup => 'MakerNotes',
         Protected => 2,
     },
     0x102 => { #PH
@@ -1725,6 +1734,7 @@ my %indexInfo = (
         OffsetPair => 0x101,
         DataTag => 'PreviewImage',
         Writable => 'int32u',
+        WriteGroup => 'MakerNotes',
         Protected => 2,
     },
     0x200 => { #4
@@ -2384,14 +2394,19 @@ my %indexInfo = (
             5 => 'Green',
         },
     },
-    0x600 => { #PH/4
+    0x600 => { #PH/4/22
         Name => 'DriveMode',
         Writable => 'int16u',
         Count => -1,
-        Notes => '2 or 3 numbers: 1. Mode, 2. Shot number, 3. Mode bits',
+        Notes => '2, 3 or 5 numbers: 1. Mode, 2. Shot number, 3. Mode bits, 5. Shutter mode',
         PrintConv => q{
-            my ($a,$b,$c) = split ' ',$val;
-            return 'Single Shot' unless $a;
+            my ($a,$b,$c,$d,$e) = split ' ',$val;
+            if ($e) {
+                $e = '; ' . ({ 2 => 'Anti-shock 0', 4 => 'Electronic shutter' }->{$e} || "Unknown ($e)");
+            } else {
+                $e = '';
+            }
+            return "Single Shot$e" unless $a;
             if ($a == 5 and defined $c) {
                 $a = DecodeBits($c, { #6
                     0 => 'AE',
@@ -2410,7 +2425,7 @@ my %indexInfo = (
                 );
                 $a = $a{$a} || "Unknown ($a)";
             }
-            return "$a, Shot $b";
+            return "$a, Shot $b$e";
         },
     },
     0x601 => { #6
@@ -2459,6 +2474,7 @@ my %indexInfo = (
         Count => 2,
         PrintConv => {
             '0 0' => 'No',
+            #'8 8' - seen this for the E-M1mkII
             '9 8' => 'Focus-stacked (8 images)',
         },
     },
@@ -2786,7 +2802,7 @@ my %indexInfo = (
     # 0x801 LensShadingParams, int16u[16] (ref 11)
     0x0805 => { #IB
         Name => 'SensorCalibration',
-        Notes => '2 numbers: 1. recommended maximum, 2. calibration midpoint',
+        Notes => '2 numbers: 1. Recommended maximum, 2. Calibration midpoint',
         Writable => 'int16s',
         Count => 2,
     },
@@ -3841,7 +3857,10 @@ my %indexInfo = (
             0 => 'ZoomedPreviewStart',
             1 => 'ZoomedPreviewLength',
         },
-        RawConv => 'Image::ExifTool::Exif::ExtractImage($self,$val[0],$val[1],"ZoomedPreviewImage")',
+        RawConv => q{
+            @grps = $self->GetGroup($$val{0});  # set groups from input tag
+            Image::ExifTool::Exif::ExtractImage($self,$val[0],$val[1],"ZoomedPreviewImage");
+        },
     },
 );
 
@@ -3951,7 +3970,7 @@ Olympus or Epson maker notes in EXIF information.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

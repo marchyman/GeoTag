@@ -16,7 +16,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::XMP;
 
-$VERSION = '1.16';
+$VERSION = '1.19';
 
 sub RecoverTruncatedIPTC($$$);
 sub ListToString($);
@@ -118,9 +118,10 @@ my $mwgLoaded;  # flag set if we alreaded Load()ed the MWG tags
         Groups => { 2 => 'Time' },
         Notes => '"creation date of the intellectual content being shown" - MWG',
         Writable => 1,
+        Shift => 0, # don't shift this tag
         Desire => {
-            0 => 'EXIF:DateTimeOriginal',
-            1 => 'EXIF:SubSecTimeOriginal',
+            0 => 'Composite:SubSecDateTimeOriginal',
+            1 => 'EXIF:DateTimeOriginal',
             2 => 'IPTC:DateCreated',
             3 => 'IPTC:TimeCreated',
             4 => 'XMP-photoshop:DateCreated',
@@ -129,11 +130,10 @@ my $mwgLoaded;  # flag set if we alreaded Load()ed the MWG tags
         },
         # must check for validity in RawConv to avoid hiding a same-named tag,
         # but IPTC dates use a ValueConv so we need to derive the value there
-        RawConv => '(defined $val[0] or defined $val[2] or defined $val[4]) ? $val : undef',
+        RawConv => '(defined $val[0] or defined $val[1] or defined $val[3]) ? $val : undef',
         ValueConv => q{
-            if (defined $val[0] and $val[0] !~ /^[: ]*$/) {
-                return ($val[1] and $val[1] !~ /^ *$/) ? "$val[0].$val[1]" : $val[0];
-            }
+            return $val[0] if defined $val[0] and $val[0] !~ /^[: ]*$/;
+            return $val[1] if defined $val[1] and $val[1] !~ /^[: ]*$/;
             return $val[4] if not defined $val[5] or (defined $val[4] and
                              (not defined $val[6] or $val[5] eq $val[6]));
             return $val[3] ? "$val[2] $val[3]" : $val[2] if $val[2];
@@ -146,31 +146,30 @@ my $mwgLoaded;  # flag set if we alreaded Load()ed the MWG tags
         WriteAlso  => {
             # set EXIF date/time values according to PrintConv option instead
             # of defaulting to Type=ValueConv to allow reformatting to be applied
-            'EXIF:DateTimeOriginal'     => 'delete $opts{Type}; $val',
-            'EXIF:SubSecTimeOriginal'   => 'delete $opts{Type}; $val',
-            'IPTC:DateCreated'          => '$opts{EditGroup} = 1; $val',
-            'IPTC:TimeCreated'          => '$opts{EditGroup} = 1; $val',
-            'XMP-photoshop:DateCreated' => '$val',
+            'Composite:SubSecDateTimeOriginal'  => 'delete $opts{Type}; $val',
+            'IPTC:DateCreated'                  => '$opts{EditGroup} = 1; $val',
+            'IPTC:TimeCreated'                  => '$opts{EditGroup} = 1; $val',
+            'XMP-photoshop:DateCreated'         => '$val',
         },
     },
     CreateDate => {
         Groups => { 2 => 'Time' },
         Notes => '"creation date of the digital representation" - MWG',
         Writable => 1,
+        Shift => 0, # don't shift this tag
         Desire => {
-            0 => 'EXIF:CreateDate',
-            1 => 'EXIF:SubSecTimeDigitized',
+            0 => 'Composite:SubSecCreateDate',
+            1 => 'EXIF:CreateDate',
             2 => 'IPTC:DigitalCreationDate',
             3 => 'IPTC:DigitalCreationTime',
             4 => 'XMP-xmp:CreateDate',
             5 => 'CurrentIPTCDigest',
             6 => 'IPTCDigest',
         },
-        RawConv => '(defined $val[0] or defined $val[2] or defined $val[4]) ? $val : undef',
+        RawConv => '(defined $val[0] or defined $val[1] or defined $val[3]) ? $val : undef',
         ValueConv => q{
-            if (defined $val[0] and $val[0] !~ /^[: ]*$/) {
-                return ($val[1] and $val[1] !~ /^ *$/) ? "$val[0].$val[1]" : $val[0];
-            }
+            return $val[0] if defined $val[0] and $val[0] !~ /^[: ]*$/;
+            return $val[1] if defined $val[1] and $val[1] !~ /^[: ]*$/;
             return $val[4] if not defined $val[5] or (defined $val[4] and
                              (not defined $val[6] or $val[5] eq $val[6]));
             return $val[3] ? "$val[2] $val[3]" : $val[2] if $val[2];
@@ -181,28 +180,27 @@ my $mwgLoaded;  # flag set if we alreaded Load()ed the MWG tags
         DelCheck   => 'Image::ExifTool::MWG::ReconcileIPTCDigest($self)',
         WriteCheck => 'Image::ExifTool::MWG::ReconcileIPTCDigest($self)',
         WriteAlso  => {
-            'EXIF:CreateDate'          => 'delete $opts{Type}; $val',
-            'EXIF:SubSecTimeDigitized' => 'delete $opts{Type}; $val',
-            'IPTC:DigitalCreationDate' => '$opts{EditGroup} = 1; $val',
-            'IPTC:DigitalCreationTime' => '$opts{EditGroup} = 1; $val',
-            'XMP-xmp:CreateDate'       => '$val',
+            'Composite:SubSecCreateDate' => 'delete $opts{Type}; $val',
+            'IPTC:DigitalCreationDate'   => '$opts{EditGroup} = 1; $val',
+            'IPTC:DigitalCreationTime'   => '$opts{EditGroup} = 1; $val',
+            'XMP-xmp:CreateDate'         => '$val',
         },
     },
     ModifyDate => {
         Groups => { 2 => 'Time' },
         Notes => '"modification date of the digital image file" - MWG',
         Writable => 1,
+        Shift => 0, # don't shift this tag
         Desire => {
-            0 => 'EXIF:ModifyDate',
-            1 => 'EXIF:SubSecTime',
+            0 => 'Composite:SubSecModifyDate',
+            1 => 'EXIF:ModifyDate',
             2 => 'XMP-xmp:ModifyDate',
             3 => 'CurrentIPTCDigest',
             4 => 'IPTCDigest',
         },
         RawConv => q{
-            if (defined $val[0] and $val[0] !~ /^[: ]*$/) {
-                return ($val[1] and $val[1] !~ /^ *$/) ? "$val[0].$val[1]" : $val[0];
-            }
+            return $val[0] if defined $val[0] and $val[0] !~ /^[: ]*$/;
+            return $val[1] if defined $val[1] and $val[1] !~ /^[: ]*$/;
             return $val[2] if not defined $val[3] or not defined $val[4] or $val[3] eq $val[4];
             return undef;
         },
@@ -213,9 +211,8 @@ my $mwgLoaded;  # flag set if we alreaded Load()ed the MWG tags
         DelCheck   => '""',
         WriteCheck => '""',
         WriteAlso  => {
-            'EXIF:ModifyDate'    => 'delete $opts{Type}; $val',
-            'EXIF:SubSecTime'    => 'delete $opts{Type}; $val',
-            'XMP-xmp:ModifyDate' => '$val',
+            'Composite:SubSecModifyDate' => 'delete $opts{Type}; $val',
+            'XMP-xmp:ModifyDate'         => '$val',
         },
     },
     Orientation => {
@@ -258,7 +255,16 @@ my $mwgLoaded;  # flag set if we alreaded Load()ed the MWG tags
         DelCheck   => 'Image::ExifTool::MWG::ReconcileIPTCDigest($self)',
         WriteCheck => 'Image::ExifTool::MWG::ReconcileIPTCDigest($self)',
         WriteAlso  => {
-            'EXIF:Copyright'       => '$val',
+            'EXIF:Copyright' => q{
+                # encode if necessary (not automatic because Format is 'undef')
+                my $enc = $self->Options('CharsetEXIF');
+                if ($enc) {
+                    my $v = $val;
+                    $self->Encode($v,$enc);
+                    return $v;
+                }
+                return $val;
+            },
             'IPTC:CopyrightNotice' => '$opts{EditGroup} = 1; $val',
             'XMP-dc:Rights'        => '$val',
         },
@@ -444,8 +450,7 @@ my %sKeywordStruct;
     NAMESPACE => 'mwg-rs',
     NOTES => q{
         Image region metadata defined by the MWG 2.0 specification.  These tags
-        belong to the ExifTool XMP-mwg-rs group, and as such they may be accessed
-        without the need to load the MWG Composite tags above.  See
+        may be accessed without the need to load the MWG Composite tags above.  See
         L<http://www.metadataworkinggroup.org/> for the official specification.
     },
     Regions => {
@@ -471,11 +476,11 @@ my %sKeywordStruct;
     GROUPS => { 0 => 'XMP', 1 => 'XMP-mwg-kw', 2 => 'Image' },
     NAMESPACE => 'mwg-kw',
     NOTES => q{
-        Hierarchical keywords metadata defined by the MWG 2.0 specification.  These
-        tags belong to the ExifTool XMP-mwg-kw group. ExifTool unrolls keyword
-        structures to an arbitrary depth of 6 to allow individual levels to be
-        accessed with different tag names, and to avoid infinite recursion.  See
-        L<http://www.metadataworkinggroup.org/> for the official specification.
+        Hierarchical keywords metadata defined by the MWG 2.0 specification. 
+        ExifTool unrolls keyword structures to an arbitrary depth of 6 to allow
+        individual levels to be accessed with different tag names, and to avoid
+        infinite recursion.  See L<http://www.metadataworkinggroup.org/> for the
+        official specification.
     },
     # arbitrarily define only the first 6 levels of the keyword hierarchy
     Keywords => {
@@ -512,8 +517,7 @@ my %sKeywordStruct;
     GROUPS => { 0 => 'XMP', 1 => 'XMP-mwg-coll', 2 => 'Image' },
     NAMESPACE => 'mwg-coll',
     NOTES => q{
-        Collections metadata defined by the MWG 2.0 specification.  These tags
-        belong to the ExifTool XMP-mwg-coll group.  See
+        Collections metadata defined by the MWG 2.0 specification.  See
         L<http://www.metadataworkinggroup.org/> for the official specification.
     },
     Collections => {
@@ -732,7 +736,7 @@ must be loaded explicitly as described above.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

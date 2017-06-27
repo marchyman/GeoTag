@@ -15,6 +15,8 @@
 #                  and http://forum.photome.de/viewtopic.php?f=2&t=353&p=742#p740
 #               7) Kai Lappalainen private communication
 #               8) http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,5223.0.html
+#               9) Zilvinas Brobliauskas private communication
+#               10) Albert Shan private communication
 #               IB) Iliah Borg private communication (LibRaw)
 #               JD) Jens Duttke private communication
 #------------------------------------------------------------------------------
@@ -26,7 +28,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.54';
+$VERSION = '1.58';
 
 sub ProcessFujiDir($$$);
 sub ProcessFaceRec($$$);
@@ -100,13 +102,15 @@ my %faceCategories = (
         Flags => 'PrintHex',
         Writable => 'int16u',
         PrintConv => {
-            0x01 => 'Soft',
-            0x02 => 'Soft2',
-            0x03 => 'Normal',
-            0x04 => 'Hard',
-            0x05 => 'Hard2',
-            0x82 => 'Medium Soft', #2
-            0x84 => 'Medium Hard', #2
+            0x00 => '-4 (softest)', #10
+            0x01 => '-3 (very soft)',
+            0x02 => '-2 (soft)',
+            0x03 => '0 (normal)',
+            0x04 => '+2 (hard)',
+            0x05 => '+3 (very hard)',
+            0x06 => '+4 (hardest)',
+            0x82 => '-1 (medium soft)', #2
+            0x84 => '+1 (medium hard)', #2
             0x8000 => 'Film Simulation', #2
             0xffff => 'n/a', #2
         },
@@ -141,17 +145,21 @@ my %faceCategories = (
         Flags => 'PrintHex',
         Writable => 'int16u',
         PrintConv => {
-            0x0   => 'Normal', # # ("Color 0", ref 8)
-            0x080 => 'Medium High', #2 ("Color +1", ref 8)
-            0x100 => 'High', # ("Color +2", ref 8)
-            0x180 => 'Medium Low', #2 ("Color -1", ref 8)
+            0x0   => '0 (normal)', # # ("Color 0", ref 8)
+            0x080 => '+1 (medium high)', #2 ("Color +1", ref 8)
+            0x100 => '+2 (high)', # ("Color +2", ref 8)
+            0x0c0 => '+3 (very high)',
+            0x0e0 => '+4 (highest)',
+            0x180 => '-1 (medium low)', #2 ("Color -1", ref 8)
             0x200 => 'Low',
             0x300 => 'None (B&W)', #2
             0x301 => 'B&W Red Filter', #PH/8
             0x302 => 'B&W Yellow Filter', #PH (X100)
             0x303 => 'B&W Green Filter', #PH/8
             0x310 => 'B&W Sepia', #PH (X100)
-            0x400 => 'Low 2', #8 ("Color -2")
+            0x400 => '-2 (low)', #8 ("Color -2")
+            0x4c0 => '-3 (very low)',
+            0x4e0 => '-4 (lowest)',
             0x500 => 'Acros', #PH (X-Pro2)
             0x501 => 'Acros Red Filter', #PH (X-Pro2)
             0x502 => 'Acros Yellow Filter', #PH (X-Pro2)
@@ -208,16 +216,21 @@ my %faceCategories = (
         Flags => 'PrintHex',
         Writable => 'int16u',
         PrintConv => {
-            0x000 => 'Normal', # ("NR 0, ref 8)
-            0x100 => 'Strong', # ("NR+2, ref 8)
-            0x180 => 'Medium Strong', #8 ("NR+1")
-            0x200 => 'Weak', # ("NR-2, ref 8)
-            0x280 => 'Medium Weak', #8 ("NR-1")
+            0x000 => '0 (normal)', # ("NR 0, ref 8)
+            0x100 => '+2 (strong)', # ("NR+2, ref 8)
+            0x180 => '+1 (medium strong)', #8 ("NR+1")
+            0x1c0 => '+3 (very strong)',
+            0x1e0 => '+4 (strongest)',
+            0x200 => '-2 (weak)', # ("NR-2, ref 8)
+            0x280 => '-1 (medium weak)', #8 ("NR-1")
+            0x2c0 => '-3 (very weak)', #10 (-3)
+            0x2e0 => '-4 (weakest)', #10 (-4)
         },
     },
     0x1010 => {
         Name => 'FujiFlashMode',
         Writable => 'int16u',
+        PrintHex => 1,
         PrintConv => {
             0 => 'Auto',
             1 => 'On',
@@ -225,6 +238,13 @@ my %faceCategories = (
             3 => 'Red-eye reduction',
             4 => 'External', #JD
             16 => 'Commander',
+            0x8000 => 'Not Attached', #10 (X-T2) (or external flash off)
+            0x8120 => 'TTL', #10 (X-T2)
+            0x9840 => 'Manual', #10 (X-T2)
+            0x9880 => 'Multi-flash', #10 (X-T2)
+            0xa920 => '1st Curtain (front)', #10 (EF-X500 flash)
+            0xc920 => '2nd Curtain (rear)', #10
+            0xe920 => 'High Speed Sync (HSS)', #10
         },
     },
     0x1011 => {
@@ -337,23 +357,33 @@ my %faceCategories = (
         Name => 'ShadowTone',
         Writable => 'int32s',
         PrintConv => {
-            -32 => 'Hard',
-            -16 => 'Medium-hard',
-            0 => 'Normal',
-            16 => 'Medium-soft',
-            32 => 'Soft',
+            -64 => '+4 (hardest)',
+            -48 => '+3 (very hard)',
+            -32 => '+2 (hard)',
+            -16 => '+1 (medium hard)',
+            0 => '0 (normal)',
+            16 => '-1 (medium soft)',
+            32 => '-2 (soft)',
         },
     },
     0x1041 => { #8
         Name => 'HighlightTone',
         Writable => 'int32s',
         PrintConv => {
-            -32 => 'Hard',
-            -16 => 'Medium-hard',
-            0 => 'Normal',
-            16 => 'Medium-soft',
-            32 => 'Soft',
+            -64 => '+4 (hardest)',
+            -48 => '+3 (very hard)',
+            -32 => '+2 (hard)',
+            -16 => '+1 (medium hard)',
+            0 => '0 (normal)',
+            16 => '-1 (medium soft)',
+            32 => '-2 (soft)',
         },
+    },
+    0x1044 => { #forum7668
+        Name => 'DigitalZoom',
+        Writable => 'int32u',
+        ValueConv => '$val / 8',
+        ValueConvInv => '$val * 8',
     },
     0x1050 => { #forum6109
         Name => 'ShutterType',
@@ -380,6 +410,20 @@ my %faceCategories = (
     # 0x1150 - Pro Low-light - val=1; Pro Focus - val=2 (ref 7)
     # 0x1151 - Pro Low-light - val=4 (number of pictures taken?); Pro Focus - val=2,3 (ref 7)
     # 0x1152 - Pro Low-light - val=1,3,4 (stacked pictures used?); Pro Focus - val=1,2 (ref 7)
+    0x1153 => { #forum7668
+        Name => 'PanoramaAngle',
+        Writable => 'int16u',
+    },
+    0x1154 => { #forum7668
+        Name => 'PanoramaDirection',
+        Writable => 'int16u',
+        PrintConv => {
+            1 => 'Right',
+            2 => 'Up',
+            3 => 'Left',
+            4 => 'Down',
+        },
+    },
     0x1201 => { #forum6109
         Name => 'AdvancedFilter',
         Writable => 'int32u',
@@ -779,6 +823,7 @@ my %faceCategories = (
     FIRST_ENTRY => 0,
     # (FujiFilm image dimensions are REALLY confusing)
     # --> this needs some cleaning up
+    # [Note to self: See email from Iliah Borg for more information about WB settings in this data]
     0 => {
         Name => 'RawImageWidth',
         Format => 'int32u',
@@ -861,11 +906,12 @@ my %faceCategories = (
     },
     # 0xf009 - values: 0, 3
     0xf00a => 'BlackLevel', #IB
-    # 0xf00b ?
+    0xf00b => 'GeometricDistortionParams', #9 (rational64s[23, 35 or 43])
     0xf00c => 'WB_GRBLevelsStandard', #IB (GRBXGRBX; X=17 is standard illuminant A, X=21 is D65)
     0xf00d => 'WB_GRBLevelsAuto', #IB
     0xf00e => 'WB_GRBLevels',
-    # 0xf00f ?
+    0xf00f => 'ChromaticAberrationParams', # (rational64s[23])
+    0xf010 => 'VignettingParams', #9 (rational64s[31 or 64])
 );
 
 # information found in FFMV atom of MOV videos
@@ -1205,7 +1251,7 @@ FujiFilm maker notes in EXIF information, and to read/write FujiFilm RAW
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

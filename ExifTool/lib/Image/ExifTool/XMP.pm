@@ -41,14 +41,14 @@
 package Image::ExifTool::XMP;
 
 use strict;
-use vars qw($VERSION $AUTOLOAD @ISA @EXPORT_OK %stdXlatNS %nsURI %dateTimeInfo
-            %xmpTableDefaults %specialStruct %sDimensions %sArea %sColorant);
+use vars qw($VERSION $AUTOLOAD @ISA @EXPORT_OK %stdXlatNS %nsURI %latConv %longConv
+            %dateTimeInfo %xmpTableDefaults %specialStruct %sDimensions %sArea %sColorant);
 use Image::ExifTool qw(:Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '2.95';
+$VERSION = '3.03';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -67,7 +67,7 @@ sub FormatXMPDate($);
 sub ConvertRational($);
 sub ConvertRationalList($);
 
-# lookup for translating to ExifTool namespaces
+# lookup for translating to ExifTool namespaces (and family 1 group names)
 %stdXlatNS = (
     # shorten ugly namespace prefixes
     'Iptc4xmpCore' => 'iptcCore',
@@ -78,14 +78,13 @@ sub ConvertRationalList($);
     'GettyImagesGIFT' => 'getty',
 );
 
-# translate ExifTool XMP family 1 group names to standard XMP namespace prefixes
+# translate ExifTool XMP family 1 group names back to standard XMP namespace prefixes
 my %xmpNS = (
-    # shorten ugly namespace prefixes
     'iptcCore' => 'Iptc4xmpCore',
     'iptcExt' => 'Iptc4xmpExt',
-    'photomechanic'=> 'photomech',
+    'photomech'=> 'photomechanic',
     'microsoft' => 'MicrosoftPhoto',
-    'gettyImages' => 'GettyImagesGIFT',
+    'getty' => 'GettyImagesGIFT',
     # (prism changed their spec to now use 'pur')
     # 'pur' => 'prismusagerights',
 );
@@ -156,7 +155,7 @@ my %xmpNS = (
     prm       => 'http://prismstandard.org/namespaces/prm/3.0/',
     acdsee    => 'http://ns.acdsee.com/iptc/1.0/',
     digiKam   => 'http://www.digikam.org/ns/1.0/',
-    swf       => 'http://ns.adobe.com/swf/1.0',
+    swf       => 'http://ns.adobe.com/swf/1.0/',
     cell      => 'http://developer.sonyericsson.com/cell/1.0/',
     aas       => 'http://ns.apple.com/adjustment-settings/1.0/',
    'mwg-rs'   => 'http://www.metadataworkinggroup.com/schemas/regions/',
@@ -168,7 +167,10 @@ my %xmpNS = (
     fpv       => 'http://ns.fastpictureviewer.com/fpv/1.0/',
     creatorAtom=>'http://ns.adobe.com/creatorAtom/1.0/',
    'apple-fi' => 'http://ns.apple.com/faceinfo/1.0/',
+    GAudio    => 'http://ns.google.com/photos/1.0/audio/',
+    GImage    => 'http://ns.google.com/photos/1.0/image/',
     GPano     => 'http://ns.google.com/photos/1.0/panorama/',
+    GSpherical=> 'http://ns.google.com/videos/1.0/spherical/',
     dwc       => 'http://rs.tdwg.org/dwc/index.htm',
     GettyImagesGIFT => 'http://xmp.gettyimages.com/gift/1.0/',
 );
@@ -183,13 +185,13 @@ my %uri2ns;
 }
 
 # conversions for GPS coordinates
-my %latConv = (
+%latConv = (
     ValueConv    => 'Image::ExifTool::GPS::ToDegrees($val, 1)',
     ValueConvInv => 'Image::ExifTool::GPS::ToDMS($self, $val, 2, "N")',
     PrintConv    => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "N")',
     PrintConvInv => 'Image::ExifTool::GPS::ToDegrees($val, 1)',
 );
-my %longConv = (
+%longConv = (
     ValueConv    => 'Image::ExifTool::GPS::ToDegrees($val, 1)',
     ValueConvInv => 'Image::ExifTool::GPS::ToDMS($self, $val, 2, "E")',
     PrintConv    => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "E")',
@@ -248,6 +250,7 @@ my %recognizedAttrs = (
     NOTES       => 1, # [optional] notes for documentation about this structure
     TYPE        => 1, # [optional] rdf:type resource for struct (if used, the StructType flag
                       # will be set automatically for all derived flattened tags when writing)
+    GROUPS      => 1, # [optional] specifies family group 2 name for the structure
 );
 # XMP structures (each structure is similar to a tag table so we can
 # recurse through them in SetPropertyPath() as if they were tag tables)
@@ -278,6 +281,13 @@ my %sResourceRef = (
     toPart          => { },
     # added May 2010
     originalDocumentID => { }, # (undocumented property written by Adobe InDesign)
+    # added Aug 2016 (INDD again)
+    lastURL         => { },
+    linkForm        => { },
+    linkCategory    => { },
+    placedXResolution    => { },
+    placedYResolution    => { },
+    placedResolutionUnit => { },
 );
 my %sResourceEvent = (
     STRUCT_NAME => 'ResourceEvent',
@@ -490,28 +500,6 @@ my %sRetouchArea = (
         Struct => \%sCorrectionMask,
         List => 'Seq',
     },
-);
-
-# IPTC Extension 1.0 structures
-my %sLocationDetails = (
-    STRUCT_NAME => 'LocationDetails',
-    NAMESPACE   => 'Iptc4xmpExt',
-    City         => { },
-    CountryCode  => { },
-    CountryName  => { },
-    ProvinceState=> { },
-    Sublocation  => { },
-    WorldRegion  => { },
-    LocationId   => { List => 'Bag' },
-);
-
-my %sCVTermDetails = (
-    STRUCT_NAME => 'CVTermDetails',
-    NAMESPACE   => 'Iptc4xmpExt',
-    CvTermId    => { },
-    CvTermName  => { Writable => 'lang-alt' },
-    CvId        => { },
-    CvTermRefinedAbout => { },
 );
 
 # main XMP tag table (tag ID's are used for the family 1 group names)
@@ -727,9 +715,21 @@ my %sCVTermDetails = (
         Name => 'apple-fi',
         SubDirectory => { TagTable => 'Image::ExifTool::XMP::apple_fi' },
     },
+    GAudio => {
+        Name => 'GAudio',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::GAudio' },
+    },
+    GImage => {
+        Name => 'GImage',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::GImage' },
+    },
     GPano => {
         Name => 'GPano',
         SubDirectory => { TagTable => 'Image::ExifTool::XMP::GPano' },
+    },
+    GSpherical => {
+        Name => 'GSpherical',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::GSpherical' },
     },
     dwc => {
         Name => 'dwc',
@@ -1021,7 +1021,7 @@ my %sPantryItem = (
         ValueConvInv => '"/$val"',
         PrintConv => { True => 'True', False => 'False', Unknown => 'Unknown' },
     },
-    Keywords    => { Priority => 0 },
+    Keywords    => { Priority => -1 }, # (-1 to get below Priority 0 PDF:Keywords)
     PDFVersion  => { },
     Producer    => { Groups => { 2 => 'Author' } },
 );
@@ -1401,6 +1401,7 @@ my %sPantryItem = (
     UprightTransform_2                  => { },
     UprightTransform_3                  => { },
     UprightTransform_4                  => { },
+    UprightTransform_5                  => { },
     # more stuff seen in lens profile file (unknown source)
     What => { }, # (with value "LensProfileDefaultSettings")
     LensProfileMatchKeyExifMake         => { },
@@ -1580,7 +1581,7 @@ my %sPantryItem = (
     ExposureTime => {
         Writable => 'rational',
         PrintConv => 'Image::ExifTool::Exif::PrintExposureTime($val)',
-        PrintConvInv => 'Image::ExifTool::Exif::ConvertFraction($val)',
+        PrintConvInv => '$val',
     },
     FNumber => {
         Writable => 'rational',
@@ -1634,7 +1635,7 @@ my %sPantryItem = (
         Name => 'ExposureCompensation',
         Writable => 'rational',
         PrintConv => 'Image::ExifTool::Exif::PrintFraction($val)',
-        PrintConvInv => 'Image::ExifTool::Exif::ConvertFraction($val)',
+        PrintConvInv => '$val',
     },
     MaxApertureValue => {
         Groups => { 2 => 'Camera' },
@@ -2123,7 +2124,7 @@ my %sPantryItem = (
     NOTES => q{
         IPTC Core namespace tags.  The actual IPTC Core namespace prefix is
         "Iptc4xmpCore", which is the prefix recorded in the file, but ExifTool
-        shortens this for the "XMP-iptcCore" family 1 group name. (see
+        shortens this for the family 1 group name. (see
         L<http://www.iptc.org/IPTC4XMP/>)
     },
     CountryCode         => { Groups => { 2 => 'Location' } },
@@ -2153,175 +2154,6 @@ my %sPantryItem = (
     Location            => { Groups => { 2 => 'Location' } },
     Scene               => { Groups => { 2 => 'Other' }, List => 'Bag' },
     SubjectCode         => { Groups => { 2 => 'Other' }, List => 'Bag' },
-);
-
-# IPTC Extension namespace properties (Iptc4xmpExt) (ref 4)
-%Image::ExifTool::XMP::iptcExt = (
-    %xmpTableDefaults,
-    GROUPS => { 1 => 'XMP-iptcExt', 2 => 'Author' },
-    NAMESPACE   => 'Iptc4xmpExt',
-    TABLE_DESC => 'XMP IPTC Extension',
-    NOTES => q{
-        IPTC Extension namespace tags.  The actual namespace prefix is
-        "Iptc4xmpExt", but ExifTool shortens this for the "XMP-iptcExt" family 1
-        group name. (see L<http://www.iptc.org/IPTC4XMP/>)
-    },
-    AboutCvTerm => {
-        Struct => \%sCVTermDetails,
-        List => 'Bag',
-    },
-    AboutCvTermCvId                 => { Flat => 1, Name => 'AboutCvTermCvId' },
-    AboutCvTermCvTermId             => { Flat => 1, Name => 'AboutCvTermId' },
-    AboutCvTermCvTermName           => { Flat => 1, Name => 'AboutCvTermName' },
-    AboutCvTermCvTermRefinedAbout   => { Flat => 1, Name => 'AboutCvTermRefinedAbout' },
-    AddlModelInfo   => { Name => 'AdditionalModelInformation' },
-    ArtworkOrObject => {
-        Struct => {
-            STRUCT_NAME => 'ArtworkOrObjectDetails',
-            NAMESPACE   => 'Iptc4xmpExt',
-            AOCopyrightNotice => { },
-            AOCreator    => { List => 'Seq' },
-            AODateCreated=> { Groups => { 2 => 'Time' }, %dateTimeInfo },
-            AOSource     => { },
-            AOSourceInvNo=> { },
-            AOTitle      => { Writable => 'lang-alt' },
-            AOCurrentCopyrightOwnerName => { },
-            AOCurrentCopyrightOwnerId   => { },
-            AOCurrentLicensorName       => { },
-            AOCurrentLicensorId         => { },
-            AOCreatorId                 => { List => 'Seq' },
-            AOCircaDateCreated          => { },
-            AOStylePeriod               => { List => 'Bag' },
-            AOSourceInvURL              => { },
-            AOContentDescription        => { Writable => 'lang-alt' },
-            AOContributionDescription   => { Writable => 'lang-alt' },
-            AOPhysicalDescription       => { Writable => 'lang-alt' },
-        },
-        List => 'Bag',
-    },
-    ArtworkOrObjectAOCopyrightNotice           => { Flat => 1, Name => 'ArtworkCopyrightNotice' },
-    ArtworkOrObjectAOCreator                   => { Flat => 1, Name => 'ArtworkCreator' },
-    ArtworkOrObjectAODateCreated               => { Flat => 1, Name => 'ArtworkDateCreated' },
-    ArtworkOrObjectAOSource                    => { Flat => 1, Name => 'ArtworkSource' },
-    ArtworkOrObjectAOSourceInvNo               => { Flat => 1, Name => 'ArtworkSourceInventoryNo' },
-    ArtworkOrObjectAOTitle                     => { Flat => 1, Name => 'ArtworkTitle' },
-    ArtworkOrObjectAOCurrentCopyrightOwnerName => { Flat => 1, Name => 'ArtworkCopyrightOwnerName' },
-    ArtworkOrObjectAOCurrentCopyrightOwnerId   => { Flat => 1, Name => 'ArtworkCopyrightOwnerID' },
-    ArtworkOrObjectAOCurrentLicensorName       => { Flat => 1, Name => 'ArtworkLicensorName' },
-    ArtworkOrObjectAOCurrentLicensorId         => { Flat => 1, Name => 'ArtworkLicensorID' },
-    ArtworkOrObjectAOCreatorId                 => { Flat => 1, Name => 'ArtworkCreatorID' },
-    ArtworkOrObjectAOCircaDateCreated          => { Flat => 1, Name => 'ArtworkCircaDateCreated' },
-    ArtworkOrObjectAOStylePeriod               => { Flat => 1, Name => 'ArtworkStylePeriod' },
-    ArtworkOrObjectAOSourceInvURL              => { Flat => 1, Name => 'ArtworkSourceInvURL' },
-    ArtworkOrObjectAOContentDescription        => { Flat => 1, Name => 'ArtworkSContentDescription' },
-    ArtworkOrObjectAOContributionDescription   => { Flat => 1, Name => 'ArtworkContributionDescription' },
-    ArtworkOrObjectAOPhysicalDescription       => { Flat => 1, Name => 'ArtworkPhysicalDescription' },
-    CVterm => {
-        Name => 'ControlledVocabularyTerm',
-        List => 'Bag',
-        Notes => 'deprecated by version 1.2',
-    },
-    DigImageGUID            => { Name => 'DigitalImageGUID' },
-    DigitalSourcefileType   => {
-        Name => 'DigitalSourceFileType',
-        Notes => 'now deprecated -- replaced by DigitalSourceType',
-    },
-    DigitalSourceType       => { Name => 'DigitalSourceType' },
-    EmbdEncRightsExpr => {
-        Struct => {
-            STRUCT_NAME => 'EEREDetails',
-            NAMESPACE   => 'Iptc4xmpExt',
-            EncRightsExpr       => { },
-            RightsExprEncType   => { },
-            RightsExprLangId    => { },
-        },
-        List => 'Bag',
-    },
-    EmbdEncRightsExprEncRightsExpr      => { Flat => 1, Name => 'EmbeddedEncodedRightsExpr' },
-    EmbdEncRightsExprRightsExprEncType  => { Flat => 1, Name => 'EmbeddedEncodedRightsExprType' },
-    EmbdEncRightsExprRightsExprLangId   => { Flat => 1, Name => 'EmbeddedEncodedRightsExprLangID' },
-    Event       => { Writable => 'lang-alt' },
-    IptcLastEdited => {
-        Name => 'IPTCLastEdited',
-        Groups => { 2 => 'Time' },
-        %dateTimeInfo,
-    },
-    LinkedEncRightsExpr => {
-        Struct => {
-            STRUCT_NAME => 'LEREDetails',
-            NAMESPACE   => 'Iptc4xmpExt',
-            LinkedRightsExpr    => { },
-            RightsExprEncType   => { },
-            RightsExprLangId    => { },
-        },
-        List => 'Bag',
-    },
-    LinkedEncRightsExprLinkedRightsExpr  => { Flat => 1, Name => 'LinkedEncodedRightsExpr' },
-    LinkedEncRightsExprRightsExprEncType => { Flat => 1, Name => 'LinkedEncodedRightsExprType' },
-    LinkedEncRightsExprRightsExprLangId  => { Flat => 1, Name => 'LinkedEncodedRightsExprLangID' },
-    LocationCreated => {
-        Struct => \%sLocationDetails,
-        Groups => { 2 => 'Location' },
-        List => 'Bag',
-    },
-    LocationShown => {
-        Struct => \%sLocationDetails,
-        Groups => { 2 => 'Location' },
-        List => 'Bag',
-    },
-    MaxAvailHeight          => { Writable => 'integer' },
-    MaxAvailWidth           => { Writable => 'integer' },
-    ModelAge                => { List => 'Bag', Writable => 'integer' },
-    OrganisationInImageCode => { List => 'Bag' },
-    OrganisationInImageName => { List => 'Bag' },
-    PersonInImage           => { List => 'Bag' },
-    PersonInImageWDetails => {
-        Struct => {
-            STRUCT_NAME => 'PersonDetails',
-            NAMESPACE   => 'Iptc4xmpExt',
-            PersonId    => { List => 'Bag' },
-            PersonName  => { Writable => 'lang-alt' },
-            PersonCharacteristic => {
-                Struct  => \%sCVTermDetails,
-                List    => 'Bag',
-            },
-            PersonDescription => { Writable => 'lang-alt' },
-        },
-        List => 'Bag',
-    },
-    PersonInImageWDetailsPersonId                               => { Flat => 1, Name => 'PersonInImageId' },
-    PersonInImageWDetailsPersonName                             => { Flat => 1, Name => 'PersonInImageName' },
-    PersonInImageWDetailsPersonCharacteristic                   => { Flat => 1, Name => 'PersonInImageCharacteristic' },
-    PersonInImageWDetailsPersonCharacteristicCvId               => { Flat => 1, Name => 'PersonInImageCvTermCvId' },
-    PersonInImageWDetailsPersonCharacteristicCvTermId           => { Flat => 1, Name => 'PersonInImageCvTermId' },
-    PersonInImageWDetailsPersonCharacteristicCvTermName         => { Flat => 1, Name => 'PersonInImageCvTermName' },
-    PersonInImageWDetailsPersonCharacteristicCvTermRefinedAbout => { Flat => 1, Name => 'PersonInImageCvTermRefinedAbout' },
-    PersonInImageWDetailsPersonDescription                      => { Flat => 1, Name => 'PersonInImageDescription' },
-    ProductInImage => {
-        Struct => {
-            STRUCT_NAME => 'ProductDetails',
-            NAMESPACE   => 'Iptc4xmpExt',
-            ProductName => { Writable => 'lang-alt' },
-            ProductGTIN => { },
-            ProductDescription => { Writable => 'lang-alt' },
-        },
-        List => 'Bag',
-    },
-    ProductInImageProductName        => { Flat => 1, Name => 'ProductInImageName' },
-    ProductInImageProductGTIN        => { Flat => 1, Name => 'ProductInImageGTIN' },
-    ProductInImageProductDescription => { Flat => 1, Name => 'ProductInImageDescription' },
-    RegistryId => {
-        Name => 'RegistryID',
-        Struct => {
-            STRUCT_NAME => 'RegistryEntryDetails',
-            NAMESPACE   => 'Iptc4xmpExt',
-            RegItemId   => { },
-            RegOrgId    => { },
-        },
-        List => 'Bag',
-    },
-    RegistryIdRegItemId => { Flat => 1, Name => 'RegistryItemID' },
-    RegistryIdRegOrgId  => { Flat => 1, Name => 'RegistryOrganisationID' },
 );
 
 # Adobe Lightroom namespace properties (lr) (ref PH)
@@ -3178,7 +3010,7 @@ NoLoop:
                 last;
             }
         }
-        $tagInfo or $tagInfo = { Name => $name, WasAdded => 1 };
+        $tagInfo or $tagInfo = { Name => $name, WasAdded => 1, Priority => 0 };
 
         # add tag Namespace entry for tags in variable-namespace tables
         $$tagInfo{Namespace} = $xns if $xns;
@@ -3698,13 +3530,17 @@ sub ProcessXMP($$;$)
     $$et{xlatNS} = { };
 
     # ignore non-standard XMP while in strict MWG compatibility mode
-    if ($Image::ExifTool::MWG::strict and not $$et{XMP_CAPTURE} and
+    if (($Image::ExifTool::MWG::strict or $et->Options('Validate')) and not $$et{XMP_CAPTURE} and
         $$et{FILE_TYPE} =~ /^(JPEG|TIFF|PSD)$/)
     {
         my $path = $et->MetadataPath();
         unless ($path =~ /^(JPEG-APP1-XMP|TIFF-IFD0-XMP|PSD-XMP)$/) {
-            $et->Warn("Ignored non-standard XMP at $path");
-            return 1;
+            if ($Image::ExifTool::MWG::strict) {
+                $et->Warn("Ignored non-standard XMP at $path");
+                return 1;
+            } else {
+                $et->Warn("Non-standard XMP at $path", 1);
+            }
         }
     }
     if ($dataPt) {
@@ -4050,7 +3886,7 @@ information.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

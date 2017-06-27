@@ -31,7 +31,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.12';
+$VERSION = '1.13';
 
 # program map table "stream_type" lookup (ref 6/1)
 my %streamType = (
@@ -407,7 +407,7 @@ sub ProcessM2TS($$)
             HexDump(\$buff, $pLen, Addr => $i * $pLen, Out => $out,
                 Start => $pos - $prePos) if $verbose > 2;
             my $str = $pidName{$pid} ? " ($pidName{$pid})" : '';
-            printf $out "  Timecode:   0x%.4x\n", Get32u(\$buff, 0) if $pLen == 192;
+            printf $out "  Timecode:   0x%.4x\n", Get32u(\$buff, $pos - $prePos) if $pLen == 192;
             printf $out "  Packet ID:  0x%.4x$str\n", $pid;
             printf $out "  Start Flag: %s\n", $payload_unit_start_indicator ? 'Yes' : 'No';
         }
@@ -693,7 +693,7 @@ video.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

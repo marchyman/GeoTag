@@ -11,7 +11,7 @@ package Image::ExifTool::Lang::en_ca;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = '1.10';
+$VERSION = '1.11';
 
 %Image::ExifTool::Lang::en_ca::Translate = (
    'AboveColor' => 'Above Colour',
@@ -847,6 +847,12 @@ $VERSION = '1.10';
    'VideoAlphaPremultipleColorYellow' => 'Video Alpha Premultiple Colour Yellow',
    'VideoColorKind' => 'Video Colour Kind',
    'VideoColorSpace' => 'Video Colour Space',
+   'VisualColor' => {
+      Description => 'Visual Colour',
+      PrintConv => {
+        'Color' => 'Colour',
+      },
+    },
    'WBAdjColorTemp' => 'WB Adj Colour Temp',
    'WBAdjLighting' => {
       PrintConv => {
@@ -921,7 +927,7 @@ and values.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

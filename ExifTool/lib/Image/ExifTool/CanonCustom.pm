@@ -19,7 +19,7 @@ use Image::ExifTool qw(:DataAccess);
 use Image::ExifTool::Canon;
 use Image::ExifTool::Exif;
 
-$VERSION = '1.53';
+$VERSION = '1.54';
 
 sub ProcessCanonCustom($$$);
 sub ProcessCanonCustom2($$$);
@@ -1596,7 +1596,7 @@ my %convPFn = ( PrintConv => \&ConvertPfn, PrintConvInv => \&ConvertPfnInv );
     ],
     0x040a => { # new for 5DmkIII
         Name => 'ViewfinderWarnings',
-        PrintConv => { BITMASK => { # (NC)
+        PrintConv => { BITMASK => { #(NC)
             0 => 'Monochrome',              # (have seen for: 5DmkII, 6D)
             1 => 'WB corrected',            # (have seen for: 5DmkII, 6D)
             2 => 'One-touch image quality', # (have seen for: 5DmkII; doesn't exist for 6D)
@@ -1924,7 +1924,7 @@ my %convPFn = ( PrintConv => \&ConvertPfn, PrintConvInv => \&ConvertPfnInv );
     },
     0x0519 => { # new for 6D
         Name => 'AIServoFirstImagePriority',
-        PrintConv => { # (NC)
+        PrintConv => { #(NC)
             -1 => 'Release priority',
             0 => 'Equal priority',
             1 => 'Focus priority',
@@ -1932,7 +1932,7 @@ my %convPFn = ( PrintConv => \&ConvertPfn, PrintConvInv => \&ConvertPfnInv );
     },
     0x051a => { # new for 6D
         Name => 'AIServoSecondImagePriority',
-        PrintConv => { # (NC)
+        PrintConv => { #(NC)
             -1 => 'Shooting speed priority',
             0 => 'Equal priority',
             1 => 'Focus priority',
@@ -1959,8 +1959,8 @@ my %convPFn = ( PrintConv => \&ConvertPfn, PrintConvInv => \&ConvertPfnInv );
             1 => 'Enable',
             2 => 'Disable',
         },{
-            0 => 'Non-illuminated', # (NC)
-            1 => 'Illuminated', # (NC)
+            0 => 'Non-illuminated', #(NC)
+            1 => 'Illuminated', #(NC)
         }],
     },
     0x051e => { # (80D)
@@ -2245,13 +2245,13 @@ my %convPFn = ( PrintConv => \&ConvertPfn, PrintConvInv => \&ConvertPfnInv );
     0x070f => { # new for 5DmkIII
         Name => 'MultiFunctionLock',
         PrintConv => [
-            { # (NC)
+            { #(NC)
                 0 => 'Off',
                 1 => 'On', # "On (main dial)" for 750D/760D?
-                2 => 'On (quick control dial)', # (NC)
-                3 => 'On (main dial and quick control dial)', # (NC)
+                2 => 'On (quick control dial)', #(NC)
+                3 => 'On (main dial and quick control dial)', #(NC)
             },
-            { BITMASK => { # (NC)
+            { BITMASK => { #(NC)
                 0 => 'Main dial',
                 1 => 'Quick control dial',
                 2 => 'Multi-controller',
@@ -2444,7 +2444,7 @@ sub ProcessCanonCustom2($$$)
         $newTags = $et->GetNewTagInfoHash($tagTablePtr);
         $et->VPrint(0, "  Rewriting CanonCustom2\n");
     } elsif ($verbose) {
-        $et->VerboseDir('CanonCustom2', $count);
+        $et->VerboseDir('CanonCustom2', $count, $len);
     }
     my $pos = $offset + 8;
     my $end = $offset + $size;
@@ -2463,7 +2463,7 @@ sub ProcessCanonCustom2($$$)
             return 0;
         }
         if ($verbose and not $write) {
-            $et->VerboseDir("CanonCustom2 group $recNum", $recCount);
+            $et->VerboseDir("CanonCustom2 group $recNum", $recCount, $recLen);
         }
         my ($i, $num, $tag);
         for ($i=0; $recPos + 8 < $recEnd; ++$i, $recPos+=4*$num) {
@@ -2640,7 +2640,7 @@ Image::ExifTool to read this information.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

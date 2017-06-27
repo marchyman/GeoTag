@@ -27,7 +27,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.42';
+$VERSION = '1.43';
 
 sub ConvertTimecode($);
 
@@ -764,7 +764,7 @@ my %code2charset = (
     erel => 'RelatedImageFile',
     etim => { Name => 'TimeCreated', Groups => { 2 => 'Time' } },
     ecor => { Name => 'Make',        Groups => { 2 => 'Camera' } },
-    emdl => { Name => 'Model',       Groups => { 2 => 'Camera' } },
+    emdl => { Name => 'Model',       Groups => { 2 => 'Camera' }, Description => 'Camera Model Name' },
     emnt => { Name => 'MakerNotes',  Binary => 1 },
     eucm => {
         Name => 'UserComment',
@@ -1553,7 +1553,7 @@ including AVI videos, WAV audio files and WEBP images.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

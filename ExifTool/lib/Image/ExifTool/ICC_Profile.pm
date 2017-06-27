@@ -274,6 +274,7 @@ my %profileClass = (
     4 => {
         Name => 'ProfileCMMType',
         Format => 'string[4]',
+        # seen: "    ",ACMS,ADBE,APPLE,KCMS,Lino,NKON,UCCM,appl,etc2,lino,none
     },
     8 => {
         Name => 'ProfileVersion',
@@ -327,6 +328,18 @@ my %profileClass = (
         Name => 'DeviceManufacturer',
         Format => 'string[4]',
         # KODA = Kodak
+        # ADBE = Adobe ...?
+        # appl = Apple
+        # HP   = HP
+        # CANO = Canon
+        # ISL  = ?
+        # JPEG = JPEG
+        # Leaf = Leaf
+        # MNLT = ?
+        # MSFT = Microsoft
+        # POne = ?
+        # etc2 = ?
+        # lcms = ?
     },
     52 => {
         Name => 'DeviceModel',
@@ -977,7 +990,7 @@ data created on one device into another device's native color space.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

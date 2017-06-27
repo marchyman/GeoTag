@@ -10,6 +10,7 @@
 #               3) Pascal de Bruijn private communication (NX100)
 #               4) Jaroslav Stepanek via rt.cpan.org
 #               5) Nick Livchits private communication
+#               6) Sreerag Raghavan private communication (SM-C200)
 #               IB) Iliah Borg private communcation (LibRaw)
 #               NJ) Niels Kristian Bech Jensen private communication
 #------------------------------------------------------------------------------
@@ -21,7 +22,7 @@ use vars qw($VERSION %samsungLensTypes);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.34';
+$VERSION = '1.38';
 
 sub WriteSTMN($$$);
 sub ProcessINFO($$$);
@@ -85,12 +86,14 @@ my %formatMinMax = (
         DataTag => 'PreviewImage',
         IsOffset => 3,
         Protected => 2,
+        WriteGroup => 'MakerNotes',
     },
     3 => {
         Name => 'PreviewImageLength',
         OffsetPair => 2,   # point to associated offset
         DataTag => 'PreviewImage',
         Protected => 2,
+        WriteGroup => 'MakerNotes',
     },
     11 => {
         Name => 'SamsungIFD',
@@ -133,6 +136,7 @@ my %formatMinMax = (
     },
     0x0002 => {
         Name => 'DeviceType',
+        Groups => { 2 => 'Camera' },
         Writable => 'int32u',
         PrintHex => 1,
         PrintConv => {
@@ -145,6 +149,7 @@ my %formatMinMax = (
     },
     0x0003 => {
         Name => 'SamsungModelID',
+        Groups => { 2 => 'Camera' },
         Writable => 'int32u',
         PrintHex => 1,
         PrintConv => {
@@ -156,11 +161,14 @@ my %formatMinMax = (
             0x1001234 => 'HMX-H304',
             0x100130c => 'NX100',
             0x1001327 => 'NX11',
+            0x170104b => 'ES65, ES67 / VLUU ES65, ES67 / SL50',
             0x170104e => 'ES70, ES71 / VLUU ES70, ES71 / SL600',
             0x1701052 => 'ES73 / VLUU ES73 / SL605',
+            0x1701055 => 'ES25, ES27 / VLUU ES25, ES27 / SL45',
             0x1701300 => 'ES28 / VLUU ES28',
             0x1701303 => 'ES74,ES75,ES78 / VLUU ES75,ES78',
             0x2001046 => 'PL150 / VLUU PL150 / TL210 / PL151',
+            0x2001048 => 'PL100 / TL205 / VLUU PL100 / PL101',
             0x2001311 => 'PL120,PL121 / VLUU PL120,PL121',
             0x2001315 => 'PL170,PL171 / VLUUPL170,PL171',
             0x200131e => 'PL210, PL211 / VLUU PL210, PL211',
@@ -170,7 +178,9 @@ my %formatMinMax = (
            #0x3000000 => 'DV150F / DV151F / DV155F',
            #0x3000000 => 'NX mini',
            #0x3000000 => 'NX3000',
+           #0x3000000 => 'NX3300',
            #0x3000000 => 'ST150F / ST151F / ST152F',
+           #0x3000000 => 'WB200F / WB201F / WB202F',
            #0x3000000 => 'WB250F / WB251F / WB252F',
            #0x3000000 => 'WB30F / WB31F / WB32F',
            #0x3000000 => 'WB350F / WB351F / WB352F',
@@ -178,6 +188,7 @@ my %formatMinMax = (
             0x3a00018 => 'Various Models (0x3a00018)',
            #0x3a00018 => 'ES30 / VLUU ES30',
            #0x3a00018 => 'ES80 / ES81',
+           #0x3a00018 => 'ES9 / ES8',
            #0x3a00018 => 'PL200 / VLUU PL200',
            #0x3a00018 => 'PL80 / VLUU PL80 / SL630 / PL81',
            #0x3a00018 => 'PL90 / VLUU PL90',
@@ -216,6 +227,8 @@ my %formatMinMax = (
            #0x5001038 => 'NX2000',
            #0x5001038 => 'NX30',
            #0x5001038 => 'NX300',
+           #0x5001038 => 'NX500',
+           #0x5001038 => 'SM-C200',
            #0x5001038 => 'WB2000',
             0x500103a => 'WB650 / VLUU WB650 / WB660',
             0x500103c => 'WB600 / VLUU WB600 / WB610',
@@ -232,19 +245,46 @@ my %formatMinMax = (
     # 0x000c - int32u ? values: 0,1
     # 0x000e - int32u[2] (SoundMultiPicture?)
     # 0x0010 - rational64u ? values: undef,inf
-    # 0x0020 - int16u[2] (ColorInfoDCM?)
+    0x0011 => { #6
+        Name => 'OrientationInfo',
+        SubDirectory => { TagTable => 'Image::ExifTool::Samsung::OrientationInfo' },
+    },
+    0x0020 => [{ #forum7685
+        Name => 'SmartAlbumColor',
+        Condition => '$$valPt =~ /^\0{4}/',
+        Writable => 'int16u',
+        Count => 2,
+        PrintConv => {
+            '0 0' => 'n/a',
+        },
+    },{
+        Name => 'SmartAlbumColor',
+        Writable => 'int16u',
+        Count => 2,
+        PrintConv => [{
+            0 => 'Red',
+            1 => 'Yellow',
+            2 => 'Green',
+            3 => 'Blue',
+            4 => 'Magenta',
+            5 => 'Black',
+            6 => 'White',
+            7 => 'Various',
+        }],
+    }],
     0x0021 => { #1
         Name => 'PictureWizard',
         Writable => 'int16u',
         SubDirectory => { TagTable => 'Image::ExifTool::Samsung::PictureWizard' },
     },
-    # 0x0022 - int32u (CaptureMode?)
+    # 0x0022 - int32u (CaptureMode?) (Gamma? eg. 65538 = 1.2, ref forum7720)
     # 0x0023 - string: "0123456789" (PH) (placeholder for SerialNumber?)
     # 0x0025 - int32u (ImageCount?)
     # 0x002a - undef[4] (SNSDirectShare?)
     # 0x002f - string (GPSInfo01?)
     0x0030 => { #1 (NX100 with GPS)
         Name => 'LocalLocationName',
+        Groups => { 2 => 'Location' },
         Writable => 'string',
         Format => 'undef',
         # this contains 2 place names (in Korean if in Korea), separated by a null+space
@@ -254,6 +294,7 @@ my %formatMinMax = (
     },
     0x0031 => { #1 (NX100 with GPS)
         Name => 'LocationName',
+        Groups => { 2 => 'Location' },
         Writable => 'string',
     },
     # 0x0032 - string (GPSInfo03)
@@ -276,19 +317,41 @@ my %formatMinMax = (
     # 0x003d - int16u[5] (SmartCropInfo?)
     # 0x003e - int32u (DualCapture?)
     # 0x003f - int16u[2] (SGIFInfo?)
-    # 0x0040 - int32u (FavoriteTagging?) values: 0
+    0x0040 => { #forum7432
+        Name => 'RawDataByteOrder',
+        PrintConv => {
+            0 => 'Little-endian (Intel, II)',
+            1 => 'Big-endian (Motorola, MM)', #(NC)
+        },
+    },
+    0x0041 => { #forum7684
+        Name => 'WhiteBalanceSetup',
+        Writable => 'int32u',
+        PrintConv => {
+            0 => 'Auto',
+            1 => 'Manual',
+        },
+    },
     0x0043 => { #1 (NC)
         Name => 'CameraTemperature',
         Groups => { 2 => 'Camera' },
         Writable => 'rational64s',
         # (DPreview samples all 0.2 C --> pre-production model)
-        PrintConv => '"$val C"',
+        PrintConv => '$val =~ /\d/ ? "$val C" : $val',
         PrintConvInv => '$val=~s/ ?C//; $val',
     },
-    0x0045 => { Name => 'RawCompressionMode', Writable => 'int32u' },
+    # 0x0045 => { Name => 'RawCompressionMode', Writable => 'int32u' }, # (related to ExposureMode, not raw compresison? ref forum7432)
     # 0x004a - int32u[7] (ImageVerification?)
     # 0x004b - int32u[2] (RewindInfo?)
-    # 0x0050 - int32u (ColorSpace? - inconsistent) values: 1
+    # 0x0050 - int32u (ColorSpace? - inconsistent) values: 1 (related to compression mode, ref forum7432)
+    0x0050 => { #forum7432
+        Name => 'RawDataCFAPattern',
+        PrintConv => {
+            0 => 'Unchanged',
+            1 => 'Swap',
+            65535 => 'Roll',
+        },
+    },
     # 0x0054 - int16u[2] (WeatherInfo?)
     # 0x0060 - undef (AEInfo?)
     # 0x0080 - undef (AFInfo?)
@@ -304,14 +367,14 @@ my %formatMinMax = (
     0x0100 => {
         Name => 'FaceDetect',
         Writable => 'int16u',
-        PrintConv => { 0 => 'Off', 1 => 'On' }, # (NC)
+        PrintConv => { 0 => 'Off', 1 => 'On' }, #(NC)
     },
     # 0x0101 - int16u[6] (FaceDetectInfo?)
     # 0x0102 - int16u[x] (FaceDetectInfo?)
     0x0120 => {
         Name => 'FaceRecognition',
         Writable => 'int32u',
-        PrintConv => { 0 => 'Off', 1 => 'On' }, # (NC)
+        PrintConv => { 0 => 'Off', 1 => 'On' }, #(NC)
     },
     0x0123 => { Name => 'FaceName', Writable => 'string' },
     # 0x140 - undef (LensInfo?)
@@ -339,6 +402,7 @@ my %formatMinMax = (
     },
     0xa005 => {
         Name => 'InternalLensSerialNumber', # Not the printed serial number (ref 1)
+        Groups => { 2 => 'Camera' },
         Writable => 'string',
     },
     0xa010 => { #1
@@ -373,7 +437,7 @@ my %formatMinMax = (
         Name => 'ExposureTime',
         Writable => 'rational64u',
         PrintConv => 'Image::ExifTool::Exif::PrintExposureTime($val)',
-        PrintConvInv => 'Image::ExifTool::Exif::ConvertFraction($val)',
+        PrintConvInv => '$val',
     },
     0xa019 => { #1
         Name => 'FNumber',
@@ -611,6 +675,31 @@ my %formatMinMax = (
     # 0xa061 - int16u (Compression?)
 );
 
+# orientation information (ref 6)
+%Image::ExifTool::Samsung::OrientationInfo = (
+    PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
+    WRITE_PROC => \&Image::ExifTool::WriteBinaryData,
+    CHECK_PROC => \&Image::ExifTool::CheckBinaryData,
+    WRITABLE => 1,
+    FORMAT => 'rational64s',
+    FIRST_ENTRY => 0,
+    GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
+    NOTES => 'Camera orientation information written by the Gear 360 (SM-C200).',
+    0 => {
+        Name => 'YawAngle', #(NC)
+        Unknown => 1,
+        Notes => 'always zero',
+    },
+    1 => {
+        Name => 'PitchAngle',
+        Notes => 'upward tilt of rear camera in degrees',
+    },
+    2 => {
+        Name => 'RollAngle',
+        Notes => 'clockwise rotation of rear camera in degrees',
+    },
+);
+
 # Picture Wizard information (ref 1)
 %Image::ExifTool::Samsung::PictureWizard = (
     PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
@@ -690,7 +779,7 @@ my %formatMinMax = (
         Description => 'Camera Model Name',
         Format => 'string[16]',
     },
-    0x2e => { # (NC)
+    0x2e => { #(NC)
         Name => 'ExposureTime',
         Format => 'int32u',
         ValueConv => '$val ? 10 / $val : 0',
@@ -701,7 +790,7 @@ my %formatMinMax = (
         Format => 'rational64u',
         PrintConv => 'sprintf("%.1f",$val)',
     },
-    0x3a => { # (NC)
+    0x3a => { #(NC)
         Name => 'ExposureCompensation',
         Format => 'rational64s',
         PrintConv => '$val ? sprintf("%+.1f", $val) : 0',
@@ -1155,7 +1244,7 @@ Samsung maker notes in EXIF information.
 
 =head1 AUTHOR
 
-Copyright 2003-2016, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -1170,8 +1259,9 @@ under the same terms as Perl itself.
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks to Tae-Sun Park for decoding a number of tags, and Pascal de Bruijn
-for the PictureWizard values.
+Thanks to Tae-Sun Park for decoding a number of tags, Pascal de Bruijn for
+the PictureWizard values, and everyone else who helped by discovering new
+Samsung information.
 
 =head1 SEE ALSO
 
