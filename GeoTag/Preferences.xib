@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Preferences" customModule="GeoTag" customModuleProvider="target">
@@ -23,20 +24,19 @@
                 <rect key="frame" x="0.0" y="0.0" width="564" height="240"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <box autoresizesSubviews="NO" title="Please read" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="mB3-is-Hvp">
+                    <box autoresizesSubviews="NO" borderType="line" title="Please read" translatesAutoresizingMaskIntoConstraints="NO" id="mB3-is-Hvp">
                         <rect key="frame" x="17" y="61" width="530" height="159"/>
                         <view key="contentView" id="CxG-qh-tIY">
                             <rect key="frame" x="1" y="1" width="528" height="143"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Usk-Sa-0th">
+                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Usk-Sa-0th">
                                     <rect key="frame" x="16" y="14" width="496" height="119"/>
                                     <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" id="DKh-Hh-nMB">
                                         <font key="font" metaFont="system"/>
                                         <string key="title">GeoTag moves the original version of images that have been changed and saved to the system Trash.  Opening the Trash and using control-click on a file allows the file to be restored using the Put back option.
 
-If you prefer to permanently save unmodified image files in a folder (in addition to the system Trash) you can specify that folder here.
-</string>
+If you prefer to permanently save unmodified image files in a folder you may specify the folder location below.   When a save folder is used files are not placed in the system trash.</string>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
@@ -51,11 +51,9 @@ If you prefer to permanently save unmodified image files in a folder (in additio
                             <constraint firstAttribute="trailing" secondItem="Usk-Sa-0th" secondAttribute="trailing" constant="16" id="tks-Ez-OnB"/>
                             <constraint firstItem="Usk-Sa-0th" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="top" constant="25" id="u0e-kO-8Ry"/>
                         </constraints>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <font key="titleFont" metaFont="smallSystemBold"/>
                     </box>
-                    <box autoresizesSubviews="NO" title="Box" borderType="line" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="cFe-lV-Lzx">
+                    <box autoresizesSubviews="NO" borderType="line" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="cFe-lV-Lzx">
                         <rect key="frame" x="17" y="16" width="411" height="43"/>
                         <view key="contentView" id="FO9-Ui-LmG">
                             <rect key="frame" x="1" y="1" width="409" height="41"/>
@@ -81,8 +79,6 @@ If you prefer to permanently save unmodified image files in a folder (in additio
                             <constraint firstItem="WPF-AV-Z7i" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="leading" id="XpK-bh-mYm"/>
                             <constraint firstItem="WPF-AV-Z7i" firstAttribute="centerX" secondItem="cFe-lV-Lzx" secondAttribute="centerX" id="ywQ-um-DEp"/>
                         </constraints>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cYX-WU-h9f">
                         <rect key="frame" x="428" y="23" width="121" height="29"/>

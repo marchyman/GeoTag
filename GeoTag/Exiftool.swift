@@ -20,14 +20,14 @@ struct Exiftool {
     // Verify access to the embedded version of ExifTool
     init() {
         if let exiftoolUrl = Bundle.main.url(forResource: "ExifTool", withExtension: nil) {
-            url = exiftoolUrl
+            url = exiftoolUrl.appendingPathComponent("exiftool")
             print("Exiftool url = \(url)")
         } else {
             fatalError("The Application Bundle is corrupt.")
         }
     }
 
-    func updateLocation(from imageData: ImageData, overwriteOriginal: Bool) {
+    func updateLocation(from imageData: ImageData) -> Int32 {
 
         // latitude exiftool args
         var latArg = "-GPSLatitude="
@@ -59,16 +59,11 @@ struct Exiftool {
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = FileHandle.nullDevice
         exiftool.launchPath = url.path
-        exiftool.arguments = ["-q", "-m", "-DateTimeOriginal>FileModifyDate",
-            latArg, latRefArg, lonArg, lonRefArg, imageData.path]
-
-        // add -overwrite_original option to the exiftool args if we were
-        // able to create a backup.
-        if overwriteOriginal {
-            exiftool.arguments?.insert("-overwrite_original", at: 2)
-        }
+        exiftool.arguments = ["-q", "-m", "-overwrite_original",
+            "-DateTimeOriginal>FileModifyDate",
+            latArg, latRefArg, lonArg, lonRefArg, imageData.sandboxUrl.path]
         exiftool.launch()
         exiftool.waitUntilExit()
-        print("Exiftool status \(exiftool.terminationStatus)")
+        return exiftool.terminationStatus
     }
 }

@@ -25,21 +25,19 @@ let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
 
 final class ImageData: NSObject {
     /*
-     * if we can't trash the file fall back to letting exiftool create
-     * backup files.   Only display a warning that this will happen once
-     * per program run.
+     * if we can't trash the file display a warning that files will be
+     * copied to an alternate directory.  This flag is used so the
+     * warning is only displayed once per execution of the program.
      */
     static var firstWarning = true
 
     // MARK: instance variables
 
-    let url: URL
-    var path: String! {
-        return url.path
-    }
+    let url: URL                // URL of the image
     var name: String? {
         return url.lastPathComponent
     }
+    let sandboxUrl: URL         // URL of the sandbox copy of the image
 
     var date: String = ""
     var dateFromEpoch: TimeInterval {
@@ -75,7 +73,21 @@ final class ImageData: NSObject {
     /// the given URL.  If the URL isn't recognized as an image mark this
     /// instance as not being valid.
     init(url: URL) {
+        // create a symlink for the URL in our sandbox
         self.url = url;
+        let fileManager = FileManager.default
+        do {
+            let docDir = try fileManager.url(for: .documentDirectory,
+                                             in: .userDomainMask,
+                                             appropriateFor: nil,
+                                             create: true)
+            sandboxUrl = docDir.appendingPathComponent(url.lastPathComponent)
+            try? fileManager.removeItem(at: sandboxUrl)
+            try fileManager.createSymbolicLink(at: sandboxUrl,
+                                               withDestinationURL: url)
+        } catch let error as NSError {
+            fatalError("docDir symlink error: \(error)")
+        }
         super.init()
         validImage = loadImageData()
         originalLatitude = latitude
@@ -107,8 +119,7 @@ final class ImageData: NSObject {
 
     // MARK: Backup and Save
 
-    /// link or copy a file into a save directory
-    /// Parameter sourceName: path to image file to be copied or linked
+    /// link or copy a file into a save directory if specified
     ///
     /// Link the named file into an optional save directory.  If the link fails
     /// (different filesystem?) copy the file instead.  If a file with the
@@ -116,43 +127,46 @@ final class ImageData: NSObject {
     ///
     /// Note: paths are used instead of URLs because linkItemAtURL fails
     /// trying to link foo.jpg_original to somedir/foo.jpg.
-    private func saveOriginalFile(sourceName: String) -> Bool {
+    private func saveOriginalFile() -> Bool {
         guard let saveDirURL = Preferences.saveFolder() else { return false }
         guard let name = name else { return false }
         let fileManager = FileManager.default
         let saveFileURL = saveDirURL.appendingPathComponent(name, isDirectory: false)
         if !fileManager.fileExists(atPath: (saveFileURL.path)) {
             do {
-                try fileManager.linkItem(atPath: sourceName, toPath: (saveFileURL.path))
-                return true
+                try fileManager.linkItem(atPath: url.path, toPath: saveFileURL.path)
             } catch {
                 // couldn't create hard link, copy file instead
                 do {
-                    try fileManager.copyItem(atPath: sourceName,
-                                             toPath: (saveFileURL.path))
-                    return true
+                    try fileManager.copyItem(at: url, to: saveFileURL)
                 } catch let error as NSError {
                     unexpected(error: error,
-                               "Cannot copy \(sourceName) to \(saveFileURL.path)\n\nReason: ")
+                               "Cannot copy \(url.path) to \(saveFileURL.path)\n\nReason: ")
+                    return false
                 }
             }
         }
-        return false
+        return true
     }
 
-    /// backup the image file by copying it to the trash.
-    /// - Returns: true if the backup was succcesful
+    /// backup the image file by either linking/copying it to a save directory
+    /// or placing a copy in the trash.
     ///
-    /// The first time backup to the trash fails an alert is shown to the user
-    /// letting them know an alternate backup method is being used.
+    /// - Returns: true if the backup was succcesful
     private func backupImageFile() -> Bool {
+        if saveOriginalFile() {
+            return true
+        }
+
+        // no backup directory specified or a copy to that directory failed
+        // try to trash the file
+
         var backupURL: NSURL?
         let fileManager = FileManager.default
         do {
             try fileManager.trashItem(at: url, resultingItemURL: &backupURL)
-            let _ = saveOriginalFile(sourceName: backupURL!.path!)
             do {
-                try fileManager.copyItem(at: backupURL! as URL, to: url as URL)
+                try fileManager.copyItem(at: backupURL! as URL, to: url)
                 return true
             } catch let error as NSError {
                 unexpected(error: error,
@@ -166,7 +180,7 @@ final class ImageData: NSObject {
                 alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
                 alert.messageText = NSLocalizedString("NO_TRASH_TITLE",
                                                       comment: "can't trash file")
-                alert.informativeText = path
+                alert.informativeText = url.path
                 alert.informativeText += NSLocalizedString("NO_TRASH_DESC",
                                                            comment: "can't trash file")
                 if let reason = error.localizedFailureReason {
@@ -187,30 +201,29 @@ final class ImageData: NSObject {
     /// latitude and longitude.  Non valid images and images that have not
     /// had their location changed do not invoke exiftool.
     ///
-    /// The updated file will overwrite the original file if a backup file
-    /// was created.  If a backup could not be created exiftool will rename
-    /// the original file.
+    /// No update will occur if a backup of the original file could not be
+    /// created.
+    ///
+    /// exiftool is called with the symbolic link to the file in our
+    /// sandbox.  This is needed as exiftool creates temporary files.
+    /// The updated file is copied back to its original location after
+    /// exiftool does its job.
     func saveImageFile() {
         if validImage &&
-           (latitude != originalLatitude || longitude != originalLongitude) {
-            let overwriteOriginal = backupImageFile()
-            Exiftool.helper.updateLocation(from: self, overwriteOriginal: overwriteOriginal)
-            // if a backup could not be created prior to running exiftool
-            // copy the exiftool created original to the save directory.
-            if !overwriteOriginal {
-                let originalFile = path + "_original"
-                if saveOriginalFile(sourceName: originalFile) {
-                    let fileManager = FileManager.default
-                    do {
-                        try fileManager.removeItem(atPath: originalFile)
-                    } catch let error as NSError {
-                        unexpected(error: error,
-                                   "Cannot remove \(originalFile)\n\nReason: ")
-                    }
+           (latitude != originalLatitude || longitude != originalLongitude) &&
+           backupImageFile() {
+            if Exiftool.helper.updateLocation(from: self) == 0 {
+                let fileManager = FileManager.default
+                do {
+                    try fileManager.removeItem(at: url)
+                    try fileManager.moveItem(at: sandboxUrl, to: url)
+                    originalLatitude = latitude
+                    originalLongitude = longitude
+                } catch let error as NSError {
+                    unexpected(error: error,
+                               "Cannot update \(url.path)\n\nReason: ")
                 }
             }
-            originalLatitude = latitude
-            originalLongitude = longitude
         }
     }
 

@@ -88,7 +88,9 @@ final class Preferences : NSWindowController {
     // window delegate function... orderOut instead of close
 
     func windowShouldClose(sender: AnyObject!) -> Bool {
-        window!.orderOut(sender)
+        if let window = window {
+            window.orderOut(sender)
+        }
         return false
     }
 }

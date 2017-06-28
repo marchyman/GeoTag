@@ -437,7 +437,7 @@ extension TableViewController: NSTableViewDelegate {
             switch id {
             case "imageName":
                 value = image.name ?? "Unknown"
-                tip = image.path
+                tip = image.url.path
             case "dateTime":
                 value = image.date
             case "latitude":
