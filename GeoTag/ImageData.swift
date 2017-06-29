@@ -128,24 +128,27 @@ final class ImageData: NSObject {
     /// Note: paths are used instead of URLs because linkItemAtURL fails
     /// trying to link foo.jpg_original to somedir/foo.jpg.
     private func saveOriginalFile() -> Bool {
-        guard let saveDirURL = Preferences.saveFolder() else { return false }
+        guard let saveDirUrl = Preferences.saveFolder() else { return false }
         guard let name = name else { return false }
         let fileManager = FileManager.default
-        let saveFileURL = saveDirURL.appendingPathComponent(name, isDirectory: false)
-        if !fileManager.fileExists(atPath: (saveFileURL.path)) {
+        let saveFileUrl = saveDirUrl.appendingPathComponent(name, isDirectory: false)
+        let _ = saveDirUrl.startAccessingSecurityScopedResource()
+        if !fileManager.fileExists(atPath: (saveFileUrl.path)) {
             do {
-                try fileManager.linkItem(atPath: url.path, toPath: saveFileURL.path)
+                try fileManager.linkItem(atPath: url.path, toPath: saveFileUrl.path)
             } catch {
                 // couldn't create hard link, copy file instead
                 do {
-                    try fileManager.copyItem(at: url, to: saveFileURL)
+                    try fileManager.copyItem(at: url, to: saveFileUrl)
                 } catch let error as NSError {
+                    saveDirUrl.stopAccessingSecurityScopedResource()
                     unexpected(error: error,
-                               "Cannot copy \(url.path) to \(saveFileURL.path)\n\nReason: ")
+                               "Cannot copy \(url.path) to \(saveFileUrl.path)\n\nReason: ")
                     return false
                 }
             }
         }
+        saveDirUrl.stopAccessingSecurityScopedResource()
         return true
     }
 
