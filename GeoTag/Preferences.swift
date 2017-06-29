@@ -10,21 +10,19 @@ import Foundation
 import AppKit
 
 final class Preferences : NSWindowController {
-    // class constants and a flag
+    // class constants
     static let nibName = "Preferences"
     static let saveBookmarkKey = "SaveBookmarkKey"
     static var checkDirectory = true
-    static var url: URL? = nil
+    private static var url: URL? = nil
 
     /// fetch the URL of the optional save folder
     /// - Returns: the URL associated with the save directory security bookmark
     ///   if one has been specified
     ///
     /// If a save directory/folder has been specified but does not exist an
-    /// alert is shown once per execution to inform the user.
+    /// alert is shown.
     class func saveFolder() -> URL? {
-        var url: URL?
-
         if checkDirectory {
             checkDirectory = false
             url = nil
@@ -59,7 +57,6 @@ final class Preferences : NSWindowController {
     
     @IBAction func pickSaveFolder(_: AnyObject) {
         var bookmark: Data? = nil
-        print("Pick Save Folder")
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseFiles = false
