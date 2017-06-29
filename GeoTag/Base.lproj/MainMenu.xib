@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="10116"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -25,15 +25,15 @@
             <connections>
                 <outlet property="appDelegate" destination="Voe-Tx-rLC" id="ubm-GD-tva"/>
                 <outlet property="imageWell" destination="xuH-yg-55o" id="Syk-7u-GRh"/>
+                <outlet property="mapViewController" destination="Go6-yP-GH9" id="lar-5L-hff"/>
                 <outlet property="tableView" destination="skl-pj-P9m" id="B2P-VY-BEo"/>
                 <outlet property="view" destination="skl-pj-P9m" id="HqZ-en-HFJ"/>
-                <outlet property="webViewController" destination="262-AH-8IW" id="7co-VA-PXg"/>
             </connections>
         </viewController>
-        <viewController id="262-AH-8IW" userLabel="Web View Controller" customClass="WebViewController" customModule="GeoTag" customModuleProvider="target">
+        <viewController id="Go6-yP-GH9" customClass="MapViewController" customModule="GeoTag" customModuleProvider="target">
             <connections>
-                <outlet property="mapTypeControl" destination="UAa-bh-Wko" id="krE-aN-fyA"/>
-                <outlet property="webView" destination="OQ7-ya-zM7" id="urJ-WK-9jW"/>
+                <outlet property="mapTypeControl" destination="UAa-bh-Wko" id="8Ar-sO-rpi"/>
+                <outlet property="mapView" destination="Zwv-MK-4Du" id="zEq-nz-0pQ"/>
             </connections>
         </viewController>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -331,7 +331,7 @@ CA
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="latitude" id="JX3-4H-ItO">
-                                                                    <rect key="frame" x="317" y="1" width="82" height="17"/>
+                                                                    <rect key="frame" x="323" y="1" width="82" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tyW-mI-5bT">
@@ -400,8 +400,8 @@ CA
                                             </subviews>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.5" horizontal="YES" id="yEh-tG-aR3">
-                                            <rect key="frame" x="1" y="119" width="223" height="15"/>
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.25" horizontal="YES" id="yEh-tG-aR3">
+                                            <rect key="frame" x="1" y="760" width="528" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="ty6-8n-qbD">
@@ -469,18 +469,9 @@ CA
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <action selector="saveMapSetting:" target="262-AH-8IW" id="D0z-vR-wGg"/>
+                                                            <action selector="saveMapSetting:" target="Go6-yP-GH9" id="BMB-0r-9Ss"/>
                                                         </connections>
                                                     </button>
-                                                    <webView maintainsBackForwardList="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OQ7-ya-zM7">
-                                                        <rect key="frame" x="3" y="0.0" width="521" height="374"/>
-                                                        <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12" plugInsEnabled="NO" javaEnabled="NO" javaScriptCanOpenWindowsAutomatically="NO" allowsAnimatedImages="NO" allowsAnimatedImageLooping="NO">
-                                                            <nil key="identifier"/>
-                                                        </webPreferences>
-                                                        <connections>
-                                                            <outlet property="frameLoadDelegate" destination="262-AH-8IW" id="wc9-Ph-uhq"/>
-                                                        </connections>
-                                                    </webView>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
                                                         <rect key="frame" x="18" y="386" width="282" height="24"/>
                                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="248-FW-Avl">
@@ -492,19 +483,25 @@ CA
                                                             </segments>
                                                         </segmentedCell>
                                                         <connections>
-                                                            <action selector="changeMapType:" target="262-AH-8IW" id="kyQ-9f-zxi"/>
+                                                            <action selector="changeMapType:" target="Go6-yP-GH9" id="3Ly-Dz-fL1"/>
                                                         </connections>
                                                     </segmentedControl>
+                                                    <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zwv-MK-4Du" customClass="MapView" customModule="GeoTag" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="521" height="380"/>
+                                                        <connections>
+                                                            <outlet property="delegate" destination="Go6-yP-GH9" id="xhZ-dn-nDA"/>
+                                                        </connections>
+                                                    </mapView>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="OQ7-ya-zM7" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="47" id="15v-mG-YMW"/>
                                                     <constraint firstAttribute="trailing" secondItem="jOB-Xu-ExJ" secondAttribute="trailing" constant="20" id="5rg-Nu-woP"/>
-                                                    <constraint firstItem="OQ7-ya-zM7" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="3" id="Als-IL-2ld"/>
+                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="41" id="9FX-y0-0J7"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Zwv-MK-4Du" secondAttribute="bottom" id="AbC-aA-sh4"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="IBD-aM-s8A"/>
-                                                    <constraint firstAttribute="trailing" secondItem="OQ7-ya-zM7" secondAttribute="trailing" constant="-3" id="Nsp-ms-rTM"/>
-                                                    <constraint firstAttribute="bottom" secondItem="OQ7-ya-zM7" secondAttribute="bottom" id="Zcs-bO-OeP"/>
+                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" id="kuE-Rp-GKs"/>
                                                     <constraint firstItem="jOB-Xu-ExJ" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="xrB-Bz-x8a"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" id="zgJ-sW-cGB"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Zwv-MK-4Du" secondAttribute="trailing" id="ziW-xO-3nP"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>

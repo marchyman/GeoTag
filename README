@@ -1,10 +1,27 @@
 ## GeoTag for OS X
 
-**Note: The current version may not work due to google maps API
-changes.   The 'maps' branch is a conversion to Apple Maps.  That means
-Mac App store distribution.   That means sandboxing.  Accessing exiftool
-as I've done in the past is not allowed in a sandboxed app.  For that
-reason the 'map' branch does not work at this time**
+The "maps" branch seems to be working, but has not been completely tested.
+This will eventually be released as GeoTag version 4.  Differences are:
+
+* Apple maps replace Google maps
+* Exiftool is now built in
+* The app is sandboxed for better security
+* Currently coded in Swift 3
+
+Note: map searching has not yet been implemented in this version
+
+Because the app is now sandboxed image backups are handled in a different
+manner than they were in previous versions.
+
+* If a backup "save" folder has been configured in system preferences a copy
+  original file will be placed there **unless a file with the same name
+  already exists in that folder**.
+* If no "save" folder has been specified the original file will be found in
+  the system trash.
+* If the image file can not be copied to either location Geolocation
+  information will not be saved.   Better to be safe than sorry.
+
+---
 
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
@@ -14,16 +31,16 @@ utility.  Existing location information can be fine tuned by dragging a marker
 representing the location in the map.  In either case only image metadata is
 changed.
 
-Image metadata modification is performed by the exiftool utility. Download
-exiftool from <http://www.sno.phy.queensu.ca/~phil/exiftool/> and install.
-GeoTag will check that the tool is installed at start-up.
+Image metadata modification is performed by the exiftool utility. See
+<http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
+exiftool.GeoTag will check that the tool is installed at start-up.
 
 The functions provided by GeoTag exist in current versions of iPhoto, Aperture
 (RIP), and Lightroom.  Some still find the application useful for geolocation
-tagging photos in the field.  Photos (OSX 10.10.3) looks like it will let you
-modify existing location metadata but not add location data to an image.
-If necessary use GeoTag to add location metadata before importing the images
-into Photos.
+tagging photos in the field.  Photos (OSX 10.10.3 and later) looks like it
+will let you modify existing location metadata but not add location data to
+an image. If necessary use GeoTag to add location metadata before importing
+the images into Photos.
 
 Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later. Use version
 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8 (Mountain
@@ -32,22 +49,6 @@ earlier See <http://www.snafu.org/GeoTag/> for more information.
 
 GeoTag is now available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
-
-### New Features:
-
-* (internal) update code to use Swift 2
-
-### Bug fixes:
-
-* Disable App Transport Security so the maps will load in OS X 10.11
-  El Capitan
-
-* location highlighting error fixed.  When assigning a location and then
-  selecting another image the latitude and longitude are re-displayed in
-  the standard color.
-
-* map search box relocated such that it no longer covers the button used
-  to exit street view.
 
 ### Operating Instructions:
 
@@ -68,10 +69,7 @@ location can also be changed by dragging the marker. Hitting the delete key
 will remove location information from all selected images.  You can Undo/Redo
 image location changes.
 
-You may double click on the map to zoom but using the zoom controls may be
-preferred as the first click of a double click will always set the image
-location to the clicked location, something you may not desire.  You can undo
-any undesired location changes.
+Double click to zoom in.  Or use the pinch gestures to zoom in and out.
 
 GeoTag can interpolate positions for images between two images with assigned
 locations.   This might be useful where you know starting and ending locations
@@ -116,7 +114,7 @@ a pop up menu by right clicking on an entry in the list.
 ### Build Instructions for developers
 
 * Get current sources from github -- https://github.com/marchyman/GeoTag
-* Open the project in Xcode (6.3 or later required)
+* Open the project in Xcode (last built using version 8.3.3)
 * ⌘R will build and run, ⌘B to build only
 
 Send all comments, bugs, requests, etc. to <marc@snafu.org>

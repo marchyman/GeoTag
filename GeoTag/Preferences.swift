@@ -10,34 +10,40 @@ import Foundation
 import AppKit
 
 final class Preferences : NSWindowController {
-    // class constants and a flag
+    // class constants
     static let nibName = "Preferences"
-    static let saveFolderKey = "saveDirectoryKey"
-    static let exiftoolPathKey = "exiftoolPathKey"
+    static let saveBookmarkKey = "SaveBookmarkKey"
     static var checkDirectory = true
+    private static var url: URL? = nil
 
-    /// fetch the URL of the optional extra save folder/directory
-    /// - Returns: the URL of the save directory if one has been specified
+    /// fetch the URL of the optional save folder
+    /// - Returns: the URL associated with the save directory security bookmark
+    ///   if one has been specified
     ///
     /// If a save directory/folder has been specified but does not exist an
-    /// alert is shown once per execution to inform the user.
-
-    class func saveFolder() -> NSURL? {
-        var saveFolder: NSURL? = nil
-
+    /// alert is shown.
+    class func saveFolder() -> URL? {
         if checkDirectory {
-            let defaults = NSUserDefaults.standardUserDefaults()
-            saveFolder = defaults.URLForKey(Preferences.saveFolderKey)
-            if let path = saveFolder?.path {
-                let fileManager = NSFileManager.defaultManager()
-                if !fileManager.fileExistsAtPath(path) {
-                    unexpectedError(nil, "The specified Optional Save Folder\n\n\t\(path)\n\nis missing. Original image files will not be copied to that location.")
-                    saveFolder = nil
-                    checkDirectory = false
+            checkDirectory = false
+            url = nil
+            let defaults = UserDefaults.standard
+            if let bookmark = defaults.data(forKey: saveBookmarkKey) {
+                var staleBookmark = true
+                do {
+                    url = try URL(resolvingBookmarkData: bookmark,
+                                  options: [.withoutUI, .withSecurityScope],
+                                  bookmarkDataIsStale: &staleBookmark)
+                } catch let error as NSError {
+                    unexpected(error: error, "Problem locating optional save folder")
                 }
+                if staleBookmark {
+                    unexpected(error: nil, "The specified Optional Save Folder\n\n\t\(url?.path ?? "[unknown]"))\n\nis missing.  Please select a new folder.")
+                    url = nil
+                }
+
             }
         }
-        return saveFolder
+        return url
     }
 
     @IBOutlet var saveFolderPath: NSPathControl!
@@ -50,17 +56,28 @@ final class Preferences : NSWindowController {
     /// the file to the system trash.
     
     @IBAction func pickSaveFolder(_: AnyObject) {
-        print("Pick Save Folder")
+        var bookmark: Data? = nil
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
-            saveFolderPath.URL = panel.URLs[0]
-            guard let url = saveFolderPath.URL else { return }
-            let defaults = NSUserDefaults.standardUserDefaults()
-            defaults.setURL(url, forKey: Preferences.saveFolderKey)
+            if let url = panel.url {
+                do {
+                    try bookmark = url.bookmarkData(options: .withSecurityScope)
+                    saveFolderPath.url = url
+                } catch let error as NSError {
+                    unexpected(error: error,
+                               "Cannot create security bookmark for save folder\n\nReason: ")
+                }
+                let defaults = UserDefaults.standard
+                defaults.set(bookmark, forKey: Preferences.saveBookmarkKey)
+                Preferences.checkDirectory = true
+            } else {
+                unexpected(error: nil,
+                               "Cannot create save folder\n\nReason: ")
+            }
         }
     }
 
@@ -68,9 +85,10 @@ final class Preferences : NSWindowController {
     /// - Parameter AnyObject: unused
 
 	@IBAction func clearSaveFolder(_: AnyObject) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.removeObjectForKey(Preferences.saveFolderKey)
-        saveFolderPath.URL = nil
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: Preferences.saveBookmarkKey)
+        saveFolderPath.url = nil
+        Preferences.checkDirectory = true
     }
 
     /// return the NIB name for this window
@@ -82,14 +100,15 @@ final class Preferences : NSWindowController {
     /// initialize the saveFolderPath field from user preferences
 
     override func windowDidLoad() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        saveFolderPath.URL = defaults.URLForKey(Preferences.saveFolderKey)
+        saveFolderPath.url = Preferences.saveFolder()
     }
 
     // window delegate function... orderOut instead of close
 
     func windowShouldClose(sender: AnyObject!) -> Bool {
-        window!.orderOut(sender)
+        if let window = window {
+            window.orderOut(sender)
+        }
         return false
     }
 }

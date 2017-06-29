@@ -6,19 +6,21 @@
 //  Copyright (c) 2014, 2015 Marco S Hyman, CC-BY-NC
 //
 
-import Cocoa
+import Foundation
+import AppKit
 
-final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+@NSApplicationMain
+final class AppDelegate: NSObject, NSApplicationDelegate {
     // class variable holds path to exiftool
-    static private(set) var exiftoolPath: String!
     lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
+    lazy var undoManager: UndoManager = UndoManager()
 
     var modified: Bool {
         get {
-            return window.documentEdited
+            return window.isDocumentEdited
         }
         set {
-            window.documentEdited = newValue
+            window.isDocumentEdited = newValue
         }
     }
 
@@ -26,77 +28,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @IBOutlet var tableViewController: TableViewController!
     @IBOutlet var progressIndicator: NSProgressIndicator!
 
-    var undoManager: NSUndoManager!
-
     //MARK: App start up
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         window.delegate = self
-        undoManager = NSUndoManager()
-        checkForExiftool()
     }
 
-    /// verify that exiftool can be found.  If exiftool can not be found in one
-    /// of the normal locations put up an alert and terminate the program.
-    func checkForExiftool() {
-        let fileManager = NSFileManager.defaultManager()
-        for path in exiftoolSearchPaths() {
-            let exiftoolPath = path + "/exiftool"
-            if fileManager.fileExistsAtPath(exiftoolPath) {
-                precondition (AppDelegate.exiftoolPath == nil)
-                AppDelegate.exiftoolPath = exiftoolPath
-                print("exiftool path = \(exiftoolPath)")
-                return
-            }
-        }
-        let alert = NSAlert()
-        alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
-        alert.addButtonWithTitle(NSLocalizedString("SET_EXIFTOOL_PATH", comment: "Choose exiftool path"))
-        alert.messageText = NSLocalizedString("NO_EXIFTOOL_TITLE",
-                                              comment: "can't find exiftool")
-        alert.informativeText = NSLocalizedString("NO_EXIFTOOL_DESC",
-                                                  comment: "can't find exiftool")
-        switch (alert.runModal()) {
-        case NSAlertSecondButtonReturn:
-            showSetExiftoolPathDialog()
-        default:
-            window.close()
-        }
-    }
+   //MARK: window delegate undo handling
 
-    func showSetExiftoolPathDialog() {
-        let openPanel = NSOpenPanel()
-        openPanel.canChooseFiles = false
-        openPanel.canCreateDirectories = false
-        openPanel.canChooseDirectories = true
-        openPanel.allowsMultipleSelection = false
-        openPanel.showsHiddenFiles = true
-        switch (openPanel.runModal()) {
-        case NSFileHandlingPanelOKButton:
-            if let path = openPanel.URL?.path {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.setObject(path, forKey: Preferences.exiftoolPathKey)
-                defaults.synchronize()
-            }
-            checkForExiftool()
-        default:
-            window.close()
-        }
-    }
-
-    func exiftoolSearchPaths() -> [String] {
-        var paths = ["/usr/bin", "/usr/local/bin", "/opt/bin"]
-        let defaults = NSUserDefaults.standardUserDefaults()
-        if let customPath = defaults.stringForKey(Preferences.exiftoolPathKey) {
-            paths.append(customPath)
-        }
-        return paths
-    }
-
-    //MARK: window delegate undo handling
-
-    func windowWillReturnUndoManager(window: NSWindow) -> NSUndoManager? {
+    func windowWillReturnUndoManager(window: NSWindow) -> UndoManager? {
         return undoManager
     }
 
@@ -118,16 +59,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         panel.canChooseDirectories = true
         if panel.runModal() == NSFileHandlingPanelOKButton {
             // expand selected URLs that refer to a directory
-            var urls = [NSURL]()
-            for url in panel.URLs {
-                if !addURLsInFolder(url, toURLs: &urls) {
+            var urls = [URL]()
+            for url in panel.urls {
+                if !addUrlsInFolder(url: url, toUrls: &urls) {
                     urls.append(url)
                 }
             }
-            let dups = tableViewController.addImages(urls)
+            let dups = tableViewController.addImages(urls: urls)
             if dups {
                 let alert = NSAlert()
-                alert.addButtonWithTitle(NSLocalizedString("CLOSE", comment: "Close"))
+                alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
                 alert.messageText = NSLocalizedString("WARN_TITLE", comment: "Files not opened")
                 alert.informativeText = NSLocalizedString("WARN_DESC", comment: "Files not opened")
                 alert.runModal()
@@ -137,8 +78,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     //MARK: Save image changes (if any)
 
-    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        switch menuItem.action {
+    func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
+        guard let action = anItem?.action else { return false }
+        switch action {
         case #selector(showOpenPanel(_:)):
             return true
         case #selector(save(_:)):
@@ -146,7 +88,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         case #selector(openPreferencesWindow(_:)):
             return true
         default:
-            print("default for item \(menuItem)")
+            print("default for item \(anItem)")
         }
         return false
     }
@@ -162,13 +104,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         undoManager.removeAllActions()
     }
 
-    @IBAction func openPreferencesWindow(sender: AnyObject!) {
+    @IBAction func openPreferencesWindow(_ sender: AnyObject!) {
         preferences.showWindow(sender)
     }
 
     //MARK: app termination
 
-    func applicationShouldTerminateAfterLastWindowClosed(theApplication: NSApplication) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(_ theApplication: NSApplication) -> Bool {
         return true
     }
 
@@ -182,17 +124,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func saveOrDontSave() -> Bool {
         if modified {
             let alert = NSAlert()
-            alert.addButtonWithTitle(NSLocalizedString("SAVE",
+            alert.addButton(withTitle: NSLocalizedString("SAVE",
                                                        comment: "Save"))
-            alert.addButtonWithTitle(NSLocalizedString("CANCEL",
+            alert.addButton(withTitle: NSLocalizedString("CANCEL",
                                                        comment: "Cancel"))
-            alert.addButtonWithTitle(NSLocalizedString("DONT_SAVE",
+            alert.addButton(withTitle: NSLocalizedString("DONT_SAVE",
                                                        comment: "Don't Save"))
             alert.messageText = NSLocalizedString("UNSAVED_TITLE",
                                                   comment: "Unsaved Changes")
             alert.informativeText = NSLocalizedString("UNSAVED_DESC",
                                                       comment: "Unsaved Changes")
-            alert.beginSheetModalForWindow(window) {
+            alert.beginSheetModal(for: window) {
                 (response: NSModalResponse) -> Void in
                 switch response {
                 case NSAlertFirstButtonReturn:      // Save
@@ -212,21 +154,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
 
-    func applicationShouldTerminate(sender: NSApplication) -> NSApplicationTerminateReply {
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplicationTerminateReply {
         if saveOrDontSave() {
-            return .TerminateNow
+            return .terminateNow
         }
-        return .TerminateCancel
+        return .terminateCancel
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
     }
+}
 
+/// Window delegate functions
 
-    /// Window delegate functions
-
-    func windowShouldClose(_: AnyObject) -> Bool {
+extension AppDelegate: NSWindowDelegate {
+    func windowShouldClose(_: Any) -> Bool {
         return saveOrDontSave()
     }
 }

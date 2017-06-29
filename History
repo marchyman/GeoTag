@@ -1,3 +1,12 @@
+## GeoTag ?.?
+
+### New Features:
+
+* Apple maps replace Google maps
+* Exiftool is now built in
+* The app is sandboxed for better security
+* Currently coded in Swift 3
+
 ## GeoTag 3.5
 
 ### New Features:
