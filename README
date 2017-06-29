@@ -8,16 +8,20 @@ This will eventually be released as GeoTag version 4.  Differences are:
 * The app is sandboxed for better security
 * Currently coded in Swift 3
 
+Note: map searching has not yet been implemented in this version
+
 Because the app is now sandboxed image backups are handled in a different
 manner than they were in previous versions.
 
 * If a backup "save" folder has been configured in system preferences a copy
-  original file will be placed there **unless the file already exists in that
-  folder**.
+  original file will be placed there **unless a file with the same name
+  already exists in that folder**.
 * If no "save" folder has been specified the original file will be found in
   the system trash.
 * If the image file can not be copied to either location Geolocation
   information will not be saved.   Better to be safe than sorry.
+
+---
 
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
