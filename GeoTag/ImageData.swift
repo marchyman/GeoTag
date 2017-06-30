@@ -323,18 +323,8 @@ final class ImageData: NSObject {
                 image = NSImage(size: imgRect.size)
                 image.lockFocus()
                 if let currentContext = NSGraphicsContext.current() {
-                    var context: CGContext! = nil
-                    // 10.9 doesn't have CGContext
-                    if #available(OSX 10.10, *) {
-                        context = currentContext.cgContext
-                    } else {
-                        // graphicsPort is type UnsafePointer<()>
-                        context = unsafeBitCast(currentContext.graphicsPort,
-                                                to: CGContext.self)
-                    }
-                    if context != nil {
-                        context.draw(imgPreview, in: imgRect)
-                    }
+                    let context = currentContext.cgContext
+                    context.draw(imgPreview, in: imgRect)
                 }
                 image.unlockFocus()
             }

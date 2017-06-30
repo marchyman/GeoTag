@@ -1,6 +1,8 @@
 ## GeoTag for OS X
 
-perf branch
+* Now requires macOS 10.10 or later
+
+perf branch (now merged into the master branch)
 
 * image loading is orders of magnitude faster
 
