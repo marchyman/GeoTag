@@ -1,19 +1,16 @@
 ## GeoTag for OS X
 
-* Now requires macOS 10.10 or later
+GeoTag 4 requires macOS 10.10 or later
 
-perf branch (now merged into the master branch)
-
-* image loading is orders of magnitude faster
-
-maps branch (now merged into the master branch)
+New features:
 
 * Apple maps replace Google maps
-* Exiftool is now built in
-* The app is sandboxed for better security
+* Image loading many times faster
+* Exiftool now built in
+* Sandboxed for better security
 * Currently coded in Swift 3
 
-Note: map searching has not yet been implemented in this version
+Note: map searching has not yet been implemented
 
 Because the app is now sandboxed image backups are handled in a different
 manner than they were in previous versions.
@@ -38,7 +35,7 @@ changed.
 
 Image metadata modification is performed by the exiftool utility. See
 <http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
-exiftool.GeoTag will check that the tool is installed at start-up.
+exiftool. exiftool is built in to GeoTag.
 
 The functions provided by GeoTag exist in current versions of iPhoto, Aperture
 (RIP), and Lightroom.  Some still find the application useful for geolocation
@@ -47,10 +44,16 @@ will let you modify existing location metadata but not add location data to
 an image. If necessary use GeoTag to add location metadata before importing
 the images into Photos.
 
-Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later. Use version
-2.2 if your Mac is running OS X 10.6 (Snow Leopard) though OS X 10.8 (Mountain
-Lion). Use version 1.8 if your Mac is running OS X version 10.5 (Leopard) or
-earlier See <http://www.snafu.org/GeoTag/> for more information.
+Version 4 is the latest version.  It workes on macOS 10.10 or later. Version
+4 uses Apple maps.
+
+Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later.  Version 3
+and earlier uses Google Maps.
+
+Use version 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though
+OS X 10.8 (Mountain Lion). Use version 1.8 if your Mac is running OS X
+version 10.5 (Leopard) or earlier.
+See <http://www.snafu.org/GeoTag/> for more information.
 
 GeoTag is now available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
