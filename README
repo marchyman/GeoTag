@@ -1,7 +1,10 @@
 ## GeoTag for OS X
 
-The "maps" branch seems to be working, but has not been completely tested.
-This will eventually be released as GeoTag version 4.  Differences are:
+perf branch
+
+* image loading is orders of magnitude faster
+
+maps branch (now merged into the master branch)
 
 * Apple maps replace Google maps
 * Exiftool is now built in

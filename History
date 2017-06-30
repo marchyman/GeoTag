@@ -5,6 +5,7 @@
 * Apple maps replace Google maps
 * Exiftool is now built in
 * The app is sandboxed for better security
+* image loading is orders of magnitude faster
 * Currently coded in Swift 3
 
 ## GeoTag 3.5

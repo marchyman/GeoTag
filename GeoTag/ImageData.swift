@@ -14,6 +14,7 @@ let pixelHeight = kCGImagePropertyPixelHeight as NSString
 let pixelWidth = kCGImagePropertyPixelWidth as NSString
 let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
 let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
+let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
 let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
 let exifDictionary = kCGImagePropertyExifDictionary as NSString
 let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
@@ -52,8 +53,8 @@ final class ImageData: NSObject {
 
     var latitude: Double?, originalLatitude: Double?
     var longitude: Double?, originalLongitude: Double?
-    var image: NSImage!
     var validImage = false
+    lazy var image: NSImage = self.loadImage()
 
     // return the string representation of the location of an image for copy
     // and paste.
@@ -233,66 +234,21 @@ final class ImageData: NSObject {
 
     // MARK: extract image metadata and build thumbnail preview
 
-    /// obtain image metadata and build thumbnail
+    /// obtain image metadata
     /// - Returns: true if successful
     ///
     /// If image propertied can not be accessed or if needed properties
-    /// do not exist the file is assumed to be a non-image file and a preview
-    /// is not created.
+    /// do not exist the file is assumed to be a non-image file
     private func loadImageData() -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
             print("Failed CGImageSourceCreateWithURL \(url)")
             return false
         }
 
-
         // grab the image properties and extract height and width
+        // if there are no image properties there is nothing to do.
         guard let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary! else {
-            print("Failed to get image properties for URL \(url)")
             return false
-        }
-        let imgHeight = imgProps[pixelHeight] as? Int
-        let imgWidth = imgProps[pixelWidth] as? Int
-        guard let height = imgHeight, let width = imgWidth else {
-            print("Nil width or height \(String(describing: imgWidth)) x \(String(describing: imgHeight))")
-            return false
-        }
-
-        // Create a "preview" of the image. If the image is larger than
-        // 512x512 constrain the preview to that size.  512x512 is an
-        // arbitrary limit.   Preview generation is used to work around a
-        // performance hit when using large raw images
-        let maxDimension = 512
-        var imgOpts: [String: AnyObject] = [
-            createThumbnailWithTransform : kCFBooleanTrue,
-            createThumbnailFromImageAlways : kCFBooleanTrue
-        ]
-        if height > maxDimension || width > maxDimension {
-            // add a max pixel size to the dictionary of options
-            imgOpts[thumbnailMaxPixelSize] = maxDimension as AnyObject
-        }
-        if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts as NSDictionary) {
-            // Create an NSImage from the preview
-            let imgHeight = CGFloat(imgPreview.height)
-            let imgWidth = CGFloat(imgPreview.width)
-            let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
-            image = NSImage(size: imgRect.size)
-            image.lockFocus()
-            if let currentContext = NSGraphicsContext.current() {
-                var context: CGContext! = nil
-                // 10.9 doesn't have CGContext
-                if #available(OSX 10.10, *) {
-                    context = currentContext.cgContext
-                } else {
-                    // graphicsPort is type UnsafePointer<()>
-                    context = unsafeBitCast(currentContext.graphicsPort,
-                                            to: CGContext.self)
-                }
-                if context != nil {
-                    context.draw(imgPreview, in: imgRect)
-                }
-            }
-            image.unlockFocus()
         }
 
         // extract image date/time created
@@ -327,5 +283,63 @@ final class ImageData: NSObject {
             }
         }
         return true
+    }
+
+    /// Load an image thumbnail
+    /// - Returns: NSImage of the thumbnail if sucessful
+    ///
+    /// If image propertied can not be accessed or if needed properties
+    /// do not exist the file is assumed to be a non-image file and a preview
+    /// is not created.
+    private func loadImage() -> NSImage {
+        var image = NSImage(size: NSMakeRect(0, 0, 0, 0).size)
+        guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
+            return image
+        }
+        // Create a "preview" of the image. If the image is larger than
+        // 512x512 constrain the preview to that size.  512x512 is an
+        // arbitrary limit.   Preview generation is used to work around a
+        // performance hit when using large raw images
+        let maxDimension = 512
+        var imgOpts: [String: AnyObject] = [
+            createThumbnailWithTransform : kCFBooleanTrue,
+            createThumbnailFromImageIfAbsent : kCFBooleanTrue,
+            thumbnailMaxPixelSize : maxDimension as AnyObject
+        ]
+        var checkSize = true
+        repeat {
+            if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts as NSDictionary) {
+                // Create an NSImage from the preview
+                let imgHeight = CGFloat(imgPreview.height)
+                let imgWidth = CGFloat(imgPreview.width)
+                if imgOpts[createThumbnailFromImageAlways] == nil &&
+                    imgHeight < 512 && imgWidth < 512 {
+                    // thumbnail too small.   Build a larger thumbnail
+                    imgOpts[createThumbnailFromImageIfAbsent] = nil
+                    imgOpts[createThumbnailFromImageAlways] = kCFBooleanTrue
+                    continue
+                }
+                let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
+                image = NSImage(size: imgRect.size)
+                image.lockFocus()
+                if let currentContext = NSGraphicsContext.current() {
+                    var context: CGContext! = nil
+                    // 10.9 doesn't have CGContext
+                    if #available(OSX 10.10, *) {
+                        context = currentContext.cgContext
+                    } else {
+                        // graphicsPort is type UnsafePointer<()>
+                        context = unsafeBitCast(currentContext.graphicsPort,
+                                                to: CGContext.self)
+                    }
+                    if context != nil {
+                        context.draw(imgPreview, in: imgRect)
+                    }
+                }
+                image.unlockFocus()
+            }
+            checkSize = false
+        } while checkSize
+        return image
     }
 }
