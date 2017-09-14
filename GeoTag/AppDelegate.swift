@@ -12,7 +12,7 @@ import AppKit
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // class variable holds path to exiftool
-    lazy var preferences: Preferences = Preferences(windowNibName: Preferences.nibName)
+    lazy var preferences: Preferences = Preferences()
     lazy var undoManager: UndoManager = UndoManager()
 
     var modified: Bool {
@@ -57,7 +57,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
-        if panel.runModal() == NSFileHandlingPanelOKButton {
+        if panel.runModal().rawValue == NSFileHandlingPanelOKButton {
             // expand selected URLs that refer to a directory
             var urls = [URL]()
             for url in panel.urls {
@@ -78,7 +78,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     //MARK: Save image changes (if any)
 
-    func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
+    @objc func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
         guard let action = anItem?.action else { return false }
         switch action {
         case #selector(showOpenPanel(_:)):
@@ -135,11 +135,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             alert.informativeText = NSLocalizedString("UNSAVED_DESC",
                                                       comment: "Unsaved Changes")
             alert.beginSheetModal(for: window) {
-                (response: NSModalResponse) -> Void in
+                (response: NSApplication.ModalResponse) -> Void in
                 switch response {
-                case NSAlertFirstButtonReturn:      // Save
+                case NSApplication.ModalResponse.alertFirstButtonReturn:      // Save
                     self.save(nil)
-                case NSAlertSecondButtonReturn:     // Cancel
+                case NSApplication.ModalResponse.alertSecondButtonReturn:     // Cancel
                     // Close/terminate cancelled
                     return
                 default:
@@ -154,7 +154,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplicationTerminateReply {
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if saveOrDontSave() {
             return .terminateNow
         }
@@ -169,7 +169,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 /// Window delegate functions
 
 extension AppDelegate: NSWindowDelegate {
-    func windowShouldClose(_: Any) -> Bool {
+    func windowShouldClose(_: NSWindow) -> Bool {
         return saveOrDontSave()
     }
 }

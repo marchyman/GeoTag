@@ -11,7 +11,7 @@ import AppKit
 
 final class Preferences : NSWindowController {
     // class constants
-    static let nibName = "Preferences"
+    static let nibName = NSNib.Name("Preferences")
     static let saveBookmarkKey = "SaveBookmarkKey"
     static var checkDirectory = true
     private static var url: URL? = nil
@@ -62,7 +62,7 @@ final class Preferences : NSWindowController {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
-        if panel.runModal() == NSFileHandlingPanelOKButton {
+        if panel.runModal().rawValue == NSFileHandlingPanelOKButton {
             if let url = panel.url {
                 do {
                     try bookmark = url.bookmarkData(options: .withSecurityScope)
@@ -93,7 +93,7 @@ final class Preferences : NSWindowController {
 
     /// return the NIB name for this window
 
-	override var windowNibName: String {
+	override var windowNibName: NSNib.Name? {
 		return Preferences.nibName
 	}
 

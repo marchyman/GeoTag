@@ -30,7 +30,7 @@ final class TableViewController: NSViewController {
         // mapViewController.mapview is a delegate to handle map clicks
         mapViewController.clickDelegate = self
         mapViewController.mapView.clickDelegate = self
-        tableView.register(forDraggedTypes: [NSFilenamesPboardType]);
+        tableView.registerForDraggedTypes([NSPasteboard.PasteboardType("NSFilenamesPboardType")])
         tableView.draggingDestinationFeedbackStyle = .none
     }
 
@@ -99,7 +99,7 @@ final class TableViewController: NSViewController {
     /// will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
     /// The validLocation Boolean is used to mitigate this issue.
 
-    func updateLocation(row: Int, validLocation: Bool, latitude: Double,
+    @objc func updateLocation(row: Int, validLocation: Bool, latitude: Double,
                         longitude: Double, modified: Bool = true) {
         var oldValidLocation: Bool
         var oldLatitude: Double
@@ -185,8 +185,8 @@ final class TableViewController: NSViewController {
             // OK if there is at least one selected row and something that
             // looks like a lat and lon in the pasteboard.
             if tableView.numberOfSelectedRows > 0 {
-                let pb = NSPasteboard.general()
-                if let pasteVal = pb.string(forType: NSPasteboardTypeString) {
+                let pb = NSPasteboard.general
+                if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string) {
                     // pasteVal should look like "lat lon"
                     let values = pasteVal.components(separatedBy: " ")
                     if values.count == 2 {
@@ -241,10 +241,10 @@ final class TableViewController: NSViewController {
 
     @IBAction func copy(_: AnyObject) {
         let row = tableView.selectedRow
-        let pb = NSPasteboard.general()
-        pb.declareTypes([NSPasteboardTypeString], owner: self)
+        let pb = NSPasteboard.general
+        pb.declareTypes([NSPasteboard.PasteboardType.string], owner: self)
         pb.setString(images[row].stringRepresentation,
-                     forType: NSPasteboardTypeString)
+                     forType: NSPasteboard.PasteboardType.string)
     }
 
     /// paste item location from the pasteboard to all selected items
@@ -256,8 +256,8 @@ final class TableViewController: NSViewController {
     /// to all selected items in the table.
 
     @IBAction func paste(_: AnyObject) {
-        let pb = NSPasteboard.general()
-        if let pasteVal = pb.string(forType: NSPasteboardTypeString) {
+        let pb = NSPasteboard.general
+        if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string) {
             // pasteVal should look like "lat lon"
             let values = pasteVal.components(separatedBy: " ")
             if values.count == 2 {
@@ -396,7 +396,7 @@ final class TableViewController: NSViewController {
     /// Update the latitude and longitude columns for the given row.
 
     func reload(row: Int) {
-        let latColumn = tableView.column(withIdentifier: "latitude")
+        let latColumn = tableView.column(withIdentifier: NSUserInterfaceItemIdentifier("latitude"))
         let cols = IndexSet(integersIn: latColumn..<latColumn+2)
         tableView.reloadData(forRowIndexes: IndexSet(integer: row),
                              columnIndexes: cols)
@@ -435,16 +435,16 @@ extension TableViewController: NSTableViewDelegate {
         var tip: String? = nil
         if let id = tableColumn?.identifier {
             switch id {
-            case "imageName":
+            case NSUserInterfaceItemIdentifier("imageName"):
                 value = image.name ?? "Unknown"
                 tip = image.url.path
-            case "dateTime":
+            case NSUserInterfaceItemIdentifier("dateTime"):
                 value = image.date
-            case "latitude":
+            case NSUserInterfaceItemIdentifier("latitude"):
                 if let lat = image.latitude {
                     value = String(format: "% 2.6f", lat)
                 }
-            case "longitude":
+            case NSUserInterfaceItemIdentifier("longitude"):
                 if let lon = image.longitude {
                     value = String(format: "% 2.6f", lon)
                 }
@@ -452,7 +452,7 @@ extension TableViewController: NSTableViewDelegate {
                 break
             }
             let colView =
-                tableView.make(withIdentifier: id, owner: nil) as! NSTableCellView
+                tableView.makeView(withIdentifier: id, owner: nil) as! NSTableCellView
             colView.textField?.stringValue = value;
             if row == tableView.selectedRow {
                 lastSelectedRow = row
@@ -525,9 +525,9 @@ extension TableViewController: NSTableViewDataSource {
     // validate a proposed drop
     func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo,
                    proposedRow row: Int,
-                   proposedDropOperation dropOperation: NSTableViewDropOperation) -> NSDragOperation {
+                   proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
         let pb = info.draggingPasteboard()
-        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String] {
+        if let paths = pb.propertyList(forType: NSPasteboard.PasteboardType("NSFilenamesPboardType")) as? [String] {
             let fileManager = FileManager.default
             for path in paths {
                 if !fileManager.fileExists(atPath: path) ||
@@ -542,9 +542,9 @@ extension TableViewController: NSTableViewDataSource {
 
     // Add dropped files to the table
     func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo,
-                   row: Int, dropOperation: NSTableViewDropOperation) -> Bool {
+                   row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         let pb = info.draggingPasteboard()
-        if let paths = pb.propertyList(forType: NSFilenamesPboardType) as? [String] {
+        if let paths = pb.propertyList(forType: NSPasteboard.PasteboardType("NSFilenamesPboardType")) as? [String] {
             var urls = [URL]()
             for path in paths {
                 let fileURL = URL(fileURLWithPath: path)

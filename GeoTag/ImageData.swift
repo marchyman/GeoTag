@@ -322,7 +322,7 @@ final class ImageData: NSObject {
                 let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
                 image = NSImage(size: imgRect.size)
                 image.lockFocus()
-                if let currentContext = NSGraphicsContext.current() {
+                if let currentContext = NSGraphicsContext.current {
                     let context = currentContext.cgContext
                     context.draw(imgPreview, in: imgRect)
                 }
