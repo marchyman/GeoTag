@@ -19,6 +19,7 @@ let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
 let exifDictionary = kCGImagePropertyExifDictionary as NSString
 let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
 let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
+let GPSStatus = kCGImagePropertyGPSStatus as String
 let GPSLatitude = kCGImagePropertyGPSLatitude as String
 let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
 let GPSLongitude = kCGImagePropertyGPSLongitude as String
@@ -259,6 +260,14 @@ final class ImageData: NSObject {
 
         // extract image existing gps info
         if let gpsData = imgProps[GPSDictionary] as? [String: AnyObject] {
+            // some Leica write GPS tags with a status tag of "V" (void) when no
+            // GPS info is available.   If a status tag exists and its value
+            // is "V" ignore the GPS data.
+            if let status = gpsData[GPSStatus] as? String {
+                if status == "V" {
+                    return true
+                }
+            }
             if let lat = gpsData[GPSLatitude] as? Double,
                let latRef = gpsData[GPSLatitudeRef] as? String {
                 if latRef == "N" {
@@ -274,12 +283,6 @@ final class ImageData: NSObject {
                 } else {
                     longitude = -lon
                 }
-            }
-            // At least one version of leica firmware uses a latitude and
-            // longitude of 0 for no gps info
-            if latitude == 0.0 && longitude == 0.0 {
-                latitude = nil
-                longitude = nil
             }
         }
         return true

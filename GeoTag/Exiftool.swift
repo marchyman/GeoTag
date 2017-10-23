@@ -60,7 +60,7 @@ struct Exiftool {
         exiftool.standardError = FileHandle.nullDevice
         exiftool.launchPath = url.path
         exiftool.arguments = ["-q", "-m", "-overwrite_original",
-            "-DateTimeOriginal>FileModifyDate",
+            "-DateTimeOriginal>FileModifyDate", "-GPSStatus=",
             latArg, latRefArg, lonArg, lonRefArg, imageData.sandboxUrl.path]
         exiftool.launch()
         exiftool.waitUntilExit()
