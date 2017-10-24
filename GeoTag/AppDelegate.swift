@@ -33,6 +33,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         window.delegate = self
+        if Preferences.saveFolder() == nil {
+            perform(#selector(openPreferencesWindow(_:)), with: nil, afterDelay: 0)
+        }
     }
 
    //MARK: window delegate undo handling
@@ -101,9 +104,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Save all images with updated geolocation information and clear all
     /// undo actions.
     @IBAction func save(_: AnyObject?) {
-        tableViewController.saveAllImages()
-        modified = false
-        undoManager.removeAllActions()
+        if tableViewController.saveAllImages() {
+            modified = false
+            undoManager.removeAllActions()
+        }
     }
 
     @IBAction func openPreferencesWindow(_ sender: AnyObject!) {

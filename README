@@ -8,41 +8,43 @@ New features:
 * Image loading many times faster
 * Exiftool now built in
 * Sandboxed for better security
-* Currently coded in Swift 3
+* Currently coded in Swift 4
 
 Note: map searching has not yet been implemented
 
-Because the app is now sandboxed image backups are handled in a different
-manner than they were in previous versions.
+Yet another change to image backup handling.  This removes the now all too common
+error stating you do not have permission to back up your files.
 
-* If a backup "save" folder has been configured in system preferences a copy
-  original file will be placed there **unless a file with the same name
-  already exists in that folder**.
-* If no "save" folder has been specified the original file will be found in
-  the system trash.
-* If the image file can not be copied to either location Geolocation
+* A "backup folder" location is required.  If a backup folder is not configured
+  when GeoTag starts the program will open the preferences window for you to
+  select a location.
+* When saving geo location data to an image a copy of the un-edited image is
+  placed in the backup folder. If an image of the same name exists in that folder
+  a numbered suffix will be added to the name.   The name with the highest
+  numbered suffix is the most current backup (usually).
+* If the image file can not be copied to the backup location Geolocation
   information will not be saved.   Better to be safe than sorry.
+* The system trash is no longer used.
 
 ---
 
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
-zooming within a google map to the place the image was recorded. Clicking on
-the map will add the location to the selected photos using the free exiftool
-utility.  Existing location information can be fine tuned by dragging a marker
-representing the location in the map.  In either case only image metadata is
-changed.
+zooming within a a map to the place the image was recorded. Clicking on
+the map will add the location to the selected photos.  Clicking on a new location
+will change the geolocation for the selected photos.  Zoom in on the map
+and fine tune the location with a click.  The built in ExifTool utility is
+used to write location data to the images when you save your changes.  ExifTool
+only modifies image metadata -- your image pixels are not touched.
 
-Image metadata modification is performed by the exiftool utility. See
-<http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
-exiftool. exiftool is built in to GeoTag.
+See <http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
+ExifTool. ExifTool is built in to GeoTag.
 
 The functions provided by GeoTag exist in current versions of iPhoto, Aperture
 (RIP), and Lightroom.  Some still find the application useful for geolocation
-tagging photos in the field.  Photos (OSX 10.10.3 and later) looks like it
-will let you modify existing location metadata but not add location data to
-an image. If necessary use GeoTag to add location metadata before importing
-the images into Photos.
+tagging photos in the field.  Photos (OSX 10.10.3 and later) will let you modify
+existing location metadata but not add location data to an image. If necessary
+use GeoTag to add location metadata **before** importing the images into Photos.
 
 Version 4 is the latest version.  It workes on macOS 10.10 or later. Version
 4 uses Apple maps.
@@ -73,7 +75,7 @@ the latitude and longitude of the image displayed in the image well and marked
 on the map location will be shown in yellow.
 
 Click on the map to set or change the location of all selected images. Existing
-location can also be changed by dragging the marker. Hitting the delete key
+location can be changed by clicking on the desired location. Hitting the delete key
 will remove location information from all selected images.  You can Undo/Redo
 image location changes.
 
@@ -97,7 +99,7 @@ in street view do not match the same marker on one of the other three map
 views.
 
 If you find yourself working in a specific area of a map you can save
-the map type, location, and zoom level by clicking on the Save Map Location
+the map type, location, and zoom level by clicking on the *Save Map Location*
 button.   When GeoTag is launched the map will load to the last saved
 location.
 
@@ -107,14 +109,10 @@ undo/redo your changes. You can undo all changes to all images by selecting
 "Discard changes" from the "File" menu.  All Undo/Redo information is cleared
 once changes are discarded or saved.
 
-The original versions of images that have been changed and saved are in your
-system trash or in their original directory with '_original' appended to the
-file name. You can restore them from the trash if necessary.  If there are
-no changes pending the list of images can be cleared.
-
-A preference item exists to name a folder where original images will be
-copied in addition to the trash.  Files in this folder will not be overwritten
-upon subsequent changes to the image.
+The original versions of images that have been updated are saved are in a
+backup folder.  The backup folder may be changed using GeoTag Preferences.
+The first time GeoTag is run it will prompt you to select a backup folder.
+Images updates can not be saved until a backup folder is selected.
 
 Cut, Copy, Paste, Delete, Interpolate, and Clear Image List can be accessed from
 a pop up menu by right clicking on an entry in the list.
@@ -122,7 +120,7 @@ a pop up menu by right clicking on an entry in the list.
 ### Build Instructions for developers
 
 * Get current sources from github -- https://github.com/marchyman/GeoTag
-* Open the project in Xcode (last built using version 8.3.3)
+* Open the project in Xcode (last built using version 9.0.1)
 * ⌘R will build and run, ⌘B to build only
 
 Send all comments, bugs, requests, etc. to <marc@snafu.org>
