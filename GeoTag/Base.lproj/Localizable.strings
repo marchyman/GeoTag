@@ -1,4 +1,4 @@
-﻿/* 
+/* 
    Localizable.strings
    GeoTag
 
@@ -14,11 +14,11 @@ You may save your changes, throw away your changes, or cancel program terminatio
 "CLOSE" = "Close";
 "WARN_TITLE" = "Some files not opened";
 "WARN_DESC" = "One or more files were not opened. Unopened files were duplicates of files already opened for processing.";
-"NO_TRASH_TITLE" = "Cannot make backup of image file";
-"NO_TRASH_DESC" = "
+"NO_BACKUP_TITLE" = "Cannot make backup of image file";
+"NO_BACKUP_DESC" = "
 
-The above named image file could not be copied to a save directory or the Trash. Geolocation information has NOT been saved to the image.  This warning is only shown once per GeoTag run. The warning may apply to multiple files.  It is recommended that you open GeoTag preferences and select a backup destination then save your changes again.
+The above named image file could not be copied to your backup folder. Geolocation information has NOT been saved to the image. The warning may apply to multiple image files.  You must open GeoTag preferences and select a backup folder before you can save your changes.
 
 Failure reason: ";
-"NO_TRASH_REASON" = "Unknown";
+"NO_BACKUP_REASON" = "Missing Backup Folder";
 "UNEXPECTED_ERROR" = "Unexpected Error";

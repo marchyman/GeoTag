@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -30,13 +30,13 @@
                             <rect key="frame" x="1" y="1" width="528" height="143"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Usk-Sa-0th">
+                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Usk-Sa-0th">
                                     <rect key="frame" x="16" y="14" width="496" height="119"/>
                                     <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" id="DKh-Hh-nMB">
                                         <font key="font" metaFont="system"/>
-                                        <string key="title">GeoTag moves the original version of images that have been changed and saved to the system Trash.  Opening the Trash and using control-click on a file allows the file to be restored using the Put back option.
+                                        <string key="title">GeoTag makes a copy of each image before updating geo-location information to make sure you will never loose an image should something happen during the update.
 
-If you prefer to permanently save unmodified image files in a folder you may specify the folder location below.   When a save folder is used files are not placed in the system trash.</string>
+Please select a folder to hold these backup copies.  The backups can be removed once you are satisfied that your images are correct. </string>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
@@ -54,14 +54,14 @@ If you prefer to permanently save unmodified image files in a folder you may spe
                         <font key="titleFont" metaFont="smallSystemBold"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="cFe-lV-Lzx">
-                        <rect key="frame" x="17" y="16" width="411" height="43"/>
+                        <rect key="frame" x="17" y="16" width="530" height="43"/>
                         <view key="contentView" id="FO9-Ui-LmG">
-                            <rect key="frame" x="1" y="1" width="409" height="41"/>
+                            <rect key="frame" x="1" y="1" width="528" height="41"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <pathControl horizontalHuggingPriority="249" verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WPF-AV-Z7i">
-                                    <rect key="frame" x="2" y="14" width="404" height="17"/>
-                                    <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" placeholderString="Pick Optional Save Folder" id="KgB-tz-k8k">
+                                    <rect key="frame" x="2" y="14" width="405" height="17"/>
+                                    <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" placeholderString="Select a Folder to hold your image backups here" id="KgB-tz-k8k">
                                         <font key="font" metaFont="system"/>
                                         <allowedTypes>
                                             <string>public.folder</string>
@@ -77,31 +77,17 @@ If you prefer to permanently save unmodified image files in a folder you may spe
                             <constraint firstAttribute="bottom" secondItem="WPF-AV-Z7i" secondAttribute="bottom" constant="11" id="87E-JL-Cmj"/>
                             <constraint firstItem="WPF-AV-Z7i" firstAttribute="top" secondItem="cFe-lV-Lzx" secondAttribute="top" constant="9" id="SZb-gk-urk"/>
                             <constraint firstItem="WPF-AV-Z7i" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="leading" id="XpK-bh-mYm"/>
-                            <constraint firstItem="WPF-AV-Z7i" firstAttribute="centerX" secondItem="cFe-lV-Lzx" secondAttribute="centerX" id="ywQ-um-DEp"/>
+                            <constraint firstItem="WPF-AV-Z7i" firstAttribute="centerX" secondItem="cFe-lV-Lzx" secondAttribute="centerX" constant="-59.5" id="ywQ-um-DEp"/>
                         </constraints>
                     </box>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cYX-WU-h9f">
-                        <rect key="frame" x="428" y="23" width="121" height="29"/>
-                        <buttonCell key="cell" type="push" title="No Save Folder" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kYX-Rj-z4j">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="smallSystem"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="clearSaveFolder:" target="-2" id="K1t-Qx-3KU"/>
-                        </connections>
-                    </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="cYX-WU-h9f" firstAttribute="trailing" secondItem="mB3-is-Hvp" secondAttribute="trailing" id="9dC-03-4Zh"/>
-                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="centerY" secondItem="cYX-WU-h9f" secondAttribute="centerY" id="A0X-qI-Qc5"/>
                     <constraint firstAttribute="trailing" secondItem="mB3-is-Hvp" secondAttribute="trailing" constant="20" symbolic="YES" id="Cxg-L3-bjR"/>
                     <constraint firstItem="cFe-lV-Lzx" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="8" symbolic="YES" id="Ja0-Qw-QaV"/>
-                    <constraint firstItem="cYX-WU-h9f" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="17" id="aG8-RX-NPV"/>
-                    <constraint firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="139" id="cEa-Sc-EYE"/>
+                    <constraint firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="20" id="cEa-Sc-EYE"/>
                     <constraint firstAttribute="bottom" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="20" symbolic="YES" id="ckU-15-SeQ"/>
                     <constraint firstItem="mB3-is-Hvp" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="iy0-gW-KpC"/>
                     <constraint firstItem="mB3-is-Hvp" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="kVW-8m-BBi"/>
-                    <constraint firstItem="cYX-WU-h9f" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="8" symbolic="YES" id="nKG-S9-xpC"/>
                     <constraint firstItem="cFe-lV-Lzx" firstAttribute="leading" secondItem="mB3-is-Hvp" secondAttribute="leading" id="uIo-3J-BQd"/>
                 </constraints>
             </view>

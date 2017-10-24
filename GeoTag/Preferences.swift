@@ -34,10 +34,10 @@ final class Preferences : NSWindowController {
                                   options: [.withoutUI, .withSecurityScope],
                                   bookmarkDataIsStale: &staleBookmark)
                 } catch let error as NSError {
-                    unexpected(error: error, "Problem locating optional save folder")
+                    unexpected(error: error, "Problem locating image backup folder")
                 }
                 if staleBookmark {
-                    unexpected(error: nil, "The specified Optional Save Folder\n\n\t\(url?.path ?? "[unknown]"))\n\nis missing.  Please select a new folder.")
+                    unexpected(error: nil, "The specified image backup Folder\n\n\t\(url?.path ?? "[unknown]"))\n\nis missing.  Please select a new backup folder.")
                     url = nil
                 }
 
@@ -52,8 +52,7 @@ final class Preferences : NSWindowController {
     /// - Parameter AnyObject: unused
     ///
     /// Allow the user to pick or create a folder where the original
-    /// copies of updated images will be saved (in addition to moving
-    /// the file to the system trash.
+    /// copies of updated images will be saved
     
     @IBAction func pickSaveFolder(_: AnyObject) {
         var bookmark: Data? = nil
@@ -69,26 +68,16 @@ final class Preferences : NSWindowController {
                     saveFolderPath.url = url
                 } catch let error as NSError {
                     unexpected(error: error,
-                               "Cannot create security bookmark for save folder\n\nReason: ")
+                               "Cannot create security bookmark for image backup folder\n\nReason: ")
                 }
                 let defaults = UserDefaults.standard
                 defaults.set(bookmark, forKey: Preferences.saveBookmarkKey)
                 Preferences.checkDirectory = true
             } else {
                 unexpected(error: nil,
-                               "Cannot create save folder\n\nReason: ")
+                           "Cannot create image backup folder\n\nReason: ")
             }
         }
-    }
-
-    /// remove the optional save folder from user preferences
-    /// - Parameter AnyObject: unused
-
-	@IBAction func clearSaveFolder(_: AnyObject) {
-        let defaults = UserDefaults.standard
-        defaults.removeObject(forKey: Preferences.saveBookmarkKey)
-        saveFolderPath.url = nil
-        Preferences.checkDirectory = true
     }
 
     /// return the NIB name for this window

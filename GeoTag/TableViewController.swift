@@ -69,12 +69,17 @@ final class TableViewController: NSViewController {
     /// Each ImageData instance in the table is to save itself. A progress
     /// indicator is displayed while the operation is in progress.
 
-    func saveAllImages() {
+    func saveAllImages() -> Bool {
+        var allSaved = true
         appDelegate.progressIndicator.startAnimation(self)
         for image in images {
-            image.saveImageFile()
+            if !image.saveImageFile() {
+                allSaved = false
+            }
         }
         appDelegate.progressIndicator.stopAnimation(self)
+        ImageData.enableSaveWarnings()
+        return allSaved
     }
 
     //MARK: Image location change handling

@@ -33,6 +33,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         window.delegate = self
+        if Preferences.saveFolder() == nil {
+            perform(#selector(openPreferencesWindow(_:)), with: nil, afterDelay: 0)
+        }
     }
 
    //MARK: window delegate undo handling
@@ -57,7 +60,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
-        if panel.runModal().rawValue == NSFileHandlingPanelOKButton {
+        // first (rightmost button) is the Open button
+        let openButton = NSApplication.ModalResponse.alertFirstButtonReturn
+        if panel.runModal() == openButton {
             // expand selected URLs that refer to a directory
             var urls = [URL]()
             for url in panel.urls {
@@ -78,8 +83,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     //MARK: Save image changes (if any)
 
-    @objc func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
-        guard let action = anItem?.action else { return false }
+    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        guard let action = item.action else { return false }
         switch action {
         case #selector(showOpenPanel(_:)):
             return true
@@ -88,7 +93,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case #selector(openPreferencesWindow(_:)):
             return true
         default:
-            print("default for item \(anItem)")
+            print("default for item \(item)")
         }
         return false
     }
@@ -99,9 +104,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Save all images with updated geolocation information and clear all
     /// undo actions.
     @IBAction func save(_: AnyObject?) {
-        tableViewController.saveAllImages()
-        modified = false
-        undoManager.removeAllActions()
+        if tableViewController.saveAllImages() {
+            modified = false
+            undoManager.removeAllActions()
+        }
     }
 
     @IBAction func openPreferencesWindow(_ sender: AnyObject!) {

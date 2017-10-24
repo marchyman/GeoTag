@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
-        <plugIn identifier="com.apple.MapKitIBPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="13196"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -304,6 +305,7 @@ CA
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gmo-tg-1MM">
                                                                             <rect key="frame" x="0.0" y="0.0" width="142" height="17"/>
+                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="yyyy:mm:dd hh:mm:ss" id="TXL-1H-fom">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -398,7 +400,6 @@ CA
                                                     </connections>
                                                 </tableView>
                                             </subviews>
-                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </clipView>
                                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.25" horizontal="YES" id="yEh-tG-aR3">
                                             <rect key="frame" x="1" y="760" width="528" height="15"/>
@@ -460,9 +461,9 @@ CA
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jOB-Xu-ExJ">
-                                                        <rect key="frame" x="342" y="381" width="165" height="32"/>
+                                                        <rect key="frame" x="352" y="381" width="155" height="32"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="153" id="SvS-X7-UYa"/>
+                                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="SvS-X7-UYa"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="push" title="Save Map Location" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7D7-7V-JIv">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -473,7 +474,7 @@ CA
                                                         </connections>
                                                     </button>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
-                                                        <rect key="frame" x="18" y="386" width="282" height="24"/>
+                                                        <rect key="frame" x="18" y="386" width="280" height="24"/>
                                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="248-FW-Avl">
                                                             <font key="font" metaFont="system"/>
                                                             <segments>
@@ -499,6 +500,7 @@ CA
                                                     <constraint firstAttribute="bottom" secondItem="Zwv-MK-4Du" secondAttribute="bottom" id="AbC-aA-sh4"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="IBD-aM-s8A"/>
                                                     <constraint firstItem="Zwv-MK-4Du" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" id="kuE-Rp-GKs"/>
+                                                    <constraint firstItem="jOB-Xu-ExJ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" symbolic="YES" id="n6X-hq-z6F"/>
                                                     <constraint firstItem="jOB-Xu-ExJ" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="xrB-Bz-x8a"/>
                                                     <constraint firstItem="UAa-bh-Wko" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" id="zgJ-sW-cGB"/>
                                                     <constraint firstAttribute="trailing" secondItem="Zwv-MK-4Du" secondAttribute="trailing" id="ziW-xO-3nP"/>
