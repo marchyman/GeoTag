@@ -60,10 +60,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
-        // first (rightmost button) is the Open button
-        let openButton = NSApplication.ModalResponse.alertFirstButtonReturn
-        if panel.runModal() == openButton {
-            // expand selected URLs that refer to a directory
+        if panel.runModal().rawValue == NSFileHandlingPanelOKButton {
             var urls = [URL]()
             for url in panel.urls {
                 if !addUrlsInFolder(url: url, toUrls: &urls) {
