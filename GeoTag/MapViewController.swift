@@ -37,6 +37,7 @@ class MapViewController: NSViewController {
     @available(OSX 10.10, *)
     override func viewDidLoad() {
         super.viewDidLoad()
+        mapView.delegate = self
     }
 
     // final initialization for the mapView
@@ -135,7 +136,6 @@ class MapViewController: NSViewController {
 
 
 }
-
 
 // Mark: MKMapView Delegate functions
 
