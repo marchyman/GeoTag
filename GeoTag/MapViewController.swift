@@ -76,7 +76,7 @@ class MapViewController: NSViewController {
         case mapTypeSatellite:
             mapView.mapType = .satellite
         case let type:
-            print("Unknown segment item \(type), sender \(sender)")
+            unexpected(error: nil, "Unknown segment item \(type), sender \(sender)")
         }
     }
 
@@ -121,7 +121,10 @@ class MapViewController: NSViewController {
             mapPin = MKPointAnnotation()
             if let pin = mapPin {
                 pin.coordinate = location;
+                pin.title = "location"
                 mapView.addAnnotation(pin)
+            } else {
+                unexpected(error: nil, "Can't create map pin")
             }
         }
     }
@@ -145,30 +148,46 @@ extension MapViewController: MKMapViewDelegate {
                  viewFor annotation: MKAnnotation) -> MKAnnotationView? {
 
         let identifier = "pinAnnotation"
-        var annotationView: MKPinAnnotationView!
-        annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
-        if (annotationView != nil) {
-            // is this correct?
-            annotationView.annotation = annotation
-        } else {
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
+        if (annotationView == nil) {
             annotationView = MKPinAnnotationView(annotation: annotation,
                                                  reuseIdentifier: identifier)
+            if let av = annotationView {
+                print("\(av)")
+                av.isEnabled = true
+                av.canShowCallout = true
+                av.pinColor = .red
+                av.animatesDrop = false
+                av.canShowCallout = false
+                av.isDraggable = true
+            } else {
+                unexpected(error: nil, "Can't create MKPinAnnotationView")
+            }
+        } else {
+            annotationView!.annotation = annotation
         }
-        annotationView.pinColor = .red;
-        annotationView.animatesDrop = false
-        annotationView.canShowCallout = false
-        annotationView.isDraggable = true
         return annotationView
     }
 
     // A pin is being dragged.
     func mapView(_ mapView: MKMapView,
-                 annotationView: MKAnnotationView,
+                 annotationView view: MKAnnotationView,
                  didChange newState: MKAnnotationViewDragState,
                  fromOldState oldState: MKAnnotationViewDragState) {
-        if newState == .ending {
+         switch newState {
+         case .starting:
+            view.setDragState(.dragging, animated: true)
+         case .ending:
+            view.setDragState(.none, animated: true)
             clickDelegate?.mouseClicked(mapView: nil,
-                                        location: annotationView.annotation!.coordinate)
-         }
+                                        location: view.annotation!.coordinate)
+         default:
+            view.setDragState(.none, animated: false)
+        }
+    }
+
+    // debug cruft
+    func mapView(_ mapView: MKMapView, didSelect: MKAnnotationView) {
+        print("Annotation view \(didSelect) selected")
     }
 }
