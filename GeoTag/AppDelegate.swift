@@ -38,12 +38,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-   //MARK: window delegate undo handling
-
-    func windowWillReturnUndoManager(window: NSWindow) -> UndoManager? {
-        return undoManager
-    }
-
     //MARK: open panel handling
 
     /// action bound to File -> Open
@@ -174,5 +168,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 extension AppDelegate: NSWindowDelegate {
     func windowShouldClose(_: NSWindow) -> Bool {
         return saveOrDontSave()
+    }
+
+    func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
+        return undoManager
     }
 }
