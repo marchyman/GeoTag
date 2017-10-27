@@ -120,10 +120,20 @@ final class TableViewController: NSViewController {
             oldLongitude = 0
         }
         let undo = appDelegate.undoManager
-        (undo.prepare(withInvocationTarget: self) as AnyObject)
-            .updateLocation(row: row, validLocation: oldValidLocation,
-                            latitude: oldLatitude, longitude: oldLongitude,
-                            modified: appDelegate.modified)
+        if #available(OSX 10.11, *) {
+            undo.registerUndo(withTarget: self) {
+                targetSelf in
+                targetSelf.updateLocation(row: row, validLocation: oldValidLocation,
+                                          latitude: oldLatitude, longitude: oldLongitude,
+                                          modified: targetSelf.appDelegate.modified)
+            }
+        } else {
+            // Fallback on earlier versions
+            (undo.prepare(withInvocationTarget: self) as AnyObject)
+                .updateLocation(row: row, validLocation: oldValidLocation,
+                                latitude: oldLatitude, longitude: oldLongitude,
+                                modified: appDelegate.modified)
+        }
         if validLocation {
             image.setLocation(latitude: latitude, longitude: longitude)
             mapViewController.pinMapAt(latitude: image.latitude!,
@@ -165,8 +175,8 @@ final class TableViewController: NSViewController {
 
     // only enable various tableview related menu items when it makes sense
 
-    func validateUserInterfaceItem(_ anItem: NSValidatedUserInterfaceItem!) -> Bool {
-        guard let action = anItem?.action else { return false }
+    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        guard let action = item.action else { return false }
         switch action {
         case #selector(selectAll(_:)):
             // OK as long as there is at least one entry in the table
@@ -205,7 +215,7 @@ final class TableViewController: NSViewController {
         case #selector(interpolate(_:)):
             return validateForInterpolation()
         default:
-            print("default for item \(anItem)")
+            print("default for item \(item)")
         }
         return false
     }
