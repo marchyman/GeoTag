@@ -11,7 +11,6 @@ import AppKit
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    // class variable holds path to exiftool
     lazy var preferences: Preferences = Preferences()
     lazy var undoManager: UndoManager = UndoManager()
 
@@ -31,8 +30,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     //MARK: App start up
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
         window.delegate = self
+        // Pop open a preferences window if a backup (save) folder location hasn't
+        // yet been selected
         if Preferences.saveFolder() == nil {
             perform(#selector(openPreferencesWindow(_:)), with: nil, afterDelay: 0)
         }

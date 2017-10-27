@@ -21,7 +21,6 @@ struct Exiftool {
     init() {
         if let exiftoolUrl = Bundle.main.url(forResource: "ExifTool", withExtension: nil) {
             url = exiftoolUrl.appendingPathComponent("exiftool")
-            print("Exiftool url = \(url)")
         } else {
             fatalError("The Application Bundle is corrupt.")
         }

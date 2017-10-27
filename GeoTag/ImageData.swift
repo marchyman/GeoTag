@@ -29,10 +29,11 @@ final class ImageData: NSObject {
     /*
      * if we can't backup an image file display a warning that files will be
      * copied to an alternate directory.  This flag is used so the
-     * warning is only displayed once per execution of the program.
+     * warning is only displayed once per save operation
      */
     static var saveWarning = true
 
+    // used to re-enable the save warning after a save operation has completed
     class func enableSaveWarnings() {
         saveWarning = true
     }
@@ -142,7 +143,7 @@ final class ImageData: NSObject {
                                                       comment: "can't backup file")
                 alert.informativeText = url.path
                 alert.informativeText += NSLocalizedString("NO_BACKUP_DESC",
-                                                           comment: "can't trash file")
+                                                           comment: "can't backup file")
                 alert.informativeText += NSLocalizedString("NO_BACKUP_REASON",
                                                            comment: "unknown error reason")
                 alert.runModal()
@@ -154,6 +155,7 @@ final class ImageData: NSObject {
         var saveFileUrl = saveDirUrl.appendingPathComponent(name, isDirectory: false)
         let fileManager = FileManager.default
         let _ = saveDirUrl.startAccessingSecurityScopedResource()
+        defer { saveDirUrl.stopAccessingSecurityScopedResource() }
         // add a suffix to the name until no file is found at the save location
         while fileManager.fileExists(atPath: (saveFileUrl.path)) {
             var newName = name
@@ -162,7 +164,7 @@ final class ImageData: NSObject {
             fileNumber += 1
             saveFileUrl = saveDirUrl.appendingPathComponent(newName, isDirectory: false)
         }
-        // couldn't create hard link, copy file instead
+        // Copy the image file to the backup folder
         do {
             try fileManager.copyItem(at: url, to: saveFileUrl)
             /// DANGER WILL ROBINSON -- the above call can fail to return an
@@ -170,18 +172,15 @@ final class ImageData: NSObject {
             /// closed as a DUPLICATE OF 30350792 which is still open.
             /// As a result I must verify that the copied file exists
             if !fileManager.fileExists(atPath: (saveFileUrl.path)) {
-                saveDirUrl.stopAccessingSecurityScopedResource()
                 unexpected(error: nil,
                            "Cannot copy \(url.path) to \(saveFileUrl.path)")
                 return false
             }
         } catch let error as NSError {
-            saveDirUrl.stopAccessingSecurityScopedResource()
             unexpected(error: error,
                        "Cannot copy \(url.path) to \(saveFileUrl.path)\n\nReason: ")
             return false
         }
-        saveDirUrl.stopAccessingSecurityScopedResource()
         return true
     }
 
