@@ -1,19 +1,24 @@
 ## GeoTag for OS X
 
-GeoTag 4 requires macOS 10.10 or later
+GeoTag 4.1 requires macOS 10.10 or later
 
-New features:
+### New features:
 
-* Apple maps replace Google maps
-* Image loading many times faster
-* Exiftool now built in
-* Sandboxed for better security
-* Currently coded in Swift 4
+* Map searching
+* Image backup handling
+* MIT License
+* ExifTool version x.xx
 
-Note: map searching has not yet been implemented
+### Known issue
 
-Yet another change to image backup handling.  This removes the now all too common
-error stating you do not have permission to back up your files.
+* You can not re-position a pin by dragging the pin.  Instead click on the desired
+  location
+* Clicking and dragging on the map repositions any existing map pin.
+
+### Image Backups
+
+I've made yet another change to image backup handling.  The change eliminates the
+now all too common error stating you do not have permission to back up your files.
 
 * A "backup folder" location is required.  If a backup folder is not configured
   when GeoTag starts the program will open the preferences window for you to
@@ -25,6 +30,30 @@ error stating you do not have permission to back up your files.
 * If the image file can not be copied to the backup location Geolocation
   information will not be saved.   Better to be safe than sorry.
 * The system trash is no longer used.
+
+### MIT License
+
+It was brought to my attention that the Creative Commons license is not really
+suitable for software.  I've changed to the MIT software licence.
+
+Copyright 2014-2017 Marco S Hyman
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in the
+Software without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
@@ -46,7 +75,7 @@ tagging photos in the field.  Photos (OSX 10.10.3 and later) will let you modify
 existing location metadata but not add location data to an image. If necessary
 use GeoTag to add location metadata **before** importing the images into Photos.
 
-Version 4 is the latest version.  It workes on macOS 10.10 or later. Version
+Version 4.1 is the latest version.  It workes on macOS 10.10 or later. Version
 4 uses Apple maps.
 
 Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later.  Version 3

@@ -1,4 +1,15 @@
-## GeoTag 4.0
+## GeoTag 4.1
+
+### New Features
+
+* Map search
+* Image backup handling
+* MIT Software License
+
+### Bug Fixes
+
+* GPS info validation
+* Changes for Swift 4.0
 
 ### New Features:
 
