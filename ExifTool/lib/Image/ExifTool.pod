@@ -65,42 +65,43 @@ supported by ExifTool (r = read, w = write, c = create):
 
   File Types
   ------------+-------------+-------------+-------------+------------
-  3FR   r     | DV    r     | JSON  r     | ODT   r     | RIFF  r
-  3G2   r/w   | DVB   r/w   | K25   r     | OFR   r     | RSRC  r
-  3GP   r/w   | DYLIB r     | KDC   r     | OGG   r     | RTF   r
-  A     r     | EIP   r     | KEY   r     | OGV   r     | RW2   r/w
-  AA    r     | EPS   r/w   | LA    r     | OPUS  r     | RWL   r/w
-  AAX   r/w   | EPUB  r     | LFP   r     | ORF   r/w   | RWZ   r
-  ACR   r     | ERF   r/w   | LNK   r     | OTF   r     | RM    r
-  AFM   r     | EXE   r     | M2TS  r     | PAC   r     | SEQ   r
-  AI    r/w   | EXIF  r/w/c | M4A/V r/w   | PAGES r     | SO    r
-  AIFF  r     | EXR   r     | MAX   r     | PBM   r/w   | SR2   r/w
-  APE   r     | EXV   r/w/c | MEF   r/w   | PCD   r     | SRF   r
-  ARW   r/w   | F4A/V r/w   | MIE   r/w/c | PDB   r     | SRW   r/w
-  ASF   r     | FFF   r/w   | MIFF  r     | PDF   r/w   | SVG   r
-  AVI   r     | FLA   r     | MKA   r     | PEF   r/w   | SWF   r
-  AZW   r     | FLAC  r     | MKS   r     | PFA   r     | THM   r/w
-  BMP   r     | FLIF  r/w   | MKV   r     | PFB   r     | TIFF  r/w
-  BPG   r     | FLV   r     | MNG   r/w   | PFM   r     | TORRENT r
-  BTF   r     | FPF   r     | MOBI  r     | PGF   r     | TTC   r
-  CHM   r     | FPX   r     | MODD  r     | PGM   r/w   | TTF   r
-  COS   r     | GIF   r/w   | MOI   r     | PLIST r     | VCF   r
-  CR2   r/w   | GZ    r     | MOS   r/w   | PICT  r     | VRD   r/w/c
-  CRW   r/w   | HDP   r/w   | MOV   r/w   | PMP   r     | VSD   r
-  CS1   r/w   | HDR   r     | MP3   r     | PNG   r/w   | WAV   r
-  DCM   r     | HTML  r     | MP4   r/w   | PPM   r/w   | WDP   r/w
-  DCP   r/w   | ICC   r/w/c | MPC   r     | PPT   r     | WEBP  r
-  DCR   r     | ICS   r     | MPG   r     | PPTX  r     | WEBM  r
-  DFONT r     | IDML  r     | MPO   r/w   | PS    r/w   | WMA   r
-  DIVX  r     | IIQ   r/w   | MQV   r/w   | PSB   r/w   | WMV   r
-  DJVU  r     | IND   r/w   | MRW   r/w   | PSD   r/w   | WV    r
-  DLL   r     | INX   r     | MXF   r     | PSP   r     | X3F   r/w
-  DNG   r/w   | ISO   r     | NEF   r/w   | QTIF  r/w   | XCF   r
-  DOC   r     | ITC   r     | NRW   r/w   | RA    r     | XLS   r
-  DOCX  r     | J2C   r     | NUMBERS r   | RAF   r/w   | XLSX  r
-  DPX   r     | JNG   r/w   | O     r     | RAM   r     | XMP   r/w/c
-  DR4   r/w/c | JP2   r/w   | ODP   r     | RAR   r     | ZIP   r
-  DSS   r     | JPEG  r/w   | ODS   r     | RAW   r/w   |
+  3FR   r     | DVB   r/w   | JSON  r     | OFR   r     | RTF   r
+  3G2   r/w   | DYLIB r     | K25   r     | OGG   r     | RW2   r/w
+  3GP   r/w   | EIP   r     | KDC   r     | OGV   r     | RWL   r/w
+  A     r     | EPS   r/w   | KEY   r     | OPUS  r     | RWZ   r
+  AA    r     | EPUB  r     | LA    r     | ORF   r/w   | RM    r
+  AAX   r/w   | ERF   r/w   | LFP   r     | OTF   r     | SEQ   r
+  ACR   r     | EXE   r     | LNK   r     | PAC   r     | SO    r
+  AFM   r     | EXIF  r/w/c | M2TS  r     | PAGES r     | SR2   r/w
+  AI    r/w   | EXR   r     | M4A/V r/w   | PBM   r/w   | SRF   r
+  AIFF  r     | EXV   r/w/c | MAX   r     | PCD   r     | SRW   r/w
+  APE   r     | F4A/V r/w   | MEF   r/w   | PDB   r     | SVG   r
+  ARW   r/w   | FFF   r/w   | MIE   r/w/c | PDF   r/w   | SWF   r
+  ASF   r     | FLA   r     | MIFF  r     | PEF   r/w   | THM   r/w
+  AVI   r     | FLAC  r     | MKA   r     | PFA   r     | TIFF  r/w
+  AZW   r     | FLIF  r/w   | MKS   r     | PFB   r     | TORRENT r
+  BMP   r     | FLV   r     | MKV   r     | PFM   r     | TTC   r
+  BPG   r     | FPF   r     | MNG   r/w   | PGF   r     | TTF   r
+  BTF   r     | FPX   r     | MOBI  r     | PGM   r/w   | VCF   r
+  CHM   r     | GIF   r/w   | MODD  r     | PLIST r     | VRD   r/w/c
+  COS   r     | GZ    r     | MOI   r     | PICT  r     | VSD   r
+  CR2   r/w   | HDP   r/w   | MOS   r/w   | PMP   r     | WAV   r
+  CRW   r/w   | HDR   r     | MOV   r/w   | PNG   r/w   | WDP   r/w
+  CS1   r/w   | HEIC  r     | MP3   r     | PPM   r/w   | WEBP  r
+  DCM   r     | HEIF  r     | MP4   r/w   | PPT   r     | WEBM  r
+  DCP   r/w   | HTML  r     | MPC   r     | PPTX  r     | WMA   r
+  DCR   r     | ICC   r/w/c | MPG   r     | PS    r/w   | WMV   r
+  DFONT r     | ICS   r     | MPO   r/w   | PSB   r/w   | WV    r
+  DIVX  r     | IDML  r     | MQV   r/w   | PSD   r/w   | X3F   r/w
+  DJVU  r     | IIQ   r/w   | MRW   r/w   | PSP   r     | XCF   r
+  DLL   r     | IND   r/w   | MXF   r     | QTIF  r/w   | XLS   r
+  DNG   r/w   | INX   r     | NEF   r/w   | RA    r     | XLSX  r
+  DOC   r     | ISO   r     | NRW   r/w   | RAF   r/w   | XMP   r/w/c
+  DOCX  r     | ITC   r     | NUMBERS r   | RAM   r     | ZIP   r
+  DPX   r     | J2C   r     | O     r     | RAR   r     |
+  DR4   r/w/c | JNG   r/w   | ODP   r     | RAW   r/w   |
+  DSS   r     | JP2   r/w   | ODS   r     | RIFF  r     |
+  DV    r     | JPEG  r/w   | ODT   r     | RSRC  r     |
 
   Meta Information
   ----------------------+----------------------+---------------------
@@ -458,6 +459,8 @@ below, case is not significant:
   Baltic       cp1257           Windows Baltic
   Vietnam      cp1258           Windows Vietnamese
   Thai         cp874            Windows Thai
+  DOSLatinUS   cp437            DOS Latin US
+  DOSLatin1    cp850            DOS Latin1
   MacRoman     cp10000, Roman   Macintosh Roman
   MacLatin2    cp10029          Macintosh Latin2 (Central Europe)
   MacCyrillic  cp10007          Macintosh Cyrillic
@@ -560,7 +563,7 @@ different when copying tags with L</SetNewValuesFromFile>.
 Format for printing date/time values.  See C<strftime> in the L<POSIX>
 package for details about the format string.  If date can not be converted,
 value is left unchanged unless the StrictDate option is set.  Timezones are
-ignored. The inverse conversion (ie. when calling L</SetNewValue>) is
+ignored.  The inverse conversion (ie. when calling L</SetNewValue>) is
 performed only if POSIX::strptime or Time::Piece is installed.  The default
 setting of undef causes date/time values to remain in standard EXIF format
 (similar to a DateFormat of "%Y:%m:%d %H:%M:%S").
@@ -672,8 +675,8 @@ number of acquired satellites is less than this.  Default is undef.
 
 Time shift to apply to all extracted date/time PrintConv values.  Does not
 affect ValueConv values.  Value is a date/time shift string (see
-L<Image::ExifTool::Shift.pl|Image::ExifTool::Shift.pl>), with a leading '-'
-for negative shifts.  Default is undef.
+L<Image::ExifTool::Shift(3pm)|Image::ExifTool::Shift.pl>), with a leading
+'-' for negative shifts.  Default is undef.
 
 =item Group#
 
@@ -797,12 +800,13 @@ print conversion for writing.  Default is 1.
 =item QuickTimeUTC
 
 Flag set to assume that QuickTime date/time values are stored as UTC,
-causing conversion to local time when they are extracted.  According to the
-QuickTime specification date/time values should be UTC, but many digital
-cameras store local time instead (presumably because they don't know the
-time zone), so the default is undef.  This option also disables the
-autodetection of incorrect time-zero offsets in QuickTime date/time values,
-and enforces a time zero of 1904 as per the QuickTime specification.
+causing conversion to local time when they are extracted and from local time
+when written.  According to the QuickTime specification date/time values
+should be UTC, but many digital cameras store local time instead (presumably
+because they don't know the time zone), so the default is undef.  This
+option also disables the autodetection of incorrect time-zero offsets in
+QuickTime date/time values, and enforces a time zero of 1904 as per the
+QuickTime specification.
 
 =item RequestAll
 
@@ -854,9 +858,13 @@ Secondary sort order used for tags within each group when Sort is 'Group':
 Flag to return undefined value for any date which can't be converted when
 the DateFormat option is used.  Default is undef.
 
-  undef - Same as 0 for reading, 1 for copying
+  undef - Same as 0 for reading/writing, or 1 for copying
     0   - Return date/time value unchanged if it can't be converted
     1   - Return undef if date/time value can't be converted
+
+When set to 1 while writing a PrintConv date/time value, the value is
+written only if POSIX::strptime or Time::Piece is available and can
+successfully convert the value.
 
 =item Struct
 
@@ -880,6 +888,12 @@ FileDeviceID, FileBlockSize and FileBlockCount.
 
 Output file reference for Verbose and HtmlDump options.  Default is
 \*STDOUT.
+
+=item TimeZone
+
+Time zone for local date/time values.  May be set to any valid TZ string.
+Uses the system time zone if not specified.  Default is undef.  (Note that
+this option may not work in Windows.)
 
 =item Unknown
 
@@ -1471,7 +1485,7 @@ tags with numerical values may be shifted.  Undefined for no shift, 1 for a
 positive shift, or -1 for a negative shift.  A value of 0 causes a positive
 shift to be applied if the tag is shiftable and AddValue is set, or a
 negative shift for date/time tags only if DelValue is set. Default is undef.
-See L<Image::ExifTool::Shift.pl|Image::ExifTool::Shift.pl> for more
+See L<Image::ExifTool::Shift(3pm)|Image::ExifTool::Shift.pl> for more
 information.
 
 =item Type
@@ -2157,39 +2171,40 @@ SigmaRaw, Stim, Theora, Torrent, VCard, Vorbis, XML, XMP, ZIP
 =item Family 1 (Specific Location):
 
 AC3, AFCP, AIFF, APE, ASF, AVI1, Adobe, AdobeCM, AdobeDNG, Apple, Audible,
-CIFF, Canon, CanonCustom, CanonRaw, CanonVRD, Casio, Chapter#, Composite,
-DICOM, DJI, DNG, DV, DjVu, DjVu-Meta, Ducky, EPPIM, EXE, EXIF, ExifIFD,
-ExifTool, FLAC, FLIR, File, Flash, FlashPix, Font, FotoStation, FujiFilm,
-FujiIFD, GE, GIF, GIMP, GPS, GeoTiff, GlobParamIFD, GraphConv, H264, HP,
-HTC, HTML, HTML-dc, HTML-ncc, HTML-office, HTML-prod, HTML-vw96, HTTP-equiv,
-ICC-chrm, ICC-clrt, ICC-header, ICC-meas, ICC-meta, ICC-view, ICC_Profile,
-ICC_Profile#, ID3, ID3v1, ID3v1_Enh, ID3v2_2, ID3v2_3, ID3v2_4, IFD0, IFD1,
-IPTC, IPTC#, ISO, ITC, InteropIFD, JFIF, JPEG, JPEG-HDR, JVC, Jpeg2000,
-KDC_IFD, Kodak, KodakBordersIFD, KodakEffectsIFD, KodakIFD, KyoceraRaw, LNK,
-Leaf, LeafSubIFD, Leica, Lytro, M2TS, MAC, MIE-Audio, MIE-Camera, MIE-Canon,
-MIE-Doc, MIE-Extender, MIE-Flash, MIE-GPS, MIE-Geo, MIE-Image, MIE-Lens,
-MIE-Main, MIE-MakerNotes, MIE-Meta, MIE-Orient, MIE-Preview, MIE-Thumbnail,
-MIE-UTM, MIE-Unknown, MIE-Video, MIFF, MNG, MOBI, MOI, MPC, MPEG, MPF0,
-MPImage, MXF, MacOS, MakerNotes, MakerUnknown, Matroska, MediaJukebox,
-MetaIFD, Microsoft, Minolta, MinoltaRaw, Motorola, NITF, Nikon,
-NikonCapture, NikonCustom, NikonScan, Nintendo, Ocad, Ogg, Olympus, OpenEXR,
-Opus, PDF, PICT, PNG, PNG-pHYs, PSP, Palm, Panasonic, PanasonicRaw, Pentax,
-PhaseOne, PhotoCD, PhotoMechanic, Photoshop, PictureInfo, PostScript,
-PreviewIFD, PrintIM, ProfileIFD, Qualcomm, QuickTime, RAF, RAF2, RIFF,
-RMETA, RSRC, RTF, Radiance, Rawzor, Real, Real-CONT, Real-MDPR, Real-PROP,
-Real-RA3, Real-RA4, Real-RA5, Real-RJMD, Reconyx, Ricoh, SPIFF, SR2,
-SR2DataIFD, SR2SubIFD, SRF#, SVG, Samsung, Sanyo, Scalado, Sigma, SigmaRaw,
-Sony, SonyIDC, Stim, SubIFD, System, Theora, Torrent, Track#, VCalendar,
-VCard, Version0, Vorbis, XML, XMP, XMP-DICOM, XMP-GPano, XMP-MP, XMP-MP1,
-XMP-PixelLive, XMP-aas, XMP-acdsee, XMP-album, XMP-apple-fi, XMP-aux,
-XMP-cc, XMP-cell, XMP-creatorAtom, XMP-crs, XMP-dc, XMP-dex, XMP-digiKam,
-XMP-dwc, XMP-exif, XMP-exifEX, XMP-expressionmedia, XMP-extensis, XMP-fpv,
-XMP-getty, XMP-ics, XMP-iptcCore, XMP-iptcExt, XMP-lr, XMP-mediapro,
-XMP-microsoft, XMP-mwg-coll, XMP-mwg-kw, XMP-mwg-rs, XMP-pdf, XMP-pdfx,
-XMP-photomech, XMP-photoshop, XMP-plus, XMP-pmi, XMP-prism, XMP-prl,
-XMP-prm, XMP-pur, XMP-rdf, XMP-swf, XMP-tiff, XMP-x, XMP-xmp, XMP-xmpBJ,
-XMP-xmpDM, XMP-xmpMM, XMP-xmpNote, XMP-xmpPLUS, XMP-xmpRights, XMP-xmpTPg,
-ZIP
+CIFF, CameraIFD, Canon, CanonCustom, CanonRaw, CanonVRD, Casio, Chapter#,
+Composite, DICOM, DJI, DNG, DV, DjVu, DjVu-Meta, Ducky, EPPIM, EXE, EXIF,
+ExifIFD, ExifTool, FLAC, FLIR, File, Flash, FlashPix, Font, FotoStation,
+FujiFilm, FujiIFD, GE, GIF, GIMP, GPS, GeoTiff, GlobParamIFD, GraphConv,
+H264, HP, HTC, HTML, HTML-dc, HTML-ncc, HTML-office, HTML-prod, HTML-vw96,
+HTTP-equiv, ICC-chrm, ICC-clrt, ICC-header, ICC-meas, ICC-meta, ICC-view,
+ICC_Profile, ICC_Profile#, ID3, ID3v1, ID3v1_Enh, ID3v2_2, ID3v2_3, ID3v2_4,
+IFD0, IFD1, IPTC, IPTC#, ISO, ITC, InteropIFD, JFIF, JFXX, JPEG, JPEG-HDR,
+JVC, Jpeg2000, KDC_IFD, Kodak, KodakBordersIFD, KodakEffectsIFD, KodakIFD,
+KyoceraRaw, LNK, Leaf, LeafSubIFD, Leica, Lytro, M2TS, MAC, MIE-Audio,
+MIE-Camera, MIE-Canon, MIE-Doc, MIE-Extender, MIE-Flash, MIE-GPS, MIE-Geo,
+MIE-Image, MIE-Lens, MIE-Main, MIE-MakerNotes, MIE-Meta, MIE-Orient,
+MIE-Preview, MIE-Thumbnail, MIE-UTM, MIE-Unknown, MIE-Video, MIFF, MNG,
+MOBI, MOI, MPC, MPEG, MPF0, MPImage, MXF, MacOS, MakerNotes, MakerUnknown,
+Matroska, MediaJukebox, MetaIFD, Microsoft, Minolta, MinoltaRaw, Motorola,
+NITF, Nikon, NikonCapture, NikonCustom, NikonScan, Nintendo, Ocad, Ogg,
+Olympus, OpenEXR, Opus, PDF, PICT, PNG, PNG-pHYs, PSP, Palm, Panasonic,
+PanasonicRaw, Pentax, PhaseOne, PhotoCD, PhotoMechanic, Photoshop,
+PictureInfo, PostScript, PreviewIFD, PrintIM, ProfileIFD, Qualcomm,
+QuickTime, RAF, RAF2, RIFF, RMETA, RSRC, RTF, Radiance, Rawzor, Real,
+Real-CONT, Real-MDPR, Real-PROP, Real-RA3, Real-RA4, Real-RA5, Real-RJMD,
+Reconyx, Ricoh, SPIFF, SR2, SR2DataIFD, SR2SubIFD, SRF#, SVG, Samsung,
+Sanyo, Scalado, Sigma, SigmaRaw, Sony, SonyIDC, Stim, SubIFD, System,
+Theora, Torrent, Track#, VCalendar, VCard, Version0, Vorbis, XML, XMP,
+XMP-DICOM, XMP-GAudio, XMP-GImage, XMP-GPano, XMP-GSpherical, XMP-MP,
+XMP-MP1, XMP-PixelLive, XMP-aas, XMP-acdsee, XMP-album, XMP-apple-fi,
+XMP-aux, XMP-cc, XMP-cell, XMP-creatorAtom, XMP-crs, XMP-dc, XMP-dex,
+XMP-digiKam, XMP-drone-dji, XMP-dwc, XMP-exif, XMP-exifEX,
+XMP-expressionmedia, XMP-extensis, XMP-fpv, XMP-getty, XMP-ics,
+XMP-iptcCore, XMP-iptcExt, XMP-lr, XMP-mediapro, XMP-microsoft,
+XMP-mwg-coll, XMP-mwg-kw, XMP-mwg-rs, XMP-pdf, XMP-pdfx, XMP-photomech,
+XMP-photoshop, XMP-plus, XMP-pmi, XMP-prism, XMP-prl, XMP-prm, XMP-pur,
+XMP-rdf, XMP-swf, XMP-tiff, XMP-x, XMP-xmp, XMP-xmpBJ, XMP-xmpDM, XMP-xmpMM,
+XMP-xmpNote, XMP-xmpPLUS, XMP-xmpRights, XMP-xmpTPg, ZIP
 
 =item Family 2 (Category):
 
@@ -2384,8 +2399,8 @@ Win32API::File is available.
 
 The encodings used to store strings in the various metadata formats.  These
 encodings may be changed for certain types of metadata via the
-L</CharsetEXIF>, L</CharsetID3>, L</CharsetIPTC>, L</CharsetPhotoshop> and
-L</CharsetQuickTime> options.
+L</CharsetEXIF>, L</CharsetID3>, L</CharsetIPTC>, L</CharsetPhotoshop>,
+L</CharsetQuickTime> and L</CharsetRIFF> options.
 
 =back
 
@@ -2581,7 +2596,7 @@ people who have contributed to this project.
 L<exiftool(1)|exiftool>,
 L<Image::ExifTool::TagNames(3pm)|Image::ExifTool::TagNames>,
 L<Image::ExifTool::Shortcuts(3pm)|Image::ExifTool::Shortcuts>,
-L<Image::ExifTool::Shift.pl|Image::ExifTool::Shift.pl>,
+L<Image::ExifTool::Shift(3pm)|Image::ExifTool::Shift.pl>,
 L<Image::Info(3pm)|Image::Info>,
 L<Image::MetaData::JPEG(3pm)|Image::MetaData::JPEG>
 

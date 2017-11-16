@@ -24,6 +24,286 @@ use Image::ExifTool qw(:Utils);
 use Image::ExifTool::XMP;
 
 #------------------------------------------------------------------------------
+
+# xmpDM structure definitions
+my %sCuePointParam = (
+    STRUCT_NAME => 'CuePointParam',
+    NAMESPACE   => 'xmpDM',
+    key         => { },
+    value       => { },
+);
+my %sMarker = (
+    STRUCT_NAME => 'Marker',
+    NAMESPACE   => 'xmpDM',
+    comment     => { },
+    duration    => { },
+    location    => { },
+    name        => { },
+    startTime   => { },
+    target      => { },
+    type        => { },
+    # added Oct 2008
+    cuePointParams => { Struct => \%sCuePointParam, List => 'Seq' },
+    cuePointType=> { },
+    probability => { Writable => 'real' },
+    speaker     => { },
+);
+my %sTime = (
+    STRUCT_NAME => 'Time',
+    NAMESPACE   => 'xmpDM',
+    scale       => { Writable => 'rational' },
+    value       => { Writable => 'integer' },
+);
+my %sTimecode = (
+    STRUCT_NAME => 'Timecode',
+    NAMESPACE   => 'xmpDM',
+    timeFormat  => {
+        PrintConv => {
+            '24Timecode' => '24 fps',
+            '25Timecode' => '25 fps',
+            '2997DropTimecode' => '29.97 fps (drop)',
+            '2997NonDropTimecode' => '29.97 fps (non-drop)',
+            '30Timecode' => '30 fps',
+            '50Timecode' => '50 fps',
+            '5994DropTimecode' => '59.94 fps (drop)',
+            '5994NonDropTimecode' => '59.94 fps (non-drop)',
+            '60Timecode' => '60 fps',
+            '23976Timecode' => '23.976 fps',
+        },
+    },
+    timeValue   => { },
+    value       => { Writable => 'integer', Notes => 'only in XMP 2008 spec; an error?' },
+);
+
+# XMP Dynamic Media namespace properties (xmpDM)
+%Image::ExifTool::XMP::xmpDM = (
+    %xmpTableDefaults,
+    GROUPS => { 1 => 'XMP-xmpDM', 2 => 'Image' },
+    NAMESPACE => 'xmpDM',
+    NOTES => 'XMP Dynamic Media namespace tags.',
+    absPeakAudioFilePath=> { },
+    album               => { },
+    altTapeName         => { },
+    altTimecode         => { Struct => \%sTimecode },
+    artist              => { Avoid => 1, Groups => { 2 => 'Author' } },
+    audioModDate        => { Groups => { 2 => 'Time' }, %dateTimeInfo },
+    audioSampleRate     => { Writable => 'integer' },
+    audioSampleType => {
+        PrintConv => {
+            '8Int' => '8-bit integer',
+            '16Int' => '16-bit integer',
+            '24Int' => '24-bit integer',
+            '32Int' => '32-bit integer',
+            '32Float' => '32-bit float',
+            'Compressed' => 'Compressed',
+            'Packed' => 'Packed',
+            'Other' => 'Other',
+        },
+    },
+    audioChannelType => {
+        PrintConv => {
+            'Mono' => 'Mono',
+            'Stereo' => 'Stereo',
+            '5.1' => '5.1',
+            '7.1' => '7.1',
+            '16 Channel' => '16 Channel',
+            'Other' => 'Other',
+        },
+    },
+    audioCompressor     => { },
+    beatSpliceParams => {
+        Struct => {
+            STRUCT_NAME => 'BeatSpliceStretch',
+            NAMESPACE   => 'xmpDM',
+            riseInDecibel       => { Writable => 'real' },
+            riseInTimeDuration  => { Struct => \%sTime },
+            useFileBeatsMarker  => { Writable => 'boolean' },
+        },
+    },
+    cameraAngle         => { },
+    cameraLabel         => { },
+    cameraModel         => { },
+    cameraMove          => { },
+    client              => { },
+    comment             => { Name => 'DMComment' },
+    composer            => { Groups => { 2 => 'Author' } },
+    contributedMedia => {
+        Struct => {
+            STRUCT_NAME => 'Media',
+            NAMESPACE   => 'xmpDM',
+            duration    => { Struct => \%sTime },
+            managed     => { Writable => 'boolean' },
+            path        => { },
+            startTime   => { Struct => \%sTime },
+            track       => { },
+            webStatement=> { },
+        },
+        List => 'Bag',
+    },
+    copyright       => { Avoid => 1, Groups => { 2 => 'Author' } }, # (deprecated)
+    director        => { },
+    directorPhotography => { },
+    discNumber      => { }, #12
+    duration        => { Struct => \%sTime },
+    engineer        => { },
+    fileDataRate    => { Writable => 'rational' },
+    genre           => { },
+    good            => { Writable => 'boolean' },
+    instrument      => { },
+    introTime       => { Struct => \%sTime },
+    key => {
+        PrintConvColumns => 3,
+        PrintConv => {
+            'C'  => 'C',  'C#' => 'C#', 'D'  => 'D',  'D#' => 'D#',
+            'E'  => 'E',  'F'  => 'F',  'F#' => 'F#', 'G'  => 'G',
+            'G#' => 'G#', 'A'  => 'A',  'A#' => 'A#', 'B'  => 'B',
+        },
+    },
+    logComment      => { },
+    loop            => { Writable => 'boolean' },
+    lyrics          => { }, #12
+    numberOfBeats   => { Writable => 'real' },
+    markers         => { Struct => \%sMarker, List => 'Seq' },
+    metadataModDate => { Groups => { 2 => 'Time' }, %dateTimeInfo },
+    outCue          => { Struct => \%sTime },
+    partOfCompilation=>{ Writable => 'boolean' }, #12
+    projectName     => { },
+    projectRef => {
+        Struct => {
+            STRUCT_NAME => 'ProjectLink',
+            NAMESPACE   => 'xmpDM',
+            path        => { },
+            type        => {
+                PrintConv => {
+                    movie => 'Movie',
+                    still => 'Still Image',
+                    audio => 'Audio',
+                    custom => 'Custom',
+                },
+            },
+        },
+    },
+    pullDown => {
+        PrintConvColumns => 2,
+        PrintConv => {
+            'WSSWW' => 'WSSWW',  'SSWWW' => 'SSWWW',
+            'SWWWS' => 'SWWWS',  'WWWSS' => 'WWWSS',
+            'WWSSW' => 'WWSSW',  'WWWSW' => 'WWWSW',
+            'WWSWW' => 'WWSWW',  'WSWWW' => 'WSWWW',
+            'SWWWW' => 'SWWWW',  'WWWWS' => 'WWWWS',
+        },
+    },
+    relativePeakAudioFilePath => { },
+    relativeTimestamp   => { Struct => \%sTime },
+    releaseDate         => { Groups => { 2 => 'Time' }, %dateTimeInfo },
+    resampleParams => {
+        Struct => {
+            STRUCT_NAME => 'ResampleStretch',
+            NAMESPACE   => 'xmpDM',
+            quality     => { PrintConv => { Low => 'Low', Medium => 'Medium', High => 'High' } },
+        },
+    },
+    scaleType => {
+        PrintConv => {
+            Major => 'Major',
+            Minor => 'Minor',
+            Both => 'Both',
+            Neither => 'Neither',
+        },
+    },
+    scene           => { Avoid => 1 },
+    shotDate        => { Groups => { 2 => 'Time' }, %dateTimeInfo },
+    shotDay         => { },
+    shotLocation    => { },
+    shotName        => { },
+    shotNumber      => { },
+    shotSize        => { },
+    speakerPlacement=> { },
+    startTimecode   => { Struct => \%sTimecode },
+    startTimeSampleSize => { Writable => 'integer' }, #PH
+    startTimeScale  => { }, #PH (real?)
+    stretchMode     => {
+        PrintConv => {
+            'Fixed length' => 'Fixed length',
+            'Time-Scale' => 'Time-Scale',
+            'Resample' => 'Resample',
+            'Beat Splice' => 'Beat Splice',
+            'Hybrid' => 'Hybrid',
+        },
+    },
+    takeNumber      => { Writable => 'integer' },
+    tapeName        => { },
+    tempo           => { Writable => 'real' },
+    timeScaleParams => {
+        Struct => {
+            STRUCT_NAME => 'TimeScaleStretch',
+            NAMESPACE   => 'xmpDM',
+            frameOverlappingPercentage => { Writable => 'real' },
+            frameSize   => { Writable => 'real' },
+            quality     => { PrintConv => { Low => 'Low', Medium => 'Medium', High => 'High' } },
+        },
+    },
+    timeSignature   => {
+        PrintConvColumns => 3,
+        PrintConv => {
+            '2/4' => '2/4',  '3/4' => '3/4',  '4/4' => '4/4',
+            '5/4' => '5/4',  '7/4' => '7/4',  '6/8' => '6/8',
+            '9/8' => '9/8',  '12/8'=> '12/8', 'other' => 'other',
+        },
+    },
+    trackNumber     => { Writable => 'integer' },
+    Tracks => {
+        Struct => {
+            STRUCT_NAME => 'Track',
+            NAMESPACE   => 'xmpDM',
+            frameRate => { },
+            markers   => { Struct => \%sMarker, List => 'Seq' },
+            trackName => { },
+            trackType => { },
+        },
+        List => 'Bag',
+    },
+    videoAlphaMode => {
+        PrintConv => {
+            'straight' => 'Straight',
+            'pre-multiplied', => 'Pre-multiplied',
+            'none' => 'None',
+        },
+    },
+    videoAlphaPremultipleColor   => { Struct => \%sColorant },
+    videoAlphaUnityIsTransparent => { Writable => 'boolean' },
+    videoColorSpace     => {
+        PrintConv => {
+            'sRGB' => 'sRGB',
+            'CCIR-601' => 'CCIR-601',
+            'CCIR-709' => 'CCIR-709',
+        },
+    },
+    videoCompressor => { },
+    videoFieldOrder => {
+        PrintConv => {
+            Upper => 'Upper',
+            Lower => 'Lower',
+            Progressive => 'Progressive',
+        },
+    },
+    videoFrameRate  => { Writable => 'real' },
+    videoFrameSize  => { Struct => \%sDimensions },
+    videoModDate    => { Groups => { 2 => 'Time' }, %dateTimeInfo },
+    videoPixelAspectRatio => { Writable => 'rational' },
+    videoPixelDepth => {
+        PrintConv => {
+            '8Int' => '8-bit integer',
+            '16Int' => '16-bit integer',
+            '24Int' => '24-bit integer',
+            '32Int' => '32-bit integer',
+            '32Float' => '32-bit float',
+            'Other' => 'Other',
+        },
+    },
+);
+
+#------------------------------------------------------------------------------
 # IPTC Extensions version 1.3 (+ proposed video extensions)
 
 # IPTC Extension 1.0 structures
@@ -129,6 +409,17 @@ my %sTextRegion = (
     NAMESPACE   => 'Iptc4xmpExt',
     RegionText  => { },
     Region      => { Struct => \%Image::ExifTool::XMP::sArea },
+);
+my %sLinkedImage = (
+    STRUCT_NAME => 'LinkedImage',
+    NAMESPACE   => 'Iptc4xmpExt',
+    Link        => { },
+    LinkQualifier => { List => 'Bag' },
+    ImageRole   => { },
+   'format'     => { Namespace => 'dc' },
+    WidthPixels => { Writable => 'integer' },
+    HeightPixels=> { Writable => 'integer' },
+    UsedVideoFrame => { Struct => \%sTimecode },
 );
 
 # IPTC Extension namespace properties (Iptc4xmpExt) (ref 4)
@@ -375,292 +666,15 @@ my %sTextRegion = (
     },
     videoEncodingProfile => { Groups => { 2 => 'Video' } },
     videoStreamsCount    => { Groups => { 2 => 'Video' }, Writable => 'integer' },
-);
-
-#------------------------------------------------------------------------------
-
-# xmpDM structure definitions
-my %sCuePointParam = (
-    STRUCT_NAME => 'CuePointParam',
-    NAMESPACE   => 'xmpDM',
-    key         => { },
-    value       => { },
-);
-my %sMarker = (
-    STRUCT_NAME => 'Marker',
-    NAMESPACE   => 'xmpDM',
-    comment     => { },
-    duration    => { },
-    location    => { },
-    name        => { },
-    startTime   => { },
-    target      => { },
-    type        => { },
-    # added Oct 2008
-    cuePointParams => { Struct => \%sCuePointParam, List => 'Seq' },
-    cuePointType=> { },
-    probability => { Writable => 'real' },
-    speaker     => { },
-);
-my %sTime = (
-    STRUCT_NAME => 'Time',
-    NAMESPACE   => 'xmpDM',
-    scale       => { Writable => 'rational' },
-    value       => { Writable => 'integer' },
-);
-my %sTimecode = (
-    STRUCT_NAME => 'Timecode',
-    NAMESPACE   => 'xmpDM',
-    timeFormat  => {
-        PrintConv => {
-            '24Timecode' => '24 fps',
-            '25Timecode' => '25 fps',
-            '2997DropTimecode' => '29.97 fps (drop)',
-            '2997NonDropTimecode' => '29.97 fps (non-drop)',
-            '30Timecode' => '30 fps',
-            '50Timecode' => '50 fps',
-            '5994DropTimecode' => '59.94 fps (drop)',
-            '5994NonDropTimecode' => '59.94 fps (non-drop)',
-            '60Timecode' => '60 fps',
-            '23976Timecode' => '23.976 fps',
-        },
-    },
-    timeValue   => { },
-    value       => { Writable => 'integer' },
-);
-
-# XMP Dynamic Media namespace properties (xmpDM)
-%Image::ExifTool::XMP::xmpDM = (
-    %xmpTableDefaults,
-    GROUPS => { 1 => 'XMP-xmpDM', 2 => 'Image' },
-    NAMESPACE => 'xmpDM',
-    NOTES => 'XMP Dynamic Media namespace tags.',
-    absPeakAudioFilePath=> { },
-    album               => { },
-    altTapeName         => { },
-    altTimecode         => { Struct => \%sTimecode },
-    artist              => { Avoid => 1, Groups => { 2 => 'Author' } },
-    audioModDate        => { Groups => { 2 => 'Time' }, %dateTimeInfo },
-    audioSampleRate     => { Writable => 'integer' },
-    audioSampleType => {
-        PrintConv => {
-            '8Int' => '8-bit integer',
-            '16Int' => '16-bit integer',
-            '24Int' => '24-bit integer',
-            '32Int' => '32-bit integer',
-            '32Float' => '32-bit float',
-            'Compressed' => 'Compressed',
-            'Packed' => 'Packed',
-            'Other' => 'Other',
-        },
-    },
-    audioChannelType => {
-        PrintConv => {
-            'Mono' => 'Mono',
-            'Stereo' => 'Stereo',
-            '5.1' => '5.1',
-            '7.1' => '7.1',
-            '16 Channel' => '16 Channel',
-            'Other' => 'Other',
-        },
-    },
-    audioCompressor     => { },
-    beatSpliceParams => {
-        Struct => {
-            STRUCT_NAME => 'BeatSpliceStretch',
-            NAMESPACE   => 'xmpDM',
-            riseInDecibel       => { Writable => 'real' },
-            riseInTimeDuration  => { Struct => \%sTime },
-            useFileBeatsMarker  => { Writable => 'boolean' },
-        },
-    },
-    cameraAngle         => { },
-    cameraLabel         => { },
-    cameraModel         => { },
-    cameraMove          => { },
-    client              => { },
-    comment             => { Name => 'DMComment' },
-    composer            => { Groups => { 2 => 'Author' } },
-    contributedMedia => {
-        Struct => {
-            STRUCT_NAME => 'Media',
-            NAMESPACE   => 'xmpDM',
-            duration    => { Struct => \%sTime },
-            managed     => { Writable => 'boolean' },
-            path        => { },
-            startTime   => { Struct => \%sTime },
-            track       => { },
-            webStatement=> { },
-        },
-        List => 'Bag',
-    },
-    copyright       => { Avoid => 1, Groups => { 2 => 'Author' } }, # (deprecated)
-    director        => { },
-    directorPhotography => { },
-    discNumber      => { }, #12
-    duration        => { Struct => \%sTime },
-    engineer        => { },
-    fileDataRate    => { Writable => 'rational' },
-    genre           => { },
-    good            => { Writable => 'boolean' },
-    instrument      => { },
-    introTime       => { Struct => \%sTime },
-    key => {
-        PrintConvColumns => 3,
-        PrintConv => {
-            'C'  => 'C',  'C#' => 'C#', 'D'  => 'D',  'D#' => 'D#',
-            'E'  => 'E',  'F'  => 'F',  'F#' => 'F#', 'G'  => 'G',
-            'G#' => 'G#', 'A'  => 'A',  'A#' => 'A#', 'B'  => 'B',
-        },
-    },
-    logComment      => { },
-    loop            => { Writable => 'boolean' },
-    lyrics          => { }, #12
-    numberOfBeats   => { Writable => 'real' },
-    markers         => { Struct => \%sMarker, List => 'Seq' },
-    metadataModDate => { Groups => { 2 => 'Time' }, %dateTimeInfo },
-    outCue          => { Struct => \%sTime },
-    partOfCompilation=>{ Writable => 'boolean' }, #12
-    projectName     => { },
-    projectRef => {
-        Struct => {
-            STRUCT_NAME => 'ProjectLink',
-            NAMESPACE   => 'xmpDM',
-            path        => { },
-            type        => {
-                PrintConv => {
-                    movie => 'Movie',
-                    still => 'Still Image',
-                    audio => 'Audio',
-                    custom => 'Custom',
-                },
-            },
-        },
-    },
-    pullDown => {
-        PrintConvColumns => 2,
-        PrintConv => {
-            'WSSWW' => 'WSSWW',  'SSWWW' => 'SSWWW',
-            'SWWWS' => 'SWWWS',  'WWWSS' => 'WWWSS',
-            'WWSSW' => 'WWSSW',  'WWWSW' => 'WWWSW',
-            'WWSWW' => 'WWSWW',  'WSWWW' => 'WSWWW',
-            'SWWWW' => 'SWWWW',  'WWWWS' => 'WWWWS',
-        },
-    },
-    relativePeakAudioFilePath => { },
-    relativeTimestamp   => { Struct => \%sTime },
-    releaseDate         => { Groups => { 2 => 'Time' }, %dateTimeInfo },
-    resampleParams => {
-        Struct => {
-            STRUCT_NAME => 'ResampleStretch',
-            NAMESPACE   => 'xmpDM',
-            quality     => { PrintConv => { Low => 'Low', Medium => 'Medium', High => 'High' } },
-        },
-    },
-    scaleType => {
-        PrintConv => {
-            Major => 'Major',
-            Minor => 'Minor',
-            Both => 'Both',
-            Neither => 'Neither',
-        },
-    },
-    scene           => { Avoid => 1 },
-    shotDate        => { Groups => { 2 => 'Time' }, %dateTimeInfo },
-    shotDay         => { },
-    shotLocation    => { },
-    shotName        => { },
-    shotNumber      => { },
-    shotSize        => { },
-    speakerPlacement=> { },
-    startTimecode   => { Struct => \%sTimecode },
-    startTimeSampleSize => { Writable => 'integer' }, #PH
-    startTimeScale  => { }, #PH (real?)
-    stretchMode     => {
-        PrintConv => {
-            'Fixed length' => 'Fixed length',
-            'Time-Scale' => 'Time-Scale',
-            'Resample' => 'Resample',
-            'Beat Splice' => 'Beat Splice',
-            'Hybrid' => 'Hybrid',
-        },
-    },
-    takeNumber      => { Writable => 'integer' },
-    tapeName        => { },
-    tempo           => { Writable => 'real' },
-    timeScaleParams => {
-        Struct => {
-            STRUCT_NAME => 'TimeScaleStretch',
-            NAMESPACE   => 'xmpDM',
-            frameOverlappingPercentage => { Writable => 'real' },
-            frameSize   => { Writable => 'real' },
-            quality     => { PrintConv => { Low => 'Low', Medium => 'Medium', High => 'High' } },
-        },
-    },
-    timeSignature   => {
-        PrintConvColumns => 3,
-        PrintConv => {
-            '2/4' => '2/4',  '3/4' => '3/4',  '4/4' => '4/4',
-            '5/4' => '5/4',  '7/4' => '7/4',  '6/8' => '6/8',
-            '9/8' => '9/8',  '12/8'=> '12/8', 'other' => 'other',
-        },
-    },
-    trackNumber     => { Writable => 'integer' },
-    Tracks => {
-        Struct => {
-            STRUCT_NAME => 'Track',
-            NAMESPACE   => 'xmpDM',
-            frameRate => { },
-            markers   => { Struct => \%sMarker, List => 'Seq' },
-            trackName => { },
-            trackType => { },
-        },
-        List => 'Bag',
-    },
-    videoAlphaMode => {
-        PrintConv => {
-            'straight' => 'Straight',
-            'pre-multiplied', => 'Pre-multiplied',
-            'none' => 'None',
-        },
-    },
-    videoAlphaPremultipleColor   => { Struct => \%sColorant },
-    videoAlphaUnityIsTransparent => { Writable => 'boolean' },
-    videoColorSpace     => {
-        PrintConv => {
-            'sRGB' => 'sRGB',
-            'CCIR-601' => 'CCIR-601',
-            'CCIR-709' => 'CCIR-709',
-        },
-    },
-    videoCompressor => { },
-    videoFieldOrder => {
-        PrintConv => {
-            Upper => 'Upper',
-            Lower => 'Lower',
-            Progressive => 'Progressive',
-        },
-    },
-    videoFrameRate  => { Writable => 'real' },
-    videoFrameSize  => { Struct => \%sDimensions },
-    videoModDate    => { Groups => { 2 => 'Time' }, %dateTimeInfo },
-    videoPixelAspectRatio => { Writable => 'rational' },
-    videoPixelDepth => {
-        PrintConv => {
-            '8Int' => '8-bit integer',
-            '16Int' => '16-bit integer',
-            '24Int' => '24-bit integer',
-            '32Int' => '32-bit integer',
-            '32Float' => '32-bit float',
-            'Other' => 'Other',
-        },
-    },
+    # new IPTC video metadata 1.1 properties
+    # (ref https://www.iptc.org/std/videometadatahub/recommendation/IPTC-VideoMetadataHub-props-Rec_1.1.html)
+    SnapshotLink => { Groups => { 2 => 'Image' }, List => 'Bag', Struct => \%sLinkedImage, Name => 'Snapshot' },
 );
 
 #------------------------------------------------------------------------------
 # PRISM
 #
-# NOTE: The "Avoid" flag is set for all PRISM tags
+# NOTE: The "Avoid" flag is set for all PRISM tags (via tag table AVOID flag)
 
 # my %obsolete = (
 #     Notes => 'obsolete in 2.0',
@@ -687,6 +701,7 @@ my %prismPublicationDate = (
     %xmpTableDefaults,
     GROUPS => { 0 => 'XMP', 1 => 'XMP-prism', 2 => 'Document' },
     NAMESPACE => 'prism',
+    AVOID => 1,
     NOTES => q{
         Publishing Requirements for Industry Standard Metadata 3.0 namespace
         tags.  (see L<http://www.prismstandard.org/>)
@@ -904,6 +919,7 @@ my %prismPublicationDate = (
     %xmpTableDefaults,
     GROUPS => { 0 => 'XMP', 1 => 'XMP-prl', 2 => 'Document' },
     NAMESPACE => 'prl',
+    AVOID => 1,
     NOTES => q{
         PRISM Rights Language 2.1 namespace tags.  These tags have been deprecated
         since the release of the PRISM Usage Rights 3.0. (see
@@ -919,6 +935,7 @@ my %prismPublicationDate = (
     %xmpTableDefaults,
     GROUPS => { 0 => 'XMP', 1 => 'XMP-pur', 2 => 'Document' },
     NAMESPACE => 'pur',
+    AVOID => 1,
     NOTES => q{
         PRISM Usage Rights 3.0 namespace tags.  (see
         L<http://www.prismstandard.org/>)
@@ -950,6 +967,7 @@ my %prismPublicationDate = (
     %xmpTableDefaults,
     GROUPS => { 0 => 'XMP', 1 => 'XMP-pmi', 2 => 'Image' },
     NAMESPACE => 'pmi',
+    AVOID => 1,
     NOTES => q{
         PRISM Metadata for Images 3.0 namespace tags.  (see
         L<http://www.prismstandard.org/>)
@@ -1016,6 +1034,7 @@ my %prismPublicationDate = (
     %xmpTableDefaults,
     GROUPS => { 0 => 'XMP', 1 => 'XMP-prm', 2 => 'Document' },
     NAMESPACE => 'prm',
+    AVOID => 1,
     NOTES => q{
         PRISM Recipe Metadata 3.0 namespace tags.  (see
         L<http://www.prismstandard.org/>)
@@ -1079,17 +1098,18 @@ my %prismPublicationDate = (
 %Image::ExifTool::XMP::PixelLive = (
     GROUPS => { 1 => 'XMP-PixelLive', 2 => 'Image' },
     NAMESPACE => 'PixelLive',
+    AVOID => 1,
     NOTES => q{
         PixelLive namespace tags.  These tags are not writable becase they are very
         uncommon and I haven't been able to locate a reference which gives the
         namespace URI.
     },
-    AUTHOR    => { Name => 'Author',   Avoid => 1, Groups => { 2 => 'Author' } },
-    COMMENTS  => { Name => 'Comments', Avoid => 1 },
-    COPYRIGHT => { Name => 'Copyright',Avoid => 1, Groups => { 2 => 'Author' } },
-    DATE      => { Name => 'Date',     Avoid => 1, Groups => { 2 => 'Time' } },
-    GENRE     => { Name => 'Genre',    Avoid => 1 },
-    TITLE     => { Name => 'Title',    Avoid => 1 },
+    AUTHOR    => { Name => 'Author',    Groups => { 2 => 'Author' } },
+    COMMENTS  => { Name => 'Comments' },
+    COPYRIGHT => { Name => 'Copyright', Groups => { 2 => 'Author' } },
+    DATE      => { Name => 'Date',      Groups => { 2 => 'Time' } },
+    GENRE     => { Name => 'Genre' },
+    TITLE     => { Name => 'Title' },
 );
 
 # Extensis Portfolio tags (extensis) (ref 11)
@@ -1171,6 +1191,7 @@ my %sSubVersion = (
     %xmpTableDefaults,
     GROUPS => { 0 => 'XMP', 1 => 'XMP-acdsee', 2 => 'Image' },
     NAMESPACE => 'acdsee',
+    AVOID => 1,
     NOTES => q{
         ACD Systems ACDSee namespace tags.
 
@@ -1180,15 +1201,15 @@ my %sSubVersion = (
         mumble to themselves instead of speaking out for the rest of the world to
         hear.)
     },
-    author     => { Avoid => 1, Groups => { 2 => 'Author' } },
-    caption    => { Avoid => 1 },
-    categories => { Avoid => 1 },
-    collections=> { Avoid => 1 },
-    datetime   => { Name => 'DateTime', Avoid => 1, Groups => { 2 => 'Time' }, %dateTimeInfo },
-    keywords   => { Avoid => 1, List => 'Bag' },
-    notes      => { Avoid => 1 },
-    rating     => { Avoid => 1, Writable => 'real' }, # integer?
-    tagged     => { Avoid => 1, Writable => 'boolean' },
+    author     => { Groups => { 2 => 'Author' } },
+    caption    => { },
+    categories => { },
+    collections=> { },
+    datetime   => { Name => 'DateTime', Groups => { 2 => 'Time' }, %dateTimeInfo },
+    keywords   => { List => 'Bag' },
+    notes      => { },
+    rating     => { Writable => 'real' }, # integer?
+    tagged     => { Writable => 'boolean' },
     rawrppused => { Writable => 'boolean' },
     rpp => {
         Name => 'RPP',
@@ -1203,13 +1224,13 @@ my %sSubVersion = (
         Binary => 1,
     },
     # more tags (ref forum6840)
-    FixtureIdentifier   => { Avoid => 1 },
-    EditStatus          => { Avoid => 1 },
-    ReleaseDate         => { Avoid => 1 },
-    ReleaseTime         => { Avoid => 1 },
-    OriginatingProgram  => { Avoid => 1 },
-    ObjectCycle         => { Avoid => 1 },
-    Snapshots           => { Avoid => 1, List => 'Bag', Binary => 1 },
+    FixtureIdentifier   => { },
+    EditStatus          => { },
+    ReleaseDate         => { },
+    ReleaseTime         => { },
+    OriginatingProgram  => { },
+    ObjectCycle         => { },
+    Snapshots           => { List => 'Bag', Binary => 1 },
 );
 
 # Picture Licensing Universal System namespace properties (xmpPLUS)
@@ -1217,13 +1238,14 @@ my %sSubVersion = (
     %xmpTableDefaults,
     GROUPS => { 1 => 'XMP-xmpPLUS', 2 => 'Author' },
     NAMESPACE => 'xmpPLUS',
+    AVOID => 1,
     NOTES => q{
         XMP Picture Licensing Universal System (PLUS) tags as written by some older
         Adobe applications.  See L<PLUS XMP Tags|Image::ExifTool::TagNames/PLUS XMP Tags>
         for the current PLUS tags.
     },
-    CreditLineReq   => { Writable => 'boolean', Avoid => 1 },
-    ReuseAllowed    => { Writable => 'boolean', Avoid => 1 },
+    CreditLineReq   => { Writable => 'boolean' },
+    ReuseAllowed    => { Writable => 'boolean' },
 );
 
 # Creative Commons namespace properties (cc) (ref 5)
@@ -1340,14 +1362,15 @@ my %sSubVersion = (
     %xmpTableDefaults,
     GROUPS => { 1 => 'XMP-expressionmedia', 2 => 'Image' },
     NAMESPACE => 'expressionmedia',
+    AVOID => 1,
     NOTES => q{
         Microsoft Expression Media namespace tags.  These tags are avoided when
         writing due to name conflicts with tags in other schemas.
     },
-    Event       => { Avoid => 1 },
-    Status      => { Avoid => 1 },
-    People      => { Avoid => 1, List => 'Bag' },
-    CatalogSets => { Avoid => 1, List => 'Bag' },
+    Event       => { },
+    Status      => { },
+    People      => { List => 'Bag' },
+    CatalogSets => { List => 'Bag' },
 );
 
 # DigiKam namespace tags (ref PH)
@@ -1570,6 +1593,7 @@ my %sSubVersion = (
     %xmpTableDefaults,
     GROUPS => { 1 => 'XMP-GSpherical', 2 => 'Image' },
     NAMESPACE => 'GSpherical',
+    AVOID => 1,
     NOTES => q{
         Not actually XMP.  These RDF/XML tags are used in Google spherical MP4
         videos.  See
@@ -1577,32 +1601,74 @@ my %sSubVersion = (
         for the specification.
     },
     # (avoid due to conflicts with XMP-GPano tags)
-    Spherical                   => { Avoid => 1, Writable => 'boolean' },
-    Stitched                    => { Avoid => 1, Writable => 'boolean' },
-    StitchingSoftware           => { Avoid => 1 },
-    ProjectionType              => { Avoid => 1 },
-    StereoMode                  => { Avoid => 1 },
-    SourceCount                 => { Avoid => 1, Writable => 'integer' },
-    InitialViewHeadingDegrees   => { Avoid => 1, Writable => 'real' },
-    InitialViewPitchDegrees     => { Avoid => 1, Writable => 'real' },
-    InitialViewRollDegrees      => { Avoid => 1, Writable => 'real' },
+    Spherical                   => { Writable => 'boolean' },
+    Stitched                    => { Writable => 'boolean' },
+    StitchingSoftware           => { },
+    ProjectionType              => { },
+    StereoMode                  => { },
+    SourceCount                 => { Writable => 'integer' },
+    InitialViewHeadingDegrees   => { Writable => 'real' },
+    InitialViewPitchDegrees     => { Writable => 'real' },
+    InitialViewRollDegrees      => { Writable => 'real' },
     Timestamp                   => {
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
-        Avoid => 1,
-        Writable => 'date',
+        Writable => 'integer',
         Shift => 'Time',
         ValueConv => 'ConvertUnixTime($val)', #(NC)
         ValueConvInv => 'GetUnixTime($val)',
         PrintConv => '$self->ConvertDateTime($val)',
         PrintConvInv => '$self->InverseDateTime($val)',
     },
-    FullPanoWidthPixels         => { Avoid => 1, Writable => 'integer' },
-    FullPanoHeightPixels        => { Avoid => 1, Writable => 'integer' },
-    CroppedAreaImageWidthPixels => { Avoid => 1, Writable => 'integer' },
-    CroppedAreaImageHeightPixels=> { Avoid => 1, Writable => 'integer' },
-    CroppedAreaLeftPixels       => { Avoid => 1, Writable => 'integer' },
-    CroppedAreaTopPixels        => { Avoid => 1, Writable => 'integer' },
+    FullPanoWidthPixels         => { Writable => 'integer' },
+    FullPanoHeightPixels        => { Writable => 'integer' },
+    CroppedAreaImageWidthPixels => { Writable => 'integer' },
+    CroppedAreaImageHeightPixels=> { Writable => 'integer' },
+    CroppedAreaLeftPixels       => { Writable => 'integer' },
+    CroppedAreaTopPixels        => { Writable => 'integer' },
+);
+
+# Google depthmap information (ref https://developers.google.com/depthmap-metadata/reference)
+%Image::ExifTool::XMP::GDepth = (
+    GROUPS      => { 0 => 'XMP', 1 => 'XMP-GDepth', 2 => 'Image' },
+    NAMESPACE   => { 'GDepth' => 'http://ns.google.com/photos/1.0/depthmap/' },
+    AVOID       => 1, # (too potential tag name conflicts)
+    NOTES       => q{
+        Google depthmap information. See
+        L<https://developers.google.com/depthmap-metadata/> for the specification.
+    },
+    WRITABLE    => 'string', # (default to string-type tags)
+    PRIORITY    => 0,
+    Format => {
+        PrintConv => {
+            RangeInverse => 'RangeInverse',
+            RangeLinear  => 'RangeLinear',
+        },
+    },
+    Near        => { Writable => 'real' },
+    Far         => { Writable => 'real' },
+    Mime        => { },
+    Data => {
+        ValueConv => 'Image::ExifTool::XMP::DecodeBase64($val)',
+        ValueConvInv => 'Image::ExifTool::XMP::EncodeBase64($val)',
+    },
+    Units       => { },
+    MeasureType => {
+        PrintConv => {
+            OpticalAxis => 'OpticalAxis',
+            OpticalRay  => 'OpticalRay',
+        },
+    },
+    ConfidenceMime  => { },
+    Confidence => {
+        ValueConv => 'Image::ExifTool::XMP::DecodeBase64($val)',
+        ValueConvInv => 'Image::ExifTool::XMP::EncodeBase64($val)',
+    },
+    Manufacturer=> { },
+    Model       => { },
+    Software    => { },
+    ImageWidth  => { Writable => 'real' },
+    ImageHeight => { Writable => 'real' },
 );
 
 # Getty Images namespace (ref PH)
@@ -1669,21 +1735,6 @@ my %sSubVersion = (
     LANG_INFO => \&GetLangInfo,
     NAMESPACE => undef, # variable namespace
 );
-
-# set "Avoid" flag for all PRISM tags
-my ($table, $key);
-foreach $table (
-    \%Image::ExifTool::XMP::prism,
-    \%Image::ExifTool::XMP::prl,
-    \%Image::ExifTool::XMP::pur,
-    \%Image::ExifTool::XMP::pmi,
-    \%Image::ExifTool::XMP::prm)
-{
-    foreach $key (TagTableKeys($table)) {
-        $$table{$key}{Avoid} = 1;
-    }
-}
-
 
 1;  #end
 

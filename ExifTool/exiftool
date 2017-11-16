@@ -12,7 +12,7 @@
 use strict;
 require 5.004;
 
-my $version = '10.57';
+my $version = '10.67';
 
 # add our 'lib' directory to the include list BEFORE 'use Image::ExifTool'
 my $exeDir;
@@ -510,9 +510,9 @@ if (not $preserveTime and $^O eq 'MSWin32') {
 for (;;) {
 
   # execute the command now if no more arguments or -execute is used
-  if (not @ARGV or $ARGV[0] =~ /^-execute(\d*)$/i) {
+  if (not @ARGV or $ARGV[0] =~ /^(-|\xe2\x88\x92)execute(\d*)$/i) {
     if (@ARGV) {
-        $executeID = $1;        # save -execute number for "{ready}" response
+        $executeID = $2;        # save -execute number for "{ready}" response
         $helped = 1;            # don't show help if we used -execute
         $badCmd and shift, next Command;
     } elsif ($stayOpen >= 2) {
@@ -943,7 +943,7 @@ for (;;) {
     (/^l$/ or $a eq 'long') and --$outFormat, next;
     (/^L$/ or $a eq 'latin') and $utf8 = 0, $mt->Options(Charset => 'Latin'), next;
     if ($a eq 'lang') {
-        $langOpt = (@ARGV and $ARGV[0] !~ /^-/) ? shift : undef;
+        $langOpt = (@ARGV and $ARGV[0] !~ /^(-|\xe2\x88\x92)/) ? shift : undef;
         if ($langOpt) {
             # make lower case and use underline as a separator (eg. 'en_ca')
             $langOpt =~ tr/-A-Z/_a-z/;
@@ -1314,8 +1314,8 @@ if ($tagOut and ($csv or %printFmt or $tabFormat or $xml or ($verbose and $html)
     next;
 }
 
-if ($textOut and $csv and $csv eq 'CSV' and not $isWriting) {
-    Warn "Sorry, -w may not be combined with -csv\n";
+if ($csv and $csv eq 'CSV' and not $isWriting and ($textOut or $binaryOutput)) {
+    Warn 'Sorry, ' . ($textOut ? '-w' : '-b') . " may not be combined with -csv\n";
     $rtnVal = 1;
     next;
 }
@@ -3171,7 +3171,7 @@ sub ConvertBinary($)
             }
         } else {
             # (-b is not valid for HTML output)
-            my $bOpt = $html ? '' : ', use -b option to extract';
+            my $bOpt = ($html or ($csv and $csv eq 'CSV')) ? '' : ', use -b option to extract';
             if ($$obj =~ /^Binary data \d+ bytes$/) {
                 $obj = "($$obj$bOpt)";
             } else {
@@ -3724,15 +3724,16 @@ sub NextUnusedFilename($;$$)
     return $fmt unless $fmt =~ /%[-+]?\d*\.?\d*[lun]?[cC]/;
     my %sep = ( '-' => '-', '+' => '_' );
     my ($copy, $alpha) = (0, 'a');
+    my $seq = $seqFileNum - 1;
     for (;;) {
         my ($filename, $pos) = ('', 0);
         while ($fmt =~ /(%([-+]?)(\d*)(\.?)(\d*)([lun]?)([cC]))/g) {
             $filename .= substr($fmt, $pos, pos($fmt) - $pos - length($1));
             $pos = pos($fmt);
             my ($sign, $wid, $dec, $wid2, $mod, $tok) = ($2, $3 || 0, $4, $5 || 0, $6, $7);
-            my $seq = $seqFileNum - 1;
+            my $diff = 0;
             if ($tok eq 'C') {
-                $seq += $wid if $wid;
+                $diff = $wid;
                 $wid = $wid2;
             } else {
                 next unless $dec or $copy;
@@ -3741,13 +3742,13 @@ sub NextUnusedFilename($;$$)
             # add dash or underline separator if '-' or '+' specified
             $filename .= $sep{$sign} if $sign;
             if ($mod and $mod ne 'n') {
-                my $a = $tok eq 'C' ? Num2Alpha($seq) : $alpha;
+                my $a = $tok eq 'C' ? Num2Alpha($diff + $seq++) : $alpha;
                 my $str = ($wid and $wid > length $a) ? 'a' x ($wid - length($a)) : '';
                 $str .= $a;
                 $str = uc $str if $mod eq 'u';
                 $filename .= $str;
             } else {
-                my $c = $tok eq 'C' ? $seq : $copy;
+                my $c = $tok eq 'C' ? ($diff + $seq++) : $copy;
                 my $num = $c + ($mod ? 1 : 0);
                 $filename .= $wid ? sprintf("%.${wid}d",$num) : $num;
             }
@@ -4074,42 +4075,43 @@ supported by ExifTool (r = read, w = write, c = create):
 
   File Types
   ------------+-------------+-------------+-------------+------------
-  3FR   r     | DV    r     | JSON  r     | ODT   r     | RIFF  r
-  3G2   r/w   | DVB   r/w   | K25   r     | OFR   r     | RSRC  r
-  3GP   r/w   | DYLIB r     | KDC   r     | OGG   r     | RTF   r
-  A     r     | EIP   r     | KEY   r     | OGV   r     | RW2   r/w
-  AA    r     | EPS   r/w   | LA    r     | OPUS  r     | RWL   r/w
-  AAX   r/w   | EPUB  r     | LFP   r     | ORF   r/w   | RWZ   r
-  ACR   r     | ERF   r/w   | LNK   r     | OTF   r     | RM    r
-  AFM   r     | EXE   r     | M2TS  r     | PAC   r     | SEQ   r
-  AI    r/w   | EXIF  r/w/c | M4A/V r/w   | PAGES r     | SO    r
-  AIFF  r     | EXR   r     | MAX   r     | PBM   r/w   | SR2   r/w
-  APE   r     | EXV   r/w/c | MEF   r/w   | PCD   r     | SRF   r
-  ARW   r/w   | F4A/V r/w   | MIE   r/w/c | PDB   r     | SRW   r/w
-  ASF   r     | FFF   r/w   | MIFF  r     | PDF   r/w   | SVG   r
-  AVI   r     | FLA   r     | MKA   r     | PEF   r/w   | SWF   r
-  AZW   r     | FLAC  r     | MKS   r     | PFA   r     | THM   r/w
-  BMP   r     | FLIF  r/w   | MKV   r     | PFB   r     | TIFF  r/w
-  BPG   r     | FLV   r     | MNG   r/w   | PFM   r     | TORRENT r
-  BTF   r     | FPF   r     | MOBI  r     | PGF   r     | TTC   r
-  CHM   r     | FPX   r     | MODD  r     | PGM   r/w   | TTF   r
-  COS   r     | GIF   r/w   | MOI   r     | PLIST r     | VCF   r
-  CR2   r/w   | GZ    r     | MOS   r/w   | PICT  r     | VRD   r/w/c
-  CRW   r/w   | HDP   r/w   | MOV   r/w   | PMP   r     | VSD   r
-  CS1   r/w   | HDR   r     | MP3   r     | PNG   r/w   | WAV   r
-  DCM   r     | HTML  r     | MP4   r/w   | PPM   r/w   | WDP   r/w
-  DCP   r/w   | ICC   r/w/c | MPC   r     | PPT   r     | WEBP  r
-  DCR   r     | ICS   r     | MPG   r     | PPTX  r     | WEBM  r
-  DFONT r     | IDML  r     | MPO   r/w   | PS    r/w   | WMA   r
-  DIVX  r     | IIQ   r/w   | MQV   r/w   | PSB   r/w   | WMV   r
-  DJVU  r     | IND   r/w   | MRW   r/w   | PSD   r/w   | WV    r
-  DLL   r     | INX   r     | MXF   r     | PSP   r     | X3F   r/w
-  DNG   r/w   | ISO   r     | NEF   r/w   | QTIF  r/w   | XCF   r
-  DOC   r     | ITC   r     | NRW   r/w   | RA    r     | XLS   r
-  DOCX  r     | J2C   r     | NUMBERS r   | RAF   r/w   | XLSX  r
-  DPX   r     | JNG   r/w   | O     r     | RAM   r     | XMP   r/w/c
-  DR4   r/w/c | JP2   r/w   | ODP   r     | RAR   r     | ZIP   r
-  DSS   r     | JPEG  r/w   | ODS   r     | RAW   r/w   |
+  3FR   r     | DVB   r/w   | JSON  r     | OFR   r     | RTF   r
+  3G2   r/w   | DYLIB r     | K25   r     | OGG   r     | RW2   r/w
+  3GP   r/w   | EIP   r     | KDC   r     | OGV   r     | RWL   r/w
+  A     r     | EPS   r/w   | KEY   r     | OPUS  r     | RWZ   r
+  AA    r     | EPUB  r     | LA    r     | ORF   r/w   | RM    r
+  AAX   r/w   | ERF   r/w   | LFP   r     | OTF   r     | SEQ   r
+  ACR   r     | EXE   r     | LNK   r     | PAC   r     | SO    r
+  AFM   r     | EXIF  r/w/c | M2TS  r     | PAGES r     | SR2   r/w
+  AI    r/w   | EXR   r     | M4A/V r/w   | PBM   r/w   | SRF   r
+  AIFF  r     | EXV   r/w/c | MAX   r     | PCD   r     | SRW   r/w
+  APE   r     | F4A/V r/w   | MEF   r/w   | PDB   r     | SVG   r
+  ARW   r/w   | FFF   r/w   | MIE   r/w/c | PDF   r/w   | SWF   r
+  ASF   r     | FLA   r     | MIFF  r     | PEF   r/w   | THM   r/w
+  AVI   r     | FLAC  r     | MKA   r     | PFA   r     | TIFF  r/w
+  AZW   r     | FLIF  r/w   | MKS   r     | PFB   r     | TORRENT r
+  BMP   r     | FLV   r     | MKV   r     | PFM   r     | TTC   r
+  BPG   r     | FPF   r     | MNG   r/w   | PGF   r     | TTF   r
+  BTF   r     | FPX   r     | MOBI  r     | PGM   r/w   | VCF   r
+  CHM   r     | GIF   r/w   | MODD  r     | PLIST r     | VRD   r/w/c
+  COS   r     | GZ    r     | MOI   r     | PICT  r     | VSD   r
+  CR2   r/w   | HDP   r/w   | MOS   r/w   | PMP   r     | WAV   r
+  CRW   r/w   | HDR   r     | MOV   r/w   | PNG   r/w   | WDP   r/w
+  CS1   r/w   | HEIC  r     | MP3   r     | PPM   r/w   | WEBP  r
+  DCM   r     | HEIF  r     | MP4   r/w   | PPT   r     | WEBM  r
+  DCP   r/w   | HTML  r     | MPC   r     | PPTX  r     | WMA   r
+  DCR   r     | ICC   r/w/c | MPG   r     | PS    r/w   | WMV   r
+  DFONT r     | ICS   r     | MPO   r/w   | PSB   r/w   | WV    r
+  DIVX  r     | IDML  r     | MQV   r/w   | PSD   r/w   | X3F   r/w
+  DJVU  r     | IIQ   r/w   | MRW   r/w   | PSP   r     | XCF   r
+  DLL   r     | IND   r/w   | MXF   r     | QTIF  r/w   | XLS   r
+  DNG   r/w   | INX   r     | NEF   r/w   | RA    r     | XLSX  r
+  DOC   r     | ISO   r     | NRW   r/w   | RAF   r/w   | XMP   r/w/c
+  DOCX  r     | ITC   r     | NUMBERS r   | RAM   r     | ZIP   r
+  DPX   r     | J2C   r     | O     r     | RAR   r     |
+  DR4   r/w/c | JNG   r/w   | ODP   r     | RAW   r/w   |
+  DSS   r     | JP2   r/w   | ODS   r     | RIFF  r     |
+  DV    r     | JPEG  r/w   | ODT   r     | RSRC  r     |
 
   Meta Information
   ----------------------+----------------------+---------------------
@@ -4158,7 +4160,7 @@ L<Input-output text formatting|/Input-output text formatting>
   -b          (-binary)            Output metadata in binary format
   -c FMT      (-coordFormat)       Set format for GPS coordinates
   -charset [[TYPE=]CHARSET]        Specify encoding for special characters
-  -csv[=CSVFILE]                   Export/import tags in CSV format
+  -csv[[+]=CSVFILE]                Export/import tags in CSV format
   -d FMT      (-dateFormat)        Set format for date/time values
   -D          (-decimal)           Show tag ID numbers in decimal
   -E, -ex     (-escape(HTML|XML))  Escape values for HTML (-E) or XML (-ex)
@@ -4168,7 +4170,7 @@ L<Input-output text formatting|/Input-output text formatting>
   -h          (-htmlFormat)        Use HMTL formatting for output
   -H          (-hex)               Show tag ID numbers in hexadecimal
   -htmlDump[OFFSET]                Generate HTML-format binary dump
-  -j[=JSONFILE] (-json)            Export/import tags in JSON format
+  -j[[+]=JSONFILE] (-json)         Export/import tags in JSON format
   -l          (-long)              Use long 2-line output format
   -L          (-latin)             Use Windows Latin1 encoding
   -lang [LANG]                     Set current language
@@ -4319,11 +4321,11 @@ value to multiple tags.  When specified with wildcards, "unsafe" tags are
 not written.  A tag name of C<All> is equivalent to C<*> (except that it
 doesn't require quoting, while arguments with wildcards do on systems with
 shell globbing), and is often used when deleting all metadata (ie. C<-All=>)
-or an entire group (eg. C<-GROUP:All=>, see note 4 below).  Note that not
+or an entire group (eg. C<-XMP-dc:All=>, see note 4 below).  Note that not
 all groups are deletable, and that the JPEG APP14 "Adobe" group is not
 removed by default with C<-All=> because it may affect the appearance of the
-image.  However, this will remove color space information, so the colors may
-be affected (but this may be avoided by copying back the tags defined by the
+image.  However, color space information is removed, so the colors may be
+affected (but this may be avoided by copying back the tags defined by the
 ColorSpaceTags shortcut).  Use the B<-listd> option for a complete list of
 deletable groups, and see note 5 below regarding the "APP" groups.  Also,
 within an image some groups may be contained within others, and these groups
@@ -4419,13 +4421,14 @@ single file.  In this case, C<@> may be used to represent the source file
 processing multiple files.  Specified tags are then copied from each file in
 turn as it is rewritten.  For advanced batch use, the source file name may
 also be specified using a I<FMT> string in which %d, %f and %e represent the
-directory, file name and extension of I<FILE>. See B<-w> option for I<FMT>
-string examples.
+directory, file name and extension of I<FILE>.  (eg. the current I<FILE>
+would be represented by C<%d%f.%e>, with the same effect as C<@>).  See the
+B<-w> option for I<FMT> string examples.
 
 A powerful redirection feature allows a destination tag to be specified for
 each copied tag.  With this feature, information may be written to a tag
 with a different name or group.  This is done using
-E<quot>'-I<DSTTAG>E<lt>I<SRCTAG>'E<quot> or 
+E<quot>'-I<DSTTAG>E<lt>I<SRCTAG>'E<quot> or
 E<quot>'-I<SRCTAG>E<gt>I<DSTTAG>'E<quot> on the command line after
 B<-tagsFromFile>, and causes the value of I<SRCTAG> to be copied from
 I<SRCFILE> and written to I<DSTTAG> in I<FILE>.  Note that this argument
@@ -4486,13 +4489,13 @@ this command:
 This is significant in the case where an overlap exists between the copied
 and assigned tags because later operations may override earlier ones.
 
-5) The normal behaviour of copied tags differs subtly from that of assigned
-tags for list-type tags.  When copying to a list, each copied tag overrides
-any previous operations on the list.  While this avoids duplicate list items
-when copying groups of tags from a file containing redundant information, it
-also prevents values of different tags from being copied into the same list
-when this is the intent.  So a B<-addTagsFromFile> option is provided which
-allows copying of multiple tags into the same list.  eg)
+5) The normal behaviour of copied tags differs from that of assigned tags
+for list-type tags and conditional replacements because each copy operation
+on a tag overrides any previous operations.  While this avoids duplicate
+list items when copying groups of tags from a file containing redundant
+information, it also prevents values of different tags from being copied
+into the same list when this is the intent.  So a B<-addTagsFromFile> option
+is provided which allows copying of multiple tags into the same list.  eg)
 
     exiftool -addtagsfromfile @ '-subject<make' '-subject<model' ...
 
@@ -4613,6 +4616,8 @@ values are:
     Baltic      cp1257           Windows Baltic
     Vietnam     cp1258           Windows Vietnamese
     Thai        cp874            Windows Thai
+    DOSLatinUS  cp437            DOS Latin US
+    DOSLatin1   cp850            DOS Latin1
     MacRoman    cp10000, Roman   Macintosh Roman
     MacLatin2   cp10029          Macintosh Latin2 (Central Europe)
     MacCyrillic cp10007          Macintosh Cyrillic
@@ -4645,7 +4650,7 @@ information about coded character sets, and the
 L<Image::ExifTool Options|Image::ExifTool/Options> for more details about
 the B<-charset> settings.
 
-=item B<-csv>[=I<CSVFILE>]
+=item B<-csv>[[+]=I<CSVFILE>]
 
 Export information in CSV format, or import information if I<CSVFILE> is
 specified.  When importing, the CSV file must be in exactly the same format
@@ -4670,14 +4675,14 @@ option and set the value to "-" in the CSV file (or to the MissingTagValue
 if this API option was used).  Multiple databases may be imported in a
 single command.
 
-When exporting a CSV file, the B<-g> or B<-G> option to add group names to
-the tag headings.  If the B<-a> option is used to allow duplicate tag names,
-the duplicate tags are only included in the CSV output if the column
-headings are unique.  Adding the B<-G4> option ensures a unique column
-heading for each tag.  When exporting specific tags, the CSV columns are
-arranged in the same order as the specified tags provided the column
-headings exactly match the specified tag names, otherwise the columns are
-sorted in alphabetical order.
+When exporting a CSV file, the B<-g> or B<-G> option adds group names to the
+tag headings.  If the B<-a> option is used to allow duplicate tag names, the
+duplicate tags are only included in the CSV output if the column headings
+are unique.  Adding the B<-G4> option ensures a unique column heading for
+each tag.  When exporting specific tags, the CSV columns are arranged in the
+same order as the specified tags provided the column headings exactly match
+the specified tag names, otherwise the columns are sorted in alphabetical
+order.
 
 When importing from a CSV file, only files specified on the command line are
 processed.  Any extra entries in the CSV file are ignored.
@@ -4770,7 +4775,7 @@ B<-htmlDump0> for absolute offsets.  Currently only EXIF/TIFF and JPEG
 information is dumped, but the -u option can be used to give a raw hex dump
 of other file formats.
 
-=item B<-j>[=I<JSONFILE>] (B<-json>)
+=item B<-j>[[+]=I<JSONFILE>] (B<-json>)
 
 Use JSON (JavaScript Object Notation) formatting for console output, or
 import JSON file if I<JSONFILE> is specified.  This option may be combined
@@ -4800,7 +4805,7 @@ of "*" defines default tags for all target files which are combined with any
 tags specified for the specific SourceFile processed.  The imported JSON
 file must have the same format as the exported JSON files with the exception
 that the B<-g> option is not compatible with the import file format (use
-B<-G> instead). Additionally, tag names in the input JSON file may be
+B<-G> instead).  Additionally, tag names in the input JSON file may be
 suffixed with a C<#> to disable print conversion.
 
 Unlike CSV import, empty values are not ignored, and will cause an empty
@@ -4852,8 +4857,8 @@ variable-width character set.
 For list-type tags, this causes only the item with the specified index to be
 extracted.  I<INDEX> is 0 for the first item in the list.  Negative indices
 may also be used to reference items from the end of the list.  Has no effect
-on single-valued tags.  Also applies to tag values when copying, and in
-B<-if> conditions.
+on single-valued tags.  Also applies to tag values when copying from a tag,
+and in B<-if> conditions.
 
 =item B<-n> (B<--printConv>)
 
@@ -4909,7 +4914,7 @@ with this command:
 
 produces output like this:
 
-    -- Generated by ExifTool 10.57 --
+    -- Generated by ExifTool 10.67 --
     File: a.jpg - 2003:10:31 15:44:19
     (f/5.6, 1/60s, ISO 100)
     File: b.jpg - 2006:05:23 11:57:38
@@ -5040,12 +5045,13 @@ include the leading '.'.  For example:
     -w dir2/%d%f.txt  # write to "dir2", keeping dir structure
     -w a%c.txt        # write to "a.txt" or "a1.txt" or "a2.txt"...
 
-Existing files will not be overwritten unless an exclamation point is added
-to the option name (ie. B<-w!> or B<-textOut!>), or a plus sign to append to
-the existing file (ie. B<-w+> or B<-textOut+>).  Both may be used (ie.
-B<-w+!> or B<-textOut+!>) to overwrite output files that didn't exist before
-the command was run, and append the output from multiple source files.  For
-example, to write one output file for all source files in each directory:
+Existing files will not be changed unless an exclamation point is added to
+the option name (ie. B<-w!> or B<-textOut!>) to overwrite the file, or a
+plus sign (ie. B<-w+> or B<-textOut+>) to append to the existing file.  Both
+may be used (ie. B<-w+!> or B<-textOut+!>) to overwrite output files that
+didn't exist before the command was run, and append the output from multiple
+source files.  For example, to write one output file for all source files in
+each directory:
 
     exiftool -filename -createdate -T -w+! %d/out.txt -r DIR
 
@@ -5245,9 +5251,9 @@ especially for PDF files with many embedded images.
 Process only files with (B<-ext>) or without (B<--ext>) a specified
 extension.  There may be multiple B<-ext> and B<--ext> options.  A plus sign
 may be added (ie. B<-ext+>) to add the specified extension to the normally
-processed files.  EXT may begin with a leading '.', and case is not
-significant.  C<"*"> may be used to process files with any extension (or
-none at all), as in the last three examples:
+processed files.  EXT may begin with a leading '.', which is ignored.  Case
+is not significant.  C<"*"> may be used to process files with any extension
+(or none at all), as in the last three examples:
 
     exiftool -ext JPG DIR             # process only JPG files
     exiftool --ext cr2 --ext dng DIR  # supported files but CR2/DNG
@@ -5928,10 +5934,11 @@ Note that function names are case sensitive.
 
 =head1 WINDOWS UNICODE FILE NAMES
 
-In Windows, by default, file and directory names are specified on the
-command line (or in arg files) using the system code page, which varies with
-the system settings.  Unfortunately, these code pages are not complete
-character sets, so not all file names may be represented.
+In Windows, command-line arguments are specified using the current code page
+and are recoded automatically to the system code page.  This recoding is not
+done for arguments in ExifTool arg files, so by default filenames in arg
+files use the system code page.  Unfortunately, these code pages are not
+complete character sets, so not all file names may be represented.
 
 ExifTool 9.79 and later allow the file name encoding to be specified with
 C<-charset filename=CHARSET>, where C<CHARSET> is the name of a valid
@@ -5940,8 +5947,8 @@ complete list).  Setting this triggers the use of Windows wide-character i/o
 routines, thus providing support for all Unicode file names.  But note that
 it is not trivial to pass properly encoded file names on the Windows command
 line (see L<http://owl.phy.queensu.ca/~phil/exiftool/faq.html#Q18> for
-details), so placing them in a UTF-8 encoded B<-@> argfile is recommended if
-possible.
+details), so placing them in a UTF-8 encoded B<-@> argfile and using
+C<-charset filename=utf8> is recommended if possible.
 
 A warning is issued if a specified filename contains special characters and
 the filename character set was not provided.  However, the warning may be
