@@ -123,26 +123,45 @@ class MapViewController: NSViewController {
                      forKey: cameraAltitudeKey)
     }
 
+    @IBAction func searchMapLocation(_ sender: NSSearchField) {
+        if !sender.stringValue.isEmpty {
+            print("search bar: \(sender.stringValue)")
+            let geocoder = CLGeocoder()
+            geocoder.geocodeAddressString(sender.stringValue) {
+                placeMark, error in
+                if error == nil,
+                   let location = placeMark?[0].location {
+                    self.pinMapAt(latitude: location.coordinate.latitude,
+                                  longitude: location.coordinate.longitude,
+                                  dropPin: false)
+                }
+            }
+        }
+    }
+
     // center the map as the given latitude/longitude and drop
     // a pin at that location
-    func pinMapAt(latitude: Double, longitude: Double) {
+    func pinMapAt(latitude: Double, longitude: Double, dropPin: Bool = true) {
         let location = CLLocationCoordinate2D(latitude: latitude,
                                               longitude: longitude)
         let point = MKMapPointForCoordinate(location);
         if !MKMapRectContainsPoint(mapView.visibleMapRect, point) {
             mapView.setCenter(location, animated: false)
         }
-        // if a pin exists, move it.  Otherwise create a new pin
-        if let pin = mapPin {
-            pin.coordinate = location;
-        } else {
-            mapPin = MKPointAnnotation()
+        // if an image is selected and a pin exists, move it.
+        // Otherwise create a new pin
+        if dropPin {
             if let pin = mapPin {
                 pin.coordinate = location;
-                pin.title = "location"
-                mapView.addAnnotation(pin)
             } else {
-                unexpected(error: nil, "Can't create map pin")
+                mapPin = MKPointAnnotation()
+                if let pin = mapPin {
+                    pin.coordinate = location;
+                    pin.title = "location"
+                    mapView.addAnnotation(pin)
+                } else {
+                    unexpected(error: nil, "Can't create map pin")
+                }
             }
         }
     }

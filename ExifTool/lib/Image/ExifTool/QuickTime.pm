@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # File:         QuickTime.pm
 #
-# Description:  Read QuickTime, MP4 and M4A meta information
+# Description:  Read QuickTime and MP4 meta information
 #
 # Revisions:    10/04/2005 - P. Harvey Created
 #               12/19/2005 - P. Harvey Added MP4 support
@@ -42,7 +42,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.02';
+$VERSION = '2.05';
 
 sub FixWrongFormat($);
 sub ProcessMOV($$;$);
@@ -51,6 +51,9 @@ sub ProcessMetaData($$$);
 sub ProcessEncodingParams($$$);
 sub ProcessHybrid($$$);
 sub ProcessRights($$$);
+sub ParseItemLocation($$);
+sub ParseItemInfoEntry($$);
+sub ParseItemPropAssoc($$);
 sub ConvertISO6709($);
 sub ConvertChapterList($);
 sub PrintChapter($);
@@ -77,6 +80,9 @@ my %mimeLookup = (
     M4V  => 'video/x-m4v',
     MOV  => 'video/quicktime',
     MQV  => 'video/quicktime',
+    HEIC => 'image/heic',
+    HEVC => 'image/heic-sequence',
+    HEIF => 'image/heif',
 );
 
 # look up file type from ftyp atom type, with MIME type in comment if known
@@ -171,6 +177,10 @@ my %ftypLookup = (
     'ssc1' => 'Samsung stereoscopic, single stream',
     'ssc2' => 'Samsung stereoscopic, dual stream',
     'XAVC' => 'Sony XAVC', #PH
+    'heic' => 'High Efficiency Image Format HEVC still image (.HEIC)', # image/heic
+    'hevc' => 'High Efficiency Image Format HEVC sequence (.HEICS)', # image/heic-sequence
+    'mif1' => 'High Efficiency Image Format still image (.HEIF)', # image/heif
+    'msf1' => 'High Efficiency Image Format sequence (.HEIFS)', # image/heif-sequence
 );
 
 # information for time/date-based tags (time zero is Jan 1, 1904)
@@ -364,6 +374,7 @@ my %graphicsMode = (
         Groups => { 2 => 'Preview' },
         Binary => 1,
     },
+    # (note that moov is present for an HEIF sequence)
     moov => {
         Name => 'Movie',
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::Movie' },
@@ -561,6 +572,7 @@ my %graphicsMode = (
 #            v410 => "Uncompressed Y'CbCr, 10-bit 4:4:4",
 #            v210 => "Uncompressed Y'CbCr, 10-bit 4:2:2",
 #        },
+        # (HEVC-encoded videos have a CompressorID of 'hvc1')
     },
     10 => {
         Name => 'VendorID',
@@ -628,6 +640,7 @@ my %graphicsMode = (
     gama => { Name => 'Gamma', Format => 'fixed32u' },
     # mjqt - default quantization table for MJPEG
     # mjht - default Huffman table for MJPEG
+    # csgm ? (seen in hevc video)
 #
 # spherical video v2 stuff (untested)
 #
@@ -639,6 +652,7 @@ my %graphicsMode = (
             0 => 'Monoscopic',
             1 => 'Stereoscopic Top-Bottom',
             2 => 'Stereoscopic Left-Right',
+            3 => 'Stereoscopic Stereo-Custom', # (provisional in spec as of 2017-10-10)
         },
     },
     sv3d => {
@@ -682,6 +696,7 @@ my %graphicsMode = (
         Name => 'EquirectangularProj',
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::equi' },
     },
+    # mshp - MeshProjection (P.I.T.A. to decode, for not much reward, see ref)
 );
 
 # 'prhd' atom information (ref https://github.com/google/spatial-media/blob/master/docs/spherical-video-v2-rfc.md)
@@ -929,6 +944,7 @@ my %graphicsMode = (
             Name => 'SphericalVideoXML',
             Condition => '$$valPt=~/^\xff\xcc\x82\x63\xf8\x55\x4a\x93\x88\x14\x58\x7a\x02\x52\x1f\xdd/',
             Flags => [ 'Binary', 'BlockExtract' ],
+            Writable => 0,
             SubDirectory => {
                 TagTable => 'Image::ExifTool::XMP::Main',
                 Start => 16,
@@ -1931,16 +1947,27 @@ my %graphicsMode = (
     },
     iloc => {
         Name => 'ItemLocation',
-        Flags => ['Binary','Unknown'],
+        RawConv => \&ParseItemLocation,
+        Notes => 'parsed, but not extracted as a tag',
     },
     ipro => {
         Name => 'ItemProtection',
         Flags => ['Binary','Unknown'],
     },
-    iinf => {
+    iinf => [{
         Name => 'ItemInformation',
-        Flags => ['Binary','Unknown'],
-    },
+        Condition => '$$valPt =~ /^\0/', # (version 0?)
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::QuickTime::ItemInfo',
+            Start => 6, # (4-byte version/flags + 2-byte count)
+        },
+    },{
+        Name => 'ItemInformation',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::QuickTime::ItemInfo',
+            Start => 8, # (4-byte version/flags + 4-byte count)
+        },
+    }],
    'xml ' => {
         Name => 'XML',
         Flags => [ 'Binary', 'Protected', 'BlockExtract' ],
@@ -1957,13 +1984,143 @@ my %graphicsMode = (
         Name => 'BinaryXML',
         Flags => ['Binary','Unknown'],
     },
-    pitm => {
+    pitm => [{
         Name => 'PrimaryItemReference',
-        Flags => ['Binary','Unknown'],
-    },
+        Condition => '$$valPt =~ /^\0/', # (version 0?)
+        RawConv => '$$self{PrimaryItem} = unpack("x4n",$val)',
+    },{
+        Name => 'PrimaryItemReference',
+        RawConv => '$$self{PrimaryItem} = unpack("x4N",$val)',
+    }],
     free => { #PH
         Name => 'Free',
         Flags => ['Binary','Unknown'],
+    },
+    iprp => {
+        Name => 'ItemProperties',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::ItemProp' },
+    },
+    iref => {
+        Name => 'ItemReference',
+        # the version is needed to parse some of the item references
+        Condition => '$$self{ItemRefVersion} = ord($$valPt); 1',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::QuickTime::ItemRef',
+            Start => 4,
+        },
+    },
+    # idat
+);
+
+%Image::ExifTool::QuickTime::ItemProp = (
+    PROCESS_PROC => \&ProcessMOV,
+    GROUPS => { 2 => 'Image' },
+    ipco => {
+        Name => 'ItemPropertyContainer',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::ItemPropCont' },
+    },
+    ipma => {
+        Name => 'ItemPropertyAssociation',
+        RawConv => \&ParseItemPropAssoc,
+        Notes => 'parsed, but not extracted as a tag',
+    },
+);
+
+%Image::ExifTool::QuickTime::ItemPropCont = (
+    PROCESS_PROC => \&ProcessMOV,
+    GROUPS => { 2 => 'Image' },
+    VARS => { START_INDEX => 1 },   # show verbose indices starting at 1
+    colr => [{
+        Name => 'ICC_Profile',
+        Condition => '$$valPt =~ /^(prof|rICC)/',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::ICC_Profile::Main',
+            Start => 4,
+        },
+    },{
+        Name => 'Unknown_colr',
+        Flags => ['Binary','Unknown','Hidden'],
+    }],
+    irot => {
+        Name => 'Rotation',
+        Format => 'int8u',
+        ValueConv => '$val * 90',
+    },
+    ispe => {
+        Name => 'ImageSpatialExtent',
+        Condition => '$$valPt =~ /^\0{4}/',     # (version/flags == 0/0)
+        RawConv => 'join " ", unpack("x4N*", $val)',
+        PrintConv => '$val =~ tr/ /x/; $val',
+    },
+    pixi => {
+        Name => 'ImagePixelDepth',
+        Condition => '$$valPt =~ /^\0{4}./s',   # (version/flags == 0/0 and count)
+        RawConv => 'join " ", unpack("x5C*", $val)',
+    },
+    auxC => {
+        Name => 'AuxiliaryImageType',
+        Format => 'undef',
+        RawConv => '$val = substr($val, 4); $val =~ s/\0.*//s; $val',
+    },
+    pasp => {
+        Name => 'PixelAspectRatio',
+        Format => 'int32u',
+    },
+    rloc => {
+        Name => 'RelativeLocation',
+        Format => 'int32u',
+        RawConv => '$val =~ s/^\S+\s+//; $val', # remove version/flags
+    },
+    clap => {
+        Name => 'CleanAperture',
+        Format => 'rational64u',
+        Notes => '4 numbers: width, height, left and top',
+    },
+    hvcC => {
+        Name => 'HEVCConfiguration',
+        Flags => ['Binary','Unknown'],
+    },
+);
+
+%Image::ExifTool::QuickTime::ItemRef = (
+    PROCESS_PROC => \&ProcessMOV,
+    GROUPS => { 2 => 'Image' },
+    # (Note: ExifTool's ItemRefVersion may be used to test the iref version number)
+    # dimg - DerivedImage
+    # thmb - Thumbnail
+    # auxl - AuxiliaryImage
+    cdsc => {
+        Name => 'ContentDescribes',
+        Notes => 'parsed, but not extracted as a tag',
+        RawConv => sub {
+            my ($val, $et) = @_;
+            my ($id, $count, @to);
+            if ($$et{ItemRefVersion}) {
+                return undef if length $val < 10;
+                ($id, $count, @to) = unpack('NnN*', $val);
+            } else {
+                return undef if length $val < 6;
+                ($id, $count, @to) = unpack('nnn*', $val);
+            }
+            # add all referenced item ID's to a "RefersTo" lookup
+            $$et{ItemInfo}{$id}{RefersTo}{$_} = 1 foreach @to;
+            return undef;
+        },
+    },
+);
+
+%Image::ExifTool::QuickTime::ItemInfo = (
+    PROCESS_PROC => \&ProcessMOV,
+    GROUPS => { 2 => 'Image' },
+    # avc1 - AVC image
+    # hvc1 - HEVC image
+    # lhv1 - L-HEVC image
+    # infe - ItemInformationEntry
+    # infe types: avc1,hvc1,lhv1,Exif,xml1,iovl(overlay image),grid,mime,hvt1(tile image)
+    infe => {
+        Name => 'ItemInfoEntry',
+        RawConv => \&ParseItemInfoEntry,
+        Notes => 'parsed, but not extracted as a tag',
     },
 );
 
@@ -1979,6 +2136,12 @@ my %graphicsMode = (
         ValueConv => '$val =~ s/^1 //; $val',  # (why 2 numbers? -- ignore the first if "1")
     },
     # also: sync, scpt, ssrc, iTunesInfo
+    cdsc => {
+        Name => 'ContentDescribes',
+        Format => 'int32u',
+        PrintConv => '"Track $val"',
+    },
+    # cdep (Structural Dependency QT tag?)
 );
 
 # track aperture mode dimensions atoms
@@ -5307,7 +5470,7 @@ my %graphicsMode = (
         Name => 'ProtectionInfo', #3
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::ProtectionInfo' },
     },
-    # chan - 16/36 bytes
+    # f - 16/36 bytes
     # esds - 31/40/42/43 bytes - ES descriptor (ref 3)
     damr => { #3
         Name => 'DecodeConfig',
@@ -5580,7 +5743,7 @@ my %graphicsMode = (
         Format => 'undef',  # (necessary to prevent decoding as string!)
         RawConv => q{
             return undef if unpack("N",$val) & 0x01;
-            $_ = substr($val,4); s/\0.*//s; $_;
+            $_ = substr($val,4); s/\0+/; /; s/\0.*//s; $_;
         },
     },
 );
@@ -5624,6 +5787,7 @@ my %graphicsMode = (
             vide => 'Video Track',
             subp => 'Subpicture', #http://www.google.nl/patents/US7778526
             nrtm => 'Non-Real Time Metadata', #PH (Sony ILCE-7S) [how is this different from "meta"?]
+            pict => 'Picture', # (HEIC images)
         },
     },
     12 => { #PH
@@ -5973,6 +6137,321 @@ sub GetLangInfoQT($$$)
 }
 
 #------------------------------------------------------------------------------
+# Get variable-length integer from data (used by ParseItemLocation)
+# Inputs: 0) data ref, 1) start position, 2) integer size in bytes (0, 4 or 8),
+#         3) default value
+# Returns: integer value, and updates current position
+sub GetVarInt($$$;$)
+{
+    my ($dataPt, $pos, $n, $default) = @_;
+    my $len = length $$dataPt;
+    $_[1] = $pos + $n;  # update current position
+    return undef if $pos + $n > $len;
+    if ($n == 0) {
+        return $default || 0;
+    } elsif ($n == 4) {
+        return Get32u($dataPt, $pos);
+    } elsif ($n == 8) {
+        return Get64u($dataPt, $pos);
+    }
+    return undef;
+}
+
+#------------------------------------------------------------------------------
+# Get null-terminated string from binary data (used by ParseItemInfoEntry)
+# Inputs: 0) data ref, 1) start position
+# Returns: string, and updates current position
+sub GetString($$)
+{
+    my ($dataPt, $pos) = @_;
+    my $len = length $$dataPt;
+    my $str = '';
+    while ($pos < $len) {
+        my $ch = substr($$dataPt, $pos, 1);
+        ++$pos;
+        last if ord($ch) == 0;
+        $str .= $ch;
+    }
+    $_[1] = $pos;   # update current position
+    return $str;
+}
+
+#==============================================================================
+# The following ParseXxx routines parse various boxes to extract this
+# information about embedded items in a $$et{ItemInfo} hash, keyed by item ID:
+#
+# iloc:
+#  ConstructionMethod - offset type: 0=file, 1=idat, 2=item
+#  DataReferenceIndex - 0 for "this file", otherwise index in dref box
+#  BaseOffset         - base for file offsets
+#  Extents            - list of index,offset,length details for data in file
+# infe:
+#  ProtectionIndex    - index if item is protected (0 for unprotected)
+#  Name               - item name
+#  ContentType        - mime type of item
+#  ContentEncoding    - item encoding
+#  URI                - URI of a 'uri '-type item
+# ipma:
+#  Association        - list of associated properties in the ipco container
+#  Essential          - list of "essential" flags for the associated properties
+# cdsc:
+#  RefersTo           - hash lookup of flags based on referred item ID
+# other:
+#  DocNum             - exiftool document number for this item
+#
+#------------------------------------------------------------------------------
+# Parse item location (iloc) box (ref ISO 14496-12:2015 pg.79)
+# Inputs: 0) iloc data, 1) ExifTool ref
+# Returns: undef, and fills in ExifTool ItemInfo hash
+sub ParseItemLocation($$)
+{
+    my ($val, $et) = @_;
+    my ($i, $j, $num, $pos, $id);
+    my ($extent_index, $extent_offset, $extent_length);
+
+    my $items = $$et{ItemInfo} || ($$et{ItemInfo} = { });
+    my $len = length $val;
+    return undef if $len < 8;
+    my $ver = Get8u(\$val, 0);
+    my $siz = Get16u(\$val, 4);
+    my $noff = ($siz >> 12);
+    my $nlen = ($siz >> 8) & 0x0f;
+    my $nbas = ($siz >> 4) & 0x0f;
+    my $nind = $siz & 0x0f;
+    if ($ver < 2) {
+        $num = Get16u(\$val, 6);
+        $pos = 8;
+    } else {
+        return undef if $len < 10;
+        $num = Get32u(\$val, 6);
+        $pos = 10;
+    }
+    for ($i=0; $i<$num; ++$i) {
+        if ($ver < 2) {
+            return undef if $pos + 2 > $len;
+            $id = Get16u(\$val, $pos);
+            $pos += 2;
+        } else {
+            return undef if $pos + 4 > $len;
+            $id = Get32u(\$val, $pos);
+            $pos += 4;
+        }
+        if ($ver == 1 or $ver == 2) {
+            return undef if $pos + 2 > $len;
+            $$items{$id}{ConstructionMethod} = Get16u(\$val, $pos) & 0x0f;
+            $pos += 2;
+        }
+        return undef if $pos + 2 > $len;
+        $$items{$id}{DataReferenceIndex} = Get16u(\$val, $pos);
+        $pos += 2;
+        $$items{$id}{BaseOffset} = GetVarInt(\$val, $pos, $nbas);
+        return undef if $pos + 2 > $len;
+        my $ext_num = Get16u(\$val, $pos);
+        $pos += 2;
+        my @extents;
+        for ($j=0; $j<$ext_num; ++$j) {
+            if ($ver == 1 or $ver == 2) {
+                $extent_index = GetVarInt(\$val, $pos, $nind, 1);
+            }
+            $extent_offset = GetVarInt(\$val, $pos, $noff);
+            $extent_length = GetVarInt(\$val, $pos, $nlen);
+            return undef unless defined $extent_length;
+            push @extents, [ $extent_index, $extent_offset, $extent_length ];
+        }
+        # save item location information keyed on 1-based item ID:
+        $$items{$id}{Extents} = \@extents;
+    }
+    return undef;
+}
+
+#------------------------------------------------------------------------------
+# Parse item information entry (infe) box (ref ISO 14496-12:2015 pg.82)
+# Inputs: 0) infe data, 1) ExifTool ref
+# Returns: undef, and fills in ExifTool ItemInfo hash
+sub ParseItemInfoEntry($$)
+{
+    my ($val, $et) = @_;
+    my $id;
+
+    my $verbose = $et->Options('Verbose');
+    my $items = $$et{ItemInfo} || ($$et{ItemInfo} = { });
+    my $len = length $val;
+    return undef if $len < 4;
+    my $ver = Get8u(\$val, 0);
+    my $pos = 4;
+    return undef if $pos + 4 > $len;
+    if ($ver == 0 or $ver == 1) {
+        $id = Get16u(\$val, $pos);
+        $$items{$id}{ProtectionIndex} = Get16u(\$val, $pos + 2);
+        $pos += 4;
+        $$items{$id}{Name} = GetString(\$val, $pos);
+        $$items{$id}{ContentType} = GetString(\$val, $pos);
+        $$items{$id}{ContentEncoding} = GetString(\$val, $pos);
+    } else {
+        if ($ver == 2) {
+            $id = Get16u(\$val, $pos);
+            $pos += 2;
+        } elsif ($ver == 3) {
+            $id = Get32u(\$val, $pos);
+            $pos += 4;
+        }
+        return undef if $pos + 6 > $len;
+        $$items{$id}{ProtectionIndex} = Get16u(\$val, $pos);
+        my $type = substr($val, $pos + 2, 4);
+        $$items{$id}{Type} = $type;
+        $pos += 6;
+        $$items{$id}{Name} = GetString(\$val, $pos);
+        if ($type eq 'mime') {
+            $$items{$id}{ContentType} = GetString(\$val, $pos);
+            $$items{$id}{ContentEncoding} = GetString(\$val, $pos);
+        } elsif ($type eq 'uri ') {
+            $$items{$id}{URI} = GetString(\$val, $pos);
+        }
+    }
+    $et->VPrint(1, "$$et{INDENT}  Item $id: Type=", $$items{$id}{Type} || '',
+                   ' Name=', $$items{$id}{Name} || '',
+                   ' ContentType=', $$items{$id}{ContentType} || '',
+                   "\n") if $verbose > 1;
+    return undef;
+}
+
+#------------------------------------------------------------------------------
+# Parse item property association (ipma) box (ref https://github.com/gpac/gpac/blob/master/src/isomedia/iff.c)
+# Inputs: 0) infe data, 1) ExifTool ref
+# Returns: undef, and fills in ExifTool ItemInfo hash
+# Note: this information is currently not used by ExifTool (must figure out how to do this)
+sub ParseItemPropAssoc($$)
+{
+    my ($val, $et) = @_;
+    my ($i, $j, $id);
+
+    my $verbose = $et->Options('Verbose');
+    my $items = $$et{ItemInfo} || ($$et{ItemInfo} = { });
+    my $len = length $val;
+    return undef if $len < 8;
+    my $ver = Get8u(\$val, 0);
+    my $flg = Get32u(\$val, 0);
+    my $num = Get32u(\$val, 4);
+    my $pos = 8;
+    for ($i=0; $i<$num; ++$i) {
+        if ($ver == 0) {
+            return undef if $pos + 3 > $len;
+            $id = Get16u(\$val, $pos);
+            $pos += 2;
+        } else {
+            return undef if $pos + 5 > $len;
+            $id = Get32u(\$val, $pos);
+            $pos += 4;
+        }
+        my $n = Get8u(\$val, $pos++);
+        my (@association, @essential);
+        if ($flg & 0x01) {
+            return undef if $pos + $n * 2 > $len;
+            for ($j=0; $j<$n; ++$j) {
+                my $tmp = Get16u(\$val, $pos + $j * 2);
+                push @association, $tmp & 0x7fff;
+                push @essential, ($tmp & 0x8000) ? 1 : 0;
+            }
+            $pos += $n * 2;
+        } else {
+            return undef if $pos + $n > $len;
+            for ($j=0; $j<$n; ++$j) {
+                my $tmp = Get8u(\$val, $pos + $j);
+                push @association, $tmp & 0x7f;
+                push @essential, ($tmp & 0x80) ? 1 : 0;
+            }
+            $pos += $n;
+        }
+        $$items{$id}{Association} = \@association;
+        $$items{$id}{Essential} = \@essential;
+        $et->VPrint(1, "$$et{INDENT}  Item $id properties: @association\n") if $verbose > 1;
+    }
+    return undef;
+}
+
+#------------------------------------------------------------------------------
+# Process item information now
+# Inputs: 0) ExifTool ref, 1) RAF ref
+sub HandleItemInfo($$)
+{
+    my ($et, $raf) = @_;
+    my $items = $$et{ItemInfo};
+    my $buff;
+
+    # extract information from EXIF/XMP metadata items
+    if ($items and $raf) {
+        my $curPos = $raf->Tell();
+        my $primary = $$et{PrimaryItem};
+        my $id;
+        foreach $id (sort { $a <=> $b } keys %$items) {
+            my $item = $$items{$id};
+            my $type = $$item{ContentType} || $$item{Type} || next;
+            unless ($type eq 'Exif') {
+                next unless $type eq 'application/rdf+xml';
+                $type = 'XMP';
+            }
+            if ($$item{ContentEncoding}) {
+                $et->WarnOnce("Can't currently decode encoded $type metadata");
+                next;
+            }
+            if ($$item{ProtectionIndex}) {
+                $et->WarnOnce("Can't currently decode protected $type metadata");
+                next;
+            }
+            if ($$item{ConstructionMethod}) {
+                $et->WarnOnce("Can't currently extract $type with construction method $$item{ConstructionMethod}");
+                next;
+            }
+            next if $$item{DataReferenceIndex}; # (can only extract information from "this file")
+            my ($extent, $proc);
+            my $base = $$item{BaseOffset} || 0;
+            undef $buff;
+            my $val = '';
+            foreach $extent (@{$$item{Extents}}) {
+                $val .= $buff if defined $buff;
+                $raf->Seek($$extent[1] + $base, 0) or last;
+                $raf->Read($buff, $$extent[2]) or last;
+            }
+            next unless defined $buff;
+            $buff = $val . $buff if length $val;
+            my $start = $type eq 'Exif' ? 10 : 0; # skip count and "Exif\0\0" header
+            my $pos = $$item{Extents}[0][1] + $base;
+            my %dirInfo = (
+                DataPt   => \$buff,
+                DataLen  => length $buff,
+                DirStart => $start,
+                DirLen   => length($buff) - $start,
+                DataPos  => $pos,
+                Base     => $pos, # (needed for IsOffset tags in binary data)
+            );
+            # handle processing of metadata for sub-documents
+            if (defined $primary and $$item{RefersTo} and not $$item{RefersTo}{$primary}) {
+                # set document number if this doesn't refer to the primary document
+                $$et{DOC_NUM} = ++$$et{DOC_COUNT};
+                # associate this document number with the lowest item index
+                my ($lowest) = sort { $a <=> $b } keys %{$$item{RefersTo}};
+                $$items{$lowest}{DocNum} = $$et{DOC_NUM};
+            }
+            my $subTable = GetTagTable('Image::ExifTool::' . $type . '::Main');
+            $proc = \&Image::ExifTool::ProcessTIFF if $type eq 'Exif';
+            $et->ProcessDirectory(\%dirInfo, $subTable, $proc);
+            delete $$et{DOC_NUM};
+        }
+        $raf->Seek($curPos, 0);     # seek back to original position
+    }
+    # process the item properties now that we should know their associations and document numbers
+    if ($$et{ItemPropertyContainer}) {
+        my ($dirInfo, $subTable, $proc) = @{$$et{ItemPropertyContainer}};
+        $$et{IsItemProperty} = 1;   # set item property flag
+        $et->ProcessDirectory($dirInfo, $subTable, $proc);
+        delete $$et{ItemPropertyContainer};
+        delete $$et{IsItemProperty};
+        delete $$et{DOC_NUM};
+    }
+    delete $$et{ItemInfo};
+}
+
+#------------------------------------------------------------------------------
 # Process MPEG-4 MTDT atom (ref 11)
 # Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) tag table ref
 # Returns: 1 on success
@@ -6219,7 +6698,10 @@ sub ProcessMOV($$;$)
     my $verbose = $et->Options('Verbose');
     my $dataPos = $$dirInfo{Base} || 0;
     my $charsetQuickTime = $et->Options('CharsetQuickTime');
-    my ($buff, $tag, $size, $track, $isUserData, %triplet, $doDefaultLang);
+    my ($buff, $tag, $size, $track, $isUserData, %triplet, $doDefaultLang, $index);
+
+    my $topLevel = not $$et{InQuickTime};
+    $$et{InQuickTime} = 1;
 
     unless (defined $$et{KeyCount}) {
         $$et{KeyCount} = 0;     # initialize ItemList key directory count
@@ -6272,6 +6754,7 @@ sub ProcessMOV($$;$)
         SetByteOrder('MM');
         $$et{PRIORITY_DIR} = 'XMP';   # have XMP take priority
     }
+    $index = $$tagTablePtr{VARS}{START_INDEX} if $$tagTablePtr{VARS};
     for (;;) {
         if ($size < 8) {
             if ($size == 0) {
@@ -6372,6 +6855,40 @@ sub ProcessMOV($$;$)
             }
         }
         if (defined $tagInfo and not $ignore) {
+            # set document number for this item property if necessary
+            if ($$et{IsItemProperty}) {
+                my $items = $$et{ItemInfo};
+                my ($id, $prop, $mainItem, $docNum, $lowest);
+                my $primary = $$et{PrimaryItem} || 0;
+ItemID:         foreach $id (keys %$items) {
+                    next unless $$items{$id}{Association};
+                    my $item = $$items{$id};
+                    foreach $prop (@{$$item{Association}}) {
+                        next unless $prop == $index;
+                        if ($id == $primary or (not $$item{RefersTo} or $$item{RefersTo}{$primary})) {
+                            # this is associated with the primary item or an item describing
+                            # the primary item, so consider this part of the main document
+                            undef $docNum;
+                            undef $lowest;
+                            last ItemID;
+                        } elsif ($$item{DocNum}) {
+                            # this property is already associated with an item that has
+                            # an ExifTool document number, so use the lowest assocated DocNum
+                            $docNum = $$item{DocNum} if not defined $docNum or $docNum > $$item{DocNum};
+                        } elsif (not defined $lowest or $lowest > $id) {
+                            # keep track of the lowest associated item ID
+                            $lowest = $id;
+                        }
+                    }
+                }
+                if (not defined $docNum and defined $lowest) {
+                    # this is the first time we've seen metadata from this item,
+                    # so use a new document number
+                    $docNum = ++$$et{DOC_COUNT};
+                    $$items{$lowest}{DocNum} = $docNum;
+                }
+                $$et{DOC_NUM} = $docNum;
+            }
             my $val;
             my $missing = $size - $raf->Read($val, $size);
             if ($missing) {
@@ -6392,6 +6909,7 @@ sub ProcessMOV($$;$)
                     DataPos => $dataPos,
                     Size    => $size,
                     Format  => $tagInfo ? $$tagInfo{Format} : undef,
+                    Index   => $index,
                 );
             }
             # handle iTunesInfo mean/name/data triplets
@@ -6462,9 +6980,19 @@ sub ProcessMOV($$;$)
                     my $proc = $$subdir{ProcessProc};
                     # make ProcessMOV() the default processing procedure for subdirectories
                     $proc = \&ProcessMOV unless $proc or $$subTable{PROCESS_PROC};
-                    $et->ProcessDirectory(\%dirInfo, $subTable, $proc) if $size > $start;
+                    if ($size > $start) {
+                        # delay processing of ipco box until after all other boxes
+                        if ($tag eq 'ipco' and not $$et{IsItemProperty}) {
+                            $$et{ItemPropertyContainer} = [ \%dirInfo, $subTable, $proc ];
+                            $et->VPrint(0,"$$et{INDENT}\[Process ipco box later]");
+                        } else {
+                            $et->ProcessDirectory(\%dirInfo, $subTable, $proc);
+                        }
+                    }
                     $$et{SET_GROUP1} = $oldGroup1;
                     SetByteOrder('MM');
+                    # handle metadata now if iwe just processed the 'meta' box
+                    HandleItemInfo($et, $raf) if $tag eq 'meta';
                 } elsif ($hasData) {
                     # handle atoms containing 'data' tags
                     # (currently ignore contained atoms: 'itif', 'name', etc.)
@@ -6550,6 +7078,7 @@ sub ProcessMOV($$;$)
                             Start   => $pos,
                             Size    => $len,
                             Format  => $format,
+                            Index   => $index,
                             Extra   => sprintf(", Type='$type', Flags=0x%x",$flags)
                         ) if $verbose;
                         $et->FoundTag($langInfo, $value) if defined $value;
@@ -6638,6 +7167,7 @@ sub ProcessMOV($$;$)
         $raf->Read($buff, 8) == 8 or last;
         $dataPos += $size + 8;
         ($size, $tag) = unpack('Na4', $buff);
+        ++$index if defined $index;
     }
     # fill in missing defaults for alternate language tags
     # (the first language is taken as the default)
@@ -6658,6 +7188,7 @@ QTLang: foreach $tag (@{$$et{QTLang}}) {
         }
         delete $$et{QTLang};
     }
+    HandleItemInfo($et, $raf) if $topLevel;
     return 1;
 }
 
@@ -6687,7 +7218,7 @@ This module is used by Image::ExifTool
 =head1 DESCRIPTION
 
 This module contains routines required by Image::ExifTool to extract
-information from QuickTime and MP4 video, and M4A audio files.
+information from QuickTime and MP4 video, M4A audio, and HEIC image files.
 
 =head1 AUTHOR
 

@@ -26,7 +26,7 @@ use strict;
 use vars qw($VERSION $AUTOLOAD %stdCase);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.42';
+$VERSION = '1.44';
 
 sub ProcessPNG_tEXt($$$);
 sub ProcessPNG_iTXt($$$);
@@ -41,7 +41,7 @@ sub GetLangInfo($$);
 sub BuildTextChunk($$$$$);
 
 # translate lower-case to actual case used for eXIf/zXIf chunks
-%stdCase = ( 'zxif' => 'zxIf', exif => 'exIf' );
+%stdCase = ( 'zxif' => 'zxIf', exif => 'eXIf' );
 
 my $noCompressLib;
 
@@ -258,10 +258,7 @@ $Image::ExifTool::PNG::colorType = -1;
     # eXIf
     $stdCase{exif} => {
         Name => $stdCase{exif},
-        Notes => q{
-            proposed but not yet registered.  This is where ExifTool will create new
-            EXIF
-        },
+        Notes => 'this is where ExifTool will create new EXIF',
         SubDirectory => {
             TagTable => 'Image::ExifTool::Exif::Main',
             DirName => 'EXIF', # (to write as a block)
@@ -984,7 +981,7 @@ sub ProcessProfile($$$)
         }
     } elsif ($buff =~ /^(MM\0\x2a|II\x2a\0)/) {
         # TIFF information
-        return 1 if $outBuff and not $$editDirs{IFD0};  
+        return 1 if $outBuff and not $$editDirs{IFD0};
         if ($outBuff) {
             # delete non-standard EXIF if recreating from scratch
             if ($$et{DEL_GROUP}{EXIF} or $$et{DEL_GROUP}{IFD0}) {
