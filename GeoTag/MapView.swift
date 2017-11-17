@@ -34,14 +34,39 @@ import MapKit
 
 class MapView: MKMapView {
     var clickDelegate: MapViewDelegate?
+    var clickTimer: Timer?
+    var dragInProgress = false
 
+    // start a timer to mark the location on the first click.  Cancel the
+    // timer on double clicks.
     override func mouseUp(with theEvent: NSEvent) {
         super.mouseUp(with: theEvent)
-        if theEvent.clickCount == 1 {
+        if theEvent.clickCount == 1 && !dragInProgress {
+            // start a timer for this location.  The location will be marked
+            // when the timer fires unless this is a double click
             let point = convert(theEvent.locationInWindow, from: nil)
-            let location = convert(point, toCoordinateFrom: self)
-            clickDelegate?.mouseClicked(mapView: self, location: location)
+            let coords = convert(point, toCoordinateFrom: self)
+            clickTimer = Timer.scheduledTimer(timeInterval: NSEvent.doubleClickInterval,
+                                              target: self,
+                                              selector: #selector(self.clicked),
+                                              userInfo: coords, repeats: false)
+        } else {
+            dragInProgress = false
+            clickTimer?.invalidate()
+            clickTimer = nil
         }
+    }
+
+    override func mouseDragged(with theEvent: NSEvent) {
+        dragInProgress = true
+    }
+
+    // Mark the saved location when the click timer expires
+    @objc func clicked(timer: Timer ) {
+        let coords = timer.userInfo as! CLLocationCoordinate2D
+        clickTimer?.invalidate()
+        clickTimer = nil
+        clickDelegate?.mouseClicked(mapView: self, location: coords)
     }
 }
 

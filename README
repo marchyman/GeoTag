@@ -1,19 +1,25 @@
-## GeoTag for OS X
+## GeoTag for OS X (almost 4.1 -- needs more testing)
 
-GeoTag 4.1 will require macOS 10.10 or later
+GeoTag 4.1 requires macOS 10.10 or later
 
 ### New features:
 
-* Map searching (not yet, but soon)
+* Map searching -- position map by name of city/street/etc.
 * Image backup handling
 * MIT License
 * ExifTool version 10.67
+* Swift 4
+
+### Bug Fixes
+
+* pin no longer placed when double clicking on map
+* pin no longer placed when dragging map
+* GPS info validation
 
 ### Known issue
 
 * You can not re-position a pin by dragging the pin.  Instead click on the desired
   location
-* Clicking and dragging on the map repositions any existing map pin.
 
 ### Image Backups
 

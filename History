@@ -10,7 +10,11 @@
 ### Bug Fixes
 
 * GPS info validation
+* pin no longer placed when double clicking on map
+* pin no longer placed when dragging map
 * Changes for Swift 4.0
+
+## GeoTag 4.0
 
 ### New Features:
 
