@@ -40,7 +40,7 @@ public func unexpected(error: NSError?, _ description: String = "") {
     alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
     alert.messageText = NSLocalizedString("UNEXPECTED_ERROR",
                                           comment: "unexpected error")
-    if let reason = error?.localizedFailureReason {
+    if let reason = error?.localizedDescription {
         alert.informativeText = description + reason
     } else {
         alert.informativeText = description

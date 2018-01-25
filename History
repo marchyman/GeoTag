@@ -1,3 +1,9 @@
+## GeoTag 4.x ... (not yet released)
+
+### Bug Fixes
+
+* Fix display of error reason when a backup folder can not be selected
+
 ## GeoTag 4.1 includes the following.
 
 ### New Features
