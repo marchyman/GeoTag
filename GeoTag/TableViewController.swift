@@ -530,7 +530,6 @@ extension TableViewController: NSTableViewDelegate {
         if row < 0 {
             imageWell.image = nil
             mapViewController.removeMapPin()
-//          mapViewController.itemSelected = false
         } else {
             let image = images[row]
             imageWell.image = image.image
@@ -541,7 +540,6 @@ extension TableViewController: NSTableViewDelegate {
             } else {
                 mapViewController.removeMapPin()
             }
-//          mapViewController.itemSelected = true
         }
     }
 }
