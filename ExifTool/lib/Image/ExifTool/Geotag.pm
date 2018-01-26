@@ -24,7 +24,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:Public);
 
-$VERSION = '1.51';
+$VERSION = '1.54';
 
 sub JITTER() { return 2 }       # maximum time jitter
 
@@ -237,7 +237,13 @@ sub LoadTrackLog($$;$)
                     my $tag = $xmlTag{lc $2};
                     if ($tag) {
                         $$fix{$tag} = $4;
-                        $$has{orient} = 1 if $isOrient{$tag};
+                        if ($isOrient{$tag}) {
+                            $$has{orient} = 1;
+                        } elsif ($tag eq 'alt') {
+                            # validate altitude
+                            undef $$fix{alt} if defined $$fix{alt} and $$fix{alt} !~ /^[+-]?\d+\.?\d*/;
+                            $$has{alt} = 1 if $$fix{alt};   # set "has altitude" flag if appropriate
+                        }
                     }
                 }
                 # loop through XML elements
@@ -270,7 +276,13 @@ sub LoadTrackLog($$;$)
                                 @$fix{'lon','lat','alt'} = split ',', $1;
                             } else {
                                 $$fix{$tag} = $1;
-                                $$has{orient} = 1 if $isOrient{$tag};
+                                if ($isOrient{$tag}) {
+                                    $$has{orient} = 1;
+                                } elsif ($tag eq 'alt') {
+                                    # validate altitude
+                                    undef $$fix{alt} if defined $$fix{alt} and $$fix{alt} !~ /^[+-]?\d+\.?\d*/;
+                                    $$has{alt} = 1 if $$fix{alt};   # set "has altitude" flag if appropriate
+                                }
                             }
                         }
                         next;
@@ -287,11 +299,8 @@ sub LoadTrackLog($$;$)
                         $e1 or $et->VPrint(0, "Timestamp format error in $from\n"), $e1 = 1;
                         next;
                     }
-                    # validate altitude
-                    undef $$fix{alt} if defined $$fix{alt} and $$fix{alt} !~ /^[+-]?\d+\.?\d*/;
                     $isDate = 1;
                     $canCut= 1 if defined $$fix{pdop} or defined $$fix{hdop} or defined $$fix{nsats};
-                    $$has{alt} = 1 if $$fix{alt};   # set "has altitude" flag if appropriate
                     # generate extra fixes assuming an equally spaced track
                     if ($$fix{begin}) {
                         my $begin = GetTime($$fix{begin});
@@ -469,7 +478,7 @@ DoneFix:    $isDate = 1;
             # status: L=low alarm, M=low warning, N=normal, O=high warning
             #         P=high alarm, C=tuning analog circuit
             # (ignore this information on any alarm status)
-            /^\$PTNTHPR,(-?[\d.]+),[MNO],(-?[\d.]+),[MNO],(-?[\d.]+),[MNO],/ or next;
+            /^\$PTNTHPR,(-?[\d.]+),[MNO],(-?[\d.]+),[MNO],(-?[\d.]+),[MNO]/ or next;
             @fix{qw(dir pitch roll)} = ($1,$2,$3);
 
         } else {
@@ -829,7 +838,8 @@ sub SetGeoValues($$;$)
         $time += $fs if $fs and $fs ne '.';
 
         # bring UTC time back to Jan. 1 if no date is given
-        $time %= $secPerDay if $noDate;
+        # (don't use '%' operator here because it drops fractional seconds)
+        $time -= int($time / $secPerDay) * $secPerDay if $noDate;
 
         # apply time synchronization if available
         my $sync = ApplySyncCorr($et, $time);
@@ -1262,7 +1272,7 @@ user-defined tags, GPSPitch and GPSRoll, must be active.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

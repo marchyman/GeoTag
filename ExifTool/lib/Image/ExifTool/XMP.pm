@@ -48,7 +48,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.07';
+$VERSION = '3.09';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -173,6 +173,7 @@ my %xmpNS = (
     GPano     => 'http://ns.google.com/photos/1.0/panorama/',
     GSpherical=> 'http://ns.google.com/videos/1.0/spherical/',
     GDepth    => 'http://ns.google.com/photos/1.0/depthmap/',
+    GFocus    => 'http://ns.google.com/photos/1.0/focus/',
     dwc       => 'http://rs.tdwg.org/dwc/index.htm',
     GettyImagesGIFT => 'http://xmp.gettyimages.com/gift/1.0/',
 );
@@ -203,6 +204,7 @@ my %uri2ns;
     # NOTE: Do NOT put "Groups" here because Groups hash must not be common!
     Writable => 'date',
     Shift => 'Time',
+    Validate => 'ValidateXMPDate($val)',
     PrintConv => '$self->ConvertDateTime($val)',
     PrintConvInv => '$self->InverseDateTime($val,undef,1)',
 );
@@ -736,6 +738,10 @@ my %sRetouchArea = (
     GDepth => {
         Name => 'GDepth',
         SubDirectory => { TagTable => 'Image::ExifTool::XMP::GDepth' },
+    },
+    GFocus => {
+        Name => 'GFocus',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::GFocus' },
     },
     dwc => {
         Name => 'dwc',
@@ -3137,6 +3143,7 @@ NoLoop:
 # Returns: Number of contained XMP elements
 sub ParseXMPElement($$$;$$$$)
 {
+    local $_;
     my ($et, $tagTablePtr, $dataPt, $start, $end, $propListPt, $blankInfo) = @_;
     my ($count, $nItems) = (0, 0);
     my $isWriting = $$et{XMP_CAPTURE};
@@ -3280,6 +3287,14 @@ sub ParseXMPElement($$$;$$$$)
                             # use the new namespace prefix
                             $$xlatNS{$ns} = $newNS;
                             $attr = 'xmlns:' . $newNS;
+                            # must go through previous attributes and change prefixes if necessary
+                            foreach (@attrs) {
+                                next unless /(.*?):/ and $1 eq $ns and $1 ne $newNS;
+                                my $newAttr = $newNS . substr($_, length($ns));
+                                $attrs{$newAttr} = $attrs{$_};
+                                delete $attrs{$_};
+                                $_ = $newAttr;
+                            }
                         } else {
                             delete $$xlatNS{$ns};
                         }
@@ -3900,7 +3915,7 @@ information.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

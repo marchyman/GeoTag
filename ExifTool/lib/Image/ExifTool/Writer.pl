@@ -1593,8 +1593,8 @@ GNV_TagInfo:    foreach $tagInfo (@tagInfoList) {
 #------------------------------------------------------------------------------
 # Return the total number of new values set
 # Inputs: 0) ExifTool object reference
-# Returns: Scalar context) Number of new values that have been set
-#          List context) Number of new values, number of "pseudo" values
+# Returns: Scalar context) Number of new values that have been set (incl pseudo)
+#          List context) Number of new values (incl pseudo), number of "pseudo" values
 # ("pseudo" values are those which don't require rewriting the file to change)
 sub CountNewValues($)
 {
@@ -1602,13 +1602,14 @@ sub CountNewValues($)
     my $newVal = $$self{NEW_VALUE};
     my ($num, $pseudo) = (0, 0);
     if ($newVal) {
-        $num += scalar keys %$newVal;
-        # don't count "fake" tags (only in Extra table)
+        $num = scalar keys %$newVal;
         my $nv;
         foreach $nv (values %$newVal) {
             my $tagInfo = $$nv{TagInfo};
-            --$num if $$tagInfo{WriteNothing};
-            ++$pseudo if $$tagInfo{WritePseudo};
+            # don't count tags that don't write anything
+            $$tagInfo{WriteNothing} and --$num, next;
+            # count the number of pseudo tags included
+            $$tagInfo{WritePseudo} and ++$pseudo;
         }
     }
     $num += scalar keys %{$$self{DEL_GROUP}};
@@ -2224,6 +2225,7 @@ sub WriteInfo($$;$$)
                     $err = 'Writing this type of RAW file is not supported';
                 } else {
                     if ($wrongType) {
+                        $fileType = $tiffType if $fileType eq 'TIFF';
                         $err = "Not a valid $fileType";
                         # do a quick check to see what this file looks like
                         foreach $type (@fileTypes) {
@@ -2789,7 +2791,9 @@ Conv: for (;;) {
 #               undef    - set missing tags to ''
 #              'Error'   - issue minor error on missing tag (and return undef)
 #              'Warn'    - issue minor warning on missing tag (and return undef)
+#              'Silent'  - just return undef on missing tag (no errors/warnings)
 #               Hash ref - hash for return of tag/value pairs
+#         4) document group name if extracting from a specific document
 # Returns: string with embedded tag values (or '$info{TAGNAME}' entries with Hash ref option)
 # Notes:
 # - tag names are not case sensitive and may end with '#' for ValueConv value
@@ -2798,10 +2802,10 @@ Conv: for (;;) {
 # - advanced feature allows Perl expressions inside braces (eg. '${model;tr/ //d}')
 # - an error/warning in an advanced expression ("${TAG;EXPR}") generates an error
 #   if option set to 'Error', or a warning otherwise
-sub InsertTagValues($$$;$)
+sub InsertTagValues($$$;$$)
 {
     local $_;
-    my ($self, $foundTags, $line, $opt) = @_;
+    my ($self, $foundTags, $line, $opt, $docGrp) = @_;
     my $rtnStr = '';
     while ($line =~ s/(.*?)\$(\{\s*)?([-\w]*\w|\$|\/)//s) {
         my ($pre, $bra, $var) = ($1, $2, $3);
@@ -2821,7 +2825,7 @@ sub InsertTagValues($$$;$)
         }
         # allow trailing '#' to indicate ValueConv value
         $type = 'ValueConv' if $line =~ s/^#//;
-        # (undocumented feature to allow '@' to evaluate values separately, but only in braces)
+        # (undocumented feature to allow '@' to evaluate list values separately, but only in braces)
         if ($bra and $line =~ s/^\@(#)?//) {
             $asList = 1;
             $type = 'ValueConv' if $1;
@@ -2842,6 +2846,8 @@ sub InsertTagValues($$$;$)
             # use default Windows filename filter if expression is empty
             $expr = 'tr(/\\\\?*:|"<>\\0)()d' unless length $expr;
         }
+        # add document number to tag if specified and it doesn't already exist
+        $var = $docGrp . ':' . $var if $docGrp and $var !~ /\b(main|doc\d+):/i;
         push @tags, $var;
         ExpandShortcuts(\@tags);
         @tags or $rtnStr .= $pre, next;
@@ -2938,7 +2944,13 @@ sub InsertTagValues($$$;$)
             }
             if ($evalWarning) {
                 my $str = CleanWarning() . " for '$var'";
-                ($opt and $opt eq 'Error') ? $self->Error($str) : $self->Warn($str);
+                if ($opt) {
+                    if ($opt eq 'Error') {
+                        $self->Error($str);
+                    } elsif ($opt ne 'Silent') {
+                        $self->Warn($str);
+                    }
+                }
             }
             undef $advFmtSelf;
             $didExpr = 1;   # set flag indicating an expression was evaluated
@@ -2949,7 +2961,7 @@ sub InsertTagValues($$$;$)
                 my $msg = $didExpr ? "Advanced formatting expression returned undef for '$var'" :
                                      "Tag '$var' not defined";
                 no strict 'refs';
-                $opt and &$opt($self, $msg, 2) and return $$self{FMT_EXPR} = undef;
+                $opt and ($opt eq 'Silent' or &$opt($self, $msg, 2)) and return $$self{FMT_EXPR} = undef;
                 $val = '';
             }
         }
@@ -3881,6 +3893,13 @@ sub Get64u($$)
     my $lo = Get32u($dataPt, $pos + 4 - $pt);
     return $hi * 4294967296 + $lo;
 }
+sub GetFixed64s($$)
+{
+    my ($dataPt, $pos) = @_;
+    my $val = Get64s($dataPt, $pos) / 4294967296;
+    # remove insignificant digits
+    return int($val * 1e10 + ($val>0 ? 0.5 : -0.5)) / 1e10;
+}
 # Decode extended 80-bit float used by Apple SANE and Intel 8087
 # (note: different than the IEEE standard 80-bit float)
 sub GetExtended($$)
@@ -4009,8 +4028,10 @@ sub VerboseInfo($$$%)
         $line .= ' (SubDirectory) -->';
     } else {
         my $maxLen = 90 - length($line);
-        if (defined $parms{Value}) {
-            $line .= ' = ' . $self->Printable($parms{Value}, $maxLen);
+        my $val = $parms{Value};
+        if (defined $val) {
+            $val = '[' . join(',',@$val) . ']' if ref $val eq 'ARRAY';
+            $line .= ' = ' . $self->Printable($val, $maxLen);
         } elsif ($dataPt) {
             my $start = $parms{Start} || 0;
             $line .= ' = ' . $self->Printable(substr($$dataPt,$start,$size), $maxLen);
@@ -4907,6 +4928,7 @@ sub AddNewTrailers($;@)
 # Inputs: 0) file or scalar reference, 1) segment marker
 #         2) segment header, 3) segment data ref, 4) segment type
 # Returns: number of segments written, or 0 on error
+# Notes: Writes a single empty segment if data is empty
 sub WriteMultiSegment($$$$;$)
 {
     my ($outfile, $marker, $header, $dataPt, $type) = @_;
@@ -4917,10 +4939,10 @@ sub WriteMultiSegment($$$$;$)
     my $maxLen = $maxSegmentLen - length($header);
     $maxLen -= 2 if $type eq 'ICC'; # leave room for segment counters
     my $num = int(($len + $maxLen - 1) / $maxLen);  # number of segments to write
-    my $n;
+    my $n = 0;
     # write data, splitting into multiple segments if necessary
     # (each segment gets its own header)
-    for ($n=0; $n<$len; $n+=$maxLen) {
+    for (;;) {
         ++$count;
         my $size = $len - $n;
         $size > $maxLen and $size = $maxLen;
@@ -4933,6 +4955,7 @@ sub WriteMultiSegment($$$$;$)
         # write the new segment with appropriate header
         my $segHdr = $hdr . pack('n', $size + 2);
         Write($outfile, $segHdr, $header, $buff) or return 0;
+        last if ($n+=$maxLen) >= $len;
     }
     return $count;
 }
@@ -5321,7 +5344,7 @@ sub WriteJPEG($$)
                 $doneDir{COM} = 1;
                 next if $$delGroup{File} and $$delGroup{File} != 2;
                 my $newComment = $self->GetNewValue('Comment');
-                if (defined $newComment and length($newComment)) {
+                if (defined $newComment) {
                     if ($verbose) {
                         print $out "Creating COM:\n";
                         $self->VerboseValue('+ Comment', $newComment);
@@ -5980,7 +6003,7 @@ sub WriteJPEG($$)
                     }
                 }
                 $self->VerboseValue('- Comment', $$segDataPt);
-                if (defined $newComment and length $newComment) {
+                if (defined $newComment) {
                     # write out the comments
                     $self->VerboseValue('+ Comment', $newComment);
                     WriteMultiSegment($outfile, 0xfe, '', \$newComment) or $err = 1;
@@ -6541,7 +6564,7 @@ used routines.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

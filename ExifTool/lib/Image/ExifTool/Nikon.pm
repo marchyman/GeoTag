@@ -59,7 +59,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '3.41';
+$VERSION = '3.43';
 
 sub LensIDConv($$$);
 sub ProcessNikonAVI($$$);
@@ -646,6 +646,7 @@ sub GetAFPointGrid($$;$);
     '12 36 69 97 35 42 09 00' => 'Soligor AF Zoom 100-400mm 1:4.5-6.7 MC',
 #
     'BF 4E 26 26 1E 1E 01 04' => 'Irix 15mm f/2.4 Firefly', #30
+    'BF 3C 1B 1B 30 30 01 04' => 'Irix 11mm f/4 Firefly', #30
 #
     '00 00 00 00 00 00 00 01' => 'Manual Lens No CPU',
 #
@@ -1217,7 +1218,10 @@ my %binaryDataAttrs = (
         Name => 'HDRInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::Nikon::HDRInfo' },
     },
-    # 0x0037 - int32u (1V models only): an image count maybe? - PH
+    0x0037 => { #XavierJubier
+        Name => 'MechanicalShutterCount',
+        Writable => 'int32u',
+    },
     0x0039 => {
         Name => 'LocationInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::Nikon::LocationInfo' },
@@ -1917,8 +1921,10 @@ my %binaryDataAttrs = (
         PrintConv => '$val == 4294965247 ? "n/a" : $val',
         PrintConvInv => '$val eq "n/a" ? 4294965247 : $val',
         Notes => q{
-            this value is used as a key to decrypt other information -- writing this tag
-            causes the other information to be re-encrypted with the new key
+            includes both mechanical and electronic shutter activations for models with
+            this feature.  This value is used as a key to decrypt other information, and
+            writing this tag causes the other information to be re-encrypted with the
+            new key
         },
     },
     0x00a8 => [#JD
@@ -2974,14 +2980,17 @@ my %binaryDataAttrs = (
             4 => 'On (73-point)', #PH (1J1[128/129],1J2[128/129/135],1J3/1S1/1V2[128/129/131],1V1[129],AW1[129/131])
             5 => 'On (5)', #PH (1S2[128/129], 1J4/1V3[129])
             6 => 'On (105-point)', #PH (1J4/1V3[128/130])
-            7 => 'On (153-point)', #PH (D5/D500)
+            7 => 'On (153-point)', #PH (D5/D500/D850)
         },
     },
     7 => [
         { #PH/JD
             Name => 'PrimaryAFPoint',
             Condition => '$$self{PhaseDetectAF} < 2',
-            Notes => 'models with 51-point AF: D3, D3S, D3X, D300, D300S, D700 and D800',
+            Notes => q{
+                models with 51-point AF -- 5 rows (A-E) and 11 columns (1-11): D3, D3S, D3X,
+                D4, D4S, D300, D300S, D700, D800, D800e and D810
+            },
             PrintConvColumns => 5,
             PrintConv => {
                 0 => '(none)',
@@ -3073,7 +3082,8 @@ my %binaryDataAttrs = (
             Name => 'PrimaryAFPoint',
             Condition => '$$self{PhaseDetectAF} == 7 and $$self{AFInfo2Version} eq "0100"',
             Notes => q{
-                Nikon models with 153-point AF -- 9 rows (A-I) and 17 columns (1-17)
+                Nikon models with 153-point AF -- 9 rows (A-I) and 17 columns (1-17): D5,
+                D500 and D850
             },
             PrintConvColumns => 5,
             PrintConv => {
@@ -8381,7 +8391,7 @@ Nikon maker notes in EXIF information.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

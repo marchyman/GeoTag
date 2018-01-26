@@ -11,7 +11,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 
 sub MDItemLocalTime($);
 
@@ -200,10 +200,11 @@ my %mdDateInfo = (
             quarantine information for files downloaded from the internet.  May only be
             deleted when writing
         },
+        # ($a[1] is the time when the quarantine tag was set)
         PrintConv => q{
             my @a = split /;/, $val;
             $a[0] = 'Flags=' . $a[0];
-            $a[1] = 'downloaded at ' . ConvertUnixTime(hex $a[1]);
+            $a[1] = 'set at ' . ConvertUnixTime(hex $a[1]);
             $a[2] = 'by ' . $a[2];
             return join ' ', @a;
         },
@@ -455,7 +456,7 @@ for writing.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

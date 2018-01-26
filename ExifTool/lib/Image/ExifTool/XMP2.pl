@@ -457,7 +457,7 @@ my %sLinkedImage = (
             AOCurrentLicensorName       => { },
             AOCurrentLicensorId         => { },
             AOCreatorId                 => { List => 'Seq' },
-            AOCircaDateCreated          => { Groups => { 2 => 'Time' } },
+            AOCircaDateCreated          => { Groups => { 2 => 'Time' }, Protected => 1 },
             AOStylePeriod               => { List => 'Bag' },
             AOSourceInvURL              => { },
             AOContentDescription        => { Writable => 'lang-alt' },
@@ -1671,6 +1671,18 @@ my %sSubVersion = (
     ImageHeight => { Writable => 'real' },
 );
 
+# Google focus namespace
+%Image::ExifTool::XMP::GFocus = (
+    %xmpTableDefaults,
+    GROUPS => { 1 => 'XMP-GFocus', 2 => 'Image' },
+    NAMESPACE => 'GFocus',
+    NOTES => 'Focus information found in Google depthmap images.',
+    BlurAtInfinity  => { Writable => 'real' },
+    FocalDistance   => { Writable => 'real' },
+    FocalPointX     => { Writable => 'real' },
+    FocalPointY     => { Writable => 'real' },
+);
+
 # Getty Images namespace (ref PH)
 %Image::ExifTool::XMP::GettyImages = (
     %xmpTableDefaults,
@@ -1754,7 +1766,7 @@ This file contains definitions for less common XMP namespaces.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

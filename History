@@ -11,6 +11,7 @@
   defaults write org.snafu.GeoTag DateTimeGPSKey -bool 'YES'
 
   Eventually this will be turned into  check-box in the preferences pane.
+* ExifTool 10.76
 
 ### Bug Fixes
 
