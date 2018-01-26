@@ -26,6 +26,7 @@
 
 import Foundation
 import AppKit
+import MapKit
 
 // CFString to (NS)*String casts
 let pixelHeight = kCGImagePropertyPixelHeight as NSString
@@ -51,6 +52,9 @@ final class ImageData: NSObject {
      */
     static var saveWarning = true
 
+    // Keep track of the last timezone
+//  static var lastTimeZone: TimeZone?
+
     // used to re-enable the save warning after a save operation has completed
     class func enableSaveWarnings() {
         saveWarning = true
@@ -65,6 +69,7 @@ final class ImageData: NSObject {
     let sandboxUrl: URL         // URL of the sandbox copy of the image
 
     var date: String = ""
+    var timeZone: TimeZone?
     var dateFromEpoch: TimeInterval {
         let format = DateFormatter()
         format.dateFormat = "yyyy:MM:dd HH:mm:ss"
@@ -131,6 +136,7 @@ final class ImageData: NSObject {
     func setLocation(latitude: Double?, longitude: Double?) {
         self.latitude = latitude
         self.longitude = longitude
+        setTimeZone(latitude: latitude, longitude: longitude)
     }
 
     /// restore latitude and longitude to their initial values
@@ -141,6 +147,7 @@ final class ImageData: NSObject {
     func revertLocation() {
         latitude = originalLatitude
         longitude = originalLongitude
+        setTimeZone(latitude: latitude, longitude: longitude)
     }
 
     // MARK: Backup and Save
@@ -232,6 +239,27 @@ final class ImageData: NSObject {
         return true
     }
 
+    // Get the time zone for a given location
+    private func setTimeZone(latitude: Double?, longitude: Double?) {
+        if #available(OSX 10.11, *) {
+            if let latitude = latitude,
+               let longitude = longitude {
+                let coder = CLGeocoder();
+                let loc = CLLocation(latitude:latitude, longitude:longitude)
+                coder.reverseGeocodeLocation(loc) {
+                    (placemarks, error) in
+                    let place = placemarks?.last
+                    self.timeZone = place?.timeZone
+//                  ImageData.lastTimeZone = self.timeZone
+                    print("TimeZone: \(String(describing: self.timeZone))")
+                    }
+            } else {
+                timeZone = nil
+            }
+        } else {
+            timeZone = nil
+        }
+    }
 
     // MARK: extract image metadata and build thumbnail preview
 
