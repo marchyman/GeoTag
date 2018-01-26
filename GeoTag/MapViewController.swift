@@ -125,7 +125,7 @@ class MapViewController: NSViewController {
 
     @IBAction func searchMapLocation(_ sender: NSSearchField) {
         if !sender.stringValue.isEmpty {
-            print("search bar: \(sender.stringValue)")
+//          print("search bar: \(sender.stringValue)")
             let geocoder = CLGeocoder()
             geocoder.geocodeAddressString(sender.stringValue) {
                 placeMark, error in
@@ -190,7 +190,7 @@ extension MapViewController: MKMapViewDelegate {
             annotationView = MKPinAnnotationView(annotation: annotation,
                                                  reuseIdentifier: identifier)
             if let av = annotationView {
-                print("\(av)")
+//              print("\(av)")
                 av.isEnabled = true
                 av.canShowCallout = true
                 av.pinColor = .red
@@ -225,6 +225,6 @@ extension MapViewController: MKMapViewDelegate {
 
     // debug cruft
     func mapView(_ mapView: MKMapView, didSelect: MKAnnotationView) {
-        print("Annotation view \(didSelect) selected")
+//      print("Annotation view \(didSelect) selected")
     }
 }
