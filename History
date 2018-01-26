@@ -1,5 +1,17 @@
 ## GeoTag 4.x ... (not yet released)
 
+### New Features
+
+* Update GPS Date and Time tags when updating location.   GPS timestamps are
+  in GMT.  The procedure assumes the date and time the image was taken was correct
+  for the time zone.  If your camera was set to the wrong time zone or set to
+  UTC/GMT the GPS timestamp will be incorrect.  For now this feature will only
+  be enabled if you open a terminal window and issue this command:
+
+  defaults write org.snafu.GeoTag DateTimeGPSKey -bool 'YES'
+
+  Eventually this will be turned into  check-box in the preferences pane.
+
 ### Bug Fixes
 
 * Fix display of error reason when a backup folder can not be selected

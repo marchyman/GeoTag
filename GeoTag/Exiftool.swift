@@ -45,7 +45,6 @@ struct Exiftool {
     }
 
     func updateLocation(from imageData: ImageData) -> Int32 {
-
         // latitude exiftool args
         var latArg = "-GPSLatitude="
         var latRefArg = "-GPSLatitudeRef="
@@ -72,15 +71,43 @@ struct Exiftool {
             lonArg += "\(lon)"
         }
 
+        // GSPDateTime exiftool arg
+        var gpsDArg = ""
+        var gpsTArg = ""
+        if Preferences.dateTimeGPS() {
+            if let dto = dtoWithZone(from: imageData) {
+                gpsDArg = "-GPSDateStamp=\(dto)"
+                gpsTArg = "-GPSTimeStamp=\(dto)"
+            }
+        }
+
         let exiftool = Process()
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = FileHandle.nullDevice
         exiftool.launchPath = url.path
         exiftool.arguments = ["-q", "-m", "-overwrite_original_in_place",
             "-DateTimeOriginal>FileModifyDate", "-GPSStatus=",
-            latArg, latRefArg, lonArg, lonRefArg, imageData.sandboxUrl.path]
+            latArg, latRefArg, lonArg, lonRefArg, gpsDArg, gpsTArg,
+            imageData.sandboxUrl.path]
         exiftool.launch()
         exiftool.waitUntilExit()
         return exiftool.terminationStatus
+    }
+
+    // return a date and time stamp of the date the image was taken
+    // converted to Zulu time.
+    // Nils are returned if there was no dto or we couldn't get the
+    // appropriate time zone from image geo location data.
+    private func dtoWithZone(from imageData: ImageData) -> String? {
+        if let timeZone = imageData.timeZone, !imageData.date.isEmpty {
+            let format = DateFormatter()
+            format.dateFormat = "yyyy:MM:dd HH:mm:ss"
+            format.timeZone = timeZone
+            if let convertedDate = format.date(from: imageData.date) {
+                format.dateFormat = "yyyy:MM:dd HH:mm:ss xxx"
+                return format.string(from: convertedDate)
+            }
+        }
+        return nil
     }
 }

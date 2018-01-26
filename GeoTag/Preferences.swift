@@ -31,6 +31,7 @@ final class Preferences : NSWindowController {
     // class constants
     static let nibName = NSNib.Name("Preferences")
     static let saveBookmarkKey = "SaveBookmarkKey"
+    static let dateTimeGPSKey = "DateTimeGPSKey"
     static var checkDirectory = true
     private static var url: URL? = nil
 
@@ -62,6 +63,11 @@ final class Preferences : NSWindowController {
             }
         }
         return url
+    }
+
+    class func dateTimeGPS() -> Bool {
+        let defaults = UserDefaults.standard
+        return defaults.bool(forKey: dateTimeGPSKey)
     }
 
     @IBOutlet var saveFolderPath: NSPathControl!
