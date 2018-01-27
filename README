@@ -1,17 +1,25 @@
 ## GeoTag for OS X
 
-GeoTag 4.1 requires macOS 10.10 or later
+## GeoTag 4.2 requires macOS 10.10 or later
 
-### New features:
+### New Features
+
+* Update GPS Date and Time tags when updating location.   GPS timestamps are
+  in GMT.  The procedure assumes the date and time the image was taken was correct
+  for the time zone.  If your camera was set to the wrong time zone or set to
+  UTC/GMT the GPS timestamp will be incorrect.  This feature is only enabled when
+  the 'Update GPS Date/Time stamps' button is checked in program Preferences.
+  **This feature is only available on macOS 10.11 or later**
+* ExifTool 10.76
+
+### 4.1 Features
 
 * Map searching -- position map by name of city/street/etc.
 * Image backup handling
-* MIT License
-* ExifTool version 10.67
-* Swift 4
 
 ### Bug Fixes
 
+* Fix display of error reason when a backup folder can not be selected
 * pin no longer placed when double clicking on map
 * pin no longer placed when dragging map
 * GPS info validation
@@ -35,7 +43,8 @@ now all too common error stating you do not have permission to back up your file
   numbered suffix is the most current backup (usually).
 * If the image file can not be copied to the backup location Geolocation
   information will not be saved.   Better to be safe than sorry.
-* The system trash is no longer used.
+* The system trash is no longer used (although you could set your backup location
+  to ~/.Trash)
 
 ### MIT License
 
@@ -81,7 +90,7 @@ tagging photos in the field.  Photos (OSX 10.10.3 and later) will let you modify
 existing location metadata but not add location data to an image. If necessary
 use GeoTag to add location metadata **before** importing the images into Photos.
 
-Version 4.1 is the latest version.  It workes on macOS 10.10 or later. Version
+Version 4.2 is the latest version.  It workes on macOS 10.10 or later. Version
 4 uses Apple maps.
 
 Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later.  Version 3
