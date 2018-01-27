@@ -104,6 +104,14 @@ final class Preferences : NSWindowController {
         }
     }
 
+    @IBOutlet weak var dtGPSButton: NSButton!
+
+    @IBAction func toggleDateTimeGPS(_ sender: NSButton) {
+        let defaults = UserDefaults.standard
+        defaults.set(sender.state == NSControl.StateValue.on,
+                     forKey: Preferences.dateTimeGPSKey)
+    }
+
     /// return the NIB name for this window
 
 	override var windowNibName: NSNib.Name? {
@@ -114,6 +122,9 @@ final class Preferences : NSWindowController {
 
     override func windowDidLoad() {
         saveFolderPath.url = Preferences.saveFolder()
+        dtGPSButton.state = Preferences.dateTimeGPS() ?
+                            NSControl.StateValue.on :
+                            NSControl.StateValue.off
     }
 
     // window delegate function... orderOut instead of close

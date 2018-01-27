@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Preferences" customModule="GeoTag" customModuleProvider="target">
             <connections>
+                <outlet property="dtGPSButton" destination="S1F-zn-Pq7" id="cye-pw-bmt"/>
                 <outlet property="saveFolderPath" destination="WPF-AV-Z7i" id="5ND-o8-xTq"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="RD0-Rv-tXN"/>
             </connections>
@@ -18,14 +19,14 @@
         <window title="GeoTag Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="734" y="724" width="564" height="240"/>
+            <rect key="contentRect" x="734" y="724" width="564" height="431"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="564" height="240"/>
+                <rect key="frame" x="0.0" y="0.0" width="564" height="431"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <box autoresizesSubviews="NO" borderType="line" title="Please read" translatesAutoresizingMaskIntoConstraints="NO" id="mB3-is-Hvp">
-                        <rect key="frame" x="17" y="61" width="530" height="159"/>
+                    <box autoresizesSubviews="NO" borderType="line" title="Backup Location" translatesAutoresizingMaskIntoConstraints="NO" id="mB3-is-Hvp">
+                        <rect key="frame" x="17" y="252" width="530" height="159"/>
                         <view key="contentView" id="CxG-qh-tIY">
                             <rect key="frame" x="1" y="1" width="528" height="143"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -54,7 +55,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                         <font key="titleFont" metaFont="smallSystemBold"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="cFe-lV-Lzx">
-                        <rect key="frame" x="17" y="16" width="530" height="43"/>
+                        <rect key="frame" x="17" y="207" width="530" height="43"/>
                         <view key="contentView" id="FO9-Ui-LmG">
                             <rect key="frame" x="1" y="1" width="528" height="41"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -80,21 +81,65 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                             <constraint firstItem="WPF-AV-Z7i" firstAttribute="centerX" secondItem="cFe-lV-Lzx" secondAttribute="centerX" constant="-59.5" id="ywQ-um-DEp"/>
                         </constraints>
                     </box>
+                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="2MB-cC-IxN">
+                        <rect key="frame" x="20" y="200" width="524" height="5"/>
+                    </box>
+                    <box title="GPS Date/Time" translatesAutoresizingMaskIntoConstraints="NO" id="TuR-Sl-4jS">
+                        <rect key="frame" x="17" y="16" width="530" height="178"/>
+                        <view key="contentView" id="9Aq-D2-3fw">
+                            <rect key="frame" x="2" y="2" width="526" height="161"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S1F-zn-Pq7">
+                                    <rect key="frame" x="18" y="125" width="210" height="18"/>
+                                    <buttonCell key="cell" type="check" title="Update GPS Date/Time stamps" bezelStyle="regularSquare" imagePosition="left" inset="2" id="syZ-lz-UV9">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                        <connections>
+                                            <action selector="toggleDateTimeGPS:" target="-2" id="Gc9-Cd-fgU"/>
+                                        </connections>
+                                    </buttonCell>
+                                </button>
+                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dZK-5P-EUd">
+                                    <rect key="frame" x="18" y="34" width="495" height="85"/>
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="MDl-2A-OhN">
+                                        <font key="font" metaFont="system"/>
+                                        <string key="title">When the above box is checked the GPS Date/Time stamps will be updated from the Original Date/Time the image was taken but converted to UTC.  This is only correct when the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="S1F-zn-Pq7" firstAttribute="leading" secondItem="dZK-5P-EUd" secondAttribute="leading" id="AXa-7Z-riL"/>
+                                <constraint firstItem="S1F-zn-Pq7" firstAttribute="top" secondItem="9Aq-D2-3fw" secondAttribute="top" constant="20" symbolic="YES" id="MYj-wj-A8m"/>
+                                <constraint firstItem="S1F-zn-Pq7" firstAttribute="leading" secondItem="9Aq-D2-3fw" secondAttribute="leading" constant="20" symbolic="YES" id="dcj-3c-S69"/>
+                                <constraint firstItem="dZK-5P-EUd" firstAttribute="top" secondItem="S1F-zn-Pq7" secondAttribute="bottom" constant="8" symbolic="YES" id="lJD-cG-goe"/>
+                            </constraints>
+                        </view>
+                    </box>
                 </subviews>
                 <constraints>
+                    <constraint firstAttribute="bottom" secondItem="TuR-Sl-4jS" secondAttribute="bottom" constant="20" symbolic="YES" id="2pK-0k-UKS"/>
+                    <constraint firstItem="TuR-Sl-4jS" firstAttribute="top" secondItem="2MB-cC-IxN" secondAttribute="bottom" constant="8" symbolic="YES" id="B3y-cd-OHZ"/>
                     <constraint firstAttribute="trailing" secondItem="mB3-is-Hvp" secondAttribute="trailing" constant="20" symbolic="YES" id="Cxg-L3-bjR"/>
                     <constraint firstItem="cFe-lV-Lzx" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="8" symbolic="YES" id="Ja0-Qw-QaV"/>
-                    <constraint firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="20" id="cEa-Sc-EYE"/>
-                    <constraint firstAttribute="bottom" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="20" symbolic="YES" id="ckU-15-SeQ"/>
+                    <constraint firstItem="2MB-cC-IxN" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="leading" id="L6H-Rv-iuL"/>
+                    <constraint firstItem="2MB-cC-IxN" firstAttribute="trailing" secondItem="TuR-Sl-4jS" secondAttribute="trailing" id="N3S-zE-bYa"/>
+                    <constraint firstItem="2MB-cC-IxN" firstAttribute="leading" secondItem="TuR-Sl-4jS" secondAttribute="leading" id="YCA-rR-dtx"/>
+                    <constraint firstItem="2MB-cC-IxN" firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" id="b5x-EO-WjN"/>
+                    <constraint firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="20" symbolic="YES" id="cEa-Sc-EYE"/>
+                    <constraint firstAttribute="bottom" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="211" id="ckU-15-SeQ"/>
                     <constraint firstItem="mB3-is-Hvp" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="iy0-gW-KpC"/>
                     <constraint firstItem="mB3-is-Hvp" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="kVW-8m-BBi"/>
                     <constraint firstItem="cFe-lV-Lzx" firstAttribute="leading" secondItem="mB3-is-Hvp" secondAttribute="leading" id="uIo-3J-BQd"/>
+                    <constraint firstItem="2MB-cC-IxN" firstAttribute="top" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="8" symbolic="YES" id="wcY-dd-Ip7"/>
                 </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="arP-ts-3v3"/>
             </connections>
-            <point key="canvasLocation" x="793" y="541"/>
+            <point key="canvasLocation" x="793" y="636.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="Zvz-jD-4SQ"/>
     </objects>
