@@ -75,9 +75,13 @@ struct Exiftool {
         var gpsDArg = ""
         var gpsTArg = ""
         if Preferences.dateTimeGPS() {
-            if let dto = dtoWithZone(from: imageData) {
-                gpsDArg = "-GPSDateStamp=\(dto)"
-                gpsTArg = "-GPSTimeStamp=\(dto)"
+            gpsDArg = "-GPSDateStamp="
+            gpsTArg = "-GPSTimeStamp="
+            if imageData.latitude != nil && imageData.longitude != nil {
+                if let dto = dtoWithZone(from: imageData) {
+                    gpsDArg += "\(dto)"
+                    gpsTArg += "\(dto)"
+                }
             }
         }
 
