@@ -44,6 +44,11 @@ struct Exiftool {
         }
     }
 
+    /// Use the embedded copy of exiftool to update the geolocation metadata
+    /// in the file containing the passed image
+    /// - Parameter imageData: the image to update.  imageData contains the URL
+    ///     of the original file plus the assigned location.
+    /// - Returns: ExifTool exit status
     func updateLocation(from imageData: ImageData) -> Int32 {
         // ExifTool latitude and longitude exiftool argument names
         var latArg = "-GPSLatitude="
