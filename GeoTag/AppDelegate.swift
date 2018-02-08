@@ -171,6 +171,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if saveOrDontSave() {
+            tableViewController.clear(self)
             return .terminateNow
         }
         return .terminateCancel
@@ -178,7 +179,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
-        tableViewController.clear(self)
   }
 }
 
