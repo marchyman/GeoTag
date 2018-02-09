@@ -66,7 +66,7 @@ final class ImageData: NSObject {
     var name: String? {
         return url.lastPathComponent
     }
-    let sandboxUrl: URL         // URL of the sandbox copy of the image
+    var sandboxUrl: URL         // URL of the sandbox copy of the image
 
     // image date/time created
     var date: String = ""
@@ -85,11 +85,11 @@ final class ImageData: NSObject {
     var location: Coord?
     var originalLocation: Coord?
 
-    var validImage = false  // is the image file valid?
+    var validImage = false  // does URL point to a valid image file?
     lazy var image: NSImage = self.loadImage()
 
-    // return the string representation of the location of an image for copy
-    // and paste.
+    /// The string representation of the location of an image for copy and paste.
+    /// The representation of no location is an empty string.
     var stringRepresentation: String {
         if let location = location {
             return "\(location.latitude) \(location.longitude)"
@@ -116,7 +116,15 @@ final class ImageData: NSObject {
                                              appropriateFor: nil,
                                              create: true)
             sandboxUrl = docDir.appendingPathComponent(url.lastPathComponent)
-            try? fileManager.removeItem(at: sandboxUrl)
+            /// if sandboxUrl already exists modify the name until it doesn't
+            var fileNumber = 1
+            while fileManager.fileExists(atPath: (sandboxUrl.path)) {
+                var newName = url.lastPathComponent
+                let nameDot = newName.index(of: ".") ?? newName.endIndex
+                newName.insert(contentsOf: "-\(fileNumber)", at: nameDot)
+                fileNumber += 1
+                sandboxUrl = docDir.appendingPathComponent(newName)
+            }
             try fileManager.createSymbolicLink(at: sandboxUrl,
                                                withDestinationURL: url)
         } catch let error as NSError {
@@ -127,7 +135,8 @@ final class ImageData: NSObject {
         originalLocation = location
     }
 
-    /// remove the symbolic link created at init time
+    /// remove the symbolic link created in the sandboxed document directory
+    /// during instance initialization
     deinit {
         let fileManager = FileManager.default
         try? fileManager.removeItem(at: sandboxUrl)
@@ -136,8 +145,7 @@ final class ImageData: NSObject {
     // MARK: set/revert latitude and longitude for an image
 
     /// set the latitude and longitude of an image
-    /// - Parameter latitude: the new latitude
-    /// - Parameter longitude: the new longitude
+    /// - Parameter location: the new coordinates
     ///
     /// The location may be set to nil to delete location information from
     /// an image.
@@ -190,7 +198,7 @@ final class ImageData: NSObject {
         // add a suffix to the name until no file is found at the save location
         while fileManager.fileExists(atPath: (saveFileUrl.path)) {
             var newName = name
-            let nameDot = newName.index(of: ".") ?? name.endIndex
+            let nameDot = newName.index(of: ".") ?? newName.endIndex
             newName.insert(contentsOf: "-\(fileNumber)", at: nameDot)
             fileNumber += 1
             saveFileUrl = saveDirUrl.appendingPathComponent(newName, isDirectory: false)
@@ -199,9 +207,9 @@ final class ImageData: NSObject {
         do {
             try fileManager.copyItem(at: url, to: saveFileUrl)
             /// DANGER WILL ROBINSON -- the above call can fail to return an
-            /// error when the file is not copied.  radar filed and
-            /// closed as a DUPLICATE OF 30350792 which is still open.
-            /// As a result I must verify that the copied file exists
+            /// error when the file is not copied.  radar filed and closed
+            /// as a DUPLICATE OF 30350792 which was still open as of macOS
+            /// 10.12.x.  As a result I must verify that the copied file exists
             if !fileManager.fileExists(atPath: (saveFileUrl.path)) {
                 unexpected(error: nil,
                            "Cannot copy \(url.path) to \(saveFileUrl.path)")
@@ -216,6 +224,7 @@ final class ImageData: NSObject {
     }
 
     /// save image file if location has changed
+    /// - Returns: false if a changed location could not be saved
     ///
     /// Invokes exiftool to update image metadata with the current
     /// latitude and longitude.  Non valid images and images that have not
@@ -308,11 +317,11 @@ final class ImageData: NSObject {
     }
 
     /// Load an image thumbnail
-    /// - Returns: NSImage of the thumbnail if sucessful
+    /// - Returns: NSImage of the thumbnail
     ///
     /// If image propertied can not be accessed or if needed properties
-    /// do not exist the file is assumed to be a non-image file and a preview
-    /// is not created.
+    /// do not exist the file is assumed to be a non-image file and a zero
+    /// sized empty image is returned.
     private func loadImage() -> NSImage {
         var image = NSImage(size: NSMakeRect(0, 0, 0, 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
