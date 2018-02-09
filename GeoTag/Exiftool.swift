@@ -58,6 +58,10 @@ struct Exiftool {
         // ExifTool GSPDateTime arg storage
         var gpsDArg = ""
         var gpsTArg = ""
+        if Preferences.dateTimeGPS() {
+            gpsDArg = "-GPSDateStamp="
+            gpsTArg = "-GPSTimeStamp="
+        }
 
         // ExifTool latitude, longitude, and date/time argument values
         if let location = imageData.location {
@@ -80,13 +84,10 @@ struct Exiftool {
             lonArg += "\(lon)"
 
             // set GPS date/time stamp for current location if enabled
-            if Preferences.dateTimeGPS() {
-                gpsDArg = "-GPSDateStamp="
-                gpsTArg = "-GPSTimeStamp="
-                if let dto = dtoWithZone(from: imageData) {
-                    gpsDArg += "\(dto)"
-                    gpsTArg += "\(dto)"
-                }
+            if let dto = dtoWithZone(from: imageData),
+               Preferences.dateTimeGPS() {
+                gpsDArg += "\(dto)"
+                gpsTArg += "\(dto)"
             }
         }
 
