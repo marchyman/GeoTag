@@ -83,6 +83,7 @@ final class TableViewController: NSViewController {
     }
 
     /// update geolocation information for images in the table
+    /// - Returns: true if all modified images were saved, otherwise false
     ///
     /// Each ImageData instance in the table is to save itself. A progress
     /// indicator is displayed while the operation is in progress.
@@ -120,8 +121,9 @@ final class TableViewController: NSViewController {
     /// will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
     /// The validLocation Boolean is used to mitigate this issue.
 
-    @objc func updateLocation(row: Int, validLocation: Bool, latLon: Coord,
-                              modified: Bool = true) {
+    @objc
+    func updateLocation(row: Int, validLocation: Bool, latLon: Coord,
+                        modified: Bool = true) {
         var oldLatLon = Coord()
         let image = images[row]
         if image.location != nil {
@@ -184,7 +186,8 @@ final class TableViewController: NSViewController {
 
     // only enable various tableview related menu items when it makes sense
 
-    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+    @objc
+    func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
         guard let action = item.action else { return false }
         switch action {
         case #selector(selectAll(_:)):
