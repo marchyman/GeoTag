@@ -4,7 +4,7 @@
 //
 //  Created by Marco S Hyman on 6/11/14.
 //
-// Copyright 2014-2017 Marco S Hyman
+// Copyright 2014-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -56,6 +56,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// don't enable save menu item unless something has been modified
+    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        guard let action = item.action else { return false }
+        switch action {
+        case #selector(showOpenPanel(_:)):
+            return true
+        case #selector(save(_:)):
+            return modified
+        case #selector(openPreferencesWindow(_:)):
+            return true
+        default:
+            print("default for item \(item)")
+        }
+        return false
+    }
+
     //MARK: open panel handling
 
     /// action bound to File -> Open
@@ -91,21 +107,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     //MARK: Save image changes (if any)
-
-    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
-        guard let action = item.action else { return false }
-        switch action {
-        case #selector(showOpenPanel(_:)):
-            return true
-        case #selector(save(_:)):
-            return modified
-        case #selector(openPreferencesWindow(_:)):
-            return true
-        default:
-            print("default for item \(item)")
-        }
-        return false
-    }
 
     /// action bound to File -> Save
     /// - Parameter AnyObject: unused
@@ -171,6 +172,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if saveOrDontSave() {
+            tableViewController.clear(self)
             return .terminateNow
         }
         return .terminateCancel
@@ -178,7 +180,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
-    }
+  }
 }
 
 /// Window delegate functions

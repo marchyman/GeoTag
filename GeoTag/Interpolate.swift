@@ -25,6 +25,7 @@
 //
 
 import Foundation
+import MapKit
 
 // constants used in this file
 private let π = Double.pi
@@ -78,7 +79,7 @@ public func distanceAndBearing(lat1: Double, lon1: Double,
 /// - Returns: tuple containing the latitude and longitude of the destination
 
 public func destFromStart(lat: Double, lon: Double,
-                          distance: Double, bearing: Double) -> (Double, Double) {
+                          distance: Double, bearing: Double) -> CLLocationCoordinate2D {
     let latR = degreesToRadians(lat)
     let lonR = degreesToRadians(lon)
     let angularDist = distance / R
@@ -89,6 +90,7 @@ public func destFromStart(lat: Double, lon: Double,
     let lon2R = lonR +
                 atan2(sin(bearingR) * sin(angularDist) * cos(latR),
                       cos(angularDist) - sin(latR) * sin(lat2R))
-    return (radiansToDegrees(lat2R), radiansToDegrees(lon2R))
+    return CLLocationCoordinate2D(latitude: radiansToDegrees(lat2R),
+                  longitude: radiansToDegrees(lon2R))
 }
 

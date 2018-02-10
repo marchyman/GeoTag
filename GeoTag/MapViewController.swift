@@ -125,14 +125,12 @@ class MapViewController: NSViewController {
 
     @IBAction func searchMapLocation(_ sender: NSSearchField) {
         if !sender.stringValue.isEmpty {
-//          print("search bar: \(sender.stringValue)")
             let geocoder = CLGeocoder()
             geocoder.geocodeAddressString(sender.stringValue) {
                 placeMark, error in
                 if error == nil,
                    let location = placeMark?[0].location {
-                    self.pinMapAt(latitude: location.coordinate.latitude,
-                                  longitude: location.coordinate.longitude,
+                    self.pinMapAt(coords: location.coordinate,
                                   dropPin: false)
                 }
             }
@@ -141,23 +139,21 @@ class MapViewController: NSViewController {
 
     // center the map as the given latitude/longitude and drop
     // a pin at that location
-    func pinMapAt(latitude: Double, longitude: Double, dropPin: Bool = true) {
-        let location = CLLocationCoordinate2D(latitude: latitude,
-                                              longitude: longitude)
-        let point = MKMapPointForCoordinate(location);
+    func pinMapAt(coords: Coord, dropPin: Bool = true) {
+        let point = MKMapPointForCoordinate(coords);
         if !MKMapRectContainsPoint(mapView.visibleMapRect, point) {
-            mapView.setCenter(location, animated: false)
+            mapView.setCenter(coords, animated: false)
         }
         // if an image is selected and a pin exists, move it.
         // Otherwise create a new pin
         if dropPin {
             if let pin = mapPin {
-                pin.coordinate = location;
+                pin.coordinate = coords;
             } else {
                 mapPin = MKPointAnnotation()
                 if let pin = mapPin {
-                    pin.coordinate = location;
-                    pin.title = "location"
+                    pin.coordinate = coords;
+                    pin.title = "coords"
                     mapView.addAnnotation(pin)
                 } else {
                     unexpected(error: nil, "Can't create map pin")
@@ -190,7 +186,6 @@ extension MapViewController: MKMapViewDelegate {
             annotationView = MKPinAnnotationView(annotation: annotation,
                                                  reuseIdentifier: identifier)
             if let av = annotationView {
-//              print("\(av)")
                 av.isEnabled = true
                 av.canShowCallout = true
                 av.pinColor = .red

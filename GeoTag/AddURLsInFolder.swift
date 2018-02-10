@@ -33,7 +33,7 @@ import Foundation
 ///
 /// Non-hidden files are added to the inout toUrls parameter. Hidden files
 /// and internal folders are not added to the array.  Internal folders are
-/// enumerated.
+/// also enumerated.
 
 public func addUrlsInFolder(url: URL, toUrls urls: inout [URL]) -> Bool {
     let fileManager = FileManager.default

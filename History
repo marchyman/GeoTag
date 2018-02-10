@@ -1,3 +1,13 @@
+## GeoTag 4.x
+
+### New Features
+
+### Bug Fixes
+
+* handle the case where the same file name is used for two images located in
+  different folders.
+* remove GPS date and time stamps when a location is removed.
+
 ## GeoTag 4.2
 
 ### New Features

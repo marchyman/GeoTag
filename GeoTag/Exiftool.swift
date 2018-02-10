@@ -44,11 +44,28 @@ struct Exiftool {
         }
     }
 
+    /// Use the embedded copy of exiftool to update the geolocation metadata
+    /// in the file containing the passed image
+    /// - Parameter imageData: the image to update.  imageData contains the URL
+    ///     of the original file plus the assigned location.
+    /// - Returns: ExifTool exit status
     func updateLocation(from imageData: ImageData) -> Int32 {
-        // latitude exiftool args
+        // ExifTool latitude and longitude exiftool argument names
         var latArg = "-GPSLatitude="
         var latRefArg = "-GPSLatitudeRef="
-        if var lat = imageData.latitude {
+        var lonArg = "-GPSLongitude="
+        var lonRefArg = "-GPSLongitudeRef="
+        // ExifTool GSPDateTime arg storage
+        var gpsDArg = ""
+        var gpsTArg = ""
+        if Preferences.dateTimeGPS() {
+            gpsDArg = "-GPSDateStamp="
+            gpsTArg = "-GPSTimeStamp="
+        }
+
+        // ExifTool latitude, longitude, and date/time argument values
+        if let location = imageData.location {
+            var lat = location.latitude
             if lat < 0 {
                 latRefArg += "S"
                 lat = -lat
@@ -56,12 +73,8 @@ struct Exiftool {
                 latRefArg += "N"
             }
             latArg += "\(lat)"
-        }
 
-        // longitude exiftool args
-        var lonArg = "-GPSLongitude="
-        var lonRefArg = "-GPSLongitudeRef="
-        if var lon = imageData.longitude {
+            var lon = location.longitude
             if lon < 0 {
                 lonRefArg += "W"
                 lon = -lon
@@ -69,19 +82,12 @@ struct Exiftool {
                 lonRefArg += "E"
             }
             lonArg += "\(lon)"
-        }
 
-        // GSPDateTime exiftool arg
-        var gpsDArg = ""
-        var gpsTArg = ""
-        if Preferences.dateTimeGPS() {
-            gpsDArg = "-GPSDateStamp="
-            gpsTArg = "-GPSTimeStamp="
-            if imageData.latitude != nil && imageData.longitude != nil {
-                if let dto = dtoWithZone(from: imageData) {
-                    gpsDArg += "\(dto)"
-                    gpsTArg += "\(dto)"
-                }
+            // set GPS date/time stamp for current location if enabled
+            if let dto = dtoWithZone(from: imageData),
+               Preferences.dateTimeGPS() {
+                gpsDArg += "\(dto)"
+                gpsTArg += "\(dto)"
             }
         }
 
@@ -98,10 +104,11 @@ struct Exiftool {
         return exiftool.terminationStatus
     }
 
-    // return a date and time stamp of the date the image was taken
-    // converted to Zulu time.
-    // Nils are returned if there was no dto or we couldn't get the
-    // appropriate time zone from image geo location data.
+    // return a date and time stamp of the date the image was taken including
+    // time zone indication of +/-hh:mm
+    //
+    // Nil is returned if there was no date/time original or we couldn't get the
+    // appropriate time zone from image geolocation data.
     private func dtoWithZone(from imageData: ImageData) -> String? {
         if let timeZone = imageData.timeZone, !imageData.date.isEmpty {
             let format = DateFormatter()

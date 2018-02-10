@@ -83,6 +83,7 @@ final class TableViewController: NSViewController {
     }
 
     /// update geolocation information for images in the table
+    /// - Returns: true if all modified images were saved, otherwise false
     ///
     /// Each ImageData instance in the table is to save itself. A progress
     /// indicator is displayed while the operation is in progress.
@@ -106,10 +107,8 @@ final class TableViewController: NSViewController {
     ///
     /// - Parameter row: the row of the table referencing the image to update
     /// - Parameter validLocation: true if the latitude and longitude are valid
-    /// - Parameter latitude: latitude of the location to be assigned to
+    /// - Parameter latLon: latitude/longitude of the location to be assigned to
     ///   the image.
-    /// - Parameter longitude: longitude of the location to be assigned to
-    ///   the image
     /// - Parameter modified: appDeligate modified flag used to propagate
     ///   proper modified status when using undo.   Always true when called
     ///   from outside this function.
@@ -122,42 +121,37 @@ final class TableViewController: NSViewController {
     /// will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
     /// The validLocation Boolean is used to mitigate this issue.
 
-    @objc func updateLocation(row: Int, validLocation: Bool, latitude: Double,
-                        longitude: Double, modified: Bool = true) {
-        var oldValidLocation: Bool
-        var oldLatitude: Double
-        var oldLongitude: Double
+    @objc
+    func updateLocation(row: Int, validLocation: Bool, latLon: Coord,
+                        modified: Bool = true) {
+        var oldLatLon = Coord()
         let image = images[row]
-        if image.latitude != nil && image.longitude != nil {
-            oldValidLocation = true
-            oldLatitude = image.latitude!
-            oldLongitude = image.longitude!
-        } else {
-            oldValidLocation = false
-            oldLatitude = 0
-            oldLongitude = 0
+        if image.location != nil {
+            oldLatLon = image.location!
         }
+
         let undo = appDelegate.undoManager
         if #available(OSX 10.11, *) {
             undo.registerUndo(withTarget: self) {
                 targetSelf in
-                targetSelf.updateLocation(row: row, validLocation: oldValidLocation,
-                                          latitude: oldLatitude, longitude: oldLongitude,
+                targetSelf.updateLocation(row: row,
+                                          validLocation: image.location != nil,
+                                          latLon: oldLatLon,
                                           modified: targetSelf.appDelegate.modified)
             }
         } else {
             // Fallback on earlier versions
             (undo.prepare(withInvocationTarget: self) as AnyObject)
-                .updateLocation(row: row, validLocation: oldValidLocation,
-                                latitude: oldLatitude, longitude: oldLongitude,
+                .updateLocation(row: row,
+                                validLocation: image.location != nil,
+                                latLon: oldLatLon,
                                 modified: appDelegate.modified)
         }
         if validLocation {
-            image.setLocation(latitude: latitude, longitude: longitude)
-            mapViewController.pinMapAt(latitude: image.latitude!,
-                                       longitude: image.longitude!)
+            image.setLocation(latLon)
+            mapViewController.pinMapAt(coords: latLon)
         } else {
-            image.setLocation(latitude: nil, longitude: nil)
+            image.setLocation(nil)
             mapViewController.removeMapPin()
         }
         reload(row: row)
@@ -179,8 +173,7 @@ final class TableViewController: NSViewController {
             var count = 0
             tableView.selectedRowIndexes.forEach {
                 row in
-                if self.images[row].latitude != nil &&
-                   self.images[row].longitude != nil {
+                if self.images[row].location != nil {
                    count += 1
                 }
             }
@@ -193,7 +186,8 @@ final class TableViewController: NSViewController {
 
     // only enable various tableview related menu items when it makes sense
 
-    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+    @objc
+    func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
         guard let action = item.action else { return false }
         switch action {
         case #selector(selectAll(_:)):
@@ -210,7 +204,7 @@ final class TableViewController: NSViewController {
             // OK if only one row with a valid location selected
             if tableView.numberOfSelectedRows == 1 {
                 let image = images[tableView.selectedRow]
-                if (image.latitude != nil && image.longitude != nil ) {
+                if image.location != nil {
                     return true
                 }
             }
@@ -296,7 +290,7 @@ final class TableViewController: NSViewController {
             if values.count == 2 {
                 let latitude = values[0].doubleValue
                 let longitude = values[1].doubleValue
-                updateSelectedRows(latitude: latitude, longitude: longitude)
+                updateSelectedRows(latLon: Coord(latitude: latitude, longitude: longitude))
                 appDelegate.undoManager.setActionName("paste")
             }
         }
@@ -312,7 +306,7 @@ final class TableViewController: NSViewController {
         appDelegate.undoManager.beginUndoGrouping()
         tableView.selectedRowIndexes.forEach {
             self.updateLocation(row: $0, validLocation: false,
-                                latitude: 0, longitude: 0)
+                                latLon: Coord())
         }
         appDelegate.undoManager.endUndoGrouping()
         appDelegate.undoManager.setActionName("delete")
@@ -355,10 +349,9 @@ final class TableViewController: NSViewController {
 
         rows.forEach {
             let image = self.images[$0]
-            if image.latitude != nil &&
-               image.longitude != nil {
-                let info = LocnInfo(lat: image.latitude!,
-                                    lon: image.longitude!,
+            if let latLon = image.location {
+                let info = LocnInfo(lat: latLon.latitude,
+                                    lon: latLon.longitude,
                                     timestamp: image.dateFromEpoch)
                 if startInfo == nil {
                     startInfo = info
@@ -395,12 +388,12 @@ final class TableViewController: NSViewController {
                 let image = self.images[$0]
                 let deltaTime = image.dateFromEpoch - startInfo.timestamp
                 if deltaTime > 0 && deltaTime <= endInfo.timestamp &&
-                   image.latitude == nil {
+                   image.location == nil {
                     let deltaDist = deltaTime * speed
-                    let (lat, lon) = destFromStart(lat: startInfo.lat, lon: startInfo.lon,
-                                                   distance: deltaDist, bearing: bearing)
+                    let latLon = destFromStart(lat: startInfo.lat, lon: startInfo.lon,
+                                               distance: deltaDist, bearing: bearing)
                     self.updateLocation(row: $0, validLocation: true,
-                                        latitude: lat, longitude: lon)
+                                        latLon: latLon)
                 }
             }
             appDelegate.undoManager.endUndoGrouping()
@@ -442,11 +435,11 @@ final class TableViewController: NSViewController {
     ///
     /// Update all selected rows as a single undo group.
 
-    func updateSelectedRows(latitude: Double, longitude: Double) {
+    func updateSelectedRows(latLon: Coord) {
         appDelegate.undoManager.beginUndoGrouping()
         tableView.selectedRowIndexes.forEach {
             self.updateLocation(row: $0, validLocation: true,
-                latitude: latitude, longitude: longitude)
+                                latLon: latLon)
         }
         appDelegate.undoManager.endUndoGrouping()
     }
@@ -474,11 +467,11 @@ extension TableViewController: NSTableViewDelegate {
             case NSUserInterfaceItemIdentifier("dateTime"):
                 value = image.date
             case NSUserInterfaceItemIdentifier("latitude"):
-                if let lat = image.latitude {
+                if let lat = image.location?.latitude {
                     value = String(format: "% 2.6f", lat)
                 }
             case NSUserInterfaceItemIdentifier("longitude"):
-                if let lon = image.longitude {
+                if let lon = image.location?.longitude {
                     value = String(format: "% 2.6f", lon)
                 }
             default:
@@ -533,10 +526,9 @@ extension TableViewController: NSTableViewDelegate {
         } else {
             let image = images[row]
             imageWell.image = image.image
-            if image.latitude != nil && image.longitude != nil {
+            if let latLon = image.location {
                 reload(row: row) // change color of selected row
-                mapViewController.pinMapAt(latitude: image.latitude!,
-                                           longitude: image.longitude!)
+                mapViewController.pinMapAt(coords: latLon)
             } else {
                 mapViewController.removeMapPin()
             }
@@ -593,8 +585,7 @@ extension TableViewController: MapViewDelegate {
 
     func mouseClicked(mapView: MapView!,
                       location: CLLocationCoordinate2D) {
-        updateSelectedRows(latitude: location.latitude,
-                           longitude: location.longitude)
+        updateSelectedRows(latLon: location)
         appDelegate.undoManager.setActionName("location change")
     }
 }
