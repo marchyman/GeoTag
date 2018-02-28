@@ -285,7 +285,7 @@ final class ImageData: NSObject {
 
         // grab the image properties and extract height and width
         // if there are no image properties there is nothing to do.
-        guard let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary! else {
+        guard let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary? else {
             return false
         }
 
