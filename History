@@ -2,6 +2,10 @@
 
 ### New Features
 
+* Add ability to sort the table of images by column.  Clicking on a column header
+  will sort the table by the contents of that column.  Clicking again will change
+  the sort direction.
+
 ### Bug Fixes
 
 * handle the case where the same file name is used for two images located in

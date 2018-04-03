@@ -364,3 +364,20 @@ final class ImageData: NSObject {
         return image
     }
 }
+
+/// Key-value names for tableview column sorting
+extension ImageData {
+    @objc var imageName: String {
+        return name ?? ""
+    }
+    @objc var dateTime: Double {
+        return dateFromEpoch
+    }
+    @objc var latitude: Double {
+        return location?.latitude ?? 0
+    }
+    @objc var longitude: Double {
+        return location?.longitude ?? 0
+    }
+}
+

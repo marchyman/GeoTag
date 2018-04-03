@@ -545,6 +545,15 @@ extension TableViewController: NSTableViewDataSource {
         return images.count
     }
 
+    // table sorting by column contents
+    func tableView(_ tableView: NSTableView,
+                   sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
+        let sortedImages = NSMutableArray(array: images)
+        sortedImages.sort(using: tableView.sortDescriptors)
+        images = sortedImages as! [ImageData]
+        tableView.reloadData()
+    }
+
     // validate a proposed drop
     func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo,
                    proposedRow row: Int,
