@@ -1,8 +1,23 @@
 ## GeoTag for OS X
 
-## GeoTag 4.2 requires macOS 10.10 or later
+## GeoTag 4.3 requires macOS 10.10 or later
+
+## GeoTag 4.3
 
 ### New Features
+
+* Add ability to sort the table of images by column.  Clicking on a column header
+  will sort the table by the contents of that column.  Clicking again will change
+  the sort direction.
+* ExifTool version 10.94
+
+### Bug Fixes
+
+* handle the case where the same file name is used for two images located in
+  different folders.
+* remove GPS date and time stamps when a location is removed.
+
+### Other 4.x Features and bug fixes
 
 * Update GPS Date and Time tags when updating location.   GPS timestamps are
   in GMT.  The procedure assumes the date and time the image was taken was correct
@@ -11,28 +26,16 @@
   the 'Update GPS Date/Time stamps' button is checked in program Preferences.
   **This feature is only available on macOS 10.11 or later**
 * ExifTool 10.76
-
-### 4.1 Features
-
 * Map searching -- position map by name of city/street/etc.
 * Image backup handling
-
-### Bug Fixes
-
 * Fix display of error reason when a backup folder can not be selected
 * pin no longer placed when double clicking on map
 * pin no longer placed when dragging map
 * GPS info validation
 
-### Known issue
-
-* You can not re-position a pin by dragging the pin.  Instead click on the desired
-  location
-
 ### Image Backups
 
-I've made yet another change to image backup handling.  The change eliminates the
-now all too common error stating you do not have permission to back up your files.
+This is different from the 3.x and earlier versions of GeoTag.
 
 * A "backup folder" location is required.  If a backup folder is not configured
   when GeoTag starts the program will open the preferences window for you to
@@ -46,29 +49,10 @@ now all too common error stating you do not have permission to back up your file
 * The system trash is no longer used (although you could set your backup location
   to ~/.Trash)
 
-### MIT License
+### Known issue
 
-It was brought to my attention that the Creative Commons license is not really
-suitable for software.  I've changed to the MIT software licence.
-
-Copyright 2014-2018 Marco S Hyman
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in the
-Software without restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* You can not re-position a pin by dragging the pin.  Instead click on the desired
+  location
 
 ---
 
@@ -82,7 +66,7 @@ used to write location data to the images when you save your changes.  ExifTool
 only modifies image metadata -- your image pixels are not touched.
 
 See <http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
-ExifTool. ExifTool is built in to GeoTag.
+ExifTool. **ExifTool is built in to GeoTag.**
 
 The functions provided by GeoTag exist in current versions of iPhoto, Aperture
 (RIP), and Lightroom.  Some still find the application useful for geolocation
@@ -90,7 +74,7 @@ tagging photos in the field.  Photos (OSX 10.10.3 and later) will let you modify
 existing location metadata but not add location data to an image. If necessary
 use GeoTag to add location metadata **before** importing the images into Photos.
 
-Version 4.2 is the latest version.  It workes on macOS 10.10 or later. Version
+Version 4.3 is the latest version.  It workes on macOS 10.10 or later. Version
 4 uses Apple maps.
 
 Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later.  Version 3
@@ -164,7 +148,7 @@ a pop up menu by right clicking on an entry in the list.
 ### Build Instructions for developers
 
 * Get current sources from github -- https://github.com/marchyman/GeoTag
-* Open the project in Xcode (last built using version 9.0.1)
+* Open the project in Xcode (last built using version 9.3)
 * ⌘R will build and run, ⌘B to build only
 
 Send all comments, bugs, requests, etc. to <marc@snafu.org>
