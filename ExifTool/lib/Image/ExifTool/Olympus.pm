@@ -39,7 +39,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::APP12;
 
-$VERSION = '2.51';
+$VERSION = '2.54';
 
 sub PrintLensInfo($$$);
 
@@ -123,6 +123,7 @@ my %olympusLensTypes = (
     '1 06 00' => 'Sigma APO 50-500mm F4.0-6.3 EX DG HSM', #6
     '1 06 10' => 'Sigma 30mm F1.4 DC DN | C', #NJ
     '1 07 00' => 'Sigma Macro 105mm F2.8 EX DG', #PH
+    '1 07 10' => 'Sigma 16mm F1.4 DC DN | C (017)', #IB
     '1 08 00' => 'Sigma APO Macro 150mm F2.8 EX DG HSM', #PH
     '1 09 00' => 'Sigma 18-50mm F2.8 EX DC Macro', #NJ
     '1 10 00' => 'Sigma 24mm F1.8 EX DG Aspherical Macro', #PH
@@ -404,6 +405,7 @@ my %olympusCameraTypes = (
     S0065 => 'E-PL8',
     S0067 => 'E-M1MarkII',
     S0068 => 'E-M10MarkIII',
+    S0076 => 'E-PL9', #IB
     SR45 => 'D220',
     SR55 => 'D320L',
     SR83 => 'D340L',
@@ -2416,6 +2418,8 @@ my %indexInfo = (
                     1 => 'WB',
                     2 => 'FL',
                     3 => 'MF',
+                    4 => 'ISO', #forum8906
+                    5 => 'AE Auto', #forum8906
                     6 => 'Focus', #PH
                 }) . ' Bracketing';
                 $a =~ s/, /+/g;
@@ -2477,6 +2481,8 @@ my %indexInfo = (
         Count => 2,
         PrintConv => {
             '0 0' => 'No',
+            '5 4' => 'HDR1', #forum8906
+            '6 4' => 'HDR2', #forum8906
             #'8 8' - seen this for the E-M1mkII
             '9 8' => 'Focus-stacked (8 images)',
         },

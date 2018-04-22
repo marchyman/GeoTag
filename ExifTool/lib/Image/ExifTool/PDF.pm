@@ -21,7 +21,7 @@ use vars qw($VERSION $AUTOLOAD $lastFetched);
 use Image::ExifTool qw(:DataAccess :Utils);
 require Exporter;
 
-$VERSION = '1.43';
+$VERSION = '1.46';
 
 sub FetchObject($$$$);
 sub ExtractObject($$;$$);
@@ -747,7 +747,7 @@ sub FetchObject($$$$)
         return ExtractObject($et, \$data);
     }
     my $raf = $$et{RAF};
-    $raf->Seek($offset, 0) or $et->Warn("Bad $tag offset"), return undef;
+    $raf->Seek($offset+$$et{PDFBase}, 0) or $et->Warn("Bad $tag offset"), return undef;
     # verify that we are reading the expected object
     $raf->ReadLine($data) or $et->Warn("Error reading $tag data"), return undef;
     ($obj = $ref) =~ s/R/obj/;
@@ -927,7 +927,7 @@ sub ExtractObject($$;$$)
         }
         if ($$dict{$tag}) {
             # duplicate dictionary entries are not allowed
-            $et->Warn("Duplicate '$tag' entry in dictionary (ignored)");
+            $et->Warn("Duplicate '${tag}' entry in dictionary (ignored)");
         } else {
             # save the entry
             push @tags, $tag;
@@ -949,7 +949,7 @@ sub ExtractObject($$;$$)
         # (compressed objects are not allowed)
         my $offset = LocateObject($xref, $length) or return $dict;
         $offset or $et->Warn('Bad Length object'), return $dict;
-        $raf->Seek($offset, 0) or $et->Warn('Bad Length offset'), return $dict;
+        $raf->Seek($offset+$$et{PDFBase}, 0) or $et->Warn('Bad Length offset'), return $dict;
         # verify that we are reading the expected object
         $raf->ReadLine($data) or $et->Warn('Error reading Length data'), return $dict;
         $length =~ s/R/obj/;
@@ -1451,7 +1451,7 @@ sub DecryptInit($$$)
     }
     if ("$ver.$rev" >= 5.6) {
         # apologize for poor performance (AES is a pure Perl implementation)
-        $et->Warn('Decryption is very slow for encryption V5.6 or higher', 1);
+        $et->Warn('Decryption is very slow for encryption V5.6 or higher', 3);
     }
     $et->HandleTag($tagTablePtr, 'P', $$encrypt{P});
 
@@ -2052,9 +2052,7 @@ sub ProcessDict($$$$;$$)
         DecodeStream($et, $dict) or last;
         if ($verbose > 2) {
             $et->VPrint(2,"$$et{INDENT}$$et{DIR_NAME} stream data\n");
-            my %parms = ( Prefix => $$et{INDENT} );
-            $parms{MaxLen} = $verbose > 3 ? 1024 : 96 if $verbose < 5;
-            HexDump(\$$dict{_stream}, undef, %parms);
+            $et->VerboseDump(\$$dict{_stream});
         }
         # extract information from stream
         my %dirInfo = (
@@ -2087,8 +2085,9 @@ sub ReadPDF($$)
 #
     # (linearization dictionary must be in the first 1024 bytes of the file)
     $raf->Read($buff, 1024) >= 8 or return 0;
-    $buff =~ /^%PDF-(\d+\.\d+)/ or return 0;
-    $pdfVer = $1;
+    $buff =~ /^(\s*)%PDF-(\d+\.\d+)/ or return 0;
+    $$et{PDFBase} = length $1 and $et->Warn('PDF header is not at start of file',1);
+    $pdfVer = $2;
     $et->SetFileType();   # set the FileType tag
     $et->Warn("May not be able to read a PDF version $pdfVer file") if $pdfVer >= 2.0;
     # store PDFVersion tag
@@ -2107,7 +2106,7 @@ sub ReadPDF($$)
             if (ref $dict eq 'HASH' and $$dict{Linearized} and $$dict{L}) {
                 if (not $$et{VALUE}{FileSize}) {
                     undef $lin; # can't determine if it is linearized
-                } elsif ($$dict{L} == $$et{VALUE}{FileSize}) {
+                } elsif ($$dict{L} == $$et{VALUE}{FileSize} - $$et{PDFBase}) {
                     $lin = 'true';
                 }
             }
@@ -2145,7 +2144,7 @@ XRef:
         my $offset = shift @xrefOffsets;
         my $type = shift @xrefOffsets;
         next if $loaded{$offset};   # avoid infinite recursion
-        unless ($raf->Seek($offset, 0)) {
+        unless ($raf->Seek($offset+$$et{PDFBase}, 0)) {
             %loaded or return -5;
             $et->Warn('Bad offset for secondary xref table');
             next;

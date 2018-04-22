@@ -10,6 +10,7 @@
 #               2010/06/18 - PH Support variable-length CustomPictureStyle data
 #               2010/09/14 - PH Added r/w support for XMP in VRD
 #               2015/05/16 - PH Added DR4 support (DPP 4.1.50.0)
+#               2018/03/13 - PH Update to DPP 4.8.20
 #
 # References:   1) Bogdan private communication (Canon DPP v3.4.1.1)
 #               2) Gert Kello private communiation (DPP 3.8)
@@ -22,7 +23,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Canon;
 
-$VERSION = '1.28';
+$VERSION = '1.31';
 
 sub ProcessCanonVRD($$;$);
 sub WriteCanonVRD($$;$);
@@ -1144,6 +1145,8 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     0x20600 => 'LuminanceNoiseReduction',
     0x20601 => 'ChrominanceNoiseReduction',
     # 0x20650 - fmt=9: 0 (JPG images)
+    0x20670 => 'ColorMoireReduction',
+   '0x20670.0' => { Name => 'ColorMoireReductionOn', %noYes },
     0x20701 => {
         Name => 'ShootingDistance',
         Notes => '100% = infinity',
@@ -1195,13 +1198,14 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     },
     # 0x20800 - fmt=1: 0
     # 0x20801 - fmt=1: 0
+    0x2070b => { Name => 'DiffractionCorrectionOn', %noYes },
     0x20900 => 'ColorHue',
     0x20901 => 'SaturationAdj',
     0x20910 => 'RedHSL',
     0x20911 => 'OrangeHSL',
-    0x20912 => 'GreenHSL',
-    0x20913 => 'AquaHSL',
-    0x20914 => 'BlueHSL',
+    0x20912 => 'YellowHSL',
+    0x20913 => 'GreenHSL',
+    0x20914 => 'AquaHSL',
     0x20915 => 'BlueHSL',
     0x20916 => 'PurpleHSL',
     0x20917 => 'MagentaHSL',
@@ -1280,7 +1284,7 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
         Name => 'DR4CameraModel',
         Writable => 'int32u',
         PrintHex => 1,
-        SeparateTable => 'Canon CameraModelID',
+        SeparateTable => 'Canon CanonModelID',
         PrintConv => \%Image::ExifTool::Canon::canonModelID,
     },
     # 4 - value: 3
@@ -1542,16 +1546,7 @@ sub ProcessEditData($$$)
         if ($verbose > 1 and not $outfile) {
             printf $out "$$et{INDENT}CanonVRD Edit record ($recLen bytes at offset 0x%x)\n",
                    $pos + $dataPos;
-            if ($recNum and $verbose > 2) {
-                my %parms = (
-                    Start  => $pos,
-                    Addr   => $pos + $dataPos,
-                    Out    => $out,
-                    Prefix => $$et{INDENT},
-                );
-                $parms{MaxLen} = $verbose == 3 ? 96 : 2048 if $verbose < 5;
-                HexDump($dataPt, $recLen, %parms);
-            }
+            $et->VerboseDump($dataPt, Len => $recLen, Start => $pos, Addr => $pos + $dataPos) if $recNum;
         }
 
         # our edit information is the 0th record, so don't process the others
@@ -2125,16 +2120,7 @@ sub ProcessCanonVRD($$;$)
         if ($verbose > 1 and not $outfile) {
             printf $out "  CanonVRD block 0x%.8x ($blockLen bytes at offset 0x%x)\n",
                 $blockType, $pos + $$dirInfo{DataPos};
-            if ($verbose > 2) {
-                my %parms = (
-                    Start  => $pos,
-                    Addr   => $pos + $$dirInfo{DataPos},
-                    Out    => $out,
-                    Prefix => $$et{INDENT},
-                );
-                $parms{MaxLen} = $verbose == 3 ? 96 : 2048 if $verbose < 5;
-                HexDump($dataPt, $blockLen, %parms);
-            }
+            $et->VerboseDump($dataPt, Len => $blockLen, Start => $pos, Addr => $pos + $$dirInfo{DataPos});
         }
         my $tagInfo = $$tagTablePtr{$blockType};
         unless ($tagInfo) {

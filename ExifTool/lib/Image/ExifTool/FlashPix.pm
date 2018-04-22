@@ -19,7 +19,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::ASF;   # for GetGUID()
 
-$VERSION = '1.29';
+$VERSION = '1.30';
 
 sub ProcessFPX($$);
 sub ProcessFPXR($$$);
@@ -1482,7 +1482,7 @@ sub ProcessFPXR($$$)
             my $name = Image::ExifTool::Decode(undef, $1, 'UCS2', 'II', 'Latin');
             if ($verbose) {
                 my $psize = ($size == 0xffffffff) ? 'storage' : "$size bytes";
-                $et->VPrint(0,"  |  $entry) Name: '$name' [$psize]\n");
+                $et->VPrint(0,"  |  $entry) Name: '${name}' [$psize]\n");
             }
             # remove directory specification
             $name =~ s{.*/}{}s;
@@ -1637,7 +1637,7 @@ sub ProcessFPX($$)
 {
     my ($et, $dirInfo) = @_;
     my $raf = $$dirInfo{RAF};
-    my ($buff, $out, %dumpParms, $oldIndent, $miniStreamBuff);
+    my ($buff, $out, $oldIndent, $miniStreamBuff);
     my ($tag, %hier, %objIndex, %loadedDifSect);
 
     # read header
@@ -1667,8 +1667,6 @@ sub ProcessFPX($$)
 
     if ($verbose) {
         $out = $et->Options('TextOut');
-        $dumpParms{Out} = $out;
-        $dumpParms{MaxLen} = 96 if $verbose == 3;
         print $out "  Sector size=$sectSize\n  FAT: Count=$fatCount\n";
         print $out "  DIR: Start=$dirStart\n";
         print $out "  MiniFAT: Mini-sector size=$miniSize Start=$miniStart Count=$miniCount Cutoff=$miniCutoff\n";
@@ -1736,11 +1734,11 @@ sub ProcessFPX($$)
     }
     if ($verbose) {
         print $out "  FAT [",length($fat)," bytes]:\n";
-        HexDump(\$fat, undef, %dumpParms) if $verbose > 2;
+        $et->VerboseDump(\$fat);
         print $out "  Mini-FAT [",length($miniFat)," bytes]:\n";
-        HexDump(\$miniFat, undef, %dumpParms) if $verbose > 2;
+        $et->VerboseDump(\$miniFat);
         print $out "  Directory [",length($dir)," bytes]:\n";
-        HexDump(\$dir, undef, %dumpParms) if $verbose > 2;
+        $et->VerboseDump(\$dir);
     }
 #
 # process the directory

@@ -58,7 +58,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 use Image::ExifTool::HP;
 
-$VERSION = '3.20';
+$VERSION = '3.22';
 
 sub CryptShutterCount($$);
 sub PrintFilter($$$);
@@ -534,6 +534,7 @@ my %pentaxModelID = (
     0x131f0 => 'WG-M2', # (Ricoh)
     0x13222 => 'K-70', #29 (Ricoh)
     0x1322c => 'KP', #29 (Ricoh)
+    0x13240 => 'K-1 Mark II', # (Ricoh)
 );
 
 # Pentax city codes - (PH, Optio WP)
@@ -946,6 +947,7 @@ my %binaryDataAttrs = (
             4 => 'RAW', #5
             5 => 'Premium', #PH (K20D)
             7 => 'RAW (pixel shift enabled)', #forum6536 (K-3 II)
+            8 => 'Dynamic Pixel Shift', #IB
             65535 => 'n/a', #PH (Q MOV video)
         },
     },

@@ -55,7 +55,7 @@ Image::ExifTool - Read and write meta information
 
 Reads and writes meta information in a wide variety of files, including the
 maker notes of many digital cameras by various manufacturers such as Canon,
-Casio, FLIR, FujiFilm, GE, HP, JVC/Victor, Kodak, Leaf,
+Casio, DJI, FLIR, FujiFilm, GE, GoPro, HP, JVC/Victor, Kodak, Leaf,
 Minolta/Konica-Minolta, Nikon, Nintendo, Olympus/Epson, Panasonic/Leica,
 Pentax/Asahi, Phase One, Reconyx, Ricoh, Samsung, Sanyo, Sigma/Foveon and
 Sony.
@@ -65,43 +65,44 @@ supported by ExifTool (r = read, w = write, c = create):
 
   File Types
   ------------+-------------+-------------+-------------+------------
-  3FR   r     | DVB   r/w   | JPEG  r/w   | ODT   r     | RSRC  r
-  3G2   r/w   | DYLIB r     | JSON  r     | OFR   r     | RTF   r
-  3GP   r/w   | EIP   r     | K25   r     | OGG   r     | RW2   r/w
-  A     r     | EPS   r/w   | KDC   r     | OGV   r     | RWL   r/w
-  AA    r     | EPUB  r     | KEY   r     | OPUS  r     | RWZ   r
-  AAX   r/w   | ERF   r/w   | LA    r     | ORF   r/w   | RM    r
-  ACR   r     | EXE   r     | LFP   r     | OTF   r     | SEQ   r
-  AFM   r     | EXIF  r/w/c | LNK   r     | PAC   r     | SO    r
-  AI    r/w   | EXR   r     | M2TS  r     | PAGES r     | SR2   r/w
-  AIFF  r     | EXV   r/w/c | M4A/V r/w   | PBM   r/w   | SRF   r
-  APE   r     | F4A/V r/w   | MAX   r     | PCD   r     | SRW   r/w
-  ARW   r/w   | FFF   r/w   | MEF   r/w   | PDB   r     | SVG   r
-  ASF   r     | FLA   r     | MIE   r/w/c | PDF   r/w   | SWF   r
-  AVI   r     | FLAC  r     | MIFF  r     | PEF   r/w   | THM   r/w
-  AZW   r     | FLIF  r/w   | MKA   r     | PFA   r     | TIFF  r/w
-  BMP   r     | FLV   r     | MKS   r     | PFB   r     | TORRENT r
-  BPG   r     | FPF   r     | MKV   r     | PFM   r     | TTC   r
-  BTF   r     | FPX   r     | MNG   r/w   | PGF   r     | TTF   r
-  CHM   r     | GIF   r/w   | MOBI  r     | PGM   r/w   | VCF   r
-  COS   r     | GPR   r/w   | MODD  r     | PLIST r     | VRD   r/w/c
-  CR2   r/w   | GZ    r     | MOI   r     | PICT  r     | VSD   r
-  CRW   r/w   | HDP   r/w   | MOS   r/w   | PMP   r     | WAV   r
-  CS1   r/w   | HDR   r     | MOV   r/w   | PNG   r/w   | WDP   r/w
-  DCM   r     | HEIC  r     | MP3   r     | PPM   r/w   | WEBP  r
-  DCP   r/w   | HEIF  r     | MP4   r/w   | PPT   r     | WEBM  r
-  DCR   r     | HTML  r     | MPC   r     | PPTX  r     | WMA   r
-  DFONT r     | ICC   r/w/c | MPG   r     | PS    r/w   | WMV   r
-  DIVX  r     | ICS   r     | MPO   r/w   | PSB   r/w   | WV    r
-  DJVU  r     | IDML  r     | MQV   r/w   | PSD   r/w   | X3F   r/w
-  DLL   r     | IIQ   r/w   | MRW   r/w   | PSP   r     | XCF   r
-  DNG   r/w   | IND   r/w   | MXF   r     | QTIF  r/w   | XLS   r
-  DOC   r     | INX   r     | NEF   r/w   | RA    r     | XLSX  r
-  DOCX  r     | ISO   r     | NRW   r/w   | RAF   r/w   | XMP   r/w/c
-  DPX   r     | ITC   r     | NUMBERS r   | RAM   r     | ZIP   r
-  DR4   r/w/c | J2C   r     | O     r     | RAR   r     |
-  DSS   r     | JNG   r/w   | ODP   r     | RAW   r/w   |
-  DV    r     | JP2   r/w   | ODS   r     | RIFF  r     |
+  3FR   r     | DV    r     | JPEG  r/w   | OFR   r     | RTF   r
+  3G2   r/w   | DVB   r/w   | JSON  r     | OGG   r     | RW2   r/w
+  3GP   r/w   | DYLIB r     | K25   r     | OGV   r     | RWL   r/w
+  A     r     | EIP   r     | KDC   r     | OPUS  r     | RWZ   r
+  AA    r     | EPS   r/w   | KEY   r     | ORF   r/w   | RM    r
+  AAX   r/w   | EPUB  r     | LA    r     | OTF   r     | SEQ   r
+  ACR   r     | ERF   r/w   | LFP   r     | PAC   r     | SKETCH r
+  AFM   r     | EXE   r     | LNK   r     | PAGES r     | SO    r
+  AI    r/w   | EXIF  r/w/c | M2TS  r     | PBM   r/w   | SR2   r/w
+  AIFF  r     | EXR   r     | M4A/V r/w   | PCD   r     | SRF   r
+  APE   r     | EXV   r/w/c | MAX   r     | PDB   r     | SRW   r/w
+  ARW   r/w   | F4A/V r/w   | MEF   r/w   | PDF   r/w   | SVG   r
+  ASF   r     | FFF   r/w   | MIE   r/w/c | PEF   r/w   | SWF   r
+  AVI   r     | FLA   r     | MIFF  r     | PFA   r     | THM   r/w
+  AZW   r     | FLAC  r     | MKA   r     | PFB   r     | TIFF  r/w
+  BMP   r     | FLIF  r/w   | MKS   r     | PFM   r     | TORRENT r
+  BPG   r     | FLV   r     | MKV   r     | PGF   r     | TTC   r
+  BTF   r     | FPF   r     | MNG   r/w   | PGM   r/w   | TTF   r
+  CHM   r     | FPX   r     | MOBI  r     | PLIST r     | VCF   r
+  COS   r     | GIF   r/w   | MODD  r     | PICT  r     | VRD   r/w/c
+  CR2   r/w   | GPR   r/w   | MOI   r     | PMP   r     | VSD   r
+  CR3   r/w   | GZ    r     | MOS   r/w   | PNG   r/w   | WAV   r
+  CRM   r/w   | HDP   r/w   | MOV   r/w   | PPM   r/w   | WDP   r/w
+  CRW   r/w   | HDR   r     | MP3   r     | PPT   r     | WEBP  r
+  CS1   r/w   | HEIC  r     | MP4   r/w   | PPTX  r     | WEBM  r
+  DCM   r     | HEIF  r     | MPC   r     | PS    r/w   | WMA   r
+  DCP   r/w   | HTML  r     | MPG   r     | PSB   r/w   | WMV   r
+  DCR   r     | ICC   r/w/c | MPO   r/w   | PSD   r/w   | WV    r
+  DFONT r     | ICS   r     | MQV   r/w   | PSP   r     | X3F   r/w
+  DIVX  r     | IDML  r     | MRW   r/w   | QTIF  r/w   | XCF   r
+  DJVU  r     | IIQ   r/w   | MXF   r     | R3D   r     | XLS   r
+  DLL   r     | IND   r/w   | NEF   r/w   | RA    r     | XLSX  r
+  DNG   r/w   | INX   r     | NRW   r/w   | RAF   r/w   | XMP   r/w/c
+  DOC   r     | ISO   r     | NUMBERS r   | RAM   r     | ZIP   r
+  DOCX  r     | ITC   r     | O     r     | RAR   r     |
+  DPX   r     | J2C   r     | ODP   r     | RAW   r/w   |
+  DR4   r/w/c | JNG   r/w   | ODS   r     | RIFF  r     |
+  DSS   r     | JP2   r/w   | ODT   r     | RSRC  r     |
 
   Meta Information
   ----------------------+----------------------+---------------------
@@ -303,10 +304,10 @@ as arguments to L</ImageInfo> take precedence over L</Options> settings.
 =item Return Values:
 
 L</ImageInfo> returns a reference to a hash of tag key/value pairs.  The tag
-keys are identifiers, which are similar to the tag names but may have an
+keys are identifiers -- essentially case-sensitive tag names with an
 appended instance number if multiple tags with the same name were extracted
 from the image.  Many of the ExifTool functions require a tag key as an
-argument. Use L</GetTagName [static]> to get the tag name for a given tag
+argument.  Use L</GetTagName [static]> to get the tag name for a given tag
 key.  Note that the case of the tag names may not be the same as requested.
 Here is a simple example to print out the information returned by
 L</ImageInfo>:
@@ -814,8 +815,8 @@ QuickTime specification.
 Flag to request all tags to be extracted.  This causes some tags to be
 generated which normally would not be unless specifically requested (by
 passing the tag name to L</ImageInfo> or L</ExtractInfo>).  May be set to 2
-or 3 to enable generation of some additional tags mentioned in the tag name
-documentation.  Default is undef.
+or 3 to enable generation of some additional tags as mentioned in the tag
+name documentation.  Default is undef.
 
 =item RequestTags
 
@@ -919,9 +920,10 @@ are:
 Where I<PARAM> is the user-defined parameter name (case insensitive).
 
 User-defined parameters may be accessed in tag name expressions by prefixing
-the parameter name with a dollar sign, just like normal tags.  If called
-without no additional arguments, C<Options('UserParam')> returns a reference
-to the hash of all user parameters (with lower-case names).
+the parameter name with a dollar sign just like normal tags, or via the API
+by calling C<Options('UserParam','PARAM')>.  If called without no additional
+arguments, C<Options('UserParam')> returns a reference to the hash of all
+user parameters (with lower-case names).
 
 =item Validate
 
@@ -1231,11 +1233,12 @@ Note that this list will be empty if tags were not specifically requested
 
 Get the value of a specified tag.  The returned value is either the
 human-readable (PrintConv) value, the converted machine-readable (ValueConv)
-value, or the original raw (Raw) value.  If the value type is not specified,
-the PrintConv value is returned if the PrintConv option is set, otherwise
-the ValueConv value is returned.  The PrintConv values are same as the
-values returned by L</ImageInfo> and L</GetInfo> in the tag/value hash
-unless the PrintConv option is disabled.
+value, the original raw (Raw) value, or the original rational (Rational)
+value for rational formats.  If the value type is not specified, the
+PrintConv value is returned if the PrintConv option is set, otherwise the
+ValueConv value is returned.  The PrintConv values are same as the values
+returned by L</ImageInfo> and L</GetInfo> in the tag/value hash unless the
+PrintConv option is disabled.
 
 Tags which represent lists of multiple values (as may happen with 'Keywords'
 for example) are handled specially.  In scalar context, the returned
@@ -1280,7 +1283,7 @@ StrictDate.
 
 0) ExifTool object reference
 
-1) Tag key
+1) Tag key, or case-sensitive tag name with optional group prefix(es)
 
 2) [optional] Value type: 'PrintConv', 'ValueConv', 'Both', 'Raw' or
 'Rational'
@@ -1626,13 +1629,15 @@ of this feature allows the tag value to be set from a string containing tag
 names with leading '$' symbols (eg. 'CommentE<lt>the file is $filename'). 
 Braces '{}' may be used around the tag name to separate it from subsequent
 text, and a '$$' is used to to represent a '$' symbol.  The behaviour for
-missing tags in expressions is defined by the L</MissingTagValue> option. 
+missing tags in expressions is defined by the L</MissingTagValue> option.
 The tag value may be modified via changes to the default input variable ($_)
 in a Perl expression placed inside the braces and after a semicolon
-following the tag name (see the last example above).  Braces within the
-expression must be balanced.  Multiple options hash references may be passed
-to set different options for different tags.  Options apply to subsequent
-tags in the argument list.
+following the tag name (see the last example above).  A '@' may be added
+after the tag name (before the semicolon) to make the expression act on
+individual list items instead of the concatenated string for list-type tags.
+Braces within the expression must be balanced. Multiple options hash
+references may be passed to set different options for different tags. 
+Options apply to subsequent tags in the argument list.
 
 By default, this routine will commute information between same-named tags in
 different groups, allowing information to be translated between images with
@@ -2169,11 +2174,12 @@ AFCP, AIFF, APE, APP0, APP1, APP11, APP12, APP13, APP14, APP15, APP4, APP5,
 APP6, APP8, ASF, Audible, CanonVRD, Composite, DICOM, DNG, DV, DjVu, Ducky,
 EXE, EXIF, ExifTool, FLAC, FLIR, File, Flash, FlashPix, Font, FotoStation,
 GIF, GIMP, GeoTiff, GoPro, H264, HTML, ICC_Profile, ID3, IPTC, ISO, ITC,
-JFIF, JPEG, Jpeg2000, LNK, Leaf, Lytro, M2TS, MIE, MIFF, MNG, MOI, MPC,
-MPEG, MPF, MXF, MakerNotes, Matroska, Meta, Ogg, OpenEXR, Opus, PDF, PICT,
-PLIST, PNG, PSP, Palm, PanasonicRaw, PhotoCD, PhotoMechanic, Photoshop,
-PostScript, PrintIM, QuickTime, RAF, RIFF, RSRC, RTF, Radiance, Rawzor,
-Real, SVG, SigmaRaw, Stim, Theora, Torrent, VCard, Vorbis, XML, XMP, ZIP
+JFIF, JPEG, JSON, Jpeg2000, LNK, Leaf, Lytro, M2TS, MIE, MIFF, MNG, MOI,
+MPC, MPEG, MPF, MXF, MakerNotes, Matroska, Meta, Ogg, OpenEXR, Opus, PDF,
+PICT, PLIST, PNG, PSP, Palm, PanasonicRaw, PhotoCD, PhotoMechanic,
+Photoshop, PostScript, PrintIM, QuickTime, RAF, RIFF, RSRC, RTF, Radiance,
+Rawzor, Real, Red, SVG, SigmaRaw, Stim, Theora, Torrent, VCard, Vorbis, XML,
+XMP, ZIP
 
 =item Family 1 (Specific Location):
 
@@ -2186,7 +2192,7 @@ GraphConv, H264, HP, HTC, HTML, HTML-dc, HTML-ncc, HTML-office, HTML-prod,
 HTML-vw96, HTTP-equiv, ICC-chrm, ICC-clrt, ICC-header, ICC-meas, ICC-meta,
 ICC-view, ICC_Profile, ICC_Profile#, ID3, ID3v1, ID3v1_Enh, ID3v2_2,
 ID3v2_3, ID3v2_4, IFD0, IFD1, IPTC, IPTC#, ISO, ITC, InteropIFD, JFIF, JFXX,
-JPEG, JPEG-HDR, JVC, Jpeg2000, KDC_IFD, Kodak, KodakBordersIFD,
+JPEG, JPEG-HDR, JSON, JVC, Jpeg2000, KDC_IFD, Kodak, KodakBordersIFD,
 KodakEffectsIFD, KodakIFD, KyoceraRaw, LNK, Leaf, LeafSubIFD, Leica, Lytro,
 M2TS, MAC, MIE-Audio, MIE-Camera, MIE-Canon, MIE-Doc, MIE-Extender,
 MIE-Flash, MIE-GPS, MIE-Geo, MIE-Image, MIE-Lens, MIE-Main, MIE-MakerNotes,
@@ -2199,7 +2205,7 @@ PNG-pHYs, PSP, Palm, Panasonic, PanasonicRaw, Pentax, PhaseOne, PhotoCD,
 PhotoMechanic, Photoshop, PictureInfo, PostScript, PreviewIFD, PrintIM,
 ProfileIFD, Qualcomm, QuickTime, RAF, RAF2, RIFF, RMETA, RSRC, RTF,
 Radiance, Rawzor, Real, Real-CONT, Real-MDPR, Real-PROP, Real-RA3, Real-RA4,
-Real-RA5, Real-RJMD, Reconyx, Ricoh, SPIFF, SR2, SR2DataIFD, SR2SubIFD,
+Real-RA5, Real-RJMD, Reconyx, Red, Ricoh, SPIFF, SR2, SR2DataIFD, SR2SubIFD,
 SRF#, SVG, Samsung, Sanyo, Scalado, Sigma, SigmaRaw, Sony, SonyIDC, Stim,
 SubIFD, System, Theora, Torrent, Track#, VCalendar, VCard, Version0, Vorbis,
 XML, XMP, XMP-DICOM, XMP-GAudio, XMP-GImage, XMP-GPano, XMP-GSpherical,
@@ -2246,22 +2252,27 @@ A list of deletable group names in alphabetical order.  The current list of
 deletable group names is:
 
 AFCP, APP0, APP1, APP10, APP11, APP12, APP13, APP14, APP15, APP2, APP3,
-APP4, APP5, APP6, APP7, APP8, APP9, Adobe, CIFF, CanonVRD, Ducky, EXIF,
-ExifIFD, File, FlashPix, FotoStation, GPS, GlobParamIFD, ICC_Profile, IFD0,
-IFD1, IPTC, InteropIFD, JFIF, Jpeg2000, MIE, MPF, MakerNotes, Meta, MetaIFD,
-NikonCapture, PDF, PDF-update, PNG, PhotoMechanic, Photoshop, PrintIM,
-RMETA, RSRC, SubIFD, Trailer, XML, XML-*, XMP, XMP-*
+APP4, APP5, APP6, APP7, APP8, APP9, Adobe, Audio, Author, CIFF, Camera,
+CanonVRD, Document, Ducky, EXIF, ExifIFD, ExifTool, File, FlashPix,
+FotoStation, GPS, GlobParamIFD, ICC_Profile, IFD0, IFD1, IPTC, Image,
+InteropIFD, JFIF, Jpeg2000, Location, MIE, MPF, MakerNotes, Meta, MetaIFD,
+NikonCapture, Other, PDF, PDF-update, PNG, PNG-pHYs, PhotoMechanic,
+Photoshop, Preview, PrintIM, Printing, RMETA, RSRC, SubIFD, Time, Trailer,
+Video, XML, XML-*, XMP, XMP-*
 
-All names in this list are either family 0 or family 1 group names, with the
-exception of 'Trailer' which allows all trailers in JPEG and TIFF-format
-images to be deleted at once, including unknown trailers.  To schedule a
-group for deletion, call L</SetNewValue> with an undefined value and a tag
-name like 'Trailer:*'.
+To schedule a group for deletion, call L</SetNewValue> with a tag name like
+'EXIF:*' and an undefined tag value.
 
-Note that the JPEG "APP" groups are special, and are used only to delete
-application segments which are not associated with another deletable group. 
-For example, deleting 'APP14:*' will delete other APP14 segments, but not
-the APP14 "Adobe" segment.
+Deleting a family 0 or 1 group will delete the entire corresponding block of
+metadata, but deleting a family 2 group (eg. Audio, Author, Camera, etc.)
+deletes the individual tags belonging to that category.
+
+The 'Trailer' group allows all trailers in JPEG and TIFF-format images to be
+deleted at once, including unknown trailers.  Note that the JPEG "APP"
+groups are special, and are used only to delete application segments which
+are not associated with another deletable group. For example, deleting
+'APP14:*' will delete other APP14 segments, but not the APP14 "Adobe"
+segment.
 
 =back
 
@@ -2278,9 +2289,10 @@ Get type of file given file name.
 
 0) [optional] File name (or just an extension)
 
-1) [optional] Flag to return a description instead of a type.  Set to 0 to
-return type for recognized but unsupported files (otherwise the return value
-for unsupported files is undef).
+1) [optional] Flag to return a description instead of a type.  Default is
+undef.  Set to 0 to also return types of recognized but unsupported files
+(otherwise the return value for unsupported files is undef), or 1 to return
+descriptions.
 
 =item Return Value:
 
@@ -2340,8 +2352,8 @@ files.
 Add user-defined tags to an existing tag table at run time.  This differs
 from the usual technique of creating user-defined tags via the
 %Image::ExifTool::UserDefined hash (see the ExifTool_config file in the
-Image::ExifTool distribution) because it allows tags to be added after the
-tag table has been initialized.
+Image::ExifTool distribution) because it allows tags to be added after a tag
+table has been initialized.
 
     use Image::ExifTool ':Public';
     my %tags = (

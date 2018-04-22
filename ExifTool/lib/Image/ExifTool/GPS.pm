@@ -12,7 +12,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.47';
+$VERSION = '1.48';
 
 my %coordConv = (
     ValueConv    => 'Image::ExifTool::GPS::ToDegrees($val)',
@@ -133,7 +133,8 @@ my %coordConv = (
         # pull time out of any format date/time string
         # (converting to UTC if a timezone is given)
         PrintConvInv => sub {
-            my $v = shift;
+            my ($v, $et) = @_;
+            $v = $et->TimeNow() if lc($v) eq 'now';
             my @tz;
             if ($v =~ s/([-+])(.*)//s) {    # remove timezone
                 my $s = $1 eq '-' ? 1 : -1; # opposite sign to convert back to UTC
@@ -314,6 +315,7 @@ my %coordConv = (
         # (and adjust to UTC if this is a full date/time/timezone value)
         PrintConvInv => q{
             my $secs;
+            $val = $self->TimeNow() if lc($val) eq 'now';
             if ($val =~ /[-+]/ and ($secs = Image::ExifTool::GetUnixTime($val, 1))) {
                 $val = Image::ExifTool::ConvertUnixTime($secs);
             }
@@ -374,7 +376,7 @@ my %coordConv = (
         PrintConv => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "E")',
     },
     GPSAltitude => {
-        SubDoc => 1,    # generate for all sub-documents
+        SubDoc => [1,3], # generate for sub-documents if Desire 1 or 3 has a chance to exist
         Desire => {
             0 => 'GPS:GPSAltitude',
             1 => 'GPS:GPSAltitudeRef',
@@ -444,6 +446,11 @@ sub ToDMS($$;$$)
     my ($et, $val, $doPrintConv, $ref) = @_;
     my ($fmt, @fmt, $num, $sign);
 
+    unless (length $val) {
+        # don't convert an empty value
+        return $val if $doPrintConv and $doPrintConv eq 1;  # avoid hiding existing tag when extracting
+        return undef; # avoid writing empty value
+    }
     if ($ref) {
         if ($val < 0) {
             $val = -$val;
@@ -511,7 +518,8 @@ sub ToDegrees($;$)
     my ($val, $doSign) = @_;
     # extract decimal or floating point values out of any other garbage
     my ($d, $m, $s) = ($val =~ /((?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee][+-]\d+)?)/g);
-    my $deg = ($d || 0) + (($m || 0) + ($s || 0)/60) / 60;
+    return '' unless defined $d;
+    my $deg = $d + (($m || 0) + ($s || 0)/60) / 60;
     # make negative if S or W coordinate
     $deg = -$deg if $doSign ? $val =~ /[^A-Z](S|W)$/i : $deg < 0;
     return $deg;

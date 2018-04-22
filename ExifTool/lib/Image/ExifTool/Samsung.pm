@@ -22,7 +22,7 @@ use vars qw($VERSION %samsungLensTypes);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.38';
+$VERSION = '1.40';
 
 sub WriteSTMN($$$);
 sub ProcessINFO($$$);
@@ -387,7 +387,12 @@ my %formatMinMax = (
         Groups => { 2 => 'Camera' },
         Writable => 'string',
     },
-    # 0xa002 - string[30]: '0' or 'DY049P000000' (ref PH) (BodySerialNumber?)
+    0xa002 => { #PH/IB
+        Name => 'SerialNumber',
+        Condition => '$$valPt =~ /^\w{5}/', # should be at least 5 characters long
+        Groups => { 2 => 'Camera' },
+        Writable => 'string',
+    },
     0xa003 => { #1 (SRW images only)
         Name => 'LensType',
         Groups => { 2 => 'Camera' },
@@ -910,7 +915,7 @@ my %formatMinMax = (
     4 => { Name => 'ThumbnailOffset', IsOffset => 1 },
 );
 
-# information extracted from Samsung trailer (ie. Samsung SM-T805 "Sound & Shot" JPEG)
+# information extracted from Samsung trailer (ie. Samsung SM-T805 "Sound & Shot" JPEG) (ref PH)
 %Image::ExifTool::Samsung::Trailer = (
     GROUPS => { 0 => 'MakerNotes', 2 => 'Other' },
     VARS => { NO_ID => 1 },
@@ -920,24 +925,49 @@ my %formatMinMax = (
         as the Galaxy S4 and Tab S.
     },
     # stuff written with "Shot & More" feature
-    '0x0001' => { Name => 'EmbeddedImage', Groups => { 2 => 'Preview' }, Binary => 1 },
     '0x0001-name' => 'EmbeddedImageName',
+    '0x0001' => { Name => 'EmbeddedImage', Groups => { 2 => 'Preview' }, Binary => 1 },
     # stuff written with "Sound & Shot" feature
-    '0x0100' => { Name => 'EmbeddedAudioFile', Binary => 1 },
     '0x0100-name' => 'EmbeddedAudioFileName',
-   # 0x0800 - SoundShot_Meta_Info (contains only already-extracted sound shot name)
-   # 0x0830 - unknown (164004 bytes, name like "1165724808.pre")
+    '0x0100' => { Name => 'EmbeddedAudioFile', Binary => 1 },
+   # 0x0800-name - seen 'SoundShot_Meta_Info'
+   # 0x0800 - (contains only already-extracted sound shot name)
+   # 0x0830-name - seen '1165724808.pre'
+   # 0x0830 - unknown (164004 bytes)
+   # 0x09e0-name - seen 'Burst_Shot_Info'
+   # 0x09e0 - seen '489489125'
+   # 0x0a01-name - seen 'Image_UTC_Data'
     '0x0a01' => { #forum7161
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
         ValueConv => 'ConvertUnixTime($val / 1e3, 1)',
         PrintConv => '$self->ConvertDateTime($val)',
     },
-   # 0x0a01-name = "Image_UTC_Data"
-    '0x0a30' => { Name => 'EmbeddedVideoFile', Binary => 1 }, #forum7161
     '0x0a30-name' => 'EmbeddedVideoType', # ("MotionPhoto_Data")
-   # 0xa050 seen 'Jpeg3602D' (Samsung Gear 360)
-   # 0xa050-name seen 'Jpeg360_2D_Info' (Samsung Gear 360)
+    '0x0a30' => { Name => 'EmbeddedVideoFile', Binary => 1 }, #forum7161
+   # 0x0aa1-name - seen 'MCC_Data'
+   # 0x0aa1 - seen '234'
+    '0x0ab1-name' => 'DepthMapName', # seen 'DualShot_DepthMap_1' (SM-N950U)
+    '0x0ab1' => { Name => 'DepthMapData', Binary => 1 },
+   # 0x0ab3-name - seen 'DualShot_Extra_Info' (SM-N950U)
+    '0x0ab3' => { # (SM-N950U)
+        Name => 'DualShotInfo',
+        SubDirectory => { TagTable => 'Image::ExifTool::Samsung::DualShotInfo' },
+     },
+   # 0x0ac0-name - seen 'ZoomInOut_Info' (SM-N950U)
+   # 0x0ac0 - 2048 bytes of interesting stuff including firmware version? (SM-N950U)
+   # 0xa050-name - seen 'Jpeg360_2D_Info' (Samsung Gear 360)
+   # 0xa050 - seen 'Jpeg3602D' (Samsung Gear 360)
+);
+
+# DualShot Extra Info (ref PH)
+%Image::ExifTool::Samsung::DualShotInfo = (
+    PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
+    GROUPS => { 0 => 'MakerNotes', 2 => 'Image' },
+    FIRST_ENTRY => 0,
+    FORMAT => 'int32u',
+    9 => 'DepthMapWidth',
+    10 => 'DepthMapHeight',
 );
 
 # Samsung composite tags
@@ -955,6 +985,18 @@ my %formatMinMax = (
             return "@a";
         },
     },
+    DepthMapTiff => {
+        Require => {
+            0 => 'DepthMapData',
+            1 => 'DepthMapWidth',
+            2 => 'DepthMapHeight',
+        },
+        ValueConv => q{
+            return undef unless length ${$val[0]} == $val[1] * $val[2];
+            my $tiff = MakeTiffHeader($val[1],$val[2],1,8) . ${$val[0]};
+            return \$tiff;
+        },
+    }
 );
 
 # add our composite tags

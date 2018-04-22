@@ -21,7 +21,7 @@ sub ProcessKodakPatch($$$);
 sub WriteUnknownOrPreview($$$);
 sub FixLeicaBase($$;$);
 
-$VERSION = '2.00';
+$VERSION = '2.01';
 
 my $debug;          # set to 1 to enable debugging code
 
@@ -424,7 +424,7 @@ my $debug;          # set to 1 to enable debugging code
         # these maker notes have an extra 2 bytes after the entry count
         # - written by the PixPro S-1 (Note: Make is "JK Imaging, Ltd.", so check Model for "Kodak")
         Condition => q{
-            $$self{Model}=~/Kodak/i and
+            $$self{Model}=~/(Kodak|PixPro)/i and
             $$valPt =~ /^II\x2a\0\x08\0\0\0.\0\0\0/
         },
         SubDirectory => {
@@ -793,6 +793,14 @@ my $debug;          # set to 1 to enable debugging code
         },
         SubDirectory => {
             TagTable => 'Image::ExifTool::Reconyx::Main',
+            ByteOrder => 'Little-endian',
+        },
+    },
+    {
+        Name => 'MakerNoteReconyx2',
+        Condition => '$$valPt =~ /^RECONYXUF\0/',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::Reconyx::Type2',
             ByteOrder => 'Little-endian',
         },
     },

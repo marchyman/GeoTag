@@ -166,6 +166,7 @@ sub WriteQuickTime($$$)
                     HasData  => $$subdir{HasData},  # necessary?
                     Multi    => $$subdir{Multi},    # necessary?
                     OutFile  => $outfile,
+                    InPlace  => 2, # (to write fixed-length XMP if possible)
                 );
                 # pass the header pointer if necessary (for EXIF IFD's
                 # where the Base offset is at the end of the header)
@@ -206,8 +207,8 @@ sub WriteQuickTime($$$)
                 my $len = length $newData;
                 $len > 0x7ffffff7 and $et->Error("$tag to large to write"), last;
                 if ($len == $size or $dataPt or $foundMDAT) {
-                    # write the updated directory now
-                    Write($outfile, Set32u($len+8), $tag, $newData) or $rtnVal = 0, last;
+                    # write the updated directory now (unless length is zero)
+                    Write($outfile, Set32u($len+8), $tag, $newData) or $rtnVal = 0, last if $len;
                     next;
                 } else {
                     # bad things happen if 'mdat' atom is moved (eg. Adobe Bridge crashes --
@@ -215,9 +216,9 @@ sub WriteQuickTime($$$)
                     # so hold this atom and write it out later
                     if ($len) {
                         push @hold, Set32u($len+8), $tag, $newData;
-                        $et->VPrint(0,"  Moving '$tag' atom to after 'mdat'");
+                        $et->VPrint(0,"  Moving '${tag}' atom to after 'mdat'");
                     } else {
-                        $et->VPrint(0,"  Freeing '$tag' atom (and zeroing data)");
+                        $et->VPrint(0,"  Freeing '${tag}' atom (and zeroing data)");
                     }
                     # write a 'free' atom here to keep 'mdat' at the same offset
                     substr($hdr, 4, 4) = 'free';

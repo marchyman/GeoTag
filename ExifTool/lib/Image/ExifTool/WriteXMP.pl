@@ -571,9 +571,9 @@ sub LimitXMPSize($$$$$$)
     my $guid = '0' x 32;
     my $sp = $noPad ? '' : ' ';
     # write the required xmpNote:HasExtendedXMP property
-    $newData .= "\n$sp<$rdfDesc rdf:about='$about'\n$sp${sp}xmlns:xmpNote='$nsURI{xmpNote}'";
+    $newData .= "\n$sp<$rdfDesc rdf:about='${about}'\n$sp${sp}xmlns:xmpNote='$nsURI{xmpNote}'";
     if ($et->Options('XMPShorthand')) {
-        $newData .= "\n$sp${sp}xmpNote:HasExtendedXMP='$guid'/>\n";
+        $newData .= "\n$sp${sp}xmpNote:HasExtendedXMP='${guid}'/>\n";
     } else {
         $newData .= ">\n$sp$sp<xmpNote:HasExtendedXMP>$guid</xmpNote:HasExtendedXMP>\n$sp</$rdfDesc>\n";
     }
@@ -665,7 +665,7 @@ sub CloseProperty($$$$)
 #         2) [optional] tag table reference
 # Returns: with tag table: new XMP data (may be empty if no XMP data) or undef on error
 #          without tag table: 1 on success, 0 if not valid XMP file, -1 on write error
-# Notes: May set dirInfo InPlace flag to rewrite with specified DirLen
+# Notes: May set dirInfo InPlace flag to rewrite with specified DirLen (=2 to allow larger)
 #        May set dirInfo ReadOnly flag to write as read-only XMP ('r' mode and no padding)
 #        May set dirInfo Compact flag to force compact (drops 2kB of padding)
 #        May set dirInfo MaxDataLen to limit output data length -- this causes ExtendedXMP
@@ -1304,7 +1304,7 @@ sub WriteXMP($$;$)
             %nsCur = %nsNew;            # save current namespaces
             my $sp = $noPad ? '' : ' ';
             my @ns = sort keys %nsCur;
-            $long[-2] .= "\n$sp<$prop rdf:about='$about'";
+            $long[-2] .= "\n$sp<$prop rdf:about='${about}'";
             # generate et:toolkit attribute if this is an exiftool RDF/XML output file
             if (@ns and $nsCur{$ns[0]} =~ m{^http://ns.exiftool.ca/}) {
                 $long[-2] .= "\n$sp${sp}xmlns:et='http://ns.exiftool.ca/1.0/'" .
@@ -1315,7 +1315,6 @@ sub WriteXMP($$;$)
             # set resFlag to 0 to indicate base description when XMPShorthand enabled
             $resFlag[0] = 0 if $useShorthand;
         }
-        # loop over all values for this new property
         my ($val, $attrs) = @{$capture{$path}};
         $debug and print "$path = $val\n";
         # open new properties if necessary
@@ -1354,8 +1353,9 @@ sub WriteXMP($$;$)
         unless ($dummy or ($val eq '' and $prop2 =~ /:~dummy~$/)) {
             $prop2 =~ s/ .*//;      # remove list index if it exists
             my $pad = $noPad ? '' : ' ' x (scalar(@curPropList) + 1);
-            if (defined $resFlag[$#curPropList] and not %$attrs) {
-                $short[-1] .= "\n$pad$prop2='$val'";
+            # (can't write as shortcut if it has attributes or CDATA)
+            if (defined $resFlag[$#curPropList] and not %$attrs and $val !~ /<!\[CDATA\[/) {
+                $short[-1] .= "\n$pad$prop2='${val}'";
             } else {
                 $long[-1] .= "$pad<$prop2";
                 # write out attributes
@@ -1399,11 +1399,14 @@ sub WriteXMP($$;$)
     # packet trailer, with a newline every 100 characters)
     unless ($$et{XMP_NO_XPACKET}) {
         my $pad = (' ' x 100) . "\n";
-        if ($$dirInfo{InPlace}) {
+        # get current XMP length without padding
+        my $len = length($long[-2]) + length($pktCloseW);
+        if ($$dirInfo{InPlace} and not ($$dirInfo{InPlace} == 2 and $len > $dirLen)) {
             # pad to specified DirLen
-            my $len = length($long[-2]) + length($pktCloseW);
             if ($len > $dirLen) {
-                $et->Warn('Not enough room to edit XMP in place');
+                my $str = 'Not enough room to edit XMP in place';
+                $str .= '. Try XMPShorthand option' unless $$et{OPTIONS}{XMPShorthand};
+                $et->Warn($str);
                 return undef;
             }
             my $num = int(($dirLen - $len) / length($pad));

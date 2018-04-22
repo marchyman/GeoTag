@@ -85,7 +85,7 @@ sub GetCFAPattern($)
         foreach (@cols) {
             tr/ \]\[//d;    # remove remaining brackets and any spaces
             my $c = $cfaLookup{lc($_)};
-            defined $c or warn("Unknown color '$_'\n"), return undef;
+            defined $c or warn("Unknown color '${_}'\n"), return undef;
             push @a, $c;
         }
     }
@@ -1324,6 +1324,7 @@ NoOverwrite:            next if $isNew > 0;
                             $subdirInfo{EntryBased} = $$sub{EntryBased};
                             $subdirInfo{NoFixBase} = 1 if defined $$sub{Base};
                             $subdirInfo{AutoFix} = $$sub{AutoFix};
+                            SetByteOrder($$sub{ByteOrder}) if $$sub{ByteOrder};
                         }
                         # get the proper tag table for these maker notes
                         if ($oldInfo and $$oldInfo{SubDirectory}) {
