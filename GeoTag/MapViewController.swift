@@ -53,13 +53,17 @@ class MapViewController: NSViewController {
 
     // 10.10 and later
     @available(OSX 10.10, *)
-    override func viewDidLoad() {
+    override
+    func viewDidLoad(
+    ) {
         super.viewDidLoad()
         mapView.delegate = self
     }
 
     // final initialization for the mapView
-    override func awakeFromNib() {
+    override
+    func awakeFromNib(
+    ) {
         let defaults = UserDefaults.standard
         mapTypeControl.selectedSegment = defaults.integer(forKey: mapTypeKey)
         changeMapType(mapTypeControl)
@@ -85,7 +89,10 @@ class MapViewController: NSViewController {
     /// Map control actions
 
     // select the desired map type
-    @IBAction func changeMapType(_ sender: NSSegmentedControl) {
+    @IBAction
+    func changeMapType(
+        _ sender: NSSegmentedControl
+    ) {
         switch sender.selectedSegment {
         case mapTypeStandard:
             mapView.mapType = .standard
@@ -99,7 +106,10 @@ class MapViewController: NSViewController {
     }
 
     // save the current map type and displayed region
-    @IBAction func saveMapSetting(_: AnyObject) {
+    @IBAction
+    func saveMapSetting(
+        _: AnyObject
+    ) {
         let defaults = UserDefaults.standard
         var mapTypeAsInt = 0
         switch mapView.mapType {
@@ -123,7 +133,10 @@ class MapViewController: NSViewController {
                      forKey: cameraAltitudeKey)
     }
 
-    @IBAction func searchMapLocation(_ sender: NSSearchField) {
+    @IBAction
+    func searchMapLocation(
+        _ sender: NSSearchField
+    ) {
         if !sender.stringValue.isEmpty {
             let geocoder = CLGeocoder()
             geocoder.geocodeAddressString(sender.stringValue) {
@@ -139,7 +152,10 @@ class MapViewController: NSViewController {
 
     // center the map as the given latitude/longitude and drop
     // a pin at that location
-    func pinMapAt(coords: Coord, dropPin: Bool = true) {
+    func pinMapAt(
+        coords: Coord,
+        dropPin: Bool = true
+    ) {
         let point = MKMapPointForCoordinate(coords);
         if !MKMapRectContainsPoint(mapView.visibleMapRect, point) {
             mapView.setCenter(coords, animated: false)
@@ -163,7 +179,8 @@ class MapViewController: NSViewController {
     }
 
     // remove the pin from the map
-    func removeMapPin() {
+    func removeMapPin(
+    ) {
         if let pin = mapPin {
             mapView.removeAnnotation(pin)
             mapPin = nil
@@ -177,9 +194,10 @@ class MapViewController: NSViewController {
 
 extension MapViewController: MKMapViewDelegate {
     // return a pinAnnotationView for a red pin
-    func mapView(_ mapView: MKMapView,
-                 viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-
+    func mapView(
+        _ mapView: MKMapView,
+        viewFor annotation: MKAnnotation
+    ) -> MKAnnotationView? {
         let identifier = "pinAnnotation"
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
         if (annotationView == nil) {
@@ -202,10 +220,12 @@ extension MapViewController: MKMapViewDelegate {
     }
 
     // A pin is being dragged.
-    func mapView(_ mapView: MKMapView,
-                 annotationView view: MKAnnotationView,
-                 didChange newState: MKAnnotationViewDragState,
-                 fromOldState oldState: MKAnnotationViewDragState) {
+    func mapView(
+        _ mapView: MKMapView,
+        annotationView view: MKAnnotationView,
+        didChange newState: MKAnnotationViewDragState,
+        fromOldState oldState: MKAnnotationViewDragState
+    ) {
          switch newState {
          case .starting:
             view.setDragState(.dragging, animated: true)
@@ -219,7 +239,10 @@ extension MapViewController: MKMapViewDelegate {
     }
 
     // debug cruft
-    func mapView(_ mapView: MKMapView, didSelect: MKAnnotationView) {
-//      print("Annotation view \(didSelect) selected")
+    func mapView(
+        _ mapView: MKMapView,
+        didSelect: MKAnnotationView
+    ) {
+        // print("Annotation view \(didSelect) selected")
     }
 }

@@ -36,7 +36,8 @@ struct Exiftool {
     var url: URL
 
     // Verify access to the embedded version of ExifTool
-    init() {
+    init(
+    ) {
         if let exiftoolUrl = Bundle.main.url(forResource: "ExifTool", withExtension: nil) {
             url = exiftoolUrl.appendingPathComponent("exiftool")
         } else {
@@ -49,7 +50,9 @@ struct Exiftool {
     /// - Parameter imageData: the image to update.  imageData contains the URL
     ///     of the original file plus the assigned location.
     /// - Returns: ExifTool exit status
-    func updateLocation(from imageData: ImageData) -> Int32 {
+    func updateLocation(
+        from imageData: ImageData
+    ) -> Int32 {
         // ExifTool latitude and longitude exiftool argument names
         var latArg = "-GPSLatitude="
         var latRefArg = "-GPSLatitudeRef="
@@ -109,7 +112,10 @@ struct Exiftool {
     //
     // Nil is returned if there was no date/time original or we couldn't get the
     // appropriate time zone from image geolocation data.
-    private func dtoWithZone(from imageData: ImageData) -> String? {
+    private
+    func dtoWithZone(
+        from imageData: ImageData
+    ) -> String? {
         if let timeZone = imageData.timeZone, !imageData.date.isEmpty {
             let format = DateFormatter()
             format.dateFormat = "yyyy:MM:dd HH:mm:ss"

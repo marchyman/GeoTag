@@ -4,7 +4,7 @@
 //
 //  Created by Marco S Hyman on 5/16/15.
 //
-// Copyright 2015-2017 Marco S Hyman
+// Copyright 2015-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -35,7 +35,11 @@ import Foundation
 /// and internal folders are not added to the array.  Internal folders are
 /// also enumerated.
 
-public func addUrlsInFolder(url: URL, toUrls urls: inout [URL]) -> Bool {
+public
+func addUrlsInFolder(
+    url: URL,
+    toUrls urls: inout [URL]
+) -> Bool {
     let fileManager = FileManager.default
     var dir = ObjCBool(false)
     if fileManager.fileExists(atPath: url.path, isDirectory: &dir) && dir.boolValue {

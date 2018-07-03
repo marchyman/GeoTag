@@ -33,11 +33,17 @@ private let d2r = π / 180   // degrees to radians adjustment
 private let r2d = 180 / π   // radians to degrees adjustments
 private let R = 6372800.0	// approx average radius of the earth in meters
 
-private func degreesToRadians(_ degrees: Double) -> Double {
+private
+func degreesToRadians(
+    _ degrees: Double
+) -> Double {
     return degrees * d2r
 }
 
-private func radiansToDegrees(_ radians: Double) -> Double {
+private
+func radiansToDegrees(
+    _ radians: Double
+) -> Double {
     return radians * r2d
 }
 
@@ -50,8 +56,13 @@ private func radiansToDegrees(_ radians: Double) -> Double {
 ///
 /// distance and bearing calculated using the haversine formula
 
-public func distanceAndBearing(lat1: Double, lon1: Double,
-                               lat2: Double, lon2: Double) -> (Double, Double) {
+public
+func distanceAndBearing(
+    lat1: Double,
+    lon1: Double,
+    lat2: Double,
+    lon2: Double
+) -> (Double, Double) {
     let lat1R = degreesToRadians(lat1)
     let lon1R = degreesToRadians(lon1)
     let lat2R = degreesToRadians(lat2)
@@ -78,8 +89,13 @@ public func distanceAndBearing(lat1: Double, lon1: Double,
 /// - Parameter bearing: bearing to destination point
 /// - Returns: tuple containing the latitude and longitude of the destination
 
-public func destFromStart(lat: Double, lon: Double,
-                          distance: Double, bearing: Double) -> CLLocationCoordinate2D {
+public
+func destFromStart(
+    lat: Double,
+    lon: Double,
+    distance: Double,
+    bearing: Double
+) -> CLLocationCoordinate2D {
     let latR = degreesToRadians(lat)
     let lonR = degreesToRadians(lon)
     let angularDist = distance / R

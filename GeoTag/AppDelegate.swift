@@ -29,8 +29,8 @@ import AppKit
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    lazy var preferences: Preferences = Preferences()
-    lazy var undoManager: UndoManager = UndoManager()
+    lazy var preferences = Preferences()
+    lazy var undoManager = UndoManager()
 
     var modified: Bool {
         get {
@@ -47,7 +47,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     //MARK: App start up
 
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
+    func applicationDidFinishLaunching(
+        _ aNotification: Notification
+    ) {
         window.delegate = self
         // Pop open a preferences window if a backup (save) folder location hasn't
         // yet been selected
@@ -57,7 +59,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     /// don't enable save menu item unless something has been modified
-    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+    @objc
+    func validateUserInterfaceItem(
+        _ item: NSValidatedUserInterfaceItem
+    ) -> Bool {
         guard let action = item.action else { return false }
         switch action {
         case #selector(showOpenPanel(_:)):
@@ -82,7 +87,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// will be added to the table of images.  The same file can not be added
     /// to the table multiple times.   If duplicates are detected the user
     /// will be alerted that some files were not opened.
-    @IBAction func showOpenPanel(_: AnyObject) {
+    @IBAction
+    func showOpenPanel(
+        _: AnyObject
+    ) {
         let panel = NSOpenPanel()
         panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as? [String]
         panel.allowsMultipleSelection = true
@@ -113,20 +121,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ///
     /// Save all images with updated geolocation information and clear all
     /// undo actions.
-    @IBAction func save(_: AnyObject?) {
+    @IBAction
+    func save(
+        _: AnyObject?
+    ) {
         if tableViewController.saveAllImages() {
             modified = false
             undoManager.removeAllActions()
         }
     }
 
-    @IBAction func openPreferencesWindow(_ sender: AnyObject!) {
+    @IBAction
+    func openPreferencesWindow(
+        _ sender: AnyObject!
+    ) {
         preferences.showWindow(sender)
     }
 
     //MARK: app termination
 
-    func applicationShouldTerminateAfterLastWindowClosed(_ theApplication: NSApplication) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(
+        _ theApplication: NSApplication
+    ) -> Bool {
         return true
     }
 
@@ -137,15 +153,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// the user to save or discard the changes before terminating the
     /// application. The user can also cancel program termination without
     /// saving any changes.
-    func saveOrDontSave() -> Bool {
+    func saveOrDontSave(
+    ) -> Bool {
         if modified {
             let alert = NSAlert()
             alert.addButton(withTitle: NSLocalizedString("SAVE",
-                                                       comment: "Save"))
+                                                         comment: "Save"))
             alert.addButton(withTitle: NSLocalizedString("CANCEL",
-                                                       comment: "Cancel"))
+                                                         comment: "Cancel"))
             alert.addButton(withTitle: NSLocalizedString("DONT_SAVE",
-                                                       comment: "Don't Save"))
+                                                         comment: "Don't Save"))
             alert.messageText = NSLocalizedString("UNSAVED_TITLE",
                                                   comment: "Unsaved Changes")
             alert.informativeText = NSLocalizedString("UNSAVED_DESC",
@@ -153,10 +170,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             alert.beginSheetModal(for: window) {
                 (response: NSApplication.ModalResponse) -> Void in
                 switch response {
-                case NSApplication.ModalResponse.alertFirstButtonReturn:      // Save
+                case .alertFirstButtonReturn:
+                    // Save
                     self.save(nil)
-                case NSApplication.ModalResponse.alertSecondButtonReturn:     // Cancel
-                    // Close/terminate cancelled
+                case .alertSecondButtonReturn:
+                    // Cancel -- Close/terminate cancelled
                     return
                 default:
                     // Don't bother saving
@@ -170,7 +188,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+    func applicationShouldTerminate(
+        _ sender: NSApplication
+    ) -> NSApplication.TerminateReply {
         if saveOrDontSave() {
             tableViewController.clear(self)
             return .terminateNow
@@ -178,19 +198,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return .terminateCancel
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
+    func applicationWillTerminate(
+        aNotification: NSNotification
+    ) {
         // Insert code here to tear down your application
-  }
+    }
 }
 
 /// Window delegate functions
 
 extension AppDelegate: NSWindowDelegate {
-    func windowShouldClose(_: NSWindow) -> Bool {
+    func windowShouldClose(
+        _: NSWindow
+    ) -> Bool {
         return saveOrDontSave()
     }
 
-    func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
+    func windowWillReturnUndoManager(
+        _ window: NSWindow
+    ) -> UndoManager? {
         return undoManager
     }
 }

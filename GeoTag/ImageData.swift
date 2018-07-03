@@ -56,7 +56,9 @@ final class ImageData: NSObject {
     static var saveWarning = true
 
     // used to re-enable the save warning after a save operation has completed
-    class func enableSaveWarnings() {
+    class
+    func enableSaveWarnings(
+    ) {
         saveWarning = true
     }
 
@@ -106,7 +108,9 @@ final class ImageData: NSObject {
     /// Extract geo location metadata and build a preview image for
     /// the given URL.  If the URL isn't recognized as an image mark this
     /// instance as not being valid.
-    init(url: URL) {
+    init(
+        url: URL
+    ) {
         // create a symlink for the URL in our sandbox
         self.url = url;
         let fileManager = FileManager.default
@@ -137,7 +141,8 @@ final class ImageData: NSObject {
 
     /// remove the symbolic link created in the sandboxed document directory
     /// during instance initialization
-    deinit {
+    deinit
+    {
         let fileManager = FileManager.default
         try? fileManager.removeItem(at: sandboxUrl)
     }
@@ -149,7 +154,9 @@ final class ImageData: NSObject {
     ///
     /// The location may be set to nil to delete location information from
     /// an image.
-    func setLocation(_ location: Coord?) {
+    func setLocation(
+        _ location: Coord?
+    ) {
         self.location = location
         setTimeZoneFor(location)
     }
@@ -159,7 +166,8 @@ final class ImageData: NSObject {
     /// Image location is restored to the value when location information
     /// was last saved. If the image has not been saved the restored values
     /// will be those in the image when first read.
-    func revertLocation() {
+    func revertLocation(
+    ) {
         location = originalLocation
         setTimeZoneFor(location)
     }
@@ -171,7 +179,9 @@ final class ImageData: NSObject {
     /// If an image file with the same name exists in the backup folder append
     /// an available number to the image name to make the name unique to the
     /// folder.
-    private func saveOriginalFile() -> Bool {
+    private
+    func saveOriginalFile(
+    ) -> Bool {
         guard let saveDirUrl = Preferences.saveFolder() else {
             if ImageData.saveWarning {
                 ImageData.saveWarning = false
@@ -237,7 +247,8 @@ final class ImageData: NSObject {
     /// sandbox.  This is needed as exiftool creates temporary files.
     /// The updated file is copied back to its original location after
     /// exiftool does its job.
-    func saveImageFile() -> Bool {
+    func saveImageFile(
+    ) -> Bool {
         guard validImage &&
               (location?.latitude != originalLocation?.latitude ||
                location?.longitude != originalLocation?.longitude) else {
@@ -254,7 +265,10 @@ final class ImageData: NSObject {
     }
 
     // Get the time zone for a given location
-    private func setTimeZoneFor(_ location: Coord?) {
+    private
+    func setTimeZoneFor(
+        _ location: Coord?
+    ) {
         timeZone = nil
         if #available(OSX 10.11, *) {
             if let location = location {
@@ -277,7 +291,9 @@ final class ImageData: NSObject {
     ///
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file
-    private func loadImageData() -> Bool {
+    private
+    func loadImageData(
+    ) -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
             print("Failed CGImageSourceCreateWithURL \(url)")
             return false
@@ -322,7 +338,9 @@ final class ImageData: NSObject {
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file and a zero
     /// sized empty image is returned.
-    private func loadImage() -> NSImage {
+    private
+    func loadImage(
+    ) -> NSImage {
         var image = NSImage(size: NSMakeRect(0, 0, 0, 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
             return image
@@ -367,16 +385,20 @@ final class ImageData: NSObject {
 
 /// Key-value names for tableview column sorting
 extension ImageData {
-    @objc var imageName: String {
+    @objc var imageName: String
+    {
         return name ?? ""
     }
-    @objc var dateTime: Double {
+    @objc var dateTime: Double
+    {
         return dateFromEpoch
     }
-    @objc var latitude: Double {
+    @objc var latitude: Double
+    {
         return location?.latitude ?? 0
     }
-    @objc var longitude: Double {
+    @objc var longitude: Double
+    {
         return location?.longitude ?? 0
     }
 }

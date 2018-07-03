@@ -41,7 +41,9 @@ final class Preferences : NSWindowController {
     ///
     /// If a save directory/folder has been specified but does not exist an
     /// alert is shown.
-    class func saveFolder() -> URL? {
+    class
+    func saveFolder(
+    ) -> URL? {
         if checkDirectory {
             checkDirectory = false
             url = nil
@@ -65,7 +67,9 @@ final class Preferences : NSWindowController {
         return url
     }
 
-    class func dateTimeGPS() -> Bool {
+    class
+    func dateTimeGPS(
+    ) -> Bool {
         let defaults = UserDefaults.standard
         return defaults.bool(forKey: dateTimeGPSKey)
     }
@@ -78,7 +82,10 @@ final class Preferences : NSWindowController {
     /// Allow the user to pick or create a folder where the original
     /// copies of updated images will be saved
     
-    @IBAction func pickSaveFolder(_: AnyObject) {
+    @IBAction
+    func pickSaveFolder(
+        _: AnyObject
+    ) {
         var bookmark: Data? = nil
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
@@ -106,7 +113,10 @@ final class Preferences : NSWindowController {
 
     @IBOutlet weak var dtGPSButton: NSButton!
 
-    @IBAction func toggleDateTimeGPS(_ sender: NSButton) {
+    @IBAction
+    func toggleDateTimeGPS(
+        _ sender: NSButton
+    ) {
         let defaults = UserDefaults.standard
         defaults.set(sender.state == NSControl.StateValue.on,
                      forKey: Preferences.dateTimeGPSKey)
@@ -114,13 +124,17 @@ final class Preferences : NSWindowController {
 
     /// return the NIB name for this window
 
-	override var windowNibName: NSNib.Name? {
+	override
+    var windowNibName: NSNib.Name?
+    {
 		return Preferences.nibName
 	}
 
     /// initialize the saveFolderPath field from user preferences
 
-    override func windowDidLoad() {
+    override
+    func windowDidLoad(
+    ) {
         saveFolderPath.url = Preferences.saveFolder()
         dtGPSButton.state = Preferences.dateTimeGPS() ?
                             NSControl.StateValue.on :
@@ -129,7 +143,9 @@ final class Preferences : NSWindowController {
 
     // window delegate function... orderOut instead of close
 
-    func windowShouldClose(sender: AnyObject!) -> Bool {
+    func windowShouldClose(
+        sender: AnyObject!
+    ) -> Bool {
         if let window = window {
             window.orderOut(sender)
         }
