@@ -114,6 +114,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    //MARK: Open File (UTI support)
+    func application(
+        _ sender: NSApplication,
+        openFile filename: String
+    ) -> Bool {
+        var urls = [URL]()
+        urls.append(URL(fileURLWithPath: filename))
+        return !tableViewController.addImages(urls: urls)
+    }
+
     //MARK: Save image changes (if any)
 
     /// action bound to File -> Save
