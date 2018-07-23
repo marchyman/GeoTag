@@ -11,6 +11,7 @@
 		4966FAEF1AF07BE000CEE06E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4966FAEE1AF07BE000CEE06E /* Preferences.xib */; };
 		4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */; };
 		497EE5D3195CAE6300306283 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497EE5D2195CAE6300306283 /* ImageData.swift */; };
+		498BC9EA210524160070A528 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498BC9E9210524160070A528 /* Gpx.swift */; };
 		499C56C81D399336004B47AD /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499C56C71D399336004B47AD /* Exiftool.swift */; };
 		49A476081B0850B3006E05EA /* AddURLsInFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A476071B0850B3006E05EA /* AddURLsInFolder.swift */; };
 		49A89BC51B0BED7900578EA6 /* Interpolation in Resources */ = {isa = PBXBuildFile; fileRef = 49A89BC41B0BED7900578EA6 /* Interpolation */; };
@@ -35,6 +36,7 @@
 		4966FAEE1AF07BE000CEE06E /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
 		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ImageData.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		498BC9E9210524160070A528 /* Gpx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
 		4990F0AE19818AA4001CA437 /* icon.pxm */ = {isa = PBXFileReference; lastKnownFileType = file; path = icon.pxm; sourceTree = "<group>"; };
 		499C56C71D399336004B47AD /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
 		49A476071B0850B3006E05EA /* AddURLsInFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddURLsInFolder.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */,
 				49F928751D1CF94B00D49F08 /* MapViewController.swift */,
 				49F928731D1CB34E00D49F08 /* MapView.swift */,
+				498BC9E9210524160070A528 /* Gpx.swift */,
 				49A476071B0850B3006E05EA /* AddURLsInFolder.swift */,
 				4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */,
 				49E0340C1B0BBBB700CC9768 /* Interpolate.swift */,
@@ -257,6 +260,7 @@
 				49F928761D1CF94B00D49F08 /* MapViewController.swift in Sources */,
 				499C56C81D399336004B47AD /* Exiftool.swift in Sources */,
 				49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */,
+				498BC9EA210524160070A528 /* Gpx.swift in Sources */,
 				49A476081B0850B3006E05EA /* AddURLsInFolder.swift in Sources */,
 				4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */,
 				49F928741D1CB34E00D49F08 /* MapView.swift in Sources */,

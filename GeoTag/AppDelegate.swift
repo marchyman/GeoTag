@@ -93,6 +93,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ) {
         let panel = NSOpenPanel()
         panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as? [String]
+        panel.allowedFileTypes?.append("gpx")
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
@@ -100,7 +101,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             var urls = [URL]()
             for url in panel.urls {
                 if !addUrlsInFolder(url: url, toUrls: &urls) {
-                    urls.append(url)
+                    if !isGpxFile(url) {
+                        urls.append(url)
+                    }
                 }
             }
             let dups = tableViewController.addImages(urls: urls)
@@ -119,9 +122,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         _ sender: NSApplication,
         openFile filename: String
     ) -> Bool {
-        var urls = [URL]()
-        urls.append(URL(fileURLWithPath: filename))
-        return !tableViewController.addImages(urls: urls)
+        let url = URL(fileURLWithPath: filename)
+        if !isGpxFile(url) {
+            var urls = [URL]()
+            urls.append(url)
+            return !tableViewController.addImages(urls: urls)
+        }
+        return false
     }
 
     //MARK: Save image changes (if any)
@@ -212,6 +219,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         aNotification: NSNotification
     ) {
         // Insert code here to tear down your application
+    }
+
+    /// check if the given url is a gpx file.
+    /// - Parameter url: URL of file to check
+    /// - Returns: true if file was a GPX file, otherwise false
+    ///
+    /// GPX files are parsed
+    func isGpxFile(
+        _ url: URL
+    ) -> Bool {
+        if url.pathExtension.lowercased() == "gpx" {
+            if let gpx = Gpx(contentsOf: url) {
+                gpx.parse()
+            }
+            return true
+        }
+        return false
     }
 }
 
