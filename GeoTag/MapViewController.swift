@@ -49,6 +49,9 @@ class MapViewController: NSViewController {
     // This is the point
     var mapPin: MKPointAnnotation?
 
+    // track logs
+    var mapLines = [MKPolyline]()
+
     /// startup
 
     // 10.10 and later
@@ -187,6 +190,26 @@ class MapViewController: NSViewController {
         }
     }
 
+    /// add tracks to the map.  Track segments are turned into polylines and
+    /// each polyline gets a line renderer
+    func addTracks(
+        gpx: Gpx
+    ) {
+        for track in gpx.tracks {
+            for segment in track.segments {
+                var trackCoords = [CLLocationCoordinate2D]()
+                trackCoords.reserveCapacity(segment.points.count)
+                for point in segment.points {
+                    trackCoords.append(CLLocationCoordinate2D(latitude: point.lat,
+                                                              longitude: point.lon))
+                }
+                let mapLine = MKPolyline(coordinates: &trackCoords,
+                                         count: segment.points.count)
+                mapLines.append(mapLine)
+                mapView.add(mapLine)
+            }
+        }
+    }
 
 }
 
@@ -236,6 +259,18 @@ extension MapViewController: MKMapViewDelegate {
          default:
             view.setDragState(.none, animated: false)
         }
+    }
+
+    func mapView(
+        _ mapview: MKMapView,
+        rendererFor overlay: MKOverlay
+    ) -> MKOverlayRenderer {
+        if mapLines.contains(overlay as! MKPolyline) {
+            let renderer = MKPolylineRenderer(polyline: overlay as! MKPolyline)
+            renderer.strokeColor = NSColor.systemRed
+            return renderer
+        }
+        return MKOverlayRenderer(overlay: overlay)
     }
 
     // debug cruft

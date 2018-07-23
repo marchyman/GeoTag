@@ -98,7 +98,8 @@ class Gpx: NSObject {
     }
 
     /// parse the XML from the give
-    func parse() {
+    func parse(
+    ) -> Bool {
         if parser.parse() && parseState != .error {
             print("\(tracks.count) tracks")
             var segments = 0
@@ -112,9 +113,10 @@ class Gpx: NSObject {
             print("\(segments) segments")
             print("\(points) points")
             print("XML file parsed correctly")
-        } else {
-            print("XML Parse error \(String(describing: parser.parserError))")
+            return true
         }
+        print("XML Parse error \(String(describing: parser.parserError))")
+        return false
     }
 }
 

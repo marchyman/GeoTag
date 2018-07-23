@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
-        <plugIn identifier="com.apple.MapKitIBPlugin" version="14109"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14295.6"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="14295.6"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -16,6 +16,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="GeoTag" customModuleProvider="target">
             <connections>
+                <outlet property="mapViewController" destination="Go6-yP-GH9" id="kvs-CY-ry5"/>
                 <outlet property="progressIndicator" destination="Leb-gI-5bq" id="QDo-c7-wEB"/>
                 <outlet property="tableViewController" destination="er7-2A-M57" id="Bon-5R-vH6"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
@@ -554,7 +555,7 @@ CA
                 <outlet property="delegate" destination="Voe-Tx-rLC" id="YQK-Qt-HzN"/>
                 <outlet property="initialFirstResponder" destination="ARi-Ei-bTG" id="Jxz-i1-P4S"/>
             </connections>
-            <point key="canvasLocation" x="-383" y="72"/>
+            <point key="canvasLocation" x="-1004" y="95"/>
         </window>
         <menu title="Table Menu" id="RI2-ul-n9D">
             <items>

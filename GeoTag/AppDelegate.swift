@@ -43,6 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
+    @IBOutlet weak var mapViewController: MapViewController!
     @IBOutlet var progressIndicator: NSProgressIndicator!
 
     //MARK: App start up
@@ -231,7 +232,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ) -> Bool {
         if url.pathExtension.lowercased() == "gpx" {
             if let gpx = Gpx(contentsOf: url) {
-                gpx.parse()
+                if gpx.parse() {
+                    // add the track to the map
+                    mapViewController.addTracks(gpx: gpx)
+                } else {
+                    // put up an alert
+                    // ;;;
+                }
             }
             return true
         }
