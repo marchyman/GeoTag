@@ -31,6 +31,7 @@ import Foundation
 var gpxTracks = [Gpx]()
 
 class Gpx: NSObject {
+    // parser states
     enum ParseState {
         case none
         case trk
@@ -44,7 +45,7 @@ class Gpx: NSObject {
     var tracks = [Track]()
     var parseState = ParseState.none
 
-    // Access/update the last track, segment, or point in tracks
+    // Access/update the last track, segment, or point in the tracks array
     var lastTrack: Track? {
         get { return tracks.last }
         set {
@@ -82,6 +83,7 @@ class Gpx: NSObject {
         }
     }
 
+    /// init from contents of a URL
     init?(
         contentsOf url: URL
     ) {
@@ -95,6 +97,7 @@ class Gpx: NSObject {
         gpxTracks.append(self)
     }
 
+    /// parse the XML from the give
     func parse() {
         if parser.parse() && parseState != .error {
             print("\(tracks.count) tracks")
@@ -179,6 +182,27 @@ extension Gpx: XMLParserDelegate {
             parseState = .none;
         default:
             break
+        }
+    }
+
+    /// process the string of characters for the current element.  This
+    /// program only cares about characters for the time element
+    func parser(
+        _ parser: XMLParser,
+        foundCharacters string: String
+    ) {
+        if parseState == .time {
+            // find the latest point
+            let trackIx = tracks.count - 1
+            if !tracks.isEmpty && !tracks[trackIx].segments.isEmpty {
+                let segmentIx = tracks[trackIx].segments.count - 1
+                if !tracks[trackIx].segments[segmentIx].points.isEmpty {
+                    let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
+                    tracks[trackIx].segments[segmentIx].points[pointIx].time += string
+                    return
+                }
+            }
+            parseState = .error
         }
     }
 }
