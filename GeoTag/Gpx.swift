@@ -37,11 +37,50 @@ class Gpx: NSObject {
         case trkSeg
         case trkPt
         case time
+        case error
     }
 
     var parser: XMLParser
     var tracks = [Track]()
     var parseState = ParseState.none
+
+    // Access/update the last track, segment, or point in tracks
+    var lastTrack: Track? {
+        get { return tracks.last }
+        set {
+            if newValue == nil {
+                parseState = .error
+            } else {
+                tracks.append(newValue!)
+            }
+        }
+    }
+
+    var lastSegment: Segment? {
+        get { return tracks.last?.segments.last }
+        set {
+            if newValue == nil || tracks.isEmpty {
+                parseState = .error
+            } else {
+                tracks[tracks.count - 1].segments.append(newValue!)
+            }
+        }
+    }
+
+    var lastPoint: Point? {
+        get { return tracks.last?.segments.last?.points.last }
+        set {
+            let trackIx = tracks.count - 1
+            if newValue == nil ||
+               tracks.isEmpty ||
+               tracks[trackIx].segments.isEmpty {
+                parseState = .error
+            } else {
+                let segmentIx = tracks[trackIx].segments.count - 1
+                tracks[trackIx].segments[segmentIx].points.append(newValue!)
+            }
+        }
+    }
 
     init?(
         contentsOf url: URL
@@ -57,7 +96,7 @@ class Gpx: NSObject {
     }
 
     func parse() {
-        if parser.parse() {
+        if parser.parse() && parseState != .error {
             print("\(tracks.count) tracks")
             var segments = 0
             var points = 0
@@ -89,31 +128,33 @@ extension Gpx: XMLParserDelegate {
         switch parseState {
         case .none:
             if elementName == "trk" {
-                tracks.append(Track())
+                lastTrack = Track()
                 parseState = .trk
             }
         case .trk:
             if elementName == "trkseg" {
-                guard let track = tracks.last else { return }
-                track.segments.append(Segment())
-                parseState = .trkSeg
+                if lastTrack != nil {
+                    lastSegment = Segment()
+                    parseState = .trkSeg
+                }
             }
         case .trkSeg:
             if elementName == "trkpt" {
-                guard let segment = tracks.last?.segments.last else { return }
-                if let latString = attributeDict["lat"],
-                   let lat = Double(latString),
-                   let lonString = attributeDict["lon"],
-                   let lon = Double(lonString) {
-                    segment.points.append(Point(lat: lat, lon: lon, time: ""))
-                    parseState = .trkPt
+                if lastSegment != nil {
+                    if let latString = attributeDict["lat"],
+                       let lat = Double(latString),
+                       let lonString = attributeDict["lon"],
+                       let lon = Double(lonString) {
+                        lastPoint = Point(lat: lat, lon: lon, time: "")
+                        parseState = .trkPt
+                    }
                 }
             }
         case .trkPt:
             if elementName == "time" {
                 parseState = .time
             }
-        case .time:
+        case .time, .error:
             break;
         }
     }
@@ -143,12 +184,12 @@ extension Gpx: XMLParserDelegate {
 }
 
 /// A track consists of one or more track segments
-class Track {
+struct Track {
     var segments = [Segment]()
 }
 
 /// A track segment consists of one or more track points
-class Segment {
+struct Segment {
     var points = [Point]()
 }
 
