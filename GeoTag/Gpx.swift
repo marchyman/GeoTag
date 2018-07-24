@@ -28,8 +28,6 @@ import Foundation
 
 /// GPX file processing
 
-var gpxTracks = [Gpx]()
-
 class Gpx: NSObject {
     // parser states
     enum ParseState {
@@ -94,7 +92,6 @@ class Gpx: NSObject {
         self.parser = parser
         super.init()
         self.parser.delegate = self
-        gpxTracks.append(self)
     }
 
     /// parse the XML from the give
@@ -132,19 +129,38 @@ extension Gpx: XMLParserDelegate {
     ) {
         switch parseState {
         case .none:
+            // ignore everything until the trk element
             if elementName == "trk" {
                 lastTrack = Track()
                 parseState = .trk
             }
         case .trk:
-            if elementName == "trkseg" {
+            switch elementName {
+            case "trk":
+                // nested tracks not allowed
+                parseState = .error
+            case "trkseg":
                 if lastTrack != nil {
                     lastSegment = Segment()
                     parseState = .trkSeg
+                } else {
+                    unexpected(error: nil,
+                               "Internal error! GPX file will be ignored")
+                    parseState = .error
                 }
+            case "trkpt":
+                // trkpt must be in a trkseg
+                parseState = .error
+            default:
+                // ignore everything else
+                break
             }
         case .trkSeg:
-            if elementName == "trkpt" {
+            switch elementName {
+            case "trk", "trkseg":
+                // nested tracks and track segments not allowed
+                parseState = .error
+            case "trkpt":
                 if lastSegment != nil {
                     if let latString = attributeDict["lat"],
                        let lat = Double(latString),
@@ -152,15 +168,30 @@ extension Gpx: XMLParserDelegate {
                        let lon = Double(lonString) {
                         lastPoint = Point(lat: lat, lon: lon, time: "")
                         parseState = .trkPt
+                    } else {
+                        parseState = .error
                     }
+                } else {
+                    unexpected(error: nil,
+                               "Internal error! GPX file will be ignored")
                 }
+            default:
+                // ignore everything else
+                break
             }
         case .trkPt:
-            if elementName == "time" {
+            switch elementName {
+            case "trk", "trkseg", "trkpt":
+                // nested tracks, track segments, and track points not allowed
+                parseState = .error
+            case "time":
                 parseState = .time
+            default:
+                // ignore everything else
+                break
             }
         case .time, .error:
-            break;
+            break
         }
     }
 
@@ -177,11 +208,23 @@ extension Gpx: XMLParserDelegate {
                 parseState = .trkPt
             }
         case "trkpt":
-            parseState = .trkSeg;
-        case "trkSeg":
-            parseState = .trk;
+            if parseState == .trkPt {
+                parseState = .trkSeg
+            } else {
+                parseState = .error
+            }
+        case "trkseg":
+            if parseState == .trkSeg {
+                parseState = .trk
+            } else {
+                parseState = .error
+            }
         case "trk":
-            parseState = .none;
+            if parseState == .trk {
+                parseState = .none;
+            } else {
+                parseState = .error
+            }
         default:
             break
         }

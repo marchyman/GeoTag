@@ -27,6 +27,9 @@
 import Foundation
 import AppKit
 
+/// keep track of any GPX tracks added to the map
+var gpxTracks = [Gpx]()
+
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
     lazy var preferences = Preferences()
@@ -232,13 +235,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ) -> Bool {
         if url.pathExtension.lowercased() == "gpx" {
             if let gpx = Gpx(contentsOf: url) {
+                progressIndicator.startAnimation(self)
                 if gpx.parse() {
                     // add the track to the map
+                    gpxTracks.append(gpx)
                     mapViewController.addTracks(gpx: gpx)
                 } else {
                     // put up an alert
-                    // ;;;
+                    let alert = NSAlert()
+                    alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+                    alert.messageText = NSLocalizedString("BAD_GPX_TITLE", comment: "Bad GPX file")
+                    alert.informativeText = url.path
+                    alert.informativeText += NSLocalizedString("BAD_GPX_DESC", comment: "Bad GPX file")
+                    alert.runModal()
                 }
+                progressIndicator.stopAnimation(self)
             }
             return true
         }
