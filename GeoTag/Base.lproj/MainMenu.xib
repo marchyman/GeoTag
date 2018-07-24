@@ -173,6 +173,11 @@ CA
                                     <action selector="interpolate:" target="er7-2A-M57" id="9Os-AS-YeY"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Locn from track" keyEquivalent="t" id="zOv-fq-8jk">
+                                <connections>
+                                    <action selector="locnFromTrack:" target="er7-2A-M57" id="3sm-dj-fhX"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -587,6 +592,12 @@ CA
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="interpolate:" target="er7-2A-M57" id="y2n-JA-zo0"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Locn from track" id="VuN-hN-RU0">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="locnFromTrack:" target="er7-2A-M57" id="6hh-Zb-T7B"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="Aie-jX-Muf"/>

@@ -115,6 +115,40 @@ class Gpx: NSObject {
         print("XML Parse error \(String(describing: parser.parserError))")
         return false
     }
+
+    /// Update the location of a given image from data in the track log.
+    /// The location of the last track point with a timestamp less than or equal
+    /// to the image is used.
+    func update(
+        image: ImageData,
+        row: Int,
+        doUpdate: (Int, Bool,Coord, Bool) -> Void
+    ) {
+        let imageTime = image.dateFromEpoch
+        print("Image date: \(image.date) (\(imageTime))")
+        var lastPoint: Point?
+
+        for track in tracks {
+            for segment in track.segments {
+                for point in segment.points {
+                    if point.timeFromEpoch < imageTime {
+                        lastPoint = point
+                    } else {
+                        if let last = lastPoint {
+                            print("Update locn row \(row)")
+                            doUpdate(row, true, Coord(latitude: last.lat,
+                                                      longitude: last.lon), true)
+                            return
+                        }
+                    }
+                }
+            }
+        }
+        if let last = lastPoint {
+            doUpdate(row, true, Coord(latitude: last.lat,
+                                      longitude: last.lon), true)
+        }
+    }
 }
 
 extension Gpx: XMLParserDelegate {
@@ -262,10 +296,22 @@ struct Segment {
     var points = [Point]()
 }
 
+/// date formater for track point timestamps
+@available(OSX 10.12, *)
+let pointTimeFormat = ISO8601DateFormatter()
+
 /// Track points contain (at least) a latitude, longitude, and timestamp
 struct Point {
     let lat: Double
     let lon: Double
     var time: String
+    var timeFromEpoch: TimeInterval {
+        if #available(OSX 10.12, *) {
+            if let convertedTime = pointTimeFormat.date(from: time) {
+                return convertedTime.timeIntervalSince1970
+            }
+        }
+        return 0
+    }
 }
 

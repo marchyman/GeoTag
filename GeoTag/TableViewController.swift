@@ -238,6 +238,9 @@ final class TableViewController: NSViewController {
             return tableView.numberOfSelectedRows > 0
         case #selector(interpolate(_:)):
             return validateForInterpolation()
+        case #selector(locnFromTrack(_:)):
+            // OK if at least one row selected AND a track log exists
+            return tableView.numberOfSelectedRows > 0
         default:
             print("default for item \(item)")
         }
@@ -432,6 +435,28 @@ final class TableViewController: NSViewController {
             appDelegate.undoManager.endUndoGrouping()
             appDelegate.undoManager.setActionName("interpolate locations")
         }
+    }
+
+    @IBAction
+    func locnFromTrack(
+        _ sender: Any
+    ) {
+        let rows = tableView.selectedRowIndexes
+
+        // figure out our starting and ending points
+
+        appDelegate.undoManager.beginUndoGrouping()
+        rows.forEach {
+            row in
+            let image = self.images[row]
+            if image.validImage {
+                gpxTracks.forEach {
+                    $0.update(image: image, row: row, doUpdate: updateLocation)
+                }
+            }
+        }
+        appDelegate.undoManager.endUndoGrouping()
+        appDelegate.undoManager.setActionName("locn from track")
     }
 
     //MARK: Functions to reload/update table rows
