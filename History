@@ -1,10 +1,22 @@
+## GeoTag 4.x
+
+### New Features
+
+* GeoTag can now read GPS track logs in the format of a GPX file and display
+  tracks on the map.  This can help locate places where pictures were taken.
+  Use Open (cmd-O) to select gpx files.
+* Images can now be opened with GeoTag.  You can select one or more images in
+  finder and then right click and select the "Open With" option.  GeoTag will
+  be one of app choices.
+* (internal) Swift 4.2, Xcode 10
+
 ## GeoTag 4.3
 
 ### New Features
 
-* Add ability to sort the table of images by column.  Clicking on a column header
-  will sort the table by the contents of that column.  Clicking again will change
-  the sort direction.
+* Add ability to sort the table of images by column.  Clicking on a column
+  header will sort the table by the contents of that column.  Clicking again
+  will change the sort direction.
 * ExifTool version 10.94
 
 ### Bug Fixes
