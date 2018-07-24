@@ -92,11 +92,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="bib-Uj-vzu">
                         <items>
-                            <menuItem title="New" keyEquivalent="n" id="Was-JA-tGl">
-                                <connections>
-                                    <action selector="newDocument:" target="-1" id="4Si-XN-c54"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Open…" keyEquivalent="o" id="IAo-SY-fd9">
                                 <connections>
                                     <action selector="showOpenPanel:" target="Voe-Tx-rLC" id="Urn-mG-qJg"/>
@@ -306,9 +301,8 @@ CA
                                                                     <rect key="frame" x="166" y="1" width="154" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
-                                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gmo-tg-1MM">
+                                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Gmo-tg-1MM">
                                                                             <rect key="frame" x="0.0" y="0.0" width="142" height="17"/>
-                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="yyyy:mm:dd hh:mm:ss" id="TXL-1H-fom">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -316,6 +310,11 @@ CA
                                                                             </textFieldCell>
                                                                         </textField>
                                                                     </subviews>
+                                                                    <constraints>
+                                                                        <constraint firstItem="Gmo-tg-1MM" firstAttribute="leading" secondItem="J4a-hA-T1u" secondAttribute="leading" constant="2" id="4kx-ZI-ncB"/>
+                                                                        <constraint firstItem="Gmo-tg-1MM" firstAttribute="centerY" secondItem="J4a-hA-T1u" secondAttribute="centerY" id="clD-9y-Ty0"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="Gmo-tg-1MM" secondAttribute="trailing" constant="14" id="hg8-UW-PhJ"/>
+                                                                    </constraints>
                                                                     <connections>
                                                                         <outlet property="textField" destination="Gmo-tg-1MM" id="aS6-kK-oqk"/>
                                                                     </connections>
@@ -466,11 +465,11 @@ CA
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jOB-Xu-ExJ">
-                                                        <rect key="frame" x="352" y="381" width="155" height="32"/>
+                                                        <rect key="frame" x="363" y="381" width="144" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="SvS-X7-UYa"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="push" title="Save Map Location" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7D7-7V-JIv">
+                                                        <buttonCell key="cell" type="push" title="Save Map Layout" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7D7-7V-JIv">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
