@@ -636,7 +636,9 @@ extension TableViewController: NSTableViewDataSource {
             for path in paths {
                 let fileURL = URL(fileURLWithPath: path)
                 if !addUrlsInFolder(url: fileURL, toUrls: &urls) {
-                    urls.append(fileURL)
+                    if !appDelegate.isGpxFile(fileURL) {
+                        urls.append(fileURL)
+                    }
                 }
             }
             return !addImages(urls: urls)

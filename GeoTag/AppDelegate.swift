@@ -240,6 +240,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     // add the track to the map
                     gpxTracks.append(gpx)
                     mapViewController.addTracks(gpx: gpx)
+                    // put up an alert
+                    let alert = NSAlert()
+                    alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+                    alert.messageText = NSLocalizedString("GPX_LOADED_TITLE", comment: "GPX file loaded")
+                    alert.informativeText = url.path
+                    alert.informativeText += NSLocalizedString("GPX_LOADED_DESC", comment: "GPX file loaded")
+                    alert.runModal()
                 } else {
                     // put up an alert
                     let alert = NSAlert()
