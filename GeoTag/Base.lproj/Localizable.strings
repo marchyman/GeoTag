@@ -22,3 +22,9 @@ The above named image file could not be copied to your backup folder. Geolocatio
 Failure reason: ";
 "NO_BACKUP_REASON" = "Missing Backup Folder";
 "UNEXPECTED_ERROR" = "Unexpected Error";
+"BAD_GPX_TITLE" = "Can not process GPX file";
+"BAD_GPX_DESC" = "
+
+The above named GPX file could not be properly processed. Any track log information in the file has been ignored.";
+"GPX_LOADED_TITLE" = "GPX File Loaded";
+"GPX_LOADED_DESC" = " processed and will show as a track on the map";

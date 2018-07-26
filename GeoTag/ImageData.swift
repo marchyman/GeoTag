@@ -270,16 +270,14 @@ final class ImageData: NSObject {
         _ location: Coord?
     ) {
         timeZone = nil
-        if #available(OSX 10.11, *) {
-            if let location = location {
-                let coder = CLGeocoder();
-                let loc = CLLocation(latitude: location.latitude,
-                                     longitude: location.longitude)
-                coder.reverseGeocodeLocation(loc) {
-                    (placemarks, error) in
-                    let place = placemarks?.last
-                    self.timeZone = place?.timeZone
-                }
+        if let location = location {
+            let coder = CLGeocoder();
+            let loc = CLLocation(latitude: location.latitude,
+                                 longitude: location.longitude)
+            coder.reverseGeocodeLocation(loc) {
+                (placemarks, error) in
+                let place = placemarks?.last
+                self.timeZone = place?.timeZone
             }
         }
     }
@@ -385,20 +383,16 @@ final class ImageData: NSObject {
 
 /// Key-value names for tableview column sorting
 extension ImageData {
-    @objc var imageName: String
-    {
+    @objc var imageName: String {
         return name ?? ""
     }
-    @objc var dateTime: Double
-    {
+    @objc var dateTime: Double {
         return dateFromEpoch
     }
-    @objc var latitude: Double
-    {
+    @objc var latitude: Double {
         return location?.latitude ?? 0
     }
-    @objc var longitude: Double
-    {
+    @objc var longitude: Double {
         return location?.longitude ?? 0
     }
 }
