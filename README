@@ -2,7 +2,7 @@
 
 ## GeoTag 4.x requires macOS 10.12 or later
 
-## GeoTag 4.x
+## GeoTag 4.x (not yet released)
 
 ### New Features
 
@@ -17,7 +17,7 @@
 * Images can now be opened with GeoTag.  You can select one or more images in
   finder and then right click and select the "Open With" option.  GeoTag will
   be one of app choices.
-* (internal) Swift 4.2, Xcode 10
+* (internal) Swift 4.2, Xcode 10 (beta 4)
 
 ### Bug fixes
 
