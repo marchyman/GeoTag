@@ -27,9 +27,6 @@
 import Foundation
 import AppKit
 
-/// keep track of any GPX tracks added to the map
-var gpxTracks = [Gpx]()
-
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
     lazy var preferences = Preferences()
@@ -238,7 +235,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 progressIndicator.startAnimation(self)
                 if gpx.parse() {
                     // add the track to the map
-                    gpxTracks.append(gpx)
+                    Gpx.gpxTracks.append(gpx)
                     mapViewController.addTracks(gpx: gpx)
                     // put up an alert
                     let alert = NSAlert()

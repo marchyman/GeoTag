@@ -1,6 +1,6 @@
 ## GeoTag for OS X
 
-## GeoTag 4.x requires macOS 10.10 or later
+## GeoTag 4.x requires macOS 10.12 or later
 
 ## GeoTag 4.x
 
@@ -8,10 +8,24 @@
 
 * GeoTag can now read GPS track logs in the format of a GPX file and display
   tracks on the map.  This can help locate places where pictures were taken.
-  Use Open (cmd-O) to select gpx files.
+  Use Open (⌘-O) to select GPX files.  GPX files can also be dragged onto the
+  table.
+* Image location can be updated from a GPS track logs.  Select the images to
+  update and use ⌘T, Edit -> Locn from track, or crtl-click -> Locn from track.
+  Note: this can be time consuming depending upon the number of images selected
+  and the number of track log point loaded.
 * Images can now be opened with GeoTag.  You can select one or more images in
   finder and then right click and select the "Open With" option.  GeoTag will
   be one of app choices.
+* (internal) Swift 4.2, Xcode 10
+
+### Bug fixes
+
+* undoing a location update on an image that did not have a previous location
+  resulted in a location of lat: 0, lon: 0. This has been fixed to restore the
+  image to its "no location assigned" state.
+* undoing all actions did not clear the window modified flag causing a "please
+  save" message when window was closed/application terminated.
 
 ### Other 4.x Features and bug fixes
 

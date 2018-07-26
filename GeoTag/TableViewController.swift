@@ -134,27 +134,21 @@ final class TableViewController: NSViewController {
         modified: Bool = true
     ) {
         var oldLatLon = Coord()
+        var oldLatLonValid = false
         let image = images[row]
         if image.location != nil {
             oldLatLon = image.location!
+            oldLatLonValid = true
         }
 
+        let windowModified = appDelegate.modified
         let undo = appDelegate.undoManager
-        if #available(OSX 10.11, *) {
-            undo.registerUndo(withTarget: self) {
-                targetSelf in
-                targetSelf.updateLocation(row: row,
-                                          validLocation: image.location != nil,
-                                          latLon: oldLatLon,
-                                          modified: targetSelf.appDelegate.modified)
-            }
-        } else {
-            // Fallback on earlier versions
-            (undo.prepare(withInvocationTarget: self) as AnyObject)
-                .updateLocation(row: row,
-                                validLocation: image.location != nil,
-                                latLon: oldLatLon,
-                                modified: appDelegate.modified)
+        undo.registerUndo(withTarget: self) {
+            targetSelf in
+            targetSelf.updateLocation(row: row,
+                                      validLocation: oldLatLonValid,
+                                      latLon: oldLatLon,
+                                      modified: windowModified)
         }
         if validLocation {
             image.setLocation(latLon)
@@ -240,7 +234,9 @@ final class TableViewController: NSViewController {
             return validateForInterpolation()
         case #selector(locnFromTrack(_:)):
             // OK if at least one row selected AND a track log exists
-            return tableView.numberOfSelectedRows > 0
+            return !Gpx.gpxTracks.isEmpty &&
+                   tableView.numberOfSelectedRows > 0 &&
+                   images[tableView.selectedRow].validImage
         default:
             print("default for item \(item)")
         }
@@ -450,8 +446,13 @@ final class TableViewController: NSViewController {
             row in
             let image = self.images[row]
             if image.validImage {
-                gpxTracks.forEach {
-                    $0.update(image: image, row: row, doUpdate: updateLocation)
+                Gpx.gpxTracks.forEach {
+                    $0.update(image: image) {
+                        (coords: Coord) in
+                        updateLocation( row: row,
+                                        validLocation: true,
+                                        latLon: coords )
+                    }
                 }
             }
         }

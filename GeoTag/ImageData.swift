@@ -270,16 +270,14 @@ final class ImageData: NSObject {
         _ location: Coord?
     ) {
         timeZone = nil
-        if #available(OSX 10.11, *) {
-            if let location = location {
-                let coder = CLGeocoder();
-                let loc = CLLocation(latitude: location.latitude,
-                                     longitude: location.longitude)
-                coder.reverseGeocodeLocation(loc) {
-                    (placemarks, error) in
-                    let place = placemarks?.last
-                    self.timeZone = place?.timeZone
-                }
+        if let location = location {
+            let coder = CLGeocoder();
+            let loc = CLLocation(latitude: location.latitude,
+                                 longitude: location.longitude)
+            coder.reverseGeocodeLocation(loc) {
+                (placemarks, error) in
+                let place = placemarks?.last
+                self.timeZone = place?.timeZone
             }
         }
     }

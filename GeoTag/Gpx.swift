@@ -29,6 +29,9 @@ import Foundation
 /// GPX file processing
 
 class Gpx: NSObject {
+    /// All GPX objects
+    static var gpxTracks = [Gpx]()
+
     // parser states
     enum ParseState {
         case none
@@ -37,6 +40,32 @@ class Gpx: NSObject {
         case trkPt
         case time
         case error
+    }
+
+    /// A track consists of one or more track segments
+    struct Track {
+        var segments = [Segment]()
+    }
+
+    /// A track segment consists of one or more track points
+    struct Segment {
+        var points = [Point]()
+    }
+
+    /// date formater for track point timestamps.
+    static let pointTimeFormat = ISO8601DateFormatter()
+
+    /// Track points contain (at least) a latitude, longitude, and timestamp
+    struct Point {
+        let lat: Double
+        let lon: Double
+        var time: String
+        var timeFromEpoch: TimeInterval {
+            if let convertedTime = pointTimeFormat.date(from: time) {
+                return convertedTime.timeIntervalSince1970
+            }
+            return 0
+        }
     }
 
     var parser: XMLParser
@@ -121,8 +150,7 @@ class Gpx: NSObject {
     /// to the image is used.
     func update(
         image: ImageData,
-        row: Int,
-        doUpdate: (Int, Bool,Coord, Bool) -> Void
+        found: (Coord) -> ()
     ) {
         let imageTime = image.dateFromEpoch
         print("Image date: \(image.date) (\(imageTime))")
@@ -135,9 +163,7 @@ class Gpx: NSObject {
                         lastPoint = point
                     } else {
                         if let last = lastPoint {
-                            print("Update locn row \(row)")
-                            doUpdate(row, true, Coord(latitude: last.lat,
-                                                      longitude: last.lon), true)
+                            found(Coord(latitude: last.lat, longitude: last.lon))
                             return
                         }
                     }
@@ -145,8 +171,7 @@ class Gpx: NSObject {
             }
         }
         if let last = lastPoint {
-            doUpdate(row, true, Coord(latitude: last.lat,
-                                      longitude: last.lon), true)
+            found(Coord(latitude: last.lat, longitude: last.lon))
         }
     }
 }
@@ -285,33 +310,3 @@ extension Gpx: XMLParserDelegate {
         }
     }
 }
-
-/// A track consists of one or more track segments
-struct Track {
-    var segments = [Segment]()
-}
-
-/// A track segment consists of one or more track points
-struct Segment {
-    var points = [Point]()
-}
-
-/// date formater for track point timestamps
-@available(OSX 10.12, *)
-let pointTimeFormat = ISO8601DateFormatter()
-
-/// Track points contain (at least) a latitude, longitude, and timestamp
-struct Point {
-    let lat: Double
-    let lon: Double
-    var time: String
-    var timeFromEpoch: TimeInterval {
-        if #available(OSX 10.12, *) {
-            if let convertedTime = pointTimeFormat.date(from: time) {
-                return convertedTime.timeIntervalSince1970
-            }
-        }
-        return 0
-    }
-}
-

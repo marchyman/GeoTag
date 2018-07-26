@@ -54,8 +54,6 @@ class MapViewController: NSViewController {
 
     /// startup
 
-    // 10.10 and later
-    @available(OSX 10.10, *)
     override
     func viewDidLoad(
     ) {
@@ -229,7 +227,7 @@ extension MapViewController: MKMapViewDelegate {
             if let av = annotationView {
                 av.isEnabled = true
                 av.canShowCallout = true
-                av.pinColor = .red
+                av.pinTintColor = .red
                 av.animatesDrop = false
                 av.canShowCallout = false
                 av.isDraggable = true
