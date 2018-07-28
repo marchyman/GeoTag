@@ -87,23 +87,35 @@ final class TableViewController: NSViewController {
     }
 
     /// update geolocation information for images in the table
+    /// - Parameter completion: closure invoked only if all images were
+    ///   successfully saved.
     /// - Returns: true if all modified images were saved, otherwise false
     ///
     /// Each ImageData instance in the table is to save itself. A progress
     /// indicator is displayed while the operation is in progress.
 
     func saveAllImages(
-    ) -> Bool {
+        completion: @escaping ()->()
+    ) {
         var allSaved = true
         appDelegate.progressIndicator.startAnimation(self)
-        for image in images {
-            if !image.saveImageFile() {
-                allSaved = false
+        DispatchQueue.global(qos: .userInitiated).async {
+            let updateGroup = DispatchGroup()
+            for image in self.images {
+                updateGroup.enter()
+                if !image.saveImageFile() {
+                    allSaved = false
+                }
+                updateGroup.leave()
+            }
+            updateGroup.notify(queue: DispatchQueue.main) {
+                self.appDelegate.progressIndicator.stopAnimation(self)
+                ImageData.enableSaveWarnings()
+                if allSaved {
+                    completion()
+                }
             }
         }
-        appDelegate.progressIndicator.stopAnimation(self)
-        ImageData.enableSaveWarnings()
-        return allSaved
     }
 
     //MARK: Image location change handling

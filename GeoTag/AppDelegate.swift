@@ -135,17 +135,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     //MARK: Save image changes (if any)
 
     /// action bound to File -> Save
-    /// - Parameter AnyObject: unused
+    /// - Parameter saveSource: nil if function called from saveOrDontSave in
+    ///   which case the window will be closed if the save was successful.
     ///
     /// Save all images with updated geolocation information and clear all
     /// undo actions.
     @IBAction
     func save(
-        _: AnyObject?
+        _ saveSource: AnyObject?
     ) {
-        if tableViewController.saveAllImages() {
-            modified = false
-            undoManager.removeAllActions()
+        tableViewController.saveAllImages {
+            self.modified = false
+            self.undoManager.removeAllActions()
+            if saveSource == nil {
+                self.window.close()
+            }
         }
     }
 
@@ -191,6 +195,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 case .alertFirstButtonReturn:
                     // Save
                     self.save(nil)
+                    return
                 case .alertSecondButtonReturn:
                     // Cancel -- Close/terminate cancelled
                     return
