@@ -189,7 +189,7 @@ class MapViewController: NSViewController {
     }
 
     /// add tracks to the map.  Track segments are turned into polylines and
-    /// each polyline gets a line renderer
+    /// added to the map view
     func addTracks(
         gpx: Gpx
     ) {
@@ -214,7 +214,7 @@ class MapViewController: NSViewController {
 // Mark: MKMapView Delegate functions
 
 extension MapViewController: MKMapViewDelegate {
-    // return a pinAnnotationView for a red pin
+    /// return a pinAnnotationView for a red pin
     func mapView(
         _ mapView: MKMapView,
         viewFor annotation: MKAnnotation
@@ -240,7 +240,7 @@ extension MapViewController: MKMapViewDelegate {
         return annotationView
     }
 
-    // A pin is being dragged.
+    /// A pin is being dragged. [DOES NOT WORK]
     func mapView(
         _ mapView: MKMapView,
         annotationView view: MKAnnotationView,
@@ -259,6 +259,7 @@ extension MapViewController: MKMapViewDelegate {
         }
     }
 
+    /// Create an MKPolylineRenderer for MKPolyLines added to the map
     func mapView(
         _ mapview: MKMapView,
         rendererFor overlay: MKOverlay
