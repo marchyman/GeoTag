@@ -38,6 +38,7 @@ final class TableViewController: NSViewController {
     var images = [ImageData]()
     var imageUrls = Set<URL>()
     var lastSelectedRow: Int?
+    var saveInProgress = false
 
     // MARK: startup
 
@@ -97,10 +98,11 @@ final class TableViewController: NSViewController {
     func saveAllImages(
         completion: @escaping ()->()
     ) {
-        var allSaved = true
+        saveInProgress = true
         appDelegate.progressIndicator.startAnimation(self)
         DispatchQueue.global(qos: .userInitiated).async {
             let updateGroup = DispatchGroup()
+            var allSaved = true
             for image in self.images {
                 updateGroup.enter()
                 if !image.saveImageFile() {
@@ -111,6 +113,7 @@ final class TableViewController: NSViewController {
             updateGroup.notify(queue: DispatchQueue.main) {
                 self.appDelegate.progressIndicator.stopAnimation(self)
                 ImageData.enableSaveWarnings()
+                self.saveInProgress = false
                 if allSaved {
                     completion()
                 }
@@ -216,11 +219,11 @@ final class TableViewController: NSViewController {
             return images.count > 0 && !appDelegate.modified
         case #selector(discard(_:)):
             // OK if there are changes pending
-            return appDelegate.modified
+            return !saveInProgress && appDelegate.modified
         case #selector(cut(_:)),
              #selector(copy(_:)):
             // OK if only one row with a valid location selected
-            if tableView.numberOfSelectedRows == 1 {
+            if !saveInProgress && tableView.numberOfSelectedRows == 1 {
                 let image = images[tableView.selectedRow]
                 if image.location != nil {
                     return true
@@ -229,7 +232,7 @@ final class TableViewController: NSViewController {
         case #selector(paste(_:)):
             // OK if there is at least one selected row and something that
             // looks like a lat and lon in the pasteboard.
-            if tableView.numberOfSelectedRows > 0 {
+            if !saveInProgress && tableView.numberOfSelectedRows > 0 {
                 let pb = NSPasteboard.general
                 if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string) {
                     // pasteVal should look like "lat lon"
@@ -241,12 +244,13 @@ final class TableViewController: NSViewController {
             }
         case #selector(delete(_:)):
             // OK if at least one row selected
-            return tableView.numberOfSelectedRows > 0
+            return !saveInProgress && tableView.numberOfSelectedRows > 0
         case #selector(interpolate(_:)):
-            return validateForInterpolation()
+            return !saveInProgress && validateForInterpolation()
         case #selector(locnFromTrack(_:)):
             // OK if at least one row selected AND a track log exists
-            return !Gpx.gpxTracks.isEmpty &&
+            return !saveInProgress &&
+                   !Gpx.gpxTracks.isEmpty &&
                    tableView.numberOfSelectedRows > 0 &&
                    images[tableView.selectedRow].validImage
         default:
@@ -687,12 +691,16 @@ extension TableViewController: NSTableViewDataSource {
 
 extension TableViewController: MapViewDelegate {
 
+    /// update the location for selected rows UNLESS a save is in progress.
+    /// Location updates are not allowed during a save.
     func mouseClicked(
         mapView: MapView!,
         location: CLLocationCoordinate2D
     ) {
-        updateSelectedRows(latLon: location)
-        appDelegate.undoManager.setActionName("location change")
+        if !saveInProgress {
+            updateSelectedRows(latLon: location)
+            appDelegate.undoManager.setActionName("location change")
+        }
     }
 }
 
