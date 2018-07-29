@@ -227,6 +227,49 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to tear down your application
     }
 
+}
+
+/// File/Url handling
+extension AppDelegate {
+    /// enumerate the files in a folder adding URLs for all files found to an array
+    /// - Parameter url: a URL of the folder to enumerate
+    /// - Parameter toUrls: the array to add the url of found files
+    /// - Returns: true if the URL was a folder, false otherwise
+    ///
+    /// Non-hidden files are added to the inout toUrls parameter. Hidden files
+    /// and internal folders are not added to the array.  Internal folders are
+    /// also enumerated.
+
+    public
+    func addUrlsInFolder(
+        url: URL,
+        toUrls urls: inout [URL]
+    ) -> Bool {
+        let fileManager = FileManager.default
+        var dir = ObjCBool(false)
+        if fileManager.fileExists(atPath: url.path, isDirectory: &dir) && dir.boolValue {
+            guard let urlEnumerator =
+                fileManager.enumerator(at: url,
+                                       includingPropertiesForKeys: [.isDirectoryKey],
+                                       options: [.skipsHiddenFiles],
+                                       errorHandler: nil) else { return false }
+            while let fileUrl = urlEnumerator.nextObject() as? URL {
+                guard
+                    let resources =
+                        try? fileUrl.resourceValues(forKeys: [.isDirectoryKey]),
+                    let directory = resources.isDirectory
+                    else { continue }
+                if !directory {
+                    if !isGpxFile(fileUrl) {
+                        urls.append(fileUrl)
+                    }
+                }
+            }
+            return true
+        }
+        return false
+    }
+
     /// check if the given url is a gpx file.
     /// - Parameter url: URL of file to check
     /// - Returns: true if file was a GPX file, otherwise false
@@ -264,6 +307,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         return false
     }
+
 }
 
 /// Window delegate functions

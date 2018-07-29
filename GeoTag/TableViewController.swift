@@ -677,7 +677,7 @@ extension TableViewController: NSTableViewDataSource {
             var urls = [URL]()
             for path in paths {
                 let fileURL = URL(fileURLWithPath: path)
-                if !addUrlsInFolder(url: fileURL, toUrls: &urls) {
+                if !appDelegate.addUrlsInFolder(url: fileURL, toUrls: &urls) {
                     if !appDelegate.isGpxFile(fileURL) {
                         urls.append(fileURL)
                     }
