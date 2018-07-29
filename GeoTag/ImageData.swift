@@ -120,7 +120,7 @@ final class ImageData: NSObject {
                                              appropriateFor: nil,
                                              create: true)
             sandboxUrl = docDir.appendingPathComponent(url.lastPathComponent)
-            /// if sandboxUrl already exists modify the name until it doesn't
+            // if sandboxUrl already exists modify the name until it doesn't
             var fileNumber = 1
             while fileManager.fileExists(atPath: (sandboxUrl.path)) {
                 var newName = url.lastPathComponent
@@ -129,6 +129,11 @@ final class ImageData: NSObject {
                 fileNumber += 1
                 sandboxUrl = docDir.appendingPathComponent(newName)
             }
+            // fileExistsAtPath will return false when a symbolic link
+            // exists but does not point to a valid file.  Handle that
+            // situation to avoid a crash by deleting any stale link
+            // that may be present before trying to create a new link.
+            try? fileManager.removeItem(at: sandboxUrl)
             try fileManager.createSymbolicLink(at: sandboxUrl,
                                                withDestinationURL: url)
         } catch let error as NSError {

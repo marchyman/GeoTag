@@ -30,6 +30,9 @@
   save" message when window was closed/application terminated.
 * No more beachball when saving large number of images.  Multiple images
   are saved in parallel, but the save process can still be quite slow.
+* If GeoTag (or your computer) crashed with files opened and one or more of the
+  opened files was moved to a different folder GeoTag would crash on attempts
+  to open the file.
 
 ### Other 4.x Features and bug fixes
 
