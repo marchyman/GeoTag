@@ -33,6 +33,21 @@ class MapViewController: NSViewController {
 
     @IBOutlet var mapView: MapView!
     @IBOutlet var mapTypeControl: NSSegmentedControl!
+    @IBOutlet weak var search: NSSearchField!
+
+    /// Search Field Recents Menu
+    lazy var searchesMenu: NSMenu = {
+        let menu = NSMenu(title: "Recents")
+        let i1 = menu.addItem(withTitle: "Recents Search", action: nil, keyEquivalent: "")
+        i1.tag = Int(NSSearchField.recentsTitleMenuItemTag)
+        let i2 = menu.addItem(withTitle: "Item", action: nil, keyEquivalent: "")
+        i2.tag = Int(NSSearchField.recentsMenuItemTag)
+        let i3 = menu.addItem(withTitle: "Clear", action: nil, keyEquivalent: "")
+        i3.tag = Int(NSSearchField.clearRecentsMenuItemTag)
+        let i4 = menu.addItem(withTitle: "No Recent Search", action: nil, keyEquivalent: "")
+        i4.tag = Int(NSSearchField.noRecentsMenuItemTag)
+        return menu
+    }()
 
     // user defaults keys for map configuration
     let mapTypeKey = "MapType"
@@ -85,6 +100,7 @@ class MapViewController: NSViewController {
         mapView.camera = MKMapCamera(lookingAtCenter: center,
                                      fromEyeCoordinate: center,
                                      eyeAltitude: altitude)
+        search.searchMenuTemplate = searchesMenu
     }
 
     /// Map control actions
