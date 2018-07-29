@@ -432,7 +432,7 @@ final class TableViewController: NSViewController {
 
         if distance > 0 {
             let speed = distance / (endInfo.timestamp - startInfo.timestamp)
-            print("\(distance) meters \(bearing)º at \(speed) meters/sec")
+            // print("\(distance) meters \(bearing)º at \(speed) meters/sec")
             appDelegate.undoManager.beginUndoGrouping()
             rows.forEach {
                 let image = self.images[$0]
@@ -457,25 +457,32 @@ final class TableViewController: NSViewController {
     ) {
         let rows = tableView.selectedRowIndexes
 
-        // figure out our starting and ending points
-
         appDelegate.undoManager.beginUndoGrouping()
+        let updateGroup = DispatchGroup()
         rows.forEach {
             row in
             let image = self.images[row]
             if image.validImage {
-                Gpx.gpxTracks.forEach {
-                    $0.update(image: image) {
-                        (coords: Coord) in
-                        updateLocation( row: row,
-                                        validLocation: true,
-                                        latLon: coords )
+                DispatchQueue.global(qos: .userInitiated).async {
+                    updateGroup.enter()
+                    Gpx.gpxTracks.forEach {
+                        $0.update(image: image) {
+                            (coords: Coord) in
+                            DispatchQueue.main.async {
+                                self.updateLocation( row: row,
+                                                     validLocation: true,
+                                                     latLon: coords )
+                            }
+                        }
                     }
+                    updateGroup.leave()
                 }
             }
         }
-        appDelegate.undoManager.endUndoGrouping()
-        appDelegate.undoManager.setActionName("locn from track")
+        updateGroup.notify(queue: DispatchQueue.main) {
+            self.appDelegate.undoManager.endUndoGrouping()
+            self.appDelegate.undoManager.setActionName("locn from track")
+        }
     }
 
     //MARK: Functions to reload/update table rows

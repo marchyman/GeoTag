@@ -153,7 +153,7 @@ class Gpx: NSObject {
         found: (Coord) -> ()
     ) {
         let imageTime = image.dateFromEpoch
-        print("Image date: \(image.date) (\(imageTime))")
+        // print("Image date: \(image.date) (\(imageTime))")
         var lastPoint: Point?
 
         for track in tracks {
