@@ -100,23 +100,25 @@ final class TableViewController: NSViewController {
     ) {
         saveInProgress = true
         appDelegate.progressIndicator.startAnimation(self)
-        DispatchQueue.global(qos: .userInitiated).async {
-            let updateGroup = DispatchGroup()
-            var allSaved = true
-            for image in self.images {
+        // copy image array so updates during save don't cause issues
+        let images = self.images
+        let updateGroup = DispatchGroup()
+        var allSaved = true
+        for image in images {
+            DispatchQueue.global(qos: .userInitiated).async {
                 updateGroup.enter()
                 if !image.saveImageFile() {
                     allSaved = false
                 }
                 updateGroup.leave()
             }
-            updateGroup.notify(queue: DispatchQueue.main) {
-                self.appDelegate.progressIndicator.stopAnimation(self)
-                ImageData.enableSaveWarnings()
-                self.saveInProgress = false
-                if allSaved {
-                    completion()
-                }
+        }
+        updateGroup.notify(queue: DispatchQueue.main) {
+            self.appDelegate.progressIndicator.stopAnimation(self)
+            ImageData.enableSaveWarnings()
+            self.saveInProgress = false
+            if allSaved {
+                completion()
             }
         }
     }
