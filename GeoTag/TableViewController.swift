@@ -261,6 +261,19 @@ final class TableViewController: NSViewController {
         return false
     }
 
+    /// open the change date/time window for an image
+    @IBAction
+    func doubleClick(
+        _ sender: NSTableView
+    ) {
+        print("Double Click row \(sender.clickedRow)")
+        let row = sender.clickedRow
+        if row >= 0 && row < images.count {
+            openChangeTimeWindow(for: images[row])
+        }
+    }
+
+
     /// discard location changes to the selected item
     ///
     /// - Parameter AnyObject: unused

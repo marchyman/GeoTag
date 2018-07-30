@@ -406,6 +406,7 @@ CA
                                                         </tableColumn>
                                                     </tableColumns>
                                                     <connections>
+                                                        <action trigger="doubleAction" selector="doubleClick:" target="er7-2A-M57" id="bEH-gE-ejD"/>
                                                         <outlet property="dataSource" destination="er7-2A-M57" id="0J5-bl-kmR"/>
                                                         <outlet property="delegate" destination="er7-2A-M57" id="R4s-C2-eCu"/>
                                                     </connections>
