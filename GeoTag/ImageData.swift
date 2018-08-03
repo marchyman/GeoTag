@@ -95,7 +95,6 @@ final class ImageData: NSObject {
             return dateFormatter.date(from: date)
         }
         set {
-            originalDate = date
             if let value = newValue {
                 dateFormatter.dateFormat = dateFormatString
                 if timeZone == nil, let location = location {
