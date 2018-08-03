@@ -65,6 +65,8 @@ struct Exiftool {
             gpsDArg = "-GPSDateStamp="
             gpsTArg = "-GPSTimeStamp="
         }
+        // ExifTool date/time original argument name
+        let dtoArg = "-DateTimeOriginal=" + imageData.date
 
         // ExifTool latitude, longitude, and date/time argument values
         if let location = imageData.location {
@@ -99,8 +101,8 @@ struct Exiftool {
         exiftool.standardError = FileHandle.nullDevice
         exiftool.launchPath = url.path
         exiftool.arguments = ["-q", "-m", "-overwrite_original_in_place",
+            latArg, latRefArg, lonArg, lonRefArg, gpsDArg, gpsTArg, dtoArg,
             "-DateTimeOriginal>FileModifyDate", "-GPSStatus=",
-            latArg, latRefArg, lonArg, lonRefArg, gpsDArg, gpsTArg,
             imageData.sandboxUrl.path]
         exiftool.launch()
         exiftool.waitUntilExit()

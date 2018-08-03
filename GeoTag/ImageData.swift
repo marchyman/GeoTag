@@ -62,7 +62,7 @@ final class ImageData: NSObject {
         saveWarning = true
     }
 
-    // MARK: instance variables
+    // MARK: instance variables -- file URLs
 
     let url: URL                // URL of the image
     var name: String? {
@@ -70,19 +70,46 @@ final class ImageData: NSObject {
     }
     var sandboxUrl: URL         // URL of the sandbox copy of the image
 
+    // MARK: instance variables -- date/time related values
+
+    // format of the date string
+    let dateFormatter = DateFormatter()
+    let dateFormatString = "yyyy:MM:dd HH:mm:ss"
+
     // image date/time created
     var date: String = ""
+    var originalDate: String = ""
+
+    // timeZone of image
     var timeZone: TimeZone?
-    // date as a Date
+
+    // date as a Date  This value can be also be set in which case the date
+    // string will also be updated
     var dateValue: Date? {
-        let format = DateFormatter()
-        format.dateFormat = "yyyy:MM:dd HH:mm:ss"
-        if timeZone == nil, let location = location {
-            setTimeZoneFor(location)
+        get {
+            dateFormatter.dateFormat = dateFormatString
+            if timeZone == nil, let location = location {
+                setTimeZoneFor(location)
+            }
+            dateFormatter.timeZone = timeZone
+            return dateFormatter.date(from: date)
         }
-        format.timeZone = timeZone
-        return format.date(from: date)
+        set {
+            originalDate = date
+            if let value = newValue {
+                dateFormatter.dateFormat = dateFormatString
+                if timeZone == nil, let location = location {
+                    setTimeZoneFor(location)
+                }
+                dateFormatter.timeZone = timeZone
+                date = dateFormatter.string(from: value)
+            } else {
+                date = ""
+            }
+            print("Date change to \(date)")
+        }
     }
+
     // date as a TimeInterval
     var dateFromEpoch: TimeInterval {
         if let convertedDate = dateValue {
@@ -91,9 +118,13 @@ final class ImageData: NSObject {
         return 0
     }
 
+    // MARK: instance variables -- image location
+
     // image location
     var location: Coord?
     var originalLocation: Coord?
+
+    // MARK: instance variables -- image state and thumbnail
 
     var validImage = false  // does URL point to a valid image file?
     lazy var image: NSImage = self.loadImage()
@@ -150,6 +181,7 @@ final class ImageData: NSObject {
         super.init()
         validImage = loadImageData()
         originalLocation = location
+        originalDate = date
     }
 
     /// remove the symbolic link created in the sandboxed document directory
@@ -246,7 +278,7 @@ final class ImageData: NSObject {
         return true
     }
 
-    /// save image file if location has changed
+    /// save image file if location or timestamp has changed
     /// - Returns: false if a changed location could not be saved
     ///
     /// Invokes exiftool to update image metadata with the current
@@ -264,7 +296,8 @@ final class ImageData: NSObject {
     ) -> Bool {
         guard validImage &&
               (location?.latitude != originalLocation?.latitude ||
-               location?.longitude != originalLocation?.longitude) else {
+               location?.longitude != originalLocation?.longitude ||
+               date != originalDate) else {
             return true     // nothing to update
         }
         if saveOriginalFile() &&
