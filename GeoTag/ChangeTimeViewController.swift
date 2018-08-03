@@ -38,7 +38,8 @@ class ChangeTimeViewController: NSViewController {
     ) {
         if newDate.dateValue != convertedDate {
             print("DateTime changed: \(newDate.dateValue)")
-            // do simething with date/time here
+            image.dateValue = newDate.dateValue
+            // update user interface
         }
         self.view.window?.close()
     }

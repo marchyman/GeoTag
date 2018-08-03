@@ -12,7 +12,7 @@
 use strict;
 require 5.004;
 
-my $version = '10.94';
+my $version = '11.08';
 
 # add our 'lib' directory to the include list BEFORE 'use Image::ExifTool'
 my $exeDir;
@@ -65,6 +65,7 @@ sub CreateDirectory($);
 sub OpenOutputFile($;@);
 sub AcceptFile($);
 sub SlurpFile($$);
+sub FilterArgfileLine($);
 sub ReadStayOpen($);
 sub PrintTagList($@);
 sub PrintErrors($$$);
@@ -721,11 +722,8 @@ for (;;) {
                 s/^\xef\xbb\xbf//;
                 $didBOM = 1;
             }
-            next if /^#/;   # ignore lines beginning with '#'
-            s/^\s+//; s/[\x0d\x0a]+$//s; # remove leading white space and trailing newline
-            # remove white space before, and single space after '=', '+=', '-=' or '<='
-            s/^(-[-:\w]+#?)\s*([-+<]?=) ?/$1$2/;
-            push @newArgs, $_ unless $_ eq '';
+            $_ = FilterArgfileLine($_);
+            push @newArgs, $_ if defined $_;
         }
         close ARGFILE;
         unshift @ARGV, @newArgs;
@@ -3651,6 +3649,9 @@ sub SuggestedExtension($$$)
         $ext = 'icc';
     } elsif ($$valPt =~ /^(MM\0\x2a|II\x2a\0)/) {
         $ext = 'tiff';
+    } elsif ($$valPt =~ /^.{4}ftyp(3gp|mp4|f4v|qt  )/s) {
+        my %movType = ( 'qt  ' => 'mov' );
+        $ext = $movType{$1} || $1;
     } elsif ($$valPt !~ /^.{0,4096}\0/s) {
         $ext = 'txt';
     } elsif ($$valPt =~ /^BM/) {
@@ -3947,6 +3948,32 @@ sub SlurpFile($$)
     return 1;
 }
 
+
+#------------------------------------------------------------------------------
+# Filter argfile line
+# Inputs: 0) line of argfile
+# Returns: filtered line or undef to ignore
+sub FilterArgfileLine($)
+{
+    my $arg = shift;
+    if ($arg =~ /^#/) {             # comment lines begin with '#'
+        return undef unless $arg =~ s/^#\[CSTR\]//;
+        $arg =~ s/[\x0d\x0a]+$//s;  # remove trailing newline
+        # escape double quotes, dollar signs and ampersands if they aren't already
+        # escaped by an odd number of backslashes, and escape a single backslash
+        # if it occurs at the end of the string
+        $arg =~ s{\\(.)|(["\$\@]|\\$)}{'\\'.($2 || $1)}sge;
+        $arg = eval qq{"$arg"};     # un-escape characters in C string
+    } else {
+        $arg =~ s/^\s+//;           # remove leading white space
+        $arg =~ s/[\x0d\x0a]+$//s;  # remove trailing newline
+        # remove white space before, and single space after '=', '+=', '-=' or '<='
+        $arg =~ s/^(-[-:\w]+#?)\s*([-+<]?=) ?/$1$2/;
+        return undef if $arg eq '';
+    }
+    return $arg;
+}
+
 #------------------------------------------------------------------------------
 # Read arguments from -stay_open argfile
 # Inputs: 0) argument list ref
@@ -3974,11 +4001,8 @@ sub ReadStayOpen($)
                 my $len = pos($stayOpenBuff) - $pos;
                 my $arg = substr($stayOpenBuff, $pos, $len);
                 $pos += $len;
-                $arg =~ s/^\s+//;           # remove leading white space
-                $arg =~ s/[\x0d\x0a]+$//s;  # remove trailing newline
-                # remove white space before, and single space after '=', '+=', '-=' or '<='
-                $arg =~ s/^(-[-:\w]+#?)\s*([-+<]?=) ?/$1$2/;
-                next if $arg eq '' or $arg =~ /^#/; # ignore empty/comment lines
+                $arg = FilterArgfileLine($arg);
+                next unless defined $arg;
                 push @newArgs, $arg;
                 if ($optArgs) {
                     # this is an argument for the last option
@@ -4122,44 +4146,44 @@ supported by ExifTool (r = read, w = write, c = create):
 
   File Types
   ------------+-------------+-------------+-------------+------------
-  3FR   r     | DV    r     | JPEG  r/w   | OFR   r     | RTF   r
-  3G2   r/w   | DVB   r/w   | JSON  r     | OGG   r     | RW2   r/w
-  3GP   r/w   | DYLIB r     | K25   r     | OGV   r     | RWL   r/w
-  A     r     | EIP   r     | KDC   r     | OPUS  r     | RWZ   r
-  AA    r     | EPS   r/w   | KEY   r     | ORF   r/w   | RM    r
-  AAX   r/w   | EPUB  r     | LA    r     | OTF   r     | SEQ   r
-  ACR   r     | ERF   r/w   | LFP   r     | PAC   r     | SKETCH r
-  AFM   r     | EXE   r     | LNK   r     | PAGES r     | SO    r
-  AI    r/w   | EXIF  r/w/c | M2TS  r     | PBM   r/w   | SR2   r/w
-  AIFF  r     | EXR   r     | M4A/V r/w   | PCD   r     | SRF   r
-  APE   r     | EXV   r/w/c | MAX   r     | PDB   r     | SRW   r/w
-  ARW   r/w   | F4A/V r/w   | MEF   r/w   | PDF   r/w   | SVG   r
-  ASF   r     | FFF   r/w   | MIE   r/w/c | PEF   r/w   | SWF   r
-  AVI   r     | FLA   r     | MIFF  r     | PFA   r     | THM   r/w
-  AZW   r     | FLAC  r     | MKA   r     | PFB   r     | TIFF  r/w
-  BMP   r     | FLIF  r/w   | MKS   r     | PFM   r     | TORRENT r
-  BPG   r     | FLV   r     | MKV   r     | PGF   r     | TTC   r
-  BTF   r     | FPF   r     | MNG   r/w   | PGM   r/w   | TTF   r
-  CHM   r     | FPX   r     | MOBI  r     | PLIST r     | VCF   r
-  COS   r     | GIF   r/w   | MODD  r     | PICT  r     | VRD   r/w/c
-  CR2   r/w   | GPR   r/w   | MOI   r     | PMP   r     | VSD   r
-  CR3   r/w   | GZ    r     | MOS   r/w   | PNG   r/w   | WAV   r
-  CRM   r/w   | HDP   r/w   | MOV   r/w   | PPM   r/w   | WDP   r/w
-  CRW   r/w   | HDR   r     | MP3   r     | PPT   r     | WEBP  r
-  CS1   r/w   | HEIC  r     | MP4   r/w   | PPTX  r     | WEBM  r
-  DCM   r     | HEIF  r     | MPC   r     | PS    r/w   | WMA   r
-  DCP   r/w   | HTML  r     | MPG   r     | PSB   r/w   | WMV   r
-  DCR   r     | ICC   r/w/c | MPO   r/w   | PSD   r/w   | WV    r
-  DFONT r     | ICS   r     | MQV   r/w   | PSP   r     | X3F   r/w
-  DIVX  r     | IDML  r     | MRW   r/w   | QTIF  r/w   | XCF   r
-  DJVU  r     | IIQ   r/w   | MXF   r     | R3D   r     | XLS   r
-  DLL   r     | IND   r/w   | NEF   r/w   | RA    r     | XLSX  r
-  DNG   r/w   | INX   r     | NRW   r/w   | RAF   r/w   | XMP   r/w/c
-  DOC   r     | ISO   r     | NUMBERS r   | RAM   r     | ZIP   r
-  DOCX  r     | ITC   r     | O     r     | RAR   r     |
-  DPX   r     | J2C   r     | ODP   r     | RAW   r/w   |
-  DR4   r/w/c | JNG   r/w   | ODS   r     | RIFF  r     |
-  DSS   r     | JP2   r/w   | ODT   r     | RSRC  r     |
+  3FR   r     | DV    r     | JP2   r/w   | ODT   r     | RSRC  r
+  3G2   r/w   | DVB   r/w   | JPEG  r/w   | OFR   r     | RTF   r
+  3GP   r/w   | DVR-MS r    | JSON  r     | OGG   r     | RW2   r/w
+  A     r     | DYLIB r     | K25   r     | OGV   r     | RWL   r/w
+  AA    r     | EIP   r     | KDC   r     | OPUS  r     | RWZ   r
+  AAX   r/w   | EPS   r/w   | KEY   r     | ORF   r/w   | RM    r
+  ACR   r     | EPUB  r     | LA    r     | OTF   r     | SEQ   r
+  AFM   r     | ERF   r/w   | LFP   r     | PAC   r     | SKETCH r
+  AI    r/w   | EXE   r     | LNK   r     | PAGES r     | SO    r
+  AIFF  r     | EXIF  r/w/c | M2TS  r     | PBM   r/w   | SR2   r/w
+  APE   r     | EXR   r     | M4A/V r/w   | PCD   r     | SRF   r
+  ARW   r/w   | EXV   r/w/c | MAX   r     | PDB   r     | SRW   r/w
+  ASF   r     | F4A/V r/w   | MEF   r/w   | PDF   r/w   | SVG   r
+  AVI   r     | FFF   r/w   | MIE   r/w/c | PEF   r/w   | SWF   r
+  AZW   r     | FLA   r     | MIFF  r     | PFA   r     | THM   r/w
+  BMP   r     | FLAC  r     | MKA   r     | PFB   r     | TIFF  r/w
+  BPG   r     | FLIF  r/w   | MKS   r     | PFM   r     | TORRENT r
+  BTF   r     | FLV   r     | MKV   r     | PGF   r     | TTC   r
+  CHM   r     | FPF   r     | MNG   r/w   | PGM   r/w   | TTF   r
+  COS   r     | FPX   r     | MOBI  r     | PLIST r     | VCF   r
+  CR2   r/w   | GIF   r/w   | MODD  r     | PICT  r     | VRD   r/w/c
+  CR3   r/w   | GPR   r/w   | MOI   r     | PMP   r     | VSD   r
+  CRM   r/w   | GZ    r     | MOS   r/w   | PNG   r/w   | WAV   r
+  CRW   r/w   | HDP   r/w   | MOV   r/w   | PPM   r/w   | WDP   r/w
+  CS1   r/w   | HDR   r     | MP3   r     | PPT   r     | WEBP  r
+  DCM   r     | HEIC  r     | MP4   r/w   | PPTX  r     | WEBM  r
+  DCP   r/w   | HEIF  r     | MPC   r     | PS    r/w   | WMA   r
+  DCR   r     | HTML  r     | MPG   r     | PSB   r/w   | WMV   r
+  DFONT r     | ICC   r/w/c | MPO   r/w   | PSD   r/w   | WTV   r
+  DIVX  r     | ICS   r     | MQV   r/w   | PSP   r     | WV    r
+  DJVU  r     | IDML  r     | MRW   r/w   | QTIF  r/w   | X3F   r/w
+  DLL   r     | IIQ   r/w   | MXF   r     | R3D   r     | XCF   r
+  DNG   r/w   | IND   r/w   | NEF   r/w   | RA    r     | XLS   r
+  DOC   r     | INX   r     | NRW   r/w   | RAF   r/w   | XLSX  r
+  DOCX  r     | ISO   r     | NUMBERS r   | RAM   r     | XMP   r/w/c
+  DPX   r     | ITC   r     | O     r     | RAR   r     | ZIP   r
+  DR4   r/w/c | J2C   r     | ODP   r     | RAW   r/w   |
+  DSS   r     | JNG   r/w   | ODS   r     | RIFF  r     |
 
   Meta Information
   ----------------------+----------------------+---------------------
@@ -4618,7 +4642,8 @@ control characters (such as newlines) are not replaced by '.' as they are in
 the default output.  By default, list items are separated by a newline when
 extracted with the B<-b> option, but this may be changed (see the B<-sep>
 option for details).  May be combined with C<-j>, C<-php> or C<-X> to
-extract binary data in JSON, PHP or XML format.
+extract binary data in JSON, PHP or XML format, but note that "unsafe" tags
+must be specified explicitly to be extracted as binary in these formats.
 
 =item B<-c> I<FMT> (B<-coordFormat>)
 
@@ -4959,7 +4984,7 @@ consecutive files with the same section header (eg. files are grouped by
 directory if C<#[SECT]> contains C<$directory>).  Lines beginning with
 C<#[BODY]> and lines not beginning with C<#> are output for each processed
 file.  Lines beginning with C<#[IF]> are not output, but the BODY lines are
-skipped if any tag on an IF line doesn't exist. Other lines beginning with
+skipped if any tag on an IF line doesn't exist.  Other lines beginning with
 C<#> are ignored.  For example, this format file:
 
     # this is a comment line
@@ -4974,7 +4999,7 @@ with this command:
 
 produces output like this:
 
-    -- Generated by ExifTool 10.94 --
+    -- Generated by ExifTool 11.08 --
     File: a.jpg - 2003:10:31 15:44:19
     (f/5.6, 1/60s, ISO 100)
     File: b.jpg - 2006:05:23 11:57:38
@@ -5632,12 +5657,14 @@ of setting the API Compress, Compact and XMPShorthand options to 1.
 Read command-line arguments from the specified file.  The file contains one
 argument per line (NOT one option per line -- some options require
 additional arguments, and all arguments must be placed on separate lines).
-Blank lines and lines beginning with C<#> are ignored.  White space at the
-start of a line is removed.  Normal shell processing of arguments is not
-performed, which among other things means that arguments should not be
-quoted and spaces are treated as any other character.  I<ARGFILE> may exist
-relative to either the current directory or the exiftool directory unless an
-absolute pathname is given.
+Blank lines and lines beginning with C<#> are ignored (unless they start
+with C<#[CSTR]>, in which case the rest of the line is treated as a C
+string, allowing standard C escape sequences such as "\n" for a newline). 
+White space at the start of a line is removed.  Normal shell processing of
+arguments is not performed, which among other things means that arguments
+should not be quoted and spaces are treated as any other character.
+I<ARGFILE> may exist relative to either the current directory or the
+exiftool directory unless an absolute pathname is given.
 
 For example, the following I<ARGFILE> will set the value of Copyright to
 "Copyright YYYY, Phil Harvey", where "YYYY" is the year of CreateDate:
@@ -5984,10 +6011,10 @@ underlines replaced by a single underline:
 
     exiftool -p '${make;tr/ /_/;s/__+/_/g}' image.jpg
 
-A C<@> may be added after the tag name to make the expression act on
-individual list items for list-type tags, simplifying list processing.  As
-an example, the following command returns all subjects not containing the
-string "xxx":
+An C<@> may be added after the tag name to make the expression act on
+individual list items for list-type tags, simplifying list processing.  Set
+C<$_> to undef to remove an item from the list.  As an example, the
+following command returns all subjects not containing the string "xxx":
 
     exiftool -p '${subject@;$_=undef if /xxx/}' image.jpg
 

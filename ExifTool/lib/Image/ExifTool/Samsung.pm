@@ -22,7 +22,7 @@ use vars qw($VERSION %samsungLensTypes);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.40';
+$VERSION = '1.42';
 
 sub WriteSTMN($$$);
 sub ProcessINFO($$$);
@@ -300,9 +300,9 @@ my %formatMinMax = (
     # 0x0032 - string (GPSInfo03)
     # 0x0033 - string (GPSInfo04)
     # 0x0034 - string (GPSInfo05)
-    0x0035 => {
+    0x0035 => [{
         Name => 'PreviewIFD',
-        Condition => '$$self{TIFF_TYPE} eq "SRW"', # (not an IFD in JPEG images)
+        Condition => '$$self{TIFF_TYPE} eq "SRW" and $$self{Model} ne "EK-GN120"', # (not an IFD in JPEG images)
         Groups => { 1 => 'PreviewIFD' },
         Flags => 'SubIFD',
         SubDirectory => {
@@ -310,7 +310,17 @@ my %formatMinMax = (
             ByteOrder => 'Unknown',
             Start => '$val',
         },
-    },
+    },{
+        Name => 'PreviewIFD',
+        Condition => '$$self{TIFF_TYPE} eq "SRW"', # (not an IFD in JPEG images)
+        Groups => { 1 => 'PreviewIFD' },
+        Flags => 'SubIFD',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::Nikon::PreviewIFD',
+            ByteOrder => 'Unknown',
+            Start => '$val - 36',
+        },
+    }],
     # 0x003a - int16u[2] (SmartLensInfo?)
     # 0x003b - int16u[2] (PhotoStyleSelectInfo?)
     # 0x003c - int16u (SmartRange?)
@@ -502,13 +512,12 @@ my %formatMinMax = (
         RawConv    => 'Image::ExifTool::Samsung::Crypt($self,$val,$tagInfo,-1)',
         RawConvInv => 'Image::ExifTool::Samsung::Crypt($self,$val,$tagInfo,1)',
     },
-    #this doesn't seem correct
-    #0xa025 => { #PH/1 (PostAEGain?)
-    #    Name => 'ColorTemperatureAuto',
-    #    Writable => 'int32u',
-    #    RawConv    => 'Image::ExifTool::Samsung::Crypt($self,$val,$tagInfo,6)',
-    #    RawConvInv => 'Image::ExifTool::Samsung::Crypt($self,$val,$tagInfo,-6)',
-    #},
+    0xa025 => { # (PostAEGain?)
+        Name => 'DigitalGain', #IB
+        Writable => 'int32u',
+        RawConv    => 'Image::ExifTool::Samsung::Crypt($self,$val,$tagInfo,6)',
+        RawConvInv => 'Image::ExifTool::Samsung::Crypt($self,$val,$tagInfo,-6)',
+    },
     0xa025 => { #IB
         Name => 'HighlightLinearityLimit',
         Writable => 'int32u',
@@ -924,16 +933,18 @@ my %formatMinMax = (
         features (such as "Sound & Shot" or "Shot & More") from Samsung models such
         as the Galaxy S4 and Tab S.
     },
-    # stuff written with "Shot & More" feature
-    '0x0001-name' => 'EmbeddedImageName',
+    '0x0001-name' => 'EmbeddedImageName', # ("DualShot_1","DualShot_2")
     '0x0001' => { Name => 'EmbeddedImage', Groups => { 2 => 'Preview' }, Binary => 1 },
-    # stuff written with "Sound & Shot" feature
-    '0x0100-name' => 'EmbeddedAudioFileName',
-    '0x0100' => { Name => 'EmbeddedAudioFile', Binary => 1 },
+    '0x0100-name' => 'EmbeddedAudioFileName', # ("SoundShot_000")
+    '0x0100' => { Name => 'EmbeddedAudioFile', Groups => { 2 => 'Audio' }, Binary => 1 },
+    '0x0201-name' => 'SurroundShotVideoName', # ("Interactive_Panorama_000")
+    '0x0201' => { Name => 'SurroundShotVideo', Groups => { 2 => 'Video' }, Binary => 1 },
    # 0x0800-name - seen 'SoundShot_Meta_Info'
    # 0x0800 - (contains only already-extracted sound shot name)
    # 0x0830-name - seen '1165724808.pre'
    # 0x0830 - unknown (164004 bytes)
+   # 0x08d0-name - seen 'Interactive_Panorama_Info'
+   # 0x08d0 - unknown (7984 bytes)
    # 0x09e0-name - seen 'Burst_Shot_Info'
    # 0x09e0 - seen '489489125'
    # 0x0a01-name - seen 'Image_UTC_Data'
@@ -943,10 +954,12 @@ my %formatMinMax = (
         ValueConv => 'ConvertUnixTime($val / 1e3, 1)',
         PrintConv => '$self->ConvertDateTime($val)',
     },
+    '0x0a20-name' => 'DualCameraImageName', # ("FlipPhoto_002")
+    '0x0a20' => { Name => 'DualCameraImage', Groups => { 2 => 'Preview' }, Binary => 1 },
     '0x0a30-name' => 'EmbeddedVideoType', # ("MotionPhoto_Data")
-    '0x0a30' => { Name => 'EmbeddedVideoFile', Binary => 1 }, #forum7161
+    '0x0a30' => { Name => 'EmbeddedVideoFile', Groups => { 2 => 'Video' }, Binary => 1 }, #forum7161
    # 0x0aa1-name - seen 'MCC_Data'
-   # 0x0aa1 - seen '234'
+   # 0x0aa1 - seen '234','222'
     '0x0ab1-name' => 'DepthMapName', # seen 'DualShot_DepthMap_1' (SM-N950U)
     '0x0ab1' => { Name => 'DepthMapData', Binary => 1 },
    # 0x0ab3-name - seen 'DualShot_Extra_Info' (SM-N950U)

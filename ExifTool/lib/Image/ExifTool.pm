@@ -27,7 +27,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %mimeType $swapBytes $swapWords $currentByteOrder %unpackStd
             %jpegMarker %specialTags %fileTypeLookup);
 
-$VERSION = '10.94';
+$VERSION = '11.08';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -137,11 +137,11 @@ sub ReadValue($$$$$;$);
     Sony::PMP ITC ID3 FLAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible
     MPC MPEG::Audio MPEG::Video MPEG::Xing M2TS QuickTime QuickTime::ImageFile
     QuickTime::Stream Matroska MOI MXF DV Flash Flash::FLV Real::Media
-    Real::Audio Real::Metafile Red RIFF AIFF ASF DICOM MIE JSON HTML XMP::SVG
-    Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion EXE::PEString
+    Real::Audio Real::Metafile Red RIFF AIFF ASF WTV DICOM MIE JSON HTML
+    XMP::SVG Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion EXE::PEString
     EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard
     VCard::VCalendar RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR RTF OOXML iWork ISO
-    FLIR::AFF FLIR::FPF MacOS::MDItem MacOS::XAttr
+    FLIR::AFF FLIR::FPF MacOS::MDItem MacOS::XAttr FlashPix::DocTable
 );
 
 # alphabetical list of current Lang modules
@@ -176,12 +176,12 @@ $defaultLang = 'en';    # default language
 # 2) Put types with weak file signatures at end of list to avoid false matches
 # 3) PLIST must be in this list for the binary PLIST format, although it may
 #    cause a file to be checked twice for XML
-@fileTypes = qw(JPEG CRW DR4 TIFF GIF MRW RAF X3F JP2 PNG MIE MIFF PS PDF PSD XMP
-                BMP BPG PPM RIFF AIFF ASF MOV MPEG Real SWF PSP FLV OGG FLAC APE
-                MPC MKV MXF DV PMP IND PGF ICC ITC FLIR FLIF FPF LFP HTML VRD
-                RTF XCF DSS QTIF FPX PICT ZIP GZIP PLIST RAR BZ2 TAR RWZ EXE EXR
-                HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC M2TS PHP Torrent VCard
-                LRI R3D AA PDB MOI ISO JSON MP3 DICOM PCD);
+@fileTypes = qw(JPEG EXV CRW DR4 TIFF GIF MRW RAF X3F JP2 PNG MIE MIFF PS PDF
+                PSD XMP BMP BPG PPM RIFF AIFF ASF MOV MPEG Real SWF PSP FLV OGG
+                FLAC APE MPC MKV MXF DV PMP IND PGF ICC ITC FLIR FLIF FPF LFP
+                HTML VRD RTF XCF DSS QTIF FPX PICT ZIP GZIP PLIST RAR BZ2 TAR
+                RWZ EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC M2TS PHP
+                WTV Torrent VCard LRI R3D AA PDB MOI ISO JSON MP3 DICOM PCD);
 
 # file types that we can write (edit)
 my @writeTypes = qw(JPEG TIFF GIF CRW MRW ORF RAF RAW PNG MIE PSD XMP PPM EPS
@@ -270,6 +270,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     DSS  => ['DSS',  'Digital Speech Standard'],
     DV   => ['DV',   'Digital Video'],
     DVB  => ['MOV',  'Digital Video Broadcasting'],
+   'DVR-MS'=>['ASF', 'Microsoft Digital Video recording'],
     DYLIB=> ['EXE',  'Mach-O Dynamic Link Library'],
     EIP  => ['ZIP',  'Capture One Enhanced Image Package'],
     EPS  => ['EPS',  'Encapsulated PostScript Format'],
@@ -501,6 +502,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     XLTM => [['ZIP','FPX'], 'Office Open XML Spreadsheet Template Macro-enabled'],
     XLTX => [['ZIP','FPX'], 'Office Open XML Spreadsheet Template'],
     XMP  => ['XMP',  'Extensible Metadata Platform'],
+    WTV  => ['WTV',  'Windows recorded TV show'],
     ZIP  => ['ZIP',  'ZIP archive'],
 );
 
@@ -567,6 +569,7 @@ my %fileDescription = (
     DS2  => 'audio/x-ds2',
     DSS  => 'audio/x-dss',
     DV   => 'video/x-dv',
+   'DVR-MS' => 'video/x-ms-dvr',
     EIP  => 'application/x-captureone', #(NC)
     EPS  => 'application/postscript',
     ERF  => 'image/x-epson-erf',
@@ -602,6 +605,7 @@ my %fileDescription = (
     JSON => 'application/json',
     K25  => 'image/x-kodak-k25',
     KDC  => 'image/x-kodak-kdc',
+    KEY  => 'application/x-iwork-keynote-sffkey',
     LFP  => 'image/x-lytro-lfp', #PH (NC)
     LNK  => 'application/octet-stream',
     LRI  => 'image/x-light-lri',
@@ -626,6 +630,7 @@ my %fileDescription = (
     MXF  => 'application/mxf',
     NEF  => 'image/x-nikon-nef',
     NRW  => 'image/x-nikon-nrw',
+    NUMBERS => 'application/x-iwork-numbers-sffnumbers',
     ODB  => 'application/vnd.oasis.opendocument.database',
     ODC  => 'application/vnd.oasis.opendocument.chart',
     ODF  => 'application/vnd.oasis.opendocument.formula',
@@ -639,6 +644,7 @@ my %fileDescription = (
     EXR  => 'image/x-exr',
     ORF  => 'image/x-olympus-orf',
     OTF  => 'application/x-font-otf',
+    PAGES=> 'application/x-iwork-pages-sffpages',
     PBM  => 'image/x-portable-bitmap',
     PCD  => 'image/x-photo-cd',
     PDB  => 'application/vnd.palm',
@@ -699,6 +705,7 @@ my %fileDescription = (
     WMA  => 'audio/x-ms-wma',
     WMF  => 'application/x-wmf',
     WMV  => 'video/x-ms-wmv',
+    WTV  => 'video/x-ms-wtv',
     X3F  => 'image/x-sigma-x3f',
     XCF  => 'image/x-xcf',
     XLA  => 'application/vnd.ms-excel',
@@ -819,7 +826,7 @@ my %moduleName = (
   # ISO  =>  signature is at byte 32768
     ITC  => '.{4}itch',
     JP2  => '(\0\0\0\x0cjP(  |\x1a\x1a)\x0d\x0a\x87\x0a|\xff\x4f\xff\x51\0)',
-    JPEG => '\xff(\xd8\xff|\x01Exiv2)', # (includes EXV so we don't have to add EXV to @fileTypes)
+    JPEG => '\xff\xd8\xff',
     JSON => '\s*(\[\s*)?\{\s*"[^"]+"\s*:',
     LFP  => '\x89LFP\x0d\x0a\x1a\x0a',
     LNK  => '.{4}\x01\x14\x02\0{5}\xc0\0{6}\x46',
@@ -866,6 +873,7 @@ my %moduleName = (
     VCard=> '(?i)BEGIN:(VCARD|VCALENDAR)\r\n',
     VRD  => 'CANON OPTIONAL DATA\0',
     WMF  => '(\xd7\xcd\xc6\x9a\0\0|\x01\0\x09\0\0\x03)',
+    WTV  => '\xb7\xd8\x00\x20\x37\x49\xda\x11\xa6\x4e\x00\x07\xe9\x5e\xad\x8d',
     X3F  => 'FOVb',
     XCF  => 'gimp xcf ',
     XMP  => '\0{0,3}(\xfe\xff|\xff\xfe|\xef\xbb\xbf)?\0{0,3}\s*<',
@@ -1402,6 +1410,16 @@ my %systemTagsNotes = (
         # accept either scalar or scalar reference
         RawConv => '$self->ValidateImage(ref $val ? $val : \$val, $tag)',
     },
+    ThumbnailImage => {
+        Groups => { 2 => 'Preview' },
+        Notes => 'JPEG-format embedded thumbnail image',
+        RawConv => '$self->ValidateImage(ref $val ? $val : \$val, $tag)',
+    },
+    OtherImage => {
+        Groups => { 2 => 'Preview' },
+        Notes => 'other JPEG-format embedded image',
+        RawConv => '$self->ValidateImage(ref $val ? $val : \$val, $tag)',
+    },
     PreviewPNG => {
         Groups => { 2 => 'Preview' },
         Notes => 'PNG-format embedded preview image',
@@ -1415,6 +1433,11 @@ my %systemTagsNotes = (
     PreviewTIFF => {
         Groups => { 2 => 'Preview' },
         Notes => 'TIFF-format embedded preview image',
+        Binary => 1,
+    },
+    PreviewPDF => {
+        Groups => { 2 => 'Preview' },
+        Notes => 'PDF-format embedded preview image',
         Binary => 1,
     },
     ExifByteOrder => {
@@ -2463,6 +2486,7 @@ sub ExtractInfo($;@)
                 $pos = ($$self{FIRST_EXIF_POS} || 0) unless defined $pos;
                 my $dataPt = defined $$self{EXIF_DATA} ? \$$self{EXIF_DATA} : undef;
                 undef $dataPt if defined $$self{EXIF_POS} and $pos != $$self{EXIF_POS};
+                undef $dataPt if $$self{ExtendedEXIF}; # can't use EXIF block if not contiguous
                 my $success = $$self{HTML_DUMP}->Print($raf, $dataPt, $pos,
                     $$options{TextOut}, $$options{HtmlDump},
                     $$self{FILENAME} ? "HTML Dump ($$self{FILENAME})" : 'HTML Dump');
@@ -3531,6 +3555,7 @@ sub Init($)
     $$self{WARNED_ONCE}= { };       # WarnOnce() warnings already issued
     $$self{WRITTEN}    = { };       # list of tags written (selected tags only)
     $$self{FORCE_WRITE}= { };       # ForceWrite lookup (set from ForceWrite tag)
+    $$self{FOUND_DIR}  = { };       # hash of directory names found in file
     $$self{PATH}       = [ ];       # current subdirectory path in file when reading
     $$self{NUM_FOUND}  = 0;         # total number of tags found (incl. duplicates)
     $$self{CHANGED}    = 0;         # number of tags changed (writer only)
@@ -5441,11 +5466,26 @@ sub InverseFileName($$)
 sub HDump($$$$;$$)
 {
     my $self = shift;
-    if ($$self{HTML_DUMP}) {
-        my $pos = shift;
-        $pos += $$self{BASE} if $$self{BASE};
-        $$self{HTML_DUMP}->Add($pos, @_);
+    $$self{HTML_DUMP} or return;
+    my ($pos, $len, $com, $tip, $flg) = @_;
+    $pos += $$self{BASE} if $$self{BASE};
+    # skip structural data blocks which have been removed from the middle of this dump
+    # (SkipData list contains ordered [start,end+1] offsets to skip)
+    if ($$self{SkipData}) {
+        my $end = $pos + $len;
+        my $skip;
+        foreach $skip (@{$$self{SkipData}}) {
+            $end <= $$skip[0] and last;
+            $pos >= $$skip[1] and $pos += $$skip[1] - $$skip[0], next;
+            if ($pos != $$skip[0]) {
+                $$self{HTML_DUMP}->Add($pos, $$skip[0]-$pos, $com, $tip, $flg);
+                $len -= $$skip[0] - $pos;
+                $tip = 'SAME';
+            }
+            $pos = $$skip[1];
+        }
     }
+    $$self{HTML_DUMP}->Add($pos, $len, $com, $tip, $flg);
 }
 
 #------------------------------------------------------------------------------
@@ -5668,7 +5708,7 @@ sub ProcessJPEG($$)
     my $raf = $$dirInfo{RAF};
     my $htmlDump = $$self{HTML_DUMP};
     my %dumpParms = ( Out => $out );
-    my ($success, $wantTrailer, $trailInfo, $type);
+    my ($success, $wantTrailer, $trailInfo, $foundSOS);
     my (@iccChunk, $iccChunkCount, $iccChunksTotal, @flirChunk, $flirCount, $flirTotal);
     my ($preview, $scalado, @dqt, $subSampling, $dumpEnd, %extendedXMP);
 
@@ -5676,10 +5716,10 @@ sub ProcessJPEG($$)
     return 0 unless $raf->Read($s, 2) == 2 and $s =~ /^\xff[\xd8\x4f\x01]/;
     if ($s eq "\xff\x01") {
         return 0 unless $raf->Read($s, 5) == 5 and $s eq 'Exiv2';
-        $type = 'EXV';
+        $$self{FILE_TYPE} = 'EXV';
     }
     if (not $$self{VALUE}{FileType} or ($$self{DOC_NUM} and $$self{OPTIONS}{ExtractEmbedded})) {
-        $self->SetFileType($type);          # set FileType tag
+        $self->SetFileType();               # set FileType tag
         return 1 if $fast and $fast == 3;   # don't process file when FastScan == 3
         $$self{LOW_PRIORITY_DIR}{IFD1} = 1; # lower priority of IFD1 tags
     }
@@ -5697,7 +5737,7 @@ sub ProcessJPEG($$)
     # set input record separator to 0xff (the JPEG marker) to make reading quicker
     local $/ = "\xff";
 
-    my ($nextMarker, $nextSegDataPt, $nextSegPos, $combinedSegData);
+    my ($nextMarker, $nextSegDataPt, $nextSegPos, $combinedSegData, $firstSegPos, @skipData);
 
     # read file until we reach an end of image (EOI) or start of scan (SOS)
     Marker: for (;;) {
@@ -5801,7 +5841,11 @@ sub ProcessJPEG($$)
                 $self->HDump($pos-2, 2, 'JPEG EOI', undef);
                 $dumpEnd = 0;
             }
-            $success = 1;
+            if ($foundSOS or $$self{FILE_TYPE} eq 'EXV') {
+                $success = 1;
+            } else {
+                $self->Warn('Missing JPEG SOS');
+            }
             # we are here because we are looking for trailer information
             if ($wantTrailer) {
                 my $start = $$self{PreviewImageStart};
@@ -5866,6 +5910,7 @@ sub ProcessJPEG($$)
             last;       # all done parsing file
         } elsif ($marker == 0xda) {         # SOS
             pop @$path;
+            $foundSOS = 1;
             # all done with meta information unless we have a trailer
             $verbose and print $out "JPEG SOS\n";
             unless ($fast) {
@@ -5988,12 +6033,38 @@ sub ProcessJPEG($$)
                 } elsif ($$segDataPt !~ /^Exif\0/) {
                     $self->Warn('Incorrect EXIF segment identifier',1);
                 }
-                DirStart(\%dirInfo, $hdrLen, $hdrLen);
                 if ($htmlDump) {
                     $self->HDump($segPos-4, 4, 'APP1 header', "Data size: $length bytes");
                     $self->HDump($segPos, $hdrLen, 'Exif header', 'APP1 data type: Exif');
                     $dumpEnd = $segPos + $length;
                 }
+                my $dataPt = $segDataPt;
+                if (defined $combinedSegData) {
+                    push @skipData, [ $segPos-4, $segPos+$hdrLen ];
+                    $combinedSegData .= substr($$segDataPt,$hdrLen);
+                    undef $$segDataPt;
+                    $dataPt = \$combinedSegData;
+                    $segPos = $firstSegPos;
+                }
+                # peek ahead to see if the next segment is extended EXIF
+                if ($nextMarker == $marker and
+                    $$nextSegDataPt =~ /^$exifAPP1hdr(?!(MM\0\x2a|II\x2a\0))/)
+                {
+                    # initialize combined data if necessary
+                    unless (defined $combinedSegData) {
+                        $combinedSegData = $$segDataPt;
+                        undef $$segDataPt;
+                        $firstSegPos = $segPos;
+                        $self->Warn('File contains multi-segment EXIF',1);
+                        $$self{ExtendedEXIF} = 1;
+                    }
+                    next;
+                }
+                $dirInfo{DataPt} = $dataPt;
+                $dirInfo{DataPos} = $segPos;
+                $dirInfo{DataLen} = $dirInfo{DirLen} = length $$dataPt;
+                DirStart(\%dirInfo, $hdrLen, $hdrLen);
+                $$self{SkipData} = \@skipData if @skipData;
                 # extract the EXIF information (it is in standard TIFF format)
                 $self->ProcessTIFF(\%dirInfo);
                 # avoid looking for preview unless necessary because it really slows
@@ -6015,6 +6086,12 @@ sub ProcessJPEG($$)
                     $$self{PreviewImageLength} = $plen;
                     $wantTrailer = 1;
                 }
+                if (@skipData) {
+                    undef @skipData;
+                    delete $$self{SkipData};
+                }
+                undef $$dataPt;
+                next;
             } elsif ($$segDataPt =~ /^$xmpExtAPP1hdr/) {
                 # off len -- extended XMP header (75 bytes total):
                 #   0  35 bytes - signature
@@ -6488,8 +6565,9 @@ sub ProcessJPEG($$)
                 $buff .= $$extXMP{$_} foreach @offsets;
                 my $tagTablePtr = GetTagTable('Image::ExifTool::XMP::Main');
                 my %dirInfo = (
-                    DataPt   => \$buff,
-                    Parent   => 'APP1',
+                    DataPt      => \$buff,
+                    Parent      => 'APP1',
+                    IsExtended  => 1,
                 );
                 $$path[$pn] = 'APP1';
                 $self->ProcessDirectory(\%dirInfo, $tagTablePtr);
@@ -6698,7 +6776,7 @@ sub DoProcessTIFF($$;$)
         return 1 if not $outfile and $$self{OPTIONS}{FastScan} and $$self{OPTIONS}{FastScan} == 3;
     }
     # (accomodate CR3 images which have a TIFF directory with ExifIFD at the top level)
-    my $ifdName = ($$dirInfo{DirName} and $$dirInfo{DirName} eq 'ExifIFD') ? 'ExifIFD' : 'IFD0';
+    my $ifdName = ($$dirInfo{DirName} and $$dirInfo{DirName} =~ /^(ExifIFD|GPS)$/) ? $1 : 'IFD0';
     if (not $tagTablePtr or $$tagTablePtr{GROUPS}{0} eq 'EXIF') {
         $self->FoundTag('ExifByteOrder', $byteOrder) unless $outfile;
     } else {
@@ -7017,10 +7095,14 @@ sub GetTagTable($)
     }
     # must check each time to add UserDefined Composite tags because the Composite table
     # may be loaded before the UserDefined tags are available
-    if ($table eq \%Image::ExifTool::Composite and %UserDefined and $UserDefined{$tableName}) {
+    if ($table eq \%Image::ExifTool::Composite and not $$table{VARS}{LOADED_USERDEFINED} and
+        %UserDefined and $UserDefined{$tableName})
+    {
         my $userComp = $UserDefined{$tableName};
-        delete $UserDefined{$tableName};    # (must delete first to avoid infinite recursion)
+        delete $UserDefined{$tableName};        # (must delete first to avoid infinite recursion)
         AddCompositeTags($userComp, 1);
+        $UserDefined{$tableName} = $userComp;   # (add back again for adding writable tags later)
+        $$table{VARS}{LOADED_USERDEFINED} = 1;  # set flag to avoid doing this again
     }
     return $table;
 }
@@ -7044,6 +7126,7 @@ sub ProcessDirectory($$$;$)
         $dirName = $$tagTablePtr{GROUPS}{1} if $dirName =~ /^APP\d+$/; # (use specific APP name)
         $$dirInfo{DirName} = $dirName;
     }
+    
     # guard against cyclical recursion into the same directory
     if (defined $$dirInfo{DirStart} and defined $$dirInfo{DataPos} and
         # directories don't overlap if the length is zero
@@ -7063,6 +7146,7 @@ sub ProcessDirectory($$$;$)
     $$self{INDENT} .= '| ';
     $$self{DIR_NAME} = $dirName;
     push @{$$self{PATH}}, $dirName;
+    $$self{FOUND_DIR}{$dirName} = 1;
 
     # process the directory
     my $rtnVal = &$proc($self, $dirInfo, $tagTablePtr);
@@ -7195,10 +7279,11 @@ sub GetTagInfo($$$;$$$)
 #------------------------------------------------------------------------------
 # Add new tag to table (must use this routine to add new tags to a table)
 # Inputs: 0) reference to tag table, 1) tag ID
-#         2) [optional] reference to tag information hash or simply tag name
+#         2) [optional] tag name or reference to tag information hash
 #         3) [optional] flag to avoid adding prefix when generating tag name
 # Notes: - will not override existing entry in table
 # - info need contain no entries when this routine is called
+# - tag name is made valid if necessary
 sub AddTagToTable($$;$$)
 {
     my ($tagTablePtr, $tagID, $tagInfo, $noPrefix) = @_;
@@ -7222,20 +7307,14 @@ sub AddTagToTable($$;$$)
     $$tagInfo{TagID} = $tagID;
 
     my $name = $$tagInfo{Name};
-    if (defined $name) {
-        $name =~ tr/-_a-zA-Z0-9//dc;    # remove illegal characters
-    } else {
-        # construct a name from the tag ID
-        $name = $tagID;
-        $name =~ tr/-_a-zA-Z0-9//dc;    # remove illegal characters
-        $name = ucfirst $name;          # start with uppercase
-        # add prefix if specified
-        my $prefix = $$tagTablePtr{TAG_PREFIX};
-        if ($prefix and not $noPrefix) {
-            # make description to prevent tagID from getting mangled by MakeDescription()
-            $$tagInfo{Description} = MakeDescription($prefix, $name);
-            $name = "${prefix}_$name";
-        }
+    $name = $tagID unless defined $name;
+    $name =~ tr/-_a-zA-Z0-9//dc;    # remove illegal characters
+    $name = ucfirst $name;          # capitalize first letter
+    # add tag-name prefix if specified and tag name not provided
+    unless (defined $$tagInfo{Name} or $noPrefix or not $$tagTablePtr{TAG_PREFIX}) {
+        # make description to prevent tagID from getting mangled by MakeDescription()
+        $$tagInfo{Description} = MakeDescription($$tagTablePtr{TAG_PREFIX}, $name);
+        $name = "$$tagTablePtr{TAG_PREFIX}_$name";
     }
     # tag names must be at least 2 characters long and prefer them to start with a letter
     $name = "Tag$name" if length($name) < 2 or $name !~ /^[A-Z]/i;
