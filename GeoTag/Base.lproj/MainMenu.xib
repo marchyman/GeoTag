@@ -330,7 +330,7 @@ CA
                                                         </tableColumn>
                                                         <tableColumn identifier="latitude" editable="NO" width="82" minWidth="10" maxWidth="3.4028234663852886e+38" id="EGN-Ry-sij">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Latitude">
-                                                                <font key="font" metaFont="systemMedium" size="11"/>
+                                                                <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                             </tableHeaderCell>
