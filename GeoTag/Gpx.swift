@@ -156,16 +156,30 @@ class Gpx: NSObject {
         // print("Image date: \(image.date) (\(imageTime))")
         var lastPoint: Point?
 
-        for track in tracks {
+        // search every every track for a point with a timestamp <= the
+        // image timestamp.   The location of the found point (if any)
+        // will be used as the image location.  All tracks must be searched
+        // as tracks are not sorted
+
+        tracks.forEach {
+            track in
             for segment in track.segments {
-                for point in segment.points {
-                    if point.timeFromEpoch < imageTime {
-                        lastPoint = point
-                    } else {
-                        if let last = lastPoint {
-                            found(Coord(latitude: last.lat, longitude: last.lon))
-                            return
-                        }
+                let possiblePoints = segment.points.prefix {
+                    $0.timeFromEpoch < imageTime
+                }
+                if let segmentLast = possiblePoints.last {
+                    if lastPoint == nil {
+                        lastPoint = segmentLast
+                    } else if segmentLast.timeFromEpoch > lastPoint!.timeFromEpoch {
+                        lastPoint = segmentLast
+                    }
+
+                    // if this wasn't the last point in a segment we've
+                    // found the last point in the current track.  Don't
+                    // bother checking any remaining segments.
+
+                    if possiblePoints.count != segment.points.count {
+                        break
                     }
                 }
             }
