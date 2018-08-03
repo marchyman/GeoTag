@@ -32,11 +32,11 @@
             <objects>
                 <viewController storyboardIdentifier="ChangeTimeView" id="MPQ-z2-hte" customClass="ChangeTimeViewController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="gSn-FC-o2C">
-                        <rect key="frame" x="0.0" y="0.0" width="404" height="97"/>
+                        <rect key="frame" x="0.0" y="0.0" width="404" height="135"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bD6-gs-68C">
-                                <rect key="frame" x="18" y="60" width="150" height="17"/>
+                                <rect key="frame" x="18" y="98" width="150" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="146" id="TAt-JJ-UFy"/>
                                 </constraints>
@@ -47,7 +47,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GIK-JM-bBP">
-                                <rect key="frame" x="18" y="20" width="150" height="17"/>
+                                <rect key="frame" x="18" y="64" width="150" height="17"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Updated Date/Time:" id="77k-Wd-eQr">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -55,7 +55,7 @@
                                 </textFieldCell>
                             </textField>
                             <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qej-jC-iyg">
-                                <rect key="frame" x="174" y="57" width="213" height="27"/>
+                                <rect key="frame" x="174" y="95" width="213" height="27"/>
                                 <datePickerCell key="cell" enabled="NO" refusesFirstResponder="YES" borderStyle="bezel" alignment="left" id="csd-t0-qDT">
                                     <font key="font" metaFont="system"/>
                                     <date key="date" timeIntervalSinceReferenceDate="-595929600">
@@ -67,7 +67,7 @@
                                 </datePickerCell>
                             </datePicker>
                             <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xRq-au-Q2V">
-                                <rect key="frame" x="174" y="17" width="213" height="27"/>
+                                <rect key="frame" x="174" y="61" width="213" height="27"/>
                                 <datePickerCell key="cell" borderStyle="bezel" alignment="left" id="rr9-H7-p5W">
                                     <font key="font" metaFont="system"/>
                                     <date key="date" timeIntervalSinceReferenceDate="-595929600">
@@ -78,16 +78,46 @@
                                     <datePickerElements key="datePickerElements" year="YES" month="YES" day="YES" hour="YES" minute="YES" second="YES"/>
                                 </datePickerCell>
                             </datePicker>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YdD-TR-OJh">
+                                <rect key="frame" x="306" y="13" width="87" height="32"/>
+                                <buttonCell key="cell" type="push" title="Change" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0Yz-Ld-aJ9">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="dateTimeChanged:" target="MPQ-z2-hte" id="mwx-tc-piG"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="swP-XB-TV2">
+                                <rect key="frame" x="225" y="13" width="82" height="32"/>
+                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pID-hB-yRm">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="cancel:" target="MPQ-z2-hte" id="1yQ-e8-te7"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="bD6-gs-68C" firstAttribute="top" secondItem="gSn-FC-o2C" secondAttribute="top" constant="20" symbolic="YES" id="0Qb-eQ-vPI"/>
                             <constraint firstItem="bD6-gs-68C" firstAttribute="baseline" secondItem="qej-jC-iyg" secondAttribute="baseline" id="2PP-Vo-mDZ"/>
-                            <constraint firstAttribute="bottom" secondItem="GIK-JM-bBP" secondAttribute="bottom" constant="20" symbolic="YES" id="749-PM-2mt"/>
+                            <constraint firstAttribute="bottom" secondItem="GIK-JM-bBP" secondAttribute="bottom" constant="64" id="749-PM-2mt"/>
                             <constraint firstItem="qej-jC-iyg" firstAttribute="trailing" secondItem="xRq-au-Q2V" secondAttribute="trailing" id="LZ0-xE-RWg"/>
+                            <constraint firstAttribute="trailing" secondItem="YdD-TR-OJh" secondAttribute="trailing" constant="17" id="NC6-25-C8N"/>
                             <constraint firstItem="bD6-gs-68C" firstAttribute="leading" secondItem="gSn-FC-o2C" secondAttribute="leading" constant="20" symbolic="YES" id="Qkq-4t-Ers"/>
+                            <constraint firstItem="YdD-TR-OJh" firstAttribute="leading" secondItem="swP-XB-TV2" secondAttribute="trailing" constant="11" id="XF6-Xn-3UV"/>
+                            <constraint firstItem="swP-XB-TV2" firstAttribute="baseline" secondItem="YdD-TR-OJh" secondAttribute="baseline" id="XTY-iN-Eyx"/>
                             <constraint firstItem="bD6-gs-68C" firstAttribute="trailing" secondItem="GIK-JM-bBP" secondAttribute="trailing" id="ctB-kf-b7k"/>
                             <constraint firstItem="qej-jC-iyg" firstAttribute="leading" secondItem="bD6-gs-68C" secondAttribute="trailing" constant="8" id="jF5-DK-AiR"/>
                             <constraint firstItem="qej-jC-iyg" firstAttribute="leading" secondItem="xRq-au-Q2V" secondAttribute="leading" id="mll-8m-0eO"/>
+                            <constraint firstItem="swP-XB-TV2" firstAttribute="top" secondItem="xRq-au-Q2V" secondAttribute="bottom" constant="20" symbolic="YES" id="phJ-V4-i9V"/>
                             <constraint firstAttribute="trailing" secondItem="qej-jC-iyg" secondAttribute="trailing" constant="20" symbolic="YES" id="q44-Uz-4aa"/>
                             <constraint firstItem="GIK-JM-bBP" firstAttribute="bottom" secondItem="xRq-au-Q2V" secondAttribute="bottom" constant="-3" id="uKA-l7-rQU"/>
                             <constraint firstItem="bD6-gs-68C" firstAttribute="leading" secondItem="GIK-JM-bBP" secondAttribute="leading" id="zS4-fN-p4L"/>
@@ -100,7 +130,7 @@
                 </viewController>
                 <customObject id="KN1-Oy-60z" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="481" y="-29.5"/>
+            <point key="canvasLocation" x="481" y="-10.5"/>
         </scene>
     </scenes>
 </document>

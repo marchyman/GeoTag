@@ -33,4 +33,20 @@ class ChangeTimeViewController: NSViewController {
         unexpected(error: nil, "Cannot find ChangeTime Window Controller")
         fatalError("Cannot find ChangeTime Window Controller")
     }
+
+    @IBAction func dateTimeChanged(
+        _ sender: NSButton
+    ) {
+        print("DateTime changed: \(newDate.dateValue)")
+        // do simething with date/time here
+        self.view.window?.close()
+    }
+
+    @IBAction func cancel(
+        _ sender: Any
+    ) {
+        print("Change cancelled")
+        self.view.window?.close()
+    }
+
 }
