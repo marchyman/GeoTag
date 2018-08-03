@@ -269,7 +269,12 @@ final class TableViewController: NSViewController {
         print("Double Click row \(sender.clickedRow)")
         let row = sender.clickedRow
         if row >= 0 && row < images.count {
-            openChangeTimeWindow(for: images[row])
+            openChangeTimeWindow(for: images[row]) {
+                DispatchQueue.main.async {
+                    self.appDelegate.modified = true
+                    self.reloadDate(row: row)
+                }
+            }
         }
     }
 
@@ -513,7 +518,7 @@ final class TableViewController: NSViewController {
         mapViewController.removeMapPin()
     }
 
-    /// Reload a specific row.
+    /// Reload the location in a specific row.
     ///
     /// - Parameter row: the row to be refreshed.
     ///
@@ -526,6 +531,20 @@ final class TableViewController: NSViewController {
         let cols = IndexSet(integersIn: latColumn..<latColumn+2)
         tableView.reloadData(forRowIndexes: IndexSet(integer: row),
                              columnIndexes: cols)
+    }
+
+    /// Reload the date/time in a specific row
+    ///
+    /// - Parameter row: the row to be refreshed.
+    ///
+    /// Update the date/time columns for the given row.
+    func reloadDate(
+        row: Int
+    ) {
+        let dateTimeColumn =
+            tableView.column(withIdentifier: NSUserInterfaceItemIdentifier("dateTime"))
+        tableView.reloadData(forRowIndexes: IndexSet(integer: row),
+                             columnIndexes: IndexSet(integer: dateTimeColumn))
     }
 
     /// Update all selected rows with the given latitude and longitude

@@ -303,6 +303,7 @@ final class ImageData: NSObject {
         if saveOriginalFile() &&
            Exiftool.helper.updateLocation(from: self) == 0 {
             originalLocation = location
+            originalDate = date
             return true
         }
 

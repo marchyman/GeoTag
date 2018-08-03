@@ -10,15 +10,16 @@ import Cocoa
 
 class ChangeTimeViewController: NSViewController {
     var image: ImageData!
-    var convertedDate: Date?
+    var callback: (() -> ())?
 
     @IBOutlet weak var originalDate: NSDatePicker!
     @IBOutlet weak var newDate: NSDatePicker!
 
     override func viewWillAppear() {
         super.viewWillAppear()
-        if let wc = view.window?.windowController {
-            image = (wc as! ChangeTimeWindowController).image
+        if let wc = view.window?.windowController as? ChangeTimeWindowController {
+            image = wc.image
+            callback = wc.callback
             if let dateValue = image.dateValue {
                 originalDate.dateValue = dateValue
                 newDate.dateValue = dateValue
@@ -36,10 +37,9 @@ class ChangeTimeViewController: NSViewController {
     @IBAction func dateTimeChanged(
         _ sender: NSButton
     ) {
-        if newDate.dateValue != convertedDate {
-            print("DateTime changed: \(newDate.dateValue)")
+        if newDate.dateValue != originalDate.dateValue {
             image.dateValue = newDate.dateValue
-            // update user interface
+            callback?()
         }
         self.view.window?.close()
     }

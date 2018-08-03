@@ -66,7 +66,7 @@ struct Exiftool {
             gpsTArg = "-GPSTimeStamp="
         }
         // ExifTool date/time original argument name
-        let dtoArg = "-DateTimeOriginal=" + imageData.date
+        let dtoArg = "-AllDates=" + imageData.date
 
         // ExifTool latitude, longitude, and date/time argument values
         if let location = imageData.location {

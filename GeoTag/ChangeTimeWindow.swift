@@ -10,12 +10,14 @@ import Foundation
 import AppKit
 
 func openChangeTimeWindow(
-    for image: ImageData
+    for image: ImageData,
+    _ callback: @escaping () -> ()
 ) {
     let id = ChangeTimeWindowController.storyboardName
     let storyboard = NSStoryboard(name: id, bundle: nil)
     if let ctc = storyboard.instantiateInitialController() as? ChangeTimeWindowController {
         ctc.image = image
+        ctc.callback = callback
         ctc.window?.makeKeyAndOrderFront(nil)
         return
     }
@@ -26,10 +28,10 @@ func openChangeTimeWindow(
 final class ChangeTimeWindowController: NSWindowController {
     static let storyboardName = NSStoryboard.Name("ChangeTime")
     weak var image: ImageData!
+    var callback: (() -> ())? = nil
 
     override func windowDidLoad() {
         super.windowDidLoad()
-
     }
 }
 
