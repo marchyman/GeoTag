@@ -10,6 +10,8 @@ import Cocoa
 
 class ChangeTimeViewController: NSViewController {
     var image: ImageData!
+    var convertedDate: Date?
+
     @IBOutlet weak var originalDate: NSDatePicker!
     @IBOutlet weak var newDate: NSDatePicker!
 
@@ -17,12 +19,9 @@ class ChangeTimeViewController: NSViewController {
         super.viewWillAppear()
         if let wc = view.window?.windowController {
             image = (wc as! ChangeTimeWindowController).image
-            let format = DateFormatter()
-            format.dateFormat = "yyyy:MM:dd HH:mm:ss"
-            format.timeZone = TimeZone.current
-            if let convertedDate = format.date(from: image.date) {
-                originalDate.dateValue = convertedDate
-                newDate.dateValue = convertedDate
+            if let dateValue = image.dateValue {
+                originalDate.dateValue = dateValue
+                newDate.dateValue = dateValue
             } else {
                 // no current date
                 originalDate.dateValue = Date(timeIntervalSince1970: 0)
@@ -37,8 +36,10 @@ class ChangeTimeViewController: NSViewController {
     @IBAction func dateTimeChanged(
         _ sender: NSButton
     ) {
-        print("DateTime changed: \(newDate.dateValue)")
-        // do simething with date/time here
+        if newDate.dateValue != convertedDate {
+            print("DateTime changed: \(newDate.dateValue)")
+            // do simething with date/time here
+        }
         self.view.window?.close()
     }
 

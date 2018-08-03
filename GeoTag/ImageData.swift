@@ -73,11 +73,19 @@ final class ImageData: NSObject {
     // image date/time created
     var date: String = ""
     var timeZone: TimeZone?
-    var dateFromEpoch: TimeInterval {
+    // date as a Date
+    var dateValue: Date? {
         let format = DateFormatter()
         format.dateFormat = "yyyy:MM:dd HH:mm:ss"
-        format.timeZone = TimeZone.current
-        if let convertedDate = format.date(from: date) {
+        if timeZone == nil, let location = location {
+            setTimeZoneFor(location)
+        }
+        format.timeZone = timeZone
+        return format.date(from: date)
+    }
+    // date as a TimeInterval
+    var dateFromEpoch: TimeInterval {
+        if let convertedDate = dateValue {
             return convertedDate.timeIntervalSince1970
         }
         return 0
