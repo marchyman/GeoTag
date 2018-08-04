@@ -3,8 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 7/17/14.
-//
-// Copyright 2014-2018 Marco S Hyman
+//  Copyright 2014-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -29,6 +28,7 @@ import MapKit
 
 @objc
 class MapViewController: NSViewController {
+
     var clickDelegate: MapViewDelegate?
 
     @IBOutlet var mapView: MapView!
@@ -101,7 +101,7 @@ class MapViewController: NSViewController {
         search.searchMenuTemplate = searchesMenu
     }
 
-    /// Map control actions
+    // MARK: Map control actions
 
     /// action to select the desired map type
     @IBAction
@@ -160,6 +160,8 @@ class MapViewController: NSViewController {
         }
     }
 
+    // MARK: Map pin related functions
+
     /// center the map as the given latitude/longitude and drop
     /// a pin at that location
     func pinMapAt(coords: Coord,
@@ -194,6 +196,8 @@ class MapViewController: NSViewController {
         }
     }
 
+    // MARK: track log
+
     /// add tracks to the map.  Track segments are turned into polylines and
     /// added to the map view
     func addTracks(gpx: Gpx) {
@@ -212,8 +216,6 @@ class MapViewController: NSViewController {
     }
 
 }
-
-// Mark: MKMapView Delegate functions
 
 extension MapViewController: MKMapViewDelegate {
 

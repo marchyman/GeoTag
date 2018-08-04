@@ -3,8 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 5/19/15.
-//
-// Copyright 2015-2017 Marco S Hyman
+//  Copyright 2015-2017 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -81,7 +80,7 @@ func distanceAndBearing(lat1: Double,
 /// - Parameter lon: longitude of starting point
 /// - Parameter distance: distance to destination point
 /// - Parameter bearing: bearing to destination point
-/// - Returns: tuple containing the latitude and longitude of the destination
+/// - Returns: CLLocationCoardinate2D of the destination point.
 
 public
 func destFromStart(lat: Double,
@@ -99,6 +98,6 @@ func destFromStart(lat: Double,
                 atan2(sin(bearingR) * sin(angularDist) * cos(latR),
                       cos(angularDist) - sin(latR) * sin(lat2R))
     return CLLocationCoordinate2D(latitude: radiansToDegrees(lat2R),
-                  longitude: radiansToDegrees(lon2R))
+                                  longitude: radiansToDegrees(lon2R))
 }
 

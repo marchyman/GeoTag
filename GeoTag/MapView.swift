@@ -3,8 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 7/19/14.
-//
-// Copyright 2014-2018 Marco S Hyman
+//  Copyright 2014-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -74,6 +73,7 @@ class MapView: MKMapView {
 }
 
 /// The delegate receiving the mouse clicks must follow this protocol
+
 protocol MapViewDelegate: NSObjectProtocol {
     func mouseClicked(mapView: MapView!,
                       location: CLLocationCoordinate2D)

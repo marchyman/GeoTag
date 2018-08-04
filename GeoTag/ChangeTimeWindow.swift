@@ -26,6 +26,14 @@
 import Foundation
 import AppKit
 
+/// Global function to open a date/time change window
+///
+/// - Parameter image: the image to modify
+/// - Parameter callback: closure called to assign a new date/time.
+///
+/// The parameters are stored in the window controller where they can be
+/// accessed by the date/time update view controller.
+
 func openChangeTimeWindow(for image: ImageData,
                           _ callback: @escaping (_ dateValue: Date) -> ()) {
     let id = ChangeTimeWindowController.storyboardName

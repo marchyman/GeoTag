@@ -3,8 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 5/7/15.
-//
-// Copyright 2015-2018 Marco S Hyman
+//  Copyright 2015-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -28,6 +27,7 @@ import Foundation
 import AppKit
 
 final class Preferences : NSWindowController {
+
     // class constants
     static let nibName = NSNib.Name("Preferences")
     static let saveBookmarkKey = "SaveBookmarkKey"
