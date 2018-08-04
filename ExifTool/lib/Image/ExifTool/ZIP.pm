@@ -19,7 +19,7 @@ use strict;
 use vars qw($VERSION $warnString);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.20';
+$VERSION = '1.23';
 
 sub WarnProc($) { $warnString = $_[0]; }
 
@@ -35,6 +35,12 @@ my %openDocType = (
     'application/vnd.oasis.opendocument.text'         => 'ODT',
     'application/vnd.adobe.indesign-idml-package'     => 'IDML', #6 (not open doc)
     'application/epub+zip' => 'EPUB', #PH (not open doc)
+);
+
+# iWork file types based on names of files found in the zip archive
+my %iWorkFile = (
+    'Index/Slide.iwa' => 'KEY',
+    'Index/Tables/DataList.iwa' => 'NUMBERS',
 );
 
 # ZIP metadata blocks
@@ -375,7 +381,7 @@ sub ProcessZIP($$)
     my $raf = $$dirInfo{RAF};
     my ($buff, $buf2, $zip, $docNum);
 
-    return 0 unless $raf->Read($buff, 30) and $buff =~ /^PK\x03\x04/;
+    return 0 unless $raf->Read($buff, 30) == 30 and $buff =~ /^PK\x03\x04/;
 
     my $tagTablePtr = GetTagTable('Image::ExifTool::ZIP::Main');
 
@@ -461,7 +467,7 @@ sub ProcessZIP($$)
         }
 
         # check for an iWork file
-        @members = $zip->membersMatching('^(index\.(xml|apxl)|QuickLook/Thumbnail\.jpg)$');
+        @members = $zip->membersMatching('(?i)^(index\.(xml|apxl)|QuickLook/Thumbnail\.jpg|[^/]+\.(pages|numbers|key)/Index.(zip|xml|apxl))$');
         if (@members) {
             require Image::ExifTool::iWork;
             Image::ExifTool::iWork::Process_iWork($et, $dirInfo);
@@ -485,8 +491,9 @@ sub ProcessZIP($$)
                     ($buff, $status) = $zip->contents($meta);
                     unless ($status) {
                         my %dirInfo = (
-                            DataPt => \$buff,
-                            DirLen => length $buff,
+                            DirName => 'XML',
+                            DataPt  => \$buff,
+                            DirLen  => length $buff,
                             DataLen => length $buff,
                         );
                         # (avoid structure warnings when copying from XML)
@@ -552,11 +559,16 @@ sub ProcessZIP($$)
         $et->SetFileType();
         @members = $zip->members();
         $docNum = 0;
-        my $member;
+        my ($member, $iWorkType);
         # special files to extract
         my %extract = (
             'meta.json' => 1,
             'previews/preview.png' => 'PreviewPNG',
+            'preview.jpg' => 'PreviewImage', # (iWork 2013 files)
+            'preview-web.jpg' => 'OtherImage', # (iWork 2013 files)
+            'preview-micro.jpg' => 'ThumbnailImage', # (iWork 2013 files)
+            'QuickLook/Thumbnail.jpg' => 'ThumbnailImage', # (iWork 2009 files)
+            'QuickLook/Preview.pdf' => 'PreviewPDF', # (iWork 2009 files)
         );
         foreach $member (@members) {
             $$et{DOC_NUM} = ++$docNum;
@@ -574,8 +586,13 @@ sub ProcessZIP($$)
                 } else {
                     $et->FoundTag($extract{$file} => $buff);
                 }
+            } elsif ($file eq 'Index/Document.iwa' and not $iWorkType) {
+                $iWorkType = 'PAGES';
+            } elsif ($iWorkFile{$file}) {
+                $iWorkType = $iWorkFile{$file};
             }
         }
+        $et->OverrideFileType($iWorkType) if $iWorkType;
         last;
     }
     # all done if we processed this using Archive::Zip

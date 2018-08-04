@@ -36,8 +36,7 @@ struct Exiftool {
     var url: URL
 
     // Verify access to the embedded version of ExifTool
-    init(
-    ) {
+    init() {
         if let exiftoolUrl = Bundle.main.url(forResource: "ExifTool", withExtension: nil) {
             url = exiftoolUrl.appendingPathComponent("exiftool")
         } else {
@@ -50,9 +49,7 @@ struct Exiftool {
     /// - Parameter imageData: the image to update.  imageData contains the URL
     ///     of the original file plus the assigned location.
     /// - Returns: ExifTool exit status
-    func updateLocation(
-        from imageData: ImageData
-    ) -> Int32 {
+    func updateLocation(from imageData: ImageData) -> Int32 {
         // ExifTool latitude and longitude exiftool argument names
         var latArg = "-GPSLatitude="
         var latRefArg = "-GPSLatitudeRef="
@@ -65,8 +62,10 @@ struct Exiftool {
             gpsDArg = "-GPSDateStamp="
             gpsTArg = "-GPSTimeStamp="
         }
+        // ExifTool date/time original argument name and value
+        let dtoArg = "-AllDates=" + imageData.date
 
-        // ExifTool latitude, longitude, and date/time argument values
+        // Build ExifTool latitude, longitude argument values
         if let location = imageData.location {
             var lat = location.latitude
             if lat < 0 {
@@ -99,8 +98,8 @@ struct Exiftool {
         exiftool.standardError = FileHandle.nullDevice
         exiftool.launchPath = url.path
         exiftool.arguments = ["-q", "-m", "-overwrite_original_in_place",
+            latArg, latRefArg, lonArg, lonRefArg, gpsDArg, gpsTArg, dtoArg,
             "-DateTimeOriginal>FileModifyDate", "-GPSStatus=",
-            latArg, latRefArg, lonArg, lonRefArg, gpsDArg, gpsTArg,
             imageData.sandboxUrl.path]
         exiftool.launch()
         exiftool.waitUntilExit()
@@ -113,17 +112,12 @@ struct Exiftool {
     // Nil is returned if there was no date/time original or we couldn't get the
     // appropriate time zone from image geolocation data.
     private
-    func dtoWithZone(
-        from imageData: ImageData
-    ) -> String? {
-        if let timeZone = imageData.timeZone, !imageData.date.isEmpty {
+    func dtoWithZone(from imageData: ImageData) -> String? {
+        if imageData.timeZone != nil,
+           let dateValue = imageData.dateValue {
             let format = DateFormatter()
-            format.dateFormat = "yyyy:MM:dd HH:mm:ss"
-            format.timeZone = timeZone
-            if let convertedDate = format.date(from: imageData.date) {
-                format.dateFormat = "yyyy:MM:dd HH:mm:ss xxx"
-                return format.string(from: convertedDate)
-            }
+            format.dateFormat = "yyyy:MM:dd HH:mm:ss xxx"
+            return format.string(from: dateValue)
         }
         return nil
     }

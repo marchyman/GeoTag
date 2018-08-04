@@ -36,10 +36,8 @@ import AppKit
 /// programmer provided description string.
 
 public
-func unexpected(
-    error: NSError?,
-    _ description: String = ""
-) {
+func unexpected(error: NSError?,
+                _ description: String = "") {
     let alert = NSAlert()
     alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
     alert.messageText = NSLocalizedString("UNEXPECTED_ERROR",

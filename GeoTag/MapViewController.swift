@@ -70,16 +70,14 @@ class MapViewController: NSViewController {
     /// startup
 
     override
-    func viewDidLoad(
-    ) {
+    func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
     }
 
     // final initialization for the mapView
     override
-    func awakeFromNib(
-    ) {
+    func awakeFromNib() {
         let defaults = UserDefaults.standard
         mapTypeControl.selectedSegment = defaults.integer(forKey: mapTypeKey)
         changeMapType(mapTypeControl)
@@ -105,11 +103,9 @@ class MapViewController: NSViewController {
 
     /// Map control actions
 
-    // select the desired map type
+    /// action to select the desired map type
     @IBAction
-    func changeMapType(
-        _ sender: NSSegmentedControl
-    ) {
+    func changeMapType(_ sender: NSSegmentedControl) {
         switch sender.selectedSegment {
         case mapTypeStandard:
             mapView.mapType = .standard
@@ -122,11 +118,9 @@ class MapViewController: NSViewController {
         }
     }
 
-    // save the current map type and displayed region
+    /// action save the current map type and displayed region
     @IBAction
-    func saveMapSetting(
-        _: AnyObject
-    ) {
+    func saveMapSetting(_: AnyObject) {
         let defaults = UserDefaults.standard
         var mapTypeAsInt = 0
         switch mapView.mapType {
@@ -150,10 +144,9 @@ class MapViewController: NSViewController {
                      forKey: cameraAltitudeKey)
     }
 
+    // action to search
     @IBAction
-    func searchMapLocation(
-        _ sender: NSSearchField
-    ) {
+    func searchMapLocation(_ sender: NSSearchField) {
         if !sender.stringValue.isEmpty {
             let geocoder = CLGeocoder()
             geocoder.geocodeAddressString(sender.stringValue) {
@@ -167,12 +160,10 @@ class MapViewController: NSViewController {
         }
     }
 
-    // center the map as the given latitude/longitude and drop
-    // a pin at that location
-    func pinMapAt(
-        coords: Coord,
-        dropPin: Bool = true
-    ) {
+    /// center the map as the given latitude/longitude and drop
+    /// a pin at that location
+    func pinMapAt(coords: Coord,
+                  dropPin: Bool = true) {
         let point = MKMapPointForCoordinate(coords);
         if !MKMapRectContainsPoint(mapView.visibleMapRect, point) {
             mapView.setCenter(coords, animated: false)
@@ -196,8 +187,7 @@ class MapViewController: NSViewController {
     }
 
     // remove the pin from the map
-    func removeMapPin(
-    ) {
+    func removeMapPin() {
         if let pin = mapPin {
             mapView.removeAnnotation(pin)
             mapPin = nil
@@ -206,19 +196,15 @@ class MapViewController: NSViewController {
 
     /// add tracks to the map.  Track segments are turned into polylines and
     /// added to the map view
-    func addTracks(
-        gpx: Gpx
-    ) {
-        for track in gpx.tracks {
-            for segment in track.segments {
-                var trackCoords = [CLLocationCoordinate2D]()
-                trackCoords.reserveCapacity(segment.points.count)
-                for point in segment.points {
-                    trackCoords.append(CLLocationCoordinate2D(latitude: point.lat,
-                                                              longitude: point.lon))
+    func addTracks(gpx: Gpx) {
+        gpx.tracks.forEach {
+            $0.segments.forEach {
+                var trackCoords = $0.points.map {
+                    return CLLocationCoordinate2D(latitude: $0.lat,
+                                                  longitude: $0.lon)
                 }
                 let mapLine = MKPolyline(coordinates: &trackCoords,
-                                         count: segment.points.count)
+                                         count: $0.points.count)
                 mapLines.append(mapLine)
                 mapView.add(mapLine)
             }
@@ -230,13 +216,14 @@ class MapViewController: NSViewController {
 // Mark: MKMapView Delegate functions
 
 extension MapViewController: MKMapViewDelegate {
+
     /// return a pinAnnotationView for a red pin
-    func mapView(
-        _ mapView: MKMapView,
-        viewFor annotation: MKAnnotation
-    ) -> MKAnnotationView? {
+
+    func mapView(_ mapView: MKMapView,
+                 viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let identifier = "pinAnnotation"
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
+        var annotationView =
+            mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
         if (annotationView == nil) {
             annotationView = MKPinAnnotationView(annotation: annotation,
                                                  reuseIdentifier: identifier)
@@ -257,12 +244,11 @@ extension MapViewController: MKMapViewDelegate {
     }
 
     /// A pin is being dragged. [DOES NOT WORK]
-    func mapView(
-        _ mapView: MKMapView,
-        annotationView view: MKAnnotationView,
-        didChange newState: MKAnnotationViewDragState,
-        fromOldState oldState: MKAnnotationViewDragState
-    ) {
+
+    func mapView(_ mapView: MKMapView,
+                 annotationView view: MKAnnotationView,
+                 didChange newState: MKAnnotationViewDragState,
+                 fromOldState oldState: MKAnnotationViewDragState) {
          switch newState {
          case .starting:
             view.setDragState(.dragging, animated: true)
@@ -276,23 +262,15 @@ extension MapViewController: MKMapViewDelegate {
     }
 
     /// Create an MKPolylineRenderer for MKPolyLines added to the map
-    func mapView(
-        _ mapview: MKMapView,
-        rendererFor overlay: MKOverlay
-    ) -> MKOverlayRenderer {
-        if mapLines.contains(overlay as! MKPolyline) {
-            let renderer = MKPolylineRenderer(polyline: overlay as! MKPolyline)
+
+    func mapView(_ mapview: MKMapView,
+                 rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let polyline = overlay as! MKPolyline
+        if mapLines.contains(polyline) {
+            let renderer = MKPolylineRenderer(polyline: polyline)
             renderer.strokeColor = NSColor.systemRed
             return renderer
         }
         return MKOverlayRenderer(overlay: overlay)
-    }
-
-    // debug cruft
-    func mapView(
-        _ mapView: MKMapView,
-        didSelect: MKAnnotationView
-    ) {
-        // print("Annotation view \(didSelect) selected")
     }
 }

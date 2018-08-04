@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		492978901984B48D00BE0706 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 4929788F1984B48D00BE0706 /* GeoTag Help */; };
+		494E9500210E9F740076B58F /* ChangeTime.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 494E94FF210E9F740076B58F /* ChangeTime.storyboard */; };
+		494E9502210EA1B40076B58F /* ChangeTimeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */; };
+		494E9504210EBE3B0076B58F /* ChangeTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */; };
 		4966FAEF1AF07BE000CEE06E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4966FAEE1AF07BE000CEE06E /* Preferences.xib */; };
 		4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */; };
 		497EE5D3195CAE6300306283 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497EE5D2195CAE6300306283 /* ImageData.swift */; };
@@ -31,6 +34,9 @@
 		490F7EAA1B339A6C00DB36B5 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
 		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
 		4929788F1984B48D00BE0706 /* GeoTag Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "GeoTag Help"; sourceTree = "<group>"; };
+		494E94FF210E9F740076B58F /* ChangeTime.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ChangeTime.storyboard; sourceTree = "<group>"; };
+		494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeTimeWindow.swift; sourceTree = "<group>"; };
+		494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeTimeViewController.swift; sourceTree = "<group>"; };
 		4965C67B197DDC87005FC03F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		4966FAEE1AF07BE000CEE06E /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
@@ -107,6 +113,9 @@
 				498BC9E9210524160070A528 /* Gpx.swift */,
 				4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */,
 				49E0340C1B0BBBB700CC9768 /* Interpolate.swift */,
+				494E94FF210E9F740076B58F /* ChangeTime.storyboard */,
+				494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */,
+				494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */,
 				49CE08811AFBF9370057E310 /* Preferences.swift */,
 				4966FAEE1AF07BE000CEE06E /* Preferences.xib */,
 				49B0EEBF19495FB100293C73 /* MainMenu.xib */,
@@ -217,6 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */,
+				494E9500210E9F740076B58F /* ChangeTime.storyboard in Resources */,
 				49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */,
 				49A89BC51B0BED7900578EA6 /* Interpolation in Resources */,
 				49DDA5111D82538E00DEFAAF /* ExifTool in Resources */,
@@ -254,9 +264,11 @@
 				49E0340D1B0BBBB700CC9768 /* Interpolate.swift in Sources */,
 				49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */,
 				49CE08821AFBF9370057E310 /* Preferences.swift in Sources */,
+				494E9504210EBE3B0076B58F /* ChangeTimeViewController.swift in Sources */,
 				49F928761D1CF94B00D49F08 /* MapViewController.swift in Sources */,
 				499C56C81D399336004B47AD /* Exiftool.swift in Sources */,
 				49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */,
+				494E9502210EA1B40076B58F /* ChangeTimeWindow.swift in Sources */,
 				498BC9EA210524160070A528 /* Gpx.swift in Sources */,
 				4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */,
 				49F928741D1CB34E00D49F08 /* MapView.swift in Sources */,
