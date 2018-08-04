@@ -183,24 +183,16 @@ final class ImageData: NSObject {
         try? fileManager.removeItem(at: sandboxUrl)
     }
 
-    // MARK: set/revert latitude and longitude for an image
+    // MARK: revert changes for an image
 
-    /// set the latitude and longitude of an image
-    /// - Parameter location: the new coordinates
+    /// restore latitude, longitude, and date/time to their initial values
     ///
-    /// The location may be set to nil to delete location information from
-    /// an image.
-    func setLocation(_ location: Coord?) {
-        self.location = location
-    }
-
-    /// restore latitude and longitude to their initial values
-    ///
-    /// Image location is restored to the value when location information
+    /// Image location and time is restored to the value when location information
     /// was last saved. If the image has not been saved the restored values
     /// will be those in the image when first read.
-    func revertLocation() {
+    func revert() {
         location = originalLocation
+        date = originalDate
     }
 
     // MARK: Backup and Save (does not run on main thread)

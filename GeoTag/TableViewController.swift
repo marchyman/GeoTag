@@ -136,16 +136,15 @@ final class TableViewController: NSViewController {
     /// an invocation with target self to handle undo and redo.
     ///
     /// Note: The system can not handle optional types when used with
-    /// prepareWithInvocationTarget.  A tuple will not work, either.  Both
-    /// will cause an EXC_BAD_ACCESS to be generated (true as of Xcode 6 beta 3)
-    /// The validLocation Boolean is used to mitigate this issue.
+    /// registerUndo. validLocation and updateTimestamp Booleans are used to
+    /// mitigate this issue.
 
     @objc
     func updateLocation(row: Int,
                         validLocation: Bool,
                         latLon: Coord,
                         updateTimestamp: Bool,
-                        timestamp: Date,
+                        timestamp: Date = Date(),
                         modified: Bool = true) {
         // the image to update
         let image = images[row]
@@ -158,13 +157,19 @@ final class TableViewController: NSViewController {
             oldLatLon = image.location!
             oldLatLonValid = true
         }
+
         // current date/time
+        // if the date/time is not being updated there is no need to save
+        // the existing timestamp for undo.
         var oldTimestamp = Date()
         var oldUpdateTimestamp = false
-        if let dateTime = image.dateValue {
-            oldTimestamp = dateTime
+        if updateTimestamp {
+            if let dateTime = image.dateValue {
+                oldTimestamp = dateTime
+            }
             oldUpdateTimestamp = true
         }
+
         // current window.modified flag
         let windowModified = appDelegate.modified
 
@@ -183,15 +188,14 @@ final class TableViewController: NSViewController {
         // update image location.  If the location is not valid any
         // existing location is removed.
         if validLocation {
-            image.setLocation(latLon)
+            image.location = latLon
             mapViewController.pinMapAt(coords: latLon)
         } else {
-            image.setLocation(nil)
+            image.location = nil
             mapViewController.removeMapPin()
         }
 
-        // update the date/time if requested.  Unlike lat/lon the date/time is
-        // only updated when requested.
+        // update the date/time if requested.
         if updateTimestamp {
             image.dateValue = timestamp
         }
@@ -202,7 +206,7 @@ final class TableViewController: NSViewController {
         appDelegate.modified = modified
     }
 
-    // MARK: menu actions
+    // MARK: menu/click actions
 
     /// determine if the interpolation menu item should be enabled
     ///
@@ -313,7 +317,7 @@ final class TableViewController: NSViewController {
     @IBAction
     func discard(_: AnyObject) {
         for image in images {
-            image.revertLocation()
+            image.revert()
         }
         appDelegate.modified = false
         reloadAllRows()
@@ -383,8 +387,7 @@ final class TableViewController: NSViewController {
         appDelegate.undoManager.beginUndoGrouping()
         tableView.selectedRowIndexes.forEach {
             self.updateLocation(row: $0, validLocation: false,
-                                latLon: Coord(), updateTimestamp: false,
-                                timestamp: Date())
+                                latLon: Coord(), updateTimestamp: false)
         }
         appDelegate.undoManager.endUndoGrouping()
         appDelegate.undoManager.setActionName("delete")
@@ -475,8 +478,7 @@ final class TableViewController: NSViewController {
                     self.updateLocation(row: $0,
                                         validLocation: true,
                                         latLon: latLon,
-                                        updateTimestamp: false,
-                                        timestamp: Date())
+                                        updateTimestamp: false)
                 }
             }
             appDelegate.undoManager.endUndoGrouping()
@@ -507,8 +509,7 @@ final class TableViewController: NSViewController {
                                 self.updateLocation( row: row,
                                                      validLocation: true,
                                                      latLon: coords,
-                                                     updateTimestamp: false,
-                                                     timestamp: Date())
+                                                     updateTimestamp: false)
                             }
                         }
                     }
@@ -562,8 +563,7 @@ final class TableViewController: NSViewController {
             self.updateLocation(row: $0,
                                 validLocation: true,
                                 latLon: latLon,
-                                updateTimestamp: false,
-                                timestamp: Date())
+                                updateTimestamp: false)
         }
         appDelegate.undoManager.endUndoGrouping()
     }
