@@ -47,19 +47,6 @@ final class ImageData: NSObject {
     let GPSLongitude = kCGImagePropertyGPSLongitude as String
     let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
 
-    /*
-     * if we can't backup an image file display a warning that files will be
-     * copied to an alternate directory.  This flag is used so the
-     * warning is only displayed once per save operation
-     */
-    static var saveWarning = true
-
-    // used to re-enable the save warning after a save operation has completed
-    class
-    func enableSaveWarnings() {
-        saveWarning = true
-    }
-
     // MARK: instance variables -- file URLs
 
     let url: URL                // URL of the image
@@ -216,32 +203,16 @@ final class ImageData: NSObject {
         location = originalLocation
     }
 
-    // MARK: Backup and Save
+    // MARK: Backup and Save (does not run on main thread)
 
     /// copy the image into the backup folder
     ///
     /// If an image file with the same name exists in the backup folder append
     /// an available number to the image name to make the name unique to the
-    /// folder.
+    /// folder.sz
     private
     func saveOriginalFile() -> Bool {
-        guard let saveDirUrl = Preferences.saveFolder() else {
-            if ImageData.saveWarning {
-                ImageData.saveWarning = false
-
-                let alert = NSAlert()
-                alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
-                alert.messageText = NSLocalizedString("NO_BACKUP_TITLE",
-                                                      comment: "can't backup file")
-                alert.informativeText = url.path
-                alert.informativeText += NSLocalizedString("NO_BACKUP_DESC",
-                                                           comment: "can't backup file")
-                alert.informativeText += NSLocalizedString("NO_BACKUP_REASON",
-                                                           comment: "unknown error reason")
-                alert.runModal()
-            }
-            return false
-        }
+        guard let saveDirUrl = Preferences.saveFolder() else { return false }
         guard let name = name else { return false }
         var fileNumber = 1
         var saveFileUrl = saveDirUrl.appendingPathComponent(name, isDirectory: false)
@@ -264,13 +235,19 @@ final class ImageData: NSObject {
             /// as a DUPLICATE OF 30350792 which was still open as of macOS
             /// 10.12.x.  As a result I must verify that the copied file exists
             if !fileManager.fileExists(atPath: (saveFileUrl.path)) {
-                unexpected(error: nil,
-                           "Cannot copy \(url.path) to \(saveFileUrl.path)")
+                // UI interaction must run on the main thread
+                DispatchQueue.main.async {
+                    unexpected(error: nil,
+                               "Cannot copy \(self.url.path) to \(saveFileUrl.path)")
+                }
                 return false
             }
         } catch let error as NSError {
-            unexpected(error: error,
-                       "Cannot copy \(url.path) to \(saveFileUrl.path)\n\nReason: ")
+            // UI interaction must run on the main thread
+            DispatchQueue.main.async {
+                unexpected(error: error,
+                           "Cannot copy \(self.url.path) to \(saveFileUrl.path)\n\nReason: ")
+            }
             return false
         }
         return true

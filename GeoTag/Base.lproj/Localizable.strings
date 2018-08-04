@@ -14,10 +14,9 @@ You may save your changes, throw away your changes, or cancel program terminatio
 "CLOSE" = "Close";
 "WARN_TITLE" = "Some files not opened";
 "WARN_DESC" = "One or more files were not opened. Unopened files were duplicates of files already opened for processing.";
-"NO_BACKUP_TITLE" = "Cannot make backup of image file";
+"NO_BACKUP_TITLE" = "Cannot make backups of image files";
 "NO_BACKUP_DESC" = "
-
-The above named image file could not be copied to your backup folder. Geolocation information has NOT been saved to the image. The warning may apply to multiple image files.  You must open GeoTag preferences and select a backup folder before you can save your changes.
+A backup folder has not been selected or the backup folder no longer exists.   Please open program Preferences and select a backup folder.  Location changes can not be saved until a backup folder is selected.
 
 Failure reason: ";
 "NO_BACKUP_REASON" = "Missing Backup Folder";

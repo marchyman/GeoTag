@@ -146,6 +146,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// undo actions.
     @IBAction
     func save(_ saveSource: AnyObject?) {
+        guard let folder = Preferences.saveFolder(),
+            FileManager.default.fileExists(atPath: folder.path) else {
+            let alert = NSAlert()
+            alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+            alert.messageText = NSLocalizedString("NO_BACKUP_TITLE",
+                                                  comment: "No Backup folder")
+            alert.informativeText += NSLocalizedString("NO_BACKUP_DESC",
+                                                       comment: "no backup folder")
+            alert.informativeText += NSLocalizedString("NO_BACKUP_REASON",
+                                                       comment: "no backup folder")
+            alert.runModal()
+            return
+        }
+
         tableViewController.saveAllImages {
             self.modified = false
             self.undoManager.removeAllActions()

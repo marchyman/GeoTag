@@ -3,8 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 6/24/14.
-//
-// Copyright 2014-2018 Marco S Hyman
+//  Copyright 2014-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -35,8 +34,13 @@ final class TableViewController: NSViewController {
     @IBOutlet var imageWell: NSImageView!
     @IBOutlet var mapViewController: MapViewController!
 
+    /// Images in the table
     var images = [ImageData]()
+
+    /// Set of image URLs for duplicate detection
     var imageUrls = Set<URL>()
+
+    // state variables
     var lastSelectedRow: Int?
     var saveInProgress = false
 
@@ -54,9 +58,9 @@ final class TableViewController: NSViewController {
         tableView.draggingDestinationFeedbackStyle = .none
     }
 
-    //MARK: populating the table
+    // MARK: populating the table
 
-    /// add the url of an image to the table view
+    /// add the image urls to the table view
     /// - Parameter urls: an array of urls to add to the table
     /// - Returns: true if any duplicate URLs were detected
     ///
@@ -84,10 +88,9 @@ final class TableViewController: NSViewController {
         return duplicateFound
     }
 
-    /// update geolocation information for images in the table
+    /// save updated geolocation and/or date/time information
     /// - Parameter completion: closure invoked only if all images were
     ///   successfully saved.  Completion is called on the main thread.
-    /// - Returns: true if all modified images were saved, otherwise false
     ///
     /// Each ImageData instance in the table is to save itself. A progress
     /// indicator is displayed while the operation is in progress.
@@ -110,7 +113,6 @@ final class TableViewController: NSViewController {
         }
         updateGroup.notify(queue: DispatchQueue.main) {
             self.appDelegate.progressIndicator.stopAnimation(self)
-            ImageData.enableSaveWarnings()
             self.saveInProgress = false
             if allSaved {
                 completion()
@@ -287,21 +289,18 @@ final class TableViewController: NSViewController {
             if image.validImage {
                 openChangeTimeWindow(for: image) {
                     dateValue in
-                    DispatchQueue.main.async {
-                        var latLon = Coord()
-                        var validLatLon = false
-                        if let locn = image.location {
-                            latLon = locn
-                            validLatLon = true
-                        }
-                        self.appDelegate.modified = true
-                        self.updateLocation(row: row,
-                                            validLocation: validLatLon,
-                                            latLon: latLon,
-                                            updateTimestamp: true,
-                                            timestamp: dateValue)
-
+                    var latLon = Coord()
+                    var validLatLon = false
+                    if let locn = image.location {
+                        latLon = locn
+                        validLatLon = true
                     }
+                    self.appDelegate.modified = true
+                    self.updateLocation(row: row,
+                                        validLocation: validLatLon,
+                                        latLon: latLon,
+                                        updateTimestamp: true,
+                                        timestamp: dateValue)
                 }
             }
         }
