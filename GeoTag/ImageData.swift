@@ -3,8 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 6/26/14.
-//
-// Copyright 2014-2018 Marco S Hyman
+//  Copyright 2014-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -28,7 +27,7 @@ import Foundation
 import AppKit
 import MapKit
 
-// A shorter name for a type I'll often use
+/// A shorter name for a type I'll often use
 typealias Coord = CLLocationCoordinate2D
 
 final class ImageData: NSObject {
@@ -71,7 +70,7 @@ final class ImageData: NSObject {
 
     // MARK: instance variables -- date/time related values
 
-    // format of the date string
+    // format of the date string used by exiftool
     let dateFormatter = DateFormatter()
     let dateFormatString = "yyyy:MM:dd HH:mm:ss"
 
@@ -82,29 +81,22 @@ final class ImageData: NSObject {
     // timeZone of image
     var timeZone: TimeZone?
 
-    // date as a Date  This value can be be set in which case the date
-    // string will also be updated
+    // image date/time as a Date.
+    // When this value is set the date string variable is also updated
     var dateValue: Date? {
         get {
             dateFormatter.dateFormat = dateFormatString
-            if timeZone == nil, let location = location {
-                setTimeZone(for: location)
-            }
             dateFormatter.timeZone = timeZone
             return dateFormatter.date(from: date)
         }
         set {
             if let value = newValue {
                 dateFormatter.dateFormat = dateFormatString
-                if timeZone == nil, let location = location {
-                    setTimeZone(for: location)
-                }
                 dateFormatter.timeZone = timeZone
                 date = dateFormatter.string(from: value)
             } else {
                 date = ""
             }
-            print("Date change to \(date)")
         }
     }
 
@@ -119,7 +111,23 @@ final class ImageData: NSObject {
     // MARK: instance variables -- image location
 
     // image location
-    var location: Coord?
+    var location: Coord? {
+        didSet {
+            // update the timezone to match image location
+            if let location = location {
+                let coder = CLGeocoder();
+                let loc = CLLocation(latitude: location.latitude,
+                                     longitude: location.longitude)
+                coder.reverseGeocodeLocation(loc) {
+                    (placemarks, error) in
+                    let place = placemarks?.last
+                    self.timeZone = place?.timeZone
+                }
+            } else {
+                timeZone = nil
+            }
+        }
+    }
     var originalLocation: Coord?
 
     // MARK: instance variables -- image state and thumbnail
@@ -197,7 +205,6 @@ final class ImageData: NSObject {
     /// an image.
     func setLocation(_ location: Coord?) {
         self.location = location
-        setTimeZone(for: location)
     }
 
     /// restore latitude and longitude to their initial values
@@ -207,7 +214,6 @@ final class ImageData: NSObject {
     /// will be those in the image when first read.
     func revertLocation() {
         location = originalLocation
-        setTimeZone(for: location)
     }
 
     // MARK: Backup and Save
@@ -300,22 +306,6 @@ final class ImageData: NSObject {
 
         // failed to backup or update
         return false
-    }
-
-    // Get the time zone for a given location
-    private
-    func setTimeZone(for location: Coord?) {
-        timeZone = nil
-        if let location = location {
-            let coder = CLGeocoder();
-            let loc = CLLocation(latitude: location.latitude,
-                                 longitude: location.longitude)
-            coder.reverseGeocodeLocation(loc) {
-                (placemarks, error) in
-                let place = placemarks?.last
-                self.timeZone = place?.timeZone
-            }
-        }
     }
 
     // MARK: extract image metadata and build thumbnail preview
