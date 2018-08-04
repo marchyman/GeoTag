@@ -161,10 +161,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         tableViewController.saveAllImages {
-            self.modified = false
-            self.undoManager.removeAllActions()
-            if saveSource == nil {
-                self.window.close()
+            allSaved in
+            if allSaved {
+                self.modified = false
+                self.undoManager.removeAllActions()
+                if saveSource == nil {
+                    self.window.close()
+                }
+            } else {
+                let alert = NSAlert()
+                alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+                alert.messageText = NSLocalizedString("SAVE_ERROR_TITLE",
+                                                      comment: "Save error")
+                alert.informativeText += NSLocalizedString("SAVE_ERROR_DESC",
+                                                           comment: "save error")
+                alert.runModal()
             }
         }
     }

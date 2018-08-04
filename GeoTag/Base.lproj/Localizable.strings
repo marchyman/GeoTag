@@ -20,6 +20,10 @@ A backup folder has not been selected or the backup folder no longer exists.   P
 
 Failure reason: ";
 "NO_BACKUP_REASON" = "Missing Backup Folder";
+"SAVE_ERROR_TITLE" = "Error saving files";
+"SAVE_ERROR_DESC" = "One or more files could not be saved. Possible causes:
+* The original file could not be backed up for unknown reasons
+* ExifTool could not update the modified metadata";
 "UNEXPECTED_ERROR" = "Unexpected Error";
 "BAD_GPX_TITLE" = "Can not process GPX file";
 "BAD_GPX_DESC" = "

@@ -89,13 +89,13 @@ final class TableViewController: NSViewController {
     }
 
     /// save updated geolocation and/or date/time information
-    /// - Parameter completion: closure invoked only if all images were
-    ///   successfully saved.  Completion is called on the main thread.
+    /// - Parameter completion: closure invoked on main thread when save
+    /// is complete.
     ///
     /// Each ImageData instance in the table is to save itself. A progress
     /// indicator is displayed while the operation is in progress.
 
-    func saveAllImages(completion: @escaping ()->()) {
+    func saveAllImages(completion: @escaping (Bool)->()) {
         saveInProgress = true
         appDelegate.progressIndicator.startAnimation(self)
         // copy image array so updates during save don't cause issues
@@ -114,9 +114,7 @@ final class TableViewController: NSViewController {
         updateGroup.notify(queue: DispatchQueue.main) {
             self.appDelegate.progressIndicator.stopAnimation(self)
             self.saveInProgress = false
-            if allSaved {
-                completion()
-            }
+            completion(allSaved)
         }
     }
 
