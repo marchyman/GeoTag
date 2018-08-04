@@ -29,9 +29,11 @@ import AppKit
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    // instantiate preferences window and undomanager when needed
     lazy var preferences = Preferences()
     lazy var undoManager = UndoManager()
 
+    // I like modified over isDocumentEdited
     var modified: Bool {
         get {
             return window.isDocumentEdited
@@ -41,6 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    // user interface outlets
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
     @IBOutlet weak var mapViewController: MapViewController!
@@ -48,11 +51,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     //MARK: App start up
 
-    func applicationDidFinishLaunching(
-        _ aNotification: Notification
-    ) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         window.delegate = self
-        // Pop open a preferences window if a backup (save) folder location hasn't
+        // Open a preferences window if a backup (save) folder location hasn't
         // yet been selected
         if Preferences.saveFolder() == nil {
             perform(#selector(openPreferencesWindow(_:)), with: nil, afterDelay: 0)
@@ -61,9 +62,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// don't enable save menu item unless something has been modified
     @objc
-    func validateUserInterfaceItem(
-        _ item: NSValidatedUserInterfaceItem
-    ) -> Bool {
+    func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
         guard let action = item.action else { return false }
         switch action {
         case #selector(showOpenPanel(_:)):
@@ -89,9 +88,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// to the table multiple times.   If duplicates are detected the user
     /// will be alerted that some files were not opened.
     @IBAction
-    func showOpenPanel(
-        _: AnyObject
-    ) {
+    func showOpenPanel(_: AnyObject) {
         let panel = NSOpenPanel()
         panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as? [String]
         panel.allowedFileTypes?.append("gpx")
@@ -119,10 +116,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     //MARK: Open File (UTI support)
-    func application(
-        _ sender: NSApplication,
-        openFile filename: String
-    ) -> Bool {
+
+    /// process files give to us via "Open With..."
+    ///
+    /// - parameter sender: unused
+    /// - parameter fileName: path of file to process
+    /// - returns: true if the file was opened
+    ///
+    /// this function handles both Image and GPX files
+
+    func application(_ sender: NSApplication,
+                     openFile filename: String) -> Bool {
         let url = URL(fileURLWithPath: filename)
         if !isGpxFile(url) {
             var urls = [URL]()
@@ -141,9 +145,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Save all images with updated geolocation information and clear all
     /// undo actions.
     @IBAction
-    func save(
-        _ saveSource: AnyObject?
-    ) {
+    func save(_ saveSource: AnyObject?) {
         tableViewController.saveAllImages {
             self.modified = false
             self.undoManager.removeAllActions()
@@ -154,17 +156,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @IBAction
-    func openPreferencesWindow(
-        _ sender: AnyObject!
-    ) {
+    func openPreferencesWindow(_ sender: AnyObject!) {
         preferences.showWindow(sender)
     }
 
     //MARK: app termination
 
-    func applicationShouldTerminateAfterLastWindowClosed(
-        _ theApplication: NSApplication
-    ) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(_ theApplication: NSApplication) -> Bool {
         return true
     }
 
@@ -175,8 +173,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// the user to save or discard the changes before terminating the
     /// application. The user can also cancel program termination without
     /// saving any changes.
-    func saveOrDontSave(
-    ) -> Bool {
+    func saveOrDontSave() -> Bool {
         if modified {
             let alert = NSAlert()
             alert.addButton(withTitle: NSLocalizedString("SAVE",
@@ -211,9 +208,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-    func applicationShouldTerminate(
-        _ sender: NSApplication
-    ) -> NSApplication.TerminateReply {
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if saveOrDontSave() {
             tableViewController.clear(self)
             return .terminateNow
@@ -221,9 +216,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return .terminateCancel
     }
 
-    func applicationWillTerminate(
-        aNotification: NSNotification
-    ) {
+    func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
     }
 
@@ -241,10 +234,8 @@ extension AppDelegate {
     /// also enumerated.
 
     public
-    func addUrlsInFolder(
-        url: URL,
-        toUrls urls: inout [URL]
-    ) -> Bool {
+    func addUrlsInFolder(url: URL,
+                         toUrls urls: inout [URL]) -> Bool {
         let fileManager = FileManager.default
         var dir = ObjCBool(false)
         if fileManager.fileExists(atPath: url.path, isDirectory: &dir) && dir.boolValue {
@@ -274,10 +265,11 @@ extension AppDelegate {
     /// - Parameter url: URL of file to check
     /// - Returns: true if file was a GPX file, otherwise false
     ///
-    /// GPX files are parsed
-    func isGpxFile(
-        _ url: URL
-    ) -> Bool {
+    /// GPX files are parsed and any tracks found in the file are added to
+    /// the map view
+
+    public
+    func isGpxFile(_ url: URL) -> Bool {
         if url.pathExtension.lowercased() == "gpx" {
             if let gpx = Gpx(contentsOf: url) {
                 progressIndicator.startAnimation(self)
@@ -313,15 +305,11 @@ extension AppDelegate {
 /// Window delegate functions
 
 extension AppDelegate: NSWindowDelegate {
-    func windowShouldClose(
-        _: NSWindow
-    ) -> Bool {
+    func windowShouldClose(_: NSWindow) -> Bool {
         return saveOrDontSave()
     }
 
-    func windowWillReturnUndoManager(
-        _ window: NSWindow
-    ) -> UndoManager? {
+    func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
         return undoManager
     }
 }

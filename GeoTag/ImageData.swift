@@ -31,23 +31,23 @@ import MapKit
 // A shorter name for a type I'll often use
 typealias Coord = CLLocationCoordinate2D
 
-// CFString to (NS)*String casts
-let pixelHeight = kCGImagePropertyPixelHeight as NSString
-let pixelWidth = kCGImagePropertyPixelWidth as NSString
-let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
-let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
-let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
-let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
-let exifDictionary = kCGImagePropertyExifDictionary as NSString
-let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
-let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
-let GPSStatus = kCGImagePropertyGPSStatus as String
-let GPSLatitude = kCGImagePropertyGPSLatitude as String
-let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
-let GPSLongitude = kCGImagePropertyGPSLongitude as String
-let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
-
 final class ImageData: NSObject {
+    // CFString to (NS)*String casts
+    let pixelHeight = kCGImagePropertyPixelHeight as NSString
+    let pixelWidth = kCGImagePropertyPixelWidth as NSString
+    let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
+    let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
+    let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
+    let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
+    let exifDictionary = kCGImagePropertyExifDictionary as NSString
+    let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
+    let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
+    let GPSStatus = kCGImagePropertyGPSStatus as String
+    let GPSLatitude = kCGImagePropertyGPSLatitude as String
+    let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
+    let GPSLongitude = kCGImagePropertyGPSLongitude as String
+    let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
+
     /*
      * if we can't backup an image file display a warning that files will be
      * copied to an alternate directory.  This flag is used so the
@@ -57,8 +57,7 @@ final class ImageData: NSObject {
 
     // used to re-enable the save warning after a save operation has completed
     class
-    func enableSaveWarnings(
-    ) {
+    func enableSaveWarnings() {
         saveWarning = true
     }
 
@@ -83,13 +82,13 @@ final class ImageData: NSObject {
     // timeZone of image
     var timeZone: TimeZone?
 
-    // date as a Date  This value can be also be set in which case the date
+    // date as a Date  This value can be be set in which case the date
     // string will also be updated
     var dateValue: Date? {
         get {
             dateFormatter.dateFormat = dateFormatString
             if timeZone == nil, let location = location {
-                setTimeZoneFor(location)
+                setTimeZone(for: location)
             }
             dateFormatter.timeZone = timeZone
             return dateFormatter.date(from: date)
@@ -98,7 +97,7 @@ final class ImageData: NSObject {
             if let value = newValue {
                 dateFormatter.dateFormat = dateFormatString
                 if timeZone == nil, let location = location {
-                    setTimeZoneFor(location)
+                    setTimeZone(for: location)
                 }
                 dateFormatter.timeZone = timeZone
                 date = dateFormatter.string(from: value)
@@ -146,9 +145,7 @@ final class ImageData: NSObject {
     /// Extract geo location metadata and build a preview image for
     /// the given URL.  If the URL isn't recognized as an image mark this
     /// instance as not being valid.
-    init(
-        url: URL
-    ) {
+    init(url: URL) {
         // create a symlink for the URL in our sandbox
         self.url = url;
         let fileManager = FileManager.default
@@ -198,11 +195,9 @@ final class ImageData: NSObject {
     ///
     /// The location may be set to nil to delete location information from
     /// an image.
-    func setLocation(
-        _ location: Coord?
-    ) {
+    func setLocation(_ location: Coord?) {
         self.location = location
-        setTimeZoneFor(location)
+        setTimeZone(for: location)
     }
 
     /// restore latitude and longitude to their initial values
@@ -210,10 +205,9 @@ final class ImageData: NSObject {
     /// Image location is restored to the value when location information
     /// was last saved. If the image has not been saved the restored values
     /// will be those in the image when first read.
-    func revertLocation(
-    ) {
+    func revertLocation() {
         location = originalLocation
-        setTimeZoneFor(location)
+        setTimeZone(for: location)
     }
 
     // MARK: Backup and Save
@@ -224,8 +218,7 @@ final class ImageData: NSObject {
     /// an available number to the image name to make the name unique to the
     /// folder.
     private
-    func saveOriginalFile(
-    ) -> Bool {
+    func saveOriginalFile() -> Bool {
         guard let saveDirUrl = Preferences.saveFolder() else {
             if ImageData.saveWarning {
                 ImageData.saveWarning = false
@@ -291,8 +284,7 @@ final class ImageData: NSObject {
     /// sandbox.  This is needed as exiftool creates temporary files.
     /// The updated file is copied back to its original location after
     /// exiftool does its job.
-    func saveImageFile(
-    ) -> Bool {
+    func saveImageFile() -> Bool {
         guard validImage &&
               (location?.latitude != originalLocation?.latitude ||
                location?.longitude != originalLocation?.longitude ||
@@ -312,9 +304,7 @@ final class ImageData: NSObject {
 
     // Get the time zone for a given location
     private
-    func setTimeZoneFor(
-        _ location: Coord?
-    ) {
+    func setTimeZone(for location: Coord?) {
         timeZone = nil
         if let location = location {
             let coder = CLGeocoder();
@@ -336,8 +326,7 @@ final class ImageData: NSObject {
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file
     private
-    func loadImageData(
-    ) -> Bool {
+    func loadImageData() -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
             print("Failed CGImageSourceCreateWithURL \(url)")
             return false
@@ -383,8 +372,7 @@ final class ImageData: NSObject {
     /// do not exist the file is assumed to be a non-image file and a zero
     /// sized empty image is returned.
     private
-    func loadImage(
-    ) -> NSImage {
+    func loadImage() -> NSImage {
         var image = NSImage(size: NSMakeRect(0, 0, 0, 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
             return image

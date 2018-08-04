@@ -34,12 +34,12 @@ class Gpx: NSObject {
 
     // parser states
     enum ParseState {
-        case none
-        case trk
-        case trkSeg
-        case trkPt
-        case time
-        case error
+        case none       // starting state
+        case trk        // <trk> seen
+        case trkSeg     // <trkseg> seen
+        case trkPt      // <trkpt> seen
+        case time       // <time> inside of a <trkpt>
+        case error      // bad GPX file
     }
 
     /// A track consists of one or more track segments
@@ -111,9 +111,7 @@ class Gpx: NSObject {
     }
 
     /// init from contents of a URL
-    init?(
-        contentsOf url: URL
-    ) {
+    init?(contentsOf url: URL) {
         guard let parser = XMLParser(contentsOf: url) else {
             print("Gpx init failed")
             return nil
@@ -124,8 +122,7 @@ class Gpx: NSObject {
     }
 
     /// parse the XML from the give
-    func parse(
-    ) -> Bool {
+    func parse() -> Bool {
         if parser.parse() && parseState != .error {
             print("\(tracks.count) tracks")
             var segments = 0
@@ -148,10 +145,8 @@ class Gpx: NSObject {
     /// Update the location of a given image from data in the track log.
     /// The location of the last track point with a timestamp less than or equal
     /// to the image is used.
-    func update(
-        image: ImageData,
-        found: (Coord) -> ()
-    ) {
+    func update(image: ImageData,
+                found: (Coord) -> ()) {
         let imageTime = image.dateFromEpoch
         // print("Image date: \(image.date) (\(imageTime))")
         var lastPoint: Point?
@@ -191,15 +186,15 @@ class Gpx: NSObject {
 }
 
 extension Gpx: XMLParserDelegate {
+
     /// process the start of an element according to the current state.
     /// Most elements are ignored
-    func parser(
-        _ parser: XMLParser,
-        didStartElement elementName: String,
-        namespaceURI: String?,
-        qualifiedName qName: String?,
-        attributes attributeDict: [String : String] = [:]
-    ) {
+
+    func parser(_ parser: XMLParser,
+                didStartElement elementName: String,
+                namespaceURI: String?,
+                qualifiedName qName: String?,
+                attributes attributeDict: [String : String] = [:]) {
         switch parseState {
         case .none:
             // ignore everything until the trk element
@@ -269,12 +264,10 @@ extension Gpx: XMLParserDelegate {
     }
 
     /// at the end of the elements we care about wind back the state
-    func parser(
-        _ parser: XMLParser,
-        didEndElement elementName: String,
-        namespaceURI: String?,
-        qualifiedName qName: String?
-    ) {
+    func parser(_ parser: XMLParser,
+                didEndElement elementName: String,
+                namespaceURI: String?,
+                qualifiedName qName: String?) {
         switch elementName {
         case "time":
             if parseState == .time {
@@ -305,10 +298,8 @@ extension Gpx: XMLParserDelegate {
 
     /// process the string of characters for the current element.  This
     /// program only cares about characters for the time element
-    func parser(
-        _ parser: XMLParser,
-        foundCharacters string: String
-    ) {
+    func parser(_ parser: XMLParser,
+                foundCharacters string: String) {
         if parseState == .time {
             // find the latest point
             let trackIx = tracks.count - 1

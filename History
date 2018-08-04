@@ -14,9 +14,7 @@
   finder and then right click and select the "Open With" option.  GeoTag will
   be one of app choices.
 * Double clicking on an row in the table will open a window to update the
-  timestamp of the image.  Note: timestamp updates are currently not in
-  the undo/redo stack.  However, changes are not written to the file until
-  triggered by File -> Save (⌘S).  Changes can be discarded.
+  timestamp of the image.
 * Images can be selected and the map can be panned/zoomed while saving images.
   Images locations can not be edited until the save is complete.
 * The last 10 map searches are saved across program runs. When Clicking on the
