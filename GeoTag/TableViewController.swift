@@ -284,22 +284,24 @@ final class TableViewController: NSViewController {
         let row = sender.clickedRow
         if row >= 0 && row < images.count {
             let image = images[row]
-            openChangeTimeWindow(for: image) {
-                dateValue in
-                DispatchQueue.main.async {
-                    var latLon = Coord()
-                    var validLatLon = false
-                    if let locn = image.location {
-                        latLon = locn
-                        validLatLon = true
-                    }
-                    self.appDelegate.modified = true
-                    self.updateLocation(row: row,
-                                        validLocation: validLatLon,
-                                        latLon: latLon,
-                                        updateTimestamp: true,
-                                        timestamp: dateValue)
+            if image.validImage {
+                openChangeTimeWindow(for: image) {
+                    dateValue in
+                    DispatchQueue.main.async {
+                        var latLon = Coord()
+                        var validLatLon = false
+                        if let locn = image.location {
+                            latLon = locn
+                            validLatLon = true
+                        }
+                        self.appDelegate.modified = true
+                        self.updateLocation(row: row,
+                                            validLocation: validLatLon,
+                                            latLon: latLon,
+                                            updateTimestamp: true,
+                                            timestamp: dateValue)
 
+                    }
                 }
             }
         }
