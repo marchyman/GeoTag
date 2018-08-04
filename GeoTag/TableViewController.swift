@@ -503,7 +503,7 @@ final class TableViewController: NSViewController {
                 DispatchQueue.global(qos: .userInitiated).async {
                     updateGroup.enter()
                     Gpx.gpxTracks.forEach {
-                        $0.update(image: image) {
+                        $0.search(image: image) {
                             (coords: Coord) in
                             DispatchQueue.main.async {
                                 self.updateLocation( row: row,

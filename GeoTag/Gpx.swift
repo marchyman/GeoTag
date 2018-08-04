@@ -121,7 +121,9 @@ class Gpx: NSObject {
         self.parser.delegate = self
     }
 
-    /// parse the XML from the give
+    /// parse the XML in the URL associated with this object
+    /// - Returns: true if the file was parsed without error
+
     func parse() -> Bool {
         if parser.parse() && parseState != .error {
             print("\(tracks.count) tracks")
@@ -142,16 +144,19 @@ class Gpx: NSObject {
         return false
     }
 
-    /// Update the location of a given image from data in the track log.
-    /// The location of the last track point with a timestamp less than or equal
-    /// to the image is used.
-    func update(image: ImageData,
+    /// Search for the last point in the track log with a timestamp <= the
+    /// timestamp of a given image.
+    ///
+    /// - Parameter image: the image to update
+    /// - Parameter found: A closure envoked if a point is found
+    ///
+
+    func search(image: ImageData,
                 found: (Coord) -> ()) {
         let imageTime = image.dateFromEpoch
-        // print("Image date: \(image.date) (\(imageTime))")
         var lastPoint: Point?
 
-        // search every every track for a point with a timestamp <= the
+        // search every track for the last point with a timestamp <= the
         // image timestamp.   The location of the found point (if any)
         // will be used as the image location.  All tracks must be searched
         // as tracks are not sorted
@@ -264,6 +269,7 @@ extension Gpx: XMLParserDelegate {
     }
 
     /// at the end of the elements we care about wind back the state
+
     func parser(_ parser: XMLParser,
                 didEndElement elementName: String,
                 namespaceURI: String?,
@@ -298,6 +304,7 @@ extension Gpx: XMLParserDelegate {
 
     /// process the string of characters for the current element.  This
     /// program only cares about characters for the time element
+
     func parser(_ parser: XMLParser,
                 foundCharacters string: String) {
         if parseState == .time {
