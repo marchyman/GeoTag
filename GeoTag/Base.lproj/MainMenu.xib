@@ -174,9 +174,14 @@ CA
                                     <action selector="interpolate:" target="er7-2A-M57" id="9Os-AS-YeY"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Locn from track" keyEquivalent="t" id="zOv-fq-8jk">
+                            <menuItem title="Locn from track" keyEquivalent="l" id="zOv-fq-8jk">
                                 <connections>
                                     <action selector="locnFromTrack:" target="er7-2A-M57" id="3sm-dj-fhX"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Modify Date/Time" keyEquivalent="t" id="wZk-Ky-vsg">
+                                <connections>
+                                    <action selector="modifyDateTime:" target="er7-2A-M57" id="bZg-EE-GD9"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -603,6 +608,12 @@ CA
                         <action selector="locnFromTrack:" target="er7-2A-M57" id="6hh-Zb-T7B"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Modify Date/Time" id="QoA-6r-2bN">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="modifyDateTime:" target="er7-2A-M57" id="9UR-4g-WL2"/>
+                    </connections>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="Aie-jX-Muf"/>
                 <menuItem title="Clear image list" id="Q8s-0g-bd6">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -611,7 +622,7 @@ CA
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-315" y="211"/>
+            <point key="canvasLocation" x="-327" y="272"/>
         </menu>
     </objects>
 </document>

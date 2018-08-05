@@ -276,6 +276,10 @@ final class TableViewController: NSViewController {
                    !Gpx.gpxTracks.isEmpty &&
                    tableView.numberOfSelectedRows > 0 &&
                    images[tableView.selectedRow].validImage
+        case #selector(modifyDateTime(_:)):
+            return !saveInProgress &&
+                   tableView.numberOfSelectedRows > 0 &&
+                   images[tableView.selectedRow].validImage
         default:
             print("default for item \(item)")
         }
@@ -521,6 +525,18 @@ final class TableViewController: NSViewController {
             self.appDelegate.undoManager.endUndoGrouping()
             self.appDelegate.undoManager.setActionName("locn from track")
         }
+    }
+
+    /// Modify Date/Time menu item action
+    ///
+    /// - Parameter Any: unused
+    ///
+    /// Modify the Date Time of selected images.   Open a window to get the time
+    /// change for one of the selected items.   Calculate the time delta between
+    /// the new and the existing value.  Apply the delta to all items.
+    @IBAction
+    func modifyDateTime(_: Any) {
+        print("Modify Date/Time menu item")
     }
 
     //MARK: Functions to reload/update table rows

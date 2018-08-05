@@ -51,8 +51,15 @@ class ChangeTimeViewController: NSViewController {
         fatalError("Cannot find ChangeTime Window Controller")
     }
 
+    /// Date/Time change for a single image
+    ///
+    /// - Parameter NSButton: unused
+    ///
+    /// invoke the callback passed when the window was opened with the updated
+    /// dateValue.
+
     @IBAction
-    func dateTimeChanged(_ sender: NSButton) {
+    func dateTimeChanged(_: NSButton) {
         if newDate.dateValue != originalDate.dateValue {
             callback?(newDate.dateValue)
         }
