@@ -62,8 +62,8 @@ final class ImageData: NSObject {
     let dateFormatString = "yyyy:MM:dd HH:mm:ss"
 
     // image date/time created
-    var date: String = ""
-    var originalDate: String = ""
+    var dateTime: String = ""
+    var originalDateTime: String = ""
 
     // timeZone of image
     var timeZone: TimeZone?
@@ -74,20 +74,20 @@ final class ImageData: NSObject {
         get {
             dateFormatter.dateFormat = dateFormatString
             dateFormatter.timeZone = timeZone
-            return dateFormatter.date(from: date)
+            return dateFormatter.date(from: dateTime)
         }
         set {
             if let value = newValue {
                 dateFormatter.dateFormat = dateFormatString
                 dateFormatter.timeZone = timeZone
-                date = dateFormatter.string(from: value)
+                dateTime = dateFormatter.string(from: value)
             } else {
-                date = ""
+                dateTime = ""
             }
         }
     }
 
-    // date as a TimeInterval
+    // dateTime as a TimeInterval
     var dateFromEpoch: TimeInterval {
         if let convertedDate = dateValue {
             return convertedDate.timeIntervalSince1970
@@ -172,7 +172,7 @@ final class ImageData: NSObject {
         super.init()
         validImage = loadImageData()
         originalLocation = location
-        originalDate = date
+        originalDateTime = dateTime
     }
 
     /// remove the symbolic link created in the sandboxed document directory
@@ -192,7 +192,7 @@ final class ImageData: NSObject {
     /// will be those in the image when first read.
     func revert() {
         location = originalLocation
-        date = originalDate
+        dateTime = originalDateTime
     }
 
     // MARK: Backup and Save (does not run on main thread)
@@ -263,13 +263,13 @@ final class ImageData: NSObject {
         guard validImage &&
               (location?.latitude != originalLocation?.latitude ||
                location?.longitude != originalLocation?.longitude ||
-               date != originalDate) else {
+               dateTime != originalDateTime) else {
             return true     // nothing to update
         }
         if saveOriginalFile() &&
            Exiftool.helper.updateLocation(from: self) == 0 {
             originalLocation = location
-            originalDate = date
+            originalDateTime = dateTime
             return true
         }
 
@@ -300,7 +300,7 @@ final class ImageData: NSObject {
         // extract image date/time created
         if let exifData = imgProps[exifDictionary] as? [String: AnyObject],
            let dto = exifData[exifDateTimeOriginal] as? String {
-            date = dto
+            dateTime = dto
         }
 
         // extract image existing gps info
@@ -379,7 +379,7 @@ extension ImageData {
     @objc var imageName: String {
         return name ?? ""
     }
-    @objc var dateTime: Double {
+    @objc var dateTimeSort: Double {
         return dateFromEpoch
     }
     @objc var latitude: Double {

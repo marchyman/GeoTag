@@ -41,7 +41,7 @@ class ChangeTimeViewController: NSViewController {
                 originalDate.dateValue = dateValue
                 newDate.dateValue = dateValue
             } else {
-                // no current date
+                // no current dateTime
                 originalDate.dateValue = Date(timeIntervalSince1970: 0)
                 newDate.dateValue = Date()
             }

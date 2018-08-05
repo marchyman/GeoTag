@@ -69,7 +69,7 @@ struct Exiftool {
         }
 
         // ExifTool date/time argument name and value
-        let dtArg = "-AllDates=" + imageData.date
+        let dtArg = "-AllDates=" + imageData.dateTime
 
         // Build ExifTool latitude, longitude argument values
         if let location = imageData.location {
