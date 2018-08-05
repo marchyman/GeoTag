@@ -11,7 +11,7 @@
   Use Open (⌘-O) to select GPX files.  GPX files can also be dragged onto the
   table.
 * Image location can be updated from a GPS track logs.  Select the images to
-  update and use ⌘T, Edit -> Locn from track, or crtl-click -> Locn from track.
+  update and use ⌘L, Edit -> Locn from track, or crtl-click -> Locn from track.
   Note: this can be time consuming depending upon the number of images selected
   and the number of track log point loaded.
 * Images can now be opened with GeoTag.  You can select one or more images in
@@ -20,6 +20,10 @@
 * Double clicking on an row in the table will open a window to update the
   timestamp of the image.  Timestamps are not effected during cut/copy/paste
   operations.
+* A time delta can be applied to multiple images.   Select the images and
+  use ⌘T, Edit -> Modify Date/Time, or ctrl-click -> Modify Date/Time.  Enter the
+  new time for the selected image.  A time delta between the new and the existing
+  date/time will be calculated. That delta is then applied to all selected items.
 * Images can be selected and the map can be panned/zoomed while saving images.
   Images locations can not be edited until the save is complete.
 * The last 10 map searches are saved across program runs. When Clicking on the
@@ -39,7 +43,7 @@
   are saved in parallel, but the save process can still be quite slow.
 * If GeoTag (or your computer) crashed with files opened and one or more of the
   opened files was moved to a different folder GeoTag would crash on attempts
-  to open the file.
+  to re-open the file.
 
 ### Other 4.x Features and bug fixes
 

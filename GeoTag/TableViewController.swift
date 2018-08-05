@@ -286,32 +286,6 @@ final class TableViewController: NSViewController {
         return false
     }
 
-    /// open the change date/time window for an image
-    @IBAction
-    func doubleClick(_ sender: NSTableView) {
-        let row = sender.clickedRow
-        if row >= 0 && row < images.count {
-            let image = images[row]
-            if image.validImage {
-                openChangeTimeWindow(for: image) {
-                    dateValue in
-                    var latLon = Coord()
-                    var validLatLon = false
-                    if let locn = image.location {
-                        latLon = locn
-                        validLatLon = true
-                    }
-                    self.appDelegate.modified = true
-                    self.updateLocation(row: row,
-                                        validLocation: validLatLon,
-                                        latLon: latLon,
-                                        updateTimestamp: true,
-                                        timestamp: dateValue)
-                }
-            }
-        }
-    }
-
     /// discard location changes to the selected item
     ///
     /// - Parameter AnyObject: unused
@@ -532,11 +506,67 @@ final class TableViewController: NSViewController {
     /// - Parameter Any: unused
     ///
     /// Modify the Date Time of selected images.   Open a window to get the time
-    /// change for one of the selected items.   Calculate the time delta between
-    /// the new and the existing value.  Apply the delta to all items.
+    /// change for the most selected items.   Calculate the time delta between
+    /// the new and the existing value.  Apply the delta to all selected items.
     @IBAction
     func modifyDateTime(_: Any) {
-        print("Modify Date/Time menu item")
+        let row = tableView.selectedRow
+        let rows = tableView.selectedRowIndexes
+        let image = images[row]
+        if image.validImage {
+            openChangeTimeWindow(for: image) {
+                dateValue in
+                let delta = dateValue.timeIntervalSince1970 - image.dateFromEpoch
+                self.appDelegate.undoManager.beginUndoGrouping()
+                rows.forEach {
+                    let i = self.images[$0]
+                    if i.validImage,
+                       let date = i.dateValue {
+                        let newDate = Date(timeInterval: delta,
+                                           since: date)
+                        var latLon = Coord()
+                        var validLatLon = false
+                        if let locn = image.location {
+                            latLon = locn
+                            validLatLon = true
+                        }
+                        self.updateLocation( row: $0,
+                                             validLocation: validLatLon,
+                                             latLon: latLon,
+                                             updateTimestamp: true,
+                                             timestamp: newDate)
+                    }
+                }
+                self.appDelegate.undoManager.endUndoGrouping()
+                self.appDelegate.undoManager.setActionName("modify date/time")
+            }
+        }
+    }
+
+    /// open the change date/time window for an image
+    @IBAction
+    func doubleClick(_ sender: NSTableView) {
+        let row = sender.clickedRow
+        if row >= 0 && row < images.count {
+            let image = images[row]
+            if image.validImage {
+                openChangeTimeWindow(for: image) {
+                    dateValue in
+                    var latLon = Coord()
+                    var validLatLon = false
+                    if let locn = image.location {
+                        latLon = locn
+                        validLatLon = true
+                    }
+                    self.appDelegate.modified = true
+                    self.updateLocation(row: row,
+                                        validLocation: validLatLon,
+                                        latLon: latLon,
+                                        updateTimestamp: true,
+                                        timestamp: dateValue)
+                }
+            }
+        }
     }
 
     //MARK: Functions to reload/update table rows
