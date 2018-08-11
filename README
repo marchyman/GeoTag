@@ -45,6 +45,13 @@
   opened files was moved to a different folder GeoTag would crash on attempts
   to re-open the file.
 
+### Known Bugs
+
+* Setting the date of an image outside of the range of 1970-2034 may result in
+  an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
+  and macOS libraries handle date and time.  One hopes that the year 2034 limit
+  will eventually be removed ;)
+
 ### Other 4.x Features and bug fixes
 
 * Add ability to sort the table of images by column.  Clicking on a column
