@@ -1,6 +1,4 @@
-## GeoTag for OS X
-
-## GeoTag 4.x requires macOS 10.12 or later
+## GeoTag for macOS -- macOS 10.12 or later
 
 ## GeoTag 4.x (not yet released, still testing)
 
@@ -30,7 +28,7 @@
   search box saved search strings are indicated by a down arrow next to the
   Q icon. Click on the arrow next to open the menu of saved search strings.
 * ExifTool version 11.08
-* (internal) Swift 4.2, Xcode 10 (beta 4)
+* (internal) Swift 4.2, Xcode 10 (beta 6)
 
 ### Bug fixes
 
