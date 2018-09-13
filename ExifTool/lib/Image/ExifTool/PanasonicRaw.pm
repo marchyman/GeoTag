@@ -6,7 +6,7 @@
 # Revisions:    2009/03/24 - P. Harvey Created
 #               2009/05/12 - PH Added RWL file type (same format as RW2)
 #
-# References:   1) CPAN forum post by 'hardloaf' (http://www.cpanforum.com/threads/2183)
+# References:   1) http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,1542.0.html
 #               2) http://www.cybercom.net/~dcoffin/dcraw/
 #               3) http://syscall.eu/#pana
 #               4) Klaus Homeister private communication
@@ -21,7 +21,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.15';
+$VERSION = '1.22';
 
 sub ProcessJpgFromRaw($$$);
 sub WriteJpgFromRaw($$$);
@@ -243,12 +243,19 @@ my %wbTypeInfo = (
         IsOffset => '$$et{TIFF_TYPE} =~ /^(RW2|RWL)$/', # (invalid in DNG-converted files)
         PanasonicHack => 1,
         OffsetPair => 0x117, # (use StripByteCounts as the offset pair)
+        NotRealPair => 1,    # (to avoid Validate warning)
     },
     0x119 => {
         Name => 'DistortionInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::PanasonicRaw::DistortionInfo' },
     },
-    # 0x11b - chromatic aberration correction (ref 3)
+    # 0x11b - chromatic aberration correction (ref 3) (also see forum9366)
+    0x11c => { #forum9373
+        Name => 'Gamma',
+        Writable => 'int16u',
+        ValueConv => '$val / ($val >= 1024 ? 1024 : ($val >= 256 ? 256 : 100))',
+        ValueConvInv => 'int($val * 256 + 0.5)',
+    },
     0x120 => {
         Name => 'CameraIFD',
         SubDirectory => {
@@ -257,6 +264,15 @@ my %wbTypeInfo = (
             ProcessProc => \&Image::ExifTool::ProcessTIFF,
         },
     },
+    0x121 => { #forum9295
+        Name => 'Multishot',
+        Writable => 'int32u',
+        PrintConv => {
+            0 => 'Off',
+            65536 => 'Pixel Shift',
+        },
+    },
+    # 0x122 - int32u: RAWDataOffset for the GH5s/GX9, or pointer to end of raw data for G9 (forum9295)
     0x2bc => { # PH Extension!!
         Name => 'ApplicationNotes', # (writable directory!)
         Writable => 'int8u',
@@ -265,6 +281,18 @@ my %wbTypeInfo = (
         SubDirectory => {
             DirName => 'XMP',
             TagTable => 'Image::ExifTool::XMP::Main',
+        },
+    },
+    0x001b => { #forum9250
+        Name => 'NoiseReductionParams',
+        Writable => 'undef',
+        Format => 'int16u',
+        Count => -1,
+        Flags => 'Protected',
+        Notes => q{
+            the camera's default noise reduction setup.  The first number is the number
+            of entries, then for each entry there are 4 numbers: an ISO speed, and
+            noise-reduction strengths the R, G and B channels
         },
     },
     0x83bb => { # PH Extension!!
@@ -420,11 +448,79 @@ my %wbTypeInfo = (
     # (don't know what format codes 0x101 and 0x102 are for, so just
     #  map them into 4 = int32u for now)
     VARS => { MAP_FORMAT => { 0x101 => 4, 0x102 => 4 } },
-    0x1101 => { #forum8484 (Metabones EF-M43-BT2 adapter with Canon lenses)
-        Name => 'FocusDistance',
+    0x1001 => { #forum9388
+        Name => 'MultishotOn',
+        Writable => 'int32u',
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
+    },
+    0x1100 => { #forum9274
+        Name => 'FocusStepNear',
+        Writable => 'int16s',
+    },
+    0x1101 => { #forum9274 (was forum8484)
+        Name => 'FocusStepCount',
+        Writable => 'int16s',
+    },
+    # 0x1104 - set when camera shoots on lowest possible Extended-ISO (forum9290)
+    0x1105 => { #forum9392
+        Name => 'ZoomPosition',
+        Notes => 'in the range 0-255 for most cameras',
+        Writable => 'int32u',
+    },
+    0x1200 => { #forum9278
+        Name => 'LensAttached',
+        Notes => 'many CameraIFD tags are invalid if there is no lens attached',
+        Writable => 'int32u',
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
+    },
+    # 1201 - LensStyle? ref forum9394
+    0x1203 => { #4
+        Name => 'FocalLengthIn35mmFormat',
         Writable => 'int16u',
-        ValueConv => '$val / 200',
-        PrintConv => '$val > 65534.5/200 ? "inf" : "$val m"',
+        PrintConv => '"$val mm"',
+        PrintConvInv => '$val=~s/\s*mm$//;$val',
+    },
+    0x1305 => { #forum9384
+        Name => 'HighISOMode',
+        Writable => 'int16u',
+        RawConv => '$val || undef',
+        PrintConv => { 1 => 'On', 2 => 'Off' },
+    },
+    # 0x140b - scaled overall black level? (ref forum9281)
+    # 0x1411 - scaled black level per channel difference (ref forum9281)
+    # 0x2009 - scaled black level per channel (ref forum9281)
+    0x3200 => { #forum9275
+        Name => 'WB_CFA0_LevelDaylight',
+        Writable => 'int16u',
+    },
+    0x3201 => { #forum9275
+        Name => 'WB_CFA1_LevelDaylight',
+        Writable => 'int16u',
+    },
+    0x3202 => { #forum9275
+        Name => 'WB_CFA2_LevelDaylight',
+        Writable => 'int16u',
+    },
+    0x3203 => { #forum9275
+        Name => 'WB_CFA3_LevelDaylight',
+        Writable => 'int16u',
+    },
+    # 0x3204-0x3207 - user multipliers * 1024 ? (ref forum9275)
+    # 0x320a - scaled maximum value of raw data (scaling = 4x) (ref forum9281)
+    # 0x3209 - gamma (x256) (ref forum9281)
+    # 0x3300 - WhiteBalance (0=auto, ref forum9296)
+    0x3420 => { #forum9276
+        Name => 'WB_RedLevelAuto',
+        Writable => 'int16u',
+    },
+    0x3421 => { #forum9276
+        Name => 'WB_BlueLevelAuto',
+        Writable => 'int16u',
+    },
+    0x3501 => { #4
+        Name => 'Orientation',
+        Writable => 'int8u',
+        PrintConv => \%Image::ExifTool::Exif::orientation,
     },
 );
 

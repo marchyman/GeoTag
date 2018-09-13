@@ -10,16 +10,9 @@ Feature Requests:
   to put in a tag to indicate that the photo has GPS data in it.   On a
   save if GPS data is there it also saves the Tag.  Just an idea.
 
-* Some of my photos don't have the correct Date/Time.  It would be nice if you
-  could use GeoTag 3 to also update this for one or more photos.
-
-* Multithread load and save
-
 * Manual lat/long entry
 
 * Preference option for lat/long output format.
   d.ddddddd # degrees and fractions of a degree (current format)
   d m.mmmmm # degrees and minutes
   d m s     # degrees, minutes, and seconds
-
-* Apply location from a GPS track log

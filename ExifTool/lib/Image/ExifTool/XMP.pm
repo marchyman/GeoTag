@@ -25,6 +25,7 @@
 #               10) http://www.adobe.com/devnet/xmp/pdfs/XMPSpecificationPart2.pdf (Oct 2008)
 #               11) http://www.extensis.com/en/support/kb_article.jsp?articleNumber=6102211
 #               12) http://www.cipa.jp/std/documents/e/DC-010-2012_E.pdf
+#               13) http://www.cipa.jp/std/documents/e/DC-010-2017_E.pdf
 #
 # Notes:      - Property qualifiers are handled as if they were separate
 #               properties (with no associated namespace).
@@ -48,7 +49,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.11';
+$VERSION = '3.15';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -61,6 +62,7 @@ sub EncodeBase64($;$);
 sub SaveBlankInfo($$$;$);
 sub ProcessBlankInfo($$$;$);
 sub ValidateXMP($;$);
+sub ValidateProperty($$);
 sub UnescapeChar($$);
 sub AddFlattenedTags($;$$);
 sub FormatXMPDate($);
@@ -1456,7 +1458,7 @@ my %sPantryItem = (
     TABLE_DESC => 'XMP TIFF',
     NOTES => q{
         EXIF namespace for TIFF tags.  See
-        L<http://www.cipa.jp/std/documents/e/DC-010-2012_E.pdf> for the
+        L<http://www.cipa.jp/std/documents/e/DC-010-2017_E.pdf> for the
         specification.
     },
     ImageWidth    => { Writable => 'integer' },
@@ -1547,7 +1549,7 @@ my %sPantryItem = (
     PRIORITY => 0, # not as reliable as actual EXIF tags
     NOTES => q{
         EXIF namespace for EXIF tags.  See
-        L<http://www.cipa.jp/std/documents/e/DC-010-2012_E.pdf> for the
+        L<http://www.cipa.jp/std/documents/e/DC-010-2017_E.pdf> for the
         specification.
     },
     ExifVersion     => { },
@@ -2000,8 +2002,8 @@ my %sPantryItem = (
     NAMESPACE   => 'exifEX',
     PRIORITY => 0, # not as reliable as actual EXIF tags
     NOTES => q{
-        EXIF tags added by the EXIF 2.3 for XMP specification (see
-        L<http://www.cipa.jp/std/documents/e/DC-010-2012_E.pdf>).
+        EXIF tags added by the EXIF 2.31 for XMP specification (see
+        L<http://www.cipa.jp/std/documents/e/DC-010-2017_E.pdf>).
     },
     Gamma                       => { Writable => 'rational' },
     PhotographicSensitivity     => { Writable => 'integer' },
@@ -2069,6 +2071,13 @@ my %sPantryItem = (
             THM => 'THM - DCF thumbnail file',
         },
     },
+    # new in Exif 2.31
+    Temperature         => { Writable => 'rational', Name => 'AmbientTemperature' },
+    Humidity            => { Writable => 'rational' },
+    Pressure            => { Writable => 'rational' },
+    WaterDepth          => { Writable => 'rational' },
+    Acceleration        => { Writable => 'rational' },
+    CameraElevationAngle=> { Writable => 'rational' },
 );
 
 # Auxiliary namespace properties (aux) - not fully documented (ref PH)
@@ -2209,10 +2218,7 @@ my %sPantryItem = (
             $val[0] =~ /^.*([NS])/;
             return $1;
         },
-        PrintConv => {
-            N => 'North',
-            S => 'South',
-        },
+        PrintConv => { N => 'North', S => 'South' },
     },
     GPSLongitudeRef => {
         Require => 'XMP:GPSLongitude',
@@ -2221,10 +2227,25 @@ my %sPantryItem = (
             $val[0] =~ /^.*([EW])/;
             return $1;
         },
-        PrintConv => {
-            E => 'East',
-            W => 'West',
+        PrintConv => { E => 'East', W => 'West' },
+    },
+    GPSDestLatitudeRef => {
+        Require => 'XMP:GPSDestLatitude',
+        ValueConv => q{
+            IsFloat($val[0]) and return $val[0] < 0 ? "S" : "N";
+            $val[0] =~ /^.*([NS])/;
+            return $1;
         },
+        PrintConv => { N => 'North', S => 'South' },
+    },
+    GPSDestLongitudeRef => {
+        Require => 'XMP:GPSDestLongitude',
+        ValueConv => q{
+            IsFloat($val[0]) and return $val[0] < 0 ? "W" : "E";
+            $val[0] =~ /^.*([EW])/;
+            return $1;
+        },
+        PrintConv => { E => 'East', W => 'West' },
     },
     LensID => {
         Notes => 'attempt to convert numerical XMP-aux:LensID stored by Adobe applications',
@@ -3166,7 +3187,7 @@ NoLoop:
 sub ParseXMPElement($$$;$$$$)
 {
     local $_;
-    my ($et, $tagTablePtr, $dataPt, $start, $end, $propListPt, $blankInfo) = @_;
+    my ($et, $tagTablePtr, $dataPt, $start, $end, $propList, $blankInfo) = @_;
     my ($count, $nItems) = (0, 0);
     my $isWriting = $$et{XMP_CAPTURE};
     my $isSVG = $$et{XMP_IS_SVG};
@@ -3182,7 +3203,7 @@ sub ParseXMPElement($$$;$$$$)
     }
     $start or $start = 0;
     $end or $end = length $$dataPt;
-    $propListPt or $propListPt = [ ];
+    $propList or $propList = [ ];
 
     my $processBlankInfo;
     # create empty blank node information hash if necessary
@@ -3336,7 +3357,7 @@ sub ParseXMPElement($$$;$$$$)
         if ($prop eq 'rdf:li') {
             # impose a reasonable maximum on the number of items in a list
             if ($nItems == 1000) {
-                my ($tg,$ns) = GetXMPTagID($propListPt);
+                my ($tg,$ns) = GetXMPTagID($propList);
                 if ($isWriting) {
                     $et->Warn("Excessive number of items for $ns:$tg. Processing may be slow", 1);
                 } elsif (not $$et{OPTIONS}{IgnoreMinorErrors}) {
@@ -3355,14 +3376,14 @@ sub ParseXMPElement($$$;$$$$)
             $prop .= ' ' . length($nItems) . $nItems;
             # reset LIST_TAGS at the start of the outtermost list
             # (avoids accumulating incorrectly-written elements in a correctly-written list)
-            if (not $nItems and not grep /^rdf:li /, @$propListPt) {
+            if (not $nItems and not grep /^rdf:li /, @$propList) {
                 $$et{LIST_TAGS} = { };
             }
             ++$nItems;
         } elsif ($prop eq 'rdf:Description') {
             # remove unnecessary rdf:Description elements since parseType='Resource'
             # is more efficient (also necessary to make property path consistent)
-            $parseResource = 1 if grep /^rdf:Description$/, @$propListPt;
+            $parseResource = 1 if grep /^rdf:Description$/, @$propList;
         } elsif ($prop eq 'xmp:xmpmeta') {
             # patch MicrosoftPhoto unconformity
             $prop = 'x:xmpmeta';
@@ -3387,19 +3408,19 @@ sub ParseXMPElement($$$;$$$$)
         }
 
         # push this property name onto our hierarchy list
-        push @$propListPt, $prop unless $parseResource;
+        push @$propList, $prop unless $parseResource;
 
         if ($isSVG) {
             # ignore everything but top level SVG tags and metadata unless Unknown set
             unless ($$et{OPTIONS}{Unknown} > 1 or $$et{OPTIONS}{Verbose}) {
-                if (@$propListPt > 1 and $$propListPt[1] !~ /\b(metadata|desc|title)$/) {
-                    pop @$propListPt;
+                if (@$propList > 1 and $$propList[1] !~ /\b(metadata|desc|title)$/) {
+                    pop @$propList;
                     next;
                 }
             }
             if ($prop eq 'svg' or $prop eq 'metadata') {
                 # add svg namespace prefix if missing to ignore these entries in the tag name
-                $$propListPt[-1] = "svg:$prop";
+                $$propList[-1] = "svg:$prop";
             }
         }
 
@@ -3460,21 +3481,22 @@ sub ParseXMPElement($$$;$$$$)
                 next;
             }
             delete $attrs{$shortName};  # don't re-use this attribute
-            push @$propListPt, $propName;
+            push @$propList, $propName;
             # save this shorthand XMP property
             if (defined $nodeID) {
-                SaveBlankInfo($blankInfo, $propListPt, $shortVal);
+                SaveBlankInfo($blankInfo, $propList, $shortVal);
             } elsif ($isWriting) {
-                CaptureXMP($et, $propListPt, $shortVal);
+                CaptureXMP($et, $propList, $shortVal);
             } else {
-                &$foundProc($et, $tagTablePtr, $propListPt, $shortVal);
+                ValidateProperty($et, $propList) if $$et{XmpValidate};
+                &$foundProc($et, $tagTablePtr, $propList, $shortVal);
             }
-            pop @$propListPt;
+            pop @$propList;
             $shorthand = 1;
         }
         if ($isWriting) {
             if (ParseXMPElement($et, $tagTablePtr, $dataPt, $valStart, $valEnd,
-                                $propListPt, $blankInfo))
+                                $propList, $blankInfo))
             {
                 # (no value since we found more properties within this one)
                 # set an error on any ignored attributes here, because they will be lost
@@ -3486,16 +3508,16 @@ sub ParseXMPElement($$$;$$$$)
                     $val =~ s/<!--.*?-->//g; $val =~ s/^\s+//; $val =~ s/\s+$//;
                 }
                 if (defined $nodeID) {
-                    SaveBlankInfo($blankInfo, $propListPt, $val, \%attrs);
+                    SaveBlankInfo($blankInfo, $propList, $val, \%attrs);
                 } else {
-                    CaptureXMP($et, $propListPt, $val, \%attrs);
+                    CaptureXMP($et, $propList, $val, \%attrs);
                 }
             }
         } else {
             # look for additional elements contained within this one
             if ($valStart == $valEnd or
                 !ParseXMPElement($et, $tagTablePtr, $dataPt, $valStart, $valEnd,
-                                 $propListPt, $blankInfo))
+                                 $propList, $blankInfo))
             {
                 my $wasEmpty;
                 unless (defined $val) {
@@ -3516,21 +3538,22 @@ sub ParseXMPElement($$$;$$$$)
                 # there are no contained elements, so this must be a simple property value
                 # (unless we already extracted shorthand values from this element)
                 if (length $val or not $shorthand) {
-                    my $lastProp = $$propListPt[-1];
+                    my $lastProp = $$propList[-1];
                     if (defined $nodeID) {
-                        SaveBlankInfo($blankInfo, $propListPt, $val);
+                        SaveBlankInfo($blankInfo, $propList, $val);
                     } elsif ($lastProp eq 'rdf:type' and $wasEmpty) {
                         # do not extract empty structure types (for now)
                     } elsif ($lastProp =~ /^et:(desc|prt|val)$/ and ($count or $1 eq 'desc')) {
                         # ignore et:desc, and et:val if preceded by et:prt
                         --$count;
                     } else {
-                        &$foundProc($et, $tagTablePtr, $propListPt, $val, \%attrs);
+                        ValidateProperty($et, $propList) if $$et{XmpValidate};
+                        &$foundProc($et, $tagTablePtr, $propList, $val, \%attrs);
                     }
                 }
             }
         }
-        pop @$propListPt unless $parseResource;
+        pop @$propList unless $parseResource;
         ++$count;
         last if $start >= $end;
         pos($$dataPt) = $start;
@@ -3578,18 +3601,28 @@ sub ProcessXMP($$;$)
     $$et{curNS}  = { };
     $$et{xlatNS} = { };
 
+    delete $$et{XmpValidate};   # don't validate by default
+
     # ignore non-standard XMP while in strict MWG compatibility mode
-    if (($Image::ExifTool::MWG::strict or $et->Options('Validate')) and not $$et{XMP_CAPTURE} and
-        $$et{FILE_TYPE} =~ /^(JPEG|TIFF|PSD)$/)
+    if (($Image::ExifTool::MWG::strict or $$et{OPTIONS}{Validate}) and
+        not ($$et{XMP_CAPTURE} or $$et{DOC_NUM}) and
+        (($$dirInfo{DirName} || '') eq 'XMP' or $$et{FILE_TYPE} eq 'XMP'))
     {
+        $$et{XmpValidate} = { } if $$et{OPTIONS}{Validate};
         my $path = $et->MetadataPath();
-        unless ($path =~ /^(JPEG-APP1-XMP|TIFF-IFD0-XMP|PSD-XMP)$/) {
-            if ($Image::ExifTool::MWG::strict) {
-                $et->Warn("Ignored non-standard XMP at $path");
-                return 1;
-            } else {
-                $et->Warn("Non-standard XMP at $path", 1);
-            }
+        my $nonStd;
+        if ($$et{FILE_TYPE} =~ /^(JPEG|TIFF|PSD)$/ and $path !~ /^(JPEG-APP1-XMP|TIFF-IFD0-XMP|PSD-XMP)$/) {
+            $nonStd = 1;
+        }
+        if ($nonStd and $Image::ExifTool::MWG::strict) {
+            $et->Warn("Ignored non-standard XMP at $path");
+            return 1;
+        }
+        if ($nonStd) {
+            $et->Warn("Non-standard XMP at $path", 1);
+        } elsif (not $$dirInfo{IsExtended}) {
+            $et->Warn("Duplicate XMP at $path") if $$et{DIR_COUNT}{XMP};
+            $$et{DIR_COUNT}{XMP} = ($$et{DIR_COUNT}{XMP} || 0) + 1; # count standard XMP
         }
     }
     if ($dataPt) {
@@ -3639,6 +3672,7 @@ sub ProcessXMP($$;$)
             }
             $bom = 1 if $1;
             if ($2 eq '<?xml') {
+                undef $$et{XmpValidate};    # don't validate XML
                 if (defined $fmt and not $fmt and $buf2 =~ /^[^\n\r]*[\n\r]+<\?aid /s) {
                     if ($$et{XMP_CAPTURE}) {
                         $et->Error("ExifTool does not yet support writing of INX files");
@@ -3777,7 +3811,8 @@ sub ProcessXMP($$;$)
     # extract XMP as a block if specified
     my $blockName = $$dirInfo{BlockInfo} ? $$dirInfo{BlockInfo}{Name} : 'XMP';
     if (($$et{REQ_TAG_LOOKUP}{lc $blockName} or ($$et{TAGS_FROM_FILE} and
-        not $$et{EXCL_TAG_LOOKUP}{lc $blockName})) and not $isSVG)
+        not $$et{EXCL_TAG_LOOKUP}{lc $blockName})) and
+        ($$dirInfo{DirName} and $$dirInfo{DirName} eq 'XMP'))
     {
         $et->FoundTag($$dirInfo{BlockInfo} || 'XMP', substr($$dataPt, $dirStart, $dirLen));
     }

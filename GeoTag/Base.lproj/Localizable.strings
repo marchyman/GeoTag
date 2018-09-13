@@ -14,11 +14,20 @@ You may save your changes, throw away your changes, or cancel program terminatio
 "CLOSE" = "Close";
 "WARN_TITLE" = "Some files not opened";
 "WARN_DESC" = "One or more files were not opened. Unopened files were duplicates of files already opened for processing.";
-"NO_BACKUP_TITLE" = "Cannot make backup of image file";
+"NO_BACKUP_TITLE" = "Cannot make backups of image files";
 "NO_BACKUP_DESC" = "
-
-The above named image file could not be copied to your backup folder. Geolocation information has NOT been saved to the image. The warning may apply to multiple image files.  You must open GeoTag preferences and select a backup folder before you can save your changes.
+A backup folder has not been selected or the backup folder no longer exists.   Please open program Preferences and select a backup folder.  Location changes can not be saved until a backup folder is selected.
 
 Failure reason: ";
 "NO_BACKUP_REASON" = "Missing Backup Folder";
+"SAVE_ERROR_TITLE" = "Error saving files";
+"SAVE_ERROR_DESC" = "One or more files could not be saved. Possible causes:
+* The original file could not be backed up for unknown reasons
+* ExifTool could not update the modified metadata";
 "UNEXPECTED_ERROR" = "Unexpected Error";
+"BAD_GPX_TITLE" = "Can not process GPX file";
+"BAD_GPX_DESC" = "
+
+The above named GPX file could not be properly processed. Any track log information in the file has been ignored.";
+"GPX_LOADED_TITLE" = "GPX File Loaded";
+"GPX_LOADED_DESC" = " processed and will show as a track on the map";

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
-        <plugIn identifier="com.apple.MapKitIBPlugin" version="14109"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.3.2"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="14313.3.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -16,6 +16,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="GeoTag" customModuleProvider="target">
             <connections>
+                <outlet property="mapViewController" destination="Go6-yP-GH9" id="kvs-CY-ry5"/>
                 <outlet property="progressIndicator" destination="Leb-gI-5bq" id="QDo-c7-wEB"/>
                 <outlet property="tableViewController" destination="er7-2A-M57" id="Bon-5R-vH6"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
@@ -35,6 +36,7 @@
             <connections>
                 <outlet property="mapTypeControl" destination="UAa-bh-Wko" id="8Ar-sO-rpi"/>
                 <outlet property="mapView" destination="Zwv-MK-4Du" id="zEq-nz-0pQ"/>
+                <outlet property="search" destination="cBm-xR-XMN" id="ykD-bf-zqn"/>
             </connections>
         </viewController>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -91,11 +93,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="bib-Uj-vzu">
                         <items>
-                            <menuItem title="New" keyEquivalent="n" id="Was-JA-tGl">
-                                <connections>
-                                    <action selector="newDocument:" target="-1" id="4Si-XN-c54"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Open…" keyEquivalent="o" id="IAo-SY-fd9">
                                 <connections>
                                     <action selector="showOpenPanel:" target="Voe-Tx-rLC" id="Urn-mG-qJg"/>
@@ -177,6 +174,16 @@ CA
                                     <action selector="interpolate:" target="er7-2A-M57" id="9Os-AS-YeY"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Locn from track" keyEquivalent="l" id="zOv-fq-8jk">
+                                <connections>
+                                    <action selector="locnFromTrack:" target="er7-2A-M57" id="3sm-dj-fhX"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Modify Date/Time" keyEquivalent="t" id="wZk-Ky-vsg">
+                                <connections>
+                                    <action selector="modifyDateTime:" target="er7-2A-M57" id="bZg-EE-GD9"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -218,8 +225,9 @@ CA
                     </menu>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="-240" y="-104"/>
         </menu>
-        <window title="GeoTag" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="GeoTagMain" animationBehavior="default" id="QvC-M9-y7g">
+        <window title="GeoTag" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="GeoTagMain" animationBehavior="default" tabbingMode="disallowed" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="1100" height="816"/>
@@ -298,16 +306,15 @@ CA
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
-                                                            <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="dateTime"/>
+                                                            <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="dateTimeSort"/>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="dateTime" id="J4a-hA-T1u">
                                                                     <rect key="frame" x="166" y="1" width="154" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
-                                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gmo-tg-1MM">
+                                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Gmo-tg-1MM">
                                                                             <rect key="frame" x="0.0" y="0.0" width="142" height="17"/>
-                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="yyyy:mm:dd hh:mm:ss" id="TXL-1H-fom">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -315,6 +322,11 @@ CA
                                                                             </textFieldCell>
                                                                         </textField>
                                                                     </subviews>
+                                                                    <constraints>
+                                                                        <constraint firstItem="Gmo-tg-1MM" firstAttribute="leading" secondItem="J4a-hA-T1u" secondAttribute="leading" constant="2" id="4kx-ZI-ncB"/>
+                                                                        <constraint firstItem="Gmo-tg-1MM" firstAttribute="centerY" secondItem="J4a-hA-T1u" secondAttribute="centerY" id="clD-9y-Ty0"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="Gmo-tg-1MM" secondAttribute="trailing" constant="14" id="hg8-UW-PhJ"/>
+                                                                    </constraints>
                                                                     <connections>
                                                                         <outlet property="textField" destination="Gmo-tg-1MM" id="aS6-kK-oqk"/>
                                                                     </connections>
@@ -399,6 +411,7 @@ CA
                                                         </tableColumn>
                                                     </tableColumns>
                                                     <connections>
+                                                        <action trigger="doubleAction" selector="doubleClick:" target="er7-2A-M57" id="bEH-gE-ejD"/>
                                                         <outlet property="dataSource" destination="er7-2A-M57" id="0J5-bl-kmR"/>
                                                         <outlet property="delegate" destination="er7-2A-M57" id="R4s-C2-eCu"/>
                                                     </connections>
@@ -465,11 +478,11 @@ CA
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jOB-Xu-ExJ">
-                                                        <rect key="frame" x="352" y="381" width="155" height="32"/>
+                                                        <rect key="frame" x="363" y="381" width="144" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="SvS-X7-UYa"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="push" title="Save Map Location" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7D7-7V-JIv">
+                                                        <buttonCell key="cell" type="push" title="Save Map Layout" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7D7-7V-JIv">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -500,7 +513,7 @@ CA
                                                     <searchField wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cBm-xR-XMN">
                                                         <rect key="frame" x="181" y="346" width="320" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
-                                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" id="KmR-EN-cxb">
+                                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" maximumRecents="10" recentsAutosaveName="Searches" id="KmR-EN-cxb">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -554,7 +567,7 @@ CA
                 <outlet property="delegate" destination="Voe-Tx-rLC" id="YQK-Qt-HzN"/>
                 <outlet property="initialFirstResponder" destination="ARi-Ei-bTG" id="Jxz-i1-P4S"/>
             </connections>
-            <point key="canvasLocation" x="-383" y="72"/>
+            <point key="canvasLocation" x="-1004" y="95"/>
         </window>
         <menu title="Table Menu" id="RI2-ul-n9D">
             <items>
@@ -589,6 +602,18 @@ CA
                         <action selector="interpolate:" target="er7-2A-M57" id="y2n-JA-zo0"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Locn from track" id="VuN-hN-RU0">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="locnFromTrack:" target="er7-2A-M57" id="6hh-Zb-T7B"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Modify Date/Time" id="QoA-6r-2bN">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="modifyDateTime:" target="er7-2A-M57" id="9UR-4g-WL2"/>
+                    </connections>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="Aie-jX-Muf"/>
                 <menuItem title="Clear image list" id="Q8s-0g-bd6">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -597,7 +622,7 @@ CA
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-215" y="323.5"/>
+            <point key="canvasLocation" x="-327" y="272"/>
         </menu>
     </objects>
 </document>

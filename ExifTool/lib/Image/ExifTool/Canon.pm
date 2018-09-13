@@ -87,7 +87,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '3.91';
+$VERSION = '3.95';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -112,6 +112,7 @@ $VERSION = '3.91';
      6.2 => 'Sigma 18-125mm f/3.5-5.6 DC IF ASP',
      6.3 => 'Tokina AF 193-2 19-35mm f/3.5-4.5',
      6.4 => 'Sigma 28-80mm f/3.5-5.6 II Macro', #47
+     6.5 => 'Sigma 28-300mm f/3.5-6.3 DG Macro', #IB
      7 => 'Canon EF 100-300mm f/5.6L', #15
      8 => 'Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens', #32
      8.1 => 'Sigma 70-300mm f/4-5.6 [APO] DG Macro', #15 (both APO and non-APO, ref forum2947)
@@ -206,7 +207,9 @@ $VERSION = '3.91';
     82 => 'Canon TS-E 135mm f/4L Macro', #42
     94 => 'Canon TS-E 17mm f/4L', #42
     95 => 'Canon TS-E 24mm f/3.5L II', #43
-    103 => 'Samyang AF 14mm f/2.8 EF', #IB
+    103 => 'Samyang AF 14mm f/2.8 EF or Rokinon Lens', #IB
+    103.1 => 'Rokinon SP 14mm f/2.4', #IB
+    103.2 => 'Rokinon AF 14mm f/2.8 EF', #IB
     124 => 'Canon MP-E 65mm f/2.8 1-5x Macro Photo', #9
     125 => 'Canon TS-E 24mm f/3.5L',
     126 => 'Canon TS-E 45mm f/2.8', #15
@@ -285,7 +288,7 @@ $VERSION = '3.91';
     160.3 => 'Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye', #PH (http://osdir.com/ml/digikam-devel/2011-04/msg00275.html)
     160.4 => 'Tokina AT-X 116 AF Pro DX 11-16mm f/2.8', #forum3967
     160.5 => 'Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8', #NJ (Exiv2 #1166)
-    161 => 'Canon EF 28-70mm f/2.8L USM or Sigma or Tamron Lens',
+    161 => 'Canon EF 28-70mm f/2.8L USM or Other Lens',
     161.1 => 'Sigma 24-70mm f/2.8 EX',
     161.2 => 'Sigma 28-70mm f/2.8 EX', #PH (http://www.breezesys.com/forum/showthread.php?t=3718)
     161.3 => 'Sigma 24-60mm f/2.8 EX DG', #PH (http://www.lensrentals.com/blog/2012/08/canon-illumination-correction-and-third-party-lenses)
@@ -293,6 +296,7 @@ $VERSION = '3.91';
     161.5 => 'Tamron 90mm f/2.8',
     161.6 => 'Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF', #IB (A05)
     161.7 => 'Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro', #IB/NJ
+    161.8 => 'Tokina AT-X 24-70mm f/2.8 PRO FX (IF)', #IB
     162 => 'Canon EF 200mm f/2.8L USM', #32
     163 => 'Canon EF 300mm f/4L', #32
     164 => 'Canon EF 400mm f/5.6L', #32
@@ -309,6 +313,7 @@ $VERSION = '3.91';
     169.5 => 'Sigma 85mm f/1.4 EX DG HSM', #Rolando Ruzic
     169.6 => 'Sigma 30mm f/1.4 EX DC HSM', #Rodolfo Borges
     169.7 => 'Sigma 35mm f/1.4 DG HSM', #PH (also "| A" version, ref 50)
+    169.8 => 'Sigma 35mm f/1.5 FF High-Speed Prime | 017', #IB
     170 => 'Canon EF 200mm f/2.8L II USM', #9
     171 => 'Canon EF 300mm f/4L USM', #15
     172 => 'Canon EF 400mm f/5.6L USM or Sigma Lens', #32
@@ -332,6 +337,9 @@ $VERSION = '3.91';
     180.3 => 'Zeiss Milvus 50mm f/1.4', #IB
     180.4 => 'Zeiss Milvus 85mm f/1.4', #IB
     180.5 => 'Zeiss Otus 28mm f/1.4 ZE', #PH
+    180.6 => 'Sigma 24mm f/1.5 FF High-Speed Prime | 017', #IB
+    180.7 => 'Sigma 50mm f/1.5 FF High-Speed Prime | 017', #IB
+    180.8 => 'Sigma 85mm f/1.5 FF High-Speed Prime | 017', #IB
     181 => 'Canon EF 100-400mm f/4.5-5.6L IS USM + 1.4x or Sigma Lens', #15
     181.1 => 'Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x', #50
     182 => 'Canon EF 100-400mm f/4.5-5.6L IS USM + 2x or Sigma Lens',
@@ -343,6 +351,7 @@ $VERSION = '3.91';
     183.4 => 'Sigma 150-600mm f/5-6.3 DG OS HSM | C', #47
     183.5 => 'Sigma 150-600mm f/5-6.3 DG OS HSM | S', #forum7109 (Sports 014)
     183.6 => 'Sigma 100-400mm f/5-6.3 DG OS HSM', #PH ("| C" ?)
+    183.7 => 'Sigma 180mm f/3.5 APO Macro EX DG IF HSM', #IB
     184 => 'Canon EF 400mm f/2.8L USM + 2x', #15
     185 => 'Canon EF 600mm f/4L IS USM', #32
     186 => 'Canon EF 70-200mm f/4L USM', #9
@@ -360,6 +369,7 @@ $VERSION = '3.91';
     198 => 'Canon EF 50mm f/1.4 USM or Zeiss Lens',
     198.1 => 'Zeiss Otus 55mm f/1.4 ZE', #JR (seen only on Sony camera)
     198.2 => 'Zeiss Otus 85mm f/1.4 ZE', #JR (NC)
+    198.3 => 'Zeiss Milvus 25mm f/1.4', #IB
     199 => 'Canon EF 28-80mm f/3.5-5.6 USM', #32
     200 => 'Canon EF 75-300mm f/4-5.6 USM', #32
     201 => 'Canon EF 28-80mm f/3.5-5.6 USM', #32
@@ -393,7 +403,8 @@ $VERSION = '3.91';
     236 => 'Canon EF-S 60mm f/2.8 Macro USM', #15
     237 => 'Canon EF 24-105mm f/4L IS USM', #15
     238 => 'Canon EF 70-300mm f/4-5.6 IS USM', #15 (and version II? ref 42)
-    239 => 'Canon EF 85mm f/1.2L II USM', #15
+    239 => 'Canon EF 85mm f/1.2L II USM or Rokinon Lens', #15
+    239.1 => 'Rokinon SP 85mm f/1.2', #IB
     240 => 'Canon EF-S 17-55mm f/2.8 IS USM', #15
     241 => 'Canon EF 50mm f/1.2L USM', #15
     242 => 'Canon EF 70-200mm f/4L IS USM', #PH
@@ -404,16 +415,21 @@ $VERSION = '3.91';
     247 => 'Canon EF 14mm f/2.8L II USM', #32
     248 => 'Canon EF 200mm f/2L IS USM or Sigma Lens', #42
     248.1 => 'Sigma 24-35mm f/2 DG HSM | A', #JR
+    248.2 => 'Sigma 135mm f/2 FF High-Speed Prime | 017', #IB
+    248.3 => 'Sigma 24-35mm f/2.2 FF Zoom | 017', #IB
     249 => 'Canon EF 800mm f/5.6L IS USM', #35
     250 => 'Canon EF 24mm f/1.4L II USM or Sigma Lens', #41
     250.1 => 'Sigma 20mm f/1.4 DG HSM | A', #IB
+    250.2 => 'Sigma 20mm f/1.5 FF High-Speed Prime | 017', #IB
     251 => 'Canon EF 70-200mm f/2.8L IS II USM',
     252 => 'Canon EF 70-200mm f/2.8L IS II USM + 1.4x', #50 (1.4x Mk II)
     253 => 'Canon EF 70-200mm f/2.8L IS II USM + 2x', #PH (NC)
+    # 253.1 => 'Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025) + 2x', #forum9367
     254 => 'Canon EF 100mm f/2.8L Macro IS USM', #42
     255 => 'Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens', #50
     255.1 => 'Sigma 180mm f/2.8 EX DG OS HSM APO Macro', #50
-    368 => 'Sigma 14-24mm f/2.8 DG HSM | A', #IB (A018)
+    368 => 'Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens', #IB (A018)
+    368.1 => 'Sigma 20mm f/1.4 DG HSM | A', #50 (newer firmware)
     # Note: LensType 488 (0x1e8) is reported as 232 (0xe8) in 7D CameraSettings
     488 => 'Canon EF-S 15-85mm f/3.5-5.6 IS USM', #PH
     489 => 'Canon EF 70-300mm f/4-5.6L IS USM', #Gerald Kapounek
@@ -422,6 +438,9 @@ $VERSION = '3.91';
     491.1 => 'Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)', #IB
     491.2 => 'Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)', #IB
     491.3 => 'Tamron 100-400mm f/4.5-6.3 Di VC USD (A035)', #IB
+    491.4 => 'Tamron 70-210mm f/4 Di VC USD (A034)', #IB
+    491.5 => 'Tamron 70-210mm f/4 Di VC USD (A034) + 1.4x', #IB
+    491.6 => 'Tamron SP 24-70mm f/2.8 Di VC USD G2 (A032)',
     492 => 'Canon EF 400mm f/2.8L IS II USM', #PH
     493 => 'Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM', #PH
     493.1 => 'Canon EF 24-105mm f/4L IS USM', #PH (should recheck this)
@@ -440,11 +459,15 @@ $VERSION = '3.91';
     508.1 => 'Tamron 10-24mm f/3.5-4.5 Di II VC HLD', #PH (B023)
     747 => 'Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens', #JR
     747.1 => 'Tamron SP 150-600mm f/5-6.3 Di VC USD G2', #50
-    748 => 'Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x', #JR (1.4x Mk III)
+    748 => 'Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens', #JR (1.4x Mk III)
+    748.1 => 'Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 1.4x', #IB
+    748.2 => 'Tamron 70-210mm f/4 Di VC USD (A034) + 2x', #IB
+    749 => 'Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 2x', #IB
     750 => 'Canon EF 35mm f/1.4L II USM', #42
     751 => 'Canon EF 16-35mm f/2.8L III USM', #42
     752 => 'Canon EF 24-105mm f/4L IS II USM', #42
     753 => 'Canon EF 85mm f/1.4L IS USM', #42
+    1136 => 'Sigma 24-70mm f/2.8 DG OS HSM | Art 017', #IB
     # (STM lenses - 0x10xx)
     4142 => 'Canon EF-S 18-135mm f/3.5-5.6 IS STM',
     4143 => 'Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens',
@@ -8351,6 +8374,7 @@ my %filterConv = (
         SubDirectory => {
             TagTable => 'Image::ExifTool::GPS::Main',
             ProcessProc => \&Image::ExifTool::ProcessTIFF,
+            DirName => 'GPS',
         },
     },
     THMB => {
@@ -9294,26 +9318,26 @@ sub ProcessCTMD($$$)
     while ($pos + 6 < $dirLen) {
         my $size = Get32u($dataPt, $pos);
         my $type = Get16u($dataPt, $pos + 4);
-        # what is the meaning of the next 6 bytes of these records?:
-        #   type 1 - 00 00 00 01 zz zz - TimeStamp; zz=00(CR3),ff(CRM)
-        #   type 3 - 00 00 00 01 zz zz - ? "ff ff ff ff"; zz=00(CR3),ff(CRM)
-        #   type 4 - 00 00 00 01 ff ff - FocalInfo
-        #   type 5 - 00 00 00 01 ff ff - ExposureInfo
-        #   type 6 - 00 04 00 01 ff ff - ? "03 04 00 80 e0 15 ff ff" (CRM) [0x15e0 = ColorTemperature?]
-        #   type 7 - xx yy 00 01 ff ff - ExifIFD + MakerNotes; xx=01(CR3),00(CRM) yy=01(CR3),04(CRM);
-        #   type 8 - 01 yy 00 01 ff ff - MakerNotes; yy=01(CR3),04(CRM)
-        #   type 9 - 01 yy 00 01 ff ff - MakerNotes; yy=01(CR3),00(CRM)
-        #   type 10- 01 00 00 01 ff ff - ? (CRM)
-        #   type 11- 01 00 00 01 ff ff - ? (CRM)
-        # --> maybe yy is 01 for ExifInfo?
+        # what is the meaning of the 6-byte header of these records?:
+        #  type 1 - 00 00 00 01 zz zz - TimeStamp(CR3/CRM); zz=00(CR3),ff(CRM)
+        #  type 3 - 00 00 00 01 zz zz - ? "ff ff ff ff"; zz=00(CR3),ff(CRM)
+        #  type 4 - 00 00 00 01 ff ff - FocalInfo(CR3/CRM)
+        #  type 5 - 00 00 00 01 ff ff - ExposureInfo(CR3/CRM)
+        #  type 6 - 00 04 00 01 ff ff - ? "03 04 00 80 e0 15 ff ff"(CRM) [0x15e0 = ColorTemperature?]
+        #  type 7 - xx yy 00 01 ff ff - ExifIFD + MakerNotes(CR3), ?(CRM); xxyy=0101(CR3),0004(CRM)
+        #  type 8 - 01 yy 00 01 ff ff - MakerNotes(CR3), ?(CRM); yy=01(CR3),04(CRM)
+        #  type 9 - 01 yy 00 01 ff ff - MakerNotes(CR3), ?(CRM); yy=01(CR3),00(CRM)
+        #  type 10- 01 00 00 01 ff ff - ? (CRM)
+        #  type 11- 01 00 00 01 ff ff - ? (CRM)
+        # --> maybe yy == 01 for ExifInfo?
         $size < 12 and $et->Warn('Short CTMD record'), last;
         $pos + $size > $dirLen and $et->Warn('Truncated CTMD record'), last;
-        $et->VerboseDir("CTMD type $type", undef, $size - 12);
-        $verbose > 2 and HexDump($dataPt, 6,
+        $et->VerboseDir("CTMD type $type", undef, $size - 6);
+        HexDump($dataPt, 6,     # dump 6-byte header
             Start  => $pos + 6,
             Addr   => $$dirInfo{Base} + $pos + 6,
             Prefix => $$et{INDENT},
-        );
+        ) if $verbose > 2;
         if ($$tagTablePtr{$type}) {
             $et->HandleTag($tagTablePtr, $type, undef,
                 DataPt  => $dataPt,

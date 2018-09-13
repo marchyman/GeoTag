@@ -1,37 +1,78 @@
-## GeoTag for OS X
+## GeoTag for macOS -- macOS 10.12 or later
 
-## GeoTag 4.3 requires macOS 10.10 or later
-
-## GeoTag 4.3
+## GeoTag 4.x (not yet released, still testing)
 
 ### New Features
 
-* Add ability to sort the table of images by column.  Clicking on a column header
-  will sort the table by the contents of that column.  Clicking again will change
-  the sort direction.
-* ExifTool version 10.94
+* GeoTag can now read GPS track logs in the format of a GPX file and display
+  tracks on the map.  This can help locate places where pictures were taken.
+  Use Open (⌘-O) to select GPX files.  GPX files can also be dragged onto the
+  table.
+* Image location can be updated from a GPS track logs.  Select the images to
+  update and use ⌘L, Edit -> Locn from track, or crtl-click -> Locn from track.
+  Note: this can be time consuming depending upon the number of images selected
+  and the number of track log point loaded.
+* Images can now be opened with GeoTag.  You can select one or more images in
+  finder and then right click and select the "Open With" option.  GeoTag will
+  be one of app choices.
+* Double clicking on an row in the table will open a window to update the
+  timestamp of the image.  Timestamps are not effected during cut/copy/paste
+  operations.
+* A time delta can be applied to multiple images.   Select the images and
+  use ⌘T, Edit -> Modify Date/Time, or ctrl-click -> Modify Date/Time.  Enter the
+  new time for the selected image.  A time delta between the new and the existing
+  date/time will be calculated. That delta is then applied to all selected items.
+* Images can be selected and the map can be panned/zoomed while saving images.
+  Images locations can not be edited until the save is complete.
+* The last 10 map searches are saved across program runs. When Clicking on the
+  search box saved search strings are indicated by a down arrow next to the
+  Q icon. Click on the arrow next to open the menu of saved search strings.
+* ExifTool version 11.08
+* (internal) Swift 4.2, Xcode 10 (beta 6)
 
-### Bug Fixes
+### Bug fixes
 
-* handle the case where the same file name is used for two images located in
-  different folders.
-* remove GPS date and time stamps when a location is removed.
+* undoing a location update on an image that did not have a previous location
+  resulted in a location of lat: 0, lon: 0. This has been fixed to restore the
+  image to its "no location assigned" state.
+* undoing all actions did not clear the window modified flag causing a "please
+  save" message when window was closed/application terminated.
+* No more beachball when saving large number of images.  Multiple images
+  are saved in parallel, but the save process can still be quite slow.
+* If GeoTag (or your computer) crashed with files opened and one or more of the
+  opened files was moved to a different folder GeoTag would crash on attempts
+  to re-open the file.
+
+### Known Bugs
+
+* Setting the date of an image outside of the range of 1970-2034 may result in
+  an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
+  and macOS libraries handle date and time.  One hopes that the year 2034 limit
+  will eventually be removed ;)
 
 ### Other 4.x Features and bug fixes
 
+* Add ability to sort the table of images by column.  Clicking on a column
+  header will sort the table by the contents of that column.  Clicking again
+  will change the sort direction.
+* ExifTool version 10.94
 * Update GPS Date and Time tags when updating location.   GPS timestamps are
-  in GMT.  The procedure assumes the date and time the image was taken was correct
-  for the time zone.  If your camera was set to the wrong time zone or set to
-  UTC/GMT the GPS timestamp will be incorrect.  This feature is only enabled when
-  the 'Update GPS Date/Time stamps' button is checked in program Preferences.
-  **This feature is only available on macOS 10.11 or later**
-* ExifTool 10.76
+  in GMT.  The procedure assumes the date and time the image was taken was
+  correct for the time zone.  If your camera was set to the wrong time zone or
+  set to UTC/GMT the GPS timestamp will be incorrect.  This feature is only
+  enabled when the 'Update GPS Date/Time stamps' button is checked in program
+  Preferences. **This feature is only available on macOS 10.11 or later**
+* handle the case where the same file name is used for two images located in
+  different folders.
+* remove GPS date and time stamps when a location is removed.
 * Map searching -- position map by name of city/street/etc.
 * Image backup handling
 * Fix display of error reason when a backup folder can not be selected
 * pin no longer placed when double clicking on map
 * pin no longer placed when dragging map
 * GPS info validation
+* handle the case where the same file name is used for two images located in
+  different folders.
 
 ### Image Backups
 
@@ -51,19 +92,19 @@ This is different from the 3.x and earlier versions of GeoTag.
 
 ### Known issue
 
-* You can not re-position a pin by dragging the pin.  Instead click on the desired
-  location
+* You can not re-position a pin by dragging the pin.  Instead click on the
+  desired location
 
 ---
 
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
-zooming within a a map to the place the image was recorded. Clicking on
-the map will add the location to the selected photos.  Clicking on a new location
-will change the geolocation for the selected photos.  Zoom in on the map
-and fine tune the location with a click.  The built in ExifTool utility is
-used to write location data to the images when you save your changes.  ExifTool
-only modifies image metadata -- your image pixels are not touched.
+zooming within a a map to the place the image was recorded. Clicking on the map
+will add the location to the selected photos.  Clicking on a new location will
+change the geolocation for the selected photos.  Zoom in on the map and fine
+tune the location with a click.  The built in ExifTool utility is used to write
+location data to the images when you save your changes.  ExifTool only modifies
+image metadata -- your image pixels are not touched.
 
 See <http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
 ExifTool. **ExifTool is built in to GeoTag.**
@@ -148,7 +189,7 @@ a pop up menu by right clicking on an entry in the list.
 ### Build Instructions for developers
 
 * Get current sources from github -- https://github.com/marchyman/GeoTag
-* Open the project in Xcode (last built using version 9.3)
+* Open the project in Xcode (last built using version 10)
 * ⌘R will build and run, ⌘B to build only
 
 Send all comments, bugs, requests, etc. to <marc@snafu.org>

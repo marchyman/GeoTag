@@ -4,6 +4,86 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>GeoTag</string>
+			<key>CFBundleTypeIconFile</key>
+			<string></string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.jpeg</string>
+				<string>public.png</string>
+				<string>com.compuserve.gif</string>
+				<string>com.canon.tif-raw-image</string>
+				<string>com.adobe.raw-image</string>
+				<string>com.dxo.raw-image</string>
+				<string>com.canon.cr2-raw-image</string>
+				<string>com.leafamerica.raw-image</string>
+				<string>com.hasselblad.fff-raw-image</string>
+				<string>com.hasselblad.3fr-raw-image</string>
+				<string>com.nikon.raw-image</string>
+				<string>com.nikon.nrw-raw-image</string>
+				<string>com.pentax.raw-image</string>
+				<string>com.samsung.raw-image</string>
+				<string>com.sony.raw-image</string>
+				<string>com.sony.sr2-raw-image</string>
+				<string>com.sony.arw-raw-image</string>
+				<string>com.epson.raw-image</string>
+				<string>com.kodak.raw-image</string>
+				<string>public.tiff</string>
+				<string>public.jpeg-2000</string>
+				<string>com.apple.atx</string>
+				<string>org.khronos.astc</string>
+				<string>org.khronos.ktx</string>
+				<string>public.avci</string>
+				<string>public.heic</string>
+				<string>public.heif</string>
+				<string>com.canon.crw-raw-image</string>
+				<string>com.fuji.raw-image</string>
+				<string>com.panasonic.raw-image</string>
+				<string>com.panasonic.rw2-raw-image</string>
+				<string>com.leica.raw-image</string>
+				<string>com.leica.rwl-raw-image</string>
+				<string>com.konicaminolta.raw-image</string>
+				<string>com.olympus.sr-raw-image</string>
+				<string>com.olympus.or-raw-image</string>
+				<string>com.olympus.raw-image</string>
+				<string>com.phaseone.raw-image</string>
+				<string>com.microsoft.ico</string>
+				<string>com.microsoft.bmp</string>
+				<string>com.apple.icns</string>
+				<string>com.adobe.photoshop-image</string>
+				<string>com.microsoft.cur</string>
+				<string>com.truevision.tga-image</string>
+				<string>com.ilm.openexr-image</string>
+				<string>com.sgi.sgi-image</string>
+				<string>public.radiance</string>
+				<string>public.pbm</string>
+				<string>public.mpo-image</string>
+				<string>public.pvr</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>gpx</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>gpx Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>XML</string>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleHelpBookFolder</key>

@@ -3,8 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 5/8/15.
-//
-// Copyright 2015-2018 Marco S Hyman
+//  Copyright 2015-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -35,7 +34,9 @@ import AppKit
 /// If errorInfo is not nil the system error description will be appended to the
 /// programmer provided description string.
 
-public func unexpected(error: NSError?, _ description: String = "") {
+public
+func unexpected(error: NSError?,
+                _ description: String = "") {
     let alert = NSAlert()
     alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
     alert.messageText = NSLocalizedString("UNEXPECTED_ERROR",

@@ -95,7 +95,7 @@ with tag keys.  Below is an explanation of the meaning of each special key:
     extended    - 80-bit extended floating float
     ifd         - Unsigned 32-bit integer sub-IFD pointer (EXIF 'IFD')
     ifd64       - Unsigned 64-bit integer sub-IFD pointer (BigTIFF 'IFD8')
-    string      - Series of 8-bit ASCII characters        (EXIF 'ASCII')
+    string      - Series of 8-bit characters              (EXIF 'ASCII')
     undef       - Undefined-format binary data            (EXIF 'UNDEFINED')
     binary      - Binary data (same as 'undef')
 
@@ -347,10 +347,11 @@ numerical.
                   'DataTag' - associated tag name containing data for offset or
                   byte count tags.
 
-                  'Drop' - set to 1 for tags that should be excluded when
-                  rebuilding maker notes when copying all tags.  Set to a number
-                  larger than 1 to drop only if data is larger than this size.
-                  Works for SubDirectory tags too.
+                  'Drop' - [IFD-format and PhaseOne makernote tags only] set to
+                  1 for tags that should be excluded when rebuilding maker notes
+                  when copying all tags.  Set to a number larger than 1 to drop
+                  only if data is larger than this size. Works for SubDirectory
+                  tags too.
 
                   'EntryBased' - set to 1 if the offset for this value is based
                   on the IFD entry position.  This allows individual values to
@@ -400,7 +401,7 @@ numerical.
                   if the preview must be stored inside the maker notes.
 
                   'Mandatory' - set for mandatory tags.  Used only by TagInfoXML
-                  and documentation purposes.  Mandatory tags may be added
+                  and for documentation purposes.  Mandatory tags may be added
                   automatically by ExifTool.
 
                   'NestedHtmlDump' - flag set if value for this tag is also
@@ -561,7 +562,7 @@ numerical.
                   key.  The subroutine takes 2 arguments: the Raw value and a
                   reference to the current ExifTool object.  The advanced
                   formatting expression (if any) may be accessed via the
-                  ExifTool "FMT_EXPR" member variable. The expression or
+                  ExifTool "FMT_EXPR" member variable.  The expression or
                   subroutine is evaluated if and when the tag value is requested
                   (ie. only after all extraction is complete), so if necessary
                   at this time the values of all other tags are available via

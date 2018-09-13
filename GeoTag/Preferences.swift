@@ -3,8 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 5/7/15.
-//
-// Copyright 2015-2018 Marco S Hyman
+//  Copyright 2015-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -28,6 +27,7 @@ import Foundation
 import AppKit
 
 final class Preferences : NSWindowController {
+
     // class constants
     static let nibName = NSNib.Name("Preferences")
     static let saveBookmarkKey = "SaveBookmarkKey"
@@ -41,7 +41,8 @@ final class Preferences : NSWindowController {
     ///
     /// If a save directory/folder has been specified but does not exist an
     /// alert is shown.
-    class func saveFolder() -> URL? {
+    class
+    func saveFolder() -> URL? {
         if checkDirectory {
             checkDirectory = false
             url = nil
@@ -65,12 +66,14 @@ final class Preferences : NSWindowController {
         return url
     }
 
-    class func dateTimeGPS() -> Bool {
+    class
+    func dateTimeGPS() -> Bool {
         let defaults = UserDefaults.standard
         return defaults.bool(forKey: dateTimeGPSKey)
     }
 
-    @IBOutlet var saveFolderPath: NSPathControl!
+    @IBOutlet
+    var saveFolderPath: NSPathControl!
 
     /// select a save folder
     /// - Parameter AnyObject: unused
@@ -78,7 +81,8 @@ final class Preferences : NSWindowController {
     /// Allow the user to pick or create a folder where the original
     /// copies of updated images will be saved
     
-    @IBAction func pickSaveFolder(_: AnyObject) {
+    @IBAction
+    func pickSaveFolder(_: AnyObject) {
         var bookmark: Data? = nil
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
@@ -104,9 +108,11 @@ final class Preferences : NSWindowController {
         }
     }
 
-    @IBOutlet weak var dtGPSButton: NSButton!
+    @IBOutlet
+    weak var dtGPSButton: NSButton!
 
-    @IBAction func toggleDateTimeGPS(_ sender: NSButton) {
+    @IBAction
+    func toggleDateTimeGPS(_ sender: NSButton) {
         let defaults = UserDefaults.standard
         defaults.set(sender.state == NSControl.StateValue.on,
                      forKey: Preferences.dateTimeGPSKey)
@@ -114,13 +120,15 @@ final class Preferences : NSWindowController {
 
     /// return the NIB name for this window
 
-	override var windowNibName: NSNib.Name? {
+	override
+    var windowNibName: NSNib.Name? {
 		return Preferences.nibName
 	}
 
     /// initialize the saveFolderPath field from user preferences
 
-    override func windowDidLoad() {
+    override
+    func windowDidLoad() {
         saveFolderPath.url = Preferences.saveFolder()
         dtGPSButton.state = Preferences.dateTimeGPS() ?
                             NSControl.StateValue.on :

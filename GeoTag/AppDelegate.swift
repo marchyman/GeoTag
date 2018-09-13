@@ -1,10 +1,9 @@
 //
 //  AppDelegate.swift
-//  GeoTag (3rd version)
+//  GeoTag
 //
 //  Created by Marco S Hyman on 6/11/14.
-//
-// Copyright 2014-2018 Marco S Hyman
+//  Copyright 2014-2018 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -29,9 +28,12 @@ import AppKit
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    lazy var preferences: Preferences = Preferences()
-    lazy var undoManager: UndoManager = UndoManager()
 
+    // instantiate preferences window and undomanager when needed
+    lazy var preferences = Preferences()
+    lazy var undoManager = UndoManager()
+
+    // I like modified over isDocumentEdited
     var modified: Bool {
         get {
             return window.isDocumentEdited
@@ -41,15 +43,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    // user interface outlets
     @IBOutlet var window: NSWindow!
     @IBOutlet var tableViewController: TableViewController!
+    @IBOutlet weak var mapViewController: MapViewController!
     @IBOutlet var progressIndicator: NSProgressIndicator!
 
     //MARK: App start up
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         window.delegate = self
-        // Pop open a preferences window if a backup (save) folder location hasn't
+        // Open a preferences window if a backup (save) folder location hasn't
         // yet been selected
         if Preferences.saveFolder() == nil {
             perform(#selector(openPreferencesWindow(_:)), with: nil, afterDelay: 0)
@@ -57,7 +61,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     /// don't enable save menu item unless something has been modified
-    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+    @objc
+    func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
         guard let action = item.action else { return false }
         switch action {
         case #selector(showOpenPanel(_:)):
@@ -82,9 +87,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// will be added to the table of images.  The same file can not be added
     /// to the table multiple times.   If duplicates are detected the user
     /// will be alerted that some files were not opened.
-    @IBAction func showOpenPanel(_: AnyObject) {
+    @IBAction
+    func showOpenPanel(_: AnyObject) {
         let panel = NSOpenPanel()
         panel.allowedFileTypes = CGImageSourceCopyTypeIdentifiers() as? [String]
+        panel.allowedFileTypes?.append("gpx")
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
@@ -92,7 +99,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             var urls = [URL]()
             for url in panel.urls {
                 if !addUrlsInFolder(url: url, toUrls: &urls) {
-                    urls.append(url)
+                    if !isGpxFile(url) {
+                        urls.append(url)
+                    }
                 }
             }
             let dups = tableViewController.addImages(urls: urls)
@@ -106,21 +115,73 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    //MARK: Open File (UTI support)
+
+    /// process files give to us via "Open With..."
+    ///
+    /// - parameter sender: unused
+    /// - parameter fileName: path of file to process
+    /// - returns: true if the file was opened
+    ///
+    /// this function handles both Image and GPX files
+
+    func application(_ sender: NSApplication,
+                     openFile filename: String) -> Bool {
+        let url = URL(fileURLWithPath: filename)
+        if !isGpxFile(url) {
+            var urls = [URL]()
+            urls.append(url)
+            return !tableViewController.addImages(urls: urls)
+        }
+        return false
+    }
+
     //MARK: Save image changes (if any)
 
     /// action bound to File -> Save
-    /// - Parameter AnyObject: unused
+    /// - Parameter saveSource: nil if function called from saveOrDontSave in
+    ///   which case the window will be closed if the save was successful.
     ///
     /// Save all images with updated geolocation information and clear all
     /// undo actions.
-    @IBAction func save(_: AnyObject?) {
-        if tableViewController.saveAllImages() {
-            modified = false
-            undoManager.removeAllActions()
+    @IBAction
+    func save(_ saveSource: AnyObject?) {
+        guard let folder = Preferences.saveFolder(),
+            FileManager.default.fileExists(atPath: folder.path) else {
+            let alert = NSAlert()
+            alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+            alert.messageText = NSLocalizedString("NO_BACKUP_TITLE",
+                                                  comment: "No Backup folder")
+            alert.informativeText += NSLocalizedString("NO_BACKUP_DESC",
+                                                       comment: "no backup folder")
+            alert.informativeText += NSLocalizedString("NO_BACKUP_REASON",
+                                                       comment: "no backup folder")
+            alert.runModal()
+            return
+        }
+
+        tableViewController.saveAllImages {
+            allSaved in
+            if allSaved {
+                self.modified = false
+                self.undoManager.removeAllActions()
+                if saveSource == nil {
+                    self.window.close()
+                }
+            } else {
+                let alert = NSAlert()
+                alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+                alert.messageText = NSLocalizedString("SAVE_ERROR_TITLE",
+                                                      comment: "Save error")
+                alert.informativeText += NSLocalizedString("SAVE_ERROR_DESC",
+                                                           comment: "save error")
+                alert.runModal()
+            }
         }
     }
 
-    @IBAction func openPreferencesWindow(_ sender: AnyObject!) {
+    @IBAction
+    func openPreferencesWindow(_ sender: AnyObject!) {
         preferences.showWindow(sender)
     }
 
@@ -141,11 +202,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if modified {
             let alert = NSAlert()
             alert.addButton(withTitle: NSLocalizedString("SAVE",
-                                                       comment: "Save"))
+                                                         comment: "Save"))
             alert.addButton(withTitle: NSLocalizedString("CANCEL",
-                                                       comment: "Cancel"))
+                                                         comment: "Cancel"))
             alert.addButton(withTitle: NSLocalizedString("DONT_SAVE",
-                                                       comment: "Don't Save"))
+                                                         comment: "Don't Save"))
             alert.messageText = NSLocalizedString("UNSAVED_TITLE",
                                                   comment: "Unsaved Changes")
             alert.informativeText = NSLocalizedString("UNSAVED_DESC",
@@ -153,10 +214,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             alert.beginSheetModal(for: window) {
                 (response: NSApplication.ModalResponse) -> Void in
                 switch response {
-                case NSApplication.ModalResponse.alertFirstButtonReturn:      // Save
+                case .alertFirstButtonReturn:
+                    // Save
                     self.save(nil)
-                case NSApplication.ModalResponse.alertSecondButtonReturn:     // Cancel
-                    // Close/terminate cancelled
+                    return
+                case .alertSecondButtonReturn:
+                    // Cancel -- Close/terminate cancelled
                     return
                 default:
                     // Don't bother saving
@@ -177,10 +240,87 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         return .terminateCancel
     }
+}
 
-    func applicationWillTerminate(aNotification: NSNotification) {
-        // Insert code here to tear down your application
-  }
+/// File/Url handling
+extension AppDelegate {
+
+    /// enumerate the files in a folder adding URLs for all files found to an array
+    /// - Parameter url: a URL of the folder to enumerate
+    /// - Parameter toUrls: the array to add the url of found files
+    /// - Returns: true if the URL was a folder, false otherwise
+    ///
+    /// Non-hidden files are added to the inout toUrls parameter. Hidden files
+    /// and internal folders are not added to the array.  Internal folders are
+    /// also enumerated.
+
+    public
+    func addUrlsInFolder(url: URL,
+                         toUrls urls: inout [URL]) -> Bool {
+        let fileManager = FileManager.default
+        var dir = ObjCBool(false)
+        if fileManager.fileExists(atPath: url.path, isDirectory: &dir) && dir.boolValue {
+            guard let urlEnumerator =
+                fileManager.enumerator(at: url,
+                                       includingPropertiesForKeys: [.isDirectoryKey],
+                                       options: [.skipsHiddenFiles],
+                                       errorHandler: nil) else { return false }
+            while let fileUrl = urlEnumerator.nextObject() as? URL {
+                guard
+                    let resources =
+                        try? fileUrl.resourceValues(forKeys: [.isDirectoryKey]),
+                    let directory = resources.isDirectory
+                    else { continue }
+                if !directory {
+                    if !isGpxFile(fileUrl) {
+                        urls.append(fileUrl)
+                    }
+                }
+            }
+            return true
+        }
+        return false
+    }
+
+    /// check if the given url is a gpx file.
+    /// - Parameter url: URL of file to check
+    /// - Returns: true if file was a GPX file, otherwise false
+    ///
+    /// GPX files are parsed and any tracks found in the file are added to
+    /// the map view
+
+    public
+    func isGpxFile(_ url: URL) -> Bool {
+        if url.pathExtension.lowercased() == "gpx" {
+            if let gpx = Gpx(contentsOf: url) {
+                progressIndicator.startAnimation(self)
+                if gpx.parse() {
+                    // add the track to the map
+                    Gpx.gpxTracks.append(gpx)
+                    mapViewController.addTracks(gpx: gpx)
+                    // put up an alert
+                    let alert = NSAlert()
+                    alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+                    alert.messageText = NSLocalizedString("GPX_LOADED_TITLE", comment: "GPX file loaded")
+                    alert.informativeText = url.path
+                    alert.informativeText += NSLocalizedString("GPX_LOADED_DESC", comment: "GPX file loaded")
+                    alert.runModal()
+                } else {
+                    // put up an alert
+                    let alert = NSAlert()
+                    alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+                    alert.messageText = NSLocalizedString("BAD_GPX_TITLE", comment: "Bad GPX file")
+                    alert.informativeText = url.path
+                    alert.informativeText += NSLocalizedString("BAD_GPX_DESC", comment: "Bad GPX file")
+                    alert.runModal()
+                }
+                progressIndicator.stopAnimation(self)
+            }
+            return true
+        }
+        return false
+    }
+
 }
 
 /// Window delegate functions
