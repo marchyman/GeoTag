@@ -15,8 +15,8 @@
 * Images can now be opened with GeoTag.  You can select one or more images in
   finder and then right click and select the "Open With" option.  GeoTag will
   be one of app choices.
-* Double clicking on an row in the table will open a window to update the
-  timestamp of the image.  Timestamps are not effected during cut/copy/paste
+* Double clicking on a row in the table will open a window to update the
+  timestamp of the image.  Timestamps are not changed during cut/copy/paste
   operations.
 * A time delta can be applied to multiple images.   Select the images and
   use ⌘T, Edit -> Modify Date/Time, or ctrl-click -> Modify Date/Time.  Enter the
@@ -28,7 +28,7 @@
   search box saved search strings are indicated by a down arrow next to the
   Q icon. Click on the arrow next to open the menu of saved search strings.
 * ExifTool version 11.08
-* (internal) Swift 4.2, Xcode 10 (beta 6)
+* (internal) Swift 4.2, Xcode 10
 
 ### Bug fixes
 
