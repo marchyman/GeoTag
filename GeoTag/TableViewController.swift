@@ -721,7 +721,7 @@ extension TableViewController: NSTableViewDataSource {
                    validateDrop info: NSDraggingInfo,
                    proposedRow row: Int,
                    proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        let pb = info.draggingPasteboard()
+        let pb = info.draggingPasteboard
         if let paths = pb.propertyList(forType: NSPasteboard.PasteboardType("NSFilenamesPboardType")) as? [String] {
             let fileManager = FileManager.default
             for path in paths {
@@ -740,7 +740,7 @@ extension TableViewController: NSTableViewDataSource {
                    acceptDrop info: NSDraggingInfo,
                    row: Int,
                    dropOperation: NSTableView.DropOperation) -> Bool {
-        let pb = info.draggingPasteboard()
+        let pb = info.draggingPasteboard
         if let paths = pb.propertyList(forType: NSPasteboard.PasteboardType("NSFilenamesPboardType")) as? [String] {
             var urls = [URL]()
             for path in paths {

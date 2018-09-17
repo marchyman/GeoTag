@@ -166,8 +166,8 @@ class MapViewController: NSViewController {
     /// a pin at that location
     func pinMapAt(coords: Coord,
                   dropPin: Bool = true) {
-        let point = MKMapPointForCoordinate(coords);
-        if !MKMapRectContainsPoint(mapView.visibleMapRect, point) {
+        let point = MKMapPoint(coords);
+        if !mapView.visibleMapRect.contains(point) {
             mapView.setCenter(coords, animated: false)
         }
         // if an image is selected and a pin exists, move it.
@@ -210,7 +210,7 @@ class MapViewController: NSViewController {
                 let mapLine = MKPolyline(coordinates: &trackCoords,
                                          count: $0.points.count)
                 mapLines.append(mapLine)
-                mapView.add(mapLine)
+                mapView.addOverlay(mapLine)
             }
         }
     }
@@ -231,7 +231,6 @@ extension MapViewController: MKMapViewDelegate {
                                                  reuseIdentifier: identifier)
             if let av = annotationView {
                 av.isEnabled = true
-                av.canShowCallout = true
                 av.pinTintColor = .red
                 av.animatesDrop = false
                 av.canShowCallout = false
@@ -249,17 +248,17 @@ extension MapViewController: MKMapViewDelegate {
 
     func mapView(_ mapView: MKMapView,
                  annotationView view: MKAnnotationView,
-                 didChange newState: MKAnnotationViewDragState,
-                 fromOldState oldState: MKAnnotationViewDragState) {
-         switch newState {
-         case .starting:
-            view.setDragState(.dragging, animated: true)
-         case .ending:
-            view.setDragState(.none, animated: true)
+                 didChange newState: MKAnnotationView.DragState,
+                 fromOldState oldState: MKAnnotationView.DragState) {
+        switch newState {
+        case .starting:
+            view.dragState = .dragging
+        case .ending:
+            view.dragState = .none
             clickDelegate?.mouseClicked(mapView: nil,
                                         location: view.annotation!.coordinate)
-         default:
-            view.setDragState(.none, animated: false)
+        default:
+            break
         }
     }
 
