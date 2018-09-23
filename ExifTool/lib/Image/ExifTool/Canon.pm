@@ -87,7 +87,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '3.95';
+$VERSION = '3.97';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -405,7 +405,8 @@ $VERSION = '3.95';
     238 => 'Canon EF 70-300mm f/4-5.6 IS USM', #15 (and version II? ref 42)
     239 => 'Canon EF 85mm f/1.2L II USM or Rokinon Lens', #15
     239.1 => 'Rokinon SP 85mm f/1.2', #IB
-    240 => 'Canon EF-S 17-55mm f/2.8 IS USM', #15
+    240 => 'Canon EF-S 17-55mm f/2.8 IS USM or Sigma Lens', #15
+    240.1 => 'Sigma 17-50mm f/2.8 EX DC OS HSM', #https://github.com/Exiv2/exiv2/issues/397
     241 => 'Canon EF 50mm f/1.2L USM', #15
     242 => 'Canon EF 70-200mm f/4L IS USM', #PH
     243 => 'Canon EF 70-200mm f/4L IS USM + 1.4x', #15
@@ -467,6 +468,7 @@ $VERSION = '3.95';
     751 => 'Canon EF 16-35mm f/2.8L III USM', #42
     752 => 'Canon EF 24-105mm f/4L IS II USM', #42
     753 => 'Canon EF 85mm f/1.4L IS USM', #42
+    754 => 'Canon EF 70-200mm f/4L IS II USM', #IB
     1136 => 'Sigma 24-70mm f/2.8 DG OS HSM | Art 017', #IB
     # (STM lenses - 0x10xx)
     4142 => 'Canon EF-S 18-135mm f/3.5-5.6 IS STM',
@@ -739,6 +741,7 @@ $VERSION = '3.95';
     0x4170000 => 'PowerShot SX730 HS',
     0x4180000 => 'PowerShot G1 X Mark III', #IB
     0x6040000 => 'PowerShot S100 / Digital IXUS / IXY Digital',
+    0x801     => 'PowerShot SX740 HS',
 
 # (see http://cweb.canon.jp/e-support/faq/answer/digitalcamera/10447-1.html for PowerShot/IXUS/IXY names)
 
@@ -3355,7 +3358,7 @@ my %ciMaxFocal = (
         Name => 'FirmwareVersionLookAhead',
         Hidden => 1,
         # look ahead to check location of FirmwareVersion string
-        Format => 'undef[0x286]',
+        Format => 'undef[0x28b]',
         RawConv => q{
             my $t = substr($val, 0x271, 6); # 1 = firmware 5.7.1
             $t =~ /^\d+\.\d+\.\d+/ and $$self{CanonFirm} = 1, return undef;
@@ -3363,6 +3366,8 @@ my %ciMaxFocal = (
             $t =~ /^\d+\.\d+\.\d+/ and $$self{CanonFirm} = 2, return undef;
             $t = substr($val, 0x280, 6);    # 3 = firmware 0.0.8/1.0.2/1.1.1
             $t =~ /^\d+\.\d+\.\d+/ and $$self{CanonFirm} = 3, return undef;
+            $t = substr($val, 0x285, 6);    # 4 = firmware 2.1.0
+            $t =~ /^\d+\.\d+\.\d+/ and $$self{CanonFirm} = 4, return undef;
             $self->Warn('Unrecognized CameraInfo1DX firmware version');
             $$self{CanonFirm} = 0;
             return undef;   # not a real tag
@@ -3390,7 +3395,7 @@ my %ciMaxFocal = (
     0x8e => {
         Name => 'FocusDistanceLower',
         %focusDistanceByteSwap,
-        Hook => '$varSize -= 4 if $$self{CanonFirm} < 3',
+        Hook => '$varSize -= 4 if $$self{CanonFirm} < 3; $varSize += 5 if $$self{CanonFirm} == 4',
     },
     0xbc => {
         Name => 'WhiteBalance',
