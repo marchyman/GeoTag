@@ -1,6 +1,24 @@
 ## GeoTag for macOS -- macOS 10.12 or later
 
-## GeoTag 4.x (not yet released, still testing)
+GeoTag is a free OS X single window application that allows you to update image
+metadata with geolocation tags by selecting one or more images then panning and
+zooming within a a map to the place the image was recorded. Clicking on the map
+will add the location to the selected photos.  Clicking on a new location will
+change the geolocation for the selected photos.  Zoom in on the map and fine
+tune the location with a click.  The built in ExifTool utility is used to write
+location data to the images when you save your changes.  ExifTool only modifies
+image metadata -- your image pixels are not touched.
+
+See <http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
+ExifTool. **ExifTool is built in to GeoTag.**
+
+GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
+can use the command `brew cask install geotag` to install.
+
+Version 4.4 is the latest version.  It workes on macOS 10.12 or later. Version
+4 uses Apple maps.
+
+## GeoTag 4.4
 
 ### New Features
 
@@ -27,7 +45,7 @@
 * The last 10 map searches are saved across program runs. When Clicking on the
   search box saved search strings are indicated by a down arrow next to the
   Q icon. Click on the arrow next to open the menu of saved search strings.
-* ExifTool version 11.08
+* ExifTool version 11.10
 * (internal) Swift 4.2, Xcode 10
 
 ### Bug fixes
@@ -49,13 +67,14 @@
   an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
   and macOS libraries handle date and time.  One hopes that the year 2034 limit
   will eventually be removed ;)
+* You can not re-position a pin by dragging the pin.  Instead click on the
+  desired location
 
 ### Other 4.x Features and bug fixes
 
 * Add ability to sort the table of images by column.  Clicking on a column
   header will sort the table by the contents of that column.  Clicking again
   will change the sort direction.
-* ExifTool version 10.94
 * Update GPS Date and Time tags when updating location.   GPS timestamps are
   in GMT.  The procedure assumes the date and time the image was taken was
   correct for the time zone.  If your camera was set to the wrong time zone or
@@ -66,7 +85,7 @@
   different folders.
 * remove GPS date and time stamps when a location is removed.
 * Map searching -- position map by name of city/street/etc.
-* Image backup handling
+* Image backup handling (see below)
 * Fix display of error reason when a backup folder can not be selected
 * pin no longer placed when double clicking on map
 * pin no longer placed when dragging map
@@ -75,8 +94,6 @@
   different folders.
 
 ### Image Backups
-
-This is different from the 3.x and earlier versions of GeoTag.
 
 * A "backup folder" location is required.  If a backup folder is not configured
   when GeoTag starts the program will open the preferences window for you to
@@ -87,27 +104,10 @@ This is different from the 3.x and earlier versions of GeoTag.
   numbered suffix is the most current backup (usually).
 * If the image file can not be copied to the backup location Geolocation
   information will not be saved.   Better to be safe than sorry.
-* The system trash is no longer used (although you could set your backup location
-  to ~/.Trash)
-
-### Known issue
-
-* You can not re-position a pin by dragging the pin.  Instead click on the
-  desired location
 
 ---
 
-GeoTag is a free OS X single window application that allows you to update image
-metadata with geolocation tags by selecting one or more images then panning and
-zooming within a a map to the place the image was recorded. Clicking on the map
-will add the location to the selected photos.  Clicking on a new location will
-change the geolocation for the selected photos.  Zoom in on the map and fine
-tune the location with a click.  The built in ExifTool utility is used to write
-location data to the images when you save your changes.  ExifTool only modifies
-image metadata -- your image pixels are not touched.
-
-See <http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
-ExifTool. **ExifTool is built in to GeoTag.**
+### General Note
 
 The functions provided by GeoTag exist in current versions of iPhoto, Aperture
 (RIP), and Lightroom.  Some still find the application useful for geolocation
@@ -115,21 +115,9 @@ tagging photos in the field.  Photos (OSX 10.10.3 and later) will let you modify
 existing location metadata but not add location data to an image. If necessary
 use GeoTag to add location metadata **before** importing the images into Photos.
 
-Version 4.3 is the latest version.  It workes on macOS 10.10 or later. Version
-4 uses Apple maps.
-
-Version 3 of GeoTag is for users of OS X 10.9 (Mavericks) or later.  Version 3
-and earlier uses Google Maps.
-
-Use version 2.2 if your Mac is running OS X 10.6 (Snow Leopard) though
-OS X 10.8 (Mountain Lion). Use version 1.8 if your Mac is running OS X
-version 10.5 (Leopard) or earlier.
-See <http://www.snafu.org/GeoTag/> for more information.
-
-GeoTag is now available as a [homebrew](http://brew.sh) cask.  Homebrew users
-can use the command `brew cask install geotag` to install.
-
 ### Operating Instructions:
+
+*See <https://www.snafu.org/GeoTag/NewGeoTagHelp/> for more information.*
 
 Run Program.  Use the Open command from the menu or ⌘O to select files to
 modify. You can also drag files from the finder into the table on the left side
