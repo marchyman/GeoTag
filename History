@@ -1,4 +1,4 @@
-## GeoTag 4.x (not yet released)
+## GeoTag 4.4
 
 ### New Features
 
@@ -25,7 +25,7 @@
 * The last 10 map searches are saved across program runs. When Clicking on the
   search box saved search strings are indicated by a down arrow next to the
   Q icon. Click on the arrow next to open the menu of saved search strings.
-* ExifTool version 11.08
+* ExifTool version 11.10
 * (internal) Swift 4.2, Xcode 10
 
 ### Bug fixes
