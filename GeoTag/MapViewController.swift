@@ -131,7 +131,7 @@ class MapViewController: NSViewController {
         case .satellite:
             mapTypeAsInt = mapTypeSatellite
         case let type:
-            print("Unknown map type \(type)")
+            unexpected(error: nil, "Unknown map type \(type)")
         }
         defaults.set(mapTypeAsInt, forKey: mapTypeKey)
 

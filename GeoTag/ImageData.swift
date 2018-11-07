@@ -287,7 +287,7 @@ final class ImageData: NSObject {
     private
     func loadImageData() -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
-            print("Failed CGImageSourceCreateWithURL \(url)")
+            unexpected(error: nil, "CGImageSourceCreateWithURL for \(url) failed")
             return false
         }
 

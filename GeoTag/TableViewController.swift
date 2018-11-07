@@ -300,7 +300,7 @@ final class TableViewController: NSViewController {
                    tableView.numberOfSelectedRows > 0 &&
                    images[tableView.selectedRow].validImage
         default:
-            print("default for item \(item)")
+            print("#function \(item) not handled")
         }
         return false
     }
@@ -463,7 +463,6 @@ final class TableViewController: NSViewController {
 
         if distance > 0 {
             let speed = distance / (endInfo.timestamp - startInfo.timestamp)
-            // print("\(distance) meters \(bearing)º at \(speed) meters/sec")
             appDelegate.undoManager.beginUndoGrouping()
             rows.forEach {
                 let image = self.images[$0]

@@ -72,7 +72,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case #selector(openPreferencesWindow(_:)):
             return true
         default:
-            print("default for item \(item)")
+            print("#function \(item) not handled")
         }
         return false
     }
@@ -300,6 +300,7 @@ extension AppDelegate {
                     mapViewController.addTracks(gpx: gpx)
                     // put up an alert
                     let alert = NSAlert()
+                    alert.alertStyle = NSAlert.Style.informational
                     alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
                     alert.messageText = NSLocalizedString("GPX_LOADED_TITLE", comment: "GPX file loaded")
                     alert.informativeText = url.path
@@ -308,6 +309,7 @@ extension AppDelegate {
                 } else {
                     // put up an alert
                     let alert = NSAlert()
+                    alert.alertStyle = NSAlert.Style.informational
                     alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
                     alert.messageText = NSLocalizedString("BAD_GPX_TITLE", comment: "Bad GPX file")
                     alert.informativeText = url.path

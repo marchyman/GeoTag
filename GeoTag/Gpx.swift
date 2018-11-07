@@ -113,7 +113,7 @@ class Gpx: NSObject {
     /// init from contents of a URL
     init?(contentsOf url: URL) {
         guard let parser = XMLParser(contentsOf: url) else {
-            print("Gpx init failed")
+            unexpected(error: nil, "Gpx init failed")
             return nil
         }
         self.parser = parser
@@ -126,7 +126,6 @@ class Gpx: NSObject {
 
     func parse() -> Bool {
         if parser.parse() && parseState != .error {
-            print("\(tracks.count) tracks")
             var segments = 0
             var points = 0
             for track in tracks {
@@ -135,12 +134,8 @@ class Gpx: NSObject {
                     points += segment.points.count
                 }
             }
-            print("\(segments) segments")
-            print("\(points) points")
-            print("XML file parsed correctly")
             return true
         }
-        print("XML Parse error \(String(describing: parser.parserError))")
         return false
     }
 
