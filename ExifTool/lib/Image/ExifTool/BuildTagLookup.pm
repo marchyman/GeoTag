@@ -34,7 +34,7 @@ use Image::ExifTool::Nikon;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.16';
+$VERSION = '3.19';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -163,9 +163,11 @@ The tables listed below give the names of all tags recognized by ExifTool.
 B<Tag ID>, B<Index#> or B<Sequence> is given in the first column of each
 table.  A B<Tag ID> is the computer-readable equivalent of a tag name, and
 is the identifier that is actually stored in the file.  B<Index#> refers to
-the location of a value when found at a fixed position within a data block
+the offset of a value when found at a fixed position within a data block
 (B<#> is the multiplier for calculating a byte offset: B<1>, B<2>, B<4> or
-B<8>). B<Sequence> gives the order of values for a serial data stream.
+B<8>).  These offsets may have a decimal part which is used only to
+differentiate tags with values stored at the same position.  B<Sequence>
+gives the order of values for a serial data stream.
 
 A B<Tag Name> is the handle by which the information is accessed in
 ExifTool.  In some instances, more than one name may correspond to a single
@@ -325,12 +327,13 @@ to preserve other existing languages (eg. "XMP-dc:Description-x-default").
 When reading, "x-default" is not specified.
 
 The XMP tags are organized according to schema B<Namespace> in the following
-tables.  In general, the ExifTool family 1 group names are derived from the
-namespace prefixes by adding a leading "XMP-" (eg. "XMP-dc"), but a few of
-the longer prefixes have been shortened for convenience (as mentioned in the
-documentation below).  The tags of any namespace may be deleted as a group
-by specifying the family 1 group name (eg. "-XMP-dc:all=" on the command
-line).  This includes namespaces which are not pre-defined by ExifTool.
+tables.  The ExifTool family 1 group names are derived from the namespace
+prefixes by adding a leading "XMP-" (eg. "XMP-dc").  A few of the longer
+prefixes have been shortened (as mentioned in the documentation below) to
+avoid excessively long ExifTool group names.  The tags of any namespace may
+be deleted as a group by specifying the family 1 group name (eg.
+"-XMP-dc:all=" on the command line).  This includes namespaces which are not
+pre-defined by ExifTool.
 
 In cases where a tag name exists in more than one namespace, less common
 namespaces are avoided when writing.  However, a specific namespace may be
@@ -1002,15 +1005,15 @@ TagID:  foreach $tagID (@keys) {
                 my $printConv = $$tagInfo{PrintConv};
                 if ($$tagInfo{Mask}) {
                     my $val = $$tagInfo{Mask};
-                    push @values, sprintf('[Mask 0x%.2x]',$val);
-                    $$tagInfo{PrintHex} = 1 unless defined $$tagInfo{PrintHex};
+                    my $bsh = $$tagInfo{BitShift};
+                    if ($bsh) {
+                        push @values, sprintf('[val >> %d & 0x%x]',$bsh,$val>>$bsh);
+                    } else {
+                        push @values, sprintf('[val & 0x%x]',$val);
+                    }
                     # verify that all values are within the mask
                     if (ref $printConv eq 'HASH') {
-                        # convert mask if necessary
-                        if ($$tagInfo{ValueConv}) {
-                            my $v = eval $$tagInfo{ValueConv};
-                            $val = $v if defined $v;
-                        }
+                        $val >>= $$tagInfo{BitShift};
                         foreach (keys %$printConv) {
                             next if $_ !~ /^\d+$/ or ($_ & $val) == $_;
                             my $hex = sprintf '0x%.2x', $_;
@@ -1090,7 +1093,12 @@ TagID:  foreach $tagID (@keys) {
                             $$printConv{PrintString} = 1 if $$tagInfo{PrintString};
                         } else {
                             $caseInsensitive = 0;
-                            my @pk = sort { NumbersFirst($a,$b) } keys %$printConv;
+                            my @pk;
+                            if ($$tagInfo{PrintSort}) {
+                                @pk = sort { NumbersFirst($$printConv{$a},$$printConv{$b}) } keys %$printConv;
+                            } else {
+                                @pk = sort { NumbersFirst($a,$b) } keys %$printConv;
+                            }
                             my $n = scalar @values;
                             my ($bits, $i, $v);
                             foreach (@pk) {
@@ -1099,12 +1107,13 @@ TagID:  foreach $tagID (@keys) {
                                 $_ eq 'OTHER' and next;
                                 my $index;
                                 if (($$tagInfo{PrintHex} or $$printConv{BITMASK}) and /^-?\d+$/) {
+                                    my $dig = $$tagInfo{PrintHex} || 1;
                                     if ($_ >= 0) {
-                                        $index = sprintf('0x%x', $_);
+                                        $index = sprintf('0x%.*x', $dig, $_);
                                     } elsif ($format and $format =~ /int(16|32)/) {
                                         # mask off unused bits of signed integer hex value
                                         my $mask = { 16 => 0xffff, 32 => 0xffffffff }->{$1};
-                                        $index = sprintf('0x%x', $_ & $mask);
+                                        $index = sprintf('0x%.*x', $dig, $_ & $mask);
                                     } else {
                                         $index = $_;
                                     }
@@ -1936,6 +1945,17 @@ sub CloseHtmlFiles($)
 }
 
 #------------------------------------------------------------------------------
+# Get bitmask for POD documentation
+# Inputs: mask string from HTML docs
+# Returns: mask string for POD, or ''
+sub PodMask($)
+{
+    my $mask = shift;
+    return '' unless $mask =~ /^\[val( >> (\d+))? \& (0x[\da-f]+)\]/;
+    return sprintf(' & 0x%.2x', hex($3) << ($2 || 0));
+}
+
+#------------------------------------------------------------------------------
 # Write the TagName HTML and POD documentation
 # Inputs: 0) BuildTagLookup object reference
 #         1) output pod file (eg. 'lib/Image/ExifTool/TagNames.pod')
@@ -2237,6 +2257,11 @@ sub WriteTagNames($$)
             } elsif ($tagIDstr =~ /^-?\d+(\.\d+)?$/) {
                 $w = $wID - 3;
                 $idStr = sprintf "  %${w}g    ", $tagIDstr;
+                my $tooLong = length($idStr) - 6 - $w;
+                if ($tooLong) {
+                    $tooLong = 3 if $tooLong > 3;
+                    $idStr = substr($idStr, 0, -$tooLong);
+                }
                 $align = " class=r";
             } else {
                 $tagIDstr =~ s/^'$prefix/'/ if $prefix;
@@ -2266,16 +2291,16 @@ sub WriteTagNames($$)
             my @vals = @$writable;
             my $wrStr = shift @vals;
             my $subdir;
-            my @masks = grep /^\[Mask 0x[\da-f]+\]/, @$values;
+            my @masks = grep /^\[val( >> \d+)? \& 0x[\da-f]+\]/, @$values;
             my $tag = shift @tags;
             # if this is a subdirectory or structure, print subdir name (from values) instead of writable
             if ($wrStr =~ /^[-=]/) {
                 $subdir = 1;
                 if (@masks) {
                     # combine any mask into the format string
-                    $wrStr .= " & $1" if $masks[0] =~ /(0x[\da-f]+)/;
+                    $wrStr .= PodMask($masks[0]);
                     shift @masks;
-                    @vals = grep !/^\[Mask 0x[\da-f]+\]/, @$values;
+                    @vals = grep !/^\[val( >> \d+)? \& 0x[\da-f]+\]/, @$values;
                 } else {
                     @vals = @$values;
                 }
@@ -2286,7 +2311,7 @@ sub WriteTagNames($$)
                 for ($i=0; $i<@$writable; ++$i) {
                     $vals[$i] = $$writable[$i] unless defined $vals[$i];
                     if (@masks) {
-                        $vals[$i] .= " & $1" if $masks[0] =~ /(0x[\da-f]+)/;
+                        $vals[$i] .= PodMask($masks[0]);
                         shift @masks;
                     }
                 }
@@ -2309,9 +2334,9 @@ sub WriteTagNames($$)
                     push @tags, $tag if @tags < @vals;
                 }
                 # add Mask to Writable column in POD doc
-                $wrStr .= " & $1" if $mask =~ /(0x[\da-f]+)/;
+                $wrStr .= PodMask($mask);
             }
-            printf PODFILE "%s%-${wTag2}s", $idStr, $tag;
+            my $pod = sprintf "%s%-${wTag2}s", $idStr, $tag;
             my $tGrp = $wGrp;
             if ($id and length($tag) > $wTag2) {
                 my $madeRoom;
@@ -2328,14 +2353,20 @@ sub WriteTagNames($$)
                 }
                 warn "Warning: Pushed $tag\n" unless $madeRoom;
             }
-            printf PODFILE " %-${tGrp}s", shift(@wGrp) || '-' if $showGrp;
+            $pod .= sprintf " %-${tGrp}s", shift(@wGrp) || '-' if $showGrp;
             if ($composite) {
                 @reqs = @$require;
                 $w = $wReq; # Keep writable column in line
                 length($tag) > $wTag2 and $w -= length($tag) - $wTag2;
-                printf PODFILE " %-${w}s", shift(@reqs) || '';
+                $pod .= sprintf " %-${w}s", shift(@reqs) || '';
             }
-            print PODFILE " $wrStr\n";
+            $pod .= " $wrStr";
+            # limit line length to 82 characters (even if it means messing up column alignment)
+            if (length $pod > 82 and $pod !~ /\n/) {
+                my $remove = length($pod) - 82;
+                $pod =~ s/(\w)\s{$remove}/$1/;
+            }
+            print PODFILE $pod, "\n";
             my $numTags = scalar @$tagNames;
             my $n = 0;
             while (@tags or @reqs or @vals) {
@@ -2362,7 +2393,7 @@ sub WriteTagNames($$)
                     if (defined $val) {
                         $line .= " $val";
                         if (@masks) {
-                            $line .= " & $1" if $masks[0] =~ /(0x[\da-f]+)/;
+                            $line .= PodMask($masks[0]);
                             shift @masks;
                         }
                     }

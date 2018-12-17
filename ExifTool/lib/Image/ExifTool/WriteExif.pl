@@ -344,7 +344,8 @@ sub UpdateTiffEnd($$)
 
 #------------------------------------------------------------------------------
 # Validate image data size
-# Inputs: 0) ExifTool ref, 1) validate info hash ref, 2) flag to issue error
+# Inputs: 0) ExifTool ref, 1) validate info hash ref,
+#         2) flag to issue error (ie. we're writing)
 # - issues warning or error if problems found
 sub ValidateImageData($$$;$)
 {
@@ -378,7 +379,10 @@ sub ValidateImageData($$$;$)
         my $bitsPerPixel = 0;
         $bitsPerPixel += $_ foreach @bitsPerSample;
         my $expectedBytes = int(($$vInfo{0x100} * $$vInfo{0x101} * $bitsPerPixel + 7) / 8);
-        if ($expectedBytes != $totalBytes) {
+        if ($expectedBytes != $totalBytes and
+            # (this problem seems normal for certain types of RAW files...)
+            $$et{TIFF_TYPE} !~ /^(K25|KDC|MEF|ORF|SRF)$/)
+        {
             my ($adj, $minor);
             if ($expectedBytes > $totalBytes) {
                 $adj = 'Under'; # undersized is a bigger problem because we may lose data
@@ -706,7 +710,7 @@ Entry:  for (;;) {
 # read next entry from existing directory
 #
                 if ($index < $numEntries) {
-                   $entry = $dirStart + 2 + 12 * $index;
+                    $entry = $dirStart + 2 + 12 * $index;
                     $oldID = Get16u($dataPt, $entry);
                     $readFormat = $oldFormat = Get16u($dataPt, $entry+2);
                     $readCount = $oldCount = Get32u($dataPt, $entry+4);
@@ -1022,7 +1026,7 @@ Entry:  for (;;) {
                             my $val = $et->GetNewValue($tagInfo);
                             defined $val or $mayDelete{$newID} = 1, next;
                             # must convert to binary for evaluating in Condition
-                            my $fmt = $$tagInfo{Writable} || $$tagInfo{Format};
+                            my $fmt = $$tagInfo{Format} || $$tagInfo{Writable};
                             if ($fmt) {
                                 $val = WriteValue($val, $fmt, $$tagInfo{Count});
                                 defined $val or $mayDelete{$newID} = 1, next;
@@ -1443,7 +1447,7 @@ NoOverwrite:            next if $isNew > 0;
                             }
                         }
                         if (defined $subdir) {
-                            next unless length $subdir;
+                            length $subdir or SetByteOrder($saveOrder), next;
                             my $valLen = length($valBuff);
                             # restore existing header and substitute the new
                             # maker notes for the old value

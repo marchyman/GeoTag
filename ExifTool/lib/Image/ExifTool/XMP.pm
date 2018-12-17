@@ -49,7 +49,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.16';
+$VERSION = '3.19';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -63,7 +63,7 @@ sub SaveBlankInfo($$$;$);
 sub ProcessBlankInfo($$$;$);
 sub ValidateXMP($;$);
 sub ValidateProperty($$);
-sub UnescapeChar($$);
+sub UnescapeChar($$;$);
 sub AddFlattenedTags($;$$);
 sub FormatXMPDate($);
 sub ConvertRational($);
@@ -178,6 +178,7 @@ my %xmpNS = (
     GFocus    => 'http://ns.google.com/photos/1.0/focus/',
     dwc       => 'http://rs.tdwg.org/dwc/index.htm',
     GettyImagesGIFT => 'http://xmp.gettyimages.com/gift/1.0/',
+    LImage    => 'http://ns.leiainc.com/photos/1.0/image/',
 );
 
 # build reverse namespace lookup
@@ -756,6 +757,10 @@ my %sRetouchArea = (
    'drone-dji' => {
         Name => 'drone-dji',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::XMP' },
+    },
+    LImage => {
+        Name => 'LImage',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::LImage' },
     },
 );
 
@@ -2328,13 +2333,14 @@ sub EscapeXML($)
 # Unescape XML character references (entities and numerical)
 # Inputs: 0) string to be unescaped
 #         1) optional hash reference to convert entity names to numbers
+#         2) optional character encoding
 # Returns: unescaped string
 my %charNum = ('quot'=>34, 'amp'=>38, 'apos'=>39, 'lt'=>60, 'gt'=>62);
-sub UnescapeXML($;$)
+sub UnescapeXML($;$$)
 {
-    my ($str, $conv) = @_;
+    my ($str, $conv, $enc) = @_;
     $conv = \%charNum unless $conv;
-    $str =~ s/&(#?\w+);/UnescapeChar($1,$conv)/sge;
+    $str =~ s/&(#?\w+);/UnescapeChar($1,$conv,$enc)/sge;
     return $str;
 }
 
@@ -2372,10 +2378,11 @@ sub FullUnescapeXML($)
 # Convert XML character reference to UTF-8
 # Inputs: 0) XML character reference stripped of the '&' and ';' (eg. 'quot', '#34', '#x22')
 #         1) hash reference for looking up character numbers by name
+#         2) optional character encoding (default 'UTF8')
 # Returns: UTF-8 equivalent (or original character on conversion error)
-sub UnescapeChar($$)
+sub UnescapeChar($$;$)
 {
-    my ($ch, $conv) = @_;
+    my ($ch, $conv, $enc) = @_;
     my $val = $$conv{$ch};
     unless (defined $val) {
         if ($ch =~ /^#x([0-9a-fA-F]+)$/) {
@@ -2387,8 +2394,9 @@ sub UnescapeChar($$)
         }
     }
     return chr($val) if $val < 0x80;   # simple ASCII
-    return pack('C0U', $val) if $] >= 5.006001;
-    return Image::ExifTool::PackUTF8($val);
+    $val = $] >= 5.006001 ? pack('C0U', $val) : Image::ExifTool::PackUTF8($val);
+    $val = Image::ExifTool::Decode(undef, $val, 'UTF8', undef, $enc) if $enc and $enc ne 'UTF8';
+    return $val;
 }
 
 #------------------------------------------------------------------------------

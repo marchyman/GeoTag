@@ -55,7 +55,7 @@ use vars qw($VERSION $AUTOLOAD @formatSize @formatName %formatNumber %intFormat
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::MakerNotes;
 
-$VERSION = '4.04';
+$VERSION = '4.08';
 
 sub ProcessExif($$$);
 sub WriteExif($$$);
@@ -220,8 +220,11 @@ sub BINARY_DATA_LIMIT { return 10 * 1024 * 1024; }
     32898 => 'IT8BL', #3
     32908 => 'PixarFilm', #3
     32909 => 'PixarLog', #3
+  # 32910,32911 - Pixar reserved
     32946 => 'Deflate', #3
     32947 => 'DCS', #3
+    33003 => 'Aperio JPEG 2000 YCbCr', #https://openslide.org/formats/aperio/
+    33005 => 'Aperio JPEG 2000 RGB', #https://openslide.org/formats/aperio/
     34661 => 'JBIG', #3
     34676 => 'SGILog', #3
     34677 => 'SGILog24', #3
@@ -231,7 +234,14 @@ sub BINARY_DATA_LIMIT { return 10 * 1024 * 1024; }
     34718 => 'Microsoft Document Imaging (MDI) Binary Level Codec', #18
     34719 => 'Microsoft Document Imaging (MDI) Progressive Transform Codec', #18
     34720 => 'Microsoft Document Imaging (MDI) Vector', #18
+    34887 => 'ESRI Lerc', #LibTiff
+  # 34888,34889 - ESRI reserved
     34892 => 'Lossy JPEG', # (DNG 1.4)
+    34925 => 'LZMA2', #LibTiff
+    34926 => 'Zstd', #LibTiff
+    34927 => 'WebP', #LibTiff
+    34933 => 'PNG', # (TIFF mail list)
+    34934 => 'JPEG XR', # (TIFF mail list)
     65000 => 'Kodak DCR Compressed', #PH
     65535 => 'Pentax PEF Compressed', #Jens
 );
@@ -250,6 +260,7 @@ sub BINARY_DATA_LIMIT { return 10 * 1024 * 1024; }
     32803 => 'Color Filter Array', #2
     32844 => 'Pixar LogL', #3
     32845 => 'Pixar LogLuv', #3
+    32892 => 'Sequential Color Filter', #JR (Sony ARQ)
     34892 => 'Linear Raw', #2
 );
 
@@ -2648,7 +2659,7 @@ my %sampleFormat = (
         Writable => 'rational64u',
         Count => 4,
         # convert to the form "12-20mm f/3.8-4.5" or "50mm f/1.4"
-        PrintConv => \&Image::ExifTool::Exif::PrintLensInfo,
+        PrintConv => \&PrintLensInfo,
         PrintConvInv => \&ConvertLensInfo,
     },
     0xa433 => { Name => 'LensMake',         Writable => 'string' }, #24
@@ -3138,7 +3149,7 @@ my %sampleFormat = (
             WriteGroup => 'IFD0',
             NestedHtmlDump => 1,
             SubDirectory => { TagTable => 'Image::ExifTool::DNG::AdobeData' },
-            Format => 'undef',  # written incorrectly as int8u (change to undef for speed)
+            Format => 'undef',  # but written as int8u (change to undef for speed)
         },
         {
             # Pentax/Samsung models that write AOC maker notes in JPG images:
@@ -3162,7 +3173,7 @@ my %sampleFormat = (
                 Base => '$start - 10',
                 ByteOrder => 'Unknown', # easier to do this than read byteorder word
             },
-            Format => 'undef',  # written incorrectly as int8u (change to undef for speed)
+            Format => 'undef',  # but written as int8u (change to undef for speed)
         },
         {
             # must duplicate the above tag with a different name for more recent
@@ -3185,7 +3196,7 @@ my %sampleFormat = (
             Name => 'DNGPrivateData',
             Flags => [ 'Binary', 'Protected' ],
             Format => 'undef',
-            Writable => 'undef',
+            Writable => 'int8u',
             WriteGroup => 'IFD0',
         },
     ],
@@ -3812,6 +3823,17 @@ my %sampleFormat = (
         Count => 4,
         Protected => 1,
     },
+    0xc7d5 => { #PH (in SubIFD1 of Nikon Z6/Z7 NEF images)
+        Name => 'NikonNEFInfo',
+        Condition => '$$valPt =~ /^Nikon\0/',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::Nikon::NEFInfo',
+            Start => '$valuePtr + 18',
+            Base => '$start - 8',
+            ByteOrder => 'Unknown',
+        },
+    },
+    # 0xc7d6 - int8u: 1 (SubIFD1 of Nikon Z6/Z7 NEF)
     0xea1c => { #13
         Name => 'Padding',
         Binary => 1,
@@ -4148,7 +4170,7 @@ my %subSecConv = (
             3 => 'FocusDistance',   # focus distance in metres (0 is infinity)
             4 => 'SubjectDistance',
             5 => 'ObjectDistance',
-            6 => 'ApproximateFocusDistance ',
+            6 => 'ApproximateFocusDistance',
             7 => 'FocusDistanceLower',
             8 => 'FocusDistanceUpper',
         },

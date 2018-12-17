@@ -1709,7 +1709,7 @@ my %sSubVersion = (
         prefix recorded in the file, but ExifTool shortens this for the family 1
         group name.
     },
-    Personality         => { },
+    Personality         => { List => 'Bag' },
     OriginalFilename    => { Name => 'OriginalFileName' },
     ParentMEID          => { },
     # the following from StarGeek
@@ -1730,6 +1730,22 @@ my %sSubVersion = (
     RoutingExclusions   => { List => 'Bag' },
     SecondaryFTP        => { List => 'Bag' },
     TimeShot            => { },
+);
+
+# RED smartphone images (ref PH)
+%Image::ExifTool::XMP::LImage = (
+    %xmpTableDefaults,
+    GROUPS => { 1 => 'XMP-LImage', 2 => 'Image' },
+    NAMESPACE => 'LImage',
+    NOTES => 'Tags written by RED smartphones.',
+    MajorVersion => { },
+    MinorVersion => { },
+    RightAlbedo => {
+        Notes => 'Right stereoscopic image',
+        Groups => { 2 => 'Preview' },
+        ValueConv => 'Image::ExifTool::XMP::DecodeBase64($val)',
+        ValueConvInv => 'Image::ExifTool::XMP::EncodeBase64($val)',
+    },
 );
 
 # SVG namespace properties (ref 9)

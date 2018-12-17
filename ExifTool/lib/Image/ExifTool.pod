@@ -65,44 +65,45 @@ supported by ExifTool (r = read, w = write, c = create):
 
   File Types
   ------------+-------------+-------------+-------------+------------
-  3FR   r     | DV    r     | JP2   r/w   | ODT   r     | RSRC  r
-  3G2   r/w   | DVB   r/w   | JPEG  r/w   | OFR   r     | RTF   r
-  3GP   r/w   | DVR-MS r    | JSON  r     | OGG   r     | RW2   r/w
-  A     r     | DYLIB r     | K25   r     | OGV   r     | RWL   r/w
-  AA    r     | EIP   r     | KDC   r     | OPUS  r     | RWZ   r
-  AAX   r/w   | EPS   r/w   | KEY   r     | ORF   r/w   | RM    r
-  ACR   r     | EPUB  r     | LA    r     | OTF   r     | SEQ   r
-  AFM   r     | ERF   r/w   | LFP   r     | PAC   r     | SKETCH r
-  AI    r/w   | EXE   r     | LNK   r     | PAGES r     | SO    r
-  AIFF  r     | EXIF  r/w/c | M2TS  r     | PBM   r/w   | SR2   r/w
-  APE   r     | EXR   r     | M4A/V r/w   | PCD   r     | SRF   r
-  ARW   r/w   | EXV   r/w/c | MAX   r     | PDB   r     | SRW   r/w
-  ASF   r     | F4A/V r/w   | MEF   r/w   | PDF   r/w   | SVG   r
-  AVI   r     | FFF   r/w   | MIE   r/w/c | PEF   r/w   | SWF   r
-  AZW   r     | FLA   r     | MIFF  r     | PFA   r     | THM   r/w
-  BMP   r     | FLAC  r     | MKA   r     | PFB   r     | TIFF  r/w
-  BPG   r     | FLIF  r/w   | MKS   r     | PFM   r     | TORRENT r
-  BTF   r     | FLV   r     | MKV   r     | PGF   r     | TTC   r
-  CHM   r     | FPF   r     | MNG   r/w   | PGM   r/w   | TTF   r
-  COS   r     | FPX   r     | MOBI  r     | PLIST r     | VCF   r
-  CR2   r/w   | GIF   r/w   | MODD  r     | PICT  r     | VRD   r/w/c
-  CR3   r/w   | GPR   r/w   | MOI   r     | PMP   r     | VSD   r
-  CRM   r/w   | GZ    r     | MOS   r/w   | PNG   r/w   | WAV   r
-  CRW   r/w   | HDP   r/w   | MOV   r/w   | PPM   r/w   | WDP   r/w
-  CS1   r/w   | HDR   r     | MP3   r     | PPT   r     | WEBP  r
-  DCM   r     | HEIC  r     | MP4   r/w   | PPTX  r     | WEBM  r
-  DCP   r/w   | HEIF  r     | MPC   r     | PS    r/w   | WMA   r
-  DCR   r     | HTML  r     | MPG   r     | PSB   r/w   | WMV   r
-  DFONT r     | ICC   r/w/c | MPO   r/w   | PSD   r/w   | WTV   r
-  DIVX  r     | ICS   r     | MQV   r/w   | PSP   r     | WV    r
-  DJVU  r     | IDML  r     | MRW   r/w   | QTIF  r/w   | X3F   r/w
-  DLL   r     | IIQ   r/w   | MXF   r     | R3D   r     | XCF   r
-  DNG   r/w   | IND   r/w   | NEF   r/w   | RA    r     | XLS   r
-  DOC   r     | INX   r     | NRW   r/w   | RAF   r/w   | XLSX  r
-  DOCX  r     | ISO   r     | NUMBERS r   | RAM   r     | XMP   r/w/c
-  DPX   r     | ITC   r     | O     r     | RAR   r     | ZIP   r
-  DR4   r/w/c | J2C   r     | ODP   r     | RAW   r/w   |
-  DSS   r     | JNG   r/w   | ODS   r     | RIFF  r     |
+  3FR   r     | DSS   r     | JP2   r/w   | OFR   r     | RTF   r
+  3G2   r/w   | DV    r     | JPEG  r/w   | OGG   r     | RW2   r/w
+  3GP   r/w   | DVB   r/w   | JSON  r     | OGV   r     | RWL   r/w
+  A     r     | DVR-MS r    | K25   r     | OPUS  r     | RWZ   r
+  AA    r     | DYLIB r     | KDC   r     | ORF   r/w   | RM    r
+  AAE   r     | EIP   r     | KEY   r     | OTF   r     | SEQ   r
+  AAX   r/w   | EPS   r/w   | LA    r     | PAC   r     | SKETCH r
+  ACR   r     | EPUB  r     | LFP   r     | PAGES r     | SO    r
+  AFM   r     | ERF   r/w   | LNK   r     | PBM   r/w   | SR2   r/w
+  AI    r/w   | EXE   r     | M2TS  r     | PCD   r     | SRF   r
+  AIFF  r     | EXIF  r/w/c | M4A/V r/w   | PCX   r     | SRW   r/w
+  APE   r     | EXR   r     | MAX   r     | PDB   r     | SVG   r
+  ARQ   r/w   | EXV   r/w/c | MEF   r/w   | PDF   r/w   | SWF   r
+  ARW   r/w   | F4A/V r/w   | MIE   r/w/c | PEF   r/w   | THM   r/w
+  ASF   r     | FFF   r/w   | MIFF  r     | PFA   r     | TIFF  r/w
+  AVI   r     | FLA   r     | MKA   r     | PFB   r     | TORRENT r
+  AZW   r     | FLAC  r     | MKS   r     | PFM   r     | TTC   r
+  BMP   r     | FLIF  r/w   | MKV   r     | PGF   r     | TTF   r
+  BPG   r     | FLV   r     | MNG   r/w   | PGM   r/w   | VCF   r
+  BTF   r     | FPF   r     | MOBI  r     | PLIST r     | VRD   r/w/c
+  CHM   r     | FPX   r     | MODD  r     | PICT  r     | VSD   r
+  COS   r     | GIF   r/w   | MOI   r     | PMP   r     | WAV   r
+  CR2   r/w   | GPR   r/w   | MOS   r/w   | PNG   r/w   | WDP   r/w
+  CR3   r/w   | GZ    r     | MOV   r/w   | PPM   r/w   | WEBP  r
+  CRM   r/w   | HDP   r/w   | MP3   r     | PPT   r     | WEBM  r
+  CRW   r/w   | HDR   r     | MP4   r/w   | PPTX  r     | WMA   r
+  CS1   r/w   | HEIC  r     | MPC   r     | PS    r/w   | WMV   r
+  DCM   r     | HEIF  r     | MPG   r     | PSB   r/w   | WTV   r
+  DCP   r/w   | HTML  r     | MPO   r/w   | PSD   r/w   | WV    r
+  DCR   r     | ICC   r/w/c | MQV   r/w   | PSP   r     | X3F   r/w
+  DFONT r     | ICS   r     | MRW   r/w   | QTIF  r/w   | XCF   r
+  DIVX  r     | IDML  r     | MXF   r     | R3D   r     | XLS   r
+  DJVU  r     | IIQ   r/w   | NEF   r/w   | RA    r     | XLSX  r
+  DLL   r     | IND   r/w   | NRW   r/w   | RAF   r/w   | XMP   r/w/c
+  DNG   r/w   | INX   r     | NUMBERS r   | RAM   r     | ZIP   r
+  DOC   r     | ISO   r     | O     r     | RAR   r     |
+  DOCX  r     | ITC   r     | ODP   r     | RAW   r/w   |
+  DPX   r     | J2C   r     | ODS   r     | RIFF  r     |
+  DR4   r/w/c | JNG   r/w   | ODT   r     | RSRC  r     |
 
   Meta Information
   ----------------------+----------------------+---------------------
@@ -295,9 +296,10 @@ still generated, but the tag value is undefined.
 
 =item HASH ref
 
-Reference to a hash containing the options settings.  See L</Options>
-documentation below for a list of available options.  Options specified
-as arguments to L</ImageInfo> take precedence over L</Options> settings.
+Reference to a hash containing the options settings valid for this call
+only.  See L</Options> documentation below for a list of available options. 
+Options specified as arguments to L</ImageInfo> take precedence over
+L</Options> settings.
 
 =back
 
@@ -617,12 +619,15 @@ this option set to 1, ExifTool will not scan to the end of a JPEG image to
 check for an AFCP, CanonVRD, FotoStation, PhotoMechanic, MIE or PreviewImage
 trailer.  This also stops the parsing after the first comment in GIF images,
 and at the audio/video data with RIFF-format files (AVI, WAV, etc), so any
-trailing metadata (eg. XMP written by some utilities) may be missed.  When
-combined with the ScanForXMP option, prevents scanning for XMP in recognized
-file types.  With a value of 2, ExifTool will also avoid extracting any EXIF
-MakerNote information.  When set to 3, the file is not actually parsed, and
-only an initial guess at FileType and some pseudo tags are returned. 
-Default is undef.
+trailing metadata (eg. XMP written by some utilities) may be missed.  Also
+disables input buffering for some types of files to reduce memory usage when
+reading from a non-seekable stream.  When combined with the ScanForXMP
+option, prevents scanning for XMP in recognized file types.  With a value of
+2, ExifTool will also avoid extracting any EXIF MakerNote information.  When
+set to 3 or 4, only pseudo system tags and FileType are generated.  For 3,
+the file header is read to provide an educated guess at FileType.  For 4,
+the file is not read at all and FileType is determined based on the file's
+extension.  Default is undef.
 
 =item Filter
 
@@ -672,6 +677,14 @@ ignored if the PDOP is greater than this.  Default is undef.
 
 Minimum number of satellites for geotagging.  GPS fixes are ignored if the
 number of acquired satellites is less than this.  Default is undef.
+
+=item GeoSpeedRef
+
+Reference units for writing GPSSpeed when geotagging:
+
+    'K', 'k' or 'km/h'  - km/h
+    'M', 'm' or 'mph'   - mph
+    <anything else>     - knots (default undef)
 
 =item GlobalTimeShift
 
@@ -762,9 +775,10 @@ L<Image::ExifTool::TagNames/MacOS MDItem Tags> for more information).
 
 =item MissingTagValue
 
-Value for missing tags in tag name expressions.  If not set, a minor error
-is issued for missing values, or the value is set to '' if
-L</IgnoreMinorErrors> is set.  Default is undef.
+Value for missing tags in tag name expressions (or tags where the advanced
+formatting expression returns undef).  If not set, a minor error is issued
+for missing values, or the value is set to '' if L</IgnoreMinorErrors> is
+set.  Default is undef.
 
 =item NoPDFList
 
@@ -805,10 +819,10 @@ Flag set to assume that QuickTime date/time values are stored as UTC,
 causing conversion to local time when they are extracted and from local time
 when written.  According to the QuickTime specification date/time values
 should be UTC, but many digital cameras store local time instead (presumably
-because they don't know the time zone), so the default is undef.  This
-option also disables the autodetection of incorrect time-zero offsets in
-QuickTime date/time values, and enforces a time zero of 1904 as per the
-QuickTime specification.
+because they don't know the time zone), so the default is to not convert
+these times.  This option also disables the autodetection of incorrect
+time-zero offsets in QuickTime date/time values, and enforces a time zero of
+1904 as per the QuickTime specification.
 
 =item RequestAll
 
@@ -864,9 +878,15 @@ the DateFormat option is used.  Default is undef.
     0   - Return date/time value unchanged if it can't be converted
     1   - Return undef if date/time value can't be converted
 
-When set to 1 while writing a PrintConv date/time value, the value is
-written only if POSIX::strptime or Time::Piece is available and can
-successfully convert the value.
+When set to 1 while writing a PrintConv date/time value with the DateFormat
+option set, the value is written only if POSIX::strptime or Time::Piece is
+available and can successfully convert the value.
+
+For PNG CreationTime, a setting of 1 has the additional effect of causing
+the date/time to be reformatted according to PNG 1.2 recommendation
+(RFC-1123) when writing, and a warning to be issued for any non-standard
+value when reading (but note that Windows may not recognize PNG date/time
+values in standard format).
 
 =item Struct
 
@@ -1147,7 +1167,8 @@ called with a source file name.
 The following ExifTool options are effective in the call to L</WriteInfo>:
 
 ByteOrder, Charset, CharsetEXIF, CharsetFileName, CharsetIPTC, Compact,
-Compress, FixBase, IgnoreMinorErrors, Password, PNGEarlyXMP and Verbose.
+Compress, FixBase, IgnoreMinorErrors, Password, PNGEarlyXMP, Verbose and
+XMPShorthand.
 
 =head2 GetTagList
 
@@ -1274,8 +1295,8 @@ optional group specifier), use L</GetInfo> instead.
 The following options are in effect when L</GetValue> is called:
 
 Charset, CoordFormat, DateFormat, Escape, Filter, GlobalTimeShift, Lang,
-ListItem, ListJoin, PrintConv, QuickTimeUTC (conversion to local time), and
-StrictDate.
+ListItem, ListJoin, PrintConv, QuickTimeUTC (conversion to local time),
+StrictDate and TimeZone.
 
 =over 4
 
@@ -1530,7 +1551,7 @@ explicitly, either by group (with 'Adobe:*') or as a block (with 'Adobe').
 The following ExifTool options are effective in the call to L</SetNewValue>:
 
 Charset, DateFormat, Escape, IgnoreMinorErrors, Lang, ListJoin, ListSplit,
-PrintConv, QuickTimeUTC, StrictDate, Verbose and WriteMode.
+PrintConv, QuickTimeUTC, StrictDate, TimeZone, Verbose and WriteMode.
 
 =head2 GetNewValue
 
@@ -2197,8 +2218,8 @@ KodakEffectsIFD, KodakIFD, KyoceraRaw, LNK, Leaf, LeafSubIFD, Leica, Lytro,
 M2TS, MAC, MIE-Audio, MIE-Camera, MIE-Canon, MIE-Doc, MIE-Extender,
 MIE-Flash, MIE-GPS, MIE-Geo, MIE-Image, MIE-Lens, MIE-Main, MIE-MakerNotes,
 MIE-Meta, MIE-Orient, MIE-Preview, MIE-Thumbnail, MIE-UTM, MIE-Unknown,
-MIE-Video, MIFF, MNG, MOBI, MOI, MPC, MPEG, MPF0, MPImage, MXF, MacOS,
-MakerNotes, MakerUnknown, Matroska, MediaJukebox, MetaIFD, Microsoft,
+MIE-Video, MIFF, MNG, MOBI, MOI, MPC, MPEG, MPF0, MPImage, MS-DOC, MXF,
+MacOS, MakerNotes, MakerUnknown, Matroska, MediaJukebox, MetaIFD, Microsoft,
 Minolta, MinoltaRaw, Motorola, NITF, Nikon, NikonCapture, NikonCustom,
 NikonScan, Nintendo, Ocad, Ogg, Olympus, OpenEXR, Opus, PDF, PICT, PNG,
 PNG-pHYs, PSP, Palm, Panasonic, PanasonicRaw, Pentax, PhaseOne, PhotoCD,

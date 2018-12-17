@@ -252,6 +252,7 @@ my %ignorePrintConv = map { $_ => 1 } qw(OTHER BITMASK Notes);
 #           CreateGroups => [internal use] createGroups hash ref from related tags
 #           ListOnly => [internal use] set only list or non-list tags
 #           SetTags => [internal use] hash ref to return tagInfo refs of set tags
+#           Sanitized => [internal use] set to avoid double-sanitizing the value
 # Returns: number of tags set (plus error string in list context)
 # Notes: For tag lists (like Keywords), call repeatedly with the same tag name for
 #        each value in the list.  Internally, the new information is stored in
@@ -326,7 +327,7 @@ sub SetNewValue($;$$%)
     }
     # un-escape as necessary and make sure the Perl UTF-8 flag is OFF for the value
     # if perl is 5.6 or greater (otherwise our byte manipulations get corrupted!!)
-    $self->Sanitize(\$value) if defined $value and not ref $value;
+    $self->Sanitize(\$value) if defined $value and not ref $value and not $options{Sanitized};
 
     # set group name in options if specified
     ($options{Group}, $tag) = ($1, $2) if $tag =~ /(.*):(.+)/;
@@ -523,7 +524,7 @@ sub SetNewValue($;$$%)
             my ($match) = grep /^\Q$tag\E$/i, keys %Image::ExifTool::Shortcuts::Main;
             undef $err;
             if ($match) {
-                $options{NoShortcut} = 1;
+                $options{NoShortcut} = $options{Sanitized} = 1;
                 foreach $tag (@{$Image::ExifTool::Shortcuts::Main{$match}}) {
                     my ($n, $e) = $self->SetNewValue($tag, $value, %options);
                     $numSet += $n;
@@ -1762,12 +1763,13 @@ sub SetFileModifyDate($$;$$$)
 #         2) new name (or undef to build from FileName and Directory tags)
 #         3) option: 'Link' to create link instead of renaming file
 #                    'Test' to only print new file name
+#         4) 0 to indicate that a file will no longer exist (used for 'Test' only)
 # Returns: 1=name changed OK, 0=nothing changed, -1=error changing name
 #          (and increments CHANGED flag if filename changed)
 # Notes: Will not overwrite existing file.  Creates directories as necessary.
-sub SetFileName($$;$$)
+sub SetFileName($$;$$$)
 {
-    my ($self, $file, $newName, $opt) = @_;
+    my ($self, $file, $newName, $opt, $usedFlag) = @_;
     my ($nvHash, $doName, $doDir);
 
     $opt or $opt = '';
@@ -1824,7 +1826,7 @@ sub SetFileName($$;$$)
     # protect against empty file name
     length $newName or $self->Warn('New file name is empty'), return -1;
     # don't replace existing file
-    if ($self->Exists($newName)) {
+    if ($self->Exists($newName) and (not defined $usedFlag or $usedFlag)) {
         if ($file ne $newName or $opt eq 'Link') {
             $self->Warn("File '${newName}' already exists");
             return -1;
@@ -2605,7 +2607,7 @@ sub Sanitize($$)
         if ($$self{OPTIONS}{Escape} eq 'XML') {
             $$valPt = Image::ExifTool::XMP::UnescapeXML($$valPt);
         } elsif ($$self{OPTIONS}{Escape} eq 'HTML') {
-            $$valPt = Image::ExifTool::HTML::UnescapeHTML($$valPt);
+            $$valPt = Image::ExifTool::HTML::UnescapeHTML($$valPt, $$self{OPTIONS}{Charset});
         }
     }
 }
@@ -6514,7 +6516,7 @@ sub WriteBinaryData($$$)
     my @varInfo = @varOffsets;
     my $tagInfo;
     $dataPt = \$newData;
-    foreach $tagInfo ($self->GetNewTagInfoList($tagTablePtr)) {
+    foreach $tagInfo (sort { $$a{TagID} <=> $$b{TagID} } $self->GetNewTagInfoList($tagTablePtr)) {
         my $tagID = $$tagInfo{TagID};
         # evaluate conditional tags now if necessary
         if (ref $$tagTablePtr{$tagID} eq 'ARRAY' or $$tagInfo{Condition}) {
@@ -6556,7 +6558,7 @@ sub WriteBinaryData($$$)
         next unless defined $newVal;    # can't delete from a binary table
         # only write masked bits if specified
         my $mask = $$tagInfo{Mask};
-        $newVal = ($newVal & $mask) | ($val & ~$mask) if defined $mask;
+        $newVal = (($newVal << $$tagInfo{BitShift}) & $mask) | ($val & ~$mask) if $mask;
         # set the size
         if ($$tagInfo{DataTag} and not $$tagInfo{IsOffset}) {
             warn 'Internal error' unless $newVal == 0xfeedfeed;

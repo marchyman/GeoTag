@@ -27,7 +27,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %mimeType $swapBytes $swapWords $currentByteOrder %unpackStd
             %jpegMarker %specialTags %fileTypeLookup);
 
-$VERSION = '11.10';
+$VERSION = '11.22';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -65,7 +65,7 @@ sub SaveNewValues($);
 sub RestoreNewValues($);
 sub WriteInfo($$;$$);
 sub SetFileModifyDate($$;$$$);
-sub SetFileName($$;$$);
+sub SetFileName($$;$$$);
 sub SetSystemTags($$);
 sub GetAllTags(;$);
 sub GetWritableTags(;$);
@@ -131,7 +131,7 @@ sub ReadValue($$$$$;$);
 @loadAllTables = qw(
     PhotoMechanic Exif GeoTiff CanonRaw KyoceraRaw Lytro MinoltaRaw PanasonicRaw
     SigmaRaw JPEG GIMP Jpeg2000 GIF BMP BMP::OS2 BMP::Extra BPG BPG::Extensions
-    PICT PNG MNG FLIF DjVu DPX OpenEXR MIFF PGF PSP PhotoCD Radiance PDF
+    PICT PNG MNG FLIF DjVu DPX OpenEXR MIFF PCX PGF PSP PhotoCD Radiance PDF
     PostScript Photoshop::Header Photoshop::Layers Photoshop::ImageData
     FujiFilm::RAF FujiFilm::IFD Samsung::Trailer Sony::SRF2 Sony::SR2SubIFD
     Sony::PMP ITC ID3 FLAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible
@@ -181,7 +181,8 @@ $defaultLang = 'en';    # default language
                 FLAC APE MPC MKV MXF DV PMP IND PGF ICC ITC FLIR FLIF FPF LFP
                 HTML VRD RTF XCF DSS QTIF FPX PICT ZIP GZIP PLIST RAR BZ2 TAR
                 RWZ EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC M2TS PHP
-                WTV Torrent VCard LRI R3D AA PDB MOI ISO JSON MP3 DICOM PCD);
+                PCX DCX WTV Torrent VCard LRI R3D AA PDB MOI ISO JSON MP3 DICOM
+                PCD);
 
 # file types that we can write (edit)
 my @writeTypes = qw(JPEG TIFF GIF CRW MRW ORF RAF RAW PNG MIE PSD XMP PPM EPS
@@ -211,6 +212,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
    '3GPP'=>  '3GP',
     A    => ['EXE',  'Static library'],
     AA   => ['AA',   'Audible Audiobook'],
+    AAE  => ['PLIST','Apple edit information'],
     AAX  => ['MOV',  'Audible Enhanced Audiobook'],
     ACR  => ['DICOM','American College of Radiology ACR-NEMA'],
     ACFM => ['Font', 'Adobe Composite Font Metrics'],
@@ -224,6 +226,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     APE  => ['APE',  "Monkey's Audio format"],
     APNG => ['PNG',  'Animated Portable Network Graphics'],
     ARW  => ['TIFF', 'Sony Alpha RAW format'],
+    ARQ  => ['TIFF', 'Sony Alpha Pixel-Shift RAW format'],
     ASF  => ['ASF',  'Microsoft Advanced Systems Format'],
     AVC  => ['AVC',  'Advanced Video Connection'], # (extensions are actually _AU,_AD,_IM,_ID)
     AVI  => ['RIFF', 'Audio Video Interleaved'],
@@ -245,6 +248,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     DCM  =>  'DICM',
     DCP  => ['TIFF', 'DNG Camera Profile'],
     DCR  => ['TIFF', 'Kodak Digital Camera RAW'],
+    DCX  => ['DCX',  'Multi-page PC Paintbrush'],
     DEX  => ['DEX',  'Dalvik Executable format'],
     DFONT=> ['Font', 'Macintosh Data fork Font'],
     DIB  => ['BMP',  'Device Independent Bitmap'],
@@ -318,7 +322,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     ISO  => ['ISO',  'ISO 9660 disk image'],
     ITC  => ['ITC',  'iTunes Cover Flow'],
     J2C  => ['JP2',  'JPEG 2000 codestream'],
-    J2K  =>  'JP2',
+    J2K  =>  'J2C',
     JNG  => ['PNG',  'JPG Network Graphics'],
     JP2  => ['JP2',  'JPEG 2000 file'],
     # JP4? - looks like a JPEG but the image data is different
@@ -397,6 +401,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     PBM  => ['PPM',  'Portable BitMap'],
     PCD  => ['PCD',  'Kodak Photo CD Image Pac'],
     PCT  =>  'PICT',
+    PCX  => ['PCX',  'PC Paintbrush'],
     PDB  => ['PDB',  'Palm Database'],
     PDF  => ['PDF',  'Adobe Portable Document Format'],
     PEF  => ['TIFF', 'Pentax (RAW) Electronic Format'],
@@ -536,6 +541,7 @@ my %fileDescription = (
 %mimeType = (
    '3FR' => 'image/x-hasselblad-3fr',
     AA   => 'audio/audible',
+    AAE  => 'application/vnd.apple.photos',
     AI   => 'application/vnd.adobe.illustrator',
     AIFF => 'audio/x-aiff',
     APE  => 'audio/x-monkeys-audio',
@@ -553,6 +559,7 @@ my %fileDescription = (
     CRM  => 'video/x-canon-crm',
     CRW  => 'image/x-canon-crw',
     DCR  => 'image/x-kodak-dcr',
+    DCX  => 'image/dcx',
     DEX  => 'application/octet-stream',
     DFONT=> 'application/x-dfont',
     DICOM=> 'application/dicom',
@@ -647,6 +654,7 @@ my %fileDescription = (
     PAGES=> 'application/x-iwork-pages-sffpages',
     PBM  => 'image/x-portable-bitmap',
     PCD  => 'image/x-photo-cd',
+    PCX  => 'image/pcx',
     PDB  => 'application/vnd.palm',
     PDF  => 'application/pdf',
     PEF  => 'image/x-pentax-pef',
@@ -736,6 +744,7 @@ my %moduleName = (
     COS  => 'CaptureOne',
     DEX  => 0,
     DOCX => 'OOXML',
+    DCX  => 0,
     DR4  => 'CanonVRD',
     DSS  => 'Olympus',
     EPS  => 'PostScript',
@@ -797,6 +806,7 @@ my %moduleName = (
     BZ2  => 'BZh[1-9]\x31\x41\x59\x26\x53\x59',
     CHM  => 'ITSF.{20}\x10\xfd\x01\x7c\xaa\x7b\xd0\x11\x9e\x0c\0\xa0\xc9\x22\xe6\xec',
     CRW  => '(II|MM).{4}HEAP(CCDR|JPGM)',
+    DCX  => '\xb1\x68\xde\x3a',
     DEX  => "dex\n035\0",
     DICOM=> '(.{128}DICM|\0[\x02\x04\x06\x08]\0[\0-\x20]|[\x02\x04\x06\x08]\0[\0-\x20]\0)',
     DOCX => 'PK\x03\x04',
@@ -846,6 +856,7 @@ my %moduleName = (
     ORF  => '(II|MM)',
     PDB  => '.{60}(\.pdfADBE|TEXtREAd|BVokBDIC|DB99DBOS|PNRdPPrs|DataPPrs|vIMGView|PmDBPmDB|InfoINDB|ToGoToGo|SDocSilX|JbDbJBas|JfDbJFil|DATALSdb|Mdb1Mdb1|BOOKMOBI|DataPlkr|DataSprd|SM01SMem|TEXtTlDc|InfoTlIf|DataTlMl|DataTlPt|dataTDBP|TdatTide|ToRaTRPW|zTXTGPlm|BDOCWrdS)',
   # PCD  =>  signature is at byte 2048
+    PCX  => '\x0a[\0-\x05]\x01[\x01\x02\x04\x08].{64}[\0-\x02]',
     PDF  => '\s*%PDF-\d+\.\d+',
     PGF  => 'PGF',
     PHP  => '<\?php\s',
@@ -2067,6 +2078,7 @@ sub ClearOptions($)
         GeoMaxHDOP  => undef,   # geotag maximum HDOP
         GeoMaxPDOP  => undef,   # geotag maximum PDOP
         GeoMinSats  => undef,   # geotag minimum satellites
+        GeoSpeedRef => undef,   # geotag GPSSpeedRef
         GlobalTimeShift => undef,   # apply time shift to all extracted date/time values
     #   Group#      => undef,   # return tags for specified groups in family #
         HtmlDump    => 0,       # HTML dump (0-3, higher # = bigger limit)
@@ -2244,7 +2256,7 @@ sub ExtractInfo($;@)
         }
     }
 
-    if ($raf) {
+    while ($raf) {
         my (@stat, $fileSize);
         if ($reEntry) {
             # we already set these tags
@@ -2317,6 +2329,15 @@ sub ExtractInfo($;@)
         $recognizedExt = $ext if defined $ext and not defined $magicNumber{$ext} and
                                  defined $moduleName{$ext} and not $moduleName{$ext};
         my @fileTypeList = GetFileType($realname);
+        if ($fast and $fast >= 4) {
+            if (@fileTypeList) {
+                $type = shift @fileTypeList;
+                $self->SetFileType($$self{FILE_TYPE} = $type);
+            } else {
+                $self->Error('Unknown file type');
+            }
+            last;   # don't read the file
+        }
         if (@fileTypeList) {
             # add remaining types to end of list so we test them all
             my $pat = join '|', @fileTypeList;
@@ -2346,9 +2367,13 @@ sub ExtractInfo($;@)
             my $unkHeader;
             $type = shift @fileTypeList;
             if ($type) {
-                # do quick test for this file type to avoid loading module unnecessarily
-                next if $magicNumber{$type} and $buff !~ /^$magicNumber{$type}/s and
-                        not $noMagic{$type};
+                if ($magicNumber{$type}) {
+                    # do quick test for this file type to avoid loading module unnecessarily
+                    next if $buff !~ /^$magicNumber{$type}/s and not $noMagic{$type};
+                } else {
+                    # keep checking for other types if we recognize this file only by extension
+                    next if defined $moduleName{$type} and not $moduleName{$type};
+                }
                 next if $weakMagic{$type} and defined $recognizedExt;
             } elsif (not defined $type) {
                 last;
@@ -2509,6 +2534,7 @@ sub ExtractInfo($;@)
                 }
             }
         }
+        last;   # (loop was a cheap "goto")
     }
 
     # generate Validate tag if requested
@@ -2936,9 +2962,8 @@ sub GetValue($$;$)
                                 $self->Warn("$convType $tag: " . CleanWarning()) if $evalWarning;
                             }
                             if (not defined $value) {
-                                if (($$tagInfo{PrintHex} or
-                                    ($$tagInfo{Mask} and not defined $$tagInfo{PrintHex}))
-                                    and $val and IsInt($val) and $convType eq 'PrintConv')
+                                if ($$tagInfo{PrintHex} and $val and IsInt($val) and
+                                    $convType eq 'PrintConv')
                                 {
                                     $val = sprintf('0x%x',$val);
                                 }
@@ -3241,7 +3266,7 @@ sub BuildCompositeTags($)
     my $self = shift;
 
     $$self{BuildingComposite} = 1;
-    
+
     my $compTable = GetTagTable('Image::ExifTool::Composite');
     my @tagList = sort keys %$compTable;
     my $rawValue = $$self{VALUE};
@@ -4570,6 +4595,12 @@ sub SetupTagTable($)
             $$tagInfo{Name} or $$tagInfo{Name} = MakeTagName($tagID);
             $$tagInfo{Flags} and ExpandFlags($tagInfo);
             $$tagInfo{Avoid} = $avoid if defined $avoid;
+            # calculate BitShift from Mask if necessary
+            if ($$tagInfo{Mask} and not defined $$tagInfo{BitShift}) {
+                my ($mask, $bitShift) = ($$tagInfo{Mask}, 0);
+                ++$bitShift until $mask & (1 << $bitShift);
+                $$tagInfo{BitShift} = $bitShift;
+            }
         }
         next unless @infoArray > 1;
         # add an "Index" member to each tagInfo in a list
@@ -5326,6 +5357,7 @@ sub TimeZoneString($;$)
     }
     my $sign = '+';
     $min < 0 and $sign = '-', $min = -$min;
+    $min = int($min + 0.5); # round off to nearest minute
     my $h = int($min / 60);
     return sprintf('%s%.2d:%.2d', $sign, $h, $min - $h * 60);
 }
@@ -5404,6 +5436,7 @@ sub ConvertDuration($)
     return '0 s' if $time == 0;
     my $sign = ($time > 0 ? '' : (($time = -$time), '-'));
     return sprintf("$sign%.2f s", $time) if $time < 30;
+    $time += 0.5;   # to round off to nearest second
     my $h = int($time / 3600);
     $time -= $h * 3600;
     my $m = int($time / 60);
@@ -5630,7 +5663,7 @@ sub ProcessTrailers($$)
     0xc4 => 'DHT',
     0xc8 => 'JPGA',
     0xcc => 'DAC',
-    0xd0 => 'RST0',
+    0xd0 => 'RST0', # to RST7
     0xd8 => 'SOI',
     0xd9 => 'EOI',
     0xda => 'SOS',
@@ -5702,9 +5735,10 @@ sub ProcessJPEG($$)
     local $_;
     my ($self, $dirInfo) = @_;
     my ($ch, $s, $length);
-    my $verbose = $$self{OPTIONS}{Verbose};
-    my $out = $$self{OPTIONS}{TextOut};
-    my $fast = $$self{OPTIONS}{FastScan};
+    my $options = $$self{OPTIONS};
+    my $verbose = $$options{Verbose};
+    my $out = $$options{TextOut};
+    my $fast = $$options{FastScan};
     my $raf = $$dirInfo{RAF};
     my $htmlDump = $$self{HTML_DUMP};
     my %dumpParms = ( Out => $out );
@@ -5718,11 +5752,13 @@ sub ProcessJPEG($$)
         return 0 unless $raf->Read($s, 5) == 5 and $s eq 'Exiv2';
         $$self{FILE_TYPE} = 'EXV';
     }
-    if (not $$self{VALUE}{FileType} or ($$self{DOC_NUM} and $$self{OPTIONS}{ExtractEmbedded})) {
+    if (not $$self{VALUE}{FileType} or ($$self{DOC_NUM} and $$options{ExtractEmbedded})) {
         $self->SetFileType();               # set FileType tag
         return 1 if $fast and $fast == 3;   # don't process file when FastScan == 3
         $$self{LOW_PRIORITY_DIR}{IFD1} = 1; # lower priority of IFD1 tags
     }
+    $$raf{NoBuffer} = 1 if $self->Options('FastScan'); # disable buffering in FastScan mode
+
     $dumpParms{MaxLen} = 128 if $verbose < 4;
     if ($htmlDump) {
         $dumpEnd = $raf->Tell();
@@ -5941,7 +5977,7 @@ sub ProcessJPEG($$)
                 }
                 next if $trailInfo or $wantTrailer or $verbose > 2 or $htmlDump;
             }
-            next if $$self{OPTIONS}{Validate};  # (validate to EOI)
+            next if $$options{Validate};    # (validate to EOI)
             # nothing interesting to parse after start of scan (SOS)
             $success = 1;
             last;   # all done parsing file
@@ -5962,14 +5998,14 @@ sub ProcessJPEG($$)
             #  specifically requested.  The reason is that there is too much overhead involved
             #  in the calculation of this tag to make this worth the CPU time.)
             ($$self{REQ_TAG_LOOKUP}{jpegdigest} or $$self{REQ_TAG_LOOKUP}{jpegqualityestimate}
-            or ($$self{OPTIONS}{RequestAll} and $$self{OPTIONS}{RequestAll} > 2)))
+            or ($$options{RequestAll} and $$options{RequestAll} > 2)))
         {
             my $num = unpack('C',$$segDataPt) & 0x0f;   # get table index
             $dqt[$num] = $$segDataPt if $num < 4;       # save for MD5 calculation
         }
         # handle all other markers
         my $dumpType = '';
-        my ($desc, $tip);
+        my ($desc, $tip, $xtra);
         $length = length $$segDataPt;
         if ($verbose) {
             print $out "JPEG $markerName ($length bytes):\n";
@@ -6080,7 +6116,7 @@ sub ProcessJPEG($$)
                     $start + $plen > $$self{EXIF_POS} + length($$self{EXIF_DATA}) and
                     ($$self{REQ_TAG_LOOKUP}{previewimage} or
                     # (extracted normally, so check Binary option)
-                    ($$self{OPTIONS}{Binary} and not $$self{EXCL_TAG_LOOKUP}{previewimage})))
+                    ($$options{Binary} and not $$self{EXCL_TAG_LOOKUP}{previewimage})))
                 {
                     $$self{PreviewImageStart} = $start;
                     $$self{PreviewImageLength} = $plen;
@@ -6413,6 +6449,10 @@ sub ProcessJPEG($$)
                 $dumpType = 'PhotoStudio';
                 my $comment = $self->Decode(substr($$segDataPt,8), 'UCS2', 'MM');
                 $self->FoundTag('Comment', $comment);
+            } elsif ($$segDataPt =~ /^AROT\0/ and $length > 10) {
+                # iPhone "AROT" segment containing integrated intensity per 16 scan lines
+                # (with number of elements N = ImageHeight / 16 - 1, ref PH/NealKrawetz)
+                $xtra = 'segment (N=' . unpack('x6N', $$segDataPt) . ')';
             }
         } elsif ($marker == 0xeb) {         # APP11 (JPEG-HDR)
             if ($$segDataPt =~ /^HDR_RI /) {
@@ -6525,8 +6565,10 @@ sub ProcessJPEG($$)
             $desc = "[JPEG $markerName]";   # (other known JPEG segments)
         }
         if (defined $dumpType) {
-            if (not $dumpType and $$self{OPTIONS}{Unknown}) {
-                $self->Warn("Unknown $markerName segment", 1);
+            if (not $dumpType and ($$options{Unknown} or $$options{Validate})) {
+                my $str = ($$segDataPt =~ /^([\x20-\x7e]{1,16})\0/) ? " '$1'" : '';
+                $xtra = 'segment' unless $xtra;
+                $self->Warn("Unknown $markerName$str $xtra", 1);
             }
             if ($htmlDump) {
                 $desc or $desc = $markerName . ($dumpType ? " $dumpType" : '') . ' segment';
@@ -6542,7 +6584,7 @@ sub ProcessJPEG($$)
         # GUID indicated by the last main XMP segment
         my $goodGuid = $$self{VALUE}{HasExtendedXMP} || '';
         # GUID of the extended XMP that we will process ('2' for all)
-        my $readGuid = $$self{OPTIONS}{ExtendedXMP} || 0;
+        my $readGuid = $$options{ExtendedXMP} || 0;
         $readGuid = $goodGuid if $readGuid eq '1';
         foreach $guid (sort keys %extendedXMP) {
             next unless length $guid == 32;     # ignore other (internal) keys
@@ -7126,7 +7168,7 @@ sub ProcessDirectory($$$;$)
         $dirName = $$tagTablePtr{GROUPS}{1} if $dirName =~ /^APP\d+$/; # (use specific APP name)
         $$dirInfo{DirName} = $dirName;
     }
-    
+
     # guard against cyclical recursion into the same directory
     if (defined $$dirInfo{DirStart} and defined $$dirInfo{DataPos} and
         # directories don't overlap if the length is zero
@@ -8056,7 +8098,7 @@ sub ProcessBinaryData($$$)
         unless (defined $val and not $$tagInfo{SubDirectory}) {
             $val = ReadValue($dataPt, $entry+$offset, $format, $count, $more, \$rational);
             $mask = $$tagInfo{Mask};
-            $val &= $mask if $mask;
+            $val = ($val & $mask) >> $$tagInfo{BitShift} if $mask;
         }
         if ($verbose and not $$tagInfo{Hidden}) {
             if (not $$tagInfo{SubDirectory} or $$tagInfo{Format}) {

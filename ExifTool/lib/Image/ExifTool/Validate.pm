@@ -7,9 +7,9 @@
 #
 # Notes:        My apologies for the convoluted logic contained herein, but it
 #               is done this way to retro-fit the Validate feature into the
-#               existing ExifTool code while avoiding the possibility of
-#               introducing potential bugs or slowing down processing when the
-#               Validate feature is not used.
+#               existing ExifTool code while reducing the possibility of
+#               introducing bugs or slowing down processing when this feature
+#               is not used.
 #------------------------------------------------------------------------------
 
 package Image::ExifTool::Validate;
@@ -17,7 +17,7 @@ package Image::ExifTool::Validate;
 use strict;
 use vars qw($VERSION %exifSpec);
 
-$VERSION = '1.12';
+$VERSION = '1.14';
 
 use Image::ExifTool qw(:Utils);
 use Image::ExifTool::Exif;
@@ -285,6 +285,7 @@ sub ValidateRaw($$$)
 {
     my ($self, $tag, $val) = @_;
     my $tagInfo = $$self{TAG_INFO}{$tag};
+    my $wrn;
 
     # evaluate Validate code if specified
     if ($$tagInfo{Validate}) {
@@ -304,10 +305,12 @@ sub ValidateRaw($$$)
         ($$tagInfo{Table} eq \%Image::ExifTool::Exif::Main and $exifSpec{$$tagInfo{TagID}})))
     {
         my $prt = $self->GetValue($tag, 'PrintConv');
-        if ($prt and $prt =~ /^Unknown \(/) {
-            my $name = $$self{DIR_NAME} . ':' . Image::ExifTool::GetTagName($tag);
-            $self->Warn("Unknown value for $name", 1);
-        }
+        $wrn = 'Unknown value for' if $prt and $prt =~ /^Unknown \(/;
+    }
+    $wrn = 'Undefined value for' if $val eq 'undef';
+    if ($wrn) {
+        my $name = $$self{DIR_NAME} . ':' . Image::ExifTool::GetTagName($tag);
+        $self->Warn("$wrn $name", 1);
     }
 }
 
@@ -505,7 +508,7 @@ sub FinishValidate($$)
 {
     my ($et, $mkTag) = @_;
 
-    my $fileType = $$et{FILE_TYPE};
+    my $fileType = $$et{FILE_TYPE} || '';
     $fileType = $$et{TIFF_TYPE} if $fileType eq 'TIFF';
 
     if ($validValue{$fileType}) {
@@ -575,6 +578,9 @@ sub FinishValidate($$)
             }
         }
     }
+    # issue warning if FastScan option used
+    $et->Warn('Validation incomplete because FastScan option used') if $et->Options('FastScan');
+
     # generate Validate tag if necessary
     if ($mkTag) {
         my (@num, $key);

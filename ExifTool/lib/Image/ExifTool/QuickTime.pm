@@ -42,7 +42,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.17';
+$VERSION = '2.20';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -52,7 +52,7 @@ sub ProcessEncodingParams($$$);
 sub ProcessSampleDesc($$$);
 sub ProcessHybrid($$$);
 sub ProcessRights($$$);
-sub ProcessMebx($$$); # (in QuickTimeStream.pl)
+sub Process_mebx($$$); # (in QuickTimeStream.pl)
 sub ParseItemLocation($$);
 sub ParseItemInfoEntry($$);
 sub ParseItemPropAssoc($$);
@@ -383,6 +383,7 @@ my %eeBox = (
     vide => { %eeStd, JPEG => 1 }, # (add avcC to parse H264 stream)
     text => { %eeStd },
     meta => { %eeStd },
+    sbtl => { %eeStd },
     data => { %eeStd },
     camm => { %eeStd }, # (Insta360)
     ''   => { 'gps ' => 1 }, # (no handler -- top level box)
@@ -589,6 +590,7 @@ my %eeBox = (
         Binary => 1,    # (actually ASCII, but very lengthy)
     },
     # meta - proprietary XML information written by some Flip cameras - PH
+    # beam - 16 bytes found in an iPhone video
 );
 
 # MPEG-4 'ftyp' atom
@@ -799,8 +801,9 @@ my %eeBox = (
     PROCESS_PROC => \&ProcessMOV,
     GROUPS => { 2 => 'Video' },
     NOTES => q{
-        Tags defined by the Spherical Video V2 specification (see
-        https://github.com/google/spatial-media/blob/master/docs/spherical-video-v2-rfc.md).
+        Tags defined by the Spherical Video V2 specification.  See
+        L<https://github.com/google/spatial-media/blob/master/docs/spherical-video-v2-rfc.md>
+        for the specification.
     },
     svhd => {
         Name => 'MetadataSource',
@@ -963,7 +966,7 @@ my %eeBox = (
         Name => 'HTCTrack',
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::Track' },
     },
-   'gps ' => {  # GPS data written by Novatek cameras
+   'gps ' => {  # GPS data written by Novatek cameras (parsed in QuickTimeStream.pl)
         Name => 'GPSDataList',
         Unknown => 1,
         Binary => 1,
@@ -5076,7 +5079,7 @@ my %eeBox = (
         Name => 'FaceItem',
         SubDirectory => {
             TagTable => 'Image::ExifTool::QuickTime::Keys',
-            ProcessProc => \&ProcessMebx,
+            ProcessProc => \&Process_mebx,
         },
     },
 );
@@ -5693,6 +5696,7 @@ my %eeBox = (
         Name => 'PartialSyncSamples',
         ValueConv => 'join " ",unpack("x8N*",$val)',
     },
+    # mark - 8 bytes all zero (GoPro)
 );
 
 # MP4 audio sample description box (ref 5/AtomicParsley 0.9.4 parsley.cpp)
@@ -6353,6 +6357,15 @@ my %eeBox = (
             $_ = substr($val,4); s/\0.*//s; $_;
         },
     },
+    "url\0" => { # (written by GoPro)
+        Name => 'URL',
+        Format => 'undef',  # (necessary to prevent decoding as string!)
+        RawConv => q{
+            # ignore if self-contained (flags bit 0 set)
+            return undef if unpack("N",$val) & 0x01;
+            $_ = substr($val,4); s/\0.*//s; $_;
+        },
+    },
     'urn ' => {
         Name => 'URN',
         Format => 'undef',  # (necessary to prevent decoding as string!)
@@ -6404,6 +6417,7 @@ my %eeBox = (
             nrtm => 'Non-Real Time Metadata', #PH (Sony ILCE-7S) [how is this different from "meta"?]
             pict => 'Picture', # (HEIC images)
             camm => 'Camera Metadata', # (Insta360 MP4)
+            psmd => 'Panasonic Static Metadata', #PH (Leica C-Lux CAM-DC25)
         },
     },
     12 => { #PH
@@ -6568,7 +6582,7 @@ Image::ExifTool::AddCompositeTags('Image::ExifTool::QuickTime');
 #
 sub AUTOLOAD
 {
-    if ($AUTOLOAD eq 'Image::ExifTool::QuickTime::ProcessMebx') {
+    if ($AUTOLOAD eq 'Image::ExifTool::QuickTime::Process_mebx') {
         require 'Image/ExifTool/QuickTimeStream.pl';
         no strict 'refs';
         return &$AUTOLOAD(@_);
@@ -6761,7 +6775,12 @@ sub PrintChapter($)
     $dur -= $h * 3600;
     my $m = int($dur / 60);
     my $s = $dur - $m * 60;
-    return sprintf("[%d:%.2d:%06.3f] %s",$h,$m,$s,$title);
+    my $ss = sprintf('%06.3f', $s);
+    if ($ss >= 60) {
+        $ss = '00.000';
+        ++$m >= 60 and $m -= 60, ++$h;
+    }
+    return sprintf("[%d:%.2d:%s] %s",$h,$m,$ss,$title);
 }
 
 #------------------------------------------------------------------------------
@@ -7499,6 +7518,8 @@ sub ProcessMOV($$;$)
         SetByteOrder('MM');
         $$et{PRIORITY_DIR} = 'XMP';   # have XMP take priority
     }
+    $$raf{NoBuffer} = 1 if $et->Options('FastScan'); # disable buffering in FastScan mode
+
     if ($$et{OPTIONS}{ExtractEmbedded}) {
         $ee = 1;
         $unkOpt = $$et{OPTIONS}{Unknown};
