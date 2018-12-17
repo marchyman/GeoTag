@@ -259,22 +259,27 @@ final class ImageData: NSObject {
     /// sandbox.  This is needed as exiftool creates temporary files.
     /// The updated file is copied back to its original location after
     /// exiftool does its job.
-    func saveImageFile() -> Bool {
+    /// - Returns:  0 if nothing to save or file saved
+    ///             -1 if the file could not be backed up
+    ///             non-zero exifcode return value
+    func saveImageFile() -> Int32 {
         guard validImage &&
               (location?.latitude != originalLocation?.latitude ||
                location?.longitude != originalLocation?.longitude ||
                dateTime != originalDateTime) else {
-            return true     // nothing to update
+            return 0     // nothing to update
         }
-        if saveOriginalFile() &&
-           Exiftool.helper.updateLocation(from: self) == 0 {
-            originalLocation = location
-            originalDateTime = dateTime
-            return true
+        if saveOriginalFile() {
+            let result = Exiftool.helper.updateLocation(from: self)
+            if result == 0 {
+                originalLocation = location
+                originalDateTime = dateTime
+            }
+            return result
         }
 
         // failed to backup or update
-        return false
+        return -1
     }
 
     // MARK: extract image metadata and build thumbnail preview

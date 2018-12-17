@@ -161,8 +161,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         tableViewController.saveAllImages {
-            allSaved in
-            if allSaved {
+            errorCode in
+            if errorCode == 0 {
                 self.modified = false
                 self.undoManager.removeAllActions()
                 if saveSource == nil {
@@ -175,6 +175,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                                                       comment: "Save error")
                 alert.informativeText += NSLocalizedString("SAVE_ERROR_DESC",
                                                            comment: "save error")
+                alert.informativeText += "\(errorCode)"
                 alert.runModal()
             }
         }

@@ -95,18 +95,19 @@ final class TableViewController: NSViewController {
     /// Each ImageData instance in the table is to save itself. A progress
     /// indicator is displayed while the operation is in progress.
 
-    func saveAllImages(completion: @escaping (Bool)->()) {
+    func saveAllImages(completion: @escaping (Int32)->()) {
         saveInProgress = true
         appDelegate.progressIndicator.startAnimation(self)
         // copy image array so updates during save don't cause issues
         let images = self.images
         let updateGroup = DispatchGroup()
-        var allSaved = true
+        var savedResult = Int32(0)
         for image in images {
             DispatchQueue.global(qos: .userInitiated).async {
                 updateGroup.enter()
-                if !image.saveImageFile() {
-                    allSaved = false
+                let result = image.saveImageFile()
+                if result != 0 {
+                    savedResult = result
                 }
                 updateGroup.leave()
             }
@@ -114,7 +115,7 @@ final class TableViewController: NSViewController {
         updateGroup.notify(queue: DispatchQueue.main) {
             self.appDelegate.progressIndicator.stopAnimation(self)
             self.saveInProgress = false
-            completion(allSaved)
+            completion(savedResult)
         }
     }
 
