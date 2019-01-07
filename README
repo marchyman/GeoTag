@@ -15,12 +15,30 @@ ExifTool. **ExifTool is built in to GeoTag.**
 GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
 
-Version 4.4 is the latest version.  It workes on macOS 10.12 or later. Version
+Version 4.4.x is the latest version.  It workes on macOS 10.12 or later. Version
 4 uses Apple maps.
 
-## GeoTag 4.4
+## GeoTag 4.5 (work in progress)
 
 ### New Features
+
+* exiftool 11.22
+
+### Bug fixes
+
+* fix error that caused a "could not save images" alert even when all image
+  data had been saved.
+
+### Known Bugs
+
+* Setting the date of an image outside of the range of 1970-2034 may result in
+  an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
+  and macOS libraries handle date and time.  One hopes that the year 2034 limit
+  will eventually be removed ;)
+* You can not re-position a pin by dragging the pin.  Instead click on the
+  desired location
+
+### Other 4.x Features and bug fixes
 
 * GeoTag can now read GPS track logs in the format of a GPX file and display
   tracks on the map.  This can help locate places where pictures were taken.
@@ -45,33 +63,6 @@ Version 4.4 is the latest version.  It workes on macOS 10.12 or later. Version
 * The last 10 map searches are saved across program runs. When Clicking on the
   search box saved search strings are indicated by a down arrow next to the
   Q icon. Click on the arrow next to open the menu of saved search strings.
-* ExifTool version 11.10
-* (internal) Swift 4.2, Xcode 10
-
-### Bug fixes
-
-* undoing a location update on an image that did not have a previous location
-  resulted in a location of lat: 0, lon: 0. This has been fixed to restore the
-  image to its "no location assigned" state.
-* undoing all actions did not clear the window modified flag causing a "please
-  save" message when window was closed/application terminated.
-* No more beachball when saving large number of images.  Multiple images
-  are saved in parallel, but the save process can still be quite slow.
-* If GeoTag (or your computer) crashed with files opened and one or more of the
-  opened files was moved to a different folder GeoTag would crash on attempts
-  to re-open the file.
-
-### Known Bugs
-
-* Setting the date of an image outside of the range of 1970-2034 may result in
-  an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
-  and macOS libraries handle date and time.  One hopes that the year 2034 limit
-  will eventually be removed ;)
-* You can not re-position a pin by dragging the pin.  Instead click on the
-  desired location
-
-### Other 4.x Features and bug fixes
-
 * Add ability to sort the table of images by column.  Clicking on a column
   header will sort the table by the contents of that column.  Clicking again
   will change the sort direction.
@@ -92,6 +83,16 @@ Version 4.4 is the latest version.  It workes on macOS 10.12 or later. Version
 * GPS info validation
 * handle the case where the same file name is used for two images located in
   different folders.
+* undoing a location update on an image that did not have a previous location
+  resulted in a location of lat: 0, lon: 0. This has been fixed to restore the
+  image to its "no location assigned" state.
+* undoing all actions did not clear the window modified flag causing a "please
+  save" message when window was closed/application terminated.
+* No more beachball when saving large number of images.  Multiple images
+  are saved in parallel, but the save process can still be quite slow.
+* If GeoTag (or your computer) crashed with files opened and one or more of the
+  opened files was moved to a different folder GeoTag would crash on attempts
+  to re-open the file.
 
 ### Image Backups
 

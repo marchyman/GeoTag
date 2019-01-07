@@ -1,3 +1,14 @@
+## GeoTag 4.5 (work in progress)
+
+### New Features
+
+* exiftool 11.22
+
+### Bug Fixes
+
+* fix error that caused a "could not save images" alert even when all image
+  data had been saved.
+
 ## GeoTag 4.4
 
 ### New Features

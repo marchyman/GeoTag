@@ -109,12 +109,13 @@ struct Exiftool {
                               latArg,
                               latRefArg,
                               lonArg,
-                              lonRefArg,
-                              gpsDArg,
-                              gpsTArg,
-                              dtArg,
-                              "-GPSStatus=",
-                              imageData.sandboxUrl.path]
+                              lonRefArg]
+        if Preferences.dateTimeGPS() {
+            exiftool.arguments! += [gpsDArg, gpsTArg]
+        }
+        exiftool.arguments! += [dtArg,
+                               "-GPSStatus=",
+                               imageData.sandboxUrl.path]
         exiftool.launch()
         exiftool.waitUntilExit()
         return exiftool.terminationStatus
