@@ -22,6 +22,7 @@ Version 4.4.x is the latest version.  It workes on macOS 10.12 or later. Version
 
 ### New Features
 
+* center the map (more or less) on a track when the track is opened.
 * exiftool 11.22
 
 ### Bug fixes

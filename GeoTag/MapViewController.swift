@@ -199,13 +199,38 @@ class MapViewController: NSViewController {
     // MARK: track log
 
     /// add tracks to the map.  Track segments are turned into polylines and
-    /// added to the map view
+    /// added to the map view.  The map is more or less centered on the added
+    /// track.
+    //
+    // This would be a lot easier if I could just use showAnnotations after
+    // adding the overlays to the map.   Hopwever, that method drops a marker
+    // at the 'center' of each polyline. I don't know how or if it is possible
+    // to stop mapkit from doing that.  So instead I do things the hard way.
     func addTracks(gpx: Gpx) {
+        // storage for min/max latitude found in the track
+        var minlat = CLLocationDegrees(90)
+        var minlon = CLLocationDegrees(180)
+        var maxlat = CLLocationDegrees(-90)
+        var maxlon = CLLocationDegrees(-180)
         gpx.tracks.forEach {
             $0.segments.forEach {
                 var trackCoords = $0.points.map {
                     return CLLocationCoordinate2D(latitude: $0.lat,
                                                   longitude: $0.lon)
+                }
+                for loc in trackCoords {
+                    if loc.latitude < minlat {
+                        minlat = loc.latitude
+                    }
+                    if loc.latitude > maxlat {
+                        maxlat = loc.latitude
+                    }
+                    if loc.longitude < minlon {
+                        minlon = loc.longitude
+                    }
+                    if loc.longitude > maxlon {
+                        maxlon = loc.longitude
+                    }
                 }
                 let mapLine = MKPolyline(coordinates: &trackCoords,
                                          count: $0.points.count)
@@ -213,6 +238,13 @@ class MapViewController: NSViewController {
                 mapView.addOverlay(mapLine)
             }
         }
+        let span = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
+                                    longitudeDelta:  maxlon - minlon)
+        let center = Coord(latitude: (minlat + maxlat)/2,
+                           longitude: (minlon + maxlon)/2)
+
+        mapView.setRegion(MKCoordinateRegion(center: center, span: span),
+                          animated: false)
     }
 
 }

@@ -2,6 +2,7 @@
 
 ### New Features
 
+* center the map (more or less) on a track when the track is opened.
 * exiftool 11.22
 
 ### Bug Fixes
