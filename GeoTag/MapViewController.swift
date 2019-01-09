@@ -301,7 +301,7 @@ extension MapViewController: MKMapViewDelegate {
         let polyline = overlay as! MKPolyline
         if mapLines.contains(polyline) {
             let renderer = MKPolylineRenderer(polyline: polyline)
-            renderer.strokeColor = NSColor.systemRed
+            renderer.strokeColor = NSColor.systemBlue
             return renderer
         }
         return MKOverlayRenderer(overlay: overlay)

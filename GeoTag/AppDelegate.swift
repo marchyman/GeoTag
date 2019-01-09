@@ -306,7 +306,7 @@ extension AppDelegate {
                     alert.messageText = NSLocalizedString("GPX_LOADED_TITLE", comment: "GPX file loaded")
                     alert.informativeText = url.path
                     alert.informativeText += NSLocalizedString("GPX_LOADED_DESC", comment: "GPX file loaded")
-                    alert.runModal()
+                    alert.beginSheetModal(for: window)
                 } else {
                     // put up an alert
                     let alert = NSAlert()
@@ -315,7 +315,7 @@ extension AppDelegate {
                     alert.messageText = NSLocalizedString("BAD_GPX_TITLE", comment: "Bad GPX file")
                     alert.informativeText = url.path
                     alert.informativeText += NSLocalizedString("BAD_GPX_DESC", comment: "Bad GPX file")
-                    alert.runModal()
+                    alert.beginSheetModal(for: window)
                 }
                 progressIndicator.stopAnimation(self)
             }
