@@ -61,7 +61,9 @@ class Gpx: NSObject {
         let lon: Double
         var time: String
         var timeFromEpoch: TimeInterval {
-            if let convertedTime = pointTimeFormat.date(from: time) {
+            let trimmedTime = time.replacingOccurrences(of: "\\.\\d+", with: "",
+                                                        options: .regularExpression)
+            if let convertedTime = pointTimeFormat.date(from: trimmedTime) {
                 return convertedTime.timeIntervalSince1970
             }
             return 0

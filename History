@@ -8,6 +8,7 @@
 
 * fix error that caused a "could not save images" alert even when all image
   data had been saved.
+* handle GPX logs that include milliseconds the location timestamp.
 
 ## GeoTag 4.4
 

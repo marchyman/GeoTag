@@ -28,6 +28,7 @@ Version 4.4.x is the latest version.  It workes on macOS 10.12 or later. Version
 
 * fix error that caused a "could not save images" alert even when all image
   data had been saved.
+* handle GPX logs that include milliseconds in the location timestamp.
 
 ### Known Bugs
 
