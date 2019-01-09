@@ -32,6 +32,7 @@ final class Preferences : NSWindowController {
     static let nibName = NSNib.Name("Preferences")
     static let saveBookmarkKey = "SaveBookmarkKey"
     static let dateTimeGPSKey = "DateTimeGPSKey"
+    static let trackColorKey = "TrackColorKey"
     static var checkDirectory = true
     private static var url: URL? = nil
 
@@ -70,6 +71,19 @@ final class Preferences : NSWindowController {
     func dateTimeGPS() -> Bool {
         let defaults = UserDefaults.standard
         return defaults.bool(forKey: dateTimeGPSKey)
+    }
+
+    class
+    func trackColor() -> NSColor {
+        let defaults = UserDefaults.standard
+        if let data = defaults.data(forKey: trackColorKey),
+           let color = NSUnarchiver.unarchiveObject(with: data) {
+            return color as! NSColor
+        }
+        let defaultColor = NSColor.systemBlue
+        let data = NSArchiver.archivedData(withRootObject: defaultColor)
+        defaults.set(data, forKey: trackColorKey)
+        return defaultColor
     }
 
     @IBOutlet
