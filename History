@@ -3,7 +3,7 @@
 ### New Features
 
 * center the map (more or less) on a track when the track is opened.
-* change GPX track color to blue so red pins don't get lost in the red track.
+* Add preference to select track color for GPX tracks.
 * change GPX file loaded notification to a sheet attached to the GeoTag main
   window.  Dual monitor users would sometimes find the pop-up previously used
   on the wrong monitor, i.e. no the monitor they were looking at.

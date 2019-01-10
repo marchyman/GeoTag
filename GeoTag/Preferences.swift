@@ -132,6 +132,15 @@ final class Preferences : NSWindowController {
                      forKey: Preferences.dateTimeGPSKey)
     }
 
+    @IBOutlet
+    weak var trackColorWell: NSColorWell!
+
+    @IBAction func setTrackColor(_ sender: NSColorWell) {
+        let defaults = UserDefaults.standard
+        let data = NSArchiver.archivedData(withRootObject: sender.color)
+        defaults.set(data, forKey: Preferences.trackColorKey)
+    }
+
     /// return the NIB name for this window
 
 	override
@@ -147,6 +156,7 @@ final class Preferences : NSWindowController {
         dtGPSButton.state = Preferences.dateTimeGPS() ?
                             NSControl.StateValue.on :
                             NSControl.StateValue.off
+        trackColorWell.color = Preferences.trackColor()
     }
 
     // window delegate function... orderOut instead of close
