@@ -131,7 +131,7 @@ struct Exiftool {
     private
     func dtoWithZone(from imageData: ImageData) -> String? {
         if imageData.timeZone != nil,
-           let dateValue = imageData.dateValue {
+           let dateValue = imageData.dateValueWithZone {
             let format = DateFormatter()
             format.dateFormat = "yyyy:MM:dd HH:mm:ss xxx"
             return format.string(from: dateValue)
