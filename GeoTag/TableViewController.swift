@@ -453,6 +453,10 @@ final class TableViewController: NSViewController {
            return
         }
 
+        // calculate number of seconds between the two points
+
+        let travelTime = endInfo.timestamp - startInfo.timestamp
+
         // calculate the distance, bearing, and speed between the two points
 
         let (distance, bearing) =
@@ -463,13 +467,12 @@ final class TableViewController: NSViewController {
         // using the start point, bearing, and estimated distance
 
         if distance > 0 {
-            let speed = distance / (endInfo.timestamp - startInfo.timestamp)
+            let speed = distance / travelTime
             appDelegate.undoManager.beginUndoGrouping()
             rows.forEach {
                 let image = self.images[$0]
                 let deltaTime = image.dateFromEpoch - startInfo.timestamp
-                if deltaTime > 0 && deltaTime <= endInfo.timestamp &&
-                   image.location == nil {
+                if deltaTime > 0 && deltaTime < travelTime && image.location == nil {
                     let deltaDist = deltaTime * speed
                     let coord = destFromStart(lat: startInfo.lat,
                                               lon: startInfo.lon,
