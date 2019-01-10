@@ -70,21 +70,27 @@ final class ImageData: NSObject {
 
     // image date/time as a Date.
     // When this value is set the date string variable is also updated
+    // do not use timezone info
     var dateValue: Date? {
         get {
             dateFormatter.dateFormat = dateFormatString
-            dateFormatter.timeZone = timeZone
+            dateFormatter.timeZone = nil
             return dateFormatter.date(from: dateTime)
         }
         set {
             if let value = newValue {
                 dateFormatter.dateFormat = dateFormatString
-                dateFormatter.timeZone = timeZone
+                dateFormatter.timeZone = nil
                 dateTime = dateFormatter.string(from: value)
             } else {
                 dateTime = ""
             }
         }
+    }
+    var dateValueWithZone: Date? {
+        dateFormatter.dateFormat = dateFormatString
+        dateFormatter.timeZone = timeZone
+        return dateFormatter.date(from: dateTime)
     }
 
     // dateTime as a TimeInterval
