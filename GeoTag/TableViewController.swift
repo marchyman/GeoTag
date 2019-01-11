@@ -3,7 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 6/24/14.
-//  Copyright 2014-2018 Marco S Hyman
+//  Copyright 2014-2019 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
