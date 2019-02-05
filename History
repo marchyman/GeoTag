@@ -8,13 +8,18 @@
   window.  Dual monitor users would sometimes find the pop-up previously used
   on the wrong monitor, i.e. no the monitor they were looking at.
 * exiftool 11.22
+* swift 5
 
 ### Bug Fixes
 
 * fix error that caused a "could not save images" alert even when all image
   data had been saved.
-* handle GPX logs that include milliseconds the location timestamp.
+* handle GPX logs that include milliseconds in the location timestamp.
 * Fix location interpolition issues related to time zones.
+* Fix backup file naming. Examples:
+  foo.bar.jpg would be backed up as foo.bar.jpg the first time.
+  foo.bar.jpg would be backed up as foo-1.bar.jpg the second time.
+  The backup file name should have been foo.bar-1.jpg
 
 ## GeoTag 4.4
 

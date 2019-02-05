@@ -160,7 +160,7 @@ final class ImageData: NSObject {
             var fileNumber = 1
             while fileManager.fileExists(atPath: (sandboxUrl.path)) {
                 var newName = url.lastPathComponent
-                let nameDot = newName.index(of: ".") ?? newName.endIndex
+                let nameDot = newName.lastIndex(of: ".") ?? newName.endIndex
                 newName.insert(contentsOf: "-\(fileNumber)", at: nameDot)
                 fileNumber += 1
                 sandboxUrl = docDir.appendingPathComponent(newName)
@@ -220,7 +220,7 @@ final class ImageData: NSObject {
         // add a suffix to the name until no file is found at the save location
         while fileManager.fileExists(atPath: (saveFileUrl.path)) {
             var newName = name
-            let nameDot = newName.index(of: ".") ?? newName.endIndex
+            let nameDot = newName.lastIndex(of: ".") ?? newName.endIndex
             newName.insert(contentsOf: "-\(fileNumber)", at: nameDot)
             fileNumber += 1
             saveFileUrl = saveDirUrl.appendingPathComponent(newName, isDirectory: false)
