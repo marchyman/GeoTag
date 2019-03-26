@@ -271,6 +271,7 @@ my %panasonicWhiteBalance = ( #forum9396
     0x11c => { #forum9373
         Name => 'Gamma',
         Writable => 'int16u',
+        # unfortunately it seems that the scaling factor varies with model...
         ValueConv => '$val / ($val >= 1024 ? 1024 : ($val >= 256 ? 256 : 100))',
         ValueConvInv => 'int($val * 256 + 0.5)',
     },
@@ -823,7 +824,7 @@ write meta information in Panasonic/Leica RAW, RW2 and RWL images.
 
 =head1 AUTHOR
 
-Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

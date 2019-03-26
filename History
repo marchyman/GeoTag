@@ -1,4 +1,4 @@
-## GeoTag 4.5 (work in progress)
+## GeoTag 4.5
 
 ### New Features
 
@@ -7,7 +7,7 @@
 * change GPX file loaded notification to a sheet attached to the GeoTag main
   window.  Dual monitor users would sometimes find the pop-up previously used
   on the wrong monitor, i.e. no the monitor they were looking at.
-* exiftool 11.22
+* exiftool 11.32
 * swift 5
 
 ### Bug Fixes

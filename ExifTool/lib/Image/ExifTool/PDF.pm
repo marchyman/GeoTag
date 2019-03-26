@@ -21,7 +21,7 @@ use vars qw($VERSION $AUTOLOAD $lastFetched);
 use Image::ExifTool qw(:DataAccess :Utils);
 require Exporter;
 
-$VERSION = '1.46';
+$VERSION = '1.47';
 
 sub FetchObject($$$$);
 sub ExtractObject($$;$$);
@@ -2174,6 +2174,9 @@ XRef:
                     $raf->Read($buff, 20) == 20 or return -6;
                     $buff =~ /^\s*(\d{10}) (\d{5}) (f|n)/s or return -4;
                     my $num = $start + $i;
+                    # locate object to generate entry from stream if necessary
+                    # (must do this before we test $xref{$num})
+                    LocateAnyObject(\%xref, $num) if $xref{dicts};
                     # save offset for newest copy of all objects
                     # (or next object number for free objects)
                     unless (defined $xref{$num}) {
@@ -2346,7 +2349,7 @@ including AESV2 (AES-128) and AESV3 (AES-256).
 
 =head1 AUTHOR
 
-Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
