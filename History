@@ -1,4 +1,4 @@
-## GeoTag 4.5 (work in progress)
+## GeoTag 4.5
 
 ### New Features
 
@@ -7,14 +7,22 @@
 * change GPX file loaded notification to a sheet attached to the GeoTag main
   window.  Dual monitor users would sometimes find the pop-up previously used
   on the wrong monitor, i.e. no the monitor they were looking at.
-* exiftool 11.22
+* Verify a file can be written by exiftool. If not do not allow attempted
+  updates that will fail during a save.   HEIC (iPhone) files are not writable.
+* exiftool 11.32
+* swift 5
 
 ### Bug Fixes
 
 * fix error that caused a "could not save images" alert even when all image
   data had been saved.
-* handle GPX logs that include milliseconds the location timestamp.
+* fix race condition when checking that all images had been saved
+* handle GPX logs that include milliseconds in the location timestamp.
 * Fix location interpolition issues related to time zones.
+* Fix backup file naming. Examples:
+  foo.bar.jpg would be backed up as foo.bar.jpg the first time.
+  foo.bar.jpg would be backed up as foo-1.bar.jpg the second time.
+  The backup file name should have been foo.bar-1.jpg
 
 ## GeoTag 4.4
 

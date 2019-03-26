@@ -8,7 +8,7 @@
 # Revisions:    Nov. 12/2003 - P. Harvey Created
 #               (See html/history.html for revision history)
 #
-# Legal:        Copyright (c) 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
+# Legal:        Copyright (c) 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
 #               This library is free software; you can redistribute it and/or
 #               modify it under the same terms as Perl itself.
 #------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %mimeType $swapBytes $swapWords $currentByteOrder %unpackStd
             %jpegMarker %specialTags %fileTypeLookup);
 
-$VERSION = '11.22';
+$VERSION = '11.32';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -76,6 +76,7 @@ sub AddUserDefinedTags($%);
 # non-public routines below
 sub InsertTagValues($$$;$$$);
 sub IsWritable($);
+sub IsSameFile($$$);
 sub GetNewFileName($$);
 sub LoadAllTables();
 sub GetNewTagInfoList($;$);
@@ -137,7 +138,7 @@ sub ReadValue($$$$$;$);
     Sony::PMP ITC ID3 FLAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible
     MPC MPEG::Audio MPEG::Video MPEG::Xing M2TS QuickTime QuickTime::ImageFile
     QuickTime::Stream Matroska MOI MXF DV Flash Flash::FLV Real::Media
-    Real::Audio Real::Metafile Red RIFF AIFF ASF WTV DICOM MIE JSON HTML
+    Real::Audio Real::Metafile Red RIFF AIFF ASF WTV DICOM FITS MIE JSON HTML
     XMP::SVG Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion EXE::PEString
     EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard
     VCard::VCalendar RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR RTF OOXML iWork ISO
@@ -179,10 +180,10 @@ $defaultLang = 'en';    # default language
 @fileTypes = qw(JPEG EXV CRW DR4 TIFF GIF MRW RAF X3F JP2 PNG MIE MIFF PS PDF
                 PSD XMP BMP BPG PPM RIFF AIFF ASF MOV MPEG Real SWF PSP FLV OGG
                 FLAC APE MPC MKV MXF DV PMP IND PGF ICC ITC FLIR FLIF FPF LFP
-                HTML VRD RTF XCF DSS QTIF FPX PICT ZIP GZIP PLIST RAR BZ2 TAR
-                RWZ EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC M2TS PHP
-                PCX DCX WTV Torrent VCard LRI R3D AA PDB MOI ISO JSON MP3 DICOM
-                PCD);
+                HTML VRD RTF FITS XCF DSS QTIF FPX PICT ZIP GZIP PLIST RAR BZ2
+                TAR RWZ EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC M2TS
+                PHP PCX DCX DWF DWG WTV Torrent VCard LRI R3D AA PDB MOI ISO
+                JSON MP3 DICOM PCD);
 
 # file types that we can write (edit)
 my @writeTypes = qw(JPEG TIFF GIF CRW MRW ORF RAF RAW PNG MIE PSD XMP PPM EPS
@@ -192,9 +193,9 @@ my %writeTypes; # lookup for writable file types (hash filled if required)
 # file extensions that we can't write for various base types
 %noWriteFile = (
     TIFF => [ qw(3FR DCR K25 KDC SRF) ],
-    XMP  => [ 'SVG', 'INX' ],
-    JP2  => [ 'J2C', 'JPC' ],
-    MOV  => [ 'HEIC', 'HEIF' ],
+    XMP  => [ qw(SVG INX) ],
+    JP2  => [ qw(J2C JPC) ],
+    MOV  => [ qw(HEIC HEIF INSV) ],
 );
 
 # file types that we can create from scratch
@@ -275,6 +276,8 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     DV   => ['DV',   'Digital Video'],
     DVB  => ['MOV',  'Digital Video Broadcasting'],
    'DVR-MS'=>['ASF', 'Microsoft Digital Video recording'],
+    DWF  => ['DWF',  'Autodesk drawing (Design Web Format)'],
+    DWG  => ['DWG',  'AutoCAD Drawing'],
     DYLIB=> ['EXE',  'Mach-O Dynamic Link Library'],
     EIP  => ['ZIP',  'Capture One Enhanced Image Package'],
     EPS  => ['EPS',  'Encapsulated PostScript Format'],
@@ -292,6 +295,8 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     F4P  => ['MOV',  'Adobe Flash Player 9+ Protected'],
     F4V  => ['MOV',  'Adobe Flash Player 9+ Video'],
     FFF  => [['TIFF','FLIR'], 'Hasselblad Flexible File Format'],
+    FIT  =>  'FITS',
+    FITS => ['FITS', 'Flexible Image Transport System'],
     FLAC => ['FLAC', 'Free Lossless Audio Codec'],
     FLA  => ['FPX',  'Macromedia/Adobe Flash project'],
     FLIF => ['FLIF', 'Free Lossless Image Format'],
@@ -318,6 +323,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     IND  => ['IND',  'Adobe InDesign'],
     INDD => ['IND',  'Adobe InDesign Document'],
     INDT => ['IND',  'Adobe InDesign Template'],
+    INSV => 'MP4',
     INX  => ['XMP',  'Adobe InDesign Interchange'],
     ISO  => ['ISO',  'ISO 9660 disk image'],
     ITC  => ['ITC',  'iTunes Cover Flow'],
@@ -344,6 +350,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     LFR  =>  'LFP', # (Light Field RAW)
     LNK  => ['LNK',  'Windows shortcut'],
     LRI  => ['LRI',  'Light RAW'],
+    LRV  => ['MOV',  'Low-Resolution Video'],
     M2T  =>  'M2TS',
     M2TS => ['M2TS', 'MPEG-2 Transport Stream'],
     M2V  => ['MPEG', 'MPEG-2 Video'],
@@ -472,7 +479,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     SVG  => ['XMP',  'Scalable Vector Graphics'],
     SWF  => ['SWF',  'Shockwave Flash'],
     TAR  => ['TAR',  'TAR archive'],
-    THM  => ['JPEG', 'Canon Thumbnail'],
+    THM  => ['JPEG', 'Thumbnail'],
     THMX => [['ZIP','FPX'], 'Office Open XML Theme'],
     TIF  =>  'TIFF',
     TIFF => ['TIFF', 'Tagged Image File Format'],
@@ -577,12 +584,16 @@ my %fileDescription = (
     DSS  => 'audio/x-dss',
     DV   => 'video/x-dv',
    'DVR-MS' => 'video/x-ms-dvr',
+    DWF  => 'model/vnd.dwf',
+    DWG  => 'image/vnd.dwg',
     EIP  => 'application/x-captureone', #(NC)
     EPS  => 'application/postscript',
     ERF  => 'image/x-epson-erf',
     EXE  => 'application/octet-stream',
+    EXR  => 'image/x-exr',
     EXV  => 'image/x-exv',
     FFF  => 'image/x-hasselblad-fff',
+    FITS => 'image/fits',
     FLA  => 'application/vnd.adobe.fla',
     FLAC => 'audio/flac',
     FLIF => 'image/flif',
@@ -603,8 +614,8 @@ my %fileDescription = (
     INX  => 'application/x-indesign-interchange', #PH (NC)
     ISO  => 'application/x-iso9660-image',
     ITC  => 'application/itunes',
-    JNG  => 'image/jng',
     J2C  => 'image/x-j2c', #PH (NC)
+    JNG  => 'image/jng',
     JP2  => 'image/jp2',
     JPEG => 'image/jpeg',
     JPM  => 'image/jpm',
@@ -616,9 +627,9 @@ my %fileDescription = (
     LFP  => 'image/x-lytro-lfp', #PH (NC)
     LNK  => 'application/octet-stream',
     LRI  => 'image/x-light-lri',
-    MAX  => 'application/x-3ds',
     M2T  => 'video/mpeg',
     M2TS => 'video/m2ts',
+    MAX  => 'application/x-3ds',
     MEF  => 'image/x-mamiya-mef',
     MIE  => 'application/x-mie',
     MIFF => 'application/x-magick-image',
@@ -648,7 +659,6 @@ my %fileDescription = (
     ODT  => 'application/vnd.oasis.opendocument.text',
     OGG  => 'audio/ogg',
     OGV  => 'video/ogg',
-    EXR  => 'image/x-exr',
     ORF  => 'image/x-olympus-orf',
     OTF  => 'application/x-font-otf',
     PAGES=> 'application/x-iwork-pages-sffpages',
@@ -747,6 +757,8 @@ my %moduleName = (
     DCX  => 0,
     DR4  => 'CanonVRD',
     DSS  => 'Olympus',
+    DWF  => 0,
+    DWG  => 0,
     EPS  => 'PostScript',
     EXIF => '',
     EXR  => 'OpenEXR',
@@ -814,11 +826,14 @@ my %moduleName = (
     DR4  => 'IIII\x04\0\x04\0',
     DSS  => '(\x02dss|\x03ds2)',
     DV   => '\x1f\x07\0[\x3f\xbf]', # (not tested if extension recognized)
+    DWF  => '\(DWF V\d',
+    DWG  => 'AC10\d{2}\0',
     EPS  => '(%!PS|%!Ad|\xc5\xd0\xd3\xc6)',
     EXE  => '(MZ|\xca\xfe\xba\xbe|\xfe\xed\xfa[\xce\xcf]|[\xce\xcf]\xfa\xed\xfe|Joy!peff|\x7fELF|#!\s*/\S*bin/|!<arch>\x0a)',
     EXIF => '(II\x2a\0|MM\0\x2a)',
     EXR  => '\x76\x2f\x31\x01',
     EXV  => '\xff\x01Exiv2',
+    FITS => 'SIMPLE  = {20}T',
     FLAC => '(fLaC|ID3)',
     FLIF => 'FLIF[0-\x6f][0-2]',
     FLIR => '[AF]FF\0',
@@ -837,7 +852,7 @@ my %moduleName = (
     ITC  => '.{4}itch',
     JP2  => '(\0\0\0\x0cjP(  |\x1a\x1a)\x0d\x0a\x87\x0a|\xff\x4f\xff\x51\0)',
     JPEG => '\xff\xd8\xff',
-    JSON => '\s*(\[\s*)?\{\s*"[^"]+"\s*:',
+    JSON => '(\xef\xbb\xbf)?\s*(\[\s*)?\{\s*"[^"]+"\s*:',
     LFP  => '\x89LFP\x0d\x0a\x1a\x0a',
     LNK  => '.{4}\x01\x14\x02\0{5}\xc0\0{6}\x46',
     LRI  => 'LELR \0',
@@ -5364,15 +5379,25 @@ sub TimeZoneString($;$)
 
 #------------------------------------------------------------------------------
 # Convert Unix time to EXIF date/time string
-# Inputs: 0) Unix time value, 1) non-zero to convert to local time
+# Inputs: 0) Unix time value, 1) non-zero to convert to local time, 2) number of decimal digits
 # Returns: EXIF date/time string (with timezone for local times)
 # Notes: fractional seconds are ignored
-sub ConvertUnixTime($;$)
+sub ConvertUnixTime($;$$)
 {
-    my ($time, $toLocal) = @_;
+    my ($time, $toLocal, $dec) = @_;
     return '0000:00:00 00:00:00' if $time == 0;
-    $time = int($time + 1e-6) if $time != int($time);  # avoid round-off errors
     my (@tm, $tz);
+    if ($dec) {
+        my $frac = $time - int($time);
+        $time = int($time);
+        $frac < 0 and $frac += 1, $time -= 1;
+        $dec = sprintf('%.*f', $dec, $frac);
+        # remove number before decimal and increment integer time if it was rounded up
+        $dec =~ s/^(\d)// and $1 eq '1' and $time += 1;
+    } else {
+        $time = int($time + 1e-6) if $time != int($time);  # avoid round-off errors
+        $dec = '';
+    }
     if ($toLocal) {
         @tm = localtime($time);
         $tz = TimeZoneString(\@tm, $time);
@@ -5380,7 +5405,7 @@ sub ConvertUnixTime($;$)
         @tm = gmtime($time);
         $tz = '';
     }
-    my $str = sprintf("%4d:%.2d:%.2d %.2d:%.2d:%.2d%s",
+    my $str = sprintf("%4d:%.2d:%.2d %.2d:%.2d:%.2d$dec%s",
                       $tm[5]+1900, $tm[4]+1, $tm[3], $tm[2], $tm[1], $tm[0], $tz);
     return $str;
 }
@@ -5393,20 +5418,20 @@ sub GetUnixTime($;$)
 {
     my ($timeStr, $isLocal) = @_;
     return 0 if $timeStr eq '0000:00:00 00:00:00';
-    my @tm = ($timeStr =~ /^(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)/);
-    return undef unless @tm == 6 and eval { require Time::Local };
-    my $tzsec = 0;
+    my @tm = ($timeStr =~ /^(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)(.*)/);
+    return undef unless @tm == 7 and eval { require Time::Local };
+    my ($tzStr, $tzSec) = (pop(@tm), 0);
     # use specified timezone offset (if given) instead of local system time
     # if we are converting a local time value
-    if ($isLocal and $timeStr =~ /(?:Z|([-+])(\d+):(\d+))$/i) {
+    if ($isLocal and $tzStr =~ /(?:Z|([-+])(\d+):(\d+))/i) {
         # use specified timezone if one exists
-        $tzsec = ($2 * 60 + $3) * ($1 eq '-' ? -60 : 60) if $1;
+        $tzSec = ($2 * 60 + $3) * ($1 eq '-' ? -60 : 60) if $1;
         undef $isLocal; # convert using GMT corrected for specified timezone
     }
     $tm[0] -= 1900;     # convert year
     $tm[1] -= 1;        # convert month
     @tm = reverse @tm;  # change to order required by timelocal()
-    return $isLocal ? TimeLocal(@tm) : Time::Local::timegm(@tm) - $tzsec;
+    return $isLocal ? TimeLocal(@tm) : Time::Local::timegm(@tm) - $tzSec;
 }
 
 #------------------------------------------------------------------------------
@@ -5495,12 +5520,12 @@ sub InverseFileName($$)
 #------------------------------------------------------------------------------
 # Save information for HTML dump
 # Inputs: 0) ExifTool hash ref, 1) start offset, 2) data size
-#         3) comment string, 4) tool tip (or SAME), 5) flags
-sub HDump($$$$;$$)
+#         3) comment string, 4) tool tip (or SAME), 5) flags, 6) IFD name
+sub HDump($$$$;$$$)
 {
     my $self = shift;
     $$self{HTML_DUMP} or return;
-    my ($pos, $len, $com, $tip, $flg) = @_;
+    my ($pos, $len, $com, $tip, $flg, $ifd) = @_;
     $pos += $$self{BASE} if $$self{BASE};
     # skip structural data blocks which have been removed from the middle of this dump
     # (SkipData list contains ordered [start,end+1] offsets to skip)
@@ -5511,14 +5536,14 @@ sub HDump($$$$;$$)
             $end <= $$skip[0] and last;
             $pos >= $$skip[1] and $pos += $$skip[1] - $$skip[0], next;
             if ($pos != $$skip[0]) {
-                $$self{HTML_DUMP}->Add($pos, $$skip[0]-$pos, $com, $tip, $flg);
+                $$self{HTML_DUMP}->Add($pos, $$skip[0]-$pos, $com, $tip, $flg, $ifd);
                 $len -= $$skip[0] - $pos;
                 $tip = 'SAME';
             }
             $pos = $$skip[1];
         }
     }
-    $$self{HTML_DUMP}->Add($pos, $len, $com, $tip, $flg);
+    $$self{HTML_DUMP}->Add($pos, $len, $com, $tip, $flg, $ifd);
 }
 
 #------------------------------------------------------------------------------
@@ -6102,7 +6127,7 @@ sub ProcessJPEG($$)
                 DirStart(\%dirInfo, $hdrLen, $hdrLen);
                 $$self{SkipData} = \@skipData if @skipData;
                 # extract the EXIF information (it is in standard TIFF format)
-                $self->ProcessTIFF(\%dirInfo);
+                $self->ProcessTIFF(\%dirInfo) or $self->Warn('Malformed APP1 EXIF segment');
                 # avoid looking for preview unless necessary because it really slows
                 # us down -- only look for it if we found pointer, and preview is
                 # outside EXIF, and PreviewImage is specifically requested
@@ -6354,6 +6379,7 @@ sub ProcessJPEG($$)
                 $dumpType = 'PreviewImage';
                 $preview .= $$segDataPt;
             }
+            # (also seen "QTI Debug Metadata\0" segment in some newer Samsung images)
             # BenQ DC E1050 continues preview in APP5
             if ($preview and $nextMarker ne 0xe5) {
                 $self->FoundTag('PreviewImage', $preview);
@@ -6367,6 +6393,9 @@ sub ProcessJPEG($$)
                 DirStart(\%dirInfo, 6, 6);
                 my $tagTablePtr = GetTagTable('Image::ExifTool::Ricoh::RMETA');
                 $self->ProcessDirectory(\%dirInfo, $tagTablePtr);
+            } elsif ($$segDataPt =~ /^ssuniqueid\0/) {
+                my $tagTablePtr = GetTagTable('Image::ExifTool::Samsung::APP5');
+                $self->HandleTag($tagTablePtr, 'ssuniqueid', substr($$segDataPt, 11));
             } elsif ($preview) {
                 $dumpType = 'PreviewImage';
                 $preview .= $$segDataPt;
@@ -6566,7 +6595,7 @@ sub ProcessJPEG($$)
         }
         if (defined $dumpType) {
             if (not $dumpType and ($$options{Unknown} or $$options{Validate})) {
-                my $str = ($$segDataPt =~ /^([\x20-\x7e]{1,16})\0/) ? " '$1'" : '';
+                my $str = ($$segDataPt =~ /^([\x20-\x7e]{1,20})\0/) ? " '$1'" : '';
                 $xtra = 'segment' unless $xtra;
                 $self->Warn("Unknown $markerName$str $xtra", 1);
             }
@@ -6750,6 +6779,7 @@ sub DoProcessTIFF($$;$)
   #  return 0 unless $identifier == 0x2a;
 
     # get offset to IFD0
+    return 0 if length $$dataPt < 8;
     my $offset = Get32u($dataPt, 4);
     $offset >= 8 or return 0;
 
@@ -7598,7 +7628,9 @@ sub FoundTag($$$;@)
             # increase 0-priority tags if this is the priority directory
             $priority = 1 if not $priority and $$self{DIR_NAME} and
                              $$self{DIR_NAME} eq $$self{PRIORITY_DIR};
-        } elsif ($$self{DIR_NAME} and $$self{LOW_PRIORITY_DIR}{$$self{DIR_NAME}}) {
+        } elsif ($$self{LOW_PRIORITY_DIR}{'*'} or
+            ($$self{DIR_NAME} and $$self{LOW_PRIORITY_DIR}{$$self{DIR_NAME}}))
+        {
             $priority = 0;  # default is 0 for a LOW_PRIORITY_DIR
         } else {
             $priority = 1;  # the normal default

@@ -21,7 +21,7 @@ sub ProcessKodakPatch($$$);
 sub WriteUnknownOrPreview($$$);
 sub FixLeicaBase($$;$);
 
-$VERSION = '2.06';
+$VERSION = '2.08';
 
 my $debug;          # set to 1 to enable debugging code
 
@@ -692,6 +692,15 @@ my $debug;          # set to 1 to enable debugging code
         },
     },
     {
+        Name => 'MakerNoteLeica10', # used by the D-Lux7
+        Condition => '$$valPt =~ /^LEICA CAMERA AG\0/',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::Panasonic::Main',
+            Start => '$valuePtr + 18',
+            ByteOrder => 'Unknown',
+        },
+    },
+    {
         Name => 'MakerNotePanasonic',
         # (starts with "Panasonic\0")
         Condition => '$$valPt=~/^Panasonic/ and $$self{Model} ne "DC-FT7"',
@@ -833,6 +842,25 @@ my $debug;          # set to 1 to enable debugging code
         },
     },
     {
+        Name => 'MakerNoteReconyx3',
+        Condition => '$$valPt =~ /^RECONYXH2\0/',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::Reconyx::Type3',
+            ByteOrder => 'Little-endian',
+        },
+    },
+    {
+        Name => 'MakerNoteRicohPentax',
+        # used by cameras such as the Ricoh GR III
+        Condition => '$$valPt=~/^RICOH\0(II|MM)/',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::Pentax::Main',
+            Start => '$valuePtr + 8',
+            Base => '$start - 8',
+            ByteOrder => 'Unknown',
+        },
+    },
+    {
         Name => 'MakerNoteRicoh',
         # (my test R50 image starts with "      \x02\x01" - PH)
         Condition => q{
@@ -891,9 +919,9 @@ my $debug;          # set to 1 to enable debugging code
     },
     {
         Name => 'MakerNoteSamsung2',
-        # Samsung EXIF-format maker notes
+        # Samsung EXIF-format maker notes (
         Condition => q{
-            $$self{Make} eq 'SAMSUNG' and ($$self{TIFF_TYPE} eq 'SRW' or
+            uc $$self{Make} eq 'SAMSUNG' and ($$self{TIFF_TYPE} eq 'SRW' or
             $$valPt=~/^(\0.\0\x01\0\x07\0{3}\x04|.\0\x01\0\x07\0\x04\0{3})0100/s)
         },
         SubDirectory => {
@@ -1777,7 +1805,7 @@ maker notes in EXIF information.
 
 =head1 AUTHOR
 
-Copyright 2003-2018, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

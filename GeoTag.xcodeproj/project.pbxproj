@@ -189,7 +189,7 @@
 					49B0EEB319495FB100293C73 = {
 						CreatedOnToolsVersion = 6.0;
 						DevelopmentTeam = A3UXBEBE8Z;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1020;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -206,7 +206,7 @@
 			};
 			buildConfigurationList = 49B0EEAF19495FB100293C73 /* Build configuration list for PBXProject "GeoTag" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -416,9 +416,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.snafu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = GeoTag;
 				PROVISIONING_PROFILE = "";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -439,9 +438,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.snafu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = GeoTag;
 				PROVISIONING_PROFILE = "";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
