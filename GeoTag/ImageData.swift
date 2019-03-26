@@ -176,7 +176,9 @@ final class ImageData: NSObject {
             fatalError("docDir symlink error: \(error)")
         }
         super.init()
-        validImage = loadImageData()
+        if (Exiftool.helper.fileTypeIsWritable(for: url)) {
+            validImage = loadImageData()
+        }
         originalLocation = location
         originalDateTime = dateTime
     }

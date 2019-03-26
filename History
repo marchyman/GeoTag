@@ -7,6 +7,8 @@
 * change GPX file loaded notification to a sheet attached to the GeoTag main
   window.  Dual monitor users would sometimes find the pop-up previously used
   on the wrong monitor, i.e. no the monitor they were looking at.
+* Verify a file can be written by exiftool. If not do not allow attempted
+  updates that will fail during a save.   HEIC (iPhone) files are not writable.
 * exiftool 11.32
 * swift 5
 

@@ -120,6 +120,39 @@ struct Exiftool {
         exiftool.waitUntilExit()
         return exiftool.terminationStatus
     }
+    
+    let writableTypes: Set = [
+        "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "CR2", "CR3", "CRM",
+        "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
+        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "ICC",
+        "IIQ", "IND", "JNG", "JP2", "JPEG", "LRV", "M4A/V", "MEF",
+        "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
+        "NEF", "NRW", "ORF", "PBM", "PDF", "PEF", "PGM", "PNG",
+        "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
+        "RWL", "SR2", "SRW","THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
+
+    func fileTypeIsWritable(for file: URL) -> Bool {
+        let exiftool = Process()
+        let pipe = Pipe()
+        exiftool.standardOutput = pipe
+        exiftool.standardError = FileHandle.nullDevice
+        exiftool.launchPath = url.path
+        exiftool.arguments = [ "-m", "-q", "-S", "-fast3", "-FileType", file.path]
+        exiftool.launch()
+        exiftool.waitUntilExit()
+        if exiftool.terminationStatus == 0 {
+            let data = pipe.fileHandleForReading.availableData
+            if data.count > 0,
+               let str = String(data: data, encoding: String.Encoding.utf8) {
+                let trimmed = str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                let strParts = trimmed.components(separatedBy: CharacterSet.whitespaces)
+                if let fileType = strParts.last {
+                    return writableTypes.contains(fileType)
+                }
+            }
+        }
+        return false
+    }
 
     /// return image date and time stamp including time zone
     /// - Parameter imageData: image used to obtain date/time
