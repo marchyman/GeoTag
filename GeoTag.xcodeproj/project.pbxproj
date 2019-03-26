@@ -206,7 +206,7 @@
 			};
 			buildConfigurationList = 49B0EEAF19495FB100293C73 /* Build configuration list for PBXProject "GeoTag" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
