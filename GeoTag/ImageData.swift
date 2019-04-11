@@ -54,6 +54,7 @@ final class ImageData: NSObject {
         return url.lastPathComponent
     }
     var sandboxUrl: URL         // URL of the sandbox copy of the image
+    var sandboxXmp: URL?        // URL of sandbox copy of sidecar file
 
     // MARK: instance variables -- date/time related values
 
@@ -147,8 +148,9 @@ final class ImageData: NSObject {
     /// the given URL.  If the URL isn't recognized as an image mark this
     /// instance as not being valid.
     init(url: URL) {
-        // create a symlink for the URL in our sandbox
         self.url = url;
+
+        // create a symlink for the URL in our sandbox
         let fileManager = FileManager.default
         do {
             let docDir = try fileManager.url(for: .documentDirectory,
@@ -172,6 +174,21 @@ final class ImageData: NSObject {
             try? fileManager.removeItem(at: sandboxUrl)
             try fileManager.createSymbolicLink(at: sandboxUrl,
                                                withDestinationURL: url)
+            // Create a link for any matching sidecare file, i.e. a file with
+            // the same path components but with an extension of XMP, if one
+            // is found.
+            if url.pathExtension.lowercased() != "xmp" {
+                var xmp = url.deletingPathExtension()
+                xmp.appendPathExtension("xmp")
+                if fileManager.fileExists(atPath: xmp.path) {
+                    sandboxXmp = sandboxUrl.deletingPathExtension()
+                    sandboxXmp?.appendPathExtension("XMP")
+                    try? fileManager.removeItem(at: sandboxXmp!)
+                    try fileManager.createSymbolicLink(at: sandboxXmp!,
+                                                       withDestinationURL: xmp)
+                }
+            }
+
         } catch let error as NSError {
             fatalError("docDir symlink error: \(error)")
         }
@@ -189,6 +206,9 @@ final class ImageData: NSObject {
     {
         let fileManager = FileManager.default
         try? fileManager.removeItem(at: sandboxUrl)
+        if let xmp = sandboxXmp {
+            try? fileManager.removeItem(at: xmp)
+        }
     }
 
     // MARK: revert changes for an image
