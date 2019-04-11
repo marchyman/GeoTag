@@ -76,9 +76,12 @@ final class TableViewController: NSViewController {
             if imageUrls.contains(url) {
                 duplicateFound = true
             } else {
-                imageUrls.insert(url)
-                images.append(ImageData(url: url))
-                reloadNeeded = true
+                // silently ignore xmp sidecar files
+                if url.pathExtension.lowercased() != "xmp" {
+                    imageUrls.insert(url)
+                    images.append(ImageData(url: url))
+                    reloadNeeded = true
+                }
             }
         }
         if reloadNeeded {
