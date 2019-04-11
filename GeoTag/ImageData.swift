@@ -139,7 +139,7 @@ final class ImageData: NSObject {
         }
     }
 
-    // MARK: Init
+    // MARK: Init (FYI: not run on main thread)
 
     /// instantiate an instance of the class
     /// - Parameter url: image file this instance represents
@@ -194,7 +194,11 @@ final class ImageData: NSObject {
         }
         super.init()
         if (Exiftool.helper.fileTypeIsWritable(for: url)) {
-            validImage = loadImageData()
+            if let xmp = sandboxXmp {
+                validImage = loadXmpData(xmp)
+            } else {
+                validImage = loadImageData()
+            }
         }
         originalLocation = location
         originalDateTime = dateTime
@@ -223,7 +227,7 @@ final class ImageData: NSObject {
         dateTime = originalDateTime
     }
 
-    // MARK: Backup and Save (does not run on main thread)
+    // MARK: Backup and Save (functions do not run on main thread)
 
     /// copy the image into the backup folder
     ///
@@ -311,6 +315,19 @@ final class ImageData: NSObject {
     }
 
     // MARK: extract image metadata and build thumbnail preview
+
+    /// obtain metadata from XMP file
+    /// - Parameter xmp: URL of XMP file for an image
+    /// - Returns: true if successful
+    ///
+    /// Extract desired metadata from an XMP file using ExifTool.  Apple
+    /// ImageIO functions do not work with XMP sidecar files.
+    private
+    func loadXmpData(_ xmp: URL) -> Bool {
+        let results = Exiftool.helper.metadataFrom(xmp: xmp)
+        print(results)
+        return false
+    }
 
     /// obtain image metadata
     /// - Returns: true if successful
