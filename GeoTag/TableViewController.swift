@@ -72,22 +72,30 @@ final class TableViewController: NSViewController {
         appDelegate.progressIndicator.startAnimation(self)
         var reloadNeeded = false
         var duplicateFound = false
-        for url in urls {
+        // silently ignore xmp sidecar files
+        let updateGroup = DispatchGroup()
+        for url in urls where url.pathExtension.lowercased() != "xmp" {
             if imageUrls.contains(url) {
                 duplicateFound = true
             } else {
-                // silently ignore xmp sidecar files
-                if url.pathExtension.lowercased() != "xmp" {
-                    imageUrls.insert(url)
-                    images.append(ImageData(url: url))
-                    reloadNeeded = true
+                imageUrls.insert(url)
+                updateGroup.enter()
+                DispatchQueue.global(qos: .userInitiated).async {
+                    let imageData = ImageData(url: url)
+                    DispatchQueue.main.async {
+                        self.images.append(imageData)
+                        reloadNeeded = true
+                        updateGroup.leave()
+                    }
                 }
             }
         }
-        if reloadNeeded {
-            reloadAllRows()
+        updateGroup.notify(queue: DispatchQueue.main) {
+            if reloadNeeded {
+                self.reloadAllRows()
+            }
+            self.appDelegate.progressIndicator.stopAnimation(self)
         }
-        appDelegate.progressIndicator.stopAnimation(self)
         return duplicateFound
     }
 
