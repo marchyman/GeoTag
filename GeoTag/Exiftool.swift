@@ -120,7 +120,9 @@ struct Exiftool {
         exiftool.waitUntilExit()
         return exiftool.terminationStatus
     }
-    
+
+    /// File Type codes for the file types that exiftool can write
+
     let writableTypes: Set = [
         "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "CR2", "CR3", "CRM",
         "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
@@ -131,6 +133,9 @@ struct Exiftool {
         "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
         "RWL", "SR2", "SRW","THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
 
+    /// Check if exiftool supports writing to a type of file
+    /// - Parameter for: a URL of a file to check
+    /// - Returns: true if exiftool can write to the file type of the URL
     func fileTypeIsWritable(for file: URL) -> Bool {
         let exiftool = Process()
         let pipe = Pipe()
@@ -152,6 +157,38 @@ struct Exiftool {
             }
         }
         return false
+    }
+    
+    /// return selected metadate from a file
+    /// - Parameter xmp: URL of XMP file
+    /// - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)
+    ///
+    /// Apple's ImageIO functions can not extract metadata from XMP sidecar
+    /// files.  ExifTool is used for that purpose.
+    func metadataFrom(xmp: URL) -> (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String) {
+        let exiftool = Process()
+        let pipe = Pipe()
+        exiftool.standardOutput = pipe
+        exiftool.standardError = FileHandle.nullDevice
+        exiftool.launchPath = url.path
+        exiftool.arguments = [ "-args", "-c", "%.15f", "-createdate",
+                               "-gpsstatus", "-gpslatitude", "-gpslongitude",
+                               xmp.path ]
+        exiftool.launch()
+        exiftool.waitUntilExit()
+        if exiftool.terminationStatus == 0 {
+            let data = pipe.fileHandleForReading.availableData
+            if data.count > 0,
+               let str = String(data: data, encoding: String.Encoding.utf8) {
+                let strings = str.split(separator: "\n")
+                print(strings)
+            }
+        } else {
+            print("exiftool failed for \(xmp)")
+            print("reason: \(exiftool.terminationReason.rawValue)")
+        }
+
+        return ("", 0, "", 0, "")
     }
 
     /// return image date and time stamp including time zone
