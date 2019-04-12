@@ -165,7 +165,9 @@ struct Exiftool {
     ///
     /// Apple's ImageIO functions can not extract metadata from XMP sidecar
     /// files.  ExifTool is used for that purpose.
-    func metadataFrom(xmp: URL) -> (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String) {
+    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool,
+                                    lat: Double, latRef: String,
+                                    lon: Double, lonRef: String) {
         let exiftool = Process()
         let pipe = Pipe()
         exiftool.standardOutput = pipe
@@ -176,19 +178,59 @@ struct Exiftool {
                                xmp.path ]
         exiftool.launch()
         exiftool.waitUntilExit()
+
+        var createDate = ""
+        var validGPS = false
+        var lat = 0.0
+        var latRef = ""
+        var lon = 0.0
+        var lonRef = ""
+
         if exiftool.terminationStatus == 0 {
             let data = pipe.fileHandleForReading.availableData
             if data.count > 0,
                let str = String(data: data, encoding: String.Encoding.utf8) {
+                var gpsStatus = true
+                var gpsLat = false
+                var gpsLon = false
                 let strings = str.split(separator: "\n")
-                print(strings)
+                for entry in strings {
+                    let key = entry.prefix { $0 != "=" }
+                    var value = entry.dropFirst(key.count)
+                    if !value.isEmpty {
+                        value = value.dropFirst(1)
+                    }
+                    switch key {
+                    case "-CreateDate":
+                        createDate = String(value)
+                    case "-GPSStatus":
+                        if value.hasPrefix("None") {
+                            gpsStatus = false
+                        }
+                    case "-GPSLatitude":
+                        let parts = value.split(separator: " ")
+                        if let latValue = Double(parts[0]),
+                            parts.count == 2 {
+                            lat = latValue
+                            latRef = String(parts[1])
+                            gpsLat = true
+                        }
+                    case "-GPSLongitude":
+                        let parts = value.split(separator: " ")
+                        if let lonValue = Double(parts[0]),
+                            parts.count == 2 {
+                            lon = lonValue
+                            lonRef = String(parts[1])
+                            gpsLon = true
+                        }
+                    default:
+                        break
+                    }
+                }
+                validGPS = gpsStatus && gpsLat && gpsLon
             }
-        } else {
-            print("exiftool failed for \(xmp)")
-            print("reason: \(exiftool.terminationReason.rawValue)")
         }
-
-        return ("", 0, "", 0, "")
+        return (createDate, validGPS, lat, latRef, lon, lonRef)
     }
 
     /// return image date and time stamp including time zone
