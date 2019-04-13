@@ -7,6 +7,8 @@
   folder as the image file with the same name but with an extension of ".xmp"
   are assumed to be sidecar files.
   
+* The presence of a sidecar file is indicated by a '*' following the image name.
+  
 * Reading image metadata has been moved from the main queue. As a result opening
   a large number of images should be slightly faster.
 
