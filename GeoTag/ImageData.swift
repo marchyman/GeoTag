@@ -325,8 +325,12 @@ final class ImageData: NSObject {
     private
     func loadXmpData(_ xmp: URL) -> Bool {
         let results = Exiftool.helper.metadataFrom(xmp: xmp)
-        print(results)
-        return false
+        guard results.dto != "" else { return false }
+        dateTime = results.dto
+        if results.valid {
+            location = results.location
+        }
+        return true
     }
 
     /// obtain image metadata

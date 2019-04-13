@@ -56,9 +56,7 @@ struct Exiftool {
 
         // ExifTool latitude and longitude exiftool argument names
         var latArg = "-GPSLatitude="
-        var latRefArg = "-GPSLatitudeRef="
         var lonArg = "-GPSLongitude="
-        var lonRefArg = "-GPSLongitudeRef="
 
         // ExifTool GSPDateTime arg storage
         var gpsDArg = ""
@@ -73,22 +71,9 @@ struct Exiftool {
 
         // Build ExifTool latitude, longitude argument values
         if let location = imageData.location {
-            var lat = location.latitude
-            if lat < 0 {
-                latRefArg += "S"
-                lat = -lat
-            } else {
-                latRefArg += "N"
-            }
+            let lat = location.latitude
             latArg += "\(lat)"
-
-            var lon = location.longitude
-            if lon < 0 {
-                lonRefArg += "W"
-                lon = -lon
-            } else {
-                lonRefArg += "E"
-            }
+            let lon = location.longitude
             lonArg += "\(lon)"
 
             // set GPS date/time stamp for current location if enabled
@@ -99,6 +84,12 @@ struct Exiftool {
             }
         }
 
+        // path to image (or XMP) file to update
+        var path = imageData.sandboxUrl.path
+        if let xmp = imageData.sandboxXmp {
+            path = xmp.path
+        }
+
         let exiftool = Process()
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = FileHandle.nullDevice
@@ -107,15 +98,11 @@ struct Exiftool {
                               "-m",
                               "-overwrite_original_in_place",
                               latArg,
-                              latRefArg,
-                              lonArg,
-                              lonRefArg]
+                              lonArg]
         if Preferences.dateTimeGPS() {
             exiftool.arguments! += [gpsDArg, gpsTArg]
         }
-        exiftool.arguments! += [dtArg,
-                               "-GPSStatus=",
-                               imageData.sandboxUrl.path]
+        exiftool.arguments! += [dtArg, "-GPSStatus=", path]
         exiftool.launch()
         exiftool.waitUntilExit()
         return exiftool.terminationStatus
@@ -165,9 +152,7 @@ struct Exiftool {
     ///
     /// Apple's ImageIO functions can not extract metadata from XMP sidecar
     /// files.  ExifTool is used for that purpose.
-    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool,
-                                    lat: Double, latRef: String,
-                                    lon: Double, lonRef: String) {
+    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool, location: Coord) {
         let exiftool = Process()
         let pipe = Pipe()
         exiftool.standardOutput = pipe
@@ -180,11 +165,8 @@ struct Exiftool {
         exiftool.waitUntilExit()
 
         var createDate = ""
+        var location = Coord()
         var validGPS = false
-        var lat = 0.0
-        var latRef = ""
-        var lon = 0.0
-        var lonRef = ""
 
         if exiftool.terminationStatus == 0 {
             let data = pipe.fileHandleForReading.availableData
@@ -202,25 +184,30 @@ struct Exiftool {
                     }
                     switch key {
                     case "-CreateDate":
-                        createDate = String(value)
+                        // get rid of any trailing parts of a second
+                        createDate = String(value.split(separator: ".")[0])
                     case "-GPSStatus":
-                        if value.hasPrefix("None") {
+                        if value.hasSuffix("Void") {
                             gpsStatus = false
                         }
                     case "-GPSLatitude":
                         let parts = value.split(separator: " ")
                         if let latValue = Double(parts[0]),
                             parts.count == 2 {
-                            lat = latValue
-                            latRef = String(parts[1])
+                            location.latitude = latValue
+                            if parts[1] == "S" {
+                                location.latitude = -location.latitude
+                            }
                             gpsLat = true
                         }
                     case "-GPSLongitude":
                         let parts = value.split(separator: " ")
                         if let lonValue = Double(parts[0]),
                             parts.count == 2 {
-                            lon = lonValue
-                            lonRef = String(parts[1])
+                            location.longitude = lonValue
+                            if parts[1] == "W" {
+                                location.longitude = -location.longitude
+                            }
                             gpsLon = true
                         }
                     default:
@@ -230,7 +217,7 @@ struct Exiftool {
                 validGPS = gpsStatus && gpsLat && gpsLon
             }
         }
-        return (createDate, validGPS, lat, latRef, lon, lonRef)
+        return (createDate, validGPS, location)
     }
 
     /// return image date and time stamp including time zone
