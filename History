@@ -1,3 +1,20 @@
+## sidecar branch
+
+### New Features
+
+* If a sidecar file exists metadata will be read from and updated metadata
+  written to the sidecar file instead of the image file. Files in the same
+  folder as the image file with the same name but with an extension of ".xmp"
+  are assumed to be sidecar files.
+  
+* Reading image metadata has been moved from the main queue. As a result opening
+  a large number of images should be slightly faster.
+
+### Bug fixes
+
+* Updated image locations could sometimes be written with the wrong longitude
+  reference.
+
 ## GeoTag 4.5
 
 ### New Features
