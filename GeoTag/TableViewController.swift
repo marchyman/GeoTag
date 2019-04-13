@@ -639,6 +639,9 @@ extension TableViewController: NSTableViewDelegate {
             switch id {
             case NSUserInterfaceItemIdentifier("imageName"):
                 value = image.name ?? "Unknown"
+                if image.sandboxXmp != nil {
+                    value += "*"
+                }
                 tip = image.url.path
             case NSUserInterfaceItemIdentifier("dateTime"):
                 value = image.dateTime

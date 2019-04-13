@@ -54,6 +54,7 @@ final class ImageData: NSObject {
         return url.lastPathComponent
     }
     var sandboxUrl: URL         // URL of the sandbox copy of the image
+    var xmpFile: XmpFile
     var sandboxXmp: URL?        // URL of sandbox copy of sidecar file
 
     // MARK: instance variables -- date/time related values
@@ -158,6 +159,7 @@ final class ImageData: NSObject {
                                              appropriateFor: nil,
                                              create: true)
             sandboxUrl = docDir.appendingPathComponent(url.lastPathComponent)
+
             // if sandboxUrl already exists modify the name until it doesn't
             var fileNumber = 1
             while fileManager.fileExists(atPath: (sandboxUrl.path)) {
@@ -167,6 +169,7 @@ final class ImageData: NSObject {
                 fileNumber += 1
                 sandboxUrl = docDir.appendingPathComponent(newName)
             }
+
             // fileExistsAtPath will return false when a symbolic link
             // exists but does not point to a valid file.  Handle that
             // situation to avoid a crash by deleting any stale link
@@ -174,18 +177,20 @@ final class ImageData: NSObject {
             try? fileManager.removeItem(at: sandboxUrl)
             try fileManager.createSymbolicLink(at: sandboxUrl,
                                                withDestinationURL: url)
+
             // Create a link for any matching sidecare file, i.e. a file with
             // the same path components but with an extension of XMP, if one
             // is found.
-            if url.pathExtension.lowercased() != "xmp" {
+            xmpFile = XmpFile(url: sandboxUrl)
+            if url.pathExtension.lowercased() != xmpFile.ext {
                 var xmp = url.deletingPathExtension()
-                xmp.appendPathExtension("xmp")
+                xmp.appendPathExtension(xmpFile.ext)
                 if fileManager.fileExists(atPath: xmp.path) {
-                    sandboxXmp = sandboxUrl.deletingPathExtension()
-                    sandboxXmp?.appendPathExtension("XMP")
+                    sandboxXmp = xmpFile.presentedItemURL
                     try? fileManager.removeItem(at: sandboxXmp!)
                     try fileManager.createSymbolicLink(at: sandboxXmp!,
                                                        withDestinationURL: xmp)
+                    NSFileCoordinator.addFilePresenter(xmpFile)
                 }
             }
 
@@ -324,11 +329,18 @@ final class ImageData: NSObject {
     /// ImageIO functions do not work with XMP sidecar files.
     private
     func loadXmpData(_ xmp: URL) -> Bool {
-        let results = Exiftool.helper.metadataFrom(xmp: xmp)
-        guard results.dto != "" else { return false }
-        dateTime = results.dto
-        if results.valid {
-            location = results.location
+        var errorCode: NSError?
+        let coordinator = NSFileCoordinator(filePresenter: xmpFile)
+        coordinator.coordinate(readingItemAt: xmp,
+                               options: NSFileCoordinator.ReadingOptions.resolvesSymbolicLink,
+                               error: &errorCode) {
+            url in
+            let results = Exiftool.helper.metadataFrom(xmp: url)
+            guard results.dto != "" else { return }
+            dateTime = results.dto
+            if results.valid {
+                location = results.location
+            }
         }
         return true
     }
