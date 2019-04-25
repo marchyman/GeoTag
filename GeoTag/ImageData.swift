@@ -182,7 +182,8 @@ final class ImageData: NSObject {
             // the same path components but with an extension of XMP, if one
             // is found.
             xmpFile = XmpFile(url: sandboxUrl)
-            if url.pathExtension.lowercased() != xmpFile.ext {
+            if url.pathExtension.lowercased() != xmpFile.ext &&
+               Preferences.useSidecarFiles() {
                 var xmp = url.deletingPathExtension()
                 xmp.appendPathExtension(xmpFile.ext)
                 if fileManager.fileExists(atPath: xmp.path) {
