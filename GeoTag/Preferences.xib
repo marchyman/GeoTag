@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Preferences" customModule="GeoTag" customModuleProvider="target">
             <connections>
-                <outlet property="dtGPSButton" destination="S1F-zn-Pq7" id="cye-pw-bmt"/>
+                <outlet property="dtGPSButton" destination="N0U-6Z-ghf" id="25N-xI-ohX"/>
                 <outlet property="saveFolderPath" destination="WPF-AV-Z7i" id="5ND-o8-xTq"/>
-                <outlet property="trackColorWell" destination="qN2-We-eBY" id="zev-Pd-P1V"/>
+                <outlet property="sidecarButton" destination="9Qd-pn-PyA" id="g3s-K6-hyM"/>
+                <outlet property="trackColorWell" destination="Hhs-FV-yOK" id="F7Y-YM-eli"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="RD0-Rv-tXN"/>
             </connections>
         </customObject>
@@ -19,20 +20,23 @@
         <window title="GeoTag Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="734" y="724" width="564" height="529"/>
+            <rect key="contentRect" x="734" y="724" width="564" height="388"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="564" height="529"/>
+                <rect key="frame" x="0.0" y="0.0" width="564" height="388"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <box autoresizesSubviews="NO" borderType="line" title="Backup Location" translatesAutoresizingMaskIntoConstraints="NO" id="mB3-is-Hvp">
-                        <rect key="frame" x="17" y="350" width="530" height="159"/>
+                    <box autoresizesSubviews="NO" borderType="line" title="Backup Location" translatesAutoresizingMaskIntoConstraints="NO" id="mB3-is-Hvp" userLabel="Backup Location Text">
+                        <rect key="frame" x="17" y="209" width="530" height="159"/>
                         <view key="contentView" id="CxG-qh-tIY">
                             <rect key="frame" x="3" y="3" width="524" height="141"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Usk-Sa-0th">
                                     <rect key="frame" x="14" y="12" width="496" height="119"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="119" id="bZb-RM-Dbt"/>
+                                    </constraints>
                                     <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" id="DKh-Hh-nMB">
                                         <font key="font" metaFont="system"/>
                                         <string key="title">GeoTag makes a copy of each image before updating geo-location information to make sure you will never loose an image should something happen during the update.
@@ -43,25 +47,21 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                     </textFieldCell>
                                 </textField>
                             </subviews>
+                            <constraints>
+                                <constraint firstItem="Usk-Sa-0th" firstAttribute="centerX" secondItem="CxG-qh-tIY" secondAttribute="centerX" id="oC6-5a-Z8k"/>
+                                <constraint firstItem="Usk-Sa-0th" firstAttribute="top" secondItem="CxG-qh-tIY" secondAttribute="top" constant="10" id="yZc-IP-gul"/>
+                            </constraints>
                         </view>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="155" id="1h0-0F-v0o"/>
-                            <constraint firstAttribute="bottom" secondItem="Usk-Sa-0th" secondAttribute="bottom" constant="11" id="RCp-EG-8PR"/>
-                            <constraint firstItem="Usk-Sa-0th" firstAttribute="leading" secondItem="mB3-is-Hvp" secondAttribute="leading" constant="16" id="maH-1v-NkK"/>
-                            <constraint firstAttribute="width" constant="524" id="rrb-cN-Sb0"/>
-                            <constraint firstAttribute="trailing" secondItem="Usk-Sa-0th" secondAttribute="trailing" constant="16" id="tks-Ez-OnB"/>
-                            <constraint firstItem="Usk-Sa-0th" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="top" constant="25" id="u0e-kO-8Ry"/>
-                        </constraints>
                         <font key="titleFont" metaFont="smallSystemBold"/>
                     </box>
-                    <box autoresizesSubviews="NO" borderType="line" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="cFe-lV-Lzx">
-                        <rect key="frame" x="17" y="305" width="530" height="43"/>
+                    <box autoresizesSubviews="NO" borderType="line" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="cFe-lV-Lzx" userLabel="Backup Folder">
+                        <rect key="frame" x="17" y="164" width="530" height="43"/>
                         <view key="contentView" id="FO9-Ui-LmG">
                             <rect key="frame" x="3" y="3" width="524" height="37"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <pathControl horizontalHuggingPriority="249" verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WPF-AV-Z7i">
-                                    <rect key="frame" x="0.0" y="12" width="405" height="17"/>
+                                    <rect key="frame" x="0.0" y="10" width="309" height="17"/>
                                     <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" placeholderString="Select a Folder to hold your image backups here" id="KgB-tz-k8k">
                                         <font key="font" metaFont="system"/>
                                         <allowedTypes>
@@ -73,118 +73,118 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                     </connections>
                                 </pathControl>
                             </subviews>
+                            <constraints>
+                                <constraint firstItem="WPF-AV-Z7i" firstAttribute="leading" secondItem="FO9-Ui-LmG" secondAttribute="leading" id="7Js-Tp-X5O"/>
+                                <constraint firstItem="WPF-AV-Z7i" firstAttribute="centerY" secondItem="FO9-Ui-LmG" secondAttribute="centerY" id="KCX-Op-ilM"/>
+                            </constraints>
                         </view>
-                        <constraints>
-                            <constraint firstAttribute="bottom" secondItem="WPF-AV-Z7i" secondAttribute="bottom" constant="11" id="87E-JL-Cmj"/>
-                            <constraint firstItem="WPF-AV-Z7i" firstAttribute="top" secondItem="cFe-lV-Lzx" secondAttribute="top" constant="9" id="SZb-gk-urk"/>
-                            <constraint firstItem="WPF-AV-Z7i" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="leading" id="XpK-bh-mYm"/>
-                            <constraint firstItem="WPF-AV-Z7i" firstAttribute="centerX" secondItem="cFe-lV-Lzx" secondAttribute="centerX" constant="-59.5" id="ywQ-um-DEp"/>
-                        </constraints>
                     </box>
                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="2MB-cC-IxN">
-                        <rect key="frame" x="20" y="298" width="524" height="5"/>
+                        <rect key="frame" x="20" y="157" width="524" height="5"/>
                     </box>
-                    <box title="GPS Date/Time" translatesAutoresizingMaskIntoConstraints="NO" id="TuR-Sl-4jS">
-                        <rect key="frame" x="17" y="114" width="530" height="178"/>
-                        <view key="contentView" id="9Aq-D2-3fw">
-                            <rect key="frame" x="3" y="3" width="524" height="160"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S1F-zn-Pq7">
-                                    <rect key="frame" x="18" y="124" width="210" height="18"/>
-                                    <buttonCell key="cell" type="check" title="Update GPS Date/Time stamps" bezelStyle="regularSquare" imagePosition="left" inset="2" id="syZ-lz-UV9">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                        <connections>
-                                            <action selector="toggleDateTimeGPS:" target="-2" id="Gc9-Cd-fgU"/>
-                                        </connections>
-                                    </buttonCell>
-                                </button>
-                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dZK-5P-EUd">
-                                    <rect key="frame" x="18" y="33" width="495" height="85"/>
-                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="MDl-2A-OhN">
-                                        <font key="font" metaFont="system"/>
-                                        <string key="title">When the above box is checked the GPS Date/Time stamps will be updated from the Original Date/Time the image was taken but converted to UTC.  This is only correct when the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                            </subviews>
-                            <constraints>
-                                <constraint firstItem="S1F-zn-Pq7" firstAttribute="leading" secondItem="dZK-5P-EUd" secondAttribute="leading" id="AXa-7Z-riL"/>
-                                <constraint firstItem="S1F-zn-Pq7" firstAttribute="top" secondItem="9Aq-D2-3fw" secondAttribute="top" constant="20" symbolic="YES" id="MYj-wj-A8m"/>
-                                <constraint firstItem="S1F-zn-Pq7" firstAttribute="leading" secondItem="9Aq-D2-3fw" secondAttribute="leading" constant="20" symbolic="YES" id="dcj-3c-S69"/>
-                                <constraint firstItem="dZK-5P-EUd" firstAttribute="top" secondItem="S1F-zn-Pq7" secondAttribute="bottom" constant="8" symbolic="YES" id="lJD-cG-goe"/>
-                            </constraints>
-                        </view>
-                    </box>
-                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="OtS-9p-pHU">
-                        <rect key="frame" x="20" y="107" width="524" height="5"/>
-                    </box>
-                    <box title="GPX Track Color" translatesAutoresizingMaskIntoConstraints="NO" id="aLf-EW-LtZ">
-                        <rect key="frame" x="17" y="16" width="530" height="85"/>
-                        <view key="contentView" id="5ad-pN-bDZ">
-                            <rect key="frame" x="3" y="3" width="524" height="67"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="qN2-We-eBY">
-                                    <rect key="frame" x="20" y="24" width="61" height="23"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="61" id="UnX-Ek-nSI"/>
-                                    </constraints>
-                                    <color key="color" name="systemBlueColor" catalog="System" colorSpace="catalog"/>
+                    <view translatesAutoresizingMaskIntoConstraints="NO" id="8kF-qk-LtY" userLabel="Sidecar files">
+                        <rect key="frame" x="20" y="117" width="524" height="34"/>
+                        <string key="toolTip">When checked a sidecar file existing in the same folder as an image file will be updated with location information instead of the image file.  New sidecar files will not be created.</string>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tMA-ge-WJt">
+                                <rect key="frame" x="-2" y="8" width="182" height="18"/>
+                                <string key="toolTip">Location updates will be written to existing sidecar files instead of the image file when this box is checked.   Sidecar files are files in the same folder as the image file with an extension of .xmp.</string>
+                                <buttonCell key="cell" type="check" title="Update sidecar (xmp) files" bezelStyle="regularSquare" imagePosition="left" inset="2" id="9Qd-pn-PyA">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
                                     <connections>
-                                        <action selector="setTrackColor:" target="-2" id="vBE-vQ-JbO"/>
+                                        <action selector="sidecarButtonChanged:" target="-2" id="pBC-kx-Mhy"/>
                                     </connections>
-                                </colorWell>
-                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="z75-dV-5vH">
-                                    <rect key="frame" x="87" y="27" width="419" height="17"/>
-                                    <textFieldCell key="cell" title="Select track color for tracks loaded from GPX files" id="9ao-F8-ze7">
-                                        <font key="font" usesAppearanceFont="YES"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                            </subviews>
-                            <constraints>
-                                <constraint firstItem="z75-dV-5vH" firstAttribute="top" secondItem="5ad-pN-bDZ" secondAttribute="top" constant="23" id="BGA-hZ-iih"/>
-                                <constraint firstItem="qN2-We-eBY" firstAttribute="top" secondItem="5ad-pN-bDZ" secondAttribute="top" constant="20" symbolic="YES" id="JEN-fh-Wx7"/>
-                                <constraint firstItem="qN2-We-eBY" firstAttribute="centerY" secondItem="z75-dV-5vH" secondAttribute="centerY" id="KDE-js-bds"/>
-                                <constraint firstItem="z75-dV-5vH" firstAttribute="leading" secondItem="qN2-We-eBY" secondAttribute="trailing" constant="8" symbolic="YES" id="aeJ-vb-DqJ"/>
-                                <constraint firstItem="qN2-We-eBY" firstAttribute="leading" secondItem="5ad-pN-bDZ" secondAttribute="leading" constant="20" symbolic="YES" id="d34-25-yzd"/>
-                                <constraint firstAttribute="trailing" secondItem="z75-dV-5vH" secondAttribute="trailing" constant="20" symbolic="YES" id="vIU-Fg-kUw"/>
-                            </constraints>
-                        </view>
-                    </box>
+                                </buttonCell>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="tMA-ge-WJt" firstAttribute="centerY" secondItem="8kF-qk-LtY" secondAttribute="centerY" id="Efx-WV-J6p"/>
+                            <constraint firstItem="tMA-ge-WJt" firstAttribute="top" secondItem="8kF-qk-LtY" secondAttribute="top" constant="10" id="Gsx-2c-iDL"/>
+                            <constraint firstItem="tMA-ge-WJt" firstAttribute="leading" secondItem="8kF-qk-LtY" secondAttribute="leading" id="Wbb-vW-QID"/>
+                        </constraints>
+                    </view>
+                    <view translatesAutoresizingMaskIntoConstraints="NO" id="yEb-Zx-gkg" userLabel="GPS Date/Time">
+                        <rect key="frame" x="20" y="75" width="524" height="34"/>
+                        <string key="toolTip">When this box is checked GPS Date/Time stamp metadata in UTC will be set from the Original Date/Time the image was taken.  GPS Date/Time will only be correct if the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N0U-6Z-ghf">
+                                <rect key="frame" x="-2" y="8" width="210" height="18"/>
+                                <string key="toolTip">When this box is checked GPS Date/Time stamp metadata in UTC will be set from the Original Date/Time the image was taken.  GPS Date/Time will only be correct if the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
+                                <buttonCell key="cell" type="check" title="Update GPS Date/Time stamps" bezelStyle="regularSquare" imagePosition="left" inset="2" id="wmW-6z-ADx">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <connections>
+                                        <action selector="toggleDateTimeGPS:" target="-2" id="NEI-xm-eSo"/>
+                                    </connections>
+                                </buttonCell>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="N0U-6Z-ghf" firstAttribute="leading" secondItem="yEb-Zx-gkg" secondAttribute="leading" id="2n6-SJ-S37"/>
+                            <constraint firstItem="N0U-6Z-ghf" firstAttribute="centerY" secondItem="yEb-Zx-gkg" secondAttribute="centerY" id="8c5-Ot-Py7"/>
+                            <constraint firstItem="N0U-6Z-ghf" firstAttribute="top" secondItem="yEb-Zx-gkg" secondAttribute="top" constant="10" id="NpB-5r-boA"/>
+                        </constraints>
+                    </view>
+                    <view translatesAutoresizingMaskIntoConstraints="NO" id="FNN-OT-1QP" userLabel="Track Color">
+                        <rect key="frame" x="20" y="20" width="524" height="47"/>
+                        <subviews>
+                            <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="Hhs-FV-yOK">
+                                <rect key="frame" x="0.0" y="12" width="61" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="61" id="BMF-fK-XYx"/>
+                                </constraints>
+                                <color key="color" name="systemBlueColor" catalog="System" colorSpace="catalog"/>
+                                <connections>
+                                    <action selector="setTrackColor:" target="-2" id="igw-Wd-WQ2"/>
+                                </connections>
+                            </colorWell>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="6ao-Kk-71N">
+                                <rect key="frame" x="67" y="15" width="307" height="17"/>
+                                <textFieldCell key="cell" title="Select track color for tracks loaded from GPX files" id="Vf7-ep-lmE">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Hhs-FV-yOK" firstAttribute="centerY" secondItem="6ao-Kk-71N" secondAttribute="centerY" id="D56-o9-DMc"/>
+                            <constraint firstItem="6ao-Kk-71N" firstAttribute="top" secondItem="FNN-OT-1QP" secondAttribute="top" constant="15" id="LmZ-eJ-cpO"/>
+                            <constraint firstItem="Hhs-FV-yOK" firstAttribute="leading" secondItem="FNN-OT-1QP" secondAttribute="leading" id="ZGi-4b-pem"/>
+                            <constraint firstItem="Hhs-FV-yOK" firstAttribute="top" secondItem="FNN-OT-1QP" secondAttribute="top" constant="12" id="ceG-OS-kjx"/>
+                            <constraint firstItem="Hhs-FV-yOK" firstAttribute="centerY" secondItem="FNN-OT-1QP" secondAttribute="centerY" id="vw6-eb-vQ9"/>
+                            <constraint firstItem="6ao-Kk-71N" firstAttribute="leading" secondItem="Hhs-FV-yOK" secondAttribute="trailing" constant="8" symbolic="YES" id="wG5-PN-29D"/>
+                        </constraints>
+                    </view>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="OtS-9p-pHU" firstAttribute="leading" secondItem="TuR-Sl-4jS" secondAttribute="leading" id="1k0-ex-zGw"/>
-                    <constraint firstAttribute="bottom" secondItem="TuR-Sl-4jS" secondAttribute="bottom" constant="118" id="2pK-0k-UKS"/>
-                    <constraint firstItem="TuR-Sl-4jS" firstAttribute="top" secondItem="2MB-cC-IxN" secondAttribute="bottom" constant="8" symbolic="YES" id="B3y-cd-OHZ"/>
-                    <constraint firstItem="OtS-9p-pHU" firstAttribute="trailing" secondItem="TuR-Sl-4jS" secondAttribute="trailing" id="CJt-bL-9vD"/>
-                    <constraint firstItem="aLf-EW-LtZ" firstAttribute="top" secondItem="OtS-9p-pHU" secondAttribute="bottom" constant="8" symbolic="YES" id="CvN-hr-OkR"/>
-                    <constraint firstAttribute="trailing" secondItem="mB3-is-Hvp" secondAttribute="trailing" constant="20" symbolic="YES" id="Cxg-L3-bjR"/>
-                    <constraint firstItem="OtS-9p-pHU" firstAttribute="leading" secondItem="aLf-EW-LtZ" secondAttribute="leading" id="DaV-zG-ghX"/>
-                    <constraint firstAttribute="bottom" secondItem="aLf-EW-LtZ" secondAttribute="bottom" constant="20" symbolic="YES" id="Eau-th-2O7"/>
-                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="8" symbolic="YES" id="Ja0-Qw-QaV"/>
-                    <constraint firstItem="2MB-cC-IxN" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="leading" id="L6H-Rv-iuL"/>
-                    <constraint firstItem="2MB-cC-IxN" firstAttribute="trailing" secondItem="TuR-Sl-4jS" secondAttribute="trailing" id="N3S-zE-bYa"/>
-                    <constraint firstItem="OtS-9p-pHU" firstAttribute="top" secondItem="TuR-Sl-4jS" secondAttribute="bottom" constant="8" symbolic="YES" id="Rdg-xD-Lpe"/>
-                    <constraint firstItem="2MB-cC-IxN" firstAttribute="leading" secondItem="TuR-Sl-4jS" secondAttribute="leading" id="YCA-rR-dtx"/>
-                    <constraint firstItem="2MB-cC-IxN" firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" id="b5x-EO-WjN"/>
-                    <constraint firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" constant="20" symbolic="YES" id="cEa-Sc-EYE"/>
-                    <constraint firstAttribute="bottom" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="309" id="ckU-15-SeQ"/>
-                    <constraint firstItem="mB3-is-Hvp" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="iy0-gW-KpC"/>
-                    <constraint firstItem="OtS-9p-pHU" firstAttribute="trailing" secondItem="aLf-EW-LtZ" secondAttribute="trailing" id="jjW-v1-61t"/>
-                    <constraint firstItem="mB3-is-Hvp" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="kVW-8m-BBi"/>
-                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="leading" secondItem="mB3-is-Hvp" secondAttribute="leading" id="uIo-3J-BQd"/>
-                    <constraint firstItem="2MB-cC-IxN" firstAttribute="top" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="8" symbolic="YES" id="wcY-dd-Ip7"/>
+                    <constraint firstItem="2MB-cC-IxN" firstAttribute="trailing" secondItem="8kF-qk-LtY" secondAttribute="trailing" id="2PE-6q-EV9"/>
+                    <constraint firstItem="mB3-is-Hvp" firstAttribute="trailing" secondItem="cFe-lV-Lzx" secondAttribute="trailing" id="8zg-jN-ELy"/>
+                    <constraint firstItem="8kF-qk-LtY" firstAttribute="top" secondItem="2MB-cC-IxN" secondAttribute="bottom" constant="8" symbolic="YES" id="A7F-Pw-n0B"/>
+                    <constraint firstAttribute="bottom" secondItem="FNN-OT-1QP" secondAttribute="bottom" constant="20" symbolic="YES" id="C6d-mq-nJT"/>
+                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="leading" secondItem="2MB-cC-IxN" secondAttribute="leading" id="Cfu-58-A13"/>
+                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="trailing" secondItem="2MB-cC-IxN" secondAttribute="trailing" id="SZR-zM-qiI"/>
+                    <constraint firstItem="2MB-cC-IxN" firstAttribute="top" secondItem="cFe-lV-Lzx" secondAttribute="bottom" constant="8" symbolic="YES" id="Ujn-3l-7sK"/>
+                    <constraint firstItem="8kF-qk-LtY" firstAttribute="leading" secondItem="yEb-Zx-gkg" secondAttribute="leading" id="VNL-wq-Zph"/>
+                    <constraint firstItem="yEb-Zx-gkg" firstAttribute="trailing" secondItem="FNN-OT-1QP" secondAttribute="trailing" id="Wkt-kX-4Dg"/>
+                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="top" secondItem="mB3-is-Hvp" secondAttribute="bottom" constant="8" symbolic="YES" id="YFK-ya-vic"/>
+                    <constraint firstItem="mB3-is-Hvp" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="b0V-PV-HR5"/>
+                    <constraint firstItem="FNN-OT-1QP" firstAttribute="top" secondItem="yEb-Zx-gkg" secondAttribute="bottom" constant="8" symbolic="YES" id="cx6-2m-kaU"/>
+                    <constraint firstAttribute="trailing" secondItem="mB3-is-Hvp" secondAttribute="trailing" constant="20" symbolic="YES" id="dOQ-vJ-po3"/>
+                    <constraint firstItem="mB3-is-Hvp" firstAttribute="leading" secondItem="cFe-lV-Lzx" secondAttribute="leading" id="gUj-O6-ApC"/>
+                    <constraint firstItem="yEb-Zx-gkg" firstAttribute="top" secondItem="8kF-qk-LtY" secondAttribute="bottom" constant="8" symbolic="YES" id="jeo-u0-bkI"/>
+                    <constraint firstItem="2MB-cC-IxN" firstAttribute="leading" secondItem="8kF-qk-LtY" secondAttribute="leading" id="oJY-LY-WXQ"/>
+                    <constraint firstItem="mB3-is-Hvp" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="ojq-Zv-vO4"/>
+                    <constraint firstItem="yEb-Zx-gkg" firstAttribute="leading" secondItem="FNN-OT-1QP" secondAttribute="leading" id="ou2-yl-ma3"/>
+                    <constraint firstItem="8kF-qk-LtY" firstAttribute="trailing" secondItem="yEb-Zx-gkg" secondAttribute="trailing" id="qmj-KW-eR2"/>
+                    <constraint firstItem="cFe-lV-Lzx" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="183" id="vtp-Uy-lqN"/>
                 </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="arP-ts-3v3"/>
             </connections>
-            <point key="canvasLocation" x="793" y="687.5"/>
+            <point key="canvasLocation" x="793" y="617"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="Zvz-jD-4SQ"/>
     </objects>
