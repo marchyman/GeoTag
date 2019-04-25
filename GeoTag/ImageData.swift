@@ -54,6 +54,8 @@ final class ImageData: NSObject {
         return url.lastPathComponent
     }
     var sandboxUrl: URL         // URL of the sandbox copy of the image
+    var xmpFile: XmpFile
+    var sandboxXmp: URL?        // URL of sandbox copy of sidecar file
 
     // MARK: instance variables -- date/time related values
 
@@ -138,7 +140,7 @@ final class ImageData: NSObject {
         }
     }
 
-    // MARK: Init
+    // MARK: Init (FYI: not run on main thread)
 
     /// instantiate an instance of the class
     /// - Parameter url: image file this instance represents
@@ -147,8 +149,9 @@ final class ImageData: NSObject {
     /// the given URL.  If the URL isn't recognized as an image mark this
     /// instance as not being valid.
     init(url: URL) {
-        // create a symlink for the URL in our sandbox
         self.url = url;
+
+        // create a symlink for the URL in our sandbox
         let fileManager = FileManager.default
         do {
             let docDir = try fileManager.url(for: .documentDirectory,
@@ -156,6 +159,7 @@ final class ImageData: NSObject {
                                              appropriateFor: nil,
                                              create: true)
             sandboxUrl = docDir.appendingPathComponent(url.lastPathComponent)
+
             // if sandboxUrl already exists modify the name until it doesn't
             var fileNumber = 1
             while fileManager.fileExists(atPath: (sandboxUrl.path)) {
@@ -165,6 +169,7 @@ final class ImageData: NSObject {
                 fileNumber += 1
                 sandboxUrl = docDir.appendingPathComponent(newName)
             }
+
             // fileExistsAtPath will return false when a symbolic link
             // exists but does not point to a valid file.  Handle that
             // situation to avoid a crash by deleting any stale link
@@ -172,12 +177,34 @@ final class ImageData: NSObject {
             try? fileManager.removeItem(at: sandboxUrl)
             try fileManager.createSymbolicLink(at: sandboxUrl,
                                                withDestinationURL: url)
+
+            // Create a link for any matching sidecare file, i.e. a file with
+            // the same path components but with an extension of XMP, if one
+            // is found.
+            xmpFile = XmpFile(url: sandboxUrl)
+            if url.pathExtension.lowercased() != xmpFile.ext &&
+               Preferences.useSidecarFiles() {
+                var xmp = url.deletingPathExtension()
+                xmp.appendPathExtension(xmpFile.ext)
+                if fileManager.fileExists(atPath: xmp.path) {
+                    sandboxXmp = xmpFile.presentedItemURL
+                    try? fileManager.removeItem(at: sandboxXmp!)
+                    try fileManager.createSymbolicLink(at: sandboxXmp!,
+                                                       withDestinationURL: xmp)
+                    NSFileCoordinator.addFilePresenter(xmpFile)
+                }
+            }
+
         } catch let error as NSError {
             fatalError("docDir symlink error: \(error)")
         }
         super.init()
         if (Exiftool.helper.fileTypeIsWritable(for: url)) {
-            validImage = loadImageData()
+            if let xmp = sandboxXmp {
+                validImage = loadXmpData(xmp)
+            } else {
+                validImage = loadImageData()
+            }
         }
         originalLocation = location
         originalDateTime = dateTime
@@ -189,6 +216,9 @@ final class ImageData: NSObject {
     {
         let fileManager = FileManager.default
         try? fileManager.removeItem(at: sandboxUrl)
+        if let xmp = sandboxXmp {
+            try? fileManager.removeItem(at: xmp)
+        }
     }
 
     // MARK: revert changes for an image
@@ -203,7 +233,7 @@ final class ImageData: NSObject {
         dateTime = originalDateTime
     }
 
-    // MARK: Backup and Save (does not run on main thread)
+    // MARK: Backup and Save (functions do not run on main thread)
 
     /// copy the image into the backup folder
     ///
@@ -291,6 +321,30 @@ final class ImageData: NSObject {
     }
 
     // MARK: extract image metadata and build thumbnail preview
+
+    /// obtain metadata from XMP file
+    /// - Parameter xmp: URL of XMP file for an image
+    /// - Returns: true if successful
+    ///
+    /// Extract desired metadata from an XMP file using ExifTool.  Apple
+    /// ImageIO functions do not work with XMP sidecar files.
+    private
+    func loadXmpData(_ xmp: URL) -> Bool {
+        var errorCode: NSError?
+        let coordinator = NSFileCoordinator(filePresenter: xmpFile)
+        coordinator.coordinate(readingItemAt: xmp,
+                               options: NSFileCoordinator.ReadingOptions.resolvesSymbolicLink,
+                               error: &errorCode) {
+            url in
+            let results = Exiftool.helper.metadataFrom(xmp: url)
+            guard results.dto != "" else { return }
+            dateTime = results.dto
+            if results.valid {
+                location = results.location
+            }
+        }
+        return true
+    }
 
     /// obtain image metadata
     /// - Returns: true if successful

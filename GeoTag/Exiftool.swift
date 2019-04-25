@@ -56,9 +56,7 @@ struct Exiftool {
 
         // ExifTool latitude and longitude exiftool argument names
         var latArg = "-GPSLatitude="
-        var latRefArg = "-GPSLatitudeRef="
         var lonArg = "-GPSLongitude="
-        var lonRefArg = "-GPSLongitudeRef="
 
         // ExifTool GSPDateTime arg storage
         var gpsDArg = ""
@@ -73,22 +71,9 @@ struct Exiftool {
 
         // Build ExifTool latitude, longitude argument values
         if let location = imageData.location {
-            var lat = location.latitude
-            if lat < 0 {
-                latRefArg += "S"
-                lat = -lat
-            } else {
-                latRefArg += "N"
-            }
+            let lat = location.latitude
             latArg += "\(lat)"
-
-            var lon = location.longitude
-            if lon < 0 {
-                lonRefArg += "W"
-                lon = -lon
-            } else {
-                lonRefArg += "E"
-            }
+            let lon = location.longitude
             lonArg += "\(lon)"
 
             // set GPS date/time stamp for current location if enabled
@@ -99,6 +84,12 @@ struct Exiftool {
             }
         }
 
+        // path to image (or XMP) file to update
+        var path = imageData.sandboxUrl.path
+        if let xmp = imageData.sandboxXmp {
+            path = xmp.path
+        }
+
         let exiftool = Process()
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = FileHandle.nullDevice
@@ -107,20 +98,18 @@ struct Exiftool {
                               "-m",
                               "-overwrite_original_in_place",
                               latArg,
-                              latRefArg,
-                              lonArg,
-                              lonRefArg]
+                              lonArg]
         if Preferences.dateTimeGPS() {
             exiftool.arguments! += [gpsDArg, gpsTArg]
         }
-        exiftool.arguments! += [dtArg,
-                               "-GPSStatus=",
-                               imageData.sandboxUrl.path]
+        exiftool.arguments! += [dtArg, "-GPSStatus=", path]
         exiftool.launch()
         exiftool.waitUntilExit()
         return exiftool.terminationStatus
     }
-    
+
+    /// File Type codes for the file types that exiftool can write
+
     let writableTypes: Set = [
         "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "CR2", "CR3", "CRM",
         "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
@@ -131,6 +120,9 @@ struct Exiftool {
         "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
         "RWL", "SR2", "SRW","THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
 
+    /// Check if exiftool supports writing to a type of file
+    /// - Parameter for: a URL of a file to check
+    /// - Returns: true if exiftool can write to the file type of the URL
     func fileTypeIsWritable(for file: URL) -> Bool {
         let exiftool = Process()
         let pipe = Pipe()
@@ -152,6 +144,80 @@ struct Exiftool {
             }
         }
         return false
+    }
+    
+    /// return selected metadate from a file
+    /// - Parameter xmp: URL of XMP file
+    /// - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)
+    ///
+    /// Apple's ImageIO functions can not extract metadata from XMP sidecar
+    /// files.  ExifTool is used for that purpose.
+    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool, location: Coord) {
+        let exiftool = Process()
+        let pipe = Pipe()
+        exiftool.standardOutput = pipe
+        exiftool.standardError = FileHandle.nullDevice
+        exiftool.launchPath = url.path
+        exiftool.arguments = [ "-args", "-c", "%.15f", "-createdate",
+                               "-gpsstatus", "-gpslatitude", "-gpslongitude",
+                               xmp.path ]
+        exiftool.launch()
+        exiftool.waitUntilExit()
+
+        var createDate = ""
+        var location = Coord()
+        var validGPS = false
+
+        if exiftool.terminationStatus == 0 {
+            let data = pipe.fileHandleForReading.availableData
+            if data.count > 0,
+               let str = String(data: data, encoding: String.Encoding.utf8) {
+                var gpsStatus = true
+                var gpsLat = false
+                var gpsLon = false
+                let strings = str.split(separator: "\n")
+                for entry in strings {
+                    let key = entry.prefix { $0 != "=" }
+                    var value = entry.dropFirst(key.count)
+                    if !value.isEmpty {
+                        value = value.dropFirst(1)
+                    }
+                    switch key {
+                    case "-CreateDate":
+                        // get rid of any trailing parts of a second
+                        createDate = String(value.split(separator: ".")[0])
+                    case "-GPSStatus":
+                        if value.hasSuffix("Void") {
+                            gpsStatus = false
+                        }
+                    case "-GPSLatitude":
+                        let parts = value.split(separator: " ")
+                        if let latValue = Double(parts[0]),
+                            parts.count == 2 {
+                            location.latitude = latValue
+                            if parts[1] == "S" {
+                                location.latitude = -location.latitude
+                            }
+                            gpsLat = true
+                        }
+                    case "-GPSLongitude":
+                        let parts = value.split(separator: " ")
+                        if let lonValue = Double(parts[0]),
+                            parts.count == 2 {
+                            location.longitude = lonValue
+                            if parts[1] == "W" {
+                                location.longitude = -location.longitude
+                            }
+                            gpsLon = true
+                        }
+                    default:
+                        break
+                    }
+                }
+                validGPS = gpsStatus && gpsLat && gpsLon
+            }
+        }
+        return (createDate, validGPS, location)
     }
 
     /// return image date and time stamp including time zone

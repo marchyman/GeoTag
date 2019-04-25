@@ -31,6 +31,7 @@ final class Preferences : NSWindowController {
     // class constants
     static let nibName = NSNib.Name("Preferences")
     static let saveBookmarkKey = "SaveBookmarkKey"
+    static let sidecarKey = "SidecarKey"
     static let dateTimeGPSKey = "DateTimeGPSKey"
     static let trackColorKey = "TrackColorKey"
     static var checkDirectory = true
@@ -65,6 +66,12 @@ final class Preferences : NSWindowController {
             }
         }
         return url
+    }
+
+    class
+    func useSidecarFiles() -> Bool {
+        let defaults = UserDefaults.standard
+        return defaults.bool(forKey: sidecarKey)
     }
 
     class
@@ -141,6 +148,16 @@ final class Preferences : NSWindowController {
         defaults.set(data, forKey: Preferences.trackColorKey)
     }
 
+    @IBOutlet
+    weak var sidecarButton: NSButtonCell!
+    
+    @IBAction func sidecarButtonChanged(_ sender: NSButton) {
+        let defaults = UserDefaults.standard
+        defaults.set(sender.state == NSControl.StateValue.on,
+                     forKey: Preferences.sidecarKey)
+
+    }
+
     /// return the NIB name for this window
 
 	override
@@ -148,11 +165,14 @@ final class Preferences : NSWindowController {
 		return Preferences.nibName
 	}
 
-    /// initialize the saveFolderPath field from user preferences
+    /// initialize preferences pane from current user preferences
 
     override
     func windowDidLoad() {
         saveFolderPath.url = Preferences.saveFolder()
+        sidecarButton.state = Preferences.useSidecarFiles() ?
+            NSControl.StateValue.on :
+            NSControl.StateValue.off
         dtGPSButton.state = Preferences.dateTimeGPS() ?
                             NSControl.StateValue.on :
                             NSControl.StateValue.off
