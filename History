@@ -20,6 +20,9 @@
 * Updated image locations could sometimes be written with the wrong longitude
   reference.
 
+* fix crash that occured in the app was launched by dragging images onto
+  the app icon.
+
 ## GeoTag 4.5
 
 ### New Features
