@@ -31,11 +31,18 @@ final class Preferences : NSWindowController {
     // class constants
     static let nibName = NSNib.Name("Preferences")
     static let saveBookmarkKey = "SaveBookmarkKey"
+    static let coordFormatKey = "CoordFormatKey"
     static let sidecarKey = "SidecarKey"
     static let dateTimeGPSKey = "DateTimeGPSKey"
     static let trackColorKey = "TrackColorKey"
     static var checkDirectory = true
     private static var url: URL? = nil
+    
+    enum CoordFormat: Int {
+        case deg
+        case degMin
+        case degMinSec
+    }
 
     /// fetch the URL of the optional save folder
     /// - Returns: the URL associated with the save directory security bookmark
@@ -66,6 +73,16 @@ final class Preferences : NSWindowController {
             }
         }
         return url
+    }
+    
+    class
+    func coordFormat() -> CoordFormat {
+        let defaults = UserDefaults.standard
+        let value = defaults.integer(forKey: coordFormatKey)
+        if let format = CoordFormat(rawValue: value) {
+            return format
+        }
+        return .deg
     }
 
     class
@@ -129,6 +146,28 @@ final class Preferences : NSWindowController {
         }
     }
 
+    @IBOutlet weak var coordFormatDeg: NSButton!
+    @IBOutlet weak var coordFormatDegMin: NSButton!
+    @IBOutlet weak var coordFormatDegMinSec: NSButton!
+    
+    @IBAction func coordFormatChanged(_ sender: NSButton) {
+        if let id = sender.identifier {
+            var value = 0
+            switch id {
+            case NSUserInterfaceItemIdentifier("deg"):
+                break
+            case NSUserInterfaceItemIdentifier("degMin"):
+                value = 1
+            case NSUserInterfaceItemIdentifier("degMinSec"):
+                value = 2
+            default:
+                break
+            }
+            let defaults = UserDefaults.standard
+            defaults.set(value, forKey: Preferences.coordFormatKey)
+        }
+    }
+
     @IBOutlet
     weak var dtGPSButton: NSButton!
 
@@ -170,6 +209,14 @@ final class Preferences : NSWindowController {
     override
     func windowDidLoad() {
         saveFolderPath.url = Preferences.saveFolder()
+        switch Preferences.coordFormat() {
+        case .deg:
+            coordFormatDeg.state = NSControl.StateValue.on
+        case .degMin:
+            coordFormatDegMin.state = NSControl.StateValue.on
+        case .degMinSec:
+            coordFormatDegMinSec.state = NSControl.StateValue.on
+        }
         sidecarButton.state = Preferences.useSidecarFiles() ?
             NSControl.StateValue.on :
             NSControl.StateValue.off

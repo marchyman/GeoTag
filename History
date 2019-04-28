@@ -8,7 +8,13 @@
   the same name but with an extension of ".xmp" are assumed to be sidecar files.
   
 * The presence of a sidecar file is indicated by a '*' following the image name.
-  
+
+* Add a preference item that controls coordinate display formats.   Latitude
+  and longitude can be displayed in one of three forms:
+  - dd.ddddd
+  - dd° mm.mmmm' N (or S, E, W depending upon coordinate)
+  - dd° mm' ss.ss" N (or S, E, W depending upon coordinate)
+
 * Reading image metadata has been moved from the main queue. As a result opening
   a large number of images should be slightly faster.
 

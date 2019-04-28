@@ -27,9 +27,6 @@ import Foundation
 import AppKit
 import MapKit
 
-/// A shorter name for a type I'll often use
-typealias Coord = CLLocationCoordinate2D
-
 final class ImageData: NSObject {
     // CFString to (NS)*String casts
     let pixelHeight = kCGImagePropertyPixelHeight as NSString

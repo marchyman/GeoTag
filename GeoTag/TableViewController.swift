@@ -646,12 +646,26 @@ extension TableViewController: NSTableViewDelegate {
             case NSUserInterfaceItemIdentifier("dateTime"):
                 value = image.dateTime
             case NSUserInterfaceItemIdentifier("latitude"):
-                if let lat = image.location?.latitude {
-                    value = String(format: "% 2.6f", lat)
+                if let coord = image.location {
+                    switch Preferences.coordFormat() {
+                    case .deg:
+                        value = String(format: "% 2.6f", coord.latitude)
+                    case .degMin:
+                        value = coord.dm.latitude
+                    case .degMinSec:
+                        value = coord.dms.latitude
+                    }
                 }
             case NSUserInterfaceItemIdentifier("longitude"):
-                if let lon = image.location?.longitude {
-                    value = String(format: "% 2.6f", lon)
+                if let coord = image.location {
+                    switch Preferences.coordFormat() {
+                    case .deg:
+                        value = String(format: "% 2.6f", coord.longitude)
+                    case .degMin:
+                        value = coord.dm.longitude
+                    case .degMinSec:
+                        value = coord.dms.longitude
+                    }
                 }
             default:
                 break
