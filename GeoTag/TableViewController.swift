@@ -565,16 +565,24 @@ final class TableViewController: NSViewController {
         }
     }
 
-    /// open the change date/time window for an image
+    /// open the change date/time window for an image if the double click was
+    /// on the appropriate column.
     @IBAction
     func doubleClick(_ sender: NSTableView) {
         let row = sender.clickedRow
         if row >= 0 && row < images.count {
-            let image = images[row]
-            if image.validImage {
-                openChangeTimeWindow(for: image) {
-                    dateValue in
-                    self.update(row: row, dateValue: dateValue)
+            let column = sender.clickedColumn
+            if column >= 0 {
+                let tableColumn = sender.tableColumns[column]
+                let id = tableColumn.identifier
+                if id == NSUserInterfaceItemIdentifier("dateTime") {
+                    let image = images[row]
+                    if image.validImage {
+                        openChangeTimeWindow(for: image) {
+                            dateValue in
+                            self.update(row: row, dateValue: dateValue)
+                        }
+                    }
                 }
             }
         }
