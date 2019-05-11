@@ -29,22 +29,28 @@ class ChangeLocationViewController: NSViewController {
     var image: ImageData!
     var callback: ((_ location: Coord) -> ())?
     
-//    @IBOutlet weak var originalLocation: NSDatePicker!
-//    @IBOutlet weak var newLocation: Coord!
+    @IBOutlet weak var newLatitude: NSTextField!
+    @IBOutlet weak var newLongitude: NSTextField!
     
     override func viewWillAppear() {
         super.viewWillAppear()
         if let wc = view.window?.windowController as? ChangeLocationWindowController {
             image = wc.image
             callback = wc.callback
-//            if let dateValue = image.dateValue {
-//                originalDate.dateValue = dateValue
-//                newDate.dateValue = dateValue
-//            } else {
-//                // no current dateTime
-//                originalDate.dateValue = Date(timeIntervalSince1970: 0)
-//                newDate.dateValue = Date()
-//            }
+            if let coord = image.location {
+                switch Preferences.coordFormat() {
+                case .deg:
+                    newLatitude.stringValue = String(format: "% 2.6f", coord.latitude)
+                    newLongitude.stringValue = String(format: "% 2.6f", coord.longitude)
+                case .degMin:
+                    newLatitude.stringValue = coord.dm.latitude
+                    newLongitude.stringValue = coord.dm.longitude
+                case .degMinSec:
+                    newLatitude.stringValue = coord.dms.latitude
+                    newLongitude.stringValue = coord.dms.longitude
+                }
+
+            }
             return
         }
         unexpected(error: nil, "Cannot find ChangeTime Window Controller")
