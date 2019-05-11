@@ -573,15 +573,27 @@ final class TableViewController: NSViewController {
         if row >= 0 && row < images.count {
             let column = sender.clickedColumn
             if column >= 0 {
-                let tableColumn = sender.tableColumns[column]
-                let id = tableColumn.identifier
-                if id == NSUserInterfaceItemIdentifier("dateTime") {
-                    let image = images[row]
-                    if image.validImage {
+                let image = images[row]
+                if image.validImage {
+                    let tableColumn = sender.tableColumns[column]
+                    let id = tableColumn.identifier
+                    switch id {
+                    case NSUserInterfaceItemIdentifier("dateTime"):
                         openChangeTimeWindow(for: image) {
                             dateValue in
                             self.update(row: row, dateValue: dateValue)
                         }
+                    case NSUserInterfaceItemIdentifier("latitude"),
+                         NSUserInterfaceItemIdentifier("longitude"):
+                        openChangeLocationWindow(for: image) {
+                            coord in
+                            self.update(row: row,
+                                        validLocation: true,
+                                        coord: coord)
+                        }
+                        break
+                    default:
+                        break
                     }
                 }
             }
