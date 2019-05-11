@@ -52,8 +52,8 @@ class ChangeLocationViewController: NSViewController {
             }
             return
         }
-        unexpected(error: nil, "Cannot find ChangeTime Window Controller")
-        fatalError("Cannot find ChangeTime Window Controller")
+        unexpected(error: nil, "Cannot find ChangeLocation Window Controller")
+        fatalError("Cannot find ChangeLocation Window Controller")
     }
     
 
@@ -155,6 +155,7 @@ class ChangeLocationViewController: NSViewController {
                 callback?(Coord(latitude: lat, longitude: lon))
             }
             view.window?.close()
+            return
         }
 
         // location syntax is incorrect
