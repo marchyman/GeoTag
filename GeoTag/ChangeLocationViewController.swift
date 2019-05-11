@@ -56,21 +56,108 @@ class ChangeLocationViewController: NSViewController {
         fatalError("Cannot find ChangeTime Window Controller")
     }
     
+
+    /// Convert a text string assumed to contain a coordinate to a double
+    /// value representing the coordinate.
+    ///
+    /// - Parameter input: the string containing the coordinate
+    /// - Parameter range: the allowable range for the number of degrees
+    /// - Parameter reference: the allowable reference values
+    /// - Returns: the coordinate converted to a double
+    ///
+    /// Possible inputs
+    /// -dd.dddd R          Coordinate in degrees
+    /// -dd mm.mmmm R       Coordinate in degrees and minutes
+    /// -dd mm ss.ssss R    Coordinate in degrees, minutes, and seconds
+    ///
+    /// S latitudes and W longitudes can be indicated by a negative number
+    /// of degrees or the appropriate reference.  It is an error if both
+    /// are used.  Degree (°), Minute ('), and Second (") marks are optional
+    /// and ignored if found at the end of a value.
+
+    private
+    func validateLocation(input: String,
+                          range: ClosedRange<UInt>,
+                          reference: [String]) -> Double? {
+        var coordinate: Double? = nil
+        var invert = false
+        let maxParts = 3            // maximum numeric parts to a coordinate
+        let delims = [ "°", "'", "\""]
+        var subStrings = input.split(separator: " ")
+
+        // See if the last part of the input string matches one of the
+        // given reference values.
+        if let ref = subStrings.last?.uppercased() {
+            for c in reference {
+                if c.uppercased() == ref {
+                    if  ref == "S" || ref == "W" {
+                        invert = true
+                    }
+                    subStrings.removeLast()
+                    break
+                }
+            }
+        }
+
+        // There sould be from 1...maxParts substrings to process
+
+        guard !subStrings.isEmpty &&
+              subStrings.count <= maxParts else { return nil }
+
+        var dms = [0.0, 0.0, 0.0]   // degrees, minutes, seconds
+        var index = 0
+        for str in subStrings {
+            var digits: Substring
+            if str.hasSuffix(delims[index]) {
+                digits = str.dropLast()
+            } else {
+                digits = str
+            }
+            if let val = Double(digits) {
+                // verify the number of degrees/min/sec is in the allowed range
+                if index == 0 {
+                    if !range.contains(Int(val).magnitude) {
+                        return nil
+                    }
+                } else if !(0...60).contains(Int(val)) {
+                    return nil
+                }
+                dms[index] = val
+            } else {
+                return nil
+            }
+            index += 1
+        }
+        coordinate = dms[0] + (dms[1]/60) + (dms[2]/60/60)
+        if invert {
+            coordinate = -coordinate!
+        }
+        return coordinate
+    }
+
     /// Location change for a single image
     ///
     /// - Parameter NSButton: unused
     ///
     /// invoke the callback passed when the window was opened with the updated
     /// dateValue.
-
     
     @IBAction
     func locationChanged(_: NSButton) {
-        // edit fields first.
-//        if newDate.dateValue != originalDate.dateValue {
-//            callback?(newDate.dateValue)
-//        }
-        self.view.window?.close()
+        if let lat = validateLocation(input: newLatitude.stringValue,
+                                      range: 0...90, reference: ["N", "S"]),
+            let lon = validateLocation(input: newLongitude.stringValue,
+                                       range: 0...180, reference: ["E", "W"]) {
+            if let coord = image.location,
+                coord.latitude == lat, coord.longitude == lon {
+                // nothing changed, close the window
+                self.view.window?.close()
+            }
+            callback?(Coord(latitude: lat, longitude: lon))
+            self.view.window?.close()
+        }
+
+        // location syntax is incorrect
     }
     
     @IBAction
