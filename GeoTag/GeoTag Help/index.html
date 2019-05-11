@@ -35,7 +35,7 @@ or opening a folder will add all the files in the folder and any subfolders.</p>
 
 <p>GPS track logs in the form of GPX files can also be opened or dragged onto
 the table on the left side of the window.   Tracks are displayed in Red on
-the map.</p>
+the map. The color can be changed in program Preferences.</p>
 
 <p>Select one or more images. When selecting multiple images the last image
 selected is displayed in the image well (upper right portion of the window).
@@ -48,17 +48,25 @@ location can also be changed by clicking elsewhere on the map. Hitting the delet
 key will remove location information from all selected images.  You can Undo/Redo
 image location changes.</p>
 
-<p>Double click on a row in the table to change the date/time of the image.  A
-window will open containing the current date/time and a date/time selector to
-choose a new date/time.  Hitting return or clicking on the Change button will
-note the changed time.  The image file will not be updated until changes are
-saved.  Note: date/time changes are not currently in the undo/redo tree.</p>
+<p>Double click on a the date/time in row in the table to change the date/time
+of the image.  A window will open containing the current date/time and a
+date/time selector to choose a new date/time.  Hitting return or clicking on
+the Change button will note the changed time.  The image file will not be
+updated until changes are saved.  Note: date/time changes are not currently
+in the undo/redo tree.</p>
 
 <p>Select multiple images and then hit ⌘L, or Edit -> Modify Date/Time, or
 right-click -> Modify Date/Time to open the change time window for the most
 selected image.  If the time is changed a delta between the original date/time
 and the updated date/time is calculated.  That delta is then applied to all
 of the selected images.</p>
+
+<p>In a similar manner the location assigned to an image can be entered from
+the keyboard.  Double click on either the latitude or longitude in a row in
+the table to edit the location for that row.  Coordinated can be entered as
+degrees, degrees and minutes, or degrees, minutes and seconds.  A lat/lon
+reference can be specified or you can use a negative number of degrees for
+South latitudes and West longitudes.</p>
 
 <p>Edit -> Locn from track or ⌘L will update the location of selected
 images from the track log.  This is done by matching timestamps.   The track
