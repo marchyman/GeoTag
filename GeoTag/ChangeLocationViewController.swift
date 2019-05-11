@@ -150,14 +150,22 @@ class ChangeLocationViewController: NSViewController {
                                        range: 0...180, reference: ["E", "W"]) {
             if let coord = image.location,
                 coord.latitude == lat, coord.longitude == lon {
-                // nothing changed, close the window
-                self.view.window?.close()
+                // nothing changed
+            } else {
+                callback?(Coord(latitude: lat, longitude: lon))
             }
-            callback?(Coord(latitude: lat, longitude: lon))
-            self.view.window?.close()
+            view.window?.close()
         }
 
         // location syntax is incorrect
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+        alert.messageText = NSLocalizedString("CFE_TITLE",
+                                              comment: "Coordinate Format Error")
+        alert.informativeText = NSLocalizedString("CFE_TEXT",
+                                                  comment: "Coordinate Format Error")
+        alert.beginSheetModal(for: view.window!)
     }
     
     @IBAction

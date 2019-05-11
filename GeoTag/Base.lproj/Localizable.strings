@@ -33,3 +33,16 @@ Error code: ";
 The above named GPX file could not be properly processed. Any track log information in the file has been ignored.";
 "GPX_LOADED_TITLE" = "GPX File Loaded";
 "GPX_LOADED_DESC" = " processed and will show as a track on the map";
+"CFE_TITLE" = "Coordinate Format Error";
+"CFE_TEXT" = "Latitude and Longitude coordinates may entered in several different ways:
+
+dd.dddd R
+dd mm.mmmm R
+dd mm ss.ssss R
+
+dd = degrees
+mm = minutes
+ss = seconds
+R = N, S, E, or W reference.
+
+The R value is optional.  N (lat) or E (lon) are assumed.  Entry of a negative number of degrees will use a S or W reference.";
