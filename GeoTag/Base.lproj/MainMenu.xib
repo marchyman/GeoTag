@@ -184,6 +184,11 @@ CA
                                     <action selector="modifyDateTime:" target="er7-2A-M57" id="bZg-EE-GD9"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Modify Location" keyEquivalent="L" id="IQU-za-8bE" userLabel="Modify Location">
+                                <connections>
+                                    <action selector="modifyLocation:" target="er7-2A-M57" id="00N-hN-F5i"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -612,6 +617,12 @@ CA
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="modifyDateTime:" target="er7-2A-M57" id="9UR-4g-WL2"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Modify Location" id="HwS-9h-7ia">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="modifyLocation:" target="er7-2A-M57" id="stO-pY-oWe"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="Aie-jX-Muf"/>
