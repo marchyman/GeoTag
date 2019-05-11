@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="fO0-jf-agS">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="S8f-J9-6Iv">
+            <objects>
+                <windowController storyboardIdentifier="ChangeLocation" id="fO0-jf-agS" customClass="ChangeLocationWindowController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Change Image Location" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="6m5-UA-pRC">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="425" y="461" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+                        <connections>
+                            <outlet property="delegate" destination="fO0-jf-agS" id="Y3r-m6-PkG"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="4zZ-8C-byC" kind="relationship" relationship="window.shadowedContentViewController" id="lWv-Kn-CZb"/>
+                    </connections>
+                </windowController>
+                <customObject id="4Vk-O1-2On" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-234" y="184"/>
+        </scene>
+        <!--Change Location View Controller-->
+        <scene sceneID="Tis-N5-vGH">
+            <objects>
+                <viewController storyboardIdentifier="ChangeLocationView" id="4zZ-8C-byC" customClass="ChangeLocationViewController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="nLM-kU-CRW">
+                        <rect key="frame" x="0.0" y="0.0" width="494" height="161"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hfz-Cd-bxR">
+                                <rect key="frame" x="379" y="13" width="87" height="32"/>
+                                <buttonCell key="cell" type="push" title="Change" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AyV-FK-9ao">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="locationChanged:" target="4zZ-8C-byC" id="iyb-S5-eUV"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMX-4B-KLq">
+                                <rect key="frame" x="287" y="13" width="82" height="32"/>
+                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bli-tv-o5M">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                    <connections>
+                                        <action selector="cancel:" target="4zZ-8C-byC" id="sgP-ue-2uF"/>
+                                    </connections>
+                                </buttonCell>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NCz-rt-HT9">
+                                <rect key="frame" x="32" y="100" width="58" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Latitude:" id="30s-jv-LuY">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sw3-qW-G0S">
+                                <rect key="frame" x="32" y="75" width="69" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Longitude:" id="6lM-F3-XOd">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="m4J-23-UjT">
+                                <rect key="frame" x="107" y="97" width="353" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="G1R-U2-Vem">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kba-Vn-WoC">
+                                <rect key="frame" x="107" y="69" width="353" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="ywY-ID-pIn">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="NCz-rt-HT9" firstAttribute="leading" secondItem="nLM-kU-CRW" secondAttribute="leading" constant="34" id="7Rq-lH-ear"/>
+                            <constraint firstItem="kba-Vn-WoC" firstAttribute="top" secondItem="m4J-23-UjT" secondAttribute="bottom" constant="6" id="9kw-ig-94l"/>
+                            <constraint firstItem="m4J-23-UjT" firstAttribute="trailing" secondItem="kba-Vn-WoC" secondAttribute="trailing" id="AFH-ra-1VV"/>
+                            <constraint firstItem="oMX-4B-KLq" firstAttribute="baseline" secondItem="Hfz-Cd-bxR" secondAttribute="baseline" id="BXe-95-59R"/>
+                            <constraint firstItem="kba-Vn-WoC" firstAttribute="trailing" secondItem="Hfz-Cd-bxR" secondAttribute="trailing" id="FUJ-DY-QBd"/>
+                            <constraint firstItem="NCz-rt-HT9" firstAttribute="leading" secondItem="sw3-qW-G0S" secondAttribute="leading" id="IlC-Pv-n3u"/>
+                            <constraint firstItem="m4J-23-UjT" firstAttribute="leading" secondItem="kba-Vn-WoC" secondAttribute="leading" id="Ltm-88-aoF"/>
+                            <constraint firstItem="Hfz-Cd-bxR" firstAttribute="leading" secondItem="oMX-4B-KLq" secondAttribute="trailing" constant="22" id="OuF-NM-Wfg"/>
+                            <constraint firstAttribute="trailing" secondItem="m4J-23-UjT" secondAttribute="trailing" constant="34" id="Rrd-HD-cGi"/>
+                            <constraint firstItem="kba-Vn-WoC" firstAttribute="leading" secondItem="sw3-qW-G0S" secondAttribute="trailing" constant="8" symbolic="YES" id="TGF-H2-LTJ"/>
+                            <constraint firstItem="NCz-rt-HT9" firstAttribute="baseline" secondItem="m4J-23-UjT" secondAttribute="baseline" id="puN-KM-I3B"/>
+                            <constraint firstAttribute="bottom" secondItem="oMX-4B-KLq" secondAttribute="bottom" constant="20" symbolic="YES" id="riH-Vr-Hgw"/>
+                            <constraint firstItem="sw3-qW-G0S" firstAttribute="top" secondItem="NCz-rt-HT9" secondAttribute="bottom" constant="8" symbolic="YES" id="vBG-DI-nlL"/>
+                            <constraint firstItem="oMX-4B-KLq" firstAttribute="top" secondItem="kba-Vn-WoC" secondAttribute="bottom" constant="28" id="wPW-8x-3i6"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="newLatitude" destination="m4J-23-UjT" id="HOK-zu-txx"/>
+                        <outlet property="newLongitude" destination="kba-Vn-WoC" id="ihZ-6u-U2F"/>
+                    </connections>
+                </viewController>
+                <customObject id="cLi-DJ-gaL" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="480" y="104.5"/>
+        </scene>
+    </scenes>
+</document>

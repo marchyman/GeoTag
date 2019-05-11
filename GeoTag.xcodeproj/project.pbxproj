@@ -24,6 +24,9 @@
 		49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49BC3D0B195A62F2009BEC94 /* Localizable.strings */; };
 		49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */; };
 		49CE08821AFBF9370057E310 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CE08811AFBF9370057E310 /* Preferences.swift */; };
+		49D6BD9022864E65001A69E0 /* ChangeLocation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49D6BD8F22864E65001A69E0 /* ChangeLocation.storyboard */; };
+		49D6BD9222864EBC001A69E0 /* ChangeLocationWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D6BD9122864EBC001A69E0 /* ChangeLocationWindow.swift */; };
+		49D6BD9422865064001A69E0 /* ChangeLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D6BD9322865064001A69E0 /* ChangeLocationViewController.swift */; };
 		49DDA5111D82538E00DEFAAF /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49DDA5101D82538E00DEFAAF /* ExifTool */; };
 		49E0340D1B0BBBB700CC9768 /* Interpolate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E0340C1B0BBBB700CC9768 /* Interpolate.swift */; };
 		49E154CE2262625900902787 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E154CD2262625900902787 /* XmpFile.swift */; };
@@ -60,6 +63,9 @@
 		49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		49C943AA197B170900F70F3F /* To Do */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "To Do"; sourceTree = "<group>"; };
 		49CE08811AFBF9370057E310 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Preferences.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		49D6BD8F22864E65001A69E0 /* ChangeLocation.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ChangeLocation.storyboard; sourceTree = "<group>"; };
+		49D6BD9122864EBC001A69E0 /* ChangeLocationWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLocationWindow.swift; sourceTree = "<group>"; };
+		49D6BD9322865064001A69E0 /* ChangeLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLocationViewController.swift; sourceTree = "<group>"; };
 		49DDA5101D82538E00DEFAAF /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ExifTool; path = ../ExifTool; sourceTree = "<group>"; };
 		49E0340C1B0BBBB700CC9768 /* Interpolate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interpolate.swift; sourceTree = "<group>"; };
 		49E154CD2262625900902787 /* XmpFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
@@ -121,6 +127,9 @@
 				494E94FF210E9F740076B58F /* ChangeTime.storyboard */,
 				494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */,
 				494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */,
+				49D6BD8F22864E65001A69E0 /* ChangeLocation.storyboard */,
+				49D6BD9122864EBC001A69E0 /* ChangeLocationWindow.swift */,
+				49D6BD9322865064001A69E0 /* ChangeLocationViewController.swift */,
 				49CE08811AFBF9370057E310 /* Preferences.swift */,
 				4966FAEE1AF07BE000CEE06E /* Preferences.xib */,
 				49E154CD2262625900902787 /* XmpFile.swift */,
@@ -239,6 +248,7 @@
 				49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */,
 				49A89BC51B0BED7900578EA6 /* Interpolation in Resources */,
 				49DDA5111D82538E00DEFAAF /* ExifTool in Resources */,
+				49D6BD9022864E65001A69E0 /* ChangeLocation.storyboard in Resources */,
 				49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */,
 				4966FAEF1AF07BE000CEE06E /* Preferences.xib in Resources */,
 				492978901984B48D00BE0706 /* GeoTag Help in Resources */,
@@ -274,8 +284,10 @@
 				49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */,
 				49CE08821AFBF9370057E310 /* Preferences.swift in Sources */,
 				494E9504210EBE3B0076B58F /* ChangeTimeViewController.swift in Sources */,
+				49D6BD9222864EBC001A69E0 /* ChangeLocationWindow.swift in Sources */,
 				49E154CE2262625900902787 /* XmpFile.swift in Sources */,
 				49F928761D1CF94B00D49F08 /* MapViewController.swift in Sources */,
+				49D6BD9422865064001A69E0 /* ChangeLocationViewController.swift in Sources */,
 				499C56C81D399336004B47AD /* Exiftool.swift in Sources */,
 				4997D4A42275222E00C2FE80 /* Coord.swift in Sources */,
 				49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */,

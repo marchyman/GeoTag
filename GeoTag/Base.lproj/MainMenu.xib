@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.3.2"/>
-        <plugIn identifier="com.apple.MapKitIBPlugin" version="14313.3.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -184,6 +184,11 @@ CA
                                     <action selector="modifyDateTime:" target="er7-2A-M57" id="bZg-EE-GD9"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Modify Location" keyEquivalent="L" id="IQU-za-8bE" userLabel="Modify Location">
+                                <connections>
+                                    <action selector="modifyLocation:" target="er7-2A-M57" id="00N-hN-F5i"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -333,7 +338,7 @@ CA
                                                                 </tableCellView>
                                                             </prototypeCellViews>
                                                         </tableColumn>
-                                                        <tableColumn identifier="latitude" editable="NO" width="82" minWidth="10" maxWidth="3.4028234663852886e+38" id="EGN-Ry-sij">
+                                                        <tableColumn identifier="latitude" editable="NO" width="98" minWidth="10" maxWidth="3.4028234663852886e+38" id="EGN-Ry-sij">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Latitude">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -348,11 +353,11 @@ CA
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="latitude" id="JX3-4H-ItO">
-                                                                    <rect key="frame" x="323" y="1" width="82" height="17"/>
+                                                                    <rect key="frame" x="323" y="1" width="98" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tyW-mI-5bT">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="81" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="97" height="17"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="-47.123456" id="6ou-9x-wx5">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -371,7 +376,7 @@ CA
                                                                 </tableCellView>
                                                             </prototypeCellViews>
                                                         </tableColumn>
-                                                        <tableColumn identifier="longitude" editable="NO" width="118" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
+                                                        <tableColumn identifier="longitude" editable="NO" width="102" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Longitude">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -386,11 +391,11 @@ CA
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="longitude" id="4Km-RM-P0Q">
-                                                                    <rect key="frame" x="408" y="1" width="118" height="17"/>
+                                                                    <rect key="frame" x="424" y="1" width="102" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fNU-Jf-yeQ">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="106" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="90" height="17"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="-122.123456" id="e4b-z8-Hnu">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -491,7 +496,7 @@ CA
                                                         </connections>
                                                     </button>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
-                                                        <rect key="frame" x="18" y="386" width="281" height="24"/>
+                                                        <rect key="frame" x="18" y="386" width="282" height="24"/>
                                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="248-FW-Avl">
                                                             <font key="font" metaFont="system"/>
                                                             <segments>
@@ -612,6 +617,12 @@ CA
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="modifyDateTime:" target="er7-2A-M57" id="9UR-4g-WL2"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Modify Location" id="HwS-9h-7ia">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="modifyLocation:" target="er7-2A-M57" id="stO-pY-oWe"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="Aie-jX-Muf"/>

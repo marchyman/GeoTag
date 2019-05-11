@@ -15,6 +15,11 @@
   - dd° mm.mmmm' N (or S, E, W depending upon coordinate)
   - dd° mm' ss.ss" N (or S, E, W depending upon coordinate)
 
+* Location coordinates can be entered by double clicking on either the
+  latitude or longitude of an entry.  Coordinates can be entered in
+  degrees, degrees and minutes, or degrees, minutes, and seconds.
+  Use of °, ', and " indicators are optional.
+
 * Reading image metadata has been moved from the main queue. As a result opening
   a large number of images should be slightly faster.
 

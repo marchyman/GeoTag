@@ -311,6 +311,10 @@ final class TableViewController: NSViewController {
             return !saveInProgress &&
                    tableView.numberOfSelectedRows > 0 &&
                    images[tableView.selectedRow].validImage
+        case #selector(modifyLocation(_:)):
+            return !saveInProgress &&
+                tableView.numberOfSelectedRows > 0 &&
+                images[tableView.selectedRow].validImage
         default:
             print("#function \(item) not handled")
         }
@@ -564,24 +568,68 @@ final class TableViewController: NSViewController {
             }
         }
     }
+    
+    /// Modify Location menu item action
+    ///
+    /// - Parameter Any: unused
+    ///
+    /// Modify the Date Time of selected images.   Open a window to get the time
+    /// change for the most selected items.   Calculate the time delta between
+    /// the new and the existing value.  Apply the delta to all selected items.
+    @IBAction
+    func modifyLocation(_: Any) {
+        let row = tableView.selectedRow
+        let rows = tableView.selectedRowIndexes
+        let image = images[row]
+        if image.validImage {
+            openChangeLocationWindow(for: image) {
+                coord in
+                self.appDelegate.undoManager.beginUndoGrouping()
+                rows.forEach {
+                    let img = self.images[$0]
+                    if img.validImage {
+                        self.update(row: $0,
+                                    validLocation: true,
+                                    coord: coord)
+                    }
+                }
+                self.appDelegate.undoManager.endUndoGrouping()
+                self.appDelegate.undoManager.setActionName("modify location")
+            }
+        }
+    }
 
-    /// open the change date/time window for an image if the double click was
-    /// on the appropriate column.
+
+    /// open the change date/time window or the change location window
+    /// double click in the date/time column to change the timestamp
+    /// double click in the latitude or longitude columns to change location
     @IBAction
     func doubleClick(_ sender: NSTableView) {
         let row = sender.clickedRow
         if row >= 0 && row < images.count {
             let column = sender.clickedColumn
             if column >= 0 {
-                let tableColumn = sender.tableColumns[column]
-                let id = tableColumn.identifier
-                if id == NSUserInterfaceItemIdentifier("dateTime") {
-                    let image = images[row]
-                    if image.validImage {
+                let image = images[row]
+                if image.validImage {
+                    let tableColumn = sender.tableColumns[column]
+                    let id = tableColumn.identifier
+                    switch id {
+                    case NSUserInterfaceItemIdentifier("dateTime"):
                         openChangeTimeWindow(for: image) {
                             dateValue in
                             self.update(row: row, dateValue: dateValue)
                         }
+                    case NSUserInterfaceItemIdentifier("latitude"),
+                         NSUserInterfaceItemIdentifier("longitude"):
+                        openChangeLocationWindow(for: image) {
+                            coord in
+                            self.update(row: row,
+                                        validLocation: true,
+                                        coord: coord)
+                        }
+                        break
+                    default:
+                        break
                     }
                 }
             }
