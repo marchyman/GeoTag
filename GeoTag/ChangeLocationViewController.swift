@@ -49,7 +49,6 @@ class ChangeLocationViewController: NSViewController {
                     newLatitude.stringValue = coord.dms.latitude
                     newLongitude.stringValue = coord.dms.longitude
                 }
-
             }
             return
         }
@@ -67,6 +66,7 @@ class ChangeLocationViewController: NSViewController {
     
     @IBAction
     func locationChanged(_: NSButton) {
+        // edit fields first.
 //        if newDate.dateValue != originalDate.dateValue {
 //            callback?(newDate.dateValue)
 //        }
