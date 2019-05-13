@@ -9,10 +9,3 @@ Feature Requests:
 * Would it be worth putting in the preferences or somewhere the ability
   to put in a tag to indicate that the photo has GPS data in it.   On a
   save if GPS data is there it also saves the Tag.  Just an idea.
-
-* Manual lat/long entry
-
-* Preference option for lat/long output format.
-  d.ddddddd # degrees and fractions of a degree (current format)
-  d m.mmmmm # degrees and minutes
-  d m s     # degrees, minutes, and seconds

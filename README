@@ -45,6 +45,8 @@ Version 4.5 is the latest released version.  It workes on macOS 10.12 or later.
 * Preferences window changed.  Textual explanations of buttons have been
   moved to tool tips.
 
+* ExifTool version 11.41
+
 ### Bug fixes
 
 * Updated image locations could sometimes be written with the wrong longitude
