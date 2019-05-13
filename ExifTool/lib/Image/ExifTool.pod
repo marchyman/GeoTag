@@ -609,8 +609,8 @@ XMP to be extracted.
 
 Flag to extract information from embedded documents in EPS files, embedded
 EPS information and JPEG and Jpeg2000 images in PDF files, embedded MPF
-images in JPEG and MPO files, streaming metadata in AVCHD videos, and the
-resource fork of Mac OS files.  Default is undef.
+images in JPEG and MPO files, timed metadata in videos, and the resource
+fork of Mac OS files.  Default is undef.
 
 =item FastScan
 
@@ -1820,11 +1820,11 @@ systems only.
 
 Set the file name and directory, or create a hard link.  If not specified,
 the new file name is derived from the new values of the FileName and
-Directory tags, or from the HardLink tag if creating a link.  If the
-FileName tag contains a '/', then the file is renamed into a new directory.
-If FileName ends with '/', then it is taken as a directory name and the file
-is moved into the new directory.  The new value for the Directory tag takes
-precedence over any directory specified in FileName.
+Directory tags, or from the HardLink or SymLink tag if creating a link.  If
+the FileName tag contains a '/', then the file is renamed into a new
+directory.  If FileName ends with '/', then it is taken as a directory name
+and the file is moved into the new directory.  The new value for the
+Directory tag takes precedence over any directory specified in FileName.
 
     $result = $exifTool->SetFileName($file);
     $result = $exifTool->SetFileName($file, $newName);
@@ -1839,14 +1839,14 @@ precedence over any directory specified in FileName.
 
 2) [optional] New file name
 
-3) [optional] 'Link' to create a hard link instead of renaming the file, or
-'Test' to test renaming feature by printing the old and new names instead of
-changing anything.
+3) [optional] 'HardLink' or 'SymLink' to create a hard or symbolic link
+instead of renaming the file, or 'Test' to test renaming feature by printing
+the old and new names instead of changing anything.
 
 =item Return Value:
 
-1 if the file name or directory was changed, 0 if nothing was done, or -1 if
-there was an error renaming the file.
+1 on success, 0 if nothing was done, or -1 if there was an error renaming the
+file or creating the link.
 
 =item Notes:
 
@@ -2015,13 +2015,15 @@ L</ExtractEmbedded> option for extracting tags from embedded documents.)
 Nested sub-documents (if they exist) are indicated by numbers separated with
 dashes in the group name, to an arbitrary depth. (eg. 'Doc2-3-1' is the 1st
 sub-sub-document of the 3rd sub-document of the 2nd embedded document of the
-main file.)
+main file.)  Document numbers are also used to differentiate samples for
+timed metadata in videos.
 
 Family 4 provides a method for differentiating tags when multiple tags exist
 with the same name in the same location.  The primary instance of a tag (the
 tag extracted when the Duplicates option is disabled and no group is
 specified) has no family 4 group name, but additional instances have have
-family 4 group names of 'Copy1', 'Copy2', 'Copy3', etc.
+family 4 group names of 'Copy1', 'Copy2', 'Copy3', etc.  For convenience,
+the primary tag may also be accessed using a group name of 'Copy0'.
 
 See L</GetAllGroups [static]> for complete lists of group names.
 
@@ -2214,14 +2216,14 @@ GoPro, GraphConv, H264, HP, HTC, HTML, HTML-dc, HTML-ncc, HTML-office,
 HTML-prod, HTML-vw96, HTTP-equiv, ICC-chrm, ICC-clrt, ICC-header, ICC-meas,
 ICC-meta, ICC-view, ICC_Profile, ICC_Profile#, ID3, ID3v1, ID3v1_Enh,
 ID3v2_2, ID3v2_3, ID3v2_4, IFD0, IFD1, IPTC, IPTC#, ISO, ITC, InteropIFD,
-JFIF, JFXX, JPEG, JPEG-HDR, JSON, JVC, Jpeg2000, KDC_IFD, Kodak,
-KodakBordersIFD, KodakEffectsIFD, KodakIFD, KyoceraRaw, LNK, Leaf,
+ItemList, JFIF, JFXX, JPEG, JPEG-HDR, JSON, JVC, Jpeg2000, KDC_IFD, Keys,
+Kodak, KodakBordersIFD, KodakEffectsIFD, KodakIFD, KyoceraRaw, LNK, Leaf,
 LeafSubIFD, Leica, Lytro, M2TS, MAC, MIE-Audio, MIE-Camera, MIE-Canon,
 MIE-Doc, MIE-Extender, MIE-Flash, MIE-GPS, MIE-Geo, MIE-Image, MIE-Lens,
 MIE-Main, MIE-MakerNotes, MIE-Meta, MIE-Orient, MIE-Preview, MIE-Thumbnail,
 MIE-UTM, MIE-Unknown, MIE-Video, MIFF, MNG, MOBI, MOI, MPC, MPEG, MPF0,
 MPImage, MS-DOC, MXF, MacOS, MakerNotes, MakerUnknown, Matroska,
-MediaJukebox, MetaIFD, Microsoft, Minolta, MinoltaRaw, Motorola, NITF,
+MediaJukebox, Meta, MetaIFD, Microsoft, Minolta, MinoltaRaw, Motorola, NITF,
 Nikon, NikonCapture, NikonCustom, NikonScan, Nintendo, Ocad, Ogg, Olympus,
 OpenEXR, Opus, PDF, PICT, PNG, PNG-pHYs, PSP, Palm, Panasonic, PanasonicRaw,
 Pentax, PhaseOne, PhotoCD, PhotoMechanic, Photoshop, PictureInfo,
@@ -2230,17 +2232,18 @@ RIFF, RMETA, RSRC, RTF, Radiance, Rawzor, Real, Real-CONT, Real-MDPR,
 Real-PROP, Real-RA3, Real-RA4, Real-RA5, Real-RJMD, Reconyx, Red, Ricoh,
 SPIFF, SR2, SR2DataIFD, SR2SubIFD, SRF#, SVG, Samsung, Sanyo, Scalado,
 Sigma, SigmaRaw, Sony, SonyIDC, Stim, SubIFD, System, Theora, Torrent,
-Track#, VCalendar, VCard, Version0, Vorbis, WTV, XML, XMP, XMP-DICOM,
-XMP-GAudio, XMP-GImage, XMP-GPano, XMP-GSpherical, XMP-MP, XMP-MP1,
-XMP-PixelLive, XMP-aas, XMP-acdsee, XMP-album, XMP-apple-fi, XMP-aux,
-XMP-cc, XMP-cell, XMP-creatorAtom, XMP-crs, XMP-dc, XMP-dex, XMP-digiKam,
-XMP-drone-dji, XMP-dwc, XMP-exif, XMP-exifEX, XMP-expressionmedia,
-XMP-extensis, XMP-fpv, XMP-getty, XMP-ics, XMP-iptcCore, XMP-iptcExt,
-XMP-lr, XMP-mediapro, XMP-microsoft, XMP-mwg-coll, XMP-mwg-kw, XMP-mwg-rs,
-XMP-pdf, XMP-pdfx, XMP-photomech, XMP-photoshop, XMP-plus, XMP-pmi,
-XMP-prism, XMP-prl, XMP-prm, XMP-pur, XMP-rdf, XMP-swf, XMP-tiff, XMP-x,
-XMP-xmp, XMP-xmpBJ, XMP-xmpDM, XMP-xmpMM, XMP-xmpNote, XMP-xmpPLUS,
-XMP-xmpRights, XMP-xmpTPg, ZIP
+Track#, UserData, VCalendar, VCard, Version0, Vorbis, WTV, XML, XMP,
+XMP-DICOM, XMP-GAudio, XMP-GDepth, XMP-GFocus, XMP-GImage, XMP-GPano,
+XMP-GSpherical, XMP-LImage, XMP-MP, XMP-MP1, XMP-PixelLive, XMP-aas,
+XMP-acdsee, XMP-album, XMP-apple-fi, XMP-aux, XMP-cc, XMP-cell,
+XMP-creatorAtom, XMP-crs, XMP-dc, XMP-dex, XMP-digiKam, XMP-drone-dji,
+XMP-dwc, XMP-exif, XMP-exifEX, XMP-expressionmedia, XMP-extensis, XMP-fpv,
+XMP-getty, XMP-ics, XMP-iptcCore, XMP-iptcExt, XMP-lr, XMP-mediapro,
+XMP-microsoft, XMP-mwg-coll, XMP-mwg-kw, XMP-mwg-rs, XMP-pdf, XMP-pdfx,
+XMP-photomech, XMP-photoshop, XMP-plus, XMP-pmi, XMP-prism, XMP-prl,
+XMP-prm, XMP-pur, XMP-rdf, XMP-swf, XMP-tiff, XMP-x, XMP-xmp, XMP-xmpBJ,
+XMP-xmpDM, XMP-xmpMM, XMP-xmpNote, XMP-xmpPLUS, XMP-xmpRights, XMP-xmpTPg,
+ZIP
 
 =item Family 2 (Category):
 

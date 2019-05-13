@@ -11,7 +11,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.07';
+$VERSION = '1.09';
 
 sub MDItemLocalTime($);
 
@@ -31,7 +31,7 @@ my %mdDateInfo = (
         setting the L<MDItemTags API option|../ExifTool.html#MDItemTags> to 1 or the L<RequestAll API option|../ExifTool.html#RequestAll> to 2 or
         higher.  Note that these tags do not necessarily reflect the current
         metadata of a file -- it may take some time for the MacOS mdworker daemon to
-        index the file after the metadata changes.
+        index the file after a metadata change.
     },
     MDItemFinderComment => {
         Writable => 1,
@@ -42,8 +42,17 @@ my %mdDateInfo = (
         Writable => 1,
         WritePseudo => 1,
         Protected => 1, # (all writable pseudo tags must be protected)
-        Notes => 'label number: 0-7',
         WriteCheck => '$val =~ /^[0-7]$/ ? undef : "Not an integer in the range 0-7"',
+        PrintConv => {
+            0 => '0 (none)',
+            1 => '1 (Gray)',
+            2 => '2 (Green)',
+            3 => '3 (Purple)',
+            4 => '4 (Blue)',
+            5 => '5 (Yellow)',
+            6 => '6 (Red)',
+            7 => '7 (Orange)',
+        },
     },
     MDItemFSCreationDate => {
         Writable => 1,
@@ -66,12 +75,16 @@ my %mdDateInfo = (
     MDItemAcquisitionModel        => { Groups => { 2 => 'Camera' } },
     MDItemAltitude                => { Groups => { 2 => 'Location' } },
     MDItemAperture                => { Groups => { 2 => 'Camera' } },
+    MDItemAudioBitRate            => { Groups => { 2 => 'Audio' } },
+    MDItemAudioChannelCount       => { Groups => { 2 => 'Audio' } },
     MDItemAuthors                 => { Groups => { 2 => 'Author' } },
     MDItemBitsPerSample           => { Groups => { 2 => 'Image' } },
     MDItemCity                    => { Groups => { 2 => 'Location' } },
+    MDItemCodecs                  => { },
     MDItemColorSpace              => { Groups => { 2 => 'Image' } },
     MDItemComment                 => { },
     MDItemContentCreationDate     => { Groups => { 2 => 'Time' }, %mdDateInfo },
+    MDItemContentCreationDateRanking => { Groups => { 2 => 'Time' }, %mdDateInfo },
     MDItemContentModificationDate => { Groups => { 2 => 'Time' }, %mdDateInfo },
     MDItemContentType             => { },
     MDItemContentTypeTree         => { },
@@ -83,8 +96,9 @@ my %mdDateInfo = (
     MDItemDescription             => { },
     MDItemDisplayName             => { },
     MDItemDownloadedDate          => { Groups => { 2 => 'Time' }, %mdDateInfo },
+    MDItemDurationSeconds         => { PrintConv => 'ConvertDuration($val)' },
     MDItemEncodingApplications    => { },
-    MDItemEXIFGPSVersion          => { Groups => { 2 => 'Location' } },
+    MDItemEXIFGPSVersion          => { Groups => { 2 => 'Location' }, Description => 'MD Item EXIF GPS Version' },
     MDItemEXIFVersion             => { },
     MDItemExposureMode            => { Groups => { 2 => 'Camera' } },
     MDItemExposureProgram         => { Groups => { 2 => 'Camera' } },
@@ -110,13 +124,17 @@ my %mdDateInfo = (
     MDItemGPSTrack                => { Groups => { 2 => 'Location' } },
     MDItemHasAlphaChannel         => { Groups => { 2 => 'Image' } },
     MDItemImageDirection          => { Groups => { 2 => 'Location' } },
+    MDItemInterestingDateRanking  => { Groups => { 2 => 'Time' }, %mdDateInfo },
     MDItemISOSpeed                => { Groups => { 2 => 'Camera' } },
     MDItemKeywords                => { },
     MDItemKind                    => { },
     MDItemLastUsedDate            => { Groups => { 2 => 'Time' }, %mdDateInfo },
+    MDItemLastUsedDate_Ranking    => { },
     MDItemLatitude                => { Groups => { 2 => 'Location' } },
+    MDItemLensModel               => { },
     MDItemLogicalSize             => { },
     MDItemLongitude               => { Groups => { 2 => 'Location' } },
+    MDItemMediaTypes              => { },
     MDItemNumberOfPages           => { },
     MDItemOrientation             => { Groups => { 2 => 'Image' } },
     MDItemOriginApplicationIdentifier => { },
@@ -137,10 +155,20 @@ my %mdDateInfo = (
     MDItemSecurityMethod          => { },
     MDItemSpeed                   => { Groups => { 2 => 'Location' } },
     MDItemStateOrProvince         => { Groups => { 2 => 'Location' } },
+    MDItemStreamable              => { },
     MDItemTimestamp               => { Groups => { 2 => 'Time' } }, # (time only)
     MDItemTitle                   => { },
+    MDItemTotalBitRate            => { },
     MDItemUseCount                => { },
     MDItemUsedDates               => { Groups => { 2 => 'Time' }, %mdDateInfo },
+    MDItemUserDownloadedDate      => { Groups => { 2 => 'Time' }, %mdDateInfo },
+    MDItemUserDownloadedUserHandle=> { },
+    MDItemUserSharedReceivedDate  => { },
+    MDItemUserSharedReceivedRecipient => { },
+    MDItemUserSharedReceivedRecipientHandle => { },
+    MDItemUserSharedReceivedSender=> { },
+    MDItemUserSharedReceivedSenderHandle => { },
+    MDItemUserSharedReceivedTransport => { },
     MDItemUserTags                => {
         List => 1,
         Writable => 1,
@@ -153,15 +181,18 @@ my %mdDateInfo = (
         },
     },
     MDItemVersion                 => { },
+    MDItemVideoBitRate            => { Groups => { 2 => 'Video' } },
     MDItemWhereFroms              => { },
     MDItemWhiteBalance            => { Groups => { 2 => 'Image' } },
     # tags used by Apple Mail on .emlx files
     com_apple_mail_dateReceived   => { Name => 'AppleMailDateReceived', Groups => { 2 => 'Time' }, %mdDateInfo },
+    com_apple_mail_dateSent       => { Name => 'AppleMailDateSent',     Groups => { 2 => 'Time' }, %mdDateInfo },
     com_apple_mail_flagged        => { Name => 'AppleMailFlagged' },
     com_apple_mail_messageID      => { Name => 'AppleMailMessageID' },
     com_apple_mail_priority       => { Name => 'AppleMailPriority' },
     com_apple_mail_read           => { Name => 'AppleMailRead' },
     com_apple_mail_repliedTo      => { Name => 'AppleMailRepliedTo' },
+    com_apple_mail_isRemoteAttachment => { Name => 'AppleMailIsRemoteAttachment' },
     MDItemAccountHandles          => { },
     MDItemAccountIdentifier       => { },
     MDItemAuthorEmailAddresses    => { },
@@ -247,6 +278,17 @@ my %mdDateInfo = (
         },
         PrintConvInv => '$val',
     },
+    'com.apple.metadata:com_apple_mail_dateReceived' => {
+        Name => 'XAttrAppleMailDateReceived',
+        Groups => { 2 => 'Time' },
+    },
+    'com.apple.metadata:com_apple_mail_dateSent' => {
+        Name => 'XAttrAppleMailDateSent',
+        Groups => { 2 => 'Time' },
+    },
+    'com.apple.metadata:com_apple_mail_isRemoteAttachment' => {
+        Name => 'XAttrAppleMailIsRemoteAttachment',
+    },
     'com.apple.metadata:kMDItemDownloadedDate' => {
         Name => 'XAttrMDItemDownloadedDate',
         Groups => { 2 => 'Time' },
@@ -255,6 +297,13 @@ my %mdDateInfo = (
     'com.apple.metadata:kMDItemWhereFroms'     => { Name => 'XAttrMDItemWhereFroms' },
     'com.apple.metadata:kMDLabel'              => { Name => 'XAttrMDLabel', Binary => 1 },
     'com.apple.ResourceFork'                   => { Name => 'XAttrResourceFork', Binary => 1 },
+    'com.apple.lastuseddate#PS'                => {
+        Name => 'XAttrLastUsedDate',
+        Groups => { 2 => 'Time' },
+        # (first 4 bytes are date/time.  Not sure what remaining 12 bytes are for)
+        RawConv => 'ConvertUnixTime(unpack("V",$$val))',
+        PrintConv => '$self->ConvertDateTime($val)',
+    },
 );
 
 #------------------------------------------------------------------------------
@@ -474,9 +523,11 @@ sub ExtractXAttrTags($$)
                 # generate tag name from attribute name
                 if ($tag =~ /^com\.apple\.(.*)$/) {
                     ($name = $1) =~ s/^metadata:_?k//;
+                    $name =~ s/^metadata:(com_)?//;
                 } else {
-                    ($name = $tag) =~ s/[.:]([a-z])/\U$1/g;
+                    $name = $tag;
                 }
+                $name =~ s/[.:_]([a-z])/\U$1/g;
                 $name = 'XAttr' . ucfirst $name;
                 my %tagInfo = ( Name => $name );
                 $tagInfo{Groups} = { 2 => 'Time' } if $tag=~/Date$/;

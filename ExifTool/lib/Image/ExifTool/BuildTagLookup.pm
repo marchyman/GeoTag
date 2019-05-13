@@ -34,7 +34,7 @@ use Image::ExifTool::Nikon;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.19';
+$VERSION = '3.22';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -158,6 +158,7 @@ meta information extracted from or written to a file.
 },
     ExifTool => q{
 The tables listed below give the names of all tags recognized by ExifTool.
+They contain a total of $$self{COUNT}{'total tags'} tags, with $$self{COUNT}{'unique tag names'} unique tag names.
 },
     ExifTool2 => q{
 B<Tag ID>, B<Index#> or B<Sequence> is given in the first column of each
@@ -471,7 +472,9 @@ These tags apply to CRW-format Canon RAW files and information in the APP0
 "CIFF" segment of JPEG images.  When writing CanonRaw/CIFF information, the
 length of the information is preserved (and the new information is truncated
 or padded as required) unless B<Writable> is C<resize>. Currently, only
-JpgFromRaw and ThumbnailImage are allowed to change size.
+JpgFromRaw and ThumbnailImage are allowed to change size.  See
+L<http://owl.phy.queensu.ca/~phil/exiftool/canon_raw.html> for a description
+of the Canon CRW format.
 
 CRW images also support the addition of a CanonVRD trailer, which in turn
 supports XMP.  This trailer is created automatically if necessary when
@@ -1514,7 +1517,10 @@ sub WriteTagLookup($$)
             } elsif ($tagID =~ /^\d+$/) {
                 $entry = sprintf('0x%x',$tagID);
             } else {
-                $entry = "'${tagID}'";
+                my $quot = "'";
+                # escape non-printable characters in tag ID if necessary
+                $quot = '"' if $tagID =~ s/[\x00-\x1f,\x7f-\xff]/sprintf('\\x%.2x',ord($&))/ge;
+                $entry = "$quot${tagID}$quot";
             }
             my $wrNum = $wrNum{$tableNum};
             push @entries, "$wrNum => $entry";
@@ -1978,6 +1984,7 @@ sub WriteTagNames($$)
 
     # open the file and write the header
     open(PODFILE, ">$podFile") or return 0;
+    $docs{ExifTool} = eval qq{"$docs{ExifTool}"};
     print PODFILE Doc2Pod($docs{PodHeader}, $docs{ExifTool}, $docs{ExifTool2});
     mkdir "$htmldir/TagNames", 0777;
     OpenHtmlFile($htmldir) or return 0;
@@ -2061,6 +2068,9 @@ sub WriteTagNames($$)
                     my $w = length($_) + length($$printConv{$_});
                     $wid = $w if $wid < $w;
                     push @keys, $_;
+                    if ($$printConv{$_} =~ /[\0-\x1f\x7f-\xff]/) {
+                        warn "Warning: Special characters in $tableName PrintConv ($$printConv{$_})\n";
+                    }
                 }
                 $wid = length($tableName)+7 if $wid < length($tableName)+7;
                 # print in multiple columns if there is room

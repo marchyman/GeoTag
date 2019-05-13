@@ -30,7 +30,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.67';
+$VERSION = '1.71';
 
 sub ProcessFujiDir($$$);
 sub ProcessFaceRec($$$);
@@ -49,6 +49,7 @@ my %testedRAF = (
     '0144' => 'X100T Ver1.44',
     '0159' => 'S2Pro Ver1.00',
     '0200' => 'X10 Ver2.00',
+    '0201' => 'X-H1 Ver2.01',
     '0212' => 'S3Pro Ver2.12',
     '0216' => 'S3Pro Ver2.16', # (NC)
     '0218' => 'S3Pro Ver2.18',
@@ -709,12 +710,41 @@ my %faceCategories = (
     0x1446 => { #12
         Name => 'FlickerReduction',
         Writable => 'int32u',
+        # seen values: Off=0x0000, On=0x2100,0x3100
         PrintConv => q{
-            my $on = ((($val >> 12) & 0xff) == 3) ? 'On' : 'Off';
+            my $on = ((($val >> 8) & 0x0f) == 1) ? 'On' : 'Off';
             return sprintf('%s (0x%.4x)', $on, $val);
         },
         PrintConvInv => '$val=~/(0x[0-9a-f]+)/i; hex $1',
     },
+    0x3803 => { #forum10037
+        Name => 'VideoRecordingMode',
+        Groups => { 2 => 'Video' },
+        Writable => 'int32u',
+        PrintHex => 1,
+        PrintConv => {
+            0x00 => 'Normal',
+            0x10 => 'F-log',
+            0x20 => 'HLG',
+        },
+    },
+    0x3804 => { #forum10037
+        Name => 'PeripheralLighting',
+        Groups => { 2 => 'Video' },
+        Writable => 'int16u',
+        PrintConv => { 0 => 'Off', 1 => 'On' },
+    },
+    # 0x3805 - int16u: seen 1
+    0x3806 => { #forum10037
+        Name => 'VideoCompression',
+        Groups => { 2 => 'Video' },
+        Writable => 'int16u',
+        PrintConv => {
+            1 => 'Log GOP',
+            2 => 'All Intra',
+        },
+    },
+    # 0x3810 - int32u: related to video codec (ref forum10037)
     0x3820 => { #PH (HS20EXR MOV)
         Name => 'FrameRate',
         Writable => 'int16u',
@@ -840,9 +870,10 @@ my %faceCategories = (
         Name => 'FocusMode2',
         Mask => 0x000000ff,
         PrintConv => {
-            0 => 'AF-M',
-            1 => 'AF-S',
-            2 => 'AF-C',
+            0x00 => 'AF-M',
+            0x01 => 'AF-S',
+            0x02 => 'AF-C',
+            0x11 => 'AF-S (Auto)',
         },
     },
     0.2 => {
@@ -1004,8 +1035,29 @@ my %faceCategories = (
         Groups => { 1 => 'RAF2' }, # (so RAF2 shows up in family 1 list)
         Count => 2,
         Notes => 'including borders',
-        ValueConv => 'my @v=reverse split(" ",$val);"@v"',
+        ValueConv => 'my @v=reverse split(" ",$val);"@v"', # reverse to show width first
         PrintConv => '$val=~tr/ /x/; $val',
+    },
+    0x110 => {
+        Name => 'RawImageCropTopLeft',
+        Format => 'int16u',
+        Count => 2,
+        Notes => 'top margin first, then left margin',
+    },
+    0x111 => {
+        Name => 'RawImageCroppedSize',
+        Format => 'int16u',
+        Count => 2,
+        Notes => 'including borders',
+        ValueConv => 'my @v=reverse split(" ",$val);"@v"', # reverse to show width first
+        PrintConv => '$val=~tr/ /x/; $val',
+    },
+    0x115 => {
+        Name => 'RawImageAspectRatio',
+        Format => 'int16u',
+        Count => 2,
+        ValueConv => 'my @v=reverse split(" ",$val);"@v"', # reverse to show width first
+        PrintConv => '$val=~tr/ /:/; $val',
     },
     0x121 => [
         {
