@@ -147,6 +147,12 @@ final class ImageData: NSObject {
     /// instance as not being valid.
     init(url: URL) {
         self.url = url;
+        var isHeic: Bool {
+            return url.pathExtension.lowercased() == "heic"
+        }
+        var convertHeic: Bool {
+            return isHeic && Preferences.useSidecarFiles()
+        }
 
         // create a symlink for the URL in our sandbox
         let fileManager = FileManager.default
@@ -183,20 +189,23 @@ final class ImageData: NSObject {
                Preferences.useSidecarFiles() {
                 var xmp = url.deletingPathExtension()
                 xmp.appendPathExtension(xmpFile.ext)
-                if fileManager.fileExists(atPath: xmp.path) {
-                    sandboxXmp = xmpFile.presentedItemURL
-                    try? fileManager.removeItem(at: sandboxXmp!)
+                sandboxXmp = xmpFile.presentedItemURL
+                try? fileManager.removeItem(at: sandboxXmp!)
+                if fileManager.fileExists(atPath: xmp.path) || isHeic {
                     try fileManager.createSymbolicLink(at: sandboxXmp!,
                                                        withDestinationURL: xmp)
                     NSFileCoordinator.addFilePresenter(xmpFile)
+                    if isHeic {
+                        Exiftool.helper.metadataToXmp(imageURL: url, xmpURL: xmp)
+                    }
                 }
             }
-
         } catch let error as NSError {
             fatalError("docDir symlink error: \(error)")
         }
         super.init()
-        if (Exiftool.helper.fileTypeIsWritable(for: url)) {
+        // allow heic file if xmp file created above
+        if convertHeic || Exiftool.helper.fileTypeIsWritable(for: url) {
             if let xmp = sandboxXmp {
                 validImage = loadXmpData(xmp)
             } else {
