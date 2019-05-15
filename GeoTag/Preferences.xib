@@ -25,7 +25,7 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="734" y="724" width="564" height="404"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
-            <view key="contentView" focusRingType="exterior" id="EiT-Mj-1SZ" customClass="AMPathPopUpButton">
+            <view key="contentView" focusRingType="exterior" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="564" height="404"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>

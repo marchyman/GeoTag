@@ -27,7 +27,12 @@ Version 4.5 is the latest released version.  It workes on macOS 10.12 or later.
   the same name but with an extension of ".xmp" are assumed to be sidecar files.
 
 * The presence of a sidecar file is indicated by a '*' following the image name.
-  
+
+* heic files can be processed only when updates to sidecar files are enabled
+  in preferences.  GeoTag will use ExifTool to create a sidecar (xmp) file
+  containing a copy of the image metadata and update the sidecar file with
+  any location changes.
+
 * Add a preference item that controls coordinate display formats.   Latitude
   and longitude can be displayed in one of three forms:
   - dd.ddddd
