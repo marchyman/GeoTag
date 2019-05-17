@@ -119,7 +119,7 @@ class ChangeLocationViewController: NSViewController {
                     if !range.contains(Int(val).magnitude) {
                         return nil
                     }
-                } else if !(0...60).contains(Int(val)) {
+                } else if !(0..<60).contains(Int(val)) {
                     return nil
                 }
                 dms[index] = val
