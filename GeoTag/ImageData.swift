@@ -189,9 +189,9 @@ final class ImageData: NSObject {
                Preferences.useSidecarFiles() {
                 var xmp = url.deletingPathExtension()
                 xmp.appendPathExtension(xmpFile.ext)
-                sandboxXmp = xmpFile.presentedItemURL
-                try? fileManager.removeItem(at: sandboxXmp!)
                 if fileManager.fileExists(atPath: xmp.path) || isHeic {
+                    sandboxXmp = xmpFile.presentedItemURL
+                    try? fileManager.removeItem(at: sandboxXmp!)
                     try fileManager.createSymbolicLink(at: sandboxXmp!,
                                                        withDestinationURL: xmp)
                     NSFileCoordinator.addFilePresenter(xmpFile)

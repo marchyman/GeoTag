@@ -101,8 +101,7 @@ class ChangeLocationViewController: NSViewController {
 
         // There sould be from 1...maxParts substrings to process
 
-        guard !subStrings.isEmpty &&
-              subStrings.count <= maxParts else { return nil }
+        guard (1...maxParts).contains(subStrings.count) else { return nil }
 
         var dms = [0.0, 0.0, 0.0]   // degrees, minutes, seconds
         var index = 0
