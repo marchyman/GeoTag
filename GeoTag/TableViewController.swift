@@ -694,7 +694,7 @@ extension TableViewController: NSTableViewDelegate {
         if let id = tableColumn?.identifier {
             switch id {
             case NSUserInterfaceItemIdentifier("imageName"):
-                value = image.name ?? "Unknown"
+                value = image.imageName
                 if image.sandboxXmp != nil {
                     value += "*"
                 }

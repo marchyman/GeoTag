@@ -27,82 +27,47 @@ import Foundation
 import AppKit
 import MapKit
 
+/// CFString to (NS)*String casts for Image Property constants
+
+let pixelHeight = kCGImagePropertyPixelHeight as NSString
+let pixelWidth = kCGImagePropertyPixelWidth as NSString
+let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
+let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
+let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
+let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
+let exifDictionary = kCGImagePropertyExifDictionary as NSString
+let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
+let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
+let GPSStatus = kCGImagePropertyGPSStatus as String
+let GPSLatitude = kCGImagePropertyGPSLatitude as String
+let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
+let GPSLongitude = kCGImagePropertyGPSLongitude as String
+let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
+
+/// heic file type (heic files need a sidecar file)
+
+let heic = "heic"
+
+/// class to manage Image date/time and location metadata
+
 final class ImageData: NSObject {
-    // CFString to (NS)*String casts
-    let pixelHeight = kCGImagePropertyPixelHeight as NSString
-    let pixelWidth = kCGImagePropertyPixelWidth as NSString
-    let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
-    let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
-    let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
-    let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
-    let exifDictionary = kCGImagePropertyExifDictionary as NSString
-    let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
-    let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
-    let GPSStatus = kCGImagePropertyGPSStatus as String
-    let GPSLatitude = kCGImagePropertyGPSLatitude as String
-    let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
-    let GPSLongitude = kCGImagePropertyGPSLongitude as String
-    let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
 
     // MARK: instance variables -- file URLs
 
     let url: URL                // URL of the image
-    var name: String? {
-        return url.lastPathComponent
-    }
+    let xmpUrl: URL             // URL of sidecar file (may not exist)
+    var xmpFile: XmpFile		//
     var sandboxUrl: URL         // URL of the sandbox copy of the image
-    var xmpFile: XmpFile
     var sandboxXmp: URL?        // URL of sandbox copy of sidecar file
 
     // MARK: instance variables -- date/time related values
 
-    // format of the date string used by exiftool
-    let dateFormatter = DateFormatter()
-    let dateFormatString = "yyyy:MM:dd HH:mm:ss"
-
-    // image date/time created
-    var dateTime: String = ""
-    var originalDateTime: String = ""
-
-    // timeZone of image
-    var timeZone: TimeZone?
-
-    // image date/time as a Date.
-    // When this value is set the date string variable is also updated
-    // do not use timezone info
-    var dateValue: Date? {
-        get {
-            dateFormatter.dateFormat = dateFormatString
-            dateFormatter.timeZone = nil
-            return dateFormatter.date(from: dateTime)
-        }
-        set {
-            if let value = newValue {
-                dateFormatter.dateFormat = dateFormatString
-                dateFormatter.timeZone = nil
-                dateTime = dateFormatter.string(from: value)
-            } else {
-                dateTime = ""
-            }
-        }
-    }
-    var dateValueWithZone: Date? {
-        dateFormatter.dateFormat = dateFormatString
-        dateFormatter.timeZone = timeZone
-        return dateFormatter.date(from: dateTime)
-    }
-
-    // dateTime as a TimeInterval
-    var dateFromEpoch: TimeInterval {
-        if let convertedDate = dateValue {
-            return convertedDate.timeIntervalSince1970
-        }
-        return 0
-    }
+    var dateTime = ""			// image date/time
+    var originalDateTime = ""	// date/time before any modification
+    var timeZone: TimeZone?		// timezone where image was taken
 
     // MARK: instance variables -- image location
 
-    // image location
     var location: Coord? {
         didSet {
             // update the timezone to match image location
@@ -120,41 +85,27 @@ final class ImageData: NSObject {
             }
         }
     }
-    var originalLocation: Coord?
+    var originalLocation: Coord?    // location before any modification
 
     // MARK: instance variables -- image state and thumbnail
 
-    var validImage = false  // does URL point to a valid image file?
-    lazy var image: NSImage = self.loadImage()
-
-    /// The string representation of the location of an image for copy and paste.
-    /// The representation of no location is an empty string.
-    var stringRepresentation: String {
-        if let location = location {
-            return "\(location.latitude) \(location.longitude)"
-        } else {
-            return ""
-        }
-    }
+    var validImage = false        // does URL point to a valid image file?
+    lazy var image = self.loadImage()
 
     // MARK: Init (FYI: not run on main thread)
 
     /// instantiate an instance of the class
     /// - Parameter url: image file this instance represents
     ///
-    /// Extract geo location metadata and build a preview image for
-    /// the given URL.  If the URL isn't recognized as an image mark this
-    /// instance as not being valid.
+    /// Extract geo location and date/time metadata from the given URL or a
+    /// sidecar file if sidecar processing enabled and a sidecar file exists.
+    /// If the URL isn't recognized as an image mark this instance as not valid.
+
     init(url: URL) {
         self.url = url;
-        var isHeic: Bool {
-            return url.pathExtension.lowercased() == "heic"
-        }
-        var convertHeic: Bool {
-            return isHeic && Preferences.useSidecarFiles()
-        }
 
         // create a symlink for the URL in our sandbox
+
         let fileManager = FileManager.default
         do {
             let docDir = try fileManager.url(for: .documentDirectory,
@@ -164,6 +115,7 @@ final class ImageData: NSObject {
             sandboxUrl = docDir.appendingPathComponent(url.lastPathComponent)
 
             // if sandboxUrl already exists modify the name until it doesn't
+
             var fileNumber = 1
             while fileManager.fileExists(atPath: (sandboxUrl.path)) {
                 var newName = url.lastPathComponent
@@ -177,6 +129,7 @@ final class ImageData: NSObject {
             // exists but does not point to a valid file.  Handle that
             // situation to avoid a crash by deleting any stale link
             // that may be present before trying to create a new link.
+
             try? fileManager.removeItem(at: sandboxUrl)
             try fileManager.createSymbolicLink(at: sandboxUrl,
                                                withDestinationURL: url)
@@ -184,20 +137,18 @@ final class ImageData: NSObject {
             // Create a link for any matching sidecare file, i.e. a file with
             // the same path components but with an extension of XMP, if one
             // is found.
+
+            xmpUrl = url.deletingPathExtension().appendingPathExtension(xmpExtension)
             xmpFile = XmpFile(url: sandboxUrl)
-            if url.pathExtension.lowercased() != xmpFile.ext &&
+            if url.pathExtension.lowercased() != xmpExtension &&
                Preferences.useSidecarFiles() {
-                var xmp = url.deletingPathExtension()
-                xmp.appendPathExtension(xmpFile.ext)
-                if fileManager.fileExists(atPath: xmp.path) || isHeic {
+                if fileManager.fileExists(atPath: xmpUrl.path) ||
+                   url.pathExtension.lowercased() == heic {
                     sandboxXmp = xmpFile.presentedItemURL
                     try? fileManager.removeItem(at: sandboxXmp!)
                     try fileManager.createSymbolicLink(at: sandboxXmp!,
-                                                       withDestinationURL: xmp)
+                                                       withDestinationURL: xmpUrl)
                     NSFileCoordinator.addFilePresenter(xmpFile)
-                    if isHeic {
-                        Exiftool.helper.metadataToXmp(imageURL: url, xmpURL: xmp)
-                    }
                 }
             }
         } catch let error as NSError {
@@ -205,19 +156,21 @@ final class ImageData: NSObject {
         }
         super.init()
         // allow heic file if xmp file created above
-        if convertHeic || Exiftool.helper.fileTypeIsWritable(for: url) {
-            if let xmp = sandboxXmp {
+        if Exiftool.helper.fileTypeIsWritable(for: url) ||
+            (url.pathExtension.lowercased() == heic &&
+             Preferences.useSidecarFiles()) {
+            if let xmp = sandboxXmp,
+               fileManager.fileExists(atPath: xmpUrl.path) {
                 validImage = loadXmpData(xmp)
             } else {
                 validImage = loadImageData()
             }
         }
-        originalLocation = location
-        originalDateTime = dateTime
     }
 
     /// remove the symbolic link created in the sandboxed document directory
     /// during instance initialization
+    
     deinit
     {
         let fileManager = FileManager.default
@@ -227,13 +180,14 @@ final class ImageData: NSObject {
         }
     }
 
-    // MARK: revert changes for an image
+    // MARK: revert changes to an image
 
     /// restore latitude, longitude, and date/time to their initial values
     ///
     /// Image location and time is restored to the value when location information
     /// was last saved. If the image has not been saved the restored values
     /// will be those in the image when first read.
+    
     func revert() {
         location = originalLocation
         dateTime = originalDateTime
@@ -241,20 +195,47 @@ final class ImageData: NSObject {
 
     // MARK: Backup and Save (functions do not run on main thread)
 
+    /// Create a sidecar file from an image file if one does not exist
+    /// This is only for heic files at this time as heic files can not be
+    /// written to by ExifTool.
+    private
+    func makeSidecarFile() {
+        if url.pathExtension.lowercased() == heic {
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: xmpUrl.path) {
+                Exiftool.helper.metadataToXmp(imageURL: url, xmpURL: xmpUrl)
+            }
+        }
+    }
+
     /// copy the image into the backup folder
     ///
     /// If an image file with the same name exists in the backup folder append
     /// an available number to the image name to make the name unique to the
-    /// folder.sz
+    /// folder.
+    ///
+    /// If a sidecar file is being used the sidecar file is backed up in place
+    /// of the image file.
+    
     private
     func saveOriginalFile() -> Bool {
         guard let saveDirUrl = Preferences.saveFolder() else { return false }
-        guard let name = name else { return false }
+        
+        // If a sidecar file exists use it istead of the image file
+        
+        var fileUrl = url
+        if sandboxXmp != nil {
+            makeSidecarFile()
+            fileUrl = xmpUrl
+        }
+        let name = fileUrl.lastPathComponent
+
         var fileNumber = 1
         var saveFileUrl = saveDirUrl.appendingPathComponent(name, isDirectory: false)
         let fileManager = FileManager.default
         let _ = saveDirUrl.startAccessingSecurityScopedResource()
         defer { saveDirUrl.stopAccessingSecurityScopedResource() }
+
         // add a suffix to the name until no file is found at the save location
         while fileManager.fileExists(atPath: (saveFileUrl.path)) {
             var newName = name
@@ -265,7 +246,8 @@ final class ImageData: NSObject {
         }
         // Copy the image file to the backup folder
         do {
-            try fileManager.copyItem(at: url, to: saveFileUrl)
+            
+            try fileManager.copyItem(at: fileUrl, to: saveFileUrl)
             /// DANGER WILL ROBINSON -- the above call can fail to return an
             /// error when the file is not copied.  radar filed and closed
             /// as a DUPLICATE OF 30350792 which was still open as of macOS
@@ -274,7 +256,7 @@ final class ImageData: NSObject {
                 // UI interaction must run on the main thread
                 DispatchQueue.main.async {
                     unexpected(error: nil,
-                               "Cannot copy \(self.url.path) to \(saveFileUrl.path)")
+                               "Cannot copy \(fileUrl.path) to \(saveFileUrl.path)")
                 }
                 return false
             }
@@ -282,7 +264,7 @@ final class ImageData: NSObject {
             // UI interaction must run on the main thread
             DispatchQueue.main.async {
                 unexpected(error: error,
-                           "Cannot copy \(self.url.path) to \(saveFileUrl.path)\n\nReason: ")
+                           "Cannot copy \(fileUrl.path) to \(saveFileUrl.path)\n\nReason: ")
             }
             return false
         }
@@ -306,6 +288,7 @@ final class ImageData: NSObject {
     /// - Returns:  0 if nothing to save or file saved
     ///             -1 if the file could not be backed up
     ///             non-zero exifcode return value
+    
     func saveImageFile() -> Int32 {
         guard validImage &&
               (location?.latitude != originalLocation?.latitude ||
@@ -334,6 +317,7 @@ final class ImageData: NSObject {
     ///
     /// Extract desired metadata from an XMP file using ExifTool.  Apple
     /// ImageIO functions do not work with XMP sidecar files.
+    
     private
     func loadXmpData(_ xmp: URL) -> Bool {
         var errorCode: NSError?
@@ -345,8 +329,10 @@ final class ImageData: NSObject {
             let results = Exiftool.helper.metadataFrom(xmp: url)
             guard results.dto != "" else { return }
             dateTime = results.dto
+            originalDateTime = dateTime
             if results.valid {
                 location = results.location
+                originalLocation = location
             }
         }
         return true
@@ -357,6 +343,7 @@ final class ImageData: NSObject {
     ///
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file
+    
     private
     func loadImageData() -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
@@ -374,6 +361,7 @@ final class ImageData: NSObject {
         if let exifData = imgProps[exifDictionary] as? [String: AnyObject],
            let dto = exifData[exifDateTimeOriginal] as? String {
             dateTime = dto
+            originalDateTime = dateTime
         }
 
         // extract image existing gps info
@@ -392,6 +380,7 @@ final class ImageData: NSObject {
                let lonRef = gpsData[GPSLongitudeRef] as? String {
                 location = Coord(latitude: latRef == "N" ? lat : -lat,
                                 longitude: lonRef == "E" ? lon : -lon)
+                originalLocation = location
             }
         }
         return true
@@ -403,6 +392,7 @@ final class ImageData: NSObject {
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file and a zero
     /// sized empty image is returned.
+    
     private
     func loadImage() -> NSImage {
         var image = NSImage(size: NSMakeRect(0, 0, 0, 0).size)
@@ -447,10 +437,76 @@ final class ImageData: NSObject {
     }
 }
 
-/// Key-value names for tableview column sorting
+// MARK: date/time manipulation extensions
+
+/// Image date/time format for ExifTool
+
+fileprivate let dateFormatter = DateFormatter()
+fileprivate let dateFormatString = "yyyy:MM:dd HH:mm:ss"
+
+extension ImageData {
+
+    // image date/time as a Date
+    // When this value is set the date string variable is also updated
+    // timezone information is NOT used in this conversion
+
+    var dateValue: Date? {
+        get {
+            dateFormatter.dateFormat = dateFormatString
+            dateFormatter.timeZone = nil
+            return dateFormatter.date(from: dateTime)
+        }
+        set {
+            if let value = newValue {
+                dateFormatter.dateFormat = dateFormatString
+                dateFormatter.timeZone = nil
+                dateTime = dateFormatter.string(from: value)
+            } else {
+                dateTime = ""
+            }
+        }
+    }
+    
+    // returns image date/time as a Date
+    // image timezone is used in the conversion
+
+    var dateValueWithZone: Date? {
+        dateFormatter.dateFormat = dateFormatString
+        dateFormatter.timeZone = timeZone
+        return dateFormatter.date(from: dateTime)
+    }
+
+    // dateTime as a TimeInterval
+
+    var dateFromEpoch: TimeInterval {
+        if let convertedDate = dateValue {
+            return convertedDate.timeIntervalSince1970
+        }
+        return 0
+    }
+}
+
+
+// MARK: string representation extension
+
+/// The string representation of the location of an image for copy and paste.
+/// The representation of no location is an empty string.
+
+extension ImageData {
+    var stringRepresentation: String {
+        if let location = location {
+            return "\(location.latitude) \(location.longitude)"
+        } else {
+            return ""
+        }
+    }
+}
+
+// MARK: Key-value names extension
+
 extension ImageData {
     @objc var imageName: String {
-        return name ?? ""
+        return url.lastPathComponent
     }
     @objc var dateTimeSort: Double {
         return dateFromEpoch

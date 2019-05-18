@@ -25,12 +25,15 @@
 
 import Foundation
 
+/// file extension used for sidecar files
+
+let xmpExtension = "xmp"
+
 /// Class used to access xmp sidecar files as related files to the image
 /// file being updated in a sandboxed environment.
 
 class XmpFile: NSObject {
     var url: URL        // url of image file
-    let ext = "xmp"     // extension used with sidecar files
 
     init(url: URL) {
         self.url = url
@@ -38,10 +41,11 @@ class XmpFile: NSObject {
 }
 
 // MARK: - NSFilePresenter
+
 extension XmpFile: NSFilePresenter {
     var presentedItemURL: URL? {
         var xmp = url.deletingPathExtension()
-        xmp.appendPathExtension(ext)
+        xmp.appendPathExtension(xmpExtension)
         return xmp
     }
     
