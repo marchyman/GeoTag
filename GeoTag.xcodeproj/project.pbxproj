@@ -36,6 +36,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		490410E42297689B00B34F81 /* preferences.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = preferences.jpg; sourceTree = "<group>"; };
+		490410E52297689B00B34F81 /* track.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = track.jpg; sourceTree = "<group>"; };
+		490410E62297689B00B34F81 /* geotag.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = geotag.jpg; sourceTree = "<group>"; };
 		490F7EAA1B339A6C00DB36B5 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
 		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
 		4929788F1984B48D00BE0706 /* GeoTag Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "GeoTag Help"; sourceTree = "<group>"; };
@@ -86,9 +89,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		490410DD229767FB00B34F81 /* App Store Screenshots */ = {
+			isa = PBXGroup;
+			children = (
+				490410E62297689B00B34F81 /* geotag.jpg */,
+				490410E42297689B00B34F81 /* preferences.jpg */,
+				490410E52297689B00B34F81 /* track.jpg */,
+			);
+			path = "App Store Screenshots";
+			sourceTree = "<group>";
+		};
 		49B0EEAB19495FB100293C73 = {
 			isa = PBXGroup;
 			children = (
+				490410DD229767FB00B34F81 /* App Store Screenshots */,
 				490F7EAA1B339A6C00DB36B5 /* History */,
 				49C943AA197B170900F70F3F /* To Do */,
 				49A89BC41B0BED7900578EA6 /* Interpolation */,
