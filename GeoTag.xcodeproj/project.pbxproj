@@ -61,7 +61,6 @@
 		49B0EEC019495FB100293C73 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		49B0EECB19495FB100293C73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49B0EECC19495FB100293C73 /* GeoTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagTests.swift; sourceTree = "<group>"; };
-		49BC3D06195A14D2009BEC94 /* GeoTagPlay.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = GeoTagPlay.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		49BC3D0A195A62F2009BEC94 /* Base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		49C943AA197B170900F70F3F /* To Do */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "To Do"; sourceTree = "<group>"; };
@@ -102,12 +101,11 @@
 		49B0EEAB19495FB100293C73 = {
 			isa = PBXGroup;
 			children = (
-				490410DD229767FB00B34F81 /* App Store Screenshots */,
 				490F7EAA1B339A6C00DB36B5 /* History */,
 				49C943AA197B170900F70F3F /* To Do */,
 				49A89BC41B0BED7900578EA6 /* Interpolation */,
 				4965C67B197DDC87005FC03F /* README */,
-				49BC3D06195A14D2009BEC94 /* GeoTagPlay.playground */,
+				490410DD229767FB00B34F81 /* App Store Screenshots */,
 				49B0EEB619495FB100293C73 /* GeoTag */,
 				49F928711D1CB14D00D49F08 /* MapKit.framework */,
 				49B0EEC919495FB100293C73 /* GeoTagTests */,
