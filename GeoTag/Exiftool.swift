@@ -57,6 +57,8 @@ struct Exiftool {
         // ExifTool latitude and longitude exiftool argument names
         var latArg = "-GPSLatitude="
         var lonArg = "-GPSLongitude="
+        var latRefArg = "-GPSLatitudeRef="
+        var lonRefArg = "-GPSLongitudeRef="
 
         // ExifTool GSPDateTime arg storage
         var gpsDArg = ""
@@ -72,9 +74,22 @@ struct Exiftool {
         // Build ExifTool latitude, longitude argument values
         if let location = imageData.location {
             let lat = location.latitude
-            latArg += "\(lat)"
+            if lat >= 0 {
+                latArg += "\(lat)"
+                latRefArg += "N"
+            } else {
+                latArg += "\(-lat)"
+                latRefArg += "S"
+            }
+
             let lon = location.longitude
-            lonArg += "\(lon)"
+            if lon >= 0 {
+                lonArg += "\(lon)"
+                lonRefArg += "E"
+            } else {
+                lonArg += "\(-lon)"
+                lonRefArg += "W"
+            }
 
             // set GPS date/time stamp for current location if enabled
             if let dto = dtoWithZone(from: imageData),
@@ -97,8 +112,8 @@ struct Exiftool {
         exiftool.arguments = ["-q",
                               "-m",
                               "-overwrite_original_in_place",
-                              latArg,
-                              lonArg]
+                              latArg, latRefArg,
+                              lonArg, lonRefArg]
         if Preferences.dateTimeGPS() {
             exiftool.arguments! += [gpsDArg, gpsTArg]
         }
