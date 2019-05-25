@@ -35,9 +35,7 @@
 		49E154CE2262625900902787 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E154CD2262625900902787 /* XmpFile.swift */; };
 		49EDAE882298873200AE0C45 /* TestTrack.GPX in Resources */ = {isa = PBXBuildFile; fileRef = 492AFCEC211A5DF900F74AC1 /* TestTrack.GPX */; };
 		49EDAE8922989E7600AE0C45 /* TestTrack.GPX in Resources */ = {isa = PBXBuildFile; fileRef = 492AFCEC211A5DF900F74AC1 /* TestTrack.GPX */; };
-		49EDAE8B22989EB700AE0C45 /* TestPictures in Resources */ = {isa = PBXBuildFile; fileRef = 49EDAE8A22989EB700AE0C45 /* TestPictures */; };
 		49EDAE8D2298BAF200AE0C45 /* ImageDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EDAE8C2298BAF200AE0C45 /* ImageDataTests.swift */; };
-		49EDAE8F2298BF4900AE0C45 /* TestPictures in Resources */ = {isa = PBXBuildFile; fileRef = 49EDAE8E2298BF4900AE0C45 /* TestPictures */; };
 		49F928721D1CB14D00D49F08 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49F928711D1CB14D00D49F08 /* MapKit.framework */; };
 		49F928741D1CB34E00D49F08 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F928731D1CB34E00D49F08 /* MapView.swift */; };
 		49F928761D1CF94B00D49F08 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F928751D1CF94B00D49F08 /* MapViewController.swift */; };
@@ -119,9 +117,7 @@
 		49DDA5101D82538E00DEFAAF /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ExifTool; path = ../ExifTool; sourceTree = "<group>"; };
 		49E0340C1B0BBBB700CC9768 /* Interpolate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interpolate.swift; sourceTree = "<group>"; };
 		49E154CD2262625900902787 /* XmpFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
-		49EDAE8A22989EB700AE0C45 /* TestPictures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TestPictures; path = TestData/TestPictures; sourceTree = "<group>"; };
 		49EDAE8C2298BAF200AE0C45 /* ImageDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataTests.swift; sourceTree = "<group>"; };
-		49EDAE8E2298BF4900AE0C45 /* TestPictures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TestPictures; path = TestData/TestPictures; sourceTree = "<group>"; };
 		49F928711D1CB14D00D49F08 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		49F928731D1CB34E00D49F08 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		49F928751D1CF94B00D49F08 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -217,8 +213,6 @@
 		49B0EEAB19495FB100293C73 = {
 			isa = PBXGroup;
 			children = (
-				49EDAE8A22989EB700AE0C45 /* TestPictures */,
-				49EDAE8E2298BF4900AE0C45 /* TestPictures */,
 				490F7EAA1B339A6C00DB36B5 /* History */,
 				49C943AA197B170900F70F3F /* To Do */,
 				49A89BC41B0BED7900578EA6 /* Interpolation */,
@@ -427,7 +421,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				49EDAE882298873200AE0C45 /* TestTrack.GPX in Resources */,
-				49EDAE8F2298BF4900AE0C45 /* TestPictures in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,7 +429,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				49EDAE8922989E7600AE0C45 /* TestTrack.GPX in Resources */,
-				49EDAE8B22989EB700AE0C45 /* TestPictures in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
