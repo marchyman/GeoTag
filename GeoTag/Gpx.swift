@@ -56,7 +56,7 @@ class Gpx: NSObject {
     static let pointTimeFormat = ISO8601DateFormatter()
 
     /// Track points contain (at least) a latitude, longitude, and timestamp
-    struct Point {
+    struct Point : Equatable {
         let lat: Double
         let lon: Double
         var time: String

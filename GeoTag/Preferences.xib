@@ -140,7 +140,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="TJd-th-OsV">
                         <rect key="frame" x="20" y="91" width="524" height="5"/>
                     </box>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tMA-ge-WJt">
+                    <button identifier="sidecar" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tMA-ge-WJt">
                         <rect key="frame" x="18" y="69" width="182" height="18"/>
                         <string key="toolTip">Location updates will be written to existing sidecar files instead of the image file when this box is checked.   Sidecar files are files in the same folder as the image file with an extension of .xmp.</string>
                         <buttonCell key="cell" type="check" title="Update sidecar (xmp) files" bezelStyle="regularSquare" imagePosition="left" inset="2" id="9Qd-pn-PyA">
@@ -151,7 +151,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                             </connections>
                         </buttonCell>
                     </button>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N0U-6Z-ghf">
+                    <button identifier="datetime" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N0U-6Z-ghf">
                         <rect key="frame" x="18" y="49" width="210" height="18"/>
                         <string key="toolTip">When this box is checked GPS Date/Time stamp metadata in UTC will be set from the Original Date/Time the image was taken.  GPS Date/Time will only be correct if the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
                         <buttonCell key="cell" type="check" title="Update GPS Date/Time stamps" bezelStyle="regularSquare" imagePosition="left" inset="2" id="wmW-6z-ADx">

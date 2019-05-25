@@ -109,6 +109,18 @@ final class Preferences : NSWindowController {
         defaults.set(data, forKey: trackColorKey)
         return defaultColor
     }
+#if DEBUG
+    // debug class function to reset existing defaults
+    class
+    func resetDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: coordFormatKey)
+        defaults.removeObject(forKey: sidecarKey)
+        defaults.removeObject(forKey: saveBookmarkKey)
+        defaults.removeObject(forKey: dateTimeGPSKey)
+        defaults.removeObject(forKey: trackColorKey)
+    }
+#endif
 
     @IBOutlet
     var saveFolderPath: NSPathControl!

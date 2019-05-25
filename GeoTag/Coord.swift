@@ -31,17 +31,17 @@ import MapKit
 typealias Coord = CLLocationCoordinate2D
 
 /// extend floating point to return convert the fractional part as
-/// minutes or seconds
+/// minutes or seconds. The absolute value of the resutl is returned
 
 extension FloatingPoint {
     var minutes:  Self {
-        return (self*3600).truncatingRemainder(dividingBy: 3600) / 60
+        return abs((self*3600).truncatingRemainder(dividingBy: 3600) / 60)
     }
 
     var seconds:  Self {
-        return (self*3600)
-            .truncatingRemainder(dividingBy: 3600)
-            .truncatingRemainder(dividingBy: 60)
+        return abs((self*3600)
+                    .truncatingRemainder(dividingBy: 3600)
+                    .truncatingRemainder(dividingBy: 60))
     }
 }
 
@@ -53,11 +53,11 @@ extension CLLocationCoordinate2D {
     var dm: (latitude: String, longitude: String) {
         return (String(format:"%d° %.6f' %@",
                        Int(abs(latitude)),
-                       abs(latitude.minutes),
+                       latitude.minutes,
                        latitude >= 0 ? "N" : "S"),
                 String(format:"%d° %.6f' %@",
                        Int(abs(longitude)),
-                       abs(longitude.minutes),
+                       longitude.minutes,
                        longitude >= 0 ? "E" : "W"))
     }
 
@@ -65,13 +65,13 @@ extension CLLocationCoordinate2D {
     var dms: (latitude: String, longitude: String) {
         return (String(format:"%d° %d' %.2f\" %@",
                        Int(abs(latitude)),
-                       Int(abs(latitude.minutes)),
-                       abs(latitude.seconds),
+                       Int(latitude.minutes),
+                       latitude.seconds,
                        latitude >= 0 ? "N" : "S"),
                 String(format:"%d° %d' %.2f\" %@",
                        Int(abs(longitude)),
-                       Int(abs(longitude.minutes)),
-                       abs(longitude.seconds),
+                       Int(longitude.minutes),
+                       longitude.seconds,
                        longitude >= 0 ? "E" : "W"))
     }
 }

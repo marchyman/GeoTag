@@ -53,6 +53,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         window.delegate = self
+
+#if DEBUG
+        print("Debug enabled")
+        // if UI testing clear any existing preferences.
+        if let uitests = ProcessInfo.processInfo.environment["UITESTS"],
+            uitests == "1" {
+            Preferences.resetDefaults()
+        }
+#endif
+
         // Open a preferences window if a backup (save) folder location hasn't
         // yet been selected
         if Preferences.saveFolder() == nil {

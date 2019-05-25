@@ -216,7 +216,7 @@ final class ImageData: NSObject {
     ///
     /// If a sidecar file is being used the sidecar file is backed up in place
     /// of the image file.
-    
+
     private
     func saveOriginalFile() -> Bool {
         guard let saveDirUrl = Preferences.saveFolder() else { return false }
@@ -519,3 +519,11 @@ extension ImageData {
     }
 }
 
+// MARK: unit testing extension
+
+/// indirect access to private methods needed only for unit testing.
+extension ImageData {
+    func testBackup() -> Bool {
+        return saveOriginalFile()
+    }
+}

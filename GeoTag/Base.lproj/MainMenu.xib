@@ -574,7 +574,7 @@ CA
             </connections>
             <point key="canvasLocation" x="-1004" y="95"/>
         </window>
-        <menu title="Table Menu" id="RI2-ul-n9D">
+        <menu title="TableMenu" identifier="tableMenu" id="RI2-ul-n9D">
             <items>
                 <menuItem title="Cut" id="7HJ-N3-yTm">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -633,6 +633,7 @@ CA
                     </connections>
                 </menuItem>
             </items>
+            <accessibility identifier="tableMenu"/>
             <point key="canvasLocation" x="-327" y="272"/>
         </menu>
     </objects>
