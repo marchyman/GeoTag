@@ -177,6 +177,8 @@ final class Preferences : NSWindowController {
             }
             let defaults = UserDefaults.standard
             defaults.set(value, forKey: Preferences.coordFormatKey)
+            let nc = NotificationCenter.default
+            nc.post(name: Notification.Name("CoordFormatChanged"), object: nil)
         }
     }
 

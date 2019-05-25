@@ -56,6 +56,9 @@ final class TableViewController: NSViewController {
         mapViewController.mapView.clickDelegate = self
         tableView.registerForDraggedTypes([NSPasteboard.PasteboardType("NSFilenamesPboardType")])
         tableView.draggingDestinationFeedbackStyle = .none
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(coordFormatChanged),
+                       name: Notification.Name("CoordFormatChanged"), object: nil)
     }
 
     // MARK: populating the table
@@ -97,6 +100,13 @@ final class TableViewController: NSViewController {
             self.appDelegate.progressIndicator.stopAnimation(self)
         }
         return duplicateFound
+    }
+    
+    /// Force a reload of the entire table when the coordinate format changes
+    @objc
+    private
+    func coordFormatChanged() {
+        self.reloadAllRows()
     }
 
     /// save updated geolocation and/or date/time information
