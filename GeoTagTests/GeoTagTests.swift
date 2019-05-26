@@ -70,7 +70,7 @@ class GeoTagTests: XCTestCase {
         XCTAssert(coords.latitude.seconds == 0.0)
         print(Int(coords.longitude.minutes), coords.longitude.seconds)
         XCTAssert(Int(coords.longitude.minutes) == 40)
-        let secRange = 1.20..<1.21
+        let secRange = 1.20..<1.200001
         XCTAssert(secRange.contains(coords.longitude.seconds))
         
         // latitude and longitude as deg mm.mmm ref
