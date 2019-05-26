@@ -98,12 +98,18 @@ class ImageDataTests: XCTestCase {
     
     /// test ImageData init of an image where an XMP sidecar also exists
     func testInit1() {
+        let fileManager = FileManager.default
         let img = ImageData(url: testUrl1)
-        XCTAssert(img.url == testUrl1)
+        XCTAssert(img.url == testUrl1, "Incorrect URL for image")
         let xmpUrl = testUrl1.deletingPathExtension().appendingPathExtension(xmpExtension)
         XCTAssert(img.xmpUrl == xmpUrl)
         XCTAssert(img.sandboxUrl == sandboxUrl1)
-        XCTAssertNotNil(img.sandboxXmp)
+        guard let sandboxXmp = img.sandboxXmp else {
+            XCTFail("sandboxXmp is nil")
+            return
+        }
+        XCTAssert(fileManager.fileExists(atPath: (sandboxXmp.path)),
+                  "\(sandboxXmp.path) does not exist in sandbox")
         XCTAssert(img.dateTime == "2015:11:12 13:08:23",
                   "Wrong time stamp: \(img.dateTime)")
         XCTAssert(img.dateTime == img.originalDateTime)
@@ -120,11 +126,14 @@ class ImageDataTests: XCTestCase {
 
     /// test ImageData init of an image where an XMP sidecar does not
     func testInit2() {
+        let fileManager = FileManager.default
         let img = ImageData(url: testUrl2)
         XCTAssert(img.url == testUrl2)
         let xmpUrl = testUrl2.deletingPathExtension().appendingPathExtension(xmpExtension)
         XCTAssert(img.xmpUrl == xmpUrl)
         XCTAssert(img.sandboxUrl == sandboxUrl2)
+        XCTAssert(fileManager.fileExists(atPath: (sandboxUrl2.path)),
+                  "\(sandboxUrl2.path) does not exist in sandbox")
         XCTAssertNil(img.sandboxXmp)
         XCTAssert(img.dateTime == "2015:11:12 09:41:11",
                   "Wrong time stamp: \(img.dateTime)")
@@ -138,6 +147,30 @@ class ImageDataTests: XCTestCase {
         let sandboxXml = sandboxUrl2.deletingPathExtension()
             .appendingPathExtension(xmpExtension)
         XCTAssert(img.xmpFile.presentedItemURL == sandboxXml)
+    }
+    
+    /// When an ImageData instance is deleted the link to the image should
+    /// be removed from the application sandbox.
+    func testDeinit() {
+        do {
+            let img1 = ImageData(url: testUrl1)
+            let img2 = ImageData(url: testUrl2)
+            let _ = img1    // silence compiler about img1 never used
+            let _ = img2    // silence compiler about img2 never used
+        }
+
+        let fileManager = FileManager.default
+
+        // Verify that link to image1 xml file is no longer in the sandbox
+        let sandboxXml = sandboxUrl1.deletingPathExtension()
+                                    .appendingPathExtension(xmpExtension)
+        XCTAssert(!fileManager.fileExists(atPath: (sandboxXml.path)),
+                  "\(sandboxXml.path) still exists in sandbox")
+
+        // Verify that link to image2 file is no longer in the sandbox
+        XCTAssert(!fileManager.fileExists(atPath: (sandboxUrl2.path)),
+                  "\(sandboxUrl2.path) still exists in sandbox")
+
     }
 
     /// Test creating a back of the original file for images with and
