@@ -27,7 +27,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %mimeType $swapBytes $swapWords $currentByteOrder %unpackStd
             %jpegMarker %specialTags %fileTypeLookup);
 
-$VERSION = '11.41';
+$VERSION = '11.44';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -77,6 +77,7 @@ sub AddUserDefinedTags($%);
 sub InsertTagValues($$$;$$$);
 sub IsWritable($);
 sub IsSameFile($$$);
+sub IsRawType($);
 sub GetNewFileName($$);
 sub LoadAllTables();
 sub GetNewTagInfoList($;$);
@@ -3638,6 +3639,7 @@ sub Init($)
     $$self{Make}       = '';        # camera make
     $$self{Model}      = '';        # camera model
     $$self{CameraType} = '';        # Olympus camera type
+    $$self{FileType}   = '';        # identified file type
     if ($self->Options('HtmlDump')) {
         require Image::ExifTool::HtmlDump;
         $$self{HTML_DUMP} = new Image::ExifTool::HtmlDump;
@@ -6905,6 +6907,8 @@ sub DoProcessTIFF($$;$)
     my $ifdName = ($$dirInfo{DirName} and $$dirInfo{DirName} =~ /^(ExifIFD|GPS)$/) ? $1 : 'IFD0';
     if (not $tagTablePtr or $$tagTablePtr{GROUPS}{0} eq 'EXIF') {
         $self->FoundTag('ExifByteOrder', $byteOrder) unless $outfile;
+    } elsif ($$tagTablePtr{GROUPS}{0} eq 'MakerNotes') { # (for writing CR3 maker notes)
+        $ifdName = $$tagTablePtr{GROUPS}{0};
     } else {
         $ifdName = $$tagTablePtr{GROUPS}{1};
     }
@@ -7833,6 +7837,7 @@ sub SetFileType($;$$$)
             $normExt = $fileTypeExt{$fileType};
             $normExt = $fileType unless defined $normExt;
         }
+        $$self{FileType} = $fileType;
         $self->FoundTag('FileType', $fileType);
         $self->FoundTag('FileTypeExtension', uc $normExt);
         $self->FoundTag('MIMEType', $mimeType || 'application/unknown');
@@ -7847,6 +7852,7 @@ sub OverrideFileType($$;$$)
 {
     my ($self, $fileType, $mimeType, $normExt) = @_;
     if (defined $$self{VALUE}{FileType} and $fileType ne $$self{VALUE}{FileType}) {
+        $$self{FileType} = $fileType;
         $$self{VALUE}{FileType} = $fileType;
         unless (defined $normExt) {
             $normExt = $fileTypeExt{$fileType};

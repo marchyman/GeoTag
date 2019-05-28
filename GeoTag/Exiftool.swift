@@ -128,8 +128,8 @@ struct Exiftool {
     let writableTypes: Set = [
         "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "CR2", "CR3", "CRM",
         "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
-        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "ICC",
-        "IIQ", "IND", "JNG", "JP2", "JPEG", "LRV", "M4A/V", "MEF",
+        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
+        "ICC", "IIQ", "IND", "JNG", "JP2", "JPEG", "LRV", "M4A/V", "MEF",
         "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
         "NEF", "NRW", "ORF", "PBM", "PDF", "PEF", "PGM", "PNG",
         "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",

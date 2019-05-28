@@ -12,7 +12,7 @@ meta information extracted from or written to a file.
 =head1 TAG TABLES
 
 The tables listed below give the names of all tags recognized by ExifTool.
-They contain a total of 22582 tags, with 15004 unique tag names.
+They contain a total of 22584 tags, with 15004 unique tag names.
 
 B<Tag ID>, B<Index#> or B<Sequence> is given in the first column of each
 table.  A B<Tag ID> is the computer-readable equivalent of a tag name, and
@@ -7057,7 +7057,7 @@ cameras such as the PowerShot S95.
 
   Tag ID   Tag Name                             Writable
   ------   --------                             --------
-  'CNDA'   ThumbnailImage                       no
+  'CNDA'   ThumbnailImage                       undef
 
 =head3 Canon uuid Tags
 
@@ -24000,6 +24000,7 @@ for the official specification.
   'mdat'               MovieData?               no
   'mdat-offset'        MovieDataOffset          no
   'mdat-size'          MovieDataSize            no
+  'meco'               OtherMeta                QuickTime OtherMeta
   'meta'               Meta                     QuickTime Meta
   'moof'               MovieFragment            QuickTime MovieFragment
   'moov'               Movie                    QuickTime Movie
@@ -24226,6 +24227,7 @@ ItemList tags written by the "mdta" handler.  The prefix of
   'direction.facing'      CameraDirection       string
   'direction.motion'      CameraMotion          string
   'director'              Director              string
+  'displayname'           DisplayName           string
   'genre'                 Genre                 string
   'information'           Information           string
   'keywords'              Keywords              string
@@ -24294,6 +24296,19 @@ Tags extracted from the tx3g sbtl timed metadata of Yuneec drones.
       0    MajorBrand                           no
       1    MinorVersion                         no
       2    CompatibleBrands                     no
+
+=head3 QuickTime OtherMeta Tags
+
+  Tag ID   Tag Name                             Writable
+  ------   --------                             --------
+  'mere'   MetaRelation                         QuickTime MetaRelation
+  'meta'   Meta                                 QuickTime Meta
+
+=head3 QuickTime MetaRelation Tags
+
+  Index4   Tag Name                             Writable
+  ------   --------                             --------
+  [no tags known]
 
 =head3 QuickTime Meta Tags
 
@@ -24422,6 +24437,7 @@ added dynamically to this table after processing the Meta Keys information.
   'yrrc'       Year                             string
   "\xa9ART"    Artist                           string
   "\xa9alb"    Album                            string
+  "\xa9aut"    Author                           string
   "\xa9cmt"    Comment                          string
   "\xa9com"    Composer                         string
   "\xa9cpy"    Copyright                        string
@@ -24501,9 +24517,9 @@ defined in this table.
   'clap'   CleanAperture                        no
   'colr'   ICC_Profile                          ICC_Profile
   'hvcC'   HEVCConfiguration?                   no
-  'irot'   Rotation                             no
+  'irot'   Rotation                             int8u
   'ispe'   ImageSpatialExtent                   no
-  'pasp'   PixelAspectRatio                     no
+  'pasp'   PixelAspectRatio                     int32u
   'pixi'   ImagePixelDepth                      no
   'rloc'   RelativeLocation                     no
 
@@ -24517,13 +24533,14 @@ defined in this table.
 
   Tag ID   Tag Name                             Writable
   ------   --------                             --------
+  'meta'   Meta                                 QuickTime Meta
   'traf'   TrackFragment                        QuickTime TrackFragment
 
 =head3 QuickTime TrackFragment Tags
 
   Tag ID   Tag Name                             Writable
   ------   --------                             --------
-  [no tags known]
+  'meta'   Meta                                 QuickTime Meta
 
 =head3 QuickTime Movie Tags
 
@@ -24533,6 +24550,7 @@ defined in this table.
   'gps '   GPSDataList?                         no
   'htka'   HTCTrack                             QuickTime Track
   'iods'   InitialObjectDescriptor?             no
+  'meco'   OtherMeta                            QuickTime OtherMeta
   'meta'   Meta                                 QuickTime Meta
   'mvhd'   MovieHeader                          QuickTime MovieHeader
   'trak'   Track                                QuickTime Track
@@ -24552,6 +24570,7 @@ defined in this table.
   Tag ID   Tag Name                             Writable
   ------   --------                             --------
   'mdia'   Media                                QuickTime Media
+  'meco'   OtherMeta                            QuickTime OtherMeta
   'meta'   Meta                                 QuickTime Meta
   'tapt'   TrackAperture                        QuickTime TrackAperture
   'tkhd'   TrackHeader                          QuickTime TrackHeader

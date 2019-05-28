@@ -87,7 +87,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '4.11';
+$VERSION = '4.12';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -8373,6 +8373,7 @@ my %filterConv = (
 # Canon UUID atoms (ref PH, SX280)
 %Image::ExifTool::Canon::uuid = (
     GROUPS => { 0 => 'MakerNotes', 1 => 'Canon', 2 => 'Video' },
+    WRITE_PROC => 'Image::ExifTool::QuickTime::WriteQuickTime',
     NOTES => q{
         Tags extracted from the uuid atom of MP4 videos from cameras such as the
         SX280, and CR3 images from cameras such as the EOS M50.
@@ -8401,6 +8402,7 @@ my %filterConv = (
         SubDirectory => {
             TagTable => 'Image::ExifTool::Exif::Main',
             ProcessProc => \&Image::ExifTool::ProcessTIFF,
+            WriteProc => \&Image::ExifTool::WriteTIFF,
         },
     },
     CMT2 => { # (CR3 files)
@@ -8408,6 +8410,7 @@ my %filterConv = (
         SubDirectory => {
             TagTable => 'Image::ExifTool::Exif::Main',
             ProcessProc => \&Image::ExifTool::ProcessTIFF,
+            WriteProc => \&Image::ExifTool::WriteTIFF,
         },
     },
     CMT3 => { # (CR3 files)
@@ -8415,6 +8418,7 @@ my %filterConv = (
         SubDirectory => {
             TagTable => 'Image::ExifTool::Canon::Main',
             ProcessProc => \&Image::ExifTool::ProcessTIFF,
+            WriteProc => \&Image::ExifTool::WriteTIFF,
         },
     },
     CMT4 => { # (CR3 files)
@@ -8422,6 +8426,7 @@ my %filterConv = (
         SubDirectory => {
             TagTable => 'Image::ExifTool::GPS::Main',
             ProcessProc => \&Image::ExifTool::ProcessTIFF,
+            WriteProc => \&Image::ExifTool::WriteTIFF,
             DirName => 'GPS',
         },
     },
@@ -8555,6 +8560,8 @@ my %filterConv = (
 %Image::ExifTool::Canon::CNTH = (
     GROUPS => { 0 => 'MakerNotes', 1 => 'Canon', 2 => 'Video' },
     VARS => { IGNORE_BAD_ATOMS => 1 },
+    WRITABLE => 1,
+    WRITE_PROC => 'Image::ExifTool::QuickTime::WriteQuickTime',
     NOTES => q{
         Canon-specific QuickTime tags found in the CNTH atom of MOV videos from some
         cameras such as the PowerShot S95.
@@ -8571,6 +8578,7 @@ my %filterConv = (
             $$self{DOC_NUM} = 0;
             return \$val;
         },
+        RawConvInv => '$val',
     },
 );
 

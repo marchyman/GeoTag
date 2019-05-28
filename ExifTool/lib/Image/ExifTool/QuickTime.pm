@@ -42,7 +42,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.25';
+$VERSION = '2.28';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -447,6 +447,10 @@ my %eeBox = (
             TagTable => 'Image::ExifTool::QuickTime::Meta',
             Start => 4, # skip 4-byte version number header
         },
+    },
+    meco => { #ISO14496-12:2015
+        Name => 'OtherMeta',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::OtherMeta' },
     },
     free => [
         {
@@ -1038,6 +1042,10 @@ my %eeBox = (
         Unknown => 1,
         Binary => 1,
     },
+    meco => { #ISO14496-12:2015
+        Name => 'OtherMeta',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::OtherMeta' },
+    },
     # prfl - Profile (ref 12)
     # clip - clipping --> contains crgn (clip region) (ref 12)
     # mvex - movie extends --> contains mehd (movie extends header), trex (track extends) (ref 14)
@@ -1054,6 +1062,10 @@ my %eeBox = (
         Name => 'TrackFragment',
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::TrackFragment' },
     },
+    meta => { #ISO14496-12:2015
+        Name => 'Meta',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::Meta' },
+    },
 );
 
 # (ref CFFMediaFormat-2_1.pdf)
@@ -1061,6 +1073,10 @@ my %eeBox = (
     PROCESS_PROC => \&ProcessMOV,
     WRITE_PROC => \&WriteQuickTime,
     GROUPS => { 2 => 'Video' },
+    meta => { #ISO14496-12:2015
+        Name => 'Meta',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::Meta' },
+    },
     # tfhd - track fragment header
     # edts - edits --> contains elst (edit list) (ref PH)
     # tfdt - track fragment base media decode time
@@ -1194,6 +1210,10 @@ my %eeBox = (
             %unknownInfo,
         },
     ],
+    meco => { #ISO14492-12:2015 pg 83
+        Name => 'OtherMeta',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::OtherMeta' },
+    },
     # edts - edits --> contains elst (edit list)
     # clip - clipping --> contains crgn (clip region)
     # matt - track matt --> contains kmat (compressed matt)
@@ -1451,7 +1471,7 @@ my %eeBox = (
     # http://atomicparsley.sourceforge.net
     # http://www.3gpp.org/ftp/tsg_sa/WG4_CODEC/TSGS4_25/Docs/
     cprt => { Name => 'Copyright',  %langText, Groups => { 2 => 'Author' }, Preferred => 0 },
-    auth => { Name => 'Author',     %langText, Groups => { 2 => 'Author' } },
+    auth => { Name => 'Author',     %langText, Preferred => 0, Groups => { 2 => 'Author' } },
     titl => { Name => 'Title',      %langText, Preferred => 0 },
     dscp => { Name => 'Description',%langText },
     perf => { Name => 'Performer',  %langText },
@@ -2321,7 +2341,7 @@ my %eeBox = (
     },
     iinf => [{
         Name => 'ItemInformation',
-        Condition => '$$valPt =~ /^\0/', # (version 0?)
+        Condition => '$$valPt =~ /^\0/', # (check for version 0)
         SubDirectory => {
             TagTable => 'Image::ExifTool::QuickTime::ItemInfo',
             Start => 6, # (4-byte version/flags + 2-byte count)
@@ -2353,9 +2373,11 @@ my %eeBox = (
         Name => 'PrimaryItemReference',
         Condition => '$$valPt =~ /^\0/', # (version 0?)
         RawConv => '$$self{PrimaryItem} = unpack("x4n",$val)',
+        WriteHook => sub { my ($val,$et) = @_; $$et{PrimaryItem} = unpack("x4n",$val); },
     },{
         Name => 'PrimaryItemReference',
         RawConv => '$$self{PrimaryItem} = unpack("x4N",$val)',
+        WriteHook => sub { my ($val,$et) = @_; $$et{PrimaryItem} = unpack("x4N",$val); },
     }],
     free => { #PH
         Name => 'Free',
@@ -2377,6 +2399,32 @@ my %eeBox = (
     # idat
 );
 
+# additional metadata container (ref ISO14496-12:2015)
+%Image::ExifTool::QuickTime::OtherMeta = (
+    PROCESS_PROC => \&ProcessMOV,
+    WRITE_PROC => \&WriteQuickTime,
+    GROUPS => { 2 => 'Video' },
+    mere => {
+        Name => 'MetaRelation',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::MetaRelation' },
+    },
+    meta => {
+        Name => 'Meta',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::Meta' },
+    },
+);
+
+# metabox relation (ref ISO14496-12:2015)
+%Image::ExifTool::QuickTime::MetaRelation = (
+    PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
+    GROUPS => { 2 => 'Video' },
+    FORMAT => 'int32u',
+    # 0 => 'MetaRelationVersion',
+    # 1 => 'FirstMetaboxHandlerType',
+    # 2 => 'FirstMetaboxHandlerType',
+    # 3 => { Name => 'MetaboxRelation', Format => 'int8u' },
+);
+
 %Image::ExifTool::QuickTime::ItemProp = (
     PROCESS_PROC => \&ProcessMOV,
     WRITE_PROC => \&WriteQuickTime,
@@ -2395,6 +2443,8 @@ my %eeBox = (
 
 %Image::ExifTool::QuickTime::ItemPropCont = (
     PROCESS_PROC => \&ProcessMOV,
+    WRITE_PROC => \&WriteQuickTime,
+    PERMANENT => 1, # (can't be deleted)
     GROUPS => { 2 => 'Image' },
     VARS => { START_INDEX => 1 },   # show verbose indices starting at 1
     colr => [{
@@ -2411,7 +2461,9 @@ my %eeBox = (
     irot => {
         Name => 'Rotation',
         Format => 'int8u',
+        Writable => 'int8u',
         ValueConv => '$val * 90',
+        ValueConvInv => 'int($val / 90 + 0.5)',
     },
     ispe => {
         Name => 'ImageSpatialExtent',
@@ -2440,6 +2492,7 @@ my %eeBox = (
     pasp => {
         Name => 'PixelAspectRatio',
         Format => 'int32u',
+        Writable => 'int32u',
     },
     rloc => {
         Name => 'RelativeLocation',
@@ -2560,6 +2613,7 @@ my %eeBox = (
     #  from being created when a same-named tag already exists in the table)
     "\xa9ART" => 'Artist',
     "\xa9alb" => 'Album',
+    "\xa9aut" => { Name => 'Author', Preferred => 0, Groups => { 2 => 'Author' } }, #forum10091 ('auth' is preferred)
     "\xa9cmt" => 'Comment',
     "\xa9com" => { Name => 'Composer', Preferred => 0 }, # ("\xa9wrt" is preferred in ItemList)
     "\xa9day" => {
@@ -5381,6 +5435,7 @@ my %eeBox = (
     },
     description => { },
     director    => { },
+    displayname => { Name => 'DisplayName' },
     title       => { }, #22
     genre       => { },
     information => { },
@@ -7291,7 +7346,7 @@ sub PrintableTagID($;$)
 #  ConstructionMethod - offset type: 0=file, 1=idat, 2=item
 #  DataReferenceIndex - 0 for "this file", otherwise index in dref box
 #  BaseOffset         - base for file offsets
-#  Extents            - list of index,offset,length details for data in file
+#  Extents            - list of index,offset,length,nlen,lenPt details for data in file
 # infe:
 #  ProtectionIndex    - index if item is protected (0 for unprotected)
 #  Name               - item name
@@ -7317,6 +7372,7 @@ sub ParseItemLocation($$)
     my ($i, $j, $num, $pos, $id);
     my ($extent_index, $extent_offset, $extent_length);
 
+    my $verbose = $$et{IsWriting} ? 0 : $et->Options('Verbose');
     my $items = $$et{ItemInfo} || ($$et{ItemInfo} = { });
     my $len = length $val;
     return undef if $len < 8;
@@ -7364,7 +7420,11 @@ sub ParseItemLocation($$)
             $extent_offset = GetVarInt(\$val, $pos, $noff);
             $extent_length = GetVarInt(\$val, $pos, $nlen);
             return undef unless defined $extent_length;
-            push @extents, [ $extent_index, $extent_offset, $extent_length ];
+            $et->VPrint(1, "$$et{INDENT}  Item $id: const_meth=",
+                defined $$items{$id}{ConstructionMethod} ? $$items{$id}{ConstructionMethod} : '',
+                sprintf(" base=0x%x offset=0x%x len=0x%x\n", $$items{$id}{BaseOffset},
+                    $extent_offset, $extent_length)) if $verbose;
+            push @extents, [ $extent_index, $extent_offset, $extent_length, $nlen, $pos-$nlen ];
         }
         # save item location information keyed on 1-based item ID:
         $$items{$id}{Extents} = \@extents;
@@ -7386,6 +7446,13 @@ sub ParseContentDescribes($$)
     } else {
         return undef if length $val < 6;
         ($id, $count, @to) = unpack('nnn*', $val);
+    }
+    if ($count > @to) {
+        my $str = 'Missing values in ContentDescribes box';
+        $$et{IsWriting} ? $et->Error($str) : $et->Warn($str);
+    } elsif ($count < @to) {
+        $et->Warn('Ignored extra values in ContentDescribes box', 1);
+        @to = $count;
     }
     # add all referenced item ID's to a "RefersTo" lookup
     $$et{ItemInfo}{$id}{RefersTo}{$_} = 1 foreach @to;
@@ -7446,9 +7513,8 @@ sub ParseItemInfoEntry($$)
 
 #------------------------------------------------------------------------------
 # Parse item property association (ipma) box (ref https://github.com/gpac/gpac/blob/master/src/isomedia/iff.c)
-# Inputs: 0) infe data, 1) ExifTool ref
+# Inputs: 0) ipma data, 1) ExifTool ref
 # Returns: undef, and fills in ExifTool ItemInfo hash
-# Note: this information is currently not used by ExifTool (must figure out how to do this)
 sub ParseItemPropAssoc($$)
 {
     my ($val, $et) = @_;
@@ -7506,35 +7572,70 @@ sub HandleItemInfo($)
     my $et = shift;
     my $raf = $$et{RAF};
     my $items = $$et{ItemInfo};
+    my $verbose = $et->Options('Verbose');
     my $buff;
 
     # extract information from EXIF/XMP metadata items
     if ($items and $raf) {
+        push @{$$et{PATH}}, 'ItemInformation';
         my $curPos = $raf->Tell();
         my $primary = $$et{PrimaryItem};
         my $id;
+        $et->VerboseDir('Processing items from ItemInformation', scalar(keys %$items));
         foreach $id (sort { $a <=> $b } keys %$items) {
             my $item = $$items{$id};
             my $type = $$item{ContentType} || $$item{Type} || next;
-            unless ($type eq 'Exif') {
-                next unless $type eq 'application/rdf+xml';
-                $type = 'XMP';
+            if ($verbose) {
+                # add up total length of this item for the verbose output
+                my $len = 0;
+                if ($$item{Extents} and @{$$item{Extents}}) {
+                    $len += $$_[2] foreach @{$$item{Extents}};
+                }
+                $et->VPrint(0, "$$et{INDENT}Item $id) '${type}' ($len bytes)\n");
             }
-            if ($$item{ContentEncoding}) {
-                $et->WarnOnce("Can't currently decode encoded $type metadata");
+            # get ExifTool name for this item
+            my $name = { Exif => 'EXIF', 'application/rdf+xml' => 'XMP' }->{$type} || '';
+            my ($warn, $extent);
+            $warn = "Can't currently decode encoded $type metadata" if $$item{ContentEncoding};
+            $warn = "Can't currently decode protected $type metadata" if $$item{ProtectionIndex};
+            $warn = "Can't currently extract $type with construction method $$item{ConstructionMethod}" if $$item{ConstructionMethod};
+            $et->WarnOnce($warn) if $warn and $name;
+            $warn = 'Not this file' if $$item{DataReferenceIndex}; # (can only extract from "this file")
+            unless (($$item{Extents} and @{$$item{Extents}}) or $warn) {
+                $warn = "No Extents for $type item";
+                $et->WarnOnce($warn) if $name;
+            }
+            if ($warn) {
+                $et->VPrint(0, "$$et{INDENT}    [not extracted]  ($warn)\n") if $verbose > 2;
                 next;
             }
-            if ($$item{ProtectionIndex}) {
-                $et->WarnOnce("Can't currently decode protected $type metadata");
-                next;
-            }
-            if ($$item{ConstructionMethod}) {
-                $et->WarnOnce("Can't currently extract $type with construction method $$item{ConstructionMethod}");
-                next;
-            }
-            next if $$item{DataReferenceIndex}; # (can only extract information from "this file")
-            my ($extent, $proc);
             my $base = $$item{BaseOffset} || 0;
+            if ($verbose > 2) {
+                # do verbose hex dump
+                my $len = 0;
+                undef $buff;
+                my $val = '';
+                my $maxLen = $verbose > 3 ? 2048 : 96;
+                foreach $extent (@{$$item{Extents}}) {
+                    my $n = $$extent[2];
+                    my $more = $maxLen - $len;
+                    if ($more > 0 and $n) {
+                        $more = $n if $more > $n;
+                        $val .= $buff if defined $buff;
+                        $raf->Seek($$extent[1] + $base, 0) or last;
+                        $raf->Read($buff, $more) or last;
+                    }
+                    $len += $n;
+                }
+                if (defined $buff) {
+                    $buff = $val . $buff if length $val;
+                    $et->VerboseDump(\$buff, DataPos => $$item{Extents}[0][1] + $base);
+                    my $snip = $len - length $buff;
+                    $et->VPrint(0, "$$et{INDENT}    [snip $snip bytes]\n") if $snip;
+                }
+            }
+            next unless $name;
+            # assemble the data for this item
             undef $buff;
             my $val = '';
             foreach $extent (@{$$item{Extents}}) {
@@ -7544,7 +7645,16 @@ sub HandleItemInfo($)
             }
             next unless defined $buff;
             $buff = $val . $buff if length $val;
-            my $start = $type eq 'Exif' ? 10 : 0; # skip count and "Exif\0\0" header
+            next unless length $buff;   # ignore empty directories
+            my ($start, $subTable, $proc);
+            if ($name eq 'EXIF') {
+                $start = 10;
+                $subTable = GetTagTable('Image::ExifTool::Exif::Main');
+                $proc = \&Image::ExifTool::ProcessTIFF;
+            } else {
+                $start = 0;
+                $subTable = GetTagTable('Image::ExifTool::XMP::Main');
+            }
             my $pos = $$item{Extents}[0][1] + $base;
             my %dirInfo = (
                 DataPt   => \$buff,
@@ -7562,12 +7672,11 @@ sub HandleItemInfo($)
                 my ($lowest) = sort { $a <=> $b } keys %{$$item{RefersTo}};
                 $$items{$lowest}{DocNum} = $$et{DOC_NUM};
             }
-            my $subTable = GetTagTable('Image::ExifTool::' . $type . '::Main');
-            $proc = \&Image::ExifTool::ProcessTIFF if $type eq 'Exif';
             $et->ProcessDirectory(\%dirInfo, $subTable, $proc);
             delete $$et{DOC_NUM};
         }
         $raf->Seek($curPos, 0);     # seek back to original position
+        pop @{$$et{PATH}};
     }
     # process the item properties now that we should know their associations and document numbers
     if ($$et{ItemPropertyContainer}) {
@@ -7858,11 +7967,15 @@ sub ProcessKeys($$$)
             my $groups = $$tagInfo{Groups};
             $$newInfo{Groups} = $groups ? { %$groups } : { };
             $$newInfo{Groups}{$_} or $$newInfo{Groups}{$_} = $$tagTablePtr{GROUPS}{$_} foreach 0..2;
-        } elsif ($tag =~ /^[-\w.]+$/) {
+            $$newInfo{Groups}{1} = 'Keys';
+        } elsif ($tag =~ /^[-\w. ]+$/) {
             # create info for tags with reasonable id's
-            my $name = $tag;
-            $name =~ s/\.(.)/\U$1/g;
-            $newInfo = { Name => ucfirst($name) };
+            my $name = ucfirst $tag;
+            $name =~ s/[. ]+(.?)/\U$1/g;
+            $name =~ s/_([a-z])/_\U$1/g;
+            $name =~ s/([a-z])_([A-Z])/$1$2/g;
+            $name = "Tag_$name" if length $name < 2;
+            $newInfo = { Name => $name, Groups => { 1 => 'Keys' } };
             $msg = ' (Unknown)';
         }
         # substitute this tag in the ItemList table with the given index
