@@ -9,10 +9,7 @@
   
 * The presence of a sidecar file is indicated by a '*' following the image name.
 
-* heic files can be processed only when updates to sidecar files are enabled
-  in preferences.  GeoTag will use ExifTool to create a sidecar (xmp) file
-  containing a copy of the image metadata and update the sidecar file with
-  any location changes.
+* heic (iPhone) image file updates are now supported.
 
 * Add a preference item that controls coordinate display formats.   Latitude
   and longitude can be displayed in one of three forms:

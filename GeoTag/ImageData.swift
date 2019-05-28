@@ -44,10 +44,6 @@ let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
 let GPSLongitude = kCGImagePropertyGPSLongitude as String
 let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
 
-/// heic file type (heic files need a sidecar file)
-
-let heic = "heic"
-
 /// class to manage Image date/time and location metadata
 
 final class ImageData: NSObject {
@@ -142,8 +138,7 @@ final class ImageData: NSObject {
             xmpFile = XmpFile(url: sandboxUrl)
             if url.pathExtension.lowercased() != xmpExtension &&
                Preferences.useSidecarFiles() {
-                if fileManager.fileExists(atPath: xmpUrl.path) ||
-                   url.pathExtension.lowercased() == heic {
+                if fileManager.fileExists(atPath: xmpUrl.path) {
                     sandboxXmp = xmpFile.presentedItemURL
                     try? fileManager.removeItem(at: sandboxXmp!)
                     try fileManager.createSymbolicLink(at: sandboxXmp!,
@@ -155,10 +150,8 @@ final class ImageData: NSObject {
             fatalError("docDir symlink error: \(error)")
         }
         super.init()
-        // allow heic file if xmp file created above
-        if Exiftool.helper.fileTypeIsWritable(for: url) ||
-            (url.pathExtension.lowercased() == heic &&
-             Preferences.useSidecarFiles()) {
+
+        if Exiftool.helper.fileTypeIsWritable(for: url) {
             if let xmp = sandboxXmp,
                fileManager.fileExists(atPath: xmpUrl.path) {
                 validImage = loadXmpData(xmp)
@@ -195,19 +188,6 @@ final class ImageData: NSObject {
 
     // MARK: Backup and Save (functions do not run on main thread)
 
-    /// Create a sidecar file from an image file if one does not exist
-    /// This is only for heic files at this time as heic files can not be
-    /// written to by ExifTool.
-    private
-    func makeSidecarFile() {
-        if url.pathExtension.lowercased() == heic {
-            let fileManager = FileManager.default
-            if !fileManager.fileExists(atPath: xmpUrl.path) {
-                Exiftool.helper.metadataToXmp(imageURL: url, xmpURL: xmpUrl)
-            }
-        }
-    }
-
     /// copy the image into the backup folder
     ///
     /// If an image file with the same name exists in the backup folder append
@@ -222,12 +202,7 @@ final class ImageData: NSObject {
         guard let saveDirUrl = Preferences.saveFolder() else { return false }
         
         // If a sidecar file exists use it istead of the image file
-        
-        var fileUrl = url
-        if sandboxXmp != nil {
-            makeSidecarFile()
-            fileUrl = xmpUrl
-        }
+        let fileUrl = sandboxXmp == nil ? url : xmpUrl
         let name = fileUrl.lastPathComponent
 
         var fileNumber = 1

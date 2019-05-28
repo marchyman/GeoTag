@@ -160,23 +160,6 @@ struct Exiftool {
         }
         return false
     }
-
-    /// Create a sidecar (xmp) file from an image's metadata
-    /// - Parameter imageURL: the url of the image file
-    /// - Parameter xmpURL: the url of the sidecar file
-
-    func metadataToXmp(imageURL: URL, xmpURL: URL) {
-        let exiftool = Process()
-        exiftool.standardOutput = FileHandle.nullDevice
-        exiftool.standardError = FileHandle.nullDevice
-        exiftool.launchPath = url.path
-        exiftool.arguments = ["-q", "-m", "-TagsFromFile",
-                              imageURL.path,
-                              xmpURL.path]
-        exiftool.launch()
-        exiftool.waitUntilExit()
-        print("create metadata returned \(exiftool.terminationStatus)")
-    }
     
     /// return selected metadate from a file
     /// - Parameter xmp: URL of XMP file
