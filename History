@@ -35,6 +35,8 @@
 
 ### Bug fixes
 
+* Pin dragging is working again
+
 * Updated image locations could sometimes be written with the wrong longitude
   reference.
 

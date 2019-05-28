@@ -54,6 +54,8 @@ Version 4.5 is the latest released version.  It workes on macOS 10.12 or later.
 
 ### Bug fixes
 
+* Pin dragging is working again
+
 * Updated image locations could sometimes be written with the wrong longitude
   reference.
 

@@ -282,15 +282,9 @@ extension MapViewController: MKMapViewDelegate {
                  annotationView view: MKAnnotationView,
                  didChange newState: MKAnnotationView.DragState,
                  fromOldState oldState: MKAnnotationView.DragState) {
-        switch newState {
-        case .starting:
-            view.dragState = .dragging
-        case .ending:
-            view.dragState = .none
+        if (newState == .ending) {
             clickDelegate?.mouseClicked(mapView: nil,
                                         location: view.annotation!.coordinate)
-        default:
-            break
         }
     }
 
