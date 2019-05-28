@@ -19,16 +19,6 @@ Version 4.5 is the latest released version.  It workes on macOS 10.12 or later.
 
 ## Work in progress
 
-### Known Bugs
-
-* Longitude reference are sometimes ignored, turning W longitudes into
-  E longitudes.
-
-* Setting the date of an image outside of the range of 1970-2034 may result in
-  an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
-  and macOS libraries handle date and time.  One hopes that the year 2034 limit
-  will eventually be removed ;)
-
 ### New Features
 
 * If a sidecar file exists metadata can be read from and updated metadata
@@ -62,8 +52,18 @@ Version 4.5 is the latest released version.  It workes on macOS 10.12 or later.
 
 * Pin dragging is working again
 
+* Updated image locations could sometimes be written with the wrong longitude
+  reference.
+
 * fix crash that occured in the app was launched by dragging images onto
   the app icon.
+
+### Known Bugs
+
+* Setting the date of an image outside of the range of 1970-2034 may result in
+an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
+and macOS libraries handle date and time.  One hopes that the year 2034 limit
+will eventually be removed ;)
 
 ## GeoTag 4.5
 
