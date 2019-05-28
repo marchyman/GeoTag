@@ -173,6 +173,38 @@ class ImageDataTests: XCTestCase {
 
     }
 
+    /// Test setting and clearing locations
+    
+    func testLocation() {
+        let testLoc = Coord(latitude: 35.1234, longitude: -120.9876)
+        let img = ImageData(url: testUrl2)
+        img.location = testLoc
+        XCTAssertNotNil(img.location)
+        XCTAssert(img.stringRepresentation == "35.1234 -120.9876",
+                  "stringRepresentation \(img.stringRepresentation) not as expected")
+        img.revert()
+        XCTAssertNil(img.location)
+    }
+
+    func testDateTime() {
+        let img = ImageData(url: testUrl2)
+        if var dateValue = img.dateValue {
+            dateValue.addTimeInterval(3600)
+            img.dateValue = dateValue
+            XCTAssert(img.dateTime == "2015:11:12 10:41:11",
+                      "dateTime \(img.dateTime), expected 2015:11:12 18:41:11")
+        } else {
+            XCTFail("dateValue is nil")
+        }
+        img.dateValue = nil
+        XCTAssert(img.dateTime == "", "dateTime not nil")
+        img.revert()
+        XCTAssert(img.dateTime == "2015:11:12 09:41:11",
+                  "dateTime \(img.dateTime), expected 2015:11:12 09:41:11")
+        XCTAssert(img.dateFromEpoch == 1447350071.0,
+                  "dateFromEpoch \(img.dateFromEpoch), expected 1447350071.0")
+    }
+
     /// Test creating a back of the original file for images with and
     /// without a sidecar file.
     func testBackup() {
