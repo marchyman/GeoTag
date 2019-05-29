@@ -129,6 +129,9 @@ final class TableViewController: NSViewController {
                 let result = image.saveImageFile()
                 if result != 0 {
                     savedResult = result
+                    DispatchQueue.main.async {
+                        print("Error updating \(image.url.path)")
+                    }
                 }
                 updateGroup.leave()
             }
