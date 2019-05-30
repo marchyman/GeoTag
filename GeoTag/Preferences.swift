@@ -37,6 +37,7 @@ final class Preferences  {
     static var checkDirectory = true
     private static var url: URL? = nil
     
+    // how does the user desire to see latitudes and longitudes
     enum CoordFormat: Int {
         case deg
         case degMin

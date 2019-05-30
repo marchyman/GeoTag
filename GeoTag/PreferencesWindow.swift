@@ -2,7 +2,7 @@
 //  PreferencesWindow.swift
 //  GeoTag
 //
-//  Created by Marco S Hyman on 5/7/15.
+//  Created by Marco S Hyman on 5/29/19.
 //  Copyright 2019 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
