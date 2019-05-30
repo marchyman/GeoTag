@@ -88,7 +88,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gcF-0V-Kzp">
+                            <button identifier="deg" horizontalHuggingPriority="252" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gcF-0V-Kzp">
                                 <rect key="frame" x="19" y="127" width="89" height="18"/>
                                 <buttonCell key="cell" type="radio" title="dd.dddddd" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="x8m-n3-Z0b">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -98,8 +98,8 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                     <action selector="coordFormatChanged:" target="0lh-S3-hCN" id="76l-sr-weE"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R6t-cD-FbL">
-                                <rect key="frame" x="195" y="127" width="135" height="18"/>
+                            <button identifier="degMin" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R6t-cD-FbL">
+                                <rect key="frame" x="135" y="127" width="135" height="18"/>
                                 <buttonCell key="cell" type="radio" title="dd° mm.mmmm' N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="QPS-HY-4g9">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -108,20 +108,10 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                     <action selector="coordFormatChanged:" target="0lh-S3-hCN" id="wOa-pT-ARH"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wEF-7J-BVU">
-                                <rect key="frame" x="403" y="127" width="126" height="18"/>
-                                <buttonCell key="cell" type="radio" title="dd° mm' ss.ss&quot; N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="CyN-Lu-m00">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="coordFormatChanged:" target="0lh-S3-hCN" id="hc9-td-aGP"/>
-                                </connections>
-                            </button>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x36-Kb-x3W">
                                 <rect key="frame" x="20" y="117" width="507" height="5"/>
                             </box>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WWl-e4-6Nw">
+                            <button identifier="sidecar" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WWl-e4-6Nw">
                                 <rect key="frame" x="20" y="95" width="509" height="18"/>
                                 <string key="toolTip">When checked a sidecar file existing in the same folder as an image file will be updated with location information instead of the image file.  New sidecar files will not be created.</string>
                                 <buttonCell key="cell" type="check" title="Update sidecar (XMP) files" bezelStyle="regularSquare" imagePosition="left" inset="2" id="lnG-WA-vYm">
@@ -132,7 +122,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                     <action selector="sidecarButtonChanged:" target="0lh-S3-hCN" id="BeZ-Ve-Xd7"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GDs-Ky-946">
+                            <button identifier="datetime" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GDs-Ky-946">
                                 <rect key="frame" x="20" y="75" width="509" height="18"/>
                                 <string key="toolTip">When this box is checked GPS Date/Time stamp metadata in UTC will be set from the Original Date/Time the image was taken.  GPS Date/Time will only be correct if the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
                                 <buttonCell key="cell" type="check" title="Update GPS Date/Time stamps" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ghg-rB-WJm">
@@ -174,6 +164,16 @@ DQ
                                     <action selector="close:" target="0lh-S3-hCN" id="NCi-cn-A9V"/>
                                 </connections>
                             </button>
+                            <button identifier="degMinSec" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wEF-7J-BVU">
+                                <rect key="frame" x="297" y="127" width="232" height="18"/>
+                                <buttonCell key="cell" type="radio" title="dd° mm' ss.ss&quot; N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="CyN-Lu-m00">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="coordFormatChanged:" target="0lh-S3-hCN" id="hc9-td-aGP"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="UfN-Xf-vxz" firstAttribute="leading" secondItem="ctY-vc-7Cb" secondAttribute="trailing" constant="10" id="2GZ-qv-QTt"/>
@@ -184,6 +184,7 @@ DQ
                             <constraint firstItem="gcF-0V-Kzp" firstAttribute="leading" secondItem="x36-Kb-x3W" secondAttribute="leading" id="Ff8-xj-If5"/>
                             <constraint firstItem="wEF-7J-BVU" firstAttribute="trailing" secondItem="x36-Kb-x3W" secondAttribute="trailing" id="H8x-IQ-bGP"/>
                             <constraint firstItem="xfs-6s-Szc" firstAttribute="top" secondItem="UfN-Xf-vxz" secondAttribute="bottom" constant="8" symbolic="YES" id="HBS-Ct-TvT"/>
+                            <constraint firstItem="wEF-7J-BVU" firstAttribute="leading" secondItem="R6t-cD-FbL" secondAttribute="trailing" constant="30" id="I2E-ar-wH1"/>
                             <constraint firstItem="WWl-e4-6Nw" firstAttribute="trailing" secondItem="GDs-Ky-946" secondAttribute="trailing" id="NfG-vZ-zhE"/>
                             <constraint firstItem="0DR-3T-UaS" firstAttribute="leading" secondItem="gcF-0V-Kzp" secondAttribute="leading" id="Qii-zD-4qv"/>
                             <constraint firstItem="z38-Lm-kvU" firstAttribute="leading" secondItem="NTf-hY-jkS" secondAttribute="leading" constant="20" symbolic="YES" id="UKt-Dg-baX"/>
@@ -200,7 +201,6 @@ DQ
                             <constraint firstItem="0DR-3T-UaS" firstAttribute="trailing" secondItem="NpC-9F-bSK" secondAttribute="trailing" id="jav-za-A9k"/>
                             <constraint firstItem="gcF-0V-Kzp" firstAttribute="top" secondItem="NpC-9F-bSK" secondAttribute="bottom" constant="8" symbolic="YES" id="jiv-At-HZB"/>
                             <constraint firstAttribute="bottom" secondItem="xfs-6s-Szc" secondAttribute="bottom" constant="20" symbolic="YES" id="kjq-Zu-qMD"/>
-                            <constraint firstItem="wEF-7J-BVU" firstAttribute="leading" secondItem="R6t-cD-FbL" secondAttribute="trailing" constant="76" id="pWx-by-aN1"/>
                             <constraint firstItem="R6t-cD-FbL" firstAttribute="baseline" secondItem="wEF-7J-BVU" secondAttribute="baseline" id="qwV-N2-WFT"/>
                             <constraint firstItem="UfN-Xf-vxz" firstAttribute="top" secondItem="GDs-Ky-946" secondAttribute="bottom" constant="11" id="rdg-4D-N7h"/>
                             <constraint firstItem="z38-Lm-kvU" firstAttribute="top" secondItem="NTf-hY-jkS" secondAttribute="top" constant="16" id="tC3-H6-Xa7"/>
@@ -209,6 +209,7 @@ DQ
                             <constraint firstItem="x36-Kb-x3W" firstAttribute="leading" secondItem="ctY-vc-7Cb" secondAttribute="leading" id="uUt-Lk-nFr"/>
                             <constraint firstItem="GDs-Ky-946" firstAttribute="trailing" secondItem="UfN-Xf-vxz" secondAttribute="trailing" id="wg2-O7-5sR"/>
                             <constraint firstItem="NpC-9F-bSK" firstAttribute="top" secondItem="0DR-3T-UaS" secondAttribute="bottom" constant="8" symbolic="YES" id="xkT-Zl-Dc6"/>
+                            <constraint firstItem="R6t-cD-FbL" firstAttribute="leading" secondItem="gcF-0V-Kzp" secondAttribute="trailing" constant="30" id="xmX-63-bpn"/>
                         </constraints>
                     </view>
                     <connections>
