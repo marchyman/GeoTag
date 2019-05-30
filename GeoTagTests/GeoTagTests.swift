@@ -48,15 +48,16 @@ class GeoTagTests: XCTestCase {
     func testPreferencesSetup() {
         let app = NSApplication.shared
         if let ad = app.delegate as? AppDelegate {
-            ad.openPreferencesWindow(self)
-            let prefs = ad.preferences
-            XCTAssertNotNil(prefs.coordFormatDeg)
-            XCTAssertNotNil(prefs.coordFormatDegMin)
-            XCTAssertNotNil(prefs.coordFormatDegMinSec)
-            XCTAssertNotNil(prefs.dtGPSButton)
-            XCTAssertNotNil(prefs.sidecarButton)
-            XCTAssert(prefs.windowNibName == Preferences.nibName)
-            XCTAssertFalse(prefs.windowShouldClose(sender: self))
+            ad.openPreferences(self)
+            if let prefs = preferencesViewController {
+                XCTAssertNotNil(prefs.coordFormatDeg)
+                XCTAssertNotNil(prefs.coordFormatDegMin)
+                XCTAssertNotNil(prefs.coordFormatDegMinSec)
+                XCTAssertNotNil(prefs.dtGPSButton)
+                XCTAssertNotNil(prefs.sidecarButton)
+            } else {
+                XCTFail("preferencesViewController not set")
+            }
         } else {
             XCTFail("App Delegate not set")
         }

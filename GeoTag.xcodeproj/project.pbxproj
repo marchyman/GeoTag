@@ -15,9 +15,11 @@
 		494E9500210E9F740076B58F /* ChangeTime.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 494E94FF210E9F740076B58F /* ChangeTime.storyboard */; };
 		494E9502210EA1B40076B58F /* ChangeTimeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */; };
 		494E9504210EBE3B0076B58F /* ChangeTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */; };
-		4966FAEF1AF07BE000CEE06E /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4966FAEE1AF07BE000CEE06E /* Preferences.xib */; };
 		4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */; };
 		497EE5D3195CAE6300306283 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497EE5D2195CAE6300306283 /* ImageData.swift */; };
+		4982FFA0229F399A00C1D312 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4982FF9F229F399A00C1D312 /* Preferences.storyboard */; };
+		4982FFA2229F554300C1D312 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4982FFA1229F554300C1D312 /* PreferencesWindow.swift */; };
+		4982FFA4229F582800C1D312 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4982FFA3229F582800C1D312 /* PreferencesView.swift */; };
 		498BC9EA210524160070A528 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498BC9E9210524160070A528 /* Gpx.swift */; };
 		4994C4D32118EABE00DF9F28 /* GeoTagUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4994C4D22118EABE00DF9F28 /* GeoTagUITests.swift */; };
 		4994C4DB21193D5500DF9F28 /* MenuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4994C4DA21193D5500DF9F28 /* MenuTests.swift */; };
@@ -75,9 +77,11 @@
 		494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeTimeWindow.swift; sourceTree = "<group>"; };
 		494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeTimeViewController.swift; sourceTree = "<group>"; };
 		4965C67B197DDC87005FC03F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		4966FAEE1AF07BE000CEE06E /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
 		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ImageData.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		4982FF9F229F399A00C1D312 /* Preferences.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Preferences.storyboard; sourceTree = "<group>"; };
+		4982FFA1229F554300C1D312 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindow.swift; sourceTree = "<group>"; };
+		4982FFA3229F582800C1D312 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		498BC9E9210524160070A528 /* Gpx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
 		4990F0AE19818AA4001CA437 /* icon.pxm */ = {isa = PBXFileReference; lastKnownFileType = file; path = icon.pxm; sourceTree = "<group>"; };
 		4994C4D02118EABE00DF9F28 /* GeoTagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -212,8 +216,10 @@
 				49D6BD8F22864E65001A69E0 /* ChangeLocation.storyboard */,
 				49D6BD9122864EBC001A69E0 /* ChangeLocationWindow.swift */,
 				49D6BD9322865064001A69E0 /* ChangeLocationViewController.swift */,
+				4982FF9F229F399A00C1D312 /* Preferences.storyboard */,
+				4982FFA1229F554300C1D312 /* PreferencesWindow.swift */,
+				4982FFA3229F582800C1D312 /* PreferencesView.swift */,
 				49CE08811AFBF9370057E310 /* Preferences.swift */,
-				4966FAEE1AF07BE000CEE06E /* Preferences.xib */,
 				49E154CD2262625900902787 /* XmpFile.swift */,
 				49B0EEBF19495FB100293C73 /* MainMenu.xib */,
 				4990F0AE19818AA4001CA437 /* icon.pxm */,
@@ -400,7 +406,7 @@
 				49DDA5111D82538E00DEFAAF /* ExifTool in Resources */,
 				49D6BD9022864E65001A69E0 /* ChangeLocation.storyboard in Resources */,
 				49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */,
-				4966FAEF1AF07BE000CEE06E /* Preferences.xib in Resources */,
+				4982FFA0229F399A00C1D312 /* Preferences.storyboard in Resources */,
 				492978901984B48D00BE0706 /* GeoTag Help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -460,7 +466,9 @@
 				499C56C81D399336004B47AD /* Exiftool.swift in Sources */,
 				4997D4A42275222E00C2FE80 /* Coord.swift in Sources */,
 				49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */,
+				4982FFA2229F554300C1D312 /* PreferencesWindow.swift in Sources */,
 				494E9502210EA1B40076B58F /* ChangeTimeWindow.swift in Sources */,
+				4982FFA4229F582800C1D312 /* PreferencesView.swift in Sources */,
 				498BC9EA210524160070A528 /* Gpx.swift in Sources */,
 				4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */,
 				49F928741D1CB34E00D49F08 /* MapView.swift in Sources */,

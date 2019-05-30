@@ -26,10 +26,9 @@
 import Foundation
 import AppKit
 
-final class Preferences : NSWindowController {
+final class Preferences  {
 
     // class constants
-    static let nibName = NSNib.Name("Preferences")
     static let saveBookmarkKey = "SaveBookmarkKey"
     static let coordFormatKey = "CoordFormatKey"
     static let sidecarKey = "SidecarKey"
@@ -38,6 +37,7 @@ final class Preferences : NSWindowController {
     static var checkDirectory = true
     private static var url: URL? = nil
     
+    // how does the user desire to see latitudes and longitudes
     enum CoordFormat: Int {
         case deg
         case degMin
@@ -122,130 +122,4 @@ final class Preferences : NSWindowController {
     }
 #endif
 
-    @IBOutlet
-    var saveFolderPath: NSPathControl!
-
-    /// select a save folder
-    /// - Parameter AnyObject: unused
-    ///
-    /// Allow the user to pick or create a folder where the original
-    /// copies of updated images will be saved
-    
-    @IBAction
-    func pickSaveFolder(_: AnyObject) {
-        var bookmark: Data? = nil
-        let panel = NSOpenPanel()
-        panel.allowsMultipleSelection = false
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.canCreateDirectories = true
-        if panel.runModal().rawValue == NSFileHandlingPanelOKButton {
-            if let url = panel.url {
-                do {
-                    try bookmark = url.bookmarkData(options: .withSecurityScope)
-                    saveFolderPath.url = url
-                } catch let error as NSError {
-                    unexpected(error: error,
-                               "Cannot create security bookmark for image backup folder\n\nReason: ")
-                }
-                let defaults = UserDefaults.standard
-                defaults.set(bookmark, forKey: Preferences.saveBookmarkKey)
-                Preferences.checkDirectory = true
-            } else {
-                unexpected(error: nil,
-                           "Cannot create image backup folder\n\nReason: ")
-            }
-        }
-    }
-
-    @IBOutlet weak var coordFormatDeg: NSButton!
-    @IBOutlet weak var coordFormatDegMin: NSButton!
-    @IBOutlet weak var coordFormatDegMinSec: NSButton!
-    
-    @IBAction func coordFormatChanged(_ sender: NSButton) {
-        if let id = sender.identifier {
-            var value = 0
-            switch id {
-            case NSUserInterfaceItemIdentifier("deg"):
-                break
-            case NSUserInterfaceItemIdentifier("degMin"):
-                value = 1
-            case NSUserInterfaceItemIdentifier("degMinSec"):
-                value = 2
-            default:
-                break
-            }
-            let defaults = UserDefaults.standard
-            defaults.set(value, forKey: Preferences.coordFormatKey)
-            let nc = NotificationCenter.default
-            nc.post(name: Notification.Name("CoordFormatChanged"), object: nil)
-        }
-    }
-
-    @IBOutlet
-    weak var dtGPSButton: NSButton!
-
-    @IBAction
-    func toggleDateTimeGPS(_ sender: NSButton) {
-        let defaults = UserDefaults.standard
-        defaults.set(sender.state == NSControl.StateValue.on,
-                     forKey: Preferences.dateTimeGPSKey)
-    }
-
-    @IBOutlet
-    weak var trackColorWell: NSColorWell!
-
-    @IBAction func setTrackColor(_ sender: NSColorWell) {
-        let defaults = UserDefaults.standard
-        let data = NSArchiver.archivedData(withRootObject: sender.color)
-        defaults.set(data, forKey: Preferences.trackColorKey)
-    }
-
-    @IBOutlet
-    weak var sidecarButton: NSButtonCell!
-    
-    @IBAction func sidecarButtonChanged(_ sender: NSButton) {
-        let defaults = UserDefaults.standard
-        defaults.set(sender.state == NSControl.StateValue.on,
-                     forKey: Preferences.sidecarKey)
-
-    }
-
-    /// return the NIB name for this window
-
-	override
-    var windowNibName: NSNib.Name? {
-		return Preferences.nibName
-	}
-
-    /// initialize preferences pane from current user preferences
-
-    override
-    func windowDidLoad() {
-        saveFolderPath.url = Preferences.saveFolder()
-        switch Preferences.coordFormat() {
-        case .deg:
-            coordFormatDeg.state = NSControl.StateValue.on
-        case .degMin:
-            coordFormatDegMin.state = NSControl.StateValue.on
-        case .degMinSec:
-            coordFormatDegMinSec.state = NSControl.StateValue.on
-        }
-        sidecarButton.state = Preferences.useSidecarFiles() ?
-            NSControl.StateValue.on :
-            NSControl.StateValue.off
-        dtGPSButton.state = Preferences.dateTimeGPS() ?
-                            NSControl.StateValue.on :
-                            NSControl.StateValue.off
-        trackColorWell.color = Preferences.trackColor()
-    }
-
-    // window delegate function... orderOut instead of close
-
-    func windowShouldClose(sender: AnyObject!) -> Bool {
-        if let window = window {
-            window.orderOut(sender)
-        }
-        return false
-    }
 }

@@ -31,7 +31,7 @@ import MapKit
 typealias Coord = CLLocationCoordinate2D
 
 /// extend floating point to return convert the fractional part as
-/// minutes or seconds. The absolute value of the resutl is returned
+/// minutes or seconds. The absolute value of the result is returned
 
 extension FloatingPoint {
     var minutes:  Self {

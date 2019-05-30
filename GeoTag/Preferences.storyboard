@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="GMY-Vl-9oZ">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="dd2-87-Sae">
+            <objects>
+                <windowController storyboardIdentifier="Preferences" id="GMY-Vl-9oZ" customClass="PreferencesWindowController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="GeoTag Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="w5q-YE-yuQ">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="425" y="461" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+                        <connections>
+                            <outlet property="delegate" destination="GMY-Vl-9oZ" id="rTY-nH-LMu"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="0lh-S3-hCN" kind="relationship" relationship="window.shadowedContentViewController" id="IN9-Os-Frr"/>
+                    </connections>
+                </windowController>
+                <customObject id="3kO-oB-6Gm" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-128" y="221"/>
+        </scene>
+        <!--Preferences View Controller-->
+        <scene sceneID="vXm-Xq-0od">
+            <objects>
+                <viewController storyboardIdentifier="Preferences" id="0lh-S3-hCN" customClass="PreferencesViewController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="NTf-hY-jkS">
+                        <rect key="frame" x="0.0" y="0.0" width="547" height="397"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <box title="Backup Location" translatesAutoresizingMaskIntoConstraints="NO" id="z38-Lm-kvU">
+                                <rect key="frame" x="17" y="182" width="513" height="199"/>
+                                <view key="contentView" id="YAe-wg-Cho">
+                                    <rect key="frame" x="3" y="3" width="507" height="181"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KR1-bn-ydR">
+                                            <rect key="frame" x="20" y="20" width="467" height="22"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="22" id="pfS-0f-Ows"/>
+                                            </constraints>
+                                            <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Select a folder to hold your image backups here" id="9tY-1R-VUu">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </pathCell>
+                                            <connections>
+                                                <action selector="pickSaveFolder:" target="0lh-S3-hCN" id="uSu-fm-t76"/>
+                                            </connections>
+                                        </pathControl>
+                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Iv8-JF-LLR">
+                                            <rect key="frame" x="18" y="59" width="471" height="102"/>
+                                            <textFieldCell key="cell" selectable="YES" id="SQe-WV-V99">
+                                                <font key="font" usesAppearanceFont="YES"/>
+                                                <string key="title">GeoTag makes a copy of each image before updating geo-location information to make sure you will never loose an image should something happen during the update.
+
+Please select a folder to hold these backup copies.  The backups can be removed once you are satisfied that your images are correct. </string>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="top" secondItem="YAe-wg-Cho" secondAttribute="top" constant="20" symbolic="YES" id="5VO-6X-peS"/>
+                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="trailing" secondItem="KR1-bn-ydR" secondAttribute="trailing" id="Ay8-iC-4pp"/>
+                                        <constraint firstItem="KR1-bn-ydR" firstAttribute="top" secondItem="Iv8-JF-LLR" secondAttribute="bottom" constant="17" id="IvS-Ve-hG9"/>
+                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="leading" secondItem="KR1-bn-ydR" secondAttribute="leading" id="cax-CG-CYA"/>
+                                        <constraint firstAttribute="bottom" secondItem="KR1-bn-ydR" secondAttribute="bottom" constant="20" symbolic="YES" id="gI1-MJ-1bs"/>
+                                        <constraint firstAttribute="trailing" secondItem="Iv8-JF-LLR" secondAttribute="trailing" constant="20" symbolic="YES" id="nYm-la-zTN"/>
+                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="leading" secondItem="YAe-wg-Cho" secondAttribute="leading" constant="20" symbolic="YES" id="ohd-Fl-Oos"/>
+                                    </constraints>
+                                </view>
+                            </box>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="0DR-3T-UaS">
+                                <rect key="frame" x="20" y="175" width="507" height="5"/>
+                            </box>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NpC-9F-bSK">
+                                <rect key="frame" x="20" y="152" width="509" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Select a format for Latitude and Longitude display" id="iCU-hi-ygw">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button identifier="deg" horizontalHuggingPriority="252" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gcF-0V-Kzp">
+                                <rect key="frame" x="19" y="127" width="89" height="18"/>
+                                <buttonCell key="cell" type="radio" title="dd.dddddd" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="x8m-n3-Z0b">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="coordFormatChanged:" target="0lh-S3-hCN" id="76l-sr-weE"/>
+                                </connections>
+                            </button>
+                            <button identifier="degMin" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R6t-cD-FbL">
+                                <rect key="frame" x="135" y="127" width="135" height="18"/>
+                                <buttonCell key="cell" type="radio" title="dd° mm.mmmm' N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="QPS-HY-4g9">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="coordFormatChanged:" target="0lh-S3-hCN" id="wOa-pT-ARH"/>
+                                </connections>
+                            </button>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x36-Kb-x3W">
+                                <rect key="frame" x="20" y="117" width="507" height="5"/>
+                            </box>
+                            <button identifier="sidecar" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WWl-e4-6Nw">
+                                <rect key="frame" x="20" y="95" width="509" height="18"/>
+                                <string key="toolTip">When checked a sidecar file existing in the same folder as an image file will be updated with location information instead of the image file.  New sidecar files will not be created.</string>
+                                <buttonCell key="cell" type="check" title="Update sidecar (XMP) files" bezelStyle="regularSquare" imagePosition="left" inset="2" id="lnG-WA-vYm">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="sidecarButtonChanged:" target="0lh-S3-hCN" id="BeZ-Ve-Xd7"/>
+                                </connections>
+                            </button>
+                            <button identifier="datetime" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GDs-Ky-946">
+                                <rect key="frame" x="20" y="75" width="509" height="18"/>
+                                <string key="toolTip">When this box is checked GPS Date/Time stamp metadata in UTC will be set from the Original Date/Time the image was taken.  GPS Date/Time will only be correct if the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
+                                <buttonCell key="cell" type="check" title="Update GPS Date/Time stamps" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ghg-rB-WJm">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toggleDateTimeGPS:" target="0lh-S3-hCN" id="8ub-0v-HU5"/>
+                                </connections>
+                            </button>
+                            <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="ctY-vc-7Cb">
+                                <rect key="frame" x="20" y="46" width="44" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="K5r-7K-wnB"/>
+                                </constraints>
+                                <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="setTrackColor:" target="0lh-S3-hCN" id="k4o-oi-VFE"/>
+                                </connections>
+                            </colorWell>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UfN-Xf-vxz">
+                                <rect key="frame" x="72" y="49" width="457" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Select track color for tracks loaded from GPX files" id="WjJ-at-ZO5">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xfs-6s-Szc">
+                                <rect key="frame" x="455" y="13" width="75" height="32"/>
+                                <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lWX-JU-9gq">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="close:" target="0lh-S3-hCN" id="NCi-cn-A9V"/>
+                                </connections>
+                            </button>
+                            <button identifier="degMinSec" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wEF-7J-BVU">
+                                <rect key="frame" x="297" y="127" width="232" height="18"/>
+                                <buttonCell key="cell" type="radio" title="dd° mm' ss.ss&quot; N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="CyN-Lu-m00">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="coordFormatChanged:" target="0lh-S3-hCN" id="hc9-td-aGP"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="UfN-Xf-vxz" firstAttribute="leading" secondItem="ctY-vc-7Cb" secondAttribute="trailing" constant="10" id="2GZ-qv-QTt"/>
+                            <constraint firstItem="NpC-9F-bSK" firstAttribute="leading" secondItem="WWl-e4-6Nw" secondAttribute="leading" id="7Z8-51-Tbn"/>
+                            <constraint firstItem="NpC-9F-bSK" firstAttribute="leading" secondItem="NTf-hY-jkS" secondAttribute="leading" constant="22" id="7qo-Rv-Od2"/>
+                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="leading" secondItem="GDs-Ky-946" secondAttribute="leading" id="8xc-q0-Qh4"/>
+                            <constraint firstItem="ctY-vc-7Cb" firstAttribute="centerY" secondItem="UfN-Xf-vxz" secondAttribute="centerY" id="Bal-ac-FjB"/>
+                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="leading" secondItem="x36-Kb-x3W" secondAttribute="leading" id="Ff8-xj-If5"/>
+                            <constraint firstItem="wEF-7J-BVU" firstAttribute="trailing" secondItem="x36-Kb-x3W" secondAttribute="trailing" id="H8x-IQ-bGP"/>
+                            <constraint firstItem="xfs-6s-Szc" firstAttribute="top" secondItem="UfN-Xf-vxz" secondAttribute="bottom" constant="8" symbolic="YES" id="HBS-Ct-TvT"/>
+                            <constraint firstItem="wEF-7J-BVU" firstAttribute="leading" secondItem="R6t-cD-FbL" secondAttribute="trailing" constant="30" id="I2E-ar-wH1"/>
+                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="trailing" secondItem="GDs-Ky-946" secondAttribute="trailing" id="NfG-vZ-zhE"/>
+                            <constraint firstItem="0DR-3T-UaS" firstAttribute="leading" secondItem="gcF-0V-Kzp" secondAttribute="leading" id="Qii-zD-4qv"/>
+                            <constraint firstItem="z38-Lm-kvU" firstAttribute="leading" secondItem="NTf-hY-jkS" secondAttribute="leading" constant="20" symbolic="YES" id="UKt-Dg-baX"/>
+                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="top" secondItem="x36-Kb-x3W" secondAttribute="bottom" constant="8" symbolic="YES" id="YFO-dT-vie"/>
+                            <constraint firstItem="ctY-vc-7Cb" firstAttribute="top" secondItem="GDs-Ky-946" secondAttribute="bottom" constant="8" symbolic="YES" id="YS8-vJ-1nd"/>
+                            <constraint firstItem="z38-Lm-kvU" firstAttribute="leading" secondItem="0DR-3T-UaS" secondAttribute="leading" id="ZN2-XA-mqk"/>
+                            <constraint firstItem="x36-Kb-x3W" firstAttribute="top" secondItem="gcF-0V-Kzp" secondAttribute="bottom" constant="8" symbolic="YES" id="anf-Le-Cd6"/>
+                            <constraint firstItem="GDs-Ky-946" firstAttribute="top" secondItem="WWl-e4-6Nw" secondAttribute="bottom" constant="6" symbolic="YES" id="bDp-8z-PhE"/>
+                            <constraint firstItem="0DR-3T-UaS" firstAttribute="top" secondItem="z38-Lm-kvU" secondAttribute="bottom" constant="8" symbolic="YES" id="gYN-s8-brw"/>
+                            <constraint firstItem="x36-Kb-x3W" firstAttribute="trailing" secondItem="WWl-e4-6Nw" secondAttribute="trailing" id="gwd-CW-WJH"/>
+                            <constraint firstItem="NpC-9F-bSK" firstAttribute="trailing" secondItem="wEF-7J-BVU" secondAttribute="trailing" id="hSo-sz-VUi"/>
+                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="baseline" secondItem="R6t-cD-FbL" secondAttribute="baseline" id="haA-lP-Zcb"/>
+                            <constraint firstItem="z38-Lm-kvU" firstAttribute="trailing" secondItem="0DR-3T-UaS" secondAttribute="trailing" id="i06-Mh-5ae"/>
+                            <constraint firstItem="0DR-3T-UaS" firstAttribute="trailing" secondItem="NpC-9F-bSK" secondAttribute="trailing" id="jav-za-A9k"/>
+                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="top" secondItem="NpC-9F-bSK" secondAttribute="bottom" constant="8" symbolic="YES" id="jiv-At-HZB"/>
+                            <constraint firstAttribute="bottom" secondItem="xfs-6s-Szc" secondAttribute="bottom" constant="20" symbolic="YES" id="kjq-Zu-qMD"/>
+                            <constraint firstItem="R6t-cD-FbL" firstAttribute="baseline" secondItem="wEF-7J-BVU" secondAttribute="baseline" id="qwV-N2-WFT"/>
+                            <constraint firstItem="UfN-Xf-vxz" firstAttribute="top" secondItem="GDs-Ky-946" secondAttribute="bottom" constant="11" id="rdg-4D-N7h"/>
+                            <constraint firstItem="z38-Lm-kvU" firstAttribute="top" secondItem="NTf-hY-jkS" secondAttribute="top" constant="16" id="tC3-H6-Xa7"/>
+                            <constraint firstAttribute="trailing" secondItem="xfs-6s-Szc" secondAttribute="trailing" constant="23" id="tyP-nM-z8b"/>
+                            <constraint firstAttribute="trailing" secondItem="z38-Lm-kvU" secondAttribute="trailing" constant="20" symbolic="YES" id="uCM-3H-rTh"/>
+                            <constraint firstItem="x36-Kb-x3W" firstAttribute="leading" secondItem="ctY-vc-7Cb" secondAttribute="leading" id="uUt-Lk-nFr"/>
+                            <constraint firstItem="GDs-Ky-946" firstAttribute="trailing" secondItem="UfN-Xf-vxz" secondAttribute="trailing" id="wg2-O7-5sR"/>
+                            <constraint firstItem="NpC-9F-bSK" firstAttribute="top" secondItem="0DR-3T-UaS" secondAttribute="bottom" constant="8" symbolic="YES" id="xkT-Zl-Dc6"/>
+                            <constraint firstItem="R6t-cD-FbL" firstAttribute="leading" secondItem="gcF-0V-Kzp" secondAttribute="trailing" constant="30" id="xmX-63-bpn"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="coordFormatDeg" destination="gcF-0V-Kzp" id="Pgh-WY-zgk"/>
+                        <outlet property="coordFormatDegMin" destination="R6t-cD-FbL" id="jAL-X8-nMF"/>
+                        <outlet property="coordFormatDegMinSec" destination="wEF-7J-BVU" id="wm4-A5-8BM"/>
+                        <outlet property="dtGPSButton" destination="GDs-Ky-946" id="fth-m0-wOl"/>
+                        <outlet property="saveFolderPath" destination="KR1-bn-ydR" id="qls-TC-LZE"/>
+                        <outlet property="sidecarButton" destination="WWl-e4-6Nw" id="xqp-si-GAY"/>
+                        <outlet property="trackColorWell" destination="ctY-vc-7Cb" id="ypG-mv-aaC"/>
+                    </connections>
+                </viewController>
+                <customObject id="qEd-mU-Ddf" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="541.5" y="268.5"/>
+        </scene>
+    </scenes>
+</document>

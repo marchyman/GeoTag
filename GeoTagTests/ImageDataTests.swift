@@ -40,7 +40,7 @@ class ImageDataTests: XCTestCase {
         guard let imgUrl1 = bundle.url(forResource: testImageName1,
                                        withExtension: testImageExt1,
                                        subdirectory: testImageDir) else {
-            XCTFail("Cannon create ImageData instance 1")
+            XCTFail("Cannon create ImageData instance 1 \(testImageName1)")
             return
         }
         testUrl1 = imgUrl1
@@ -51,7 +51,7 @@ class ImageDataTests: XCTestCase {
         guard let imgUrl2 = bundle.url(forResource: testImageName2,
                                        withExtension: testImageExt2,
                                        subdirectory: testImageDir) else {
-            XCTFail("Cannon create ImageData instance 2")
+            XCTFail("Cannon create ImageData instance 2 \(testImageName2)")
             return
         }
         testUrl2 = imgUrl2
