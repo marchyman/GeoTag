@@ -54,7 +54,7 @@
                             <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
                             <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW">
                                 <connections>
-                                    <action selector="openPreferencesWindow:" target="Voe-Tx-rLC" id="9Qu-ou-QHc"/>
+                                    <action selector="openPreferences:" target="Voe-Tx-rLC" id="3lN-Xl-TmI"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>

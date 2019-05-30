@@ -66,7 +66,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Open a preferences window if a backup (save) folder location hasn't
         // yet been selected
         if Preferences.saveFolder() == nil {
-            perform(#selector(openPreferencesWindow(_:)), with: nil, afterDelay: 0)
+            perform(#selector(openPreferences(_:)), with: nil, afterDelay: 0)
         }
     }
 
@@ -79,7 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return true
         case #selector(save(_:)):
             return modified
-        case #selector(openPreferencesWindow(_:)):
+        case #selector(openPreferences(_:)):
             return true
         default:
             print("#function \(item) not handled")
@@ -196,8 +196,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @IBAction
-    func openPreferencesWindow(_ sender: AnyObject!) {
-        preferences.showWindow(sender)
+    func openPreferences(_ sender: AnyObject!) {
+        openPreferencesWindow()
     }
 
     //MARK: app termination
