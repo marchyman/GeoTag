@@ -1,8 +1,8 @@
 //
-//  Preferences.swift
+//  PreferencesView.swift
 //  GeoTag
 //
-//  Created by Marco S Hyman on 5/7/15.
+//  Created by Marco S Hyman on 5/29/19.
 //  Copyright 2019 Marco S Hyman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -23,8 +23,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Foundation
-import AppKit
+import Cocoa
+
+// only used for unit testing
+var preferencesViewController: PreferencesViewController? = nil
 
 class PreferencesViewController: NSViewController {
 
@@ -33,6 +35,7 @@ class PreferencesViewController: NSViewController {
     override func viewWillAppear() {
         super.viewWillAppear()
 
+        preferencesViewController = self
         saveFolderPath.url = Preferences.saveFolder()
         switch Preferences.coordFormat() {
         case .deg:
