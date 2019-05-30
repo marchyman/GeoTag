@@ -29,8 +29,7 @@ import AppKit
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
-    // instantiate preferences window and undomanager when needed
-    lazy var preferences = Preferences()
+    // instantiate openundomanager when needed
     lazy var undoManager = UndoManager()
 
     // I like modified over isDocumentEdited
