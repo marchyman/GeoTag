@@ -63,13 +63,19 @@ final class Preferences  {
                                   options: [.withoutUI, .withSecurityScope],
                                   bookmarkDataIsStale: &staleBookmark)
                 } catch let error as NSError {
-                    unexpected(error: error, "Problem locating image backup folder")
-                }
-                if staleBookmark {
-                    unexpected(error: nil, "The specified image backup Folder\n\n\t\(url?.path ?? "[unknown]"))\n\nis missing.  Please select a new backup folder.")
+                    unexpected(error: error,
+                               NSLocalizedString("MISSING_BACKUP_FOLDER",
+                                                 comment: "Problem locating image backup folder"))
+                    staleBookmark = false
                     url = nil
                 }
-
+                if staleBookmark {
+                    let errString = String(format: NSLocalizedString("STALE_BACKUP_FOLDER",
+                                           comment: "stale backup folder"), "\(url?.path ?? "[unknown]")")
+                    
+                    unexpected(error: nil, errString)
+                    url = nil
+                }
             }
         }
         return url
