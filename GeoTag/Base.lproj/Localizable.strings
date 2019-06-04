@@ -46,3 +46,11 @@ ss = seconds
 R = N, S, E, or W reference.
 
 The R value is optional.  N (lat) or E (lon) are assumed.  Entry of a negative number of degrees will use a S or W reference.";
+"MISSING_BACKUP_FOLDER" = "Backup folder not found!
+
+Please select a new backup folder.";
+"STALE_BACKUP_FOLDER" = "The specified image backup Folder
+
+    %@
+
+is missing. Please select a new backup folder.";
