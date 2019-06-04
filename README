@@ -15,9 +15,9 @@ ExifTool. **ExifTool is built in to GeoTag.**
 GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
 
-Version 4.5 is the latest released version.  It workes on macOS 10.12 or later.
+Version 4.6 is the latest released version.  It workes on macOS 10.12 or later.
 
-## Work in progress
+## GeoTag Version 4.6
 
 ### New Features
 
@@ -65,47 +65,19 @@ an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
 and macOS libraries handle date and time.  One hopes that the year 2034 limit
 will eventually be removed ;)
 
-## GeoTag 4.5
-
-### New Features
-
-* center the map (more or less) on a track when the track is opened.
-* Add preference to select track color for GPX tracks.
-* change GPX file loaded notification to a sheet attached to the GeoTag main
-  window.  Dual monitor users would sometimes find the pop-up previously used
-  on the wrong monitor, i.e. no the monitor they were looking at.
-* Verify a file can be written by exiftool. If not do not allow attempted
-  updates that will fail during a save.   HEIC (iPhone) files are not writable.
-* exiftool 11.32
-* swift 5
-
-### Bug fixes
-
-* fix error that caused a "could not save images" alert even when all image
-  data had been saved.
-* fix race condition when checking that all images had been saved
-* handle GPX logs that include milliseconds in the location timestamp.
-* Fix location interpolition issues related to time zones.
-* Fix backup file naming. Examples:
-  foo.bar.jpg would be backed up as foo.bar.jpg the first time.
-  foo.bar.jpg would be backed up as foo-1.bar.jpg the second time.
-  The backup file name should have been foo.bar-1.jpg
-
-### Known Bugs
-
-* Setting the date of an image outside of the range of 1970-2034 may result in
-  an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
-  and macOS libraries handle date and time.  One hopes that the year 2034 limit
-  will eventually be removed ;)
-* You can not re-position a pin by dragging the pin.  Instead click on the
-  desired location
-
 ### Other 4.x Features and bug fixes
 
+* Verify a file can be written by exiftool. If not do not allow attempted
+  updates that will fail during a save.
 * GeoTag can now read GPS track logs in the format of a GPX file and display
   tracks on the map.  This can help locate places where pictures were taken.
   Use Open (⌘-O) to select GPX files.  GPX files can also be dragged onto the
   table.
+* change GPX file loaded notification to a sheet attached to the GeoTag main
+  window.  Dual monitor users would sometimes find the pop-up previously used
+  on the wrong monitor, i.e. not the monitor they were looking at.
+* center the map (more or less) on a track when the track is opened.
+* Add a preference to select the track color for GPX tracks.
 * Image location can be updated from a GPS track logs.  Select the images to
   update and use ⌘L, Edit -> Locn from track, or crtl-click -> Locn from track.
   Note: this can be time consuming depending upon the number of images selected
@@ -113,9 +85,9 @@ will eventually be removed ;)
 * Images can now be opened with GeoTag.  You can select one or more images in
   finder and then right click and select the "Open With" option.  GeoTag will
   be one of app choices.
-* Double clicking on a row in the table will open a window to update the
-  timestamp of the image.  Timestamps are not changed during cut/copy/paste
-  operations.
+* Double clicking on the date/time column in a row in the table will open a
+  window to update the timestamp of the image.  Timestamps are not changed
+  during cut/copy/paste operations.
 * A time delta can be applied to multiple images.   Select the images and
   use ⌘T, Edit -> Modify Date/Time, or ctrl-click -> Modify Date/Time.  Enter the
   new time for the selected image.  A time delta between the new and the existing
@@ -142,7 +114,6 @@ will eventually be removed ;)
 * Fix display of error reason when a backup folder can not be selected
 * pin no longer placed when double clicking on map
 * pin no longer placed when dragging map
-* GPS info validation
 * handle the case where the same file name is used for two images located in
   different folders.
 * undoing a location update on an image that did not have a previous location
@@ -155,6 +126,15 @@ will eventually be removed ;)
 * If GeoTag (or your computer) crashed with files opened and one or more of the
   opened files was moved to a different folder GeoTag would crash on attempts
   to re-open the file.
+* fix error that caused a "could not save images" alert even when all image
+  data had been saved.
+* fix race condition when checking that all images had been saved
+* handle GPX logs that include milliseconds in the location timestamp.
+* Fix location interpolition issues related to time zones.
+* Fix backup file naming. Examples:
+  foo.bar.jpg would be backed up as foo.bar.jpg the first time.
+  foo.bar.jpg would be backed up as foo-1.bar.jpg the second time.
+  The backup file name should have been foo.bar-1.jpg
 
 ### Image Backups
 

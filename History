@@ -1,4 +1,4 @@
-## work in progress
+## GeoTag 4.6
 
 ### New Features
 
@@ -28,7 +28,7 @@
 * Preferences window changed.  Textual explanations of buttons have been
   moved to tool tips.
 
-* ExifTool version 11.41
+* ExifTool version 11.44
 
 ### Bug fixes
 
