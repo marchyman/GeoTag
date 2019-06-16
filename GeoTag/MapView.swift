@@ -30,7 +30,6 @@ import MapKit
 /// location of single click events.  I couldn't do this in an extension
 /// without breaking three finger drags on a touch pad (and probably the same
 /// function on a mouse).
-
 class MapView: MKMapView {
     var clickDelegate: MapViewDelegate?
     var clickTimer: Timer?
@@ -73,7 +72,6 @@ class MapView: MKMapView {
 }
 
 /// The delegate receiving the mouse clicks must follow this protocol
-
 protocol MapViewDelegate: NSObjectProtocol {
     func mouseClicked(mapView: MapView!,
                       location: CLLocationCoordinate2D)

@@ -68,7 +68,6 @@ class MapViewController: NSViewController {
     var mapLines = [MKPolyline]()
 
     /// startup
-
     override
     func viewDidLoad() {
         super.viewDidLoad()
@@ -101,7 +100,7 @@ class MapViewController: NSViewController {
         search.searchMenuTemplate = searchesMenu
     }
 
-    // MARK: Map control actions
+    // MARK: - Map control actions
 
     /// action to select the desired map type
     @IBAction
@@ -160,7 +159,7 @@ class MapViewController: NSViewController {
         }
     }
 
-    // MARK: Map pin related functions
+    // MARK: - Map pin related functions
 
     /// center the map as the given latitude/longitude and drop
     /// a pin at that location
@@ -196,7 +195,7 @@ class MapViewController: NSViewController {
         }
     }
 
-    // MARK: track log
+    // MARK: - track log
 
     /// add tracks to the map.  Track segments are turned into polylines and
     /// added to the map view.  The map is more or less centered on the added
@@ -252,7 +251,6 @@ class MapViewController: NSViewController {
 extension MapViewController: MKMapViewDelegate {
 
     /// return a pinAnnotationView for a red pin
-
     func mapView(_ mapView: MKMapView,
                  viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let identifier = "pinAnnotation"
@@ -276,8 +274,7 @@ extension MapViewController: MKMapViewDelegate {
         return annotationView
     }
 
-    /// A pin is being dragged. [DOES NOT WORK]
-
+    /// A pin is being dragged
     func mapView(_ mapView: MKMapView,
                  annotationView view: MKAnnotationView,
                  didChange newState: MKAnnotationView.DragState,
@@ -289,7 +286,6 @@ extension MapViewController: MKMapViewDelegate {
     }
 
     /// Create an MKPolylineRenderer for MKPolyLines added to the map
-
     func mapView(_ mapview: MKMapView,
                  rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         let polyline = overlay as! MKPolyline
