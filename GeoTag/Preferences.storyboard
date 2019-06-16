@@ -9,7 +9,7 @@
         <!--Window Controller-->
         <scene sceneID="dd2-87-Sae">
             <objects>
-                <windowController id="GMY-Vl-9oZ" customClass="PreferencesWindowController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
+                <windowController storyboardIdentifier="Preferences" id="GMY-Vl-9oZ" customClass="PreferencesWindowController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
                     <window key="window" title="GeoTag Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="w5q-YE-yuQ">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
