@@ -27,10 +27,10 @@ Failure reason: ";
 
 Error code: ";
 "UNEXPECTED_ERROR" = "Unexpected Error";
-"BAD_GPX_TITLE" = "Can not process GPX file";
+"BAD_GPX_TITLE" = "No valid tracks found in GPX file";
 "BAD_GPX_DESC" = "
 
-The above named GPX file could not be properly processed. Any track log information in the file has been ignored.";
+Either no tracks could be found or the GPX file was corrupted such that it could not be properly processed. Any track log information in the file has been ignored.";
 "GPX_LOADED_TITLE" = "GPX File Loaded";
 "GPX_LOADED_DESC" = " processed and will show as a track on the map";
 "CFE_TITLE" = "Coordinate Format Error";

@@ -1,3 +1,10 @@
+## Work in progress
+
+### Bug Fix
+
+* Some GPX files may not contain any tracks.  Tell the user if no tracks were
+  found and otherwise ignore the file.
+
 ## GeoTag 4.6
 
 ### New Features
