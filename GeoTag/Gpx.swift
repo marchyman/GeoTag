@@ -136,7 +136,7 @@ class Gpx: NSObject {
                     points += segment.points.count
                 }
             }
-            return true
+            return points > 0
         }
         return false
     }
