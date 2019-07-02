@@ -5,6 +5,8 @@
 * Some GPX files may not contain any tracks.  Tell the user if no tracks were
   found and otherwise ignore the file.
 
+* The GPS Date/Time value was not being updated in sidecar files.
+
 ## GeoTag 4.6
 
 ### New Features
