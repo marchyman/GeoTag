@@ -17,6 +17,15 @@ can use the command `brew cask install geotag` to install.
 
 Version 4.6 is the latest released version.  It workes on macOS 10.12 or later.
 
+## GeoTag Version 4.6.1
+
+### Bug Fix
+
+* Some GPX files may not contain any tracks.  Tell the user if no tracks were
+found and otherwise ignore the file.
+
+* The GPS Date/Time value was not being updated in sidecar files.
+
 ## GeoTag Version 4.6
 
 ### New Features
