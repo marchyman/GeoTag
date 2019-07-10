@@ -30,7 +30,7 @@
         <!--Preferences View Controller-->
         <scene sceneID="vXm-Xq-0od">
             <objects>
-                <viewController storyboardIdentifier="Preferences" id="0lh-S3-hCN" customClass="PreferencesViewController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="0lh-S3-hCN" customClass="PreferencesViewController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NTf-hY-jkS">
                         <rect key="frame" x="0.0" y="0.0" width="547" height="397"/>
                         <autoresizingMask key="autoresizingMask"/>
