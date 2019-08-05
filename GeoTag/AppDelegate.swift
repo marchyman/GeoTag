@@ -180,6 +180,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.undoManager.removeAllActions()
                 if saveSource == nil {
                     self.window.close()
+                } else {
+                    // tell the user that the images have been saved?
                 }
             } else {
                 let alert = NSAlert()
