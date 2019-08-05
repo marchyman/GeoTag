@@ -73,23 +73,12 @@ struct Exiftool {
 
         // Build ExifTool latitude, longitude argument values
         if let location = imageData.location {
-            var lat = location.latitude
-            if lat < 0 {
-                latRefArg += "S"
-                lat = -lat
-            } else {
-                latRefArg += "N"
-            }
+            let lat = location.latitude
             latArg += "\(lat)"
-
-            var lon = location.longitude
-            if lon < 0 {
-                lonRefArg += "W"
-                lon = -lon
-            } else {
-                lonRefArg += "E"
-            }
+            latRefArg += "\(lat)"
+            let lon = location.longitude
             lonArg += "\(lon)"
+            lonRefArg += "\(lon)"
 
             // set GPS date/time stamp for current location if enabled
             if let dto = dtoWithZone(from: imageData),
