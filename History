@@ -2,6 +2,8 @@
 
 ### Bug Fixes
 
+* Pin dragging is working again
+
 * Fix crash dragging an image onto the app icon
 
 ## GeoTag 4.5

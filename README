@@ -21,6 +21,8 @@ Version 4.5.x is for macOS 10.12
 
 ### Bug Fixes
 
+* Pin dragging is working again
+
 * Fix crash dragging an image onto the app icon
 
 ## GeoTag 4.5
