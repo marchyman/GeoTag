@@ -1,3 +1,14 @@
+## WIP (and GeoTag 4.6.2)
+
+### New Feature
+
+* 4.6.2 is the same as 4.6.1, but with a notarized dmg file for hassle free
+  installation on macOS Catalina.
+
+* When doing a map search the searched location will be applied to all
+  selected images.  In previous versions a search would only position the
+  map.
+
 ## GeoTag 4.6.1
 
 ### Bug Fix

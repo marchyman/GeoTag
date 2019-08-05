@@ -34,6 +34,7 @@
         </viewController>
         <viewController id="Go6-yP-GH9" customClass="MapViewController" customModule="GeoTag" customModuleProvider="target">
             <connections>
+                <outlet property="appDelegate" destination="Voe-Tx-rLC" id="KqX-ai-VFl"/>
                 <outlet property="mapTypeControl" destination="UAa-bh-Wko" id="8Ar-sO-rpi"/>
                 <outlet property="mapView" destination="Zwv-MK-4Du" id="zEq-nz-0pQ"/>
                 <outlet property="search" destination="cBm-xR-XMN" id="ykD-bf-zqn"/>
@@ -250,21 +251,21 @@ CA
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <scrollView borderType="line" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ARi-Ei-bTG">
-                                        <rect key="frame" x="0.0" y="0.0" width="530" height="776"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="522" height="776"/>
                                         <clipView key="contentView" id="gmY-qF-zsb">
-                                            <rect key="frame" x="1" y="1" width="528" height="774"/>
+                                            <rect key="frame" x="1" y="1" width="520" height="774"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="acu-99-iMm" viewBased="YES" id="skl-pj-P9m">
-                                                    <rect key="frame" x="0.0" y="0.0" width="528" height="751"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="520" height="751"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
                                                         <tableColumn identifier="imageName" editable="NO" width="162" minWidth="40" maxWidth="1000" id="gce-uz-HJd">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Image Name">
-                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <font key="font" metaFont="message" size="11"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                             </tableHeaderCell>
@@ -302,7 +303,7 @@ CA
                                                         </tableColumn>
                                                         <tableColumn identifier="dateTime" editable="NO" width="154" minWidth="40" maxWidth="1000" id="QOH-5Z-eM4">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Date/Time">
-                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <font key="font" metaFont="message" size="11"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                             </tableHeaderCell>
@@ -340,7 +341,7 @@ CA
                                                         </tableColumn>
                                                         <tableColumn identifier="latitude" editable="NO" width="98" minWidth="10" maxWidth="3.4028234663852886e+38" id="EGN-Ry-sij">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Latitude">
-                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <font key="font" metaFont="message" size="11"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                             </tableHeaderCell>
@@ -376,9 +377,9 @@ CA
                                                                 </tableCellView>
                                                             </prototypeCellViews>
                                                         </tableColumn>
-                                                        <tableColumn identifier="longitude" editable="NO" width="102" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
+                                                        <tableColumn identifier="longitude" editable="NO" width="94" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Longitude">
-                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <font key="font" metaFont="message" size="11"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                             </tableHeaderCell>
@@ -391,11 +392,11 @@ CA
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="longitude" id="4Km-RM-P0Q">
-                                                                    <rect key="frame" x="424" y="1" width="102" height="17"/>
+                                                                    <rect key="frame" x="424" y="1" width="94" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fNU-Jf-yeQ">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="90" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="82" height="17"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="-122.123456" id="e4b-z8-Hnu">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -432,7 +433,7 @@ CA
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <tableHeaderView key="headerView" id="acu-99-iMm">
-                                            <rect key="frame" x="0.0" y="0.0" width="528" height="23"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="520" height="23"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                         <connections>
@@ -441,7 +442,7 @@ CA
                                     </scrollView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="ARi-Ei-bTG" secondAttribute="trailing" id="2a5-ab-uTm"/>
+                                    <constraint firstAttribute="trailing" secondItem="ARi-Ei-bTG" secondAttribute="trailing" constant="8" id="2a5-ab-uTm"/>
                                     <constraint firstItem="ARi-Ei-bTG" firstAttribute="leading" secondItem="Gwc-9o-vlc" secondAttribute="leading" id="Phx-zq-gKm"/>
                                     <constraint firstAttribute="bottom" secondItem="ARi-Ei-bTG" secondAttribute="bottom" id="XI4-Ob-InC"/>
                                     <constraint firstItem="ARi-Ei-bTG" firstAttribute="top" secondItem="Gwc-9o-vlc" secondAttribute="top" id="kVb-Br-vmd"/>

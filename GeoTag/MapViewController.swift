@@ -31,6 +31,7 @@ class MapViewController: NSViewController {
 
     var clickDelegate: MapViewDelegate?
 
+    @IBOutlet weak var appDelegate: AppDelegate!
     @IBOutlet var mapView: MapView!
     @IBOutlet var mapTypeControl: NSSegmentedControl!
     @IBOutlet weak var search: NSSearchField!
@@ -153,8 +154,10 @@ class MapViewController: NSViewController {
                 placeMark, error in
                 if error == nil,
                    let location = placeMark?[0].location {
-                    self.pinMapAt(coords: location.coordinate,
-                                  dropPin: false)
+                    if !self.appDelegate.tableViewController.updateSelectedRows(coord: location.coordinate) {
+                        self.pinMapAt(coords: location.coordinate,
+                                      dropPin: false)
+                    }
                 }
             }
         }

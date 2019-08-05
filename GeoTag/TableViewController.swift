@@ -396,7 +396,7 @@ final class TableViewController: NSViewController {
             if values.count == 2 {
                 let latitude = values[0].doubleValue
                 let longitude = values[1].doubleValue
-                updateSelectedRows(coord: Coord(latitude: latitude, longitude: longitude))
+                _ = updateSelectedRows(coord: Coord(latitude: latitude, longitude: longitude))
                 appDelegate.undoManager.setActionName("paste")
             }
         }
@@ -683,12 +683,15 @@ final class TableViewController: NSViewController {
     ///
     /// Update all selected rows as a single undo group.
 
-    func updateSelectedRows(coord: Coord) {
+    func updateSelectedRows(coord: Coord) -> Bool {
+        let rows = tableView.selectedRowIndexes
+        guard !rows.isEmpty else { return false }
         appDelegate.undoManager.beginUndoGrouping()
         tableView.selectedRowIndexes.forEach {
             self.update(row: $0, validLocation: true, coord: coord)
         }
         appDelegate.undoManager.endUndoGrouping()
+        return true
     }
 }
 
@@ -864,7 +867,7 @@ extension TableViewController: MapViewDelegate {
     func mouseClicked(mapView: MapView!,
                       location: CLLocationCoordinate2D) {
         if !saveInProgress {
-            updateSelectedRows(coord: location)
+            _ = updateSelectedRows(coord: location)
             appDelegate.undoManager.setActionName("location change")
         }
     }

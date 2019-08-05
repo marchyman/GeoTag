@@ -17,6 +17,17 @@ can use the command `brew cask install geotag` to install.
 
 Version 4.6 is the latest released version.  It workes on macOS 10.12 or later.
 
+## WIP (and GeoTag 4.6.2)
+
+### New Feature
+
+* 4.6.2 is the same as 4.6.1, but with a notarized dmg file for hassle free
+installation on macOS Catalina.
+
+* When doing a map search the searched location will be applied to all
+selected images.  In previous versions a search would only position the
+map.
+
 ## GeoTag Version 4.6.1
 
 ### Bug Fix
