@@ -15,7 +15,9 @@ ExifTool. **ExifTool is built in to GeoTag.**
 GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
 
-Version 4.5.x is for macOS 10.12
+Version 4.5.x is for macOS 10.12.  Later versions of GeoTag do not work on
+Sierra (specifically macOS 10.12.6).  The preference window closes as soon
+as the mouse moves.  That makes it impossible to set the backup folder.
 
 ## GeoTag 4.5.1
 
