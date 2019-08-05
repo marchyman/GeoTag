@@ -1,5 +1,20 @@
 #!/bin/sh
 
+# Code sign and notarize an app for local distribution in a DMG file.
+# 
+# MAKE SURE COMMAND LINE UTILS MATCH THE VERSION OF XCODE BEING USED
+#
+# 1) Xcode: Archive app
+# 2) Xcode: Distribute code signed app (not notarized)
+#           Name the created folder GeoTag.
+# 3) Run this script to create a READ ONLY DMG
+# 4) Note the returned Request-UUID.
+# 5) Check status using this command:
+#    xcrun altool --notarization-info Request-UUID --username "marc+developer@snafu.org" --password "@keychain:Notarizing"
+# 6) Wait until that status is "Package Approved" -- or you get an email from apple
+# 7) Staple the notarization ticket to the dmg
+#    xcrun stapler staple -v ${DMG}
+
 set -ex
 
 BUILD_VERSION=$(git describe --tags --always --dirty=+)
@@ -22,16 +37,20 @@ rm -rf ${DIR}
 mkdir ${DIR}
 
 ln -s /Applications ${DIR}
-cp -R ~/Desktop/GeoTag.app ${DIR}
+cp -R ~/Desktop/GeoTag/GeoTag.app ${DIR}
 cp README ${DIR}/Readme.txt
 echo ${BUILD_VERSION} > ${DIR}/Version.txt
 
 rm -f ${DMG}
-hdiutil create -srcfolder ${DIR} -volname ${NAME} ${DMG}
+hdiutil create -srcfolder ${DIR} -volname ${NAME} -format UDZO ${DMG}
 rm -rf ${DIR}
 
 # use `security find-identity -p codesigning` to find the appropriate ID
 
-codesign -s 384DFBAA58A1DD12FF0757C3727A5AC97E320BCD ${DMG}
+codesign --deep --force --verify --verbose -s 1BC4A429EE4A7435268EA4605A22C535E80049EE --options runtime ${DMG}
+
+# Upload to apple for notarization.  Use org.snafu.$NAME as the bundle ID
+
+xcrun altool -type osx --notarize-app --primary-bundle-id "org.snafu.${NAME}" --username "marc+developer@snafu.org" --password "@keychain:Notarizing" --file ${DMG}
 
 exit 0
