@@ -121,19 +121,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ///
     /// - parameter sender: unused
     /// - parameter fileName: path of file to process
-    /// - returns: true if the file was opened
+    /// - returns: true
     ///
-    /// this function handles both Image and GPX files
+    /// this function handles both Image and GPX files.  File open is queued
+    /// to run on the main queue.  That delay is necessary as otherwise dragging
+    /// images onto the app icon to launch the app results in a crash.
 
     func application(_ sender: NSApplication,
                      openFile filename: String) -> Bool {
-        let url = URL(fileURLWithPath: filename)
-        if !isGpxFile(url) {
-            var urls = [URL]()
-            urls.append(url)
-            return !tableViewController.addImages(urls: urls)
+        DispatchQueue.main.async() {
+            let url = URL(fileURLWithPath: filename)
+            if !self.isGpxFile(url) {
+                var urls = [URL]()
+                urls.append(url)
+                let _ = self.tableViewController.addImages(urls: urls)
+            }
         }
-        return false
+        return true
     }
 
     //MARK: Save image changes (if any)

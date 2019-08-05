@@ -15,8 +15,13 @@ ExifTool. **ExifTool is built in to GeoTag.**
 GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
 
-Version 4.4.x is the latest version.  It workes on macOS 10.12 or later. Version
-4 uses Apple maps.
+Version 4.5.x is for macOS 10.12
+
+## GeoTag 4.5.1
+
+### Bug Fixes
+
+* Fix crash dragging an image onto the app icon
 
 ## GeoTag 4.5
 
