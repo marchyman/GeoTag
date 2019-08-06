@@ -52,7 +52,7 @@ final class ImageData: NSObject {
 
     let url: URL                // URL of the image
     let xmpUrl: URL             // URL of sidecar file (may not exist)
-    var xmpFile: XmpFile		//
+    let xmpFile: XmpFile		//
     var sandboxUrl: URL         // URL of the sandbox copy of the image
     var sandboxXmp: URL?        // URL of sandbox copy of sidecar file
 
@@ -97,7 +97,7 @@ final class ImageData: NSObject {
     /// sidecar file if sidecar processing enabled and a sidecar file exists.
     /// If the URL isn't recognized as an image mark this instance as not valid.
 
-    init(url: URL) {
+    init(url: URL) throws {
         self.url = url;
 
         // create a symlink for the URL in our sandbox
@@ -146,8 +146,6 @@ final class ImageData: NSObject {
                     NSFileCoordinator.addFilePresenter(xmpFile)
                 }
             }
-        } catch let error as NSError {
-            fatalError("docDir symlink error: \(error)")
         }
         super.init()
 

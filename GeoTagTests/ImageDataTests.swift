@@ -99,7 +99,8 @@ class ImageDataTests: XCTestCase {
     /// test ImageData init of an image where an XMP sidecar also exists
     func testInit1() {
         let fileManager = FileManager.default
-        let img = ImageData(url: testUrl1)
+        let tryImg = try? ImageData(url: testUrl1)
+        guard let img = tryImg else { fail("can't process testUrl1") }
         XCTAssert(img.url == testUrl1, "Incorrect URL for image")
         let xmpUrl = testUrl1.deletingPathExtension().appendingPathExtension(xmpExtension)
         XCTAssert(img.xmpUrl == xmpUrl)
@@ -127,7 +128,8 @@ class ImageDataTests: XCTestCase {
     /// test ImageData init of an image where an XMP sidecar does not
     func testInit2() {
         let fileManager = FileManager.default
-        let img = ImageData(url: testUrl2)
+        let tryImg = try? ImageData(url: testUrl2)
+        guard let img = tryImg else { fail("can't process testUrl2") }
         XCTAssert(img.url == testUrl2)
         let xmpUrl = testUrl2.deletingPathExtension().appendingPathExtension(xmpExtension)
         XCTAssert(img.xmpUrl == xmpUrl)
@@ -153,10 +155,10 @@ class ImageDataTests: XCTestCase {
     /// be removed from the application sandbox.
     func testDeinit() {
         do {
-            let img1 = ImageData(url: testUrl1)
-            let img2 = ImageData(url: testUrl2)
-            let _ = img1    // silence compiler about img1 never used
-            let _ = img2    // silence compiler about img2 never used
+            let img1 = try? ImageData(url: testUrl1)
+            XCTAssertNotNil(img1)
+            let img2 = try? ImageData(url: testUrl2)
+            XCTAssertNotNil(img2)
         }
 
         let fileManager = FileManager.default
@@ -177,7 +179,8 @@ class ImageDataTests: XCTestCase {
     
     func testLocation() {
         let testLoc = Coord(latitude: 35.1234, longitude: -120.9876)
-        let img = ImageData(url: testUrl2)
+        let tryImg = try? ImageData(url: testUrl2)
+        guard let img = tryImg else { fail("can't process testUrl2") }
         img.location = testLoc
         XCTAssertNotNil(img.location)
         XCTAssert(img.stringRepresentation == "35.1234 -120.9876",
@@ -187,7 +190,8 @@ class ImageDataTests: XCTestCase {
     }
 
     func testDateTime() {
-        let img = ImageData(url: testUrl2)
+        let tryImg = try? ImageData(url: testUrl2)
+        guard let img = tryImg else { fail("can't process testUrl2") }
         if var dateValue = img.dateValue {
             dateValue.addTimeInterval(3600)
             img.dateValue = dateValue
@@ -208,12 +212,14 @@ class ImageDataTests: XCTestCase {
     /// Test creating a back of the original file for images with and
     /// without a sidecar file.
     func testBackup() {
-        let img1 = ImageData(url: testUrl1)
+        let tryImg1 = try? ImageData(url: testUrl1)
+        guard let img1 = tryImg1 else { fail("can't process testUrl1") }
         XCTAssert(img1.url == testUrl1)
         XCTAssert(img1.testBackup(),
                   "Cannot backup image file with sidecar")
 
-        let img2 = ImageData(url: testUrl2)
+        let tryImg2 = try? ImageData(url: testUrl2)
+        guard let img2 = tryImg2 else { fail("can't process testUrl2") }
         XCTAssert(img2.url == testUrl2)
         XCTAssert(img2.testBackup(),
                   "Cannot backup image file without sidecar")
@@ -239,6 +245,13 @@ class ImageDataTests: XCTestCase {
         backupUrl.appendPathExtension(xmpExtension)
         XCTAssert(!fileManager.fileExists(atPath: backupUrl.path),
                   "Backup file \(backupUrl.path) found")
+    }
+    
+    func fail(_ message: @autoclosure () -> String = "",
+              file: StaticString = #file,
+              line: UInt = #line) -> Never {
+        XCTFail(message(), file: file, line: line)
+        fatalError()
     }
 //    func testPerformanceExample() {
 //        // This is an example of a performance test case.

@@ -14,6 +14,9 @@ You may save your changes, throw away your changes, or cancel program terminatio
 "CLOSE" = "Close";
 "WARN_TITLE" = "Some files not opened";
 "WARN_DESC" = "One or more files were not opened. Unopened files were duplicates of files already opened for processing.";
+"WARN_DESC_2" = "The following file could not be processed.
+
+";
 "NO_BACKUP_TITLE" = "Cannot make backups of image files";
 "NO_BACKUP_DESC" = "
 A backup folder has not been selected or the backup folder no longer exists.   Please open program Preferences and select a backup folder.  Location changes can not be saved until a backup folder is selected.

@@ -84,11 +84,21 @@ final class TableViewController: NSViewController {
                 imageUrls.insert(url)
                 updateGroup.enter()
                 DispatchQueue.global(qos: .userInitiated).async {
-                    let imageData = ImageData(url: url)
-                    DispatchQueue.main.async {
-                        self.images.append(imageData)
-                        reloadNeeded = true
-                        updateGroup.leave()
+                    do {
+                        let imageData = try ImageData(url: url)
+                        DispatchQueue.main.async {
+                            self.images.append(imageData)
+                            reloadNeeded = true
+                            updateGroup.leave()
+                        }
+                    } catch let error as NSError {
+                        DispatchQueue.main.async {
+                            let desc = NSLocalizedString("WARN_DESC_2",
+                                                         comment: "cant process file error")
+                                        + "\(url.path)\n\nReason: "
+                            unexpected(error: error, desc)
+                            updateGroup.leave()
+                        }
                     }
                 }
             }
