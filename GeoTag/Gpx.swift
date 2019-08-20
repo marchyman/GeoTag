@@ -54,6 +54,7 @@ class Gpx: NSObject {
 
     /// date formater for track point timestamps.
     static let pointTimeFormat = ISO8601DateFormatter()
+    static let altTimeFormat = DateFormatter()
 
     /// Track points contain (at least) a latitude, longitude, and timestamp
     struct Point {
@@ -65,6 +66,12 @@ class Gpx: NSObject {
                                                         options: .regularExpression)
             if let convertedTime = pointTimeFormat.date(from: trimmedTime) {
                 return convertedTime.timeIntervalSince1970
+            }
+            // the time is not in ISO8601 format. Assume it is in local time.
+            altTimeFormat.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            altTimeFormat.timeZone = nil
+            if let altConvertedTime = altTimeFormat.date(from: trimmedTime) {
+                return altConvertedTime.timeIntervalSince1970
             }
             return 0
         }
@@ -162,7 +169,7 @@ class Gpx: NSObject {
             track in
             for segment in track.segments {
                 let possiblePoints = segment.points.prefix {
-                    $0.timeFromEpoch < imageTime
+                    $0.timeFromEpoch <= imageTime
                 }
                 if let segmentLast = possiblePoints.last {
                     if lastPoint == nil {

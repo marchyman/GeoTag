@@ -19,6 +19,15 @@ Version 4.5.x is for macOS 10.12.  Later versions of GeoTag do not work on
 Sierra (specifically macOS 10.12.6).  The preference window closes as soon
 as the mouse moves.  That makes it impossible to set the backup folder.
 
+## WIP
+
+### Bug Fixes
+
+* Handle GPX track logs with local (non-ISO9601) timestamps.  The timestamp
+format is assumed to be "yyyy-MM-dd'T'HH:mm:ss".
+
+* Fix possible off-by-one when searching for a track point by timestamp
+
 ## GeoTag 4.5.1
 
 ### Bug Fixes
