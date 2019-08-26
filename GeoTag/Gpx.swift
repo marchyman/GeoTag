@@ -162,7 +162,7 @@ class Gpx: NSObject {
             track in
             for segment in track.segments {
                 let possiblePoints = segment.points.prefix {
-                    $0.timeFromEpoch < imageTime
+                    $0.timeFromEpoch <= imageTime
                 }
                 if let segmentLast = possiblePoints.last {
                     if lastPoint == nil {
