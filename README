@@ -34,8 +34,9 @@ could not be processed.
 
 ### Known Bugs
 
-* [Developer bug] Trying to run any test cases will crash Xcode.  This may be
-  a side effect of running the Catalina Beta.
+* Race condition: Whan photos with the same name are among multiple images
+  opened one may fail to open.  An alert will is displayed when this
+  happens.
 
 ## GeoTag 4.6.2
 
