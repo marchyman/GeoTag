@@ -79,12 +79,13 @@ class B_MenuTests: XCTestCase {
         windowMenu.click()
         let windowMenuSearch = windowMenu.descendants(matching: .menuItem)
         // The count includes option key variants
-        XCTAssertEqual(windowMenuSearch.count, 10)
+        XCTAssertGreaterThanOrEqual(windowMenuSearch.count, 14)
 
-        let menuNames = ["Minimize", "Zoom", "Enter Full Screen",
+        let menuNames = ["Minimize", "Zoom", "Tile Window to Left of Screen",
+                         "Tile Window to Right of Screen", "Enter Full Screen",
                          "Bring All to Front", "GeoTag"]
 
-        // all of the above listed menu items must exist and not be enabled.
+        // all of the above listed menu items must exist and be enabled.
         for name in menuNames {
             let item = windowMenuSearch[name]
             XCTAssertTrue(item.exists)
