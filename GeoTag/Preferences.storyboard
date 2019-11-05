@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="GMY-Vl-9oZ">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14810.11" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="GMY-Vl-9oZ">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14810.11"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -32,13 +32,13 @@
             <objects>
                 <viewController id="0lh-S3-hCN" customClass="PreferencesViewController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NTf-hY-jkS">
-                        <rect key="frame" x="0.0" y="0.0" width="547" height="397"/>
+                        <rect key="frame" x="0.0" y="0.0" width="547" height="389"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box title="Backup Location" translatesAutoresizingMaskIntoConstraints="NO" id="z38-Lm-kvU">
-                                <rect key="frame" x="17" y="182" width="513" height="199"/>
+                                <rect key="frame" x="17" y="180" width="513" height="193"/>
                                 <view key="contentView" id="YAe-wg-Cho">
-                                    <rect key="frame" x="3" y="3" width="507" height="181"/>
+                                    <rect key="frame" x="3" y="3" width="507" height="175"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KR1-bn-ydR">
@@ -55,7 +55,7 @@
                                             </connections>
                                         </pathControl>
                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Iv8-JF-LLR">
-                                            <rect key="frame" x="18" y="59" width="471" height="102"/>
+                                            <rect key="frame" x="18" y="59" width="471" height="96"/>
                                             <textFieldCell key="cell" selectable="YES" id="SQe-WV-V99">
                                                 <font key="font" usesAppearanceFont="YES"/>
                                                 <string key="title">GeoTag makes a copy of each image before updating geo-location information to make sure you will never loose an image should something happen during the update.
@@ -78,10 +78,10 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </view>
                             </box>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="0DR-3T-UaS">
-                                <rect key="frame" x="20" y="175" width="507" height="5"/>
+                                <rect key="frame" x="20" y="173" width="507" height="5"/>
                             </box>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NpC-9F-bSK">
-                                <rect key="frame" x="20" y="152" width="509" height="17"/>
+                                <rect key="frame" x="20" y="151" width="509" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Select a format for Latitude and Longitude display" id="iCU-hi-ygw">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -89,7 +89,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </textFieldCell>
                             </textField>
                             <button identifier="deg" horizontalHuggingPriority="252" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gcF-0V-Kzp">
-                                <rect key="frame" x="19" y="127" width="89" height="18"/>
+                                <rect key="frame" x="19" y="126" width="89" height="18"/>
                                 <buttonCell key="cell" type="radio" title="dd.dddddd" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="x8m-n3-Z0b">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -99,7 +99,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <button identifier="degMin" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R6t-cD-FbL">
-                                <rect key="frame" x="135" y="127" width="135" height="18"/>
+                                <rect key="frame" x="135" y="126" width="135" height="18"/>
                                 <buttonCell key="cell" type="radio" title="dd° mm.mmmm' N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="QPS-HY-4g9">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -109,10 +109,10 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x36-Kb-x3W">
-                                <rect key="frame" x="20" y="117" width="507" height="5"/>
+                                <rect key="frame" x="20" y="116" width="507" height="5"/>
                             </box>
                             <button identifier="sidecar" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WWl-e4-6Nw">
-                                <rect key="frame" x="20" y="95" width="509" height="18"/>
+                                <rect key="frame" x="20" y="94" width="509" height="18"/>
                                 <string key="toolTip">When checked a sidecar file existing in the same folder as an image file will be updated with location information instead of the image file.  New sidecar files will not be created.</string>
                                 <buttonCell key="cell" type="check" title="Update sidecar (XMP) files" bezelStyle="regularSquare" imagePosition="left" inset="2" id="lnG-WA-vYm">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -123,7 +123,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <button identifier="datetime" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GDs-Ky-946">
-                                <rect key="frame" x="20" y="75" width="509" height="18"/>
+                                <rect key="frame" x="20" y="74" width="509" height="18"/>
                                 <string key="toolTip">When this box is checked GPS Date/Time stamp metadata in UTC will be set from the Original Date/Time the image was taken.  GPS Date/Time will only be correct if the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
                                 <buttonCell key="cell" type="check" title="Update GPS Date/Time stamps" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ghg-rB-WJm">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -134,7 +134,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="ctY-vc-7Cb">
-                                <rect key="frame" x="20" y="46" width="44" height="23"/>
+                                <rect key="frame" x="20" y="46" width="44" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="K5r-7K-wnB"/>
                                 </constraints>
@@ -144,7 +144,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </colorWell>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UfN-Xf-vxz">
-                                <rect key="frame" x="72" y="49" width="457" height="17"/>
+                                <rect key="frame" x="72" y="49" width="457" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Select track color for tracks loaded from GPX files" id="WjJ-at-ZO5">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -162,7 +162,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <button identifier="degMinSec" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wEF-7J-BVU">
-                                <rect key="frame" x="297" y="127" width="232" height="18"/>
+                                <rect key="frame" x="297" y="126" width="232" height="18"/>
                                 <buttonCell key="cell" type="radio" title="dd° mm' ss.ss&quot; N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="CyN-Lu-m00">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
