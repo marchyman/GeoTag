@@ -148,14 +148,20 @@ class MapViewController: NSViewController {
     @IBAction
     func searchMapLocation(_ sender: NSSearchField) {
         if !sender.stringValue.isEmpty {
-            let geocoder = CLGeocoder()
-            geocoder.geocodeAddressString(sender.stringValue) {
-                placeMark, error in
+            // build a "local" search request where the local area is the entire globe
+            let request = MKLocalSearch.Request()
+            request.naturalLanguageQuery = sender.stringValue
+            let span = MKCoordinateSpan(latitudeDelta: 90.0, longitudeDelta: 180.0)
+            request.region = MKCoordinateRegion(center: mapView.centerCoordinate,
+                                              span: span)
+            let searcher = MKLocalSearch(request: request)
+            searcher.start {
+                response, error in
                 if error == nil,
-                   let location = placeMark?[0].location {
+                   let location = response?.mapItems[0].placemark.location {
                     if !self.appDelegate.tableViewController.updateSelectedRows(coord: location.coordinate) {
                         self.pinMapAt(coords: location.coordinate,
-                                      dropPin: false)
+                                     dropPin: false)
                     }
                 }
             }
