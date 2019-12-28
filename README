@@ -15,11 +15,14 @@ ExifTool. **ExifTool is built in to GeoTag.**
 GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
 
-Version 4.6 is the latest released version.  It workes on macOS 10.12 or later.
+Version 4.7 is the latest released version.  Version 4.5.1 is available at
+https://www.snafu.org/GeoTag/ for those running macOS 10.12.6
 
-## WIP
+## GeoTag 4.7
 
 ### New Feature
+
+* Change map search to find Points of Interest in addition to addresses.
 
 * When doing a map search the searched location will be applied to all
 selected images.  In previous versions a search would only position the

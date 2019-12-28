@@ -1,6 +1,8 @@
-## WIP
+## GeoTag 4.7
 
 ### New Feature
+
+* Change map search to find Points of Interest in addition to addresses.
 
 * When doing a map search the searched location will be applied to all
   selected images.  In previous versions a search would only position the
