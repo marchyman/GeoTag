@@ -18,6 +18,13 @@ can use the command `brew cask install geotag` to install.
 Version 4.7 is the latest released version.  Version 4.5.1 is available at
 https://www.snafu.org/GeoTag/ for those running macOS 10.12.6
 
+## GeoTag 4.7.1
+
+### Bug Fix
+
+* when changing or setting dates of a image only change/set the
+  -DateTimeOriginal tag.  Leave the other dates alone.
+
 ## GeoTag 4.7
 
 ### New Feature
