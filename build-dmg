@@ -5,14 +5,14 @@
 # MAKE SURE COMMAND LINE UTILS MATCH THE VERSION OF XCODE BEING USED
 #
 # 1) Xcode: Archive app
-# 2) Xcode: Distribute code signed app (not notarized)
-#           Name the created folder GeoTag.
-# 3) Run this script to create a READ ONLY DMG
-# 4) Note the returned Request-UUID.
-# 5) Check status using this command:
+# 2) Notarize App
+# 3) Export Notarized app.  It will wind up on the Desktop
+# 4) Run this script to create a READ ONLY DMG
+# 5) Note the returned Request-UUID.
+# 6) Check status using this command:
 #    xcrun altool --notarization-info Request-UUID --username "marc+developer@snafu.org" --password "@keychain:Notarizing"
-# 6) Wait until that status is "Package Approved" -- or you get an email from apple
-# 7) Staple the notarization ticket to the dmg
+# 7) Wait until that status is "Package Approved" -- or you get an email from apple
+# 8) Staple the notarization ticket to the dmg
 #    xcrun stapler staple -v ${DMG}
 
 set -ex
@@ -37,7 +37,7 @@ rm -rf ${DIR}
 mkdir ${DIR}
 
 ln -s /Applications ${DIR}
-cp -R ~/Desktop/GeoTag/GeoTag.app ${DIR}
+cp -R ~/Desktop/GeoTag.app ${DIR}
 cp README ${DIR}/Readme.txt
 echo ${BUILD_VERSION} > ${DIR}/Version.txt
 
