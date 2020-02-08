@@ -57,3 +57,9 @@ Please select a new backup folder.";
     %@
 
 is missing. Please select a new backup folder.";
+"CLEAN_SAVE_FOLDER_TITLE" = "Clean your backup/save folder?";
+"CLEAN_SAVE_FOLDER" = "Your current backup/save folder
+
+    %@
+
+contains %d MB of backup files.  %d files were changed more that 7 days ago. You may want to removed files that are no longer needed.";

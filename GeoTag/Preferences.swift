@@ -62,6 +62,7 @@ final class Preferences  {
                     url = try URL(resolvingBookmarkData: bookmark,
                                   options: [.withoutUI, .withSecurityScope],
                                   bookmarkDataIsStale: &staleBookmark)
+                    checkSaveFolder(url!)
                 } catch let error as NSError {
                     unexpected(error: error,
                                NSLocalizedString("MISSING_BACKUP_FOLDER",
