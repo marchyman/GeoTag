@@ -1,5 +1,10 @@
 ## WIP
 
+### New Feature
+
+* Warn the user if the Backup/Save folder contains more than 500 MB of images
+  or if the images were added to the folder more than 7 days ago.
+
 ### Bug Fix
 
 * Remember the column/sort direction when a user picls a column to order the
