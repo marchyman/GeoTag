@@ -22,7 +22,7 @@ available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.6
 
 ### Bug Fix
 
-* Remember the column/sort direction when a user pics a column to order the
+* Remember the column/sort direction when a user picks a column to order the
   images in the table. Sort by the remembered value when new images are
   opened.
 
