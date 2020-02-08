@@ -1,3 +1,13 @@
+## WIP
+
+### Bug Fix
+
+* Remember the column/sort direction when a user pics a column to order the
+  images in the table. Sort by the remembered value when new images are
+  opened.
+
+* update the script use to build a release dmg
+
 ## GeoTag 4.7.1
 
 ### Bug Fix

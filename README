@@ -15,8 +15,18 @@ ExifTool. **ExifTool is built in to GeoTag.**
 GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
 
-Version 4.7 is the latest released version.  Version 4.5.1 is available at
-https://www.snafu.org/GeoTag/ for those running macOS 10.12.6
+Version 4.7 is the latest App Store released version.  Version 4.5.1 is
+available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.6
+
+## WIP
+
+### Bug Fix
+
+* Remember the column/sort direction when a user pics a column to order the
+  images in the table. Sort by the remembered value when new images are
+  opened.
+
+* update the script use to build a release dmg
 
 ## GeoTag 4.7.1
 
