@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
-        <plugIn identifier="com.apple.MapKitIBPlugin" version="14490.70"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="15705"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -239,25 +239,25 @@ CA
             <rect key="contentRect" x="335" y="390" width="1100" height="816"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="800" height="600"/>
-            <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="1100" height="816"/>
+            <view key="contentView" misplaced="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="1100" height="793"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView autosaveName="GeoTagLeftRight" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pMq-xL-Jwc">
-                        <rect key="frame" x="20" y="20" width="1060" height="776"/>
+                        <rect key="frame" x="20" y="20" width="1060" height="681"/>
                         <subviews>
-                            <customView id="Gwc-9o-vlc" userLabel="Left Pane">
-                                <rect key="frame" x="0.0" y="0.0" width="530" height="776"/>
-                                <autoresizingMask key="autoresizingMask"/>
+                            <customView misplaced="YES" id="Gwc-9o-vlc" userLabel="Left Pane">
+                                <rect key="frame" x="0.0" y="0.0" width="530" height="681"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <scrollView borderType="line" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ARi-Ei-bTG">
-                                        <rect key="frame" x="0.0" y="0.0" width="522" height="776"/>
+                                        <rect key="frame" x="0.0" y="-24" width="522" height="681"/>
                                         <clipView key="contentView" id="gmY-qF-zsb">
-                                            <rect key="frame" x="1" y="1" width="520" height="774"/>
+                                            <rect key="frame" x="1" y="1" width="520" height="679"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="acu-99-iMm" viewBased="YES" id="skl-pj-P9m">
-                                                    <rect key="frame" x="0.0" y="0.0" width="520" height="751"/>
+                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveName="ImageTable" rowSizeStyle="automatic" headerView="acu-99-iMm" viewBased="YES" id="skl-pj-P9m">
+                                                    <rect key="frame" x="0.0" y="0.0" width="520" height="656"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -282,7 +282,7 @@ CA
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="OEU-KB-5T7">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="163" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="1" width="163" height="16"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="p-yydddhhmm-nnnn.typ" id="eOy-hW-eGU">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -320,7 +320,7 @@ CA
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Gmo-tg-1MM">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="142" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="1" width="142" height="16"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="yyyy:mm:dd hh:mm:ss" id="TXL-1H-fom">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -358,7 +358,7 @@ CA
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tyW-mI-5bT">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="97" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="1" width="97" height="16"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="-47.123456" id="6ou-9x-wx5">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -396,7 +396,7 @@ CA
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fNU-Jf-yeQ">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="82" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="1" width="82" height="16"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="-122.123456" id="e4b-z8-Hnu">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -448,23 +448,23 @@ CA
                                     <constraint firstItem="ARi-Ei-bTG" firstAttribute="top" secondItem="Gwc-9o-vlc" secondAttribute="top" id="kVb-Br-vmd"/>
                                 </constraints>
                             </customView>
-                            <customView id="v4A-KZ-PzD" userLabel="Right Pane">
-                                <rect key="frame" x="539" y="0.0" width="521" height="776"/>
-                                <autoresizingMask key="autoresizingMask"/>
+                            <customView misplaced="YES" id="v4A-KZ-PzD" userLabel="Right Pane">
+                                <rect key="frame" x="539" y="0.0" width="521" height="681"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <splitView autosaveName="GeoTagUpDown" translatesAutoresizingMaskIntoConstraints="NO" id="Owq-8L-C5q">
-                                        <rect key="frame" x="0.0" y="0.0" width="521" height="776"/>
+                                        <rect key="frame" x="0.0" y="-24" width="521" height="681"/>
                                         <subviews>
-                                            <customView id="VLF-DZ-LKW" userLabel="Image pane">
-                                                <rect key="frame" x="0.0" y="0.0" width="521" height="346"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                            <customView misplaced="YES" id="VLF-DZ-LKW" userLabel="Image pane">
+                                                <rect key="frame" x="0.0" y="0.0" width="521" height="303"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <imageView translatesAutoresizingMaskIntoConstraints="NO" id="xuH-yg-55o">
-                                                        <rect key="frame" x="-3" y="-3" width="527" height="352"/>
+                                                        <rect key="frame" x="-3" y="-14" width="527" height="309"/>
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" id="giZ-5r-50G"/>
                                                     </imageView>
                                                     <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Leb-gI-5bq">
-                                                        <rect key="frame" x="164" y="163" width="193" height="20"/>
+                                                        <rect key="frame" x="164" y="131" width="193" height="20"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="193" id="BMR-vd-JD0"/>
                                                         </constraints>
@@ -479,12 +479,12 @@ CA
                                                     <constraint firstAttribute="centerX" secondItem="Leb-gI-5bq" secondAttribute="centerX" id="rHJ-rN-MCW"/>
                                                 </constraints>
                                             </customView>
-                                            <customView id="mR8-Yl-B58" userLabel="Map pane">
-                                                <rect key="frame" x="0.0" y="355" width="521" height="421"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <customView misplaced="YES" id="mR8-Yl-B58" userLabel="Map pane">
+                                                <rect key="frame" x="0.0" y="312" width="521" height="369"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jOB-Xu-ExJ">
-                                                        <rect key="frame" x="363" y="381" width="144" height="32"/>
+                                                        <rect key="frame" x="363" y="316" width="144" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="SvS-X7-UYa"/>
                                                         </constraints>
@@ -497,7 +497,7 @@ CA
                                                         </connections>
                                                     </button>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
-                                                        <rect key="frame" x="18" y="386" width="282" height="24"/>
+                                                        <rect key="frame" x="18" y="321" width="282" height="24"/>
                                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="248-FW-Avl">
                                                             <font key="font" metaFont="system"/>
                                                             <segments>
@@ -511,13 +511,13 @@ CA
                                                         </connections>
                                                     </segmentedControl>
                                                     <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zwv-MK-4Du" customClass="MapView" customModule="GeoTag" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="521" height="380"/>
+                                                        <rect key="frame" x="0.0" y="-13" width="521" height="328"/>
                                                         <connections>
                                                             <outlet property="delegate" destination="Go6-yP-GH9" id="xhZ-dn-nDA"/>
                                                         </connections>
                                                     </mapView>
                                                     <searchField wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cBm-xR-XMN">
-                                                        <rect key="frame" x="181" y="346" width="320" height="22"/>
+                                                        <rect key="frame" x="181" y="294" width="320" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                                                         <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" maximumRecents="10" recentsAutosaveName="Searches" id="KmR-EN-cxb">
                                                             <font key="font" metaFont="system"/>

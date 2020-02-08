@@ -668,6 +668,9 @@ final class TableViewController: NSViewController {
 
     func reloadAllRows() {
         appDelegate.undoManager.removeAllActions()
+        let sortedImages = NSMutableArray(array: images)
+        sortedImages.sort(using: tableView.sortDescriptors)
+        images = sortedImages as! [ImageData]
         tableView.reloadData()
         imageWell.image = nil
         mapViewController.removeMapPin()
@@ -823,10 +826,7 @@ extension TableViewController: NSTableViewDataSource {
     // table sorting by column contents
     func tableView(_ tableView: NSTableView,
                    sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
-        let sortedImages = NSMutableArray(array: images)
-        sortedImages.sort(using: tableView.sortDescriptors)
-        images = sortedImages as! [ImageData]
-        tableView.reloadData()
+        reloadAllRows()
     }
 
     // validate a proposed drop
