@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		490DE1C62297A650000AEAB5 /* GeoTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EECC19495FB100293C73 /* GeoTagTests.swift */; };
+		4924E31923EF329200021B32 /* SaveFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4924E31823EF329200021B32 /* SaveFolder.swift */; };
 		492978901984B48D00BE0706 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 4929788F1984B48D00BE0706 /* GeoTag Help */; };
 		492AFD23211A906200F74AC1 /* TableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492AFD22211A906200F74AC1 /* TableTests.swift */; };
 		493988B4229A40210067E081 /* TestPictures in Resources */ = {isa = PBXBuildFile; fileRef = 493988B3229A40210067E081 /* TestPictures */; };
@@ -69,6 +70,7 @@
 		490DE1BC2297A27F000AEAB5 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		490F7EAA1B339A6C00DB36B5 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
 		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
+		4924E31823EF329200021B32 /* SaveFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveFolder.swift; sourceTree = "<group>"; };
 		4929788F1984B48D00BE0706 /* GeoTag Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "GeoTag Help"; sourceTree = "<group>"; };
 		492AFCEC211A5DF900F74AC1 /* TestTrack.GPX */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestTrack.GPX; sourceTree = "<group>"; };
 		492AFD22211A906200F74AC1 /* TableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableTests.swift; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 				4982FFA1229F554300C1D312 /* PreferencesWindow.swift */,
 				4982FFA3229F582800C1D312 /* PreferencesView.swift */,
 				49CE08811AFBF9370057E310 /* Preferences.swift */,
+				4924E31823EF329200021B32 /* SaveFolder.swift */,
 				49E154CD2262625900902787 /* XmpFile.swift */,
 				49B0EEBF19495FB100293C73 /* MainMenu.xib */,
 				4990F0AE19818AA4001CA437 /* icon.pxm */,
@@ -456,6 +459,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49E0340D1B0BBBB700CC9768 /* Interpolate.swift in Sources */,
+				4924E31923EF329200021B32 /* SaveFolder.swift in Sources */,
 				49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */,
 				49CE08821AFBF9370057E310 /* Preferences.swift in Sources */,
 				494E9504210EBE3B0076B58F /* ChangeTimeViewController.swift in Sources */,

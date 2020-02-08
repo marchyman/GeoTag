@@ -114,7 +114,7 @@ struct Exiftool {
             }
         }
         exiftool.arguments! += [dtArg, "-GPSStatus=", path]
-        dump(exiftool.arguments!)
+//      dump(exiftool.arguments!)
         exiftool.launch()
         exiftool.waitUntilExit()
         return exiftool.terminationStatus
