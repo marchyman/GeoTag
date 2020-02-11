@@ -62,4 +62,7 @@ is missing. Please select a new backup folder.";
 
     %@
 
-contains %d MB of backup files.  %d files were changed more that 7 days ago. You may want to removed files that are no longer needed.";
+is using %d MB to store backup files.  %d files using %d MB of storage were placed in the folder more than 7 days ago.
+
+Shall images that have been in the folder more than 7 days be deleted?";
+"DELETE" = "Delete";

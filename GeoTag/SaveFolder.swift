@@ -26,11 +26,9 @@
 import Foundation
 import AppKit
 
-/// Check the  folder used to save backups for old image files.  Also check the total size of backed up
-/// image files.  Remind the user  that old backups can be deleted if any files were added to the
-/// directory more than 7 days prior to the current date or if the backup folder contains more than 500 MB
-/// of backuop images.  The numbers 7 and 500 MB are completely arbitrary, although any file older than
-/// 7 days will be on a time machine backup provided
+/// Check the  folder used to save backups for old image files.  Offer to delete images that were placed
+/// in the backup folder  more than 7 days prior to the current date.  7 days is an arbitrary number,
+/// although any file older than 7 days will be on a time machine backup provided
 /// 1) time machine is in use; and
 /// 2) the backup folder is being saved to time machine.
 ///
@@ -52,8 +50,9 @@ func checkSaveFolder(_ url: URL) {
     // of older files
     guard let sevenDaysAgo =
         Calendar.current.date(byAdding: .day, value: -7, to: Date()) else { return }
-    var oldFiles = 0
+    var oldFiles: [URL] = []
     var folderSize = 0
+    var deletedSize = 0
     while let fileUrl = urlEnumerator.nextObject() as? URL {
         guard
             let resources =
@@ -62,26 +61,34 @@ func checkSaveFolder(_ url: URL) {
                 let fileDate = resources.addedToDirectoryDate else { break }
         folderSize += fileSize
         if fileDate < sevenDaysAgo {
-            oldFiles += 1
+            oldFiles.append(fileUrl)
+            deletedSize += fileSize
         }
     }
     
-    // Alert if there are any old files or the folder size exceeds 500,000 MB
-    let folderLimit = 500_000_000_000
-    if folderSize > folderLimit || oldFiles > 1 {
+    // Alert if there are any old files
+    if !oldFiles.isEmpty {
         let messageStr = String(format: NSLocalizedString("CLEAN_SAVE_FOLDER",
                                                           comment: "clean save folder"),
-                                url.path, folderSize / 1_000_000, oldFiles)
+                                url.path, folderSize / 1_000_000, oldFiles.count,
+                                deletedSize / 1_000_000)
         let alert = NSAlert()
-        alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "Close"))
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: NSLocalizedString("DELETE", comment: "Delete"))
+        alert.addButton(withTitle: NSLocalizedString("CLOSE", comment: "CLOSE"))
         alert.messageText = NSLocalizedString("CLEAN_SAVE_FOLDER_TITLE",
                                               comment:"Clean Save Folder?")
         alert.informativeText = messageStr;
-        alert.runModal()
+        if alert.runModal() == .alertFirstButtonReturn {
+            remove(oldFiles)
+        }
     }
 }
 
 private
-func oldFilesAlert() {
-    
+func remove(_ oldFiles: [URL]) {
+    let fileManager = FileManager.default
+    for url in oldFiles {
+        try? fileManager.removeItem(at: url)
+    }
 }
