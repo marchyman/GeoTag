@@ -61,17 +61,9 @@ struct Exiftool {
         var lonRefArg = "-GPSLongitudeRef="
 
         // ExifTool GSPDateTime arg storage
-        var gpsDArg = ""
-        var gpsTArg = ""
-        var gpsDTArg = ""
-        if Preferences.dateTimeGPS() {
-            gpsDArg = "-GPSDateStamp="      // for non XMP files
-            gpsTArg = "-GPSTimeStamp="      // for non XMP files
-            gpsDTArg = "-GPSDateTime="       // for XMP files
-        }
-
-        // ExifTool date/time argument name and value
-        let dtArg = "-DateTimeOriginal=" + imageData.dateTime
+        var gpsDArg = "-GPSDateStamp="      // for non XMP files
+        var gpsTArg = "-GPSTimeStamp="      // for non XMP files
+        var gpsDTArg = "-GPSDateTime="      // for XMP files
 
         // Build ExifTool latitude, longitude argument values
         if let location = imageData.location {
@@ -113,7 +105,13 @@ struct Exiftool {
                 exiftool.arguments?.append(gpsDTArg)
             }
         }
-        exiftool.arguments! += [dtArg, "-GPSStatus=", path]
+        // add args to update date/time if changed
+        if imageData.dateTime != imageData.originalDateTime {
+            let dtoArg = "-DateTimeOriginal=" + imageData.dateTime
+            let cdArg = "-CreateDate=" + imageData.dateTime
+            exiftool.arguments! += [dtoArg, cdArg]
+        }
+        exiftool.arguments! += ["-GPSStatus=", path]
 //      dump(exiftool.arguments!)
         exiftool.launch()
         exiftool.waitUntilExit()
