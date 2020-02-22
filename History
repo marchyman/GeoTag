@@ -2,6 +2,9 @@
 
 ### New Feature
 
+* update CreateDate as well as Date/Time Original.  Dates are updated only
+  when the user modifies the image timestamp.
+
 * Warn the user if the Backup/Save folder contains more than 500 MB of images
   or if the images were added to the folder more than 7 days ago.
 
