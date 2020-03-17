@@ -5,7 +5,7 @@
 #
 # Notes:        Also contains some less used ExifTool functions
 #
-# URL:          http://owl.phy.queensu.ca/~phil/exiftool/
+# URL:          https://exiftool.org/
 #
 # Revisions:    12/16/2004 - P. Harvey Created
 #------------------------------------------------------------------------------
@@ -135,16 +135,23 @@ my %rawType = (
 my @delGroups = qw(
     Adobe AFCP APP0 APP1 APP2 APP3 APP4 APP5 APP6 APP7 APP8 APP9 APP10 APP11
     APP12 APP13 APP14 APP15 CanonVRD CIFF Ducky EXIF ExifIFD File FlashPix
-    FotoStation GlobParamIFD GPS ICC_Profile IFD0 IFD1 InteropIFD IPTC ItemList
-    JFIF Jpeg2000 MakerNotes Meta MetaIFD MIE MPF NikonCapture PDF PDF-update
-    PhotoMechanic Photoshop PNG PNG-pHYs PrintIM QuickTime RMETA RSRC SubIFD
-    Trailer UserData XML XML-* XMP XMP-*
+    FotoStation GlobParamIFD GPS ICC_Profile IFD0 IFD1 Insta360 InteropIFD IPTC
+    ItemList JFIF Jpeg2000 Keys MakerNotes Meta MetaIFD MIE MPF NikonCapture PDF
+    PDF-update PhotoMechanic Photoshop PNG PNG-pHYs PrintIM QuickTime RMETA RSRC
+    SubIFD Trailer UserData XML XML-* XMP XMP-*
 );
 # family 2 group names that we can delete
 my @delGroup2 = qw(
     Audio Author Camera Document ExifTool Image Location Other Preview Printing
     Time Video
 );
+# Extra groups to delete when deleting another group
+my %delMore = (
+    QuickTime => [ qw(ItemList UserData Keys) ],
+    XMP => [ 'XMP-*' ],
+    XML => [ 'XML-*' ],
+);
+
 # family 0 groups where directories should never be deleted
 my %permanentDir = ( QuickTime => 1 );
 
@@ -181,6 +188,7 @@ my %excludeGroups = (
     CanonVRD     => [ 'Trailer' ],
     PhotoMechanic=> [ 'Trailer' ],
     MIE          => [ 'Trailer' ],
+    QuickTime    => [ qw(ItemList UserData Keys) ],
 );
 # translate (lower case) wanted group when writing for tags where group name may change
 my %translateWantGroup = (
@@ -262,6 +270,7 @@ my %ignorePrintConv = map { $_ => 1 } qw(OTHER BITMASK Notes);
 #           NoFlat => treat flattened tags as 'unsafe'
 #           NoShortcut => true to prevent looking up shortcut tags
 #           ProtectSaved => protect existing new values with a save count greater than this
+#           IgnorePermanent => ignore attempts to delete a permanent tag
 #           CreateGroups => [internal use] createGroups hash ref from related tags
 #           ListOnly => [internal use] set only list or non-list tags
 #           SetTags => [internal use] hash ref to return tagInfo refs of set tags
@@ -271,8 +280,8 @@ my %ignorePrintConv = map { $_ => 1 } qw(OTHER BITMASK Notes);
 #        each value in the list.  Internally, the new information is stored in
 #        the following members of the $$self{NEW_VALUE}{$tagInfo} hash:
 #           TagInfo - tag info ref
-#           DelValue - list ref for values to delete
-#           Value - list ref for values to add (not defined if deleting the tag)
+#           DelValue - list ref for raw values to delete
+#           Value - list ref for raw values to add (not defined if deleting the tag)
 #           IsCreating - must be set for the tag to be added for the standard file types,
 #                        otherwise just changed if it already exists.  This may be
 #                        overridden for file types with a PREFERRED metadata type.
@@ -348,6 +357,9 @@ sub SetNewValue($;$$%)
     # allow trailing '#' for ValueConv value
     $options{Type} = 'ValueConv' if $tag =~ s/#$//;
     my $convType = $options{Type} || ($$self{OPTIONS}{PrintConv} ? 'PrintConv' : 'ValueConv');
+
+    # filter value if necessary
+    Filter($$self{OPTIONS}{FilterW}, \$value) if $convType eq 'PrintConv';
 
     my (@wantGroup, $family2);
     my $wantGroup = $options{Group};
@@ -436,10 +448,9 @@ sub SetNewValue($;$$%)
                     }
                 } else {
                     $$delGroup{$grp} = 1;
-                    # add flag for XMP/XML family 1 groups if deleting all XMP
-                    if ($grp =~ /^XM[LP]$/) {
-                        $$delGroup{"$grp-*"} = 1;
-                        push @donegrps, "$grp-*";
+                    # add extra groups to delete if necessary
+                    if ($delMore{$grp}) {
+                        $$delGroup{$_} = 1, push @donegrps, $_ foreach @{$delMore{$grp}};
                     }
                     # remove all of this group from previous new values
                     $self->RemoveNewValuesForGroup($grp);
@@ -583,7 +594,7 @@ sub SetNewValue($;$$%)
 # the highest priority group
 #
     my (@tagInfoList, @writeAlsoList, %writeGroup, %preferred, %tagPriority);
-    my (%avoid, $wasProtected, $noCreate, %highestPriority);
+    my (%avoid, $wasProtected, $noCreate, %highestPriority, %highestQT);
 
 TAG: foreach $tagInfo (@matchingTags) {
         $tag = $$tagInfo{Name};     # get tag name for warnings
@@ -591,6 +602,7 @@ TAG: foreach $tagInfo (@matchingTags) {
         # initialize highest priority if we are starting a new tag
         $highestPriority{$lcTag} = -999 unless defined $highestPriority{$lcTag};
         my ($priority, $writeGroup);
+        my $prfTag = defined $$tagInfo{Preferred} ? $$tagInfo{Preferred} : $$tagInfo{Table}{PREFERRED};
         if ($wantGroup) {
             # a WriteGroup of All is special
             my $wgAll = ($$tagInfo{WriteGroup} and $$tagInfo{WriteGroup} eq 'All');
@@ -600,9 +612,8 @@ TAG: foreach $tagInfo (@matchingTags) {
                 my ($fam, $lcWant) = @$fg;
                 $lcWant = $translateWantGroup{$lcWant} if $translateWantGroup{$lcWant};
                 # only set tag in specified group
-                my $prf = defined $$tagInfo{Preferred} ? $$tagInfo{Preferred} : $$tagInfo{Table}{PREFERRED};
                 # bump priority of preferred tag
-                $hiPri += $prf if $prf;
+                $hiPri += $prfTag if $prfTag;
                 if (not defined $fam) {
                     if ($lcWant eq lc $grp[0]) {
                         # don't go to more general write group of "All"
@@ -634,9 +645,10 @@ TAG: foreach $tagInfo (@matchingTags) {
                     if ($grp[1] eq 'Track#') {
                         next TAG unless $movGroup and $lcWant eq lc($movGroup);
                         $writeGroup = $movGroup;
-                    } elsif ($$tagInfo{Table}{WRITE_GROUP}) {
-                        next TAG unless $lcWant eq lc $$tagInfo{Table}{WRITE_GROUP};
-                        $writeGroup = $$tagInfo{Table}{WRITE_GROUP};
+                    } else {
+                        my $grp = $$tagInfo{Table}{WRITE_GROUP};
+                        next TAG unless $grp and $lcWant eq lc $grp;
+                        $writeGroup = $grp;
                     }
                 } elsif ($grp[0] eq 'MIE') {
                     next TAG unless $mieGroup and $lcWant eq lc($mieGroup);
@@ -688,6 +700,8 @@ TAG: foreach $tagInfo (@matchingTags) {
                     $priority = $$self{WRITE_PRIORITY}{lc($group0)} || 0;
                 }
             }
+            # adjust priority based on Preferred level for this tag
+            $priority += $prfTag if $prfTag;
         }
         # don't write tag if protected
         my $prot = $$tagInfo{Protected};
@@ -706,6 +720,9 @@ TAG: foreach $tagInfo (@matchingTags) {
         }
         # set priority for this tag
         $tagPriority{$tagInfo} = $priority;
+        # keep track of highest priority QuickTime tag
+        $highestQT{$lcTag} = $priority if $$table{GROUPS}{0} eq 'QuickTime' and
+            (not defined $highestQT{$lcTag} or $highestQT{$lcTag} < $priority);
         if ($priority > $highestPriority{$lcTag}) {
             $highestPriority{$lcTag} = $priority;
             $preferred{$lcTag} = { $tagInfo => 1 };
@@ -721,9 +738,14 @@ TAG: foreach $tagInfo (@matchingTags) {
         } else {
             push @tagInfoList, $tagInfo;
         }
+        # special case to allow override of XMP WriteGroup
+        if ($writeGroup eq 'XMP') {
+            my $wg = $$tagInfo{WriteGroup} || $$table{WRITE_GROUP};
+            $writeGroup = $wg if $wg;
+        }
         $writeGroup{$tagInfo} = $writeGroup;
     }
-    # sort tag info list in reverse order of priority (higest number last)
+    # sort tag info list in reverse order of priority (highest number last)
     # so we get the highest priority error message in the end
     @tagInfoList = sort { $tagPriority{$a} <=> $tagPriority{$b} } @tagInfoList;
     # must write any tags which also write other tags first
@@ -794,7 +816,8 @@ TAG: foreach $tagInfo (@matchingTags) {
         $writeGroup eq 'MakerNotes' and $permanent = 1 unless defined $permanent;
         my $wgrp1 = $self->GetWriteGroup1($tagInfo, $writeGroup);
         $tag = $$tagInfo{Name};     # get tag name for warnings
-        my $pref = $preferred{lc $tag} || { };
+        my $lcTag = lc $tag;
+        my $pref = $preferred{$lcTag} || { };
         my $shift = $options{Shift};
         my $addValue = $options{AddValue};
         if (defined $shift) {
@@ -834,7 +857,7 @@ TAG: foreach $tagInfo (@matchingTags) {
             # check to make sure this is a List or Shift tag if adding
             if ($addValue and not ($shift or $$tagInfo{List})) {
                 if ($addValue eq '2') {
-                    undef $addValue;    # quitely reset this option
+                    undef $addValue;    # quietly reset this option
                 } else {
                     $err = "Can't add $wgrp1:$tag (not a List type)";
                     $verbose > 2 and print $out "$err\n";
@@ -869,6 +892,7 @@ TAG: foreach $tagInfo (@matchingTags) {
                 next;
             }
         } elsif ($permanent) {
+            return 0 if $options{IgnorePermanent};
             # can't delete permanent tags, so set them to DelValue or empty string instead
             if (defined $$tagInfo{DelValue}) {
                 $val = $$tagInfo{DelValue};
@@ -893,6 +917,20 @@ TAG: foreach $tagInfo (@matchingTags) {
                     $verbose > 2 and print $out "$err\n";
                     next;
                 }
+            }
+            # set group delete flag if this tag represents an entire group
+            if ($$tagInfo{DelGroup} and not $options{DelValue}) {
+                my @del = ( $tag );
+                $$self{DEL_GROUP}{$tag} = 1;
+                # delete extra groups if necessary
+                if ($delMore{$tag}) {
+                    $$self{DEL_GROUP}{$_} = 1, push(@del,$_) foreach @{$delMore{$tag}};
+                }
+                # remove all of this group from previous new values
+                $self->RemoveNewValuesForGroup($tag);
+                $verbose and print $out "  Deleting tags in: @del\n";
+                ++$numSet;
+                next;
             }
             $noConv = 1;    # value is not defined, so don't do conversion
         }
@@ -981,6 +1019,10 @@ TAG: foreach $tagInfo (@matchingTags) {
             # (will only create the priority tag if it doesn't exist,
             #  others get changed only if they already exist)
             my $prf = defined $$tagInfo{Preferred} ? $$tagInfo{Preferred} : $$tagInfo{Table}{PREFERRED};
+            # hack to prefer only a single tag in the QuickTime group
+            if ($$tagInfo{Table}{GROUPS}{0} eq 'QuickTime') {
+                $prf = 0 if $tagPriority{$tagInfo} < $highestQT{$lcTag};
+            }
             if ($$pref{$tagInfo} or $prf) {
                 if ($permanent or $shift) {
                     # don't create permanent or Shift-ed tag but define IsCreating
@@ -1085,6 +1127,9 @@ WriteAlso:
                 undef $evalWarning;
                 #### eval WriteAlso ($val)
                 my $v = eval $$writeAlso{$wtag};
+                # we wanted to do the eval in case there are side effect, but we
+                # don't want to write a value for a tag that is being deleted:
+                undef $v unless defined $val;
                 $@ and $evalWarning = $@;
                 unless ($evalWarning) {
                     ($n,$evalWarning) = $self->SetNewValue($wgrp . $wtag, $v, %opts);
@@ -1228,6 +1273,8 @@ sub SetNewValuesFromFile($$;@)
         QuickTimeUTC    => $$options{QuickTimeUTC},
         RequestAll      => $$options{RequestAll} || 1, # (is this still necessary now that RequestTags are being set?)
         RequestTags     => $$options{RequestTags},
+        SaveFormat      => $$options{SaveFormat},
+        SavePath        => $$options{SavePath},
         ScanForXMP      => $$options{ScanForXMP},
         StrictDate      => defined $$options{StrictDate} ? $$options{StrictDate} : 1,
         Struct          => $structOpt,
@@ -1291,13 +1338,13 @@ sub SetNewValuesFromFile($$;@)
         foreach $tag (@tags) {
             # don't try to set errors or warnings
             next if $tag =~ /^(Error|Warning)\b/;
-            # get approprite value type if necessary
+            # get appropriate value type if necessary
             if ($opts{SrcType} and $opts{SrcType} ne $srcType) {
                 $$info{$tag} = $srcExifTool->GetValue($tag, $opts{SrcType});
             }
             # set value for this tag
             my ($n, $e) = $self->SetNewValue($tag, $$info{$tag}, %opts);
-            # delete this tag if we could't set it
+            # delete this tag if we couldn't set it
             $n or delete $$info{$tag};
         }
         return $info;
@@ -1693,6 +1740,8 @@ sub SaveNewValues($)
 # Notes: Restores saved new values, but currently doesn't restore them in the
 # original order, so there may be some minor side-effects when restoring tags
 # with overlapping groups. eg) XMP:Identifier, XMP-dc:Identifier
+# Also, this doesn't do the right thing for list-type tags which accumulate
+# values across a save point
 sub RestoreNewValues($)
 {
     my $self = shift;
@@ -2256,6 +2305,10 @@ sub WriteInfo($$;$$)
                     $fileType = $tiffType;
                     undef $rtnVal;
                 } else {
+                    if ($tiffType eq 'FFF') {
+                        # (see https://exiftool.org/forum/index.php?topic=10848.0)
+                        $self->Error('Phocus may not properly update previews of edited FFF images', 1);
+                    }
                     $dirInfo{Parent} = $tiffType;
                     $rtnVal = $self->ProcessTIFF(\%dirInfo);
                 }
@@ -2576,6 +2629,8 @@ sub GetAllGroups($)
 
     $family == 3 and return('Doc#', 'Main');
     $family == 4 and return('Copy#');
+    $family == 5 and return('[too many possibilities to list]');
+    $family == 6 and return(@Image::ExifTool::Exif::formatName[1..$#Image::ExifTool::Exif::formatName]);
 
     LoadAllTables();    # first load all our tables
 
@@ -2701,8 +2756,8 @@ Conv: for (;;) {
                     ($wantGroup or not defined $wantGroup))
                 {
                     $listSplit = ',?\s+' if $listSplit eq '1' and $$tagInfo{AutoSplit};
-                    my @splitVal = split /$listSplit/, $val;
-                    $val = \@splitVal if @splitVal > 1;
+                    my @splitVal = split /$listSplit/, $val, -1;
+                    $val = @splitVal > 1 ? \@splitVal : @splitVal ? $splitVal[0] : '';
                 }
             }
             $type = $convType || $$self{ConvType} || 'PrintConv';
@@ -2799,7 +2854,7 @@ Conv: for (;;) {
                     last Conv;
                 }
             } elsif ($conv) {
-                if (ref $conv eq 'HASH') {
+                if (ref $conv eq 'HASH' and (not exists $$tagInfo{"${type}Inv"} or $convInvList)) {
                     my ($multi, $lc);
                     # insert alternate language print conversions if required
                     if ($$self{CUR_LANG} and $type eq 'PrintConv' and
@@ -2876,14 +2931,16 @@ Conv: for (;;) {
 }
 
 #------------------------------------------------------------------------------
-# convert tag names to values in a string (eg. '${EXIF:ISO}x $$' --> '100x $')
+# Convert tag names to values or variables in a string
+# (eg. '${EXIF:ISO}x $$' --> '100x $' without hash ref, or "$info{'EXIF:ISO'}x $" with)
 # Inputs: 0) ExifTool object ref, 1) reference to list of found tags
 #         2) string with embedded tag names, 3) Options:
 #               undef    - set missing tags to ''
 #              'Error'   - issue minor error on missing tag (and return undef)
 #              'Warn'    - issue minor warning on missing tag (and return undef)
 #              'Silent'  - just return undef on missing tag (no errors/warnings)
-#               Hash ref - hash for return of tag/value pairs
+#               Hash ref - defined to interpolate as variables in string instead of values
+#                          --> receives tag/value pairs for interpolation of the variables
 #         4) document group name if extracting from a specific document
 #         5) hash ref to cache tag keys for subsequent calls in document loop
 # Returns: string with embedded tag values (or '$info{TAGNAME}' entries with Hash ref option)
@@ -2899,7 +2956,7 @@ sub InsertTagValues($$$;$$$)
     local $_;
     my ($self, $foundTags, $line, $opt, $docGrp, $cache) = @_;
     my $rtnStr = '';
-    my $docNum;
+    my ($docNum, $tag);
     if ($docGrp) {
         $docNum = $docGrp =~ /(\d+)$/ ? $1 : 0;
     } else {
@@ -2952,8 +3009,9 @@ sub InsertTagValues($$$;$$$)
 
         for (;;) {
             # temporarily reset ListJoin option if evaluating list values separately
-            my $oldListJoin = $self->Options(ListJoin => undef) if $asList;
-            my $tag = shift @tags;
+            my $oldListJoin;
+            $oldListJoin = $self->Options(ListJoin => undef) if $asList;
+            $tag = shift @tags;
             my $lcTag = lc $tag;
             if ($cache and $lcTag !~ /(^|:)all$/) {
                 # remove group from tag name (but not lower-case version)
@@ -2980,7 +3038,10 @@ sub InsertTagValues($$$;$$$)
                     }
                 }
                 my $doc = $lcTag =~ /\b(main|doc(\d+)):/ ? ($2 || 0) : $docNum;
-                $val = $self->GetValue($$cacheTag[$doc], $type) if $$cacheTag[$doc];
+                if ($$cacheTag[$doc]) {
+                    $tag = $$cacheTag[$doc];
+                    $val = $self->GetValue($tag, $type);
+                }
             } else {
                 # add document number to tag if specified and it doesn't already exist
                 if ($docGrp and $lcTag !~ /\b(main|doc\d+):/) {
@@ -3503,10 +3564,11 @@ sub GetNewValueHash($$;$$$$)
 
     if ($writeGroup) {
         # find the new value in the list with the specified write group
-        # (QuickTime and All are special cases because all group1 tags may be updated at once)
-        while ($nvHash and $$nvHash{WriteGroup} ne $writeGroup and
-            $$nvHash{WriteGroup} !~ /^(QuickTime|All)$/)
-        {
+        while ($nvHash and $$nvHash{WriteGroup} ne $writeGroup) {
+            # QuickTime and All are special cases because all group1 tags may be updated at once
+            last if $$nvHash{WriteGroup} =~ /^(QuickTime|All)$/;
+            # replace existing entry if WriteGroup is 'All' (avoids confusion of forum10349)
+            last if $$tagInfo{WriteGroup} and $$tagInfo{WriteGroup} eq 'All';
             $nvHash = $$nvHash{Next};
         }
     }
@@ -3783,14 +3845,14 @@ sub GetLangInfo($$)
 # initialize ADD_DIRS and EDIT_DIRS hashes for all directories that need
 # to be created or will have tags changed in them
 # Inputs: 0) ExifTool object reference, 1) file type string (or map hash ref)
-#         2) preferred family 0 group name for creating tags
+#         2) preferred family 0 group for creating tags, 3) alternate preferred group
 # Notes:
 # - the ADD_DIRS and EDIT_DIRS keys are the directory names, and the values
 #   are the names of the parent directories (undefined for a top-level directory)
 # - also initializes FORCE_WRITE lookup
-sub InitWriteDirs($$;$)
+sub InitWriteDirs($$;$$)
 {
-    my ($self, $fileType, $preferredGroup) = @_;
+    my ($self, $fileType, $preferredGroup, $altGroup) = @_;
     my $editDirs = $$self{EDIT_DIRS} = { };
     my $addDirs = $$self{ADD_DIRS} = { };
     my $fileDirs = $dirMap{$fileType};
@@ -3809,19 +3871,21 @@ sub InitWriteDirs($$;$)
         for ($nvHash=$self->GetNewValueHash($tagInfo); $nvHash; $nvHash=$$nvHash{Next}) {
             # are we creating this tag? (otherwise just deleting or editing it)
             my $isCreating = $$nvHash{IsCreating};
-            if ($isCreating) {
-                # if another group is taking priority, only create
-                # directory if specifically adding tags to this group
-                # or if this tag isn't being added to the priority group
-                $isCreating = 0 if $preferredGroup and
-                    $preferredGroup ne $self->GetGroup($tagInfo, 0) and
-                    $$nvHash{CreateGroups}{$preferredGroup};
-            } else {
-                # creating this directory if any tag is preferred and has a value
-                # (unless group creation is disabled via the WriteMode option)
-                $isCreating = 1 if ($preferredGroup and $$nvHash{Value} and
-                    $preferredGroup eq $self->GetGroup($tagInfo, 0)) and
-                    not $$nvHash{EditOnly} and $$self{OPTIONS}{WriteMode} =~ /g/;
+            if ($preferredGroup) {
+                my $g0 = $self->GetGroup($tagInfo, 0);
+                if ($isCreating) {
+                    # if another group is taking priority, only create
+                    # directory if specifically adding tags to this group
+                    # or if this tag isn't being added to the priority group
+                    $isCreating = 0 if $preferredGroup ne $g0 and
+                        $$nvHash{CreateGroups}{$preferredGroup} and
+                        (not $altGroup or $altGroup ne $g0);
+                } else {
+                    # create this directory if any tag is preferred and has a value
+                    # (unless group creation is disabled via the WriteMode option)
+                    $isCreating = 1 if $$nvHash{Value} and $preferredGroup eq $g0 and
+                        not $$nvHash{EditOnly} and $$self{OPTIONS}{WriteMode} =~ /g/;
+                }
             }
             # tag belongs to directory specified by WriteGroup, or by
             # the Group0 name if WriteGroup not defined
@@ -3831,11 +3895,11 @@ sub InitWriteDirs($$;$)
                 $dirName = 'MIE' . ($1 || '');
             }
             my @dirNames;
-            # allow a group name of '*' to force writing EXIF/IPTC/XMP (ForceWrite tag)
+            # allow a group name of '*' to force writing EXIF/IPTC/XMP/PNG (ForceWrite tag)
             if ($dirName eq '*' and $$nvHash{Value}) {
                 my $val = $$nvHash{Value}[0];
                 if ($val) {
-                    foreach (qw(EXIF IPTC XMP FixBase)) {
+                    foreach (qw(EXIF IPTC XMP PNG FixBase)) {
                         next unless $val =~ /\b($_|All)\b/i;
                         push @dirNames, $_;
                         push @dirNames, 'EXIF' if $_ eq 'FixBase';
@@ -3843,6 +3907,9 @@ sub InitWriteDirs($$;$)
                     }
                 }
                 $dirName = shift @dirNames;
+            } elsif ($dirName eq 'QuickTime') {
+                # write to specific QuickTime group
+                $dirName = $self->GetGroup($tagInfo, 1);
             }
             while ($dirName) {
                 my $parent = $$fileDirs{$dirName};
@@ -3920,7 +3987,10 @@ sub WriteDirectory($$$;$)
         # (never delete an entire QuickTime group)
         if ($delFlag) {
             if (($grp0 =~ /^(MakerNotes)$/ or $grp1 =~ /^(IFD0|ExifIFD|MakerNotes)$/) and
-                $self->IsRawType())
+                $self->IsRawType() and
+                # allow non-permanent MakerNote directories to be deleted (ie. NikonCapture)
+                (not $$dirInfo{TagInfo} or not defined $$dirInfo{TagInfo}{Permanent} or
+                $$dirInfo{TagInfo}{Permanent}))
             {
                 $self->WarnOnce("Can't delete $1 from $$self{FileType}",1);
                 undef $grp1;
@@ -4004,7 +4074,7 @@ sub WriteDirectory($$$;$)
                 $self->Warn("Can't write EXIF as a block to $$self{FILE_TYPE} file");
                 last;
             }
-            # this can happen if we call WriteDirectory for an EXIF directory without  going
+            # this can happen if we call WriteDirectory for an EXIF directory without going
             # through WriteTIFF as the WriteProc (which happens if conditionally replacing
             # the EXIF block and the condition fails), but we never want to do a block write
             # in this case because the EXIF block would end up with two TIFF headers
@@ -4029,7 +4099,9 @@ sub WriteDirectory($$$;$)
         return $newVal;
     }
     # guard against writing the same directory twice
-    if (defined $dataPt and defined $$dirInfo{DirStart} and defined $$dirInfo{DataPos}) {
+    if (defined $dataPt and defined $$dirInfo{DirStart} and defined $$dirInfo{DataPos} and
+        not $$dirInfo{NoRefTest})
+    {
         my $addr = $$dirInfo{DirStart} + $$dirInfo{DataPos} + ($$dirInfo{Base}||0) + $$self{BASE};
         # (Phase One P25 IIQ files have ICC_Profile duplicated in IFD0 and IFD1)
         if ($$self{PROCESSED}{$addr} and ($dirName ne 'ICC_Profile' or $$self{TIFF_TYPE} ne 'IIQ')) {
@@ -4647,6 +4719,11 @@ TryLib: for ($lib=$strptimeLib; ; $lib='') {
             } elsif ($lib eq 'POSIX::strptime') {
                 @a = eval { POSIX::strptime($val, $fmt) };
             } else {
+                # protect against a negative epoch time, it can cause a hard crash in Windows
+                if ($^O eq 'MSWin32' and $fmt =~ /%s/ and $val =~ /-\d/) {
+                    warn "Can't convert negative epoch time\n";
+                    return undef;
+                }
                 @a = eval {
                     my $t = Time::Piece->strptime($val, $fmt);
                     return ($t->sec, $t->min, $t->hour, $t->mday, $t->_mon, $t->_year);
@@ -4690,7 +4767,7 @@ TryLib: for ($lib=$strptimeLib; ; $lib='') {
                 if (not $tz) {
                     if (eval { require Time::Local }) {
                         # determine timezone offset for this time
-                        my @args = ($a[4],$a[3],$a[2],$a[1],$a[0]-1,$yr-1900);
+                        my @args = ($a[4],$a[3],$a[2],$a[1],$a[0]-1,$yr);
                         my $diff = Time::Local::timegm(@args) - TimeLocal(@args);
                         $tz = TimeZoneString($diff / 60);
                     } else {
@@ -4721,19 +4798,20 @@ TryLib: for ($lib=$strptimeLib; ; $lib='') {
 
 #------------------------------------------------------------------------------
 # Set byte order according to our current preferences
-# Inputs: 0) ExifTool object ref
+# Inputs: 0) ExifTool object ref, 1) default byte order
 # Returns: new byte order ('II' or 'MM') and sets current byte order
 # Notes: takes the first of the following that is valid:
 #  1) ByteOrder option
 #  2) new value for ExifByteOrder
-#  3) makenote byte order from last file read
-#  4) big endian
-sub SetPreferredByteOrder($)
+#  3) default byte order passed to this routine
+#  4) makenote byte order from last file read
+#  5) big endian
+sub SetPreferredByteOrder($;$)
 {
-    my $self = shift;
+    my ($self, $default) = @_;
     my $byteOrder = $self->Options('ByteOrder') ||
                     $self->GetNewValue('ExifByteOrder') ||
-                    $$self{MAKER_NOTE_BYTE_ORDER} || 'MM';
+                    $default || $$self{MAKER_NOTE_BYTE_ORDER} || 'MM';
     unless (SetByteOrder($byteOrder)) {
         warn "Invalid byte order '${byteOrder}'\n" if $self->Options('Verbose');
         $byteOrder = $$self{MAKER_NOTE_BYTE_ORDER} || 'MM';
@@ -5330,7 +5408,7 @@ sub WriteJPEG($$)
     }
     unless ($marker and $marker == 0xda) {
         $isEXV or $self->Error('Corrupted JPEG image'), return 1;
-        $marker and $marker ne 0xd9 and $self->Error('Corrupted EXV file'), return 1;
+        $marker and $marker != 0xd9 and $self->Error('Corrupted EXV file'), return 1;
     }
     $raf->Seek($pos, 0) or $self->Error('Seek error'), return 1;
 #
@@ -5595,7 +5673,8 @@ sub WriteJPEG($$)
             my ($buff, $endPos, $trailInfo);
             my $delPreview = $$self{DEL_PREVIEW};
             $trailInfo = IdentifyTrailer($raf) unless $$delGroup{Trailer};
-            unless ($oldOutfile or $delPreview or $trailInfo or $$delGroup{Trailer}) {
+            my $nvTrail = $self->GetNewValueHash($Image::ExifTool::Extra{Trailer});
+            unless ($oldOutfile or $delPreview or $trailInfo or $$delGroup{Trailer} or $nvTrail) {
                 # blindly copy the rest of the file
                 while ($raf->Read($buff, 65536)) {
                     Write($outfile, $buff) or $err = 1, last;
@@ -5626,7 +5705,20 @@ sub WriteJPEG($$)
             }
             # remember position of last data copied
             $endPos = $raf->Tell() - length($buff);
-            # rewrite trailers if they exist
+            # write new trailer if specified
+            if ($nvTrail) {
+                # access new value directly to avoid copying a potentially very large data block
+                if ($$nvTrail{Value} and $$nvTrail{Value}[0]) { # (note: "0" will also delete the trailer)
+                    $self->VPrint(0, '  Writing new trailer');
+                    Write($outfile, $$nvTrail{Value}[0]) or $err = 1;
+                    ++$$self{CHANGED};
+                } elsif ($raf->Seek(0, 2) and $raf->Tell() != $endPos) {
+                    $self->VPrint(0, '  Deleting trailer (', $raf->Tell() - $endPos, ' bytes)');
+                    ++$$self{CHANGED};  # changed if there was previously a trailer
+                }
+                last;   # all done
+            }
+            # rewrite existing trailers
             if ($trailInfo) {
                 my $tbuf = '';
                 $raf->Seek(-length($buff), 1);  # seek back to just after EOI
@@ -5790,7 +5882,7 @@ sub WriteJPEG($$)
                 HexDump($segDataPt, undef, %dumpParms);
             }
         }
-        # group delete of APP segements
+        # group delete of APP segments
         if ($$delGroup{$dirName}) {
             $verbose and print $out "  Deleting $dirName segment\n";
             ++$$self{CHANGED};
@@ -6583,7 +6675,7 @@ sub CopyBlock($$$)
 }
 
 #------------------------------------------------------------------------------
-# copy image data from one file to another
+# Copy image data from one file to another
 # Inputs: 0) ExifTool object reference
 #         1) reference to list of image data [ position, size, pad bytes ]
 #         2) output file ref
@@ -6612,7 +6704,7 @@ sub CopyImageData($$$)
 }
 
 #------------------------------------------------------------------------------
-# write to binary data block
+# Write to binary data block
 # Inputs: 0) ExifTool object ref, 1) source dirInfo ref, 2) tag table ref
 # Returns: Binary data block or undefined on error
 sub WriteBinaryData($$$)
@@ -6653,7 +6745,6 @@ sub WriteBinaryData($$$)
             next unless $writeInfo and $writeInfo eq $tagInfo;
         }
         # add offsets for variable-sized tags if necessary
-        my $varFmt;
         while (@varInfo and $varInfo[0][0] < $tagID) {
             $varSize = $varInfo[0][1];  # get accumulated variable size
             shift @varInfo;
@@ -6685,6 +6776,8 @@ sub WriteBinaryData($$$)
         next unless $self->IsOverwriting($nvHash, $val);
         my $newVal = $self->GetNewValue($nvHash);
         next unless defined $newVal;    # can't delete from a binary table
+        # update DataMember with new value if necessary
+        $$self{$$tagInfo{DataMember}} = $newVal if $$tagInfo{DataMember};
         # only write masked bits if specified
         my $mask = $$tagInfo{Mask};
         $newVal = (($newVal << $$tagInfo{BitShift}) & $mask) | ($val & ~$mask) if $mask;
@@ -6741,7 +6834,7 @@ sub WriteBinaryData($$$)
             $$previewInfo{IsShort} = 1 unless $format eq 'int32u';
             $$previewInfo{Absolute} = 1 if $$tagInfo{IsOffset} and $$tagInfo{IsOffset} eq '3';
             # get the value of the Composite::PreviewImage tag
-            $$previewInfo{Data} = $self->GetNewValue($Image::ExifTool::Composite{PreviewImage});
+            $$previewInfo{Data} = $self->GetNewValue(GetCompositeTagInfo('PreviewImage'));
             unless (defined $$previewInfo{Data}) {
                 if ($offset >= 0 and $offset + $size <= $$dirInfo{DataLen}) {
                     $$previewInfo{Data} = substr(${$$dirInfo{DataPt}},$offset,$size);
@@ -6790,6 +6883,7 @@ sub WriteBinaryData($$$)
 sub WriteTIFF($$$)
 {
     my ($self, $dirInfo, $tagTablePtr) = @_;
+    $self or return 1;    # allow dummy access
     my $buff = '';
     $$dirInfo{OutFile} = \$buff;
     return $buff if $self->ProcessTIFF($dirInfo, $tagTablePtr) > 0;
@@ -6815,7 +6909,7 @@ used routines.
 
 =head1 AUTHOR
 
-Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

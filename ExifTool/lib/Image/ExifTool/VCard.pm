@@ -158,7 +158,7 @@ my %timeInfo = (
     'X-apple-calendar-color'=> 'CalendarColor',
     'X-apple-default-alarm' => 'DefaultAlarm',
     'X-apple-local-default-alarm' => 'LocalDefaultAlarm',
-    'X-microsoft-cdo-appt-sequence'     => 'AppointmentSequence', 
+    'X-microsoft-cdo-appt-sequence'     => 'AppointmentSequence',
     'X-microsoft-cdo-ownerapptid'       => 'OwnerAppointmentID',
     'X-microsoft-cdo-busystatus'        => 'BusyStatus',
     'X-microsoft-cdo-intendedstatus'    => 'IntendedBusyStatus',
@@ -323,7 +323,7 @@ sub ProcessVCard($$)
         } else {
             delete $$et{SET_GROUP1};
         }
-        my ($name, %param, $p, @val);
+        my ($name, %param, $p);
         # vCard tag ID's are case-insensitive, so normalize to lowercase with
         # an uppercase first letter for use as a tag name
         $name = ucfirst $tag if $tag =~ /[a-z]/;    # preserve mixed case in name if it exists
@@ -416,7 +416,7 @@ information from vCard VCF and iCalendar ICS files.
 
 =head1 AUTHOR
 
-Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

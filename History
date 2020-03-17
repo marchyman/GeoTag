@@ -1,4 +1,4 @@
-## WIP
+## GeoTag 4.8
 
 ### New Feature
 
@@ -7,6 +7,11 @@
 
 * Warn the user if the Backup/Save folder contains more than 500 MB of images
   or if the images were added to the folder more than 7 days ago.
+  
+* gray out png files.  Exiftool can handle metadata in PNG files but
+  finder/macOS can't.
+  
+* update exiftool to version 11.91
 
 ### Bug Fix
 

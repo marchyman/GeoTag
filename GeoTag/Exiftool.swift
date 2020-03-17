@@ -120,13 +120,15 @@ struct Exiftool {
 
     /// File Type codes for the file types that exiftool can write
 
+    // note: png files are read/writable by exiftool, but macOS can not
+    // read the resulting metadata.  Remove it from the table.
     let writableTypes: Set = [
         "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "CR2", "CR3", "CRM",
         "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
         "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
         "ICC", "IIQ", "IND", "JNG", "JP2", "JPEG", "LRV", "M4A/V", "MEF",
         "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
-        "NEF", "NRW", "ORF", "PBM", "PDF", "PEF", "PGM", "PNG",
+        "NEF", "NRW", "ORF", "PBM", "PDF", "PEF", "PGM", // "PNG",
         "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
         "RWL", "SR2", "SRW","THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
 

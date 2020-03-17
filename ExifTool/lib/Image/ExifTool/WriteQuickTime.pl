@@ -12,24 +12,32 @@ use strict;
 # maps for adding metadata to various QuickTime-based file types
 my %movMap = (
     # MOV (no 'ftyp', or 'ftyp'='qt  ') -> XMP in 'moov'-'udta'-'XMP_'
-    QuickTime => 'ItemList',
-    ItemList  => 'Meta',
+    QuickTime => 'ItemList',    # (default location for QuickTime tags)
+    ItemList  => 'Meta',        # MOV-Movie-UserData-Meta-ItemList
+    Keys      => 'Movie',       # MOV-Movie-Meta-Keys !! (hack due to different Meta location)
     Meta      => 'UserData',
-    XMP       => 'UserData',
-    UserData  => 'Movie',
+    XMP       => 'UserData',    # MOV-Movie-UserData-XMP
+    UserData  => 'Movie',       # MOV-Movie-UserData
     Movie     => 'MOV',
+    GSpherical => 'SphericalVideoXML', # MOV-Movie-Track-SphericalVideoXML
+    SphericalVideoXML => 'Track',      # (video track specifically, don't create if it doesn't exist)
+    Track     => 'Movie',
 );
 my %mp4Map = (
     # MP4 ('ftyp' compatible brand 'mp41', 'mp42' or 'f4v ') -> XMP at top level
-    QuickTime => 'ItemList',
-    ItemList  => 'Meta',
+    QuickTime => 'ItemList',    # (default location for QuickTime tags)
+    ItemList  => 'Meta',        # MOV-Movie-UserData-Meta-ItemList
+    Keys      => 'Movie',       # MOV-Movie-Meta-Keys !! (hack due to different Meta location)
     Meta      => 'UserData',
-    UserData  => 'Movie',
+    UserData  => 'Movie',       # MOV-Movie-UserData
     Movie     => 'MOV',
-    XMP       => 'MOV',
+    XMP       => 'MOV',         # MOV-XMP
+    GSpherical => 'SphericalVideoXML', # MOV-Movie-Track-SphericalVideoXML
+    SphericalVideoXML => 'Track',      # (video track specifically, don't create if it doesn't exist)
+    Track     => 'Movie',
 );
 my %heicMap = (
-    # HEIC ('ftyp' compatible brand 'heic' or 'mif1') -> XMP/EXIF in top level 'meta'
+    # HEIC/HEIF/AVIF ('ftyp' compatible brand 'heic','mif1','avif') -> XMP/EXIF in top level 'meta'
     Meta         => 'MOV',
     ItemInformation => 'Meta',
     ItemPropertyContainer => 'Meta',
@@ -55,6 +63,8 @@ my %cr3Map = (
     IFD0      => 'UUID-Canon',
     GPS       => 'UUID-Canon',
     #MakerNoteCanon => 'UUID-Canon', # (doesn't yet work -- goes into ExifIFD instead)
+   'UUID-Canon2' => 'MOV',
+    CanonVRD  => 'UUID-Canon2',
 );
 my %dirMap = (
     MOV  => \%movMap,
@@ -72,8 +82,23 @@ my %qtFormat = (
 );
 my $undLang = 0x55c4;   # numeric code for default ('und') language
 
+my $maxReadLen = 100000000; # maximum size of atom to read into memory (100 MB)
+
+# boxes that may exist in an "empty" Meta box:
+my %emptyMeta = (
+    hdlr => 'Handler', 'keys' => 'Keys', lang => 'Language', ctry => 'Country', free => 'Free',
+);
+
+# lookup for CTBO ID number based on uuid for Canon CR3 files
+my %ctboID = (
+    "\xbe\x7a\xcf\xcb\x97\xa9\x42\xe8\x9c\x71\x99\x94\x91\xe3\xaf\xac" => 1, # XMP
+    "\xea\xf4\x2b\x5e\x1c\x98\x4b\x88\xb9\xfb\xb7\xdc\x40\x6e\x4d\x16" => 2, # PreviewImage
+    # ID 3 is used for 'mdat' atom (not a uuid)
+);
+
 # mark UserData tags that don't have ItemList counterparts as Preferred
-# (and for now, set Writable to 0 for any tag with a RawConv)
+# - and set Preferred to 0 for any Avoid-ed tag
+# - also, for now, set Writable to 0 for any tag with a RawConv and no RawConvInv
 {
     my $itemList = \%Image::ExifTool::QuickTime::ItemList;
     my $userData = \%Image::ExifTool::QuickTime::UserData;
@@ -82,10 +107,12 @@ my $undLang = 0x55c4;   # numeric code for default ('und') language
         my $tagInfo = $$itemList{$tag};
         if (ref $tagInfo ne 'HASH') {
             next if ref $tagInfo;
-            $tagInfo = $$userData{$tag} = { Name => $tagInfo };
+            $tagInfo = $$itemList{$tag} = { Name => $tagInfo };
+        } else {
+            $$tagInfo{Writable} = 0 if $$tagInfo{RawConv} and not $$tagInfo{RawConvInv};
+            $$tagInfo{Avoid} and $$tagInfo{Preferred} = 0, next;
+            next if defined $$tagInfo{Preferred} and not $$tagInfo{Preferred};
         }
-        $$tagInfo{Writable} = 0 if $$tagInfo{RawConv};
-        next if $$tagInfo{Avoid} or defined $$tagInfo{Preferred} and not $$tagInfo{Preferred};
         $pref{$$tagInfo{Name}} = 1;
     }
     foreach $tag (TagTableKeys($userData)) {
@@ -93,9 +120,11 @@ my $undLang = 0x55c4;   # numeric code for default ('und') language
         if (ref $tagInfo ne 'HASH') {
             next if ref $tagInfo;
             $tagInfo = $$userData{$tag} = { Name => $tagInfo };
+        } else {
+            $$tagInfo{Writable} = 0 if $$tagInfo{RawConv} and not $$tagInfo{RawConvInv};
+            $$tagInfo{Avoid} and $$tagInfo{Preferred} = 0, next;
+            next if defined $$tagInfo{Preferred} or $pref{$$tagInfo{Name}};
         }
-        $$tagInfo{Writable} = 0 if $$tagInfo{RawConv};
-        next if $$tagInfo{Avoid} or defined $$tagInfo{Preferred} or $pref{$$tagInfo{Name}};
         $$tagInfo{Preferred} = 1;
     }
 }
@@ -129,26 +158,17 @@ sub ConvInvISO6709($)
     my $val = shift;
     my @a = split ' ', $val;
     if (@a == 2 or @a == 3) {
+        # latitude must have 2 digits before the decimal, and longitude 3,
+        # and all values must start with a "+" or "-"
+        my @fmt = ('%s%02d','%s%03d','%s%d');
         foreach (@a) {
-            Image::ExifTool::IsFloat($_) or return undef;
-            $_ = '+' . $_ if $_ >= 0;
+            return undef unless Image::ExifTool::IsFloat($_);
+            $_ =~ s/^([-+]?)(\d+)/sprintf(shift(@fmt), $1 || '+', $2)/e;
         }
         return join '', @a;
     }
     return $val if $val =~ /^([-+]\d+(\.\d*)?){2,3}(CRS.*)?$/; # already in ISO6709 format?
     return undef;
-}
-
-#------------------------------------------------------------------------------
-# Check to see if path is current
-# Inputs: 0) ExifTool ref, 1) directory name
-# Returns: true if current path is the root of the specified directory
-sub IsCurPath($$)
-{
-    local $_;
-    my ($et, $dir) = @_;
-    $dir = $$et{DirMap}{$dir} and $dir eq $_ or last foreach reverse @{$$et{PATH}};
-    return($dir and $dir eq 'MOV');
 }
 
 #------------------------------------------------------------------------------
@@ -239,7 +259,6 @@ sub Handle_iloc($$$$)
         # decide whether to fix up the base offset or individual item offsets
         # (adjust the one that is larger)
         if (defined $minOffset and $minOffset > $base_offset) {
-            $off or $off = $$dirInfo{ChunkOffset} = [ ];
             $$_[3] = $base_offset foreach @offItem;
             push @$off, @offItem;
         } else {
@@ -319,13 +338,118 @@ sub SetVarInt($$)
 }
 
 #------------------------------------------------------------------------------
+# Write Meta Keys to add/delete entries as necessary ('mdta' handler) (ref PH)
+# Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) tag table ref
+# Returns: updated keys box data
+sub WriteKeys($$$)
+{
+    my ($et, $dirInfo, $tagTablePtr) = @_;
+    $et or return 1;      # allow dummy access to autoload this package
+    my $dataPt = $$dirInfo{DataPt};
+    my $dirLen = length $$dataPt;
+    my $outfile = $$dirInfo{OutFile};
+    my ($tag, %done, %remap, %info, %add, $i);
+
+    $dirLen < 8 and $et->Warn('Short Keys box'), $dirLen = 8, $$dataPt = "\0" x 8;
+    if ($$et{DEL_GROUP}{Keys}) {
+        $dirLen = 8;    # delete all existing keys
+        # deleted keys are identified by a zero entry in the Remap lookup
+        my $n = Get32u($dataPt, 4);
+        for ($i=1; $i<=$n; ++$i) { $remap{$i} = 0; }
+        $et->VPrint(0, "  [deleting $n Keys entr".($n==1 ? 'y' : 'ies')."]\n");
+        ++$$et{CHANGED};
+    }
+    my $pos = 8;
+    my $newTags = $et->GetNewTagInfoHash($tagTablePtr);
+    my $newData = substr($$dataPt, 0, $pos);
+
+    my $newIndex = 1;
+    my $index = 1;
+    while ($pos < $dirLen - 4) {
+        my $len = unpack("x${pos}N", $$dataPt);
+        last if $len < 8 or $pos + $len > $dirLen;
+        my $ns  = substr($$dataPt, $pos + 4, 4);
+        $tag = substr($$dataPt, $pos + 8, $len - 8);
+        $tag =~ s/\0.*//s; # truncate at null
+        $tag =~ s/^com\.apple\.quicktime\.// if $ns eq 'mdta'; # remove apple quicktime domain
+        $tag = "Tag_$ns" unless $tag;
+        $done{$tag} = 1;    # set flag to avoid creating this tag
+        my $tagInfo = $et->GetTagInfo($tagTablePtr, $tag);
+        if ($tagInfo) {
+            $info{$index} = $tagInfo;
+            if ($$newTags{$tag}) {
+                my $nvHash = $et->GetNewValueHash($tagInfo);
+                # drop this tag if it is being deleted
+                if ($nvHash and $et->IsOverwriting($nvHash) > 0 and not defined $et->GetNewValue($nvHash)) {
+                    # don't delete this key if we could be writing any alternate-language version of this tag
+                    my ($t, $dontDelete);
+                    foreach $t (keys %$newTags) {
+                        next unless $$newTags{$t}{SrcTagInfo} and $$newTags{$t}{SrcTagInfo} eq $tagInfo;
+                        my $nv = $et->GetNewValueHash($$newTags{$t});
+                        next unless $et->IsOverwriting($nv) and defined $et->GetNewValue($nv);
+                        $dontDelete = 1;
+                        last;
+                    }
+                    unless ($dontDelete) {
+                        # delete this key
+                        $et->VPrint(1, "$$et{INDENT}\[deleting Keys entry $index '${tag}']\n");
+                        $pos += $len;
+                        $remap{$index++} = 0;
+                        ++$$et{CHANGED};
+                        next;
+                    }
+                }
+            }
+        }
+        # add to the Keys box data
+        $newData .= substr($$dataPt, $pos, $len);
+        $remap{$index++} = $newIndex++;
+        $pos += $len;
+    }
+    # add keys for any tags we need to create
+    foreach $tag (sort keys %$newTags) {
+        my $tagInfo = $$newTags{$tag};
+        my $id;
+        if ($$tagInfo{LangCode} and $$tagInfo{SrcTagInfo}) {
+            $id = $$tagInfo{SrcTagInfo}{TagID};
+        } else {
+            $id = $tag;
+        }
+        next if $done{$id};
+        my $nvHash = $et->GetNewValueHash($tagInfo);
+        next unless $$nvHash{IsCreating} and $et->IsOverwriting($nvHash) and
+            defined $et->GetNewValue($nvHash);
+        # add new entry to 'keys' data
+        my $val = $id =~ /^com\./ ? $id : "com.apple.quicktime.$id";
+        $newData .= Set32u(8 + length($val)) . 'mdta' . $val;
+        $et->VPrint(1, "$$et{INDENT}\[adding Keys entry $newIndex '${id}']\n");
+        $add{$newIndex++} = $tagInfo;
+        ++$$et{CHANGED};
+    }
+    my $num = $newIndex - 1;
+    if ($num) {
+        Set32u($num, \$newData, 4);     # update count in header
+    } else {
+        $newData = '';  # delete empty Keys box
+    }
+    # save temporary variables for use when writing ItemList:
+    #   Remap - lookup for remapping Keys ID numbers (0 if item is deleted)
+    #   Info  - Keys tag information, based on old index value
+    #   Add   - Keys items deleted, based on old index value
+    #   Num   - Number of items in edited Keys box
+    $$et{Keys} = { Remap => \%remap, Info => \%info, Add => \%add, Num => $num };
+
+    return $newData;    # return updated Keys box
+}
+
+#------------------------------------------------------------------------------
 # Write ItemInformation in HEIC files
 # Inputs: 0) ExifTool ref, 1) dirInfo ref (with BoxPos entry), 2) output buffer ref
 # Returns: mdat edit list ref (empty if nothing changed)
 sub WriteItemInfo($$$)
 {
     my ($et, $dirInfo, $outfile) = @_;
-    my $boxPos = $$dirInfo{BoxPos};
+    my $boxPos = $$dirInfo{BoxPos};     # hash of [length,position] for each box
     my $raf = $$et{RAF};
     my $items = $$et{ItemInfo};
     my (%did, @mdatEdit, $name);
@@ -372,7 +496,11 @@ sub WriteItemInfo($$$)
             $buff = $val . $buff if length $val;
             my ($hdr, $subTable, $proc);
             if ($name eq 'EXIF') {
-                $hdr = "\0\0\0\x06Exif\0\0";
+                if (length($buff) < 4 or length($buff) < 4 + unpack('N',$buff)) {
+                    $et->Warn('Invalid Exif header');
+                    next;
+                }
+                $hdr = substr($buff, 0, 4 + unpack('N',$buff));
                 $subTable = GetTagTable('Image::ExifTool::Exif::Main');
                 $proc = \&Image::ExifTool::WriteTIFF;
             } else {
@@ -404,7 +532,7 @@ sub WriteItemInfo($$$)
                     } elsif ($n <= 0xffffffff) {
                         Set32u($n, $outfile, $$boxPos{iloc}[0] + 8 + $lenPt);
                     } else {
-                        $et->Error("Can't yet promote iloc offset to 64 bits");
+                        $et->Error("Can't yet promote iloc length to 64 bits");
                         return ();
                     }
                     $n = 0;
@@ -421,8 +549,11 @@ sub WriteItemInfo($$$)
     my ($countNew, %add, %usedID);
     foreach $name ('EXIF','XMP') {
         next if $did{$name} or not $$et{ADD_DIRS}{$name};
-        unless ($$boxPos{iinf} and $$boxPos{iref} and $$boxPos{iloc}) {
-            $et->Warn("Can't create $name. Missing expected box");
+        my @missing;
+        $$boxPos{$_} or push @missing, $_ foreach qw(iinf iloc);
+        if (@missing) {
+            my $str = @missing > 1 ? join(' and ', @missing) . ' boxes' : "@missing box";
+            $et->Warn("Can't create $name. Missing expected $str");
             last;
         }
         my $primary = $$et{PrimaryItem};
@@ -449,6 +580,14 @@ sub WriteItemInfo($$$)
         my $changed = $$et{CHANGED};
         my $newVal = $et->WriteDirectory(\%dirInfo, $subTable, $proc);
         if (defined $newVal and $changed ne $$et{CHANGED}) {
+            my $irefVer;
+            if ($$boxPos{iref}) {
+                $irefVer = Get8u($outfile, $$boxPos{iref}[0] + 8);
+            } else {
+                # create iref box after end of iinf box (and save version in boxPos list)
+                $irefVer = ($primary > 0xffff ? 1 : 0);
+                $$boxPos{iref} = [ $$boxPos{iinf}[0] + $$boxPos{iinf}[1], 0, $irefVer ];
+            }
             $newVal = $hdr . $newVal if length $hdr;
             # add new infe to iinf
             $add{iinf} = $add{iref} = $add{iloc} = '' unless defined $add{iinf};
@@ -470,7 +609,6 @@ sub WriteItemInfo($$$)
                 $add{iinf} .= pack('Na4CCCCNn', $n, 'infe', 3, 0, 0, 1, $id, 0) . $type . $mime;
             }
             # add new cdsc to iref
-            my $irefVer = Get8u($outfile, $$boxPos{iref}[0] + 8);
             if ($irefVer) {
                 $add{iref} .= pack('Na4NnN', 18, 'cdsc', $id, 1, $primary);
             } else {
@@ -483,18 +621,21 @@ sub WriteItemInfo($$$)
             my $nlen = ($siz >> 8) & 0x0f;
             my $nbas = ($siz >> 4) & 0x0f;
             my $nind = $siz & 0x0f;
-            my $p;
+            my ($pbas, $poff);
             if ($ilocVer == 0) {
                 # set offset to 0 as flag that this is a new idat chunk being added
-                $p = length($add{iloc}) + 4 + $nbas + 2;
+                $pbas = length($add{iloc}) + 4;
+                $poff = $pbas + $nbas + 2;
                 $add{iloc} .= pack('nn',$id,0) . SetVarInt(0,$nbas) . Set16u(1) .
                             SetVarInt(0,$noff) . SetVarInt(length($newVal),$nlen);
             } elsif ($ilocVer == 1) {
-                $p = length($add{iloc}) + 6 + $nbas + 2 + $nind;
+                $pbas = length($add{iloc}) + 6;
+                $poff = $pbas + $nbas + 2 + $nind;
                 $add{iloc} .= pack('nnn',$id,0,0) . SetVarInt(0,$nbas) . Set16u(1) . SetVarInt(0,$nind) .
                             SetVarInt(0,$noff) . SetVarInt(length($newVal),$nlen);
             } elsif ($ilocVer == 2) {
-                $p = length($add{iloc}) + 8 + $nbas + 2 + $nind;
+                $pbas = length($add{iloc}) + 8;
+                $poff = $pbas + $nbas + 2 + $nind;
                 $add{iloc} .= pack('Nnn',$id,0,0) . SetVarInt(0,$nbas) . Set16u(1) . SetVarInt(0,$nind) .
                             SetVarInt(0,$noff) . SetVarInt(length($newVal),$nlen);
             } else {
@@ -505,9 +646,19 @@ sub WriteItemInfo($$$)
             my $off = $$dirInfo{ChunkOffset} or $et->Warn('Internal error. Missing ChunkOffset'), last;
             my $newOff;
             if ($noff == 4) {
-                $newOff = [ 'stco_iloc', $$boxPos{iloc}[0] + $$boxPos{iloc}[1] + $p, $noff, 0, $id ];
+                $newOff = [ 'stco_iloc', $$boxPos{iloc}[0] + $$boxPos{iloc}[1] + $poff, $noff, 0, $id ];
             } elsif ($noff == 8) {
-                $newOff = [ 'co64_iloc', $$boxPos{iloc}[0] + $$boxPos{iloc}[1] + $p, $noff, 0, $id ];
+                $newOff = [ 'co64_iloc', $$boxPos{iloc}[0] + $$boxPos{iloc}[1] + $poff, $noff, 0, $id ];
+            } elsif ($noff == 0) {
+                # offset_size is zero, so store the offset in base_offset instead
+                if ($nbas == 4) {
+                    $newOff = [ 'stco_iloc', $$boxPos{iloc}[0] + $$boxPos{iloc}[1] + $pbas, $nbas, 0, $id ];
+                } elsif ($nbas == 8) {
+                    $newOff = [ 'co64_iloc', $$boxPos{iloc}[0] + $$boxPos{iloc}[1] + $pbas, $nbas, 0, $id ];
+                } else {
+                    $et->Warn("Can't create $name. Invalid iloc offset+base size");
+                    last;
+                }
             } else {
                 $et->Warn("Can't create $name. Invalid iloc offset size");
                 last;
@@ -527,15 +678,22 @@ sub WriteItemInfo($$$)
         foreach $tag (sort { $$boxPos{$a}[0] <=> $$boxPos{$b}[0] } keys %$boxPos) {
             next unless $add{$tag};
             my $pos = $$boxPos{$tag}[0] + $added;
-            my $n = Get32u($outfile, $pos);
-            Set32u($n + length($add{$tag}), $outfile, $pos);        # increase box size
+            unless ($$boxPos{$tag}[1]) {
+                $tag eq 'iref' or $et->Error('Internal error adding iref box'), last;
+                # create new iref box
+                $add{$tag} = Set32u(12 + length $add{$tag}) . $tag .
+                             Set8u($$boxPos{$tag}[2]) . "\0\0\0" . $add{$tag};
+            } else {
+                my $n = Get32u($outfile, $pos);
+                Set32u($n + length($add{$tag}), $outfile, $pos);    # increase box size
+            }
             if ($tag eq 'iinf') {
                 my $iinfVer = Get8u($outfile, $pos + 8);
                 if ($iinfVer == 0) {
-                    $n = Get16u($outfile, $pos + 12);
+                    my $n = Get16u($outfile, $pos + 12);
                     Set16u($n + $countNew, $outfile, $pos + 12);    # incr count
                 } else {
-                    $n = Get32u($outfile, $pos + 12);
+                    my $n = Get32u($outfile, $pos + 12);
                     Set32u($n + $countNew, $outfile, $pos + 12);    # incr count
                 }
             } elsif ($tag eq 'iref') {
@@ -543,10 +701,10 @@ sub WriteItemInfo($$$)
             } elsif ($tag eq 'iloc') {
                 my $ilocVer = Get8u($outfile, $pos + 8);
                 if ($ilocVer < 2) {
-                    $n = Get16u($outfile, $pos + 14);
+                    my $n = Get16u($outfile, $pos + 14);
                     Set16u($n + $countNew, $outfile, $pos + 14);    # incr count
                 } else {
-                    $n = Get32u($outfile, $pos + 14);
+                    my $n = Get32u($outfile, $pos + 14);
                     Set32u($n + $countNew, $outfile, $pos + 14);    # incr count
                 }
                 # must also update pointer locations in this box
@@ -571,13 +729,14 @@ sub WriteItemInfo($$$)
 # Returns: A) if dirInfo contains DataPt: new directory data
 #          B) otherwise: true on success, 0 if a write error occurred
 #             (true but sets an Error on a file format error)
+# Notes: Yes, this is a real mess.  Just like the QuickTime metadata situation.
 sub WriteQuickTime($$$)
 {
     local $_;
     my ($et, $dirInfo, $tagTablePtr) = @_;
     $et or return 1;    # allow dummy access to autoload this package
-    my ($mdat, @mdat, @mdatEdit, $edit, $track, $outBuff, $co, $term, $err);
-    my (%langTags, $keysTags, $canCreate, %didTag, $delGrp, %boxPos);
+    my ($mdat, @mdat, @mdatEdit, $edit, $track, $outBuff, $co, $term, $delCount);
+    my (%langTags, $canCreate, $delGrp, %boxPos, %didDir, $writeLast, $err, $atomCount);
     my $outfile = $$dirInfo{OutFile} || return 0;
     my $raf = $$dirInfo{RAF};       # (will be null for lower-level atoms)
     my $dataPt = $$dirInfo{DataPt}; # (will be null for top-level atoms)
@@ -585,6 +744,9 @@ sub WriteQuickTime($$$)
     my $dirStart = $$dirInfo{DirStart} || 0;
     my $parent = $$dirInfo{Parent};
     my $addDirs = $$et{ADD_DIRS};
+    my $didTag = $$et{DidTag};
+    my $newTags = { };
+    my $createKeys = 0;
     my ($rtnVal, $rtnErr) = $dataPt ? (undef, undef) : (1, 0);
 
     if ($dataPt) {
@@ -592,36 +754,68 @@ sub WriteQuickTime($$$)
     } else {
         return 0 unless $raf;
     }
-    # initialize ItemList key directory count
-    $$et{KeyCount} = 0 unless defined $$et{KeyCount};
-
     # use buffered output for everything but 'mdat' atoms
     $outBuff = '';
     $outfile = \$outBuff;
 
     $raf->Seek($dirStart, 1) if $dirStart;  # skip header if it exists
 
-    # get hash of new tags to add to this directory if this is the proper place for them
     my $curPath = join '-', @{$$et{PATH}};
     my ($dir, $writePath) = ($dirName, $dirName);
     $writePath = "$dir-$writePath" while defined($dir = $$et{DirMap}{$dir});
-    my $delQt = $$et{DEL_GROUP}{QuickTime};
-    if ($curPath eq $writePath) {
+    # hack to create Keys directories if necessary (its containing Meta is in a different location)
+    if ($$addDirs{Keys} and $curPath =~ /^MOV-Movie(-Meta)?$/) {
+        $createKeys = 1;    # create new Keys directories
+    } elsif ($curPath eq 'MOV-Movie-Meta-ItemList') {
+        $createKeys = 2;    # create new Keys tags
+        my $keys = $$et{Keys};
+        if ($keys) {
+            # add new tag entries for existing Keys tags, now that we know their ID's
+            # - first make lookup to convert Keys tagInfo ref to index number
+            my ($index, %keysInfo);
+            foreach $index (keys %{$$keys{Info}}) {
+                $keysInfo{$$keys{Info}{$index}} = $index if $$keys{Remap}{$index};
+            }
+            my $keysTable = GetTagTable('Image::ExifTool::QuickTime::Keys');
+            my $newKeysTags = $et->GetNewTagInfoHash($keysTable);
+            foreach (keys %$newKeysTags) {
+                my $tagInfo = $$newKeysTags{$_};
+                $index = $keysInfo{$tagInfo} || ($$tagInfo{SrcTagInfo} and $keysInfo{$$tagInfo{SrcTagInfo}});
+                next unless $index;
+                my $id = Set32u($index);
+                if ($$tagInfo{LangCode}) {
+                    # add to lookup of language tags we are writing with this ID
+                    $langTags{$id} = { } unless $langTags{$id};
+                    $langTags{$id}{$_} = $tagInfo;
+                    $id .= '-' . $$tagInfo{LangCode};
+                }
+                $$newTags{$id} = $tagInfo;
+            }
+        }
+    } else {
+        # get hash of new tags to edit/create in this directory
+        $newTags = $et->GetNewTagInfoHash($tagTablePtr);
+        # make lookup of language tags for each ID
+        foreach (keys %$newTags) {
+            next unless $$newTags{$_}{LangCode} and $$newTags{$_}{SrcTagInfo};
+            my $id = $$newTags{$_}{SrcTagInfo}{TagID};
+            $langTags{$id} = { } unless $langTags{$id};
+            $langTags{$id}{$_} = $$newTags{$_};
+        }
+    }
+    if ($curPath eq $writePath or $createKeys) {
         $canCreate = 1;
-        $delGrp = $delQt || $$et{DEL_GROUP}{$dirName};
-        $et->VPrint(0, "  Deleting $dirName tags\n") if $delGrp;
+        $delGrp = $$et{DEL_GROUP}{$dirName};
     }
-    my $newTags = $et->GetNewTagInfoHash($tagTablePtr);
-    # make lookup of language tags for this ID
-    foreach (keys %$newTags) {
-        next unless $$newTags{$_}{LangCode} and $$newTags{$_}{SrcTagInfo};
-        my $id = $$newTags{$_}{SrcTagInfo}{TagID};
-        $langTags{$id} = { } unless $langTags{$id};
-        $langTags{$id}{$_} = $$newTags{$_};
-    }
+    $atomCount = $$tagTablePtr{VARS}{ATOM_COUNT} if $$tagTablePtr{VARS};
 
     for (;;) {      # loop through all atoms at this level
-        my ($hdr, $buff);
+        if (defined $atomCount and --$atomCount < 0 and $dataPt) {
+            # stop processing now and just copy the rest of the atom
+            Write($outfile, substr($$dataPt, $raf->Tell())) or $rtnVal=$rtnErr, $err=1;
+            last;
+        }
+        my ($hdr, $buff, $keysIndex);
         my $n = $raf->Read($hdr, 8);
         unless ($n == 8) {
             if ($n == 4 and $hdr eq "\0\0\0\0") {
@@ -651,22 +845,23 @@ sub WriteQuickTime($$$)
             }
             $size = $hi * 4294967296 + $lo - 16;
             $size < 0 and $et->Error('Invalid extended atom size'), last;
-        } elsif ($size == -8 and not $dataPt) {
-            # size of zero is only valid for top-level atom, and
-            # indicates the atom extends to the end of file
-            # (save in mdat list to write later; with zero end position to copy rest of file)
-            push @mdat, [ $raf->Tell(), 0, $hdr ];
+        } elsif ($size == -8) {
+            if ($dataPt) {
+                last if $$dirInfo{DirName} eq 'CanonCNTH';  # (this is normal for Canon CNTH atom)
+                my $pos = $raf->Tell() - 4;
+                $raf->Seek(0,2);
+                my $str = $$dirInfo{DirName} . ' with ' . ($raf->Tell() - $pos) . ' bytes';
+                $et->Error("Terminator found in $str remaining", 1);
+            } else {
+                # size of zero is only valid for top-level atom, and
+                # indicates the atom extends to the end of file
+                # (save in mdat list to write later; with zero end position to copy rest of file)
+                push @mdat, [ $raf->Tell(), 0, $hdr ];
+            }
             last;
         } elsif ($size < 0) {
-            if ($$tagTablePtr{VARS}{IGNORE_BAD_ATOMS} and $dataPt) {
-                # ignore bad atom and just copy the rest of this directory
-                $buff = substr($$dataPt, $raf->Tell());
-                Write($outfile, $hdr, $buff) or $rtnVal=$rtnErr, $err=1;
-                last;
-            } else {
-                $et->Error('Invalid atom size');
-                last;
-            }
+            $et->Error('Invalid atom size');
+            last;
         }
 
         # keep track of 'mdat' atom locations for writing later
@@ -686,26 +881,52 @@ sub WriteQuickTime($$$)
         }
 
         # read the atom data
+        my $got;
         if (not $size) {
             $buff = '';
-        } elsif ($size > 100000000) {
-            my $mb = int($size / 0x100000 + 0.5);
-            $tag = PrintableTagID($tag,3);
-            $et->Error("'${tag}' atom is too large for rewriting ($mb MB)");
-            return $rtnVal;
-        } elsif ($raf->Read($buff, $size) != $size) {
-            $tag = PrintableTagID($tag,3);
-            $et->Error("Truncated $tag atom");
-            return $rtnVal;
+            $got = 0;
+        } else {
+            # read the atom data (but only first 64kB if data is huge)
+            $got = $raf->Read($buff, $size > $maxReadLen ? 0x10000 : $size);
+        }
+        if ($got != $size) {
+            # ignore up to 256 bytes of garbage at end of file
+            if ($got <= 256 and $size >= 1024 and $tag ne 'mdat') {
+                my $bytes = $got + length $hdr;
+                if ($$et{OPTIONS}{IgnoreMinorErrors}) {
+                    $et->Warn("Deleted garbage at end of file ($bytes bytes)");
+                    $buff = $hdr = '';
+                } else {
+                    $et->Error("Possible garbage at end of file ($bytes bytes)", 1);
+                    return $rtnVal;
+                }
+            } else {
+                $tag = PrintableTagID($tag,3);
+                if ($size > $maxReadLen and $got == 0x10000) {
+                    my $mb = int($size / 0x100000 + 0.5);
+                    $et->Error("'${tag}' atom is too large for rewriting ($mb MB)");
+                } else {
+                    $et->Error("Truncated '${tag}' atom");
+                }
+                return $rtnVal;
+            }
+        }
+        # save the handler type for this track
+        if ($tag eq 'hdlr' and length $buff >= 12) {
+            my $hdlr = substr($buff,8,4);
+            $$et{HandlerType} = $hdlr if $hdlr =~ /^(vide|soun)$/;
         }
 
         # if this atom stores offsets, save its location so we can fix up offsets later
         # (are there any other atoms that may store absolute file offsets?)
-        if ($tag =~ /^(stco|co64|iloc|mfra|gps )$/) {
-            # (note that we only need to do this if the movie data is stored in this file)
+        if ($tag =~ /^(stco|co64|iloc|mfra|moof|sidx|saio|gps |CTBO|uuid)$/) {
+            # (note that we only need to do this if the media data is stored in this file)
             my $flg = $$et{QtDataFlg};
-            if ($tag eq 'mfra') {
+            if ($tag eq 'mfra' or $tag eq 'moof') {
                 $et->Error("Can't yet handle movie fragments when writing");
+                return $rtnVal;
+            } elsif ($tag eq 'sidx' or $tag eq 'saio') {
+                $et->Error("Can't yet handle $tag box when writing");
                 return $rtnVal;
             } elsif ($tag eq 'iloc') {
                 Handle_iloc($et, $dirInfo, \$buff, $outfile) or $et->Error('Error parsing iloc atom');
@@ -713,7 +934,6 @@ sub WriteQuickTime($$$)
                 # (only care about the 'gps ' box in 'moov')
                 if ($$dirInfo{DirID} and $$dirInfo{DirID} eq 'moov' and length $buff > 8) {
                     my $off = $$dirInfo{ChunkOffset};
-                    $off or $off = $$dirInfo{ChunkOffset} = [ ];
                     my $num = Get32u(\$buff, 4);
                     $num = int((length($buff) - 8) / 8) if $num * 8 + 8 > length($buff);
                     my $i;
@@ -721,18 +941,18 @@ sub WriteQuickTime($$$)
                         push @$off, [ 'stco_gps ', length($$outfile) + length($hdr) + 8 + $i * 8, 4 ];
                     }
                 }
+            } elsif ($tag eq 'CTBO' or $tag eq 'uuid') { # hack for updating CR3 CTBO offsets
+                push @{$$dirInfo{ChunkOffset}}, [ $tag, length($$outfile), length($hdr) + $size ];
             } elsif (not $flg) {
                 my $grp = $$et{CUR_WRITE_GROUP} || $parent;
                 $et->Error("Can't locate data reference to update offsets for $grp");
                 return $rtnVal;
             } elsif ($flg == 3) {
-                $et->Error("Can't write files with mixed internal/external movie data");
+                $et->Error("Can't write files with mixed internal/external media data");
                 return $rtnVal;
             } elsif ($flg == 1) {
                 # must update offsets since the data is in this file
-                my $off = $$dirInfo{ChunkOffset};
-                $off or $off = $$dirInfo{ChunkOffset} = [ ];
-                push @$off, [ $tag, length($$outfile) + length($hdr), $size ];
+                push @{$$dirInfo{ChunkOffset}}, [ $tag, length($$outfile) + length($hdr), $size ];
             }
         }
 
@@ -743,14 +963,40 @@ sub WriteQuickTime($$$)
         &{$$tagInfo{WriteHook}}($buff,$et) if $tagInfo and $$tagInfo{WriteHook};
 
         # allow numerical tag ID's (ItemList entries defined by Keys)
-        unless ($tagInfo) {
-            my $id = $$et{KeyCount} . '.' . unpack('N', $tag);
-            $tagInfo = $et->GetTagInfo($tagTablePtr, $id);
+        if (not $tagInfo and $dirName eq 'ItemList' and $$et{Keys}) {
+            $keysIndex = unpack('N', $tag);
+            my $newIndex = $$et{Keys}{Remap}{$keysIndex};
+            if (defined $newIndex) {
+                $tagInfo = $$et{Keys}{Info}{$keysIndex};
+                unless ($newIndex) {
+                    if ($tagInfo) {
+                        $et->VPrint(1,"    - Keys:$$tagInfo{Name}");
+                    } else {
+                        $delCount = ($delCount || 0) + 1;
+                    }
+                    ++$$et{CHANGED};
+                    next;
+                }
+                # use the new Keys index of this item if it changed
+                unless ($keysIndex == $newIndex) {
+                    $tag = Set32u($newIndex);
+                    substr($hdr, 4, 4) = $tag;
+                }
+            } else {
+                undef $keysIndex;
+            }
         }
-        # delete all ItemList/UserData tags if deleting group
-        if ($delGrp and $dirName =~ /^(ItemList|UserData)$/) {
-            ++$$et{CHANGED};
-            next;
+        # delete all ItemList tags when deleting group, but take care not to delete UserData Meta
+        if ($delGrp) {
+            if ($dirName eq 'ItemList') {
+                $delCount = ($delCount || 0) + 1;
+                ++$$et{CHANGED};
+                next;
+            } elsif ($dirName eq 'UserData' and (not $tagInfo or not $$tagInfo{SubDirectory})) {
+                $delCount = ($delCount || 0) + 1;
+                ++$$et{CHANGED};
+                next;
+            }
         }
         undef $tagInfo if $tagInfo and $$tagInfo{Unknown};
 
@@ -759,6 +1005,8 @@ sub WriteQuickTime($$$)
             my ($newData, @chunkOffset);
 
             if ($subdir) {  # process atoms in this container from a buffer in memory
+
+                undef $$et{HandlerType} if $tag eq 'trak';  # init handler type for this track
 
                 my $subName = $$subdir{DirName} || $$tagInfo{Name};
                 my $start = $$subdir{Start} || 0;
@@ -786,6 +1034,8 @@ sub WriteQuickTime($$$)
                     HasData  => $$subdir{HasData},
                     Multi    => $$subdir{Multi},    # necessary?
                     OutFile  => $outfile,
+                    NoRefTest=> 1,     # don't check directory references
+                    WriteGroup => $$tagInfo{WriteGroup},
                     # initialize array to hold details about chunk offset table
                     # (each entry has 3-5 items: 0=atom type, 1=table offset, 2=table size,
                     #  3=optional base offset, 4=optional item ID)
@@ -826,26 +1076,15 @@ sub WriteQuickTime($$$)
                     $$_[1] += $start foreach @chunkOffset;
                 }
                 # the directory exists, so we don't need to add it
-                delete $$addDirs{$subName} if IsCurPath($et, $subName);
+                if ($curPath eq $writePath and $$addDirs{$subName} and $$addDirs{$subName} eq $dirName) {
+                    delete $$addDirs{$subName};
+                }
+                $didDir{$tag} = 1; # (note: keyed by tag ID)
 
             } else {    # modify existing QuickTime tags in various formats
 
                 my $nvHash = $et->GetNewValueHash($tagInfo);
-                # get new value from Keys source tag if necessary
-                if (not $nvHash and $$tagInfo{KeysInfo}) {
-                    $nvHash = $et->GetNewValueHash($$tagInfo{KeysInfo});
-                    # may be writing this as a language tag, so fill in $langTags for this ID
-                    unless ($keysTags) {
-                        $keysTags =  $et->GetNewTagInfoHash(GetTagTable('Image::ExifTool::QuickTime::Keys'));
-                    }
-                    foreach (keys %$keysTags) {
-                        next unless $$keysTags{$_}{SrcTagInfo};
-                        next unless $$keysTags{$_}{SrcTagInfo} eq $$tagInfo{KeysInfo};
-                        $langTags{$tag} = { } unless $langTags{$tag};
-                        $langTags{$tag}{$_} = $$keysTags{$_};
-                    }
-                }
-                if ($nvHash or $langTags{$tag} or $delQt) {
+                if ($nvHash or $langTags{$tag} or $delGrp) {
                     my $nvHashNoLang = $nvHash;
                     my ($val, $len, $lang, $type, $flags, $ctry, $charsetQuickTime);
                     my $format = $$tagInfo{Format};
@@ -854,19 +1093,50 @@ sub WriteQuickTime($$$)
                     if ($hasData) {
                         my $pos = 0;
                         for (;;$pos+=$len) {
-                            last if $pos + 16 > $size;
+                            if ($pos + 16 > $size) {
+                                # add any new alternate language tags now
+                                if ($langTags{$tag}) {
+                                    my $tg;
+                                    foreach $tg ('', sort keys %{$langTags{$tag}}) {
+                                        my $ti = $tg ? $langTags{$tag}{$tg} : $nvHashNoLang;
+                                        $nvHash = $et->GetNewValueHash($ti);
+                                        next unless $nvHash and not $$didTag{$nvHash};
+                                        $$didTag{$nvHash} = 1;
+                                        next unless $$nvHash{IsCreating} and $et->IsOverwriting($nvHash);
+                                        my $newVal = $et->GetNewValue($nvHash);
+                                        next unless defined $newVal;
+                                        my $prVal = $newVal;
+                                        my $flags = FormatQTValue($et, \$newVal, $format);
+                                        next unless defined $newVal;
+                                        my ($ctry, $lang) = (0, $undLang);
+                                        if ($$ti{LangCode}) {
+                                            unless ($$ti{LangCode} =~ /^([A-Z]{3})?[-_]?([A-Z]{2})?$/i) {
+                                                $et->Warn("Invalid language code for $$ti{Name}");
+                                                next;
+                                            }
+                                            # pack language and country codes
+                                            if ($1 and $1 ne 'und') {
+                                                $lang = ($lang << 5) | ($_ - 0x60) foreach unpack 'C*', lc($1);
+                                            }
+                                            $ctry = unpack('n', pack('a2',uc($2))) if $2 and $2 ne 'ZZ';
+                                        }
+                                        $newData = substr($buff, 0, $pos) unless defined $newData;
+                                        $newData .= pack('Na4Nnn',16+length($newVal),'data',$flags,$ctry,$lang).$newVal;
+                                        my $grp = $et->GetGroup($ti, 1);
+                                        $et->VerboseValue("+ $grp:$$ti{Name}", $prVal);
+                                        ++$$et{CHANGED};
+                                    }
+                                }
+                                last;
+                            }
                             ($len, $type, $flags, $ctry, $lang) = unpack("x${pos}Na4Nnn", $buff);
                             $lang or $lang = $undLang;  # treat both 0 and 'und' as 'und'
                             $langInfo = $tagInfo;
-                            my $delTag = $delQt;
+                            my $delTag = $delGrp;
                             my $newVal;
                             my $langCode = GetLangCode($lang, $ctry, 1);
                             for (;;) {
-                                if ($$tagInfo{KeysInfo}) {
-                                    $langInfo = GetLangInfo($$tagInfo{KeysInfo}, $langCode);
-                                } else {
-                                    $langInfo = GetLangInfo($tagInfo, $langCode);
-                                }
+                                $langInfo = GetLangInfo($tagInfo, $langCode);
                                 $nvHash = $et->GetNewValueHash($langInfo);
                                 last if $nvHash or not $ctry or $lang ne $undLang or length($langCode)==2;
                                 # check to see if tag was written with a 2-char country code only
@@ -875,7 +1145,7 @@ sub WriteQuickTime($$$)
                             # set flag to delete language tag when writing default
                             # (except for a default-language Keys entry)
                             if (not $nvHash and $nvHashNoLang) {
-                                if ($lang eq $undLang and not $ctry and not $didTag{$nvHashNoLang}) {
+                                if ($lang eq $undLang and not $ctry and not $$didTag{$nvHashNoLang}) {
                                     $nvHash = $nvHashNoLang;    # write existing default
                                 } else {
                                     $delTag = 1;    # delete tag
@@ -892,7 +1162,6 @@ sub WriteQuickTime($$$)
                                     $val =~ s/\0$// unless $$tagInfo{Binary};
                                     $flags = 0x01;  # write all strings as UTF-8
                                 } else {
-                                    $format = $$tagInfo{Format};
                                     if ($format) {
                                         # update flags for the format we are writing
                                         $flags = $qtFormat{$format} if $qtFormat{$format};
@@ -903,38 +1172,32 @@ sub WriteQuickTime($$$)
                                 }
                                 if (($nvHash and $et->IsOverwriting($nvHash, $val)) or $delTag) {
                                     $newVal = $et->GetNewValue($nvHash) if defined $nvHash;
-                                    if ($delTag or (not defined $newVal or $didTag{$nvHash})) {
-                                        if ($canCreate) {
-                                            my $grp = $et->GetGroup($langInfo, 1);
-                                            $et->VerboseValue("- $grp:$$langInfo{Name}", $val);
-                                            $newData = substr($buff, 0, $pos-16) unless defined $newData;
-                                            ++$$et{CHANGED};
-                                            $pos += $len;
-                                            next;
-                                        }
-                                        $newVal = '';
+                                    if ($delTag or not defined $newVal or $$didTag{$nvHash}) {
+                                        # delete the tag
+                                        my $grp = $et->GetGroup($langInfo, 1);
+                                        $et->VerboseValue("- $grp:$$langInfo{Name}", $val);
+                                        # copy data up to start of this tag to delete this value
+                                        $newData = substr($buff, 0, $pos-16) unless defined $newData;
+                                        ++$$et{CHANGED};
+                                        next;
                                     }
                                     my $prVal = $newVal;
                                     # format new value for writing (and get new flags)
-                                    $flags = FormatQTValue($et, \$newVal, $$tagInfo{Format});
-                                    if (defined $newVal and not ($nvHash and $didTag{$nvHash})) {
-                                        next if $newVal eq '' and $val eq '';
-                                        ++$$et{CHANGED};
-                                        my $grp = $et->GetGroup($langInfo, 1);
-                                        $et->VerboseValue("- $grp:$$langInfo{Name}", $val);
-                                        $et->VerboseValue("+ $grp:$$langInfo{Name}", $prVal);
-                                        $didTag{$nvHash} = 1 if $nvHash;
-                                        $newData = substr($buff, 0, $pos-16) unless defined $newData;
-                                        $newData .= pack('Na4Nnn', length($newVal)+16, $type, $flags, $ctry, $lang);
-                                        $newData .= $newVal;
-                                    } elsif (defined $newData) {
-                                        # copy data up to start of this tag to delete this value
-                                        $newData .= substr($buff, $pos-16, $len+16);
-                                    }
+                                    $flags = FormatQTValue($et, \$newVal, $format);
+                                    my $grp = $et->GetGroup($langInfo, 1);
+                                    $et->VerboseValue("- $grp:$$langInfo{Name}", $val);
+                                    $et->VerboseValue("+ $grp:$$langInfo{Name}", $prVal);
+                                    $newData = substr($buff, 0, $pos-16) unless defined $newData;
+                                    $newData .= pack('Na4Nnn', length($newVal)+16, $type, $flags, $ctry, $lang);
+                                    $newData .= $newVal;
+                                    ++$$et{CHANGED};
+                                } elsif (defined $newData) {
+                                    $newData .= substr($buff, $pos-16, $len+16);
                                 }
                             } elsif (defined $newData) {
                                 $newData .= substr($buff, $pos, $len);
                             }
+                            $$didTag{$nvHash} = 1 if $nvHash;
                         }
                         $newData .= substr($buff, $pos) if defined $newData and $pos < $size;
                         undef $val; # (already constructed $newData)
@@ -962,10 +1225,9 @@ sub WriteQuickTime($$$)
                         $val =~ s/\0+$//;   # remove trailing nulls if they exist
                         my $langCode = UnpackLang($lang, 1);
                         $langInfo = GetLangInfo($tagInfo, $langCode);
-                        # (no need to check $$tagInfo{KeysInfo} because Keys won't get here)
                         $nvHash = $et->GetNewValueHash($langInfo);
                         if (not $nvHash and $nvHashNoLang) {
-                            if ($lang eq $undLang and not $didTag{$nvHashNoLang}) {
+                            if ($lang eq $undLang and not $$didTag{$nvHashNoLang}) {
                                 $nvHash = $nvHashNoLang;
                             } elsif ($canCreate) {
                                 # delete other languages when writing default
@@ -975,42 +1237,59 @@ sub WriteQuickTime($$$)
                                 next;
                             }
                         }
+                    } else {
+                        $val = $buff;
                     }
-                    if ($nvHash and defined $val and $et->IsOverwriting($nvHash, $val)) {
-                        $newData = $et->GetNewValue($nvHash);
-                        $newData = '' unless defined $newData or $canCreate;
-                        ++$$et{CHANGED};
-                        my $grp = $et->GetGroup($langInfo, 1);
-                        $et->VerboseValue("- $grp:$$langInfo{Name}", $val);
-                        next unless defined $newData and not $didTag{$nvHash};
-                        $et->VerboseValue("+ $grp:$$langInfo{Name}", $newData);
-                        $didTag{$nvHash} = 1;   # set flag so we don't add this tag again
-                        # add back necessary header and encode as necessary
-                        if (defined $lang) {
-                            $newData = $et->Encode($newData, $lang < 0x400 ? $charsetQuickTime : 'UTF8');
-                            if ($$tagInfo{IText} and $$tagInfo{IText} == 6) {
-                                $newData = pack('Nn', 0, $lang) . $newData . "\0";
-                            } else {
-                                $newData = pack('nn', length($newData), $lang) . $newData;
+                    if ($nvHash and defined $val) {
+                        if ($et->IsOverwriting($nvHash, $val)) {
+                            $newData = $et->GetNewValue($nvHash);
+                            $newData = '' unless defined $newData or $canCreate;
+                            ++$$et{CHANGED};
+                            my $grp = $et->GetGroup($langInfo, 1);
+                            $et->VerboseValue("- $grp:$$langInfo{Name}", $val);
+                            next unless defined $newData and not $$didTag{$nvHash};
+                            $et->VerboseValue("+ $grp:$$langInfo{Name}", $newData);
+                            # add back necessary header and encode as necessary
+                            if (defined $lang) {
+                                $newData = $et->Encode($newData, $lang < 0x400 ? $charsetQuickTime : 'UTF8');
+                                if ($$tagInfo{IText} and $$tagInfo{IText} == 6) {
+                                    $newData = pack('Nn', 0, $lang) . $newData . "\0";
+                                } else {
+                                    $newData = pack('nn', length($newData), $lang) . $newData;
+                                }
+                            } elsif (not $format or $format =~ /^string/ and
+                                     not $$tagInfo{Binary} and not $$tagInfo{ValueConv})
+                            {
+                                # write all strings as UTF-8
+                                $newData = $et->Encode($newData, 'UTF8');
+                            } elsif ($format and not $$tagInfo{Binary}) {
+                                # format new value for writing
+                                $newData = WriteValue($newData, $format);
                             }
                         }
+                        $$didTag{$nvHash} = 1;   # set flag so we don't add this tag again
                     }
                 }
             }
             # write the new atom if it was modified
             if (defined $newData) {
-                my $len = length $newData;
-                $len > 0x7ffffff7 and $et->Error("$$tagInfo{Name} to large to write"), last;
-                next unless $len;
+                my $len = length($newData) + 8;
+                $len > 0x7fffffff and $et->Error("$$tagInfo{Name} to large to write"), last;
+                # update size in ChunkOffset list for modified 'uuid' atom
+                $$dirInfo{ChunkOffset}[-1][2] = $len if $tag eq 'uuid';
+                next unless $len > 8;   # don't write empty atom header
                 # maintain pointer to chunk offsets if necessary
                 if (@chunkOffset) {
-                    $$dirInfo{ChunkOffset} or $$dirInfo{ChunkOffset} = [ ];
                     $$_[1] += 8 + length $$outfile foreach @chunkOffset;
                     push @{$$dirInfo{ChunkOffset}}, @chunkOffset;
                 }
-                $boxPos{$tag} = [ length($$outfile), length($newData) + 8 ];
-                # write the updated directory now (unless length is zero, or it is needed as padding)
-                Write($outfile, Set32u($len+8), $tag, $newData) or $rtnVal=$rtnErr, $err=1, last;
+                if ($$tagInfo{WriteLast}) {
+                    $writeLast = ($writeLast || '') . Set32u($len) . $tag . $newData;
+                } else {
+                    $boxPos{$tag} = [ length($$outfile), length($newData) + 8 ];
+                    # write the updated directory with its atom header
+                    Write($outfile, Set32u($len), $tag, $newData) or $rtnVal=$rtnErr, $err=1, last;
+                }
                 next;
             }
         }
@@ -1023,11 +1302,11 @@ sub WriteQuickTime($$$)
         } elsif ($tag eq 'stsd' and length($buff) >= 8) {
             my $n = Get32u(\$buff, 4);      # get number of sample descriptions in table
             my ($pos, $flg) = (8, 0);
-            my $i;
+            my ($i, $msg);
             for ($i=0; $i<$n; ++$i) {       # loop through sample descriptions
-                last if $pos + 16 > length($buff);
+                $pos + 16 <= length($buff) or $msg = 'Truncated sample table', last;
                 my $siz = Get32u(\$buff, $pos);
-                last if $pos + $siz > length($buff);
+                $pos + $siz <= length($buff) or $msg = 'Truncated sample table', last;
                 my $drefIdx = Get16u(\$buff, $pos + 14);
                 my $drefTbl = $$et{QtDataRef};
                 if (not $drefIdx) {
@@ -1037,33 +1316,76 @@ sub WriteQuickTime($$$)
                     # $flg = 0x01-in this file, 0x02-in some other file
                     $flg |= ($$dref[1] == 1 and $$dref[0] ne 'rsrc') ? 0x01 : 0x02;
                 } else {
-                    my $grp = $$et{CUR_WRITE_GROUP} || $parent;
-                    $et->Error("No data reference for $grp sample description $i");
-                    return $rtnVal;
+                    $msg = "No data reference for sample description $i";
+                    last;
                 }
                 $pos += $siz;
             }
+            if ($msg) {
+                my $grp = $$et{CUR_WRITE_GROUP} || $parent;
+                $et->Error("$msg for $grp");
+                return $rtnErr;
+            }
             $$et{QtDataFlg} = $flg;
         }
-        # save position of this box in the output buffer
-        $boxPos{$tag} = [ length($$outfile), length($hdr) + length($buff) ];
-        # copy the existing atom
-        Write($outfile, $hdr, $buff) or $rtnVal=$rtnErr, $err=1, last;
+        if ($tagInfo and $$tagInfo{WriteLast}) {
+            $writeLast = ($writeLast || '') . $hdr . $buff;
+        } else {
+            # save position of this box in the output buffer
+            $boxPos{$tag} = [ length($$outfile), length($hdr) + length($buff) ];
+            # copy the existing atom
+            Write($outfile, $hdr, $buff) or $rtnVal=$rtnErr, $err=1, last;
+        }
     }
+    $et->VPrint(0, "  [deleting $delCount $dirName tag".($delCount==1 ? '' : 's')."]\n") if $delCount;
+
+    $createKeys &= ~0x01 unless $$addDirs{Keys};   # (Keys may have been written)
+
     # add new directories/tags at this level if necessary
-    if (exists $$et{EDIT_DIRS}{$dirName} and $canCreate) {
+    if ($canCreate and (exists $$et{EDIT_DIRS}{$dirName} or $createKeys)) {
         # get a hash of tagInfo references to add to this directory
         my $dirs = $et->GetAddDirHash($tagTablePtr, $dirName);
         # make sorted list of new tags to be added
         my @addTags = sort(keys(%$dirs), keys %$newTags);
-        my $tag;
+        my ($tag, $index);
+        # add Keys tags if necessary
+        if ($createKeys) {
+            if ($curPath eq 'MOV-Movie') {
+                # add Meta for Keys if necessary
+                unless ($didDir{meta}) {
+                    $$dirs{meta} = $Image::ExifTool::QuickTime::Movie{meta};
+                    push @addTags, 'meta';
+                }
+            } elsif ($curPath eq 'MOV-Movie-Meta') {
+                # special case for Keys Meta -- reset directories and start again
+                undef @addTags;
+                $dirs = { };
+                foreach ('keys','ilst') {
+                    next if $didDir{$_};  # don't add again
+                    $$dirs{$_} = $Image::ExifTool::QuickTime::Meta{$_};
+                    push @addTags, $_;
+                }
+            } elsif ($curPath eq 'MOV-Movie-Meta-ItemList' and $$et{Keys}) {
+                foreach $index (sort { $a <=> $b } keys %{$$et{Keys}{Add}}) {
+                    my $id = Set32u($index);
+                    $$newTags{$id} = $$et{Keys}{Add}{$index};
+                    push @addTags, $id;
+                }
+            } else {
+                $dirs = $et->GetAddDirHash($tagTablePtr, $dirName);
+                push @addTags, sort keys %$dirs;
+            }
+        }
+        # (note that $tag may be a binary Keys index here)
         foreach $tag (@addTags) {
             my $tagInfo = $$dirs{$tag} || $$newTags{$tag};
-            next if $$tagInfo{KeysInfo};    # don't try to add keys tags (yet)
+            next if defined $$tagInfo{CanCreate} and not $$tagInfo{CanCreate};
+            next if defined $$tagInfo{HandlerType} and
+                (not $$et{HandlerType} or $$et{HandlerType} ne $$tagInfo{HandlerType});
             my $subdir = $$tagInfo{SubDirectory};
             unless ($subdir) {
                 my $nvHash = $et->GetNewValueHash($tagInfo);
-                next unless $nvHash and not $didTag{$nvHash};
+                next unless $nvHash and not $$didTag{$nvHash};
                 next unless $$nvHash{IsCreating} and $et->IsOverwriting($nvHash);
                 my $newVal = $et->GetNewValue($nvHash);
                 next unless defined $newVal;
@@ -1071,21 +1393,25 @@ sub WriteQuickTime($$$)
                 my $flags = FormatQTValue($et, \$newVal, $$tagInfo{Format});
                 next unless defined $newVal;
                 my ($ctry, $lang) = (0,0);
-                if (length $tag > 4) { # (is there a language code appended to the tag ID?)
-                    unless ($tag =~ s/(.{4})-([A-Z]{3})?[-_]?([A-Z]{2})?/$1/si) {
+                # handle alternate languages
+                if ($$tagInfo{LangCode}) {
+                    $tag = substr($tag, 0, 4);  # strip language code from tag ID
+                    unless ($$tagInfo{LangCode} =~ /^([A-Z]{3})?[-_]?([A-Z]{2})?$/i) {
                         $et->Warn("Invalid language code for $$tagInfo{Name}");
                         next;
                     }
                     # pack language and country codes
-                    if ($2 and $2 ne 'und') {
-                        $lang = ($lang << 5) | ($_ - 0x60) foreach unpack 'C*', lc($2);
+                    if ($1 and $1 ne 'und') {
+                        $lang = ($lang << 5) | ($_ - 0x60) foreach unpack 'C*', lc($1);
                     }
-                    $ctry = unpack('n', pack('a2',uc($3))) if $3 and $3 ne 'ZZ';
+                    $ctry = unpack('n', pack('a2',uc($2))) if $2 and $2 ne 'ZZ';
                 }
                 if ($$dirInfo{HasData}) {
                     # add 'data' header
+                    $lang or $lang = $undLang;
                     $newVal = pack('Na4Nnn',16+length($newVal),'data',$flags,$ctry,$lang).$newVal;
                 } elsif ($tag =~ /^\xa9/ or $$tagInfo{IText}) {
+                    $lang or $lang = $undLang;
                     if ($ctry) {
                         my $grp = $et->GetGroup($tagInfo,1);
                         $et->Warn("Can't use country code for $grp:$$tagInfo{Name}");
@@ -1102,16 +1428,37 @@ sub WriteQuickTime($$$)
                     $et->Warn("Can't use language code for $grp:$$tagInfo{Name}");
                     next;
                 }
-                Write($outfile, Set32u(8+length($newVal)), $tag, $newVal) or $rtnVal=$rtnErr, $err=1;
-                $et->VerboseValue("+ $dirName:$$tagInfo{Name}", $prVal);
-                $didTag{$nvHash} = 1;
+                if ($$tagInfo{WriteLast}) {
+                    $writeLast = ($writeLast || '') .  Set32u(8+length($newVal)) . $tag . $newVal;
+                } else {
+                    $boxPos{$tag} = [ length($$outfile), 8 + length($newVal) ];
+                    Write($outfile, Set32u(8+length($newVal)), $tag, $newVal) or $rtnVal=$rtnErr, $err=1;
+                }
+                my $grp = $et->GetGroup($tagInfo, 1);
+                $et->VerboseValue("+ $grp:$$tagInfo{Name}", $prVal);
+                $$didTag{$nvHash} = 1;
                 ++$$et{CHANGED};
                 next;
             }
             my $subName = $$subdir{DirName} || $$tagInfo{Name};
             # QuickTime hierarchy is complex, so check full directory path before adding
-            next unless IsCurPath($et, $subName);
-            my $buff = '';  # write from scratch
+            my $buff;
+            if ($createKeys and $curPath eq 'MOV-Movie' and $subName eq 'Meta') {
+                $et->VPrint(0, "  Creating Meta with mdta Handler and Keys\n");
+                # init Meta box for Keys tags with mdta Handler and empty Keys+ItemList
+                $buff = "\0\0\0\x20hdlr\0\0\0\0\0\0\0\0mdta\0\0\0\0\0\0\0\0\0\0\0\0" .
+                        "\0\0\0\x10keys\0\0\0\0\0\0\0\0" .
+                        "\0\0\0\x08ilst";
+            } elsif ($createKeys and $curPath eq 'MOV-Movie-Meta') {
+                $buff = ($subName eq 'Keys' ? "\0\0\0\0\0\0\0\0" : '');
+            } elsif ($subName eq 'Meta' and $$et{OPTIONS}{QuickTimeHandler}) {
+                $et->VPrint(0, "  Creating Meta with mdir Handler\n");
+                # init Meta box for ItemList tags with mdir Handler
+                $buff = "\0\0\0\x20hdlr\0\0\0\0\0\0\0\0mdir\0\0\0\0\0\0\0\0\0\0\0\0";
+            } else {
+                next unless $curPath eq $writePath and $$addDirs{$subName} and $$addDirs{$subName} eq $dirName;
+                $buff = '';  # write from scratch
+            }
             my %subdirInfo = (
                 Parent   => $dirName,
                 DirName  => $subName,
@@ -1119,6 +1466,8 @@ sub WriteQuickTime($$$)
                 DirStart => 0,
                 HasData  => $$subdir{HasData},
                 OutFile  => $outfile,
+                ChunkOffset => [ ], # (just to be safe)
+                WriteGroup => $$tagInfo{WriteGroup},
             );
             my $subTable = GetTagTable($$subdir{TagTable});
             my $newData = $et->WriteDirectory(\%subdirInfo, $subTable, $$subdir{WriteProc});
@@ -1136,13 +1485,25 @@ sub WriteQuickTime($$$)
                     }
                 }
                 my $newHdr = Set32u(8+length($newData)+length($prefix)) . $tag . $prefix;
-                Write($outfile, $newHdr, $newData) or $rtnVal=$rtnErr, $err=1;
+                if ($$tagInfo{WriteLast}) {
+                    $writeLast = ($writeLast || '') . $newHdr . $newData;
+                } else {
+                    if ($tag eq 'uuid') {
+                        # add offset for new uuid (needed for CR3 CTBO offsets)
+                        my $off = $$dirInfo{ChunkOffset};
+                        push @$off, [ $tag, length($$outfile), length($newHdr) + length($newData) ];
+                    }
+                    $boxPos{$tag} = [ length($$outfile), length($newHdr) + length($newData) ];
+                    Write($outfile, $newHdr, $newData) or $rtnVal=$rtnErr, $err=1;
+                }
             }
-            delete $$addDirs{$subName}; # add only once (must delete _after_ call to WriteDirectory())
+            # add only once (must delete _after_ call to WriteDirectory())
+            # (Keys is a special case, and will be removed after Meta is processed)
+            delete $$addDirs{$subName} unless $subName eq 'Keys';
         }
     }
     # write HEIC metadata after top-level 'meta' box has been processed if editing this information
-    if ($dirName eq 'Meta' and $$et{EDIT_DIRS}{ItemInformation} and $curPath eq $writePath) {
+    if ($curPath eq 'MOV-Meta' and $$et{EDIT_DIRS}{ItemInformation}) {
         $$dirInfo{BoxPos} = \%boxPos;
         my $mdatEdit = WriteItemInfo($et, $dirInfo, $outfile);
         if ($mdatEdit) {
@@ -1151,19 +1512,39 @@ sub WriteQuickTime($$$)
         }
     }
     # write out any necessary terminator
-    Write($outfile, $term) or $rtnVal=$rtnErr, $err=1 if $term;
+    Write($outfile, $term) or $rtnVal=$rtnErr, $err=1 if $term and length $$outfile;
+
+    # delete temporary Keys variables after Meta is processed
+    if ($dirName eq 'Meta') {
+        # delete any Meta box with no useful information (ie. only 'hdlr','keys','lang','ctry')
+        my $isEmpty = 1;
+        $emptyMeta{$_} or $isEmpty = 0, last foreach keys %boxPos;
+        if ($isEmpty) {
+            $et->VPrint(0,'  Deleting ' . join('+', sort map { $emptyMeta{$_} } keys %boxPos)) if %boxPos;
+            $$outfile = '';
+            ++$$et{CHANGED};
+        }
+        if ($curPath eq 'MOV-Movie-Meta') {
+            delete $$addDirs{Keys}; # prevent creation of another Meta for Keys tags
+            delete $$et{Keys};
+        }
+    }
 
     # return now if writing subdirectory
-    return $err ? undef : $$outfile if $dataPt;
+    if ($dataPt) {
+        $et->Error("Internal error: WriteLast not on top-level atom!\n") if $writeLast;
+        return $err ? undef : $$outfile;
+    }
 
     # issue minor error if we didn't find an 'mdat' atom
-    my $off = $$dirInfo{ChunkOffset} || [ ];
+    my $off = $$dirInfo{ChunkOffset};
     if (not @mdat) {
-        if (@$off) {
-            $et->Error('Movie data referenced but not found');
+        foreach $co (@$off) {
+            next if $$co[0] eq 'uuid';
+            $et->Error('Media data referenced but not found');
             return $rtnVal;
         }
-        $et->Warn('No movie data', 1);
+        $et->Warn('No media data', 1);
     }
 
     # edit mdat blocks as required
@@ -1266,11 +1647,52 @@ sub WriteQuickTime($$$)
         $pos += $$mdat[4] ? length(${$$mdat[4]}) : $$mdat[1] - $$mdat[0];
     }
 
-    # fix up offsets for new mdat position(s)
+    # fix up offsets for new mdat position(s) (and uuid positions in CR3 images)
     foreach $co (@$off) {
         my ($type, $ptr, $len, $base, $id) = @$co;
         $base = 0 unless $base;
-        $type =~ /^(stco|co64)_?(.*)$/ or $et->Error('Internal error fixing offsets'), last;
+        unless ($type =~ /^(stco|co64)_?(.*)$/) {
+            next if $type eq 'uuid';
+            $type eq 'CTBO' or $et->Error('Internal error fixing offsets'), last;
+            # update 'CTBO' item offsets/sizes in Canon CR3 images
+            $$co[2] > 12 or $et->Error('Invalid CTBO atom'), last;
+            @mdat or $et->Error('Missing CR3 image data'), last;
+            my $n = Get32u($outfile, $$co[1] + 8);
+            $$co[2] < $n * 20 + 12 and $et->Error('Truncated CTBO atom'), last;
+            my (%ctboOff, $i);
+            # determine uuid types, and build an offset lookup based on CTBO ID number
+            foreach (@$off) {
+                next unless $$_[0] eq 'uuid' and $$_[2] >= 24; # (ignore undersized and deleted uuid boxes)
+                my $pos = $$_[1];
+                next if $pos + 24 > length $$outfile;   # (will happen for WriteLast uuid tags)
+                my $siz = Get32u($outfile, $pos);       # get size of uuid atom
+                if ($siz == 1) {                        # check for extended (8-byte) size
+                    next unless $$_[2] >= 32;
+                    $pos += 8;
+                }
+                # get CTBO entry ID based on 16-byte UUID identifier
+                my $id = $ctboID{substr($$outfile, $pos+8, 16)};
+                $ctboOff{$id} = $_ if defined $id;
+            }
+            # calculate new offset for the first mdat (size of -1 indicates it didn't change)
+            $ctboOff{3} = [ 'mdat', $mdat[0][3] - length $mdat[0][2], -1 ];
+            for ($i=0; $i<$n; ++$i) {
+                my $pos = $$co[1] + 12 + $i * 20;
+                my $id = Get32u($outfile, $pos);
+                # ignore if size is zero unless we can add this entry
+                # (note: can't yet add/delete PreviewImage, but leave this possibility open)
+                next unless Get64u($outfile, $pos + 12) or $id == 1 or $id == 2;
+                if (not defined $ctboOff{$id}) {
+                    $id==1 or $id==2 or $et->Error("Can't handle CR3 CTBO ID number $id"), last;
+                    # XMP or PreviewImage was deleted -- set offset and size to zero
+                    $ctboOff{$id} = [ 'uuid', 0, 0 ];
+                }
+                # update the new offset and size of this entry
+                Set64u($ctboOff{$id}[1], $outfile, $pos + 4);
+                Set64u($ctboOff{$id}[2], $outfile, $pos + 12) unless $ctboOff{$id}[2] < 0;
+            }
+            next;
+        }
         my $siz = $1 eq 'co64' ? 8 : 4;
         my ($n, $tag);
         if ($2) {   # is this an offset in an iloc or 'gps ' atom?
@@ -1321,19 +1743,19 @@ sub WriteQuickTime($$$)
                 last;
             }
             unless ($ok) {
-                $et->Error("Chunk offset in $tag atom is outside movie data");
+                $et->Error("Chunk offset in $tag atom is outside media data");
                 return $rtnVal;
             }
         }
     }
 
     # switch back to actual output file
-    $outfile = $$dirInfo{OutFile};  
+    $outfile = $$dirInfo{OutFile};
 
     # write the metadata
     Write($outfile, $outBuff) or $rtnVal = 0;
 
-    # write the movie data
+    # write the media data
     foreach $mdat (@mdat) {
         Write($outfile, $$mdat[2]) or $rtnVal = 0;  # write mdat header
         if ($$mdat[4]) {
@@ -1353,6 +1775,9 @@ sub WriteQuickTime($$$)
             }
         }
     }
+
+    # write the stuff that must come last
+    Write($outfile, $writeLast) or $rtnVal = 0 if $writeLast;
 
     return $rtnVal;
 }
@@ -1386,7 +1811,7 @@ sub WriteMOV($$)
     {
         if ($buff =~ /^crx /) {
             $ftype = 'CR3',
-        } elsif ($buff =~ /^(heic|mif1|msf1|heix|hevc|hevx)/) {
+        } elsif ($buff =~ /^(heic|mif1|msf1|heix|hevc|hevx|avif)/) {
             $ftype = 'HEIC';
         } else {
             $ftype = 'MP4';
@@ -1395,14 +1820,17 @@ sub WriteMOV($$)
         $ftype = 'MOV';
     }
     $et->SetFileType($ftype); # need to set "FileType" tag for a Condition
-    $et->InitWriteDirs($dirMap{$ftype}, 'XMP');
+    $et->InitWriteDirs($dirMap{$ftype}, 'XMP', 'QuickTime');
     $$et{DirMap} = $dirMap{$ftype};     # need access to directory map when writing
+    # track tags globally to avoid creating multiple tags in the case of duplicate directories
+    $$et{DidTag} = { };
     SetByteOrder('MM');
     $raf->Seek(0,0);
 
     # write the file
     $$dirInfo{Parent} = '';
     $$dirInfo{DirName} = 'MOV';
+    $$dirInfo{ChunkOffset} = [ ]; # (just to be safe)
     return WriteQuickTime($et, $dirInfo, $tagTablePtr) ? 1 : -1;
 }
 
@@ -1425,7 +1853,7 @@ QuickTime-based file formats like MOV and MP4.
 
 =head1 AUTHOR
 
-Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
