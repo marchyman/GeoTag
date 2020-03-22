@@ -1,3 +1,11 @@
+## WIP
+
+### New Feature
+
+* mark files that could not be backed up or updated.
+  files in red could not be updated by exiftool
+  files in orange could not be saved in the backup folder
+
 ## GeoTag 4.8
 
 ### New Feature

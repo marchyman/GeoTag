@@ -18,6 +18,14 @@ can use the command `brew cask install geotag` to install.
 Version 4.7 is the latest App Store released version.  Version 4.5.1 is
 available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.6
 
+## WIP
+
+### New Feature
+
+* mark files that could not be backed up or updated.
+  files in red could not be updated by exiftool
+  files in orange could not be saved in the backup folder
+
 ## GeoTag 4.8
 
 ### New Feature

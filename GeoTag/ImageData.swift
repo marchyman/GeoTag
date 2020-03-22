@@ -55,6 +55,11 @@ final class ImageData: NSObject {
     let xmpFile: XmpFile		//
     var sandboxUrl: URL         // URL of the sandbox copy of the image
     var sandboxXmp: URL?        // URL of sandbox copy of sidecar file
+    
+    // MARK: failed backup and update flag
+    
+    var backupFailed = false    // could not backup image if true
+    var updateFailed = false    // could not update image if true
 
     // MARK: instance variables -- date/time related values
 
@@ -270,15 +275,21 @@ final class ImageData: NSObject {
             return 0     // nothing to update
         }
         if saveOriginalFile() {
+            backupFailed = false
             let result = Exiftool.helper.updateLocation(from: self)
             if result == 0 {
                 originalLocation = location
                 originalDateTime = dateTime
+                updateFailed = false
+            } else {
+                updateFailed = true
             }
             return result
         }
 
-        // failed to backup or update
+        // failed to backup file
+
+        backupFailed = true
         return -1
     }
 

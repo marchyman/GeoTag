@@ -139,9 +139,9 @@ final class TableViewController: NSViewController {
                 let result = image.saveImageFile()
                 if result != 0 {
                     savedResult = result
-                    DispatchQueue.main.async {
-                        print("Error updating \(image.url.path)")
-                    }
+//                    DispatchQueue.main.async {
+//                        print("Error updating \(image.url.path)")
+//                    }
                 }
                 updateGroup.leave()
             }
@@ -150,6 +150,7 @@ final class TableViewController: NSViewController {
             self.appDelegate.progressIndicator.stopAnimation(self)
             self.saveInProgress = false
             completion(savedResult)
+            self.reloadAllRows()
         }
     }
 
@@ -770,6 +771,10 @@ extension TableViewController: NSTableViewDelegate {
             }
             if !image.validImage {
                 colView.textField?.textColor = NSColor.gray
+            } else if image.backupFailed {
+                colView.textField?.textColor = NSColor.systemOrange
+            } else if image.updateFailed {
+                colView.textField?.textColor = NSColor.systemRed
             }
             return colView
         }
