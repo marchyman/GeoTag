@@ -323,6 +323,9 @@ final class TableViewController: NSViewController {
         case #selector(delete(_:)):
             // OK if at least one row selected
             return !saveInProgress && tableView.numberOfSelectedRows > 0
+        case #selector(showInFinder(_:)):
+            // OK if at one row selected
+            return !saveInProgress && tableView.numberOfSelectedRows == 1
         case #selector(interpolate(_:)):
             return !saveInProgress && validateForInterpolation()
         case #selector(locnFromTrack(_:)):
@@ -431,6 +434,13 @@ final class TableViewController: NSViewController {
         appDelegate.undoManager.setActionName("delete")
     }
 
+    @IBAction
+    func showInFinder(_: AnyObject) {
+        if let row = tableView.selectedRowIndexes.first {
+            let url = images[row].url
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        }
+    }
     /// remove all items from the table
     ///
     /// - Parameter AnyObject: unused
