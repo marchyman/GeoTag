@@ -15,8 +15,8 @@ ExifTool. **ExifTool is built in to GeoTag.**
 GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
 can use the command `brew cask install geotag` to install.
 
-Version 4.7 is the latest App Store released version.  Version 4.5.1 is
-available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.6
+Version 4.8 is the latest App Store released version.  Version 4.5.1 is
+available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.
 
 ## WIP
 
@@ -51,100 +51,54 @@ available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.6
 
 * update the script use to build a release dmg
 
-## GeoTag 4.7.1
-
-### Bug Fix
-
-* when changing or setting dates of a image only change/set the
-  -DateTimeOriginal tag.  Leave the other dates alone.
-
-## GeoTag 4.7
-
-### New Feature
-
-* Change map search to find Points of Interest in addition to addresses.
-
-* When doing a map search the searched location will be applied to all
-selected images.  In previous versions a search would only position the
-map.
-
-### Bug Fix
-
-* Replace a call to fatalerror with an Alert notifying the user that a file
-could not be processed.
-
-* Fix possible off-by-one when searching for a track point by timestamp
-
 ### Known Bugs
 
-* Race condition: Whan photos with the same name are among multiple images
+* Race condition: When photos with the same name are among multiple images
   opened one may fail to open.  An alert will is displayed when this
   happens.
 
-## GeoTag 4.6.2
+* Setting the date of an image outside of the range of 1970-2034 may result in
+  an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
+  and macOS libraries handle date and time.  One hopes that the year 2034 limit
+  will eventually be removed ;)
 
-* 4.6.2 is the same as 4.6.1, but with a notarized dmg file for hassle free
-  installation on macOS Catalina.
+### Other 4.x Features and bug fixes
 
-## GeoTag Version 4.6.1
-
-### Bug Fix
-
+* when changing or setting dates of a image only change/set the
+  -DateTimeOriginal tag.  Leave the other dates alone.
+* Change map search to find Points of Interest in addition to addresses.
+* When doing a map search the searched location will be applied to all
+  selected images.  In previous versions a search would only position the
+  map.
+* Replace a call to fatalerror with an Alert notifying the user that a file
+  could not be processed.
+* Fix possible off-by-one when searching for a track point by timestamp
 * Some GPX files may not contain any tracks.  Tell the user if no tracks were
-found and otherwise ignore the file.
-
+  found and otherwise ignore the file.
 * The GPS Date/Time value was not being updated in sidecar files.
-
-## GeoTag Version 4.6
-
-### New Features
-
 * If a sidecar file exists metadata can be read from and updated metadata
   written to the sidecar file instead of the image file. This is controlled
   by a new preference item.  Files in the same folder as the image file with
   the same name but with an extension of ".xmp" are assumed to be sidecar files.
-
 * The presence of a sidecar file is indicated by a '*' following the image name.
-
 * heic (iPhone) image file updates are now supported.
-
 * Add a preference item that controls coordinate display formats.   Latitude
   and longitude can be displayed in one of three forms:
   - dd.ddddd
   - dd° mm.mmmm' N (or S, E, W depending upon coordinate)
   - dd° mm' ss.ss" N (or S, E, W depending upon coordinate)
-
 * Location coordinates can be entered by double clicking on either the
   latitude or longitude of an entry.  Coordinates can be entered in
   degrees, degrees and minutes, or degrees, minutes, and seconds. Use of
   °, ', and " indicators are optional.
-
 * Opening a large number of images should be slightly faster.
-
 * Preferences window changed.  Textual explanations of buttons have been
   moved to tool tips.
-
-* ExifTool version 11.44
-
-### Bug fixes
-
 * Pin dragging is working again
-
 * Updated image locations could sometimes be written with the wrong longitude
   reference.
-
 * fix crash that occured in the app was launched by dragging images onto
   the app icon.
-
-### Known Bugs
-
-* Setting the date of an image outside of the range of 1970-2034 may result in
-an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
-and macOS libraries handle date and time.  One hopes that the year 2034 limit
-will eventually be removed ;)
-
-### Other 4.x Features and bug fixes
-
 * Verify a file can be written by exiftool. If not do not allow attempted
   updates that will fail during a save.
 * GeoTag can now read GPS track logs in the format of a GPX file and display
