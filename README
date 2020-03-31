@@ -252,7 +252,7 @@ a pop up menu by right clicking on an entry in the list.
 ### Build Instructions for developers
 
 * Get current sources from github -- https://github.com/marchyman/GeoTag
-* Open the project in Xcode (last built using version 10)
+* Open the project in Xcode
 * ⌘R will build and run, ⌘B to build only
 
 Send all comments, bugs, requests, etc. to <marc@snafu.org>
