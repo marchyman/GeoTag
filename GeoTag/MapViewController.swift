@@ -99,6 +99,10 @@ class MapViewController: NSViewController {
                                      fromEyeCoordinate: center,
                                      eyeAltitude: altitude)
         search.searchMenuTemplate = searchesMenu
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(refreshTracks),
+                       name: Notification.Name("RefreshTracks"), object: nil)
+
     }
 
     // MARK: - Map control actions
@@ -261,6 +265,18 @@ class MapViewController: NSViewController {
                               animated: false)
         }
     }
+    
+    @objc
+    private
+    func refreshTracks() {
+        let overlays = mapView.overlays
+        if !overlays.isEmpty {
+            mapView.removeOverlays(overlays)
+        }
+        for mapLine in mapLines {
+            mapView.addOverlay(mapLine)
+        }
+    }
 
 }
 
@@ -308,6 +324,7 @@ extension MapViewController: MKMapViewDelegate {
         if mapLines.contains(polyline) {
             let renderer = MKPolylineRenderer(polyline: polyline)
             renderer.strokeColor = Preferences.trackColor()
+            renderer.lineWidth = CGFloat(Preferences.trackWidth())
             return renderer
         }
         return MKOverlayRenderer(overlay: overlay)

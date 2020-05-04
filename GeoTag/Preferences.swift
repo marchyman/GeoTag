@@ -34,6 +34,8 @@ final class Preferences  {
     static let sidecarKey = "SidecarKey"
     static let dateTimeGPSKey = "DateTimeGPSKey"
     static let trackColorKey = "TrackColorKey"
+    static let trackWidthKey = "TrackWidthKey"
+
     static var checkDirectory = true
     private static var url: URL? = nil
     
@@ -116,6 +118,14 @@ final class Preferences  {
         defaults.set(data, forKey: trackColorKey)
         return defaultColor
     }
+    
+    class
+    func trackWidth() -> Double {
+        let defaults = UserDefaults.standard
+        let trackWidth = defaults.double(forKey: trackWidthKey)
+        return trackWidth
+    }
+
 #if DEBUG
     // debug class function to reset existing defaults
     class
@@ -126,6 +136,7 @@ final class Preferences  {
         defaults.removeObject(forKey: saveBookmarkKey)
         defaults.removeObject(forKey: dateTimeGPSKey)
         defaults.removeObject(forKey: trackColorKey)
+        defaults.removeObject(forKey: trackWidthKey)
     }
 #endif
 

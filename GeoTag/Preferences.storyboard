@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14810.11" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="GMY-Vl-9oZ">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="GMY-Vl-9oZ">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14810.11"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -32,19 +32,19 @@
             <objects>
                 <viewController id="0lh-S3-hCN" customClass="PreferencesViewController" customModule="GeoTag" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NTf-hY-jkS">
-                        <rect key="frame" x="0.0" y="0.0" width="547" height="389"/>
+                        <rect key="frame" x="0.0" y="0.0" width="547" height="466"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box title="Backup Location" translatesAutoresizingMaskIntoConstraints="NO" id="z38-Lm-kvU">
-                                <rect key="frame" x="17" y="180" width="513" height="193"/>
+                                <rect key="frame" x="17" y="248" width="513" height="198"/>
                                 <view key="contentView" id="YAe-wg-Cho">
-                                    <rect key="frame" x="3" y="3" width="507" height="175"/>
+                                    <rect key="frame" x="3" y="3" width="507" height="180"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KR1-bn-ydR">
                                             <rect key="frame" x="20" y="20" width="467" height="22"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="22" id="pfS-0f-Ows"/>
+                                                <constraint firstAttribute="height" constant="22" id="YKn-ud-lol"/>
                                             </constraints>
                                             <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Select a folder to hold your image backups here" id="9tY-1R-VUu">
                                                 <font key="font" metaFont="system"/>
@@ -55,7 +55,7 @@
                                             </connections>
                                         </pathControl>
                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Iv8-JF-LLR">
-                                            <rect key="frame" x="18" y="59" width="471" height="96"/>
+                                            <rect key="frame" x="18" y="59" width="471" height="112"/>
                                             <textFieldCell key="cell" selectable="YES" id="SQe-WV-V99">
                                                 <font key="font" usesAppearanceFont="YES"/>
                                                 <string key="title">GeoTag makes a copy of each image before updating geo-location information to make sure you will never loose an image should something happen during the update.
@@ -67,21 +67,24 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                         </textField>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="top" secondItem="YAe-wg-Cho" secondAttribute="top" constant="20" symbolic="YES" id="5VO-6X-peS"/>
-                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="trailing" secondItem="KR1-bn-ydR" secondAttribute="trailing" id="Ay8-iC-4pp"/>
-                                        <constraint firstItem="KR1-bn-ydR" firstAttribute="top" secondItem="Iv8-JF-LLR" secondAttribute="bottom" constant="17" id="IvS-Ve-hG9"/>
-                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="leading" secondItem="KR1-bn-ydR" secondAttribute="leading" id="cax-CG-CYA"/>
-                                        <constraint firstAttribute="bottom" secondItem="KR1-bn-ydR" secondAttribute="bottom" constant="20" symbolic="YES" id="gI1-MJ-1bs"/>
-                                        <constraint firstAttribute="trailing" secondItem="Iv8-JF-LLR" secondAttribute="trailing" constant="20" symbolic="YES" id="nYm-la-zTN"/>
-                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="leading" secondItem="YAe-wg-Cho" secondAttribute="leading" constant="20" symbolic="YES" id="ohd-Fl-Oos"/>
+                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="leading" secondItem="YAe-wg-Cho" secondAttribute="leading" constant="20" symbolic="YES" id="2Jk-aa-d63"/>
+                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="top" secondItem="YAe-wg-Cho" secondAttribute="top" constant="9" id="AsI-TM-Zne"/>
+                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="trailing" secondItem="KR1-bn-ydR" secondAttribute="trailing" id="D09-DC-5Qq"/>
+                                        <constraint firstAttribute="bottom" secondItem="KR1-bn-ydR" secondAttribute="bottom" constant="20" symbolic="YES" id="ENP-sJ-EG5"/>
+                                        <constraint firstAttribute="trailing" secondItem="Iv8-JF-LLR" secondAttribute="trailing" constant="20" symbolic="YES" id="Rb9-OU-tsR"/>
+                                        <constraint firstItem="Iv8-JF-LLR" firstAttribute="leading" secondItem="KR1-bn-ydR" secondAttribute="leading" id="gjP-Na-XTb"/>
+                                        <constraint firstItem="KR1-bn-ydR" firstAttribute="top" secondItem="Iv8-JF-LLR" secondAttribute="bottom" constant="17" id="wwu-e8-lQw"/>
                                     </constraints>
                                 </view>
                             </box>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="0DR-3T-UaS">
-                                <rect key="frame" x="20" y="173" width="507" height="5"/>
+                                <rect key="frame" x="20" y="241" width="507" height="5"/>
                             </box>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NpC-9F-bSK">
-                                <rect key="frame" x="20" y="151" width="509" height="16"/>
+                                <rect key="frame" x="20" y="208" width="509" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="WvV-6y-jdJ"/>
+                                </constraints>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Select a format for Latitude and Longitude display" id="iCU-hi-ygw">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -89,7 +92,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </textFieldCell>
                             </textField>
                             <button identifier="deg" horizontalHuggingPriority="252" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gcF-0V-Kzp">
-                                <rect key="frame" x="19" y="126" width="89" height="18"/>
+                                <rect key="frame" x="19" y="183" width="89" height="18"/>
                                 <buttonCell key="cell" type="radio" title="dd.dddddd" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="x8m-n3-Z0b">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -99,7 +102,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <button identifier="degMin" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R6t-cD-FbL">
-                                <rect key="frame" x="135" y="126" width="135" height="18"/>
+                                <rect key="frame" x="136" y="183" width="135" height="18"/>
                                 <buttonCell key="cell" type="radio" title="dd° mm.mmmm' N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="QPS-HY-4g9">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -109,10 +112,10 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x36-Kb-x3W">
-                                <rect key="frame" x="20" y="116" width="507" height="5"/>
+                                <rect key="frame" x="20" y="163" width="507" height="5"/>
                             </box>
                             <button identifier="sidecar" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WWl-e4-6Nw">
-                                <rect key="frame" x="20" y="94" width="509" height="18"/>
+                                <rect key="frame" x="20" y="133" width="509" height="18"/>
                                 <string key="toolTip">When checked a sidecar file existing in the same folder as an image file will be updated with location information instead of the image file.  New sidecar files will not be created.</string>
                                 <buttonCell key="cell" type="check" title="Update sidecar (XMP) files" bezelStyle="regularSquare" imagePosition="left" inset="2" id="lnG-WA-vYm">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -123,7 +126,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <button identifier="datetime" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GDs-Ky-946">
-                                <rect key="frame" x="20" y="74" width="509" height="18"/>
+                                <rect key="frame" x="20" y="107" width="509" height="18"/>
                                 <string key="toolTip">When this box is checked GPS Date/Time stamp metadata in UTC will be set from the Original Date/Time the image was taken.  GPS Date/Time will only be correct if the Original Date/Time is the correct local time for the location of the image.  If that is not the case, e.g. the camera timezone was incorrect, do not check the box.</string>
                                 <buttonCell key="cell" type="check" title="Update GPS Date/Time stamps" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ghg-rB-WJm">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -134,35 +137,22 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                 </connections>
                             </button>
                             <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="ctY-vc-7Cb">
-                                <rect key="frame" x="20" y="46" width="44" height="22"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="K5r-7K-wnB"/>
-                                </constraints>
+                                <rect key="frame" x="22" y="70" width="44" height="22"/>
                                 <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
                                     <action selector="setTrackColor:" target="0lh-S3-hCN" id="k4o-oi-VFE"/>
                                 </connections>
                             </colorWell>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UfN-Xf-vxz">
-                                <rect key="frame" x="72" y="49" width="457" height="16"/>
+                                <rect key="frame" x="72" y="73" width="457" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Select track color for tracks loaded from GPX files" id="WjJ-at-ZO5">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xfs-6s-Szc">
-                                <rect key="frame" x="455" y="13" width="75" height="32"/>
-                                <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lWX-JU-9gq">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="close:" target="0lh-S3-hCN" id="NCi-cn-A9V"/>
-                                </connections>
-                            </button>
                             <button identifier="degMinSec" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wEF-7J-BVU">
-                                <rect key="frame" x="297" y="126" width="232" height="18"/>
+                                <rect key="frame" x="297" y="183" width="232" height="18"/>
                                 <buttonCell key="cell" type="radio" title="dd° mm' ss.ss&quot; N" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="CyN-Lu-m00">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -171,42 +161,88 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                     <action selector="coordFormatChanged:" target="0lh-S3-hCN" id="hc9-td-aGP"/>
                                 </connections>
                             </button>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ijq-aX-wIp">
+                                <rect key="frame" x="22" y="29" width="42" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="42" id="2AS-cS-xej"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" drawsBackground="YES" id="l5T-jA-Pw9">
+                                    <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="Er5-ux-lEh">
+                                        <real key="minimum" value="0.0"/>
+                                        <real key="maximum" value="9.9000000000000004"/>
+                                    </numberFormatter>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <action selector="trackWidthChanged:" target="0lh-S3-hCN" id="tyM-gb-MsM"/>
+                                </connections>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="noR-yA-5Hk">
+                                <rect key="frame" x="72" y="31" width="367" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="KAL-QB-TKi"/>
+                                    <constraint firstAttribute="width" constant="363" id="nuu-lp-pxW"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Track width (0 thru 9.9). Use 0 for default width." id="lLT-a7-G9Z">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xfs-6s-Szc">
+                                <rect key="frame" x="458" y="13" width="75" height="32"/>
+                                <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lWX-JU-9gq">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="close:" target="0lh-S3-hCN" id="NCi-cn-A9V"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="UfN-Xf-vxz" firstAttribute="leading" secondItem="ctY-vc-7Cb" secondAttribute="trailing" constant="10" id="2GZ-qv-QTt"/>
-                            <constraint firstItem="NpC-9F-bSK" firstAttribute="leading" secondItem="WWl-e4-6Nw" secondAttribute="leading" id="7Z8-51-Tbn"/>
-                            <constraint firstItem="NpC-9F-bSK" firstAttribute="leading" secondItem="NTf-hY-jkS" secondAttribute="leading" constant="22" id="7qo-Rv-Od2"/>
-                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="leading" secondItem="GDs-Ky-946" secondAttribute="leading" id="8xc-q0-Qh4"/>
-                            <constraint firstItem="ctY-vc-7Cb" firstAttribute="centerY" secondItem="UfN-Xf-vxz" secondAttribute="centerY" id="Bal-ac-FjB"/>
-                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="leading" secondItem="x36-Kb-x3W" secondAttribute="leading" id="Ff8-xj-If5"/>
-                            <constraint firstItem="wEF-7J-BVU" firstAttribute="trailing" secondItem="x36-Kb-x3W" secondAttribute="trailing" id="H8x-IQ-bGP"/>
-                            <constraint firstItem="xfs-6s-Szc" firstAttribute="top" secondItem="UfN-Xf-vxz" secondAttribute="bottom" constant="8" symbolic="YES" id="HBS-Ct-TvT"/>
-                            <constraint firstItem="wEF-7J-BVU" firstAttribute="leading" secondItem="R6t-cD-FbL" secondAttribute="trailing" constant="30" id="I2E-ar-wH1"/>
-                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="trailing" secondItem="GDs-Ky-946" secondAttribute="trailing" id="NfG-vZ-zhE"/>
-                            <constraint firstItem="0DR-3T-UaS" firstAttribute="leading" secondItem="gcF-0V-Kzp" secondAttribute="leading" id="Qii-zD-4qv"/>
-                            <constraint firstItem="z38-Lm-kvU" firstAttribute="leading" secondItem="NTf-hY-jkS" secondAttribute="leading" constant="20" symbolic="YES" id="UKt-Dg-baX"/>
-                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="top" secondItem="x36-Kb-x3W" secondAttribute="bottom" constant="8" symbolic="YES" id="YFO-dT-vie"/>
-                            <constraint firstItem="ctY-vc-7Cb" firstAttribute="top" secondItem="GDs-Ky-946" secondAttribute="bottom" constant="8" symbolic="YES" id="YS8-vJ-1nd"/>
-                            <constraint firstItem="z38-Lm-kvU" firstAttribute="leading" secondItem="0DR-3T-UaS" secondAttribute="leading" id="ZN2-XA-mqk"/>
-                            <constraint firstItem="x36-Kb-x3W" firstAttribute="top" secondItem="gcF-0V-Kzp" secondAttribute="bottom" constant="8" symbolic="YES" id="anf-Le-Cd6"/>
-                            <constraint firstItem="GDs-Ky-946" firstAttribute="top" secondItem="WWl-e4-6Nw" secondAttribute="bottom" constant="6" symbolic="YES" id="bDp-8z-PhE"/>
-                            <constraint firstItem="0DR-3T-UaS" firstAttribute="top" secondItem="z38-Lm-kvU" secondAttribute="bottom" constant="8" symbolic="YES" id="gYN-s8-brw"/>
-                            <constraint firstItem="x36-Kb-x3W" firstAttribute="trailing" secondItem="WWl-e4-6Nw" secondAttribute="trailing" id="gwd-CW-WJH"/>
-                            <constraint firstItem="NpC-9F-bSK" firstAttribute="trailing" secondItem="wEF-7J-BVU" secondAttribute="trailing" id="hSo-sz-VUi"/>
-                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="baseline" secondItem="R6t-cD-FbL" secondAttribute="baseline" id="haA-lP-Zcb"/>
-                            <constraint firstItem="z38-Lm-kvU" firstAttribute="trailing" secondItem="0DR-3T-UaS" secondAttribute="trailing" id="i06-Mh-5ae"/>
-                            <constraint firstItem="0DR-3T-UaS" firstAttribute="trailing" secondItem="NpC-9F-bSK" secondAttribute="trailing" id="jav-za-A9k"/>
-                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="top" secondItem="NpC-9F-bSK" secondAttribute="bottom" constant="8" symbolic="YES" id="jiv-At-HZB"/>
-                            <constraint firstAttribute="bottom" secondItem="xfs-6s-Szc" secondAttribute="bottom" constant="20" symbolic="YES" id="kjq-Zu-qMD"/>
-                            <constraint firstItem="R6t-cD-FbL" firstAttribute="baseline" secondItem="wEF-7J-BVU" secondAttribute="baseline" id="qwV-N2-WFT"/>
-                            <constraint firstItem="UfN-Xf-vxz" firstAttribute="top" secondItem="GDs-Ky-946" secondAttribute="bottom" constant="11" id="rdg-4D-N7h"/>
-                            <constraint firstItem="z38-Lm-kvU" firstAttribute="top" secondItem="NTf-hY-jkS" secondAttribute="top" constant="16" id="tC3-H6-Xa7"/>
-                            <constraint firstAttribute="trailing" secondItem="xfs-6s-Szc" secondAttribute="trailing" constant="23" id="tyP-nM-z8b"/>
-                            <constraint firstAttribute="trailing" secondItem="z38-Lm-kvU" secondAttribute="trailing" constant="20" symbolic="YES" id="uCM-3H-rTh"/>
-                            <constraint firstItem="x36-Kb-x3W" firstAttribute="leading" secondItem="ctY-vc-7Cb" secondAttribute="leading" id="uUt-Lk-nFr"/>
-                            <constraint firstItem="GDs-Ky-946" firstAttribute="trailing" secondItem="UfN-Xf-vxz" secondAttribute="trailing" id="wg2-O7-5sR"/>
-                            <constraint firstItem="NpC-9F-bSK" firstAttribute="top" secondItem="0DR-3T-UaS" secondAttribute="bottom" constant="8" symbolic="YES" id="xkT-Zl-Dc6"/>
-                            <constraint firstItem="R6t-cD-FbL" firstAttribute="leading" secondItem="gcF-0V-Kzp" secondAttribute="trailing" constant="30" id="xmX-63-bpn"/>
+                            <constraint firstItem="NpC-9F-bSK" firstAttribute="trailing" secondItem="wEF-7J-BVU" secondAttribute="trailing" id="115-D7-CfB"/>
+                            <constraint firstItem="0DR-3T-UaS" firstAttribute="top" secondItem="NTf-hY-jkS" secondAttribute="top" constant="222" id="2NB-TE-2bx"/>
+                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="trailing" secondItem="GDs-Ky-946" secondAttribute="trailing" id="4Js-6i-a4g"/>
+                            <constraint firstItem="GDs-Ky-946" firstAttribute="leading" secondItem="ctY-vc-7Cb" secondAttribute="leading" id="4ny-Ek-DT4"/>
+                            <constraint firstItem="z38-Lm-kvU" firstAttribute="top" secondItem="NTf-hY-jkS" secondAttribute="top" constant="20" symbolic="YES" id="7e2-H1-TVp"/>
+                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="baseline" secondItem="R6t-cD-FbL" secondAttribute="baseline" id="B1O-3V-P4B"/>
+                            <constraint firstItem="z38-Lm-kvU" firstAttribute="trailing" secondItem="0DR-3T-UaS" secondAttribute="trailing" id="EGf-OS-fHo"/>
+                            <constraint firstItem="UfN-Xf-vxz" firstAttribute="trailing" secondItem="xfs-6s-Szc" secondAttribute="trailing" id="IlX-BS-IYZ"/>
+                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="top" secondItem="x36-Kb-x3W" secondAttribute="bottom" constant="16" id="MuZ-9J-fkU"/>
+                            <constraint firstItem="x36-Kb-x3W" firstAttribute="top" secondItem="gcF-0V-Kzp" secondAttribute="bottom" constant="18" id="NCU-OC-uTo"/>
+                            <constraint firstItem="Ijq-aX-wIp" firstAttribute="centerY" secondItem="noR-yA-5Hk" secondAttribute="centerY" id="NUd-jz-hbf"/>
+                            <constraint firstItem="R6t-cD-FbL" firstAttribute="leading" secondItem="gcF-0V-Kzp" secondAttribute="trailing" constant="31" id="Pk1-Xk-hsE"/>
+                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="top" secondItem="NpC-9F-bSK" secondAttribute="bottom" constant="8" symbolic="YES" id="QoL-5Z-J3d"/>
+                            <constraint firstItem="GDs-Ky-946" firstAttribute="trailing" secondItem="UfN-Xf-vxz" secondAttribute="trailing" id="S6Z-hU-phU"/>
+                            <constraint firstItem="wEF-7J-BVU" firstAttribute="trailing" secondItem="x36-Kb-x3W" secondAttribute="trailing" id="TG3-z2-yah"/>
+                            <constraint firstItem="GDs-Ky-946" firstAttribute="top" secondItem="WWl-e4-6Nw" secondAttribute="bottom" constant="12" id="UIZ-Ih-a4n"/>
+                            <constraint firstItem="0DR-3T-UaS" firstAttribute="trailing" secondItem="NpC-9F-bSK" secondAttribute="trailing" id="VfQ-so-1cy"/>
+                            <constraint firstItem="WWl-e4-6Nw" firstAttribute="leading" secondItem="GDs-Ky-946" secondAttribute="leading" id="WE2-E6-JQK"/>
+                            <constraint firstAttribute="trailing" secondItem="z38-Lm-kvU" secondAttribute="trailing" constant="20" symbolic="YES" id="XXS-5Q-eEm"/>
+                            <constraint firstItem="ctY-vc-7Cb" firstAttribute="leading" secondItem="Ijq-aX-wIp" secondAttribute="leading" id="YBk-Ib-5s3"/>
+                            <constraint firstItem="noR-yA-5Hk" firstAttribute="top" secondItem="UfN-Xf-vxz" secondAttribute="bottom" constant="25" id="Yak-y5-Ic5"/>
+                            <constraint firstItem="UfN-Xf-vxz" firstAttribute="leading" secondItem="ctY-vc-7Cb" secondAttribute="trailing" constant="8" symbolic="YES" id="Z5O-yz-JpA"/>
+                            <constraint firstItem="gcF-0V-Kzp" firstAttribute="leading" secondItem="x36-Kb-x3W" secondAttribute="leading" id="aaZ-eP-3r9"/>
+                            <constraint firstItem="UfN-Xf-vxz" firstAttribute="leading" secondItem="noR-yA-5Hk" secondAttribute="leading" id="dKy-xz-ShH"/>
+                            <constraint firstAttribute="bottom" secondItem="xfs-6s-Szc" secondAttribute="bottom" constant="20" symbolic="YES" id="dxd-e9-kSn"/>
+                            <constraint firstItem="ctY-vc-7Cb" firstAttribute="top" secondItem="GDs-Ky-946" secondAttribute="bottom" constant="17" id="eqe-8G-bn4"/>
+                            <constraint firstItem="ctY-vc-7Cb" firstAttribute="centerY" secondItem="UfN-Xf-vxz" secondAttribute="centerY" id="fm7-gQ-k8C"/>
+                            <constraint firstItem="x36-Kb-x3W" firstAttribute="trailing" secondItem="WWl-e4-6Nw" secondAttribute="trailing" id="iMs-NF-pWN"/>
+                            <constraint firstItem="R6t-cD-FbL" firstAttribute="baseline" secondItem="wEF-7J-BVU" secondAttribute="baseline" id="k8B-Xh-9tD"/>
+                            <constraint firstItem="z38-Lm-kvU" firstAttribute="leading" secondItem="NTf-hY-jkS" secondAttribute="leading" constant="20" symbolic="YES" id="oY2-BK-uO8"/>
+                            <constraint firstItem="z38-Lm-kvU" firstAttribute="leading" secondItem="0DR-3T-UaS" secondAttribute="leading" id="pZy-RT-dTB"/>
+                            <constraint firstItem="UfN-Xf-vxz" firstAttribute="top" secondItem="GDs-Ky-946" secondAttribute="bottom" constant="20" id="ps3-jd-phD"/>
+                            <constraint firstItem="NpC-9F-bSK" firstAttribute="leading" secondItem="WWl-e4-6Nw" secondAttribute="leading" id="ptJ-ln-1Cp"/>
+                            <constraint firstItem="wEF-7J-BVU" firstAttribute="leading" secondItem="R6t-cD-FbL" secondAttribute="trailing" constant="29" id="qMx-Sf-3Cr"/>
+                            <constraint firstItem="noR-yA-5Hk" firstAttribute="leading" secondItem="Ijq-aX-wIp" secondAttribute="trailing" constant="10" id="tXp-Pf-Djn"/>
+                            <constraint firstItem="0DR-3T-UaS" firstAttribute="leading" secondItem="gcF-0V-Kzp" secondAttribute="leading" id="txa-kK-4D0"/>
+                            <constraint firstItem="NpC-9F-bSK" firstAttribute="leading" secondItem="NTf-hY-jkS" secondAttribute="leading" constant="22" id="vNc-Iu-B33"/>
+                            <constraint firstItem="Ijq-aX-wIp" firstAttribute="top" secondItem="ctY-vc-7Cb" secondAttribute="bottom" constant="20" id="wfj-H5-lN5"/>
+                            <constraint firstItem="0DR-3T-UaS" firstAttribute="top" secondItem="z38-Lm-kvU" secondAttribute="bottom" constant="8" symbolic="YES" id="yUd-DP-bXx"/>
+                            <constraint firstItem="NpC-9F-bSK" firstAttribute="top" secondItem="0DR-3T-UaS" secondAttribute="bottom" constant="13" id="zr5-V3-9by"/>
                         </constraints>
                     </view>
                     <connections>
@@ -217,11 +253,12 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                         <outlet property="saveFolderPath" destination="KR1-bn-ydR" id="qls-TC-LZE"/>
                         <outlet property="sidecarButton" destination="WWl-e4-6Nw" id="xqp-si-GAY"/>
                         <outlet property="trackColorWell" destination="ctY-vc-7Cb" id="ypG-mv-aaC"/>
+                        <outlet property="trackWidth" destination="Ijq-aX-wIp" id="2Qh-JS-q1K"/>
                     </connections>
                 </viewController>
                 <customObject id="qEd-mU-Ddf" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="541.5" y="268.5"/>
+            <point key="canvasLocation" x="541.5" y="307"/>
         </scene>
     </scenes>
 </document>

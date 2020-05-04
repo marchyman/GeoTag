@@ -52,6 +52,7 @@ class PreferencesViewController: NSViewController {
                                         NSControl.StateValue.on :
                                         NSControl.StateValue.off
         trackColorWell.color = Preferences.trackColor()
+        trackWidth.doubleValue = Preferences.trackWidth()
     }
 
     @IBOutlet
@@ -142,8 +143,21 @@ class PreferencesViewController: NSViewController {
         let defaults = UserDefaults.standard
         let data = NSArchiver.archivedData(withRootObject: sender.color)
         defaults.set(data, forKey: Preferences.trackColorKey)
+        let nc = NotificationCenter.default
+        nc.post(name: Notification.Name("RefreshTracks"), object: nil)
     }
-    
+
+    @IBOutlet
+    weak var trackWidth: NSTextField!
+
+    @IBAction
+    func trackWidthChanged(_ sender: NSTextField) {
+        let defaults = UserDefaults.standard
+        defaults.set(sender.doubleValue, forKey: Preferences.trackWidthKey)
+        let nc = NotificationCenter.default
+        nc.post(name: Notification.Name("RefreshTracks"), object: nil)
+    }
+
     @IBAction
     func close(_ sender: Any) {
         self.view.window?.close()

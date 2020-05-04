@@ -8,6 +8,12 @@
 
 * new right-click menu option -- Show in Finder
 
+* new preference -- change the width of tracks.
+
+### Bug Fix
+
+* Update existing track color (and width) when the preference changes.
+
 ## GeoTag 4.8
 
 ### New Feature
