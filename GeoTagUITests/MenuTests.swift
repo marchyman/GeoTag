@@ -107,7 +107,7 @@ class B_MenuTests: XCTestCase {
         let tableMenu = app.menus["tableMenu"]
         XCTAssert(tableMenu.exists)
         let tableMenuSearch = tableMenu.descendants(matching: .menuItem)
-        XCTAssertEqual(tableMenuSearch.count, 11)
+        XCTAssertEqual(tableMenuSearch.count, 12)
 
         let menuNames = ["Cut", "Copy", "Paste", "Delete", "Interpolate",
                          "Locn from track", "Modify Date/Time",

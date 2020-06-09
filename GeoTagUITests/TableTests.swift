@@ -217,6 +217,11 @@ class C_TableTests: XCTestCase {
         let imageNameColumnButton = table.buttons["Image Name"]
         XCTAssertTrue(imageNameColumnButton.exists)
         imageNameColumnButton.click()
+        // The column may have already been sorted by name.  If the first element
+        // isn't as we expect sort again to get the list in the proper order.
+        if texts.element(boundBy: 0).value as! String != cr2ImageStar {
+            imageNameColumnButton.click()
+        }
         XCTAssertEqual(texts.element(boundBy: 0).value as! String, cr2ImageStar)
 
         // column 2 and 3 are lat/lon
