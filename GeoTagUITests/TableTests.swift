@@ -180,20 +180,26 @@ class C_TableTests: XCTestCase {
         let imageNameColumnButton = table.buttons["Image Name"]
         XCTAssertTrue(imageNameColumnButton.exists)
         imageNameColumnButton.click()
-        XCTAssertEqual(texts.element(boundBy: 0).value as! String, cr2ImageStar)
-        // invert the sort and check again
-        imageNameColumnButton.click()
-        XCTAssertEqual(texts.element(boundBy: 0).value as! String, fooFile)
+        // sort twice
+        if texts.element(boundBy: 0).value as! String == cr2ImageStar {
+            // invert the sort and check again
+            imageNameColumnButton.click()
+            XCTAssertEqual(texts.element(boundBy: 0).value as! String, fooFile)
+        } else {
+            // invert the sort and check again
+            imageNameColumnButton.click()
+            XCTAssertEqual(texts.element(boundBy: 0).value as! String, cr2ImageStar)
+        }
 
         // sort by Date/Time (2nd column, index 1)
+        let dt1 = texts.element(boundBy: 1).value as! String
         let dateTimeColumnButton = table.buttons["Date/Time"]
         XCTAssertTrue(dateTimeColumnButton.exists)
         dateTimeColumnButton.click()
-        XCTAssertEqual(texts.element(boundBy: 1).value as! String, "")
+        XCTAssertNotEqual(texts.element(boundBy: 1).value as! String, dt1)
         // invert the sort and check again
         dateTimeColumnButton.click()
-        XCTAssertEqual(texts.element(boundBy: 1).value as! String,
-                       "2015:11:12 13:08:23")
+        XCTAssertEqual(texts.element(boundBy: 1).value as! String, dt1)
     }
 
     /// open specific files
