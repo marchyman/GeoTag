@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.34';
+$VERSION = '3.36';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -444,10 +444,10 @@ country code to the tag name (eg. "ItemList:Artist-deu" or
 "ItemList::Artist-deu-DE").  Most
 L<UserData|Image::ExifTool::TagNames/QuickTime UserData Tags> tags support a
 language code, but without a country code.  If no language code is specified
-when writing, alternate languages for the tag are deleted.  Use the "und"
-language code to write the default language without deleting alternate
-languages.  Note that "eng" is treated as a default language when reading,
-but not when writing.
+when writing, the default language is written and alternate languages for
+the tag are deleted.  Use the "und" language code to write the default
+language without deleting alternate languages.  Note that "eng" is treated
+as a default language when reading, but not when writing.
 
 According to the specification, integer-format QuickTime date/time tags
 should be stored as UTC.  Unfortunately, digital cameras often store local
@@ -1474,7 +1474,8 @@ TagID:  foreach $tagID (@keys) {
         my $tag;
         foreach $tag (sort keys %$struct) {
             my $tagInfo = $$struct{$tag};
-            next unless ref $tagInfo eq 'HASH' and $tag ne 'NAMESPACE';
+            next unless ref $tagInfo eq 'HASH' and $tag ne 'NAMESPACE' and $tag ne 'GROUPS';
+            warn "WARNING: $strName Struct containes $tag\n" if $Image::ExifTool::specialTags{$tag};
             my $writable = $$tagInfo{Writable};
             my @vals;
             unless ($writable) {
