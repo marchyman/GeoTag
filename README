@@ -9,16 +9,17 @@ tune the location with a click.  The built in ExifTool utility is used to write
 location data to the images when you save your changes.  ExifTool only modifies
 image metadata -- your image pixels are not touched.
 
-See <http://www.sno.phy.queensu.ca/~phil/exiftool/> for information about
-ExifTool. **ExifTool is built in to GeoTag.**
+See <http://exiftool.org> for information about ExifTool.
+**ExifTool is built in to GeoTag.**
 
-GeoTag is available as a [homebrew](http://brew.sh) cask.  Homebrew users
-can use the command `brew cask install geotag` to install.
+GeoTag is available from several sources
+* [App Store Link](https://itunes.apple.com/us/app/geotag/id1465180184?mt=12)
+* [GeoTag home page](https://www.snafu.org/GeoTag/)
+* [Homebrew](http://brew.sh) cask.  Homebrew users can use the command
+  `brew cask install geotag` to install.
+* [GitHub](https://github.com/marchyman/GeoTag)
 
-Version 4.8 is the latest App Store released version.  Version 4.5.1 is
-available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.
-
-## WIP
+## GeoTag 4.9
 
 ### New Feature
 
@@ -30,32 +31,11 @@ available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.
 
 * new preference -- change the width of tracks.
 
+* ExifTool version 12.0
+
 ### Bug Fix
 
 * Update existing track color (and width) when the preference changes.
-
-## GeoTag 4.8
-
-### New Feature
-
-* update CreateDate as well as Date/Time Original.  Dates are updated only
-  when the user modifies the image timestamp.
-
-* Warn the user if the Backup/Save folder contains more than 500 MB of images
-  or if the images were added to the folder more than 7 days ago.
-
-* gray out png files.  Exiftool can handle metadata in PNG files but
-  finder/macOS can't.
-  
-* update exiftool to version 11.91
-
-### Bug Fix
-
-* Remember the column/sort direction when a user picks a column to order the
-  images in the table. Sort by the remembered value when new images are
-  opened.
-
-* update the script use to build a release dmg
 
 ### Known Bugs
 
@@ -68,111 +48,7 @@ available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.
   and macOS libraries handle date and time.  One hopes that the year 2034 limit
   will eventually be removed ;)
 
-### Other 4.x Features and bug fixes
-
-* when changing or setting dates of a image only change/set the
-  -DateTimeOriginal tag.  Leave the other dates alone.
-* Change map search to find Points of Interest in addition to addresses.
-* When doing a map search the searched location will be applied to all
-  selected images.  In previous versions a search would only position the
-  map.
-* Replace a call to fatalerror with an Alert notifying the user that a file
-  could not be processed.
-* Fix possible off-by-one when searching for a track point by timestamp
-* Some GPX files may not contain any tracks.  Tell the user if no tracks were
-  found and otherwise ignore the file.
-* The GPS Date/Time value was not being updated in sidecar files.
-* If a sidecar file exists metadata can be read from and updated metadata
-  written to the sidecar file instead of the image file. This is controlled
-  by a new preference item.  Files in the same folder as the image file with
-  the same name but with an extension of ".xmp" are assumed to be sidecar files.
-* The presence of a sidecar file is indicated by a '*' following the image name.
-* heic (iPhone) image file updates are now supported.
-* Add a preference item that controls coordinate display formats.   Latitude
-  and longitude can be displayed in one of three forms:
-  - dd.ddddd
-  - dd° mm.mmmm' N (or S, E, W depending upon coordinate)
-  - dd° mm' ss.ss" N (or S, E, W depending upon coordinate)
-* Location coordinates can be entered by double clicking on either the
-  latitude or longitude of an entry.  Coordinates can be entered in
-  degrees, degrees and minutes, or degrees, minutes, and seconds. Use of
-  °, ', and " indicators are optional.
-* Opening a large number of images should be slightly faster.
-* Preferences window changed.  Textual explanations of buttons have been
-  moved to tool tips.
-* Pin dragging is working again
-* Updated image locations could sometimes be written with the wrong longitude
-  reference.
-* fix crash that occured in the app was launched by dragging images onto
-  the app icon.
-* Verify a file can be written by exiftool. If not do not allow attempted
-  updates that will fail during a save.
-* GeoTag can now read GPS track logs in the format of a GPX file and display
-  tracks on the map.  This can help locate places where pictures were taken.
-  Use Open (⌘-O) to select GPX files.  GPX files can also be dragged onto the
-  table.
-* change GPX file loaded notification to a sheet attached to the GeoTag main
-  window.  Dual monitor users would sometimes find the pop-up previously used
-  on the wrong monitor, i.e. not the monitor they were looking at.
-* center the map (more or less) on a track when the track is opened.
-* Add a preference to select the track color for GPX tracks.
-* Image location can be updated from a GPS track logs.  Select the images to
-  update and use ⌘L, Edit -> Locn from track, or crtl-click -> Locn from track.
-  Note: this can be time consuming depending upon the number of images selected
-  and the number of track log point loaded.
-* Images can now be opened with GeoTag.  You can select one or more images in
-  finder and then right click and select the "Open With" option.  GeoTag will
-  be one of app choices.
-* Double clicking on the date/time column in a row in the table will open a
-  window to update the timestamp of the image.  Timestamps are not changed
-  during cut/copy/paste operations.
-* A time delta can be applied to multiple images.   Select the images and
-  use ⌘T, Edit -> Modify Date/Time, or ctrl-click -> Modify Date/Time.  Enter the
-  new time for the selected image.  A time delta between the new and the existing
-  date/time will be calculated. That delta is then applied to all selected items.
-* Images can be selected and the map can be panned/zoomed while saving images.
-  Images locations can not be edited until the save is complete.
-* The last 10 map searches are saved across program runs. When Clicking on the
-  search box saved search strings are indicated by a down arrow next to the
-  Q icon. Click on the arrow next to open the menu of saved search strings.
-* Add ability to sort the table of images by column.  Clicking on a column
-  header will sort the table by the contents of that column.  Clicking again
-  will change the sort direction.
-* Update GPS Date and Time tags when updating location.   GPS timestamps are
-  in GMT.  The procedure assumes the date and time the image was taken was
-  correct for the time zone.  If your camera was set to the wrong time zone or
-  set to UTC/GMT the GPS timestamp will be incorrect.  This feature is only
-  enabled when the 'Update GPS Date/Time stamps' button is checked in program
-  Preferences. **This feature is only available on macOS 10.11 or later**
-* handle the case where the same file name is used for two images located in
-  different folders.
-* remove GPS date and time stamps when a location is removed.
-* Map searching -- position map by name of city/street/etc.
-* Image backup handling (see below)
-* Fix display of error reason when a backup folder can not be selected
-* pin no longer placed when double clicking on map
-* pin no longer placed when dragging map
-* handle the case where the same file name is used for two images located in
-  different folders.
-* undoing a location update on an image that did not have a previous location
-  resulted in a location of lat: 0, lon: 0. This has been fixed to restore the
-  image to its "no location assigned" state.
-* undoing all actions did not clear the window modified flag causing a "please
-  save" message when window was closed/application terminated.
-* No more beachball when saving large number of images.  Multiple images
-  are saved in parallel, but the save process can still be quite slow.
-* If GeoTag (or your computer) crashed with files opened and one or more of the
-  opened files was moved to a different folder GeoTag would crash on attempts
-  to re-open the file.
-* fix error that caused a "could not save images" alert even when all image
-  data had been saved.
-* fix race condition when checking that all images had been saved
-* handle GPX logs that include milliseconds in the location timestamp.
-* Fix location interpolition issues related to time zones.
-* Fix backup file naming. Examples:
-  foo.bar.jpg would be backed up as foo.bar.jpg the first time.
-  foo.bar.jpg would be backed up as foo-1.bar.jpg the second time.
-  The backup file name should have been foo.bar-1.jpg
+### See the file named *History* for other changes and bug fixes
 
 ### Image Backups
 
@@ -190,11 +66,10 @@ available at https://www.snafu.org/GeoTag/ for those running macOS 10.12.
 
 ### General Note
 
-The functions provided by GeoTag exist in current versions of iPhoto, Aperture
-(RIP), and Lightroom.  Some still find the application useful for geolocation
-tagging photos in the field.  Photos (OSX 10.10.3 and later) will let you modify
-existing location metadata but not add location data to an image. If necessary
-use GeoTag to add location metadata **before** importing the images into Photos.
+Photos (OSX 10.10.3 and later) will let you modify existing location metadata
+but not add location data to an image. If necessary use GeoTag to add location
+metadata **before** importing the images into Photos. This may aslo hold true
+for other image editing applications.
 
 ### Operating Instructions:
 
