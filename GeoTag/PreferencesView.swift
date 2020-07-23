@@ -72,7 +72,7 @@ class PreferencesViewController: NSViewController {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
-        if panel.runModal().rawValue == NSFileHandlingPanelOKButton {
+        if panel.runModal() == NSApplication.ModalResponse.OK {
             if let url = panel.url {
                 do {
                     try bookmark = url.bookmarkData(options: .withSecurityScope)
@@ -141,7 +141,7 @@ class PreferencesViewController: NSViewController {
     @IBAction
     func setTrackColor(_ sender: NSColorWell) {
         let defaults = UserDefaults.standard
-        let data = NSArchiver.archivedData(withRootObject: sender.color)
+        let data = NSKeyedArchiver.archivedData(withRootObject: sender.color)
         defaults.set(data, forKey: Preferences.trackColorKey)
         let nc = NotificationCenter.default
         nc.post(name: Notification.Name("RefreshTracks"), object: nil)

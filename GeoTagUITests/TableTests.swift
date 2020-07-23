@@ -118,14 +118,7 @@ class C_TableTests: XCTestCase {
                       line: Int = #line) {
         let changePredicate = NSPredicate(format: "value == \"\(value)\"")
         expectation(for: changePredicate,  evaluatedWith: element)
-        waitForExpectations(timeout: timeout) {
-            (error) -> Void in
-            if (error != nil) {
-                let message = "Failed to change \(element) to \"\(value)\" after \(timeout) seconds."
-                self.recordFailure(withDescription: message,
-                                   inFile: file, atLine: line, expected: true)
-            }
-        }
+        waitForExpectations(timeout: timeout)
     }
 
     func undo(name: String) {

@@ -104,7 +104,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
-        if panel.runModal().rawValue == NSFileHandlingPanelOKButton {
+        if panel.runModal() == NSApplication.ModalResponse.OK {
             var urls = [URL]()
             for url in panel.urls {
                 if !addUrlsInFolder(url: url, toUrls: &urls) {

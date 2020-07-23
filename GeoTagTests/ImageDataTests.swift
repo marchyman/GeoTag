@@ -248,7 +248,7 @@ class ImageDataTests: XCTestCase {
     }
     
     func fail(_ message: @autoclosure () -> String = "",
-              file: StaticString = #file,
+              file: StaticString = #filePath,
               line: UInt = #line) -> Never {
         XCTFail(message(), file: file, line: line)
         fatalError()

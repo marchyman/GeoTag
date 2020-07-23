@@ -110,11 +110,11 @@ final class Preferences  {
     func trackColor() -> NSColor {
         let defaults = UserDefaults.standard
         if let data = defaults.data(forKey: trackColorKey),
-           let color = NSUnarchiver.unarchiveObject(with: data) {
+           let color = NSKeyedUnarchiver.unarchiveObject(with: data) {
             return color as! NSColor
         }
         let defaultColor = NSColor.systemBlue
-        let data = NSArchiver.archivedData(withRootObject: defaultColor)
+        let data = NSKeyedArchiver.archivedData(withRootObject: defaultColor)
         defaults.set(data, forKey: trackColorKey)
         return defaultColor
     }
