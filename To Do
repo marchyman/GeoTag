@@ -1,5 +1,7 @@
 Feature Requests:
 
+* Paste into Change Image Location Window
+
 * Add and option to show the location of all selected images.
 
 * check for overlap before assigning locations from a track log and warn the user
@@ -14,3 +16,9 @@ Feature Requests:
 * Would it be worth putting in the preferences or somewhere the ability
   to put in a tag to indicate that the photo has GPS data in it.   On a
   save if GPS data is there it also saves the Tag.  Just an idea.
+
+Bugs:
+
+* Copy/Paste doesn't use the current selected location format, but instead
+  assumes dd.ddddddd format.
+  
