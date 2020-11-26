@@ -51,6 +51,9 @@ class PreferencesViewController: NSViewController {
         dtGPSButton.state = Preferences.dateTimeGPS() ?
                                         NSControl.StateValue.on :
                                         NSControl.StateValue.off
+        modTimeButton.state = Preferences.modTime() ?
+                                        NSControl.StateValue.on :
+                                        NSControl.StateValue.off
         trackColorWell.color = Preferences.trackColor()
         trackWidth.doubleValue = Preferences.trackWidth()
     }
@@ -135,6 +138,16 @@ class PreferencesViewController: NSViewController {
                      forKey: Preferences.dateTimeGPSKey)
     }
     
+    @IBOutlet
+    weak var modTimeButton: NSButton!
+
+    @IBAction
+    func modTimeButtonChanged(_ sender: NSButton) {
+        let defaults = UserDefaults.standard
+        defaults.set(sender.state == NSControl.StateValue.on,
+                     forKey: Preferences.modTimeKey)
+    }
+
     @IBOutlet
     weak var trackColorWell: NSColorWell!
     

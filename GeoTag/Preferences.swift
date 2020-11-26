@@ -33,6 +33,7 @@ final class Preferences  {
     static let coordFormatKey = "CoordFormatKey"
     static let sidecarKey = "SidecarKey"
     static let dateTimeGPSKey = "DateTimeGPSKey"
+    static let modTimeKey = "ModTimeKey"
     static let trackColorKey = "TrackColorKey"
     static let trackWidthKey = "TrackWidthKey"
 
@@ -104,6 +105,12 @@ final class Preferences  {
     func dateTimeGPS() -> Bool {
         let defaults = UserDefaults.standard
         return defaults.bool(forKey: dateTimeGPSKey)
+    }
+
+    class
+    func modTime() -> Bool {
+        let defaults = UserDefaults.standard
+        return defaults.bool(forKey: modTimeKey)
     }
 
     class

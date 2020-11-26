@@ -98,6 +98,9 @@ struct Exiftool {
                               "-overwrite_original_in_place",
                               latArg, latRefArg,
                               lonArg, lonRefArg]
+        if Preferences.modTime() {
+            exiftool.arguments! += ["-P"]
+        }
         if Preferences.dateTimeGPS() {
             if imageData.sandboxXmp == nil {
                 exiftool.arguments! += [gpsDArg, gpsTArg]

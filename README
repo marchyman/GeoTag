@@ -19,6 +19,13 @@ GeoTag is available from several sources
   `brew cask install geotag` to install.
 * [GitHub](https://github.com/marchyman/GeoTag)
 
+## Work In Progress
+
+### New Feature
+
+* Add preference item to preserve the original image file
+  modification time when updating GeoLocation data.
+
 ## GeoTag 4.9
 
 ### New Feature
