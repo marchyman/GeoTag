@@ -185,14 +185,18 @@ class C_TableTests: XCTestCase {
         }
 
         // sort by Date/Time (2nd column, index 1)
-        let dt1 = texts.element(boundBy: 1).value as! String
+         // date/time of newest image with timestamp in test data
+        let dt1 = "2015:11:12 13:08:23"
         let dateTimeColumnButton = table.buttons["Date/Time"]
         XCTAssertTrue(dateTimeColumnButton.exists)
         dateTimeColumnButton.click()
-        XCTAssertNotEqual(texts.element(boundBy: 1).value as! String, dt1)
-        // invert the sort and check again
-        dateTimeColumnButton.click()
-        XCTAssertEqual(texts.element(boundBy: 1).value as! String, dt1)
+        if texts.element(boundBy: 1).value as! String == dt1 {
+            dateTimeColumnButton.click()
+            XCTAssertNotEqual(texts.element(boundBy: 1).value as! String, dt1)
+        } else {
+            dateTimeColumnButton.click()
+            XCTAssertEqual(texts.element(boundBy: 1).value as! String, dt1)
+        }
     }
 
     /// open specific files

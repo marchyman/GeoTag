@@ -67,6 +67,9 @@ final class ImageData: NSObject {
     var originalDateTime = ""	// date/time before any modification
     var timeZone: TimeZone?		// timezone where image was taken
 
+    // MARK: Date/Time format
+    let dateFormatter = DateFormatter()
+
     // MARK: instance variables -- image location
 
     var location: Coord? {
@@ -104,6 +107,7 @@ final class ImageData: NSObject {
 
     init(url: URL) throws {
         self.url = url;
+        dateFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
 
         // create a symlink for the URL in our sandbox
 
@@ -425,9 +429,6 @@ final class ImageData: NSObject {
 
 /// Image date/time format for ExifTool
 
-fileprivate let dateFormatter = DateFormatter()
-fileprivate let dateFormatString = "yyyy:MM:dd HH:mm:ss"
-
 extension ImageData {
 
     // image date/time as a Date
@@ -436,13 +437,11 @@ extension ImageData {
 
     var dateValue: Date? {
         get {
-            dateFormatter.dateFormat = dateFormatString
             dateFormatter.timeZone = nil
             return dateFormatter.date(from: dateTime)
         }
         set {
             if let value = newValue {
-                dateFormatter.dateFormat = dateFormatString
                 dateFormatter.timeZone = nil
                 dateTime = dateFormatter.string(from: value)
             } else {
@@ -455,7 +454,6 @@ extension ImageData {
     // image timezone is used in the conversion
 
     var dateValueWithZone: Date? {
-        dateFormatter.dateFormat = dateFormatString
         dateFormatter.timeZone = timeZone
         return dateFormatter.date(from: dateTime)
     }
