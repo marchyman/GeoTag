@@ -19,7 +19,7 @@ GeoTag is available from several sources
   `brew cask install geotag` to install.
 * [GitHub](https://github.com/marchyman/GeoTag)
 
-## Work In Progress
+## GeoTag 4.10
 
 ### New Feature
 
@@ -28,25 +28,24 @@ GeoTag is available from several sources
 
 * Add "Discard tracks" under the File menu. All tracks are cleared from the map.
 
+* Allow paste into change timestamp and update location windows.
+
+* Paste into images when not using the Update Location window now has a new
+  format.  The format is "lat | lon" where lat and lon may be one of the
+  following formats.
+
+  -dd.dddd R            Coordinate in degrees
+  -dd mm.mmmm R         Coordinate in degrees and minutes
+  -dd mm ss.ssss R      Coordinate in degrees, minutes, and seconds
+
+  S latitudes and W longitudes can be indicated by a negative number
+  of degrees or the appropriate reference (R) value.  It is an error if both
+  are used.  Degree (°), Minute ('), and Second (") marks are optional
+  and ignored if found at the end of a value.
+
 * Update to exiftool 12.12
 
-## GeoTag 4.9
-
-### New Feature
-
-* mark files that could not be backed up or updated.
-  files in red could not be updated by exiftool
-  files in orange could not be saved in the backup folder
-
-* new right-click menu option -- Show in Finder
-
-* new preference -- change the width of tracks.
-
-* ExifTool version 12.0
-
-### Bug Fix
-
-* Update existing track color (and width) when the preference changes.
+* Compiled to also run on Apple Silicon
 
 ### Known Bugs
 
