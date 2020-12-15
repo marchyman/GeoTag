@@ -9,10 +9,6 @@ Feature Requests:
 
 * Handle location display of video files.  Exiftool does not allow updates.
 
-* When the Photos app opens up for extensions, I hope GeoTag will be there to
-  take advantage of it!  This has become my favorite program in just a few
-  hours of use.  [Note: I expect apple to add a map interface to Photos.]
-  
 * Would it be worth putting in the preferences or somewhere the ability
   to put in a tag to indicate that the photo has GPS data in it.   On a
   save if GPS data is there it also saves the Tag.  Just an idea.
