@@ -64,7 +64,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		490410E42297689B00B34F81 /* preferences.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = preferences.jpg; sourceTree = "<group>"; };
+		490410E42297689B00B34F81 /* old-preferences.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "old-preferences.jpg"; sourceTree = "<group>"; };
 		490410E52297689B00B34F81 /* track.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = track.jpg; sourceTree = "<group>"; };
 		490410E62297689B00B34F81 /* geotag.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = geotag.jpg; sourceTree = "<group>"; };
 		490DE1BC2297A27F000AEAB5 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +79,7 @@
 		494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeTimeWindow.swift; sourceTree = "<group>"; };
 		494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeTimeViewController.swift; sourceTree = "<group>"; };
 		4965C67B197DDC87005FC03F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		496E11A025896C7200547BE8 /* preferences.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = preferences.png; sourceTree = "<group>"; };
 		4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
 		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ImageData.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		4982FF9F229F399A00C1D312 /* Preferences.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Preferences.storyboard; sourceTree = "<group>"; };
@@ -145,8 +146,9 @@
 		490410DD229767FB00B34F81 /* App Store Screenshots */ = {
 			isa = PBXGroup;
 			children = (
+				496E11A025896C7200547BE8 /* preferences.png */,
 				490410E62297689B00B34F81 /* geotag.jpg */,
-				490410E42297689B00B34F81 /* preferences.jpg */,
+				490410E42297689B00B34F81 /* old-preferences.jpg */,
 				490410E52297689B00B34F81 /* track.jpg */,
 			);
 			path = "App Store Screenshots";
