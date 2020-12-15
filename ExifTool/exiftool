@@ -10,7 +10,7 @@
 use strict;
 require 5.004;
 
-my $version = '12.00';
+my $version = '12.12';
 
 # add our 'lib' directory to the include list BEFORE 'use Image::ExifTool'
 my $exeDir;
@@ -136,12 +136,13 @@ my $countSameWr;    # count files written OK but not changed
 my $critical;       # flag for critical operations (disable CTRL-C)
 my $csv;            # flag for CSV option (set to "CSV", or maybe "JSON" when writing)
 my $csvAdd;         # flag to add CSV information to existing lists
+my $csvDelim;       # delimiter for CSV files
 my $csvSaveCount;   # save counter for last CSV file loaded
 my $deleteOrig;     # 0=restore original files, 1=delete originals, 2=delete w/o asking
 my $disableOutput;  # flag to disable normal output
 my $doSetFileName;  # flag set if FileName may be written
 my $doUnzip;        # flag to extract info from .gz and .bz2 files
-my ($end,$endDir);  # flags to end processing
+my ($end,$endDir,%endDir);  # flags to end processing
 my $escapeC;        # C-style escape
 my $escapeHTML;     # flag to escape printed values for html
 my $evalWarning;    # warning from eval
@@ -239,6 +240,7 @@ my %optArgs = (
     '-c' => 1, '-coordformat' => 1,
     '-charset' => 0, # (optional arg; OK because arg cannot begin with "-")
     '-config' => 1,
+    '-csvdelim' => 1,
     '-d' => 1, '-dateformat' => 1,
     '-D' => 0, # necessary to avoid matching lower-case equivalent
     '-echo' => 1, '-echo1' => 1, '-echo2' => 1, '-echo3' => 1, '-echo4' => 1,
@@ -246,11 +248,12 @@ my %optArgs = (
     '-efile!' => 1, '-efile1!' => 1, '-efile2!' => 1, '-efile3!' => 1, '-efile4!' => 1,
     '-ext' => 1, '--ext' => 1, '-ext+' => 1, '--ext+' => 1,
         '-extension' => 1, '--extension' => 1, '-extension+' => 1, '--extension+' => 1,
-    '-fileorder' => 1,
+    '-fileorder' => 1, '-fileorder0' => 1, '-fileorder1' => 1, '-fileorder2' => 1,
+        '-fileorder3' => 1, '-fileorder4' => 1, '-fileorder5' => 1,
     '-geotag' => 1,
     '-globaltimeshift' => 1,
     '-i' => 1, '-ignore' => 1,
-    '-if' => 1, '-if0' => 1, '-if1' => 1, '-if2' => 1, '-if3' => 1, '-if4' => 1,
+    '-if' => 1, '-if0' => 1, '-if1' => 1, '-if2' => 1, '-if3' => 1, '-if4' => 1, '-if5' => 1,
     '-lang' => 0, # (optional arg; cannot begin with "-")
     '-listitem' => 1,
     '-o' => 1, '-out' => 1,
@@ -366,13 +369,21 @@ if (grep /^-common_args$/i, @ARGV) {
 # loop over sets of command-line arguments separated by "-execute"
 Command: for (;;) {
 
-@echo3 and print STDOUT join("\n", @echo3), "\n";
-@echo4 and print STDERR join("\n", @echo4), "\n";
+if (@echo3) {
+    my $str = join "\n", @echo3, "\n";
+    $str =~ s/\$\{status\}/$rtnVal/ig;
+    print STDOUT $str;
+}
+if (@echo4) {
+    my $str = join "\n", @echo4, "\n";
+    $str =~ s/\$\{status\}/$rtnVal/ig;
+    print STDERR $str;
+}
 
 $rafStdin->Close() if $rafStdin;
 undef $rafStdin;
 
-# save or previous return codes
+# save our previous return codes
 $rtnValPrev = $rtnVal;
 $rtnValApp = $rtnVal if $rtnVal;
 
@@ -387,7 +398,7 @@ if ($binaryStdout) {
 
 # flush console and print "{ready}" message if -stay_open is in effect
 if ($stayOpen >= 2) {
-    if ($quiet) {
+    if ($quiet and not defined $executeID) {
         # flush output if possible
         eval { require IO::Handle } and STDERR->flush(), STDOUT->flush();
     } else {
@@ -421,6 +432,7 @@ undef %countLink;
 undef %created;
 undef %csvTags;
 undef %database;
+undef %endDir;
 undef %filterExt;
 undef %ignore;
 undef %printFmt;
@@ -492,6 +504,7 @@ $countGoodCr = 0;
 $countGoodWr = 0;
 $countNewDir = 0;
 $countSameWr = 0;
+$csvDelim = ',';
 $csvSaveCount = 0;
 $fileTrailer = '';
 $filterFlag = 0;
@@ -554,7 +567,7 @@ if (not $preserveTime and $^O eq 'MSWin32') {
 for (;;) {
 
   # execute the command now if no more arguments or -execute is used
-  if (not @ARGV or ($ARGV[0] =~ /^(-|\xe2\x88\x92)execute(\d*)$/i and not $endOfOpts)) {
+  if (not @ARGV or ($ARGV[0] =~ /^(-|\xe2\x88\x92)execute(\d+)?$/i and not $endOfOpts)) {
     if (@ARGV) {
         $executeID = $2;        # save -execute number for "{ready}" response
         $helped = 1;            # don't show help if we used -execute
@@ -813,7 +826,7 @@ for (;;) {
         next;
     }
     /^config$/i and Warn("Ignored -config option (not first on command line)\n"), shift, next;
-    if (/^csv(\+?=.*)?/i) {
+    if (/^csv(\+?=.*)?$/i) {
         my $csvFile = $1;
         # must process on 2nd pass so -f and -charset options are available
         unless ($pass) {
@@ -833,7 +846,7 @@ for (;;) {
             if ($mt->Open(\*CSVFILE, $csvFile)) {
                 binmode CSVFILE;
                 require Image::ExifTool::Import;
-                $msg = Image::ExifTool::Import::ReadCSV(\*CSVFILE, \%database, $forcePrint);
+                $msg = Image::ExifTool::Import::ReadCSV(\*CSVFILE, \%database, $forcePrint, $csvDelim);
                 close(CSVFILE);
             } else {
                 $msg = "Error opening CSV file '${csvFile}'";
@@ -842,6 +855,15 @@ for (;;) {
             $isWriting = 1;
         }
         $csv = 'CSV';
+        next;
+    }
+    if (/^csvdelim$/i) {
+        $csvDelim = shift;
+        defined $csvDelim or Error("Expecting argument for -csvDelim option\n"), $badCmd=1, next;
+        $csvDelim =~ /"/ and Error("CSV delimiter can not contain a double quote\n"), $badCmd=1, next;
+        my %unescape = ( 't'=>"\t", 'n'=>"\n", 'r'=>"\r", '\\' => '\\' );
+        $csvDelim =~ s/\\(.)/$unescape{$1}||"\\$1"/sge;
+        $mt->Options(CSVDelim => $csvDelim);
         next;
     }
     if (/^d$/ or $a eq 'dateformat') {
@@ -1758,10 +1780,12 @@ if (@dbKeys) {
         undef $evalWarning;
         local $SIG{'__WARN__'} = sub { $evalWarning = $_[0] };
         foreach (@dbKeys) {
+            my $db = $database{$_};
+            tr/\\/\// and $database{$_} = $db;  # allow for backslashes in SourceFile
             # (punt on using ConvertFileName here, so $absPath may be a mix of encodings)
             my $absPath = AbsPath($_);
             if (defined $absPath) {
-                $database{$absPath} = $database{$_} unless $database{$absPath};
+                $database{$absPath} = $db unless $database{$absPath};
                 if ($verbose and $verbose > 1) {
                     print $vout "Imported entry for '${_}' (full path: '${absPath}')\n";
                 }
@@ -1972,6 +1996,7 @@ sub GetImageInfo($$)
                 }
                 last unless $result;
             }
+            undef @foundTags if $fastCondition; # ignore if we didn't get all tags
         }
         unless ($result) {
             $verbose and print $vout "-------- $file (failed condition)$progStr\n";
@@ -2225,7 +2250,9 @@ sub GetImageInfo($$)
         my $noDups = ($json or ($xml and $outFormat > 0));
         my $printConv = $et->Options('PrintConv');
         my $lastGroup = '';
+        my $i = -1;
 TAG:    foreach $tag (@foundTags) {
+            ++$i;   # keep track on index in @foundTags
             my $tagName = GetTagName($tag);
             my ($group, $valList);
             # get the value for this tag
@@ -2343,26 +2370,38 @@ TAG:    foreach $tag (@foundTags) {
             }
             # save information for CSV output
             if ($csv) {
-                my $t = $group ? "$group:$tagName" : $tagName;
-                $t .= '#' if $tag =~ /#/;   # add ValueConv "#" suffix if used
+                my $tn = $tagName;
+                $tn .= '#' if $tag =~ /#/;  # add ValueConv "#" suffix if used
+                my $gt = $group ? "$group:$tn" : $tn;
                 # (tag-name case may be different if some tags don't exist
                 # in a file, so all logic must use lower-case tag names)
-                my $lcTag = lc $t;
+                my $lcTag = lc $gt;
                 # override existing entry only if top priority
                 next if defined $csvInfo{$lcTag} and $tag =~ /\(/;
                 $csvInfo{$lcTag} = $val;
                 if (defined $csvTags{$lcTag}) {
                     # overwrite with actual extracted tag name
                     # (note: can't check "if defined $val" here because -f may be used)
-                    $csvTags{$lcTag} = $t if defined $$info{$tag};
-                } else {
-                    # (don't save unextracted tag name unless -f was used)
-                    $csvTags{$lcTag} = defined($val) ? $t : '';
-                    if (@csvFiles == 1) {
-                        push @csvTags, $lcTag; # save order of tags for first file
-                    } elsif (@csvTags) {
-                        undef @csvTags;
-                    }
+                    $csvTags{$lcTag} = $gt if defined $$info{$tag};
+                    next;
+                }
+                # must check for "Unknown" group (for tags that don't exist)
+                if ($group and defined $csvTags[$i] and $csvTags[$i] =~ /^(.*):$tn$/i) {
+                     next if $group eq 'Unknown';   # nothing more to do if we don't know tag group
+                     if ($1 eq 'unknown') {
+                        # replace unknown entry in CSV tag lookup and list
+                        delete $csvTags{$csvTags[$i]};
+                        $csvTags{$lcTag} = defined($val) ? $gt : '';
+                        $csvTags[$i] = $lcTag;
+                        next;
+                     }
+                }
+                # (don't save unextracted tag name unless -f was used)
+                $csvTags{$lcTag} = defined($val) ? $gt : '';
+                if (@csvFiles == 1) {
+                    push @csvTags, $lcTag; # save order of tags for first file
+                } elsif (@csvTags) {
+                    undef @csvTags;
                 }
                 next;
             }
@@ -3288,7 +3327,7 @@ sub FormatCSV($)
     # the -b option is used to encode as Base64.  It is unclear whether or not this
     # is valid CSV, but some readers may not like it.  (If this becomes a problem,
     # in the future values may need to be truncated at the first NULL character.)
-    $val = qq{"$val"} if $val =~ s/"/""/g or $val =~ /(^\s+|\s+$)/ or $val =~ /[,\n\r]/;
+    $val = qq{"$val"} if $val =~ s/"/""/g or $val =~ /(^\s+|\s+$)/ or $val =~ /[\n\r]|\Q$csvDelim/;
     return $val;
 }
 
@@ -3301,9 +3340,9 @@ sub PrintCSV()
     @csvTags or @csvTags = sort keys %csvTags;
     # make a list of tags actually found
     foreach $lcTag (@csvTags) {
-        push @tags, $csvTags{$lcTag} if $csvTags{$lcTag};
+        push @tags, FormatCSV($csvTags{$lcTag}) if $csvTags{$lcTag};
     }
-    print join(',', 'SourceFile', @tags), "\n";
+    print join($csvDelim, 'SourceFile', @tags), "\n";
     my $empty = defined($forcePrint) ? $forcePrint : '';
     foreach $file (@csvFiles) {
         my @vals = (FormatCSV($file)); # start with full file name
@@ -3314,7 +3353,7 @@ sub PrintCSV()
             defined $val or push(@vals,$empty), next;
             push @vals, FormatCSV($val);
         }
-        print join(',', @vals), "\n";
+        print join($csvDelim, @vals), "\n";
     }
 }
 
@@ -3550,8 +3589,18 @@ sub ProcessFiles($;$)
             if ($list) {
                 push(@$list, $file);
             } else {
+                if (%endDir) {
+                    my ($d, $f) = Image::ExifTool::SplitFileName($file);
+                    next if $endDir{$d};
+                }
                 GetImageInfo($et, $file);
                 $end and Warn("End called - $file\n");
+                if ($endDir) {
+                    Warn("EndDir called - $file\n");
+                    my ($d, $f) = Image::ExifTool::SplitFileName($file);
+                    $endDir{$d} = 1;
+                    undef $endDir;
+                }
             }
         }
         $et->Options(CharsetFileName => $enc) if $utf8FileName{$file};
@@ -3566,7 +3615,7 @@ sub ScanDir($$;$)
 {
     local $_;
     my ($et, $dir, $list) = @_;
-    my (@fileList, $done, $file, $utf8Name, $winSurrogate);
+    my (@fileList, $done, $file, $utf8Name, $winSurrogate, $endThisDir);
     my $enc = $et->Options('CharsetFileName');
     # recode as UTF-8 if necessary
     if ($enc) {
@@ -3636,6 +3685,7 @@ sub ScanDir($$;$)
             last if $end;
             next;
         }
+        next if $endThisDir;
         # apply rules from -ext options
         my $accepted;
         if ($filterFlag) {
@@ -3678,9 +3728,11 @@ sub ScanDir($$;$)
                 last;
             }
             if ($endDir) {
-                $dir =~ s(/$)();
+                $path =~ s(/$)();
                 Warn("EndDir called - $path\n");
-                last;
+                $endDir{$path} = 1;
+                $endThisDir = 1;
+                undef $endDir;
             }
         }
     }
@@ -4384,46 +4436,47 @@ supported by ExifTool (r = read, w = write, c = create):
 
   File Types
   ------------+-------------+-------------+-------------+------------
-  3FR   r     | DR4   r/w/c | ITC   r     | ODP   r     | RIFF  r
-  3G2   r/w   | DSS   r     | J2C   r     | ODS   r     | RSRC  r
-  3GP   r/w   | DV    r     | JNG   r/w   | ODT   r     | RTF   r
-  A     r     | DVB   r/w   | JP2   r/w   | OFR   r     | RW2   r/w
-  AA    r     | DVR-MS r    | JPEG  r/w   | OGG   r     | RWL   r/w
-  AAE   r     | DYLIB r     | JSON  r     | OGV   r     | RWZ   r
-  AAX   r/w   | EIP   r     | K25   r     | OPUS  r     | RM    r
-  ACR   r     | EPS   r/w   | KDC   r     | ORF   r/w   | SEQ   r
-  AFM   r     | EPUB  r     | KEY   r     | OTF   r     | SKETCH r
-  AI    r/w   | ERF   r/w   | LA    r     | PAC   r     | SO    r
-  AIFF  r     | EXE   r     | LFP   r     | PAGES r     | SR2   r/w
-  APE   r     | EXIF  r/w/c | LNK   r     | PBM   r/w   | SRF   r
-  ARQ   r/w   | EXR   r     | LRV   r/w   | PCD   r     | SRW   r/w
-  ARW   r/w   | EXV   r/w/c | M2TS  r     | PCX   r     | SVG   r
-  ASF   r     | F4A/V r/w   | M4A/V r/w   | PDB   r     | SWF   r
-  AVI   r     | FFF   r/w   | MAX   r     | PDF   r/w   | THM   r/w
-  AVIF  r/w   | FITS  r     | MEF   r/w   | PEF   r/w   | TIFF  r/w
-  AZW   r     | FLA   r     | MIE   r/w/c | PFA   r     | TORRENT r
-  BMP   r     | FLAC  r     | MIFF  r     | PFB   r     | TTC   r
-  BPG   r     | FLIF  r/w   | MKA   r     | PFM   r     | TTF   r
-  BTF   r     | FLV   r     | MKS   r     | PGF   r     | TXT   r
-  CHM   r     | FPF   r     | MKV   r     | PGM   r/w   | VCF   r
-  COS   r     | FPX   r     | MNG   r/w   | PLIST r     | VRD   r/w/c
-  CR2   r/w   | GIF   r/w   | MOBI  r     | PICT  r     | VSD   r
-  CR3   r/w   | GPR   r/w   | MODD  r     | PMP   r     | WAV   r
-  CRM   r/w   | GZ    r     | MOI   r     | PNG   r/w   | WDP   r/w
-  CRW   r/w   | HDP   r/w   | MOS   r/w   | PPM   r/w   | WEBP  r
-  CS1   r/w   | HDR   r     | MOV   r/w   | PPT   r     | WEBM  r
-  CSV   r     | HEIC  r/w   | MP3   r     | PPTX  r     | WMA   r
-  DCM   r     | HEIF  r/w   | MP4   r/w   | PS    r/w   | WMV   r
-  DCP   r/w   | HTML  r     | MPC   r     | PSB   r/w   | WTV   r
-  DCR   r     | ICC   r/w/c | MPG   r     | PSD   r/w   | WV    r
-  DFONT r     | ICS   r     | MPO   r/w   | PSP   r     | X3F   r/w
-  DIVX  r     | IDML  r     | MQV   r/w   | QTIF  r/w   | XCF   r
-  DJVU  r     | IIQ   r/w   | MRW   r/w   | R3D   r     | XLS   r
-  DLL   r     | IND   r/w   | MXF   r     | RA    r     | XLSX  r
-  DNG   r/w   | INSP  r/w   | NEF   r/w   | RAF   r/w   | XMP   r/w/c
-  DOC   r     | INSV  r     | NRW   r/w   | RAM   r     | ZIP   r
-  DOCX  r     | INX   r     | NUMBERS r   | RAR   r     |
-  DPX   r     | ISO   r     | O     r     | RAW   r/w   |
+  360   r/w   | DPX   r     | ITC   r     | ODP   r     | RIFF  r
+  3FR   r     | DR4   r/w/c | J2C   r     | ODS   r     | RSRC  r
+  3G2   r/w   | DSS   r     | JNG   r/w   | ODT   r     | RTF   r
+  3GP   r/w   | DV    r     | JP2   r/w   | OFR   r     | RW2   r/w
+  A     r     | DVB   r/w   | JPEG  r/w   | OGG   r     | RWL   r/w
+  AA    r     | DVR-MS r    | JSON  r     | OGV   r     | RWZ   r
+  AAE   r     | DYLIB r     | K25   r     | ONP   r     | RM    r
+  AAX   r/w   | EIP   r     | KDC   r     | OPUS  r     | SEQ   r
+  ACR   r     | EPS   r/w   | KEY   r     | ORF   r/w   | SKETCH r
+  AFM   r     | EPUB  r     | LA    r     | OTF   r     | SO    r
+  AI    r/w   | ERF   r/w   | LFP   r     | PAC   r     | SR2   r/w
+  AIFF  r     | EXE   r     | LNK   r     | PAGES r     | SRF   r
+  APE   r     | EXIF  r/w/c | LRV   r/w   | PBM   r/w   | SRW   r/w
+  ARQ   r/w   | EXR   r     | M2TS  r     | PCD   r     | SVG   r
+  ARW   r/w   | EXV   r/w/c | M4A/V r/w   | PCX   r     | SWF   r
+  ASF   r     | F4A/V r/w   | MACOS r     | PDB   r     | THM   r/w
+  AVI   r     | FFF   r/w   | MAX   r     | PDF   r/w   | TIFF  r/w
+  AVIF  r/w   | FITS  r     | MEF   r/w   | PEF   r/w   | TORRENT r
+  AZW   r     | FLA   r     | MIE   r/w/c | PFA   r     | TTC   r
+  BMP   r     | FLAC  r     | MIFF  r     | PFB   r     | TTF   r
+  BPG   r     | FLIF  r/w   | MKA   r     | PFM   r     | TXT   r
+  BTF   r     | FLV   r     | MKS   r     | PGF   r     | VCF   r
+  CHM   r     | FPF   r     | MKV   r     | PGM   r/w   | VRD   r/w/c
+  COS   r     | FPX   r     | MNG   r/w   | PLIST r     | VSD   r
+  CR2   r/w   | GIF   r/w   | MOBI  r     | PICT  r     | WAV   r
+  CR3   r/w   | GPR   r/w   | MODD  r     | PMP   r     | WDP   r/w
+  CRM   r/w   | GZ    r     | MOI   r     | PNG   r/w   | WEBP  r
+  CRW   r/w   | HDP   r/w   | MOS   r/w   | PPM   r/w   | WEBM  r
+  CS1   r/w   | HDR   r     | MOV   r/w   | PPT   r     | WMA   r
+  CSV   r     | HEIC  r/w   | MP3   r     | PPTX  r     | WMV   r
+  CZI   r     | HEIF  r/w   | MP4   r/w   | PS    r/w   | WTV   r
+  DCM   r     | HTML  r     | MPC   r     | PSB   r/w   | WV    r
+  DCP   r/w   | ICC   r/w/c | MPG   r     | PSD   r/w   | X3F   r/w
+  DCR   r     | ICS   r     | MPO   r/w   | PSP   r     | XCF   r
+  DFONT r     | IDML  r     | MQV   r/w   | QTIF  r/w   | XLS   r
+  DIVX  r     | IIQ   r/w   | MRW   r/w   | R3D   r     | XLSX  r
+  DJVU  r     | IND   r/w   | MXF   r     | RA    r     | XMP   r/w/c
+  DLL   r     | INSP  r/w   | NEF   r/w   | RAF   r/w   | ZIP   r
+  DNG   r/w   | INSV  r     | NRW   r/w   | RAM   r     |
+  DOC   r     | INX   r     | NUMBERS r   | RAR   r     |
+  DOCX  r     | ISO   r     | O     r     | RAW   r/w   |
 
   Meta Information
   ----------------------+----------------------+---------------------
@@ -4473,6 +4526,7 @@ L<Input-output text formatting|/Input-output text formatting>
   -c FMT      (-coordFormat)       Set format for GPS coordinates
   -charset [[TYPE=]CHARSET]        Specify encoding for special characters
   -csv[[+]=CSVFILE]                Export/import tags in CSV format
+  -csvDelim STR                    Set delimiter for CSV file
   -d FMT      (-dateFormat)        Set format for date/time values
   -D          (-decimal)           Show tag ID numbers in decimal
   -E,-ex,-ec  (-escape(HTML|XML|C))Escape tag values for HTML, XML or C
@@ -4625,7 +4679,7 @@ delete or replace a tag (see L</WRITING EXAMPLES> for examples).  C<^=> is
 used to write an empty string instead of deleting the tag when no I<VALUE>
 is given, but otherwise it is equivalent to C<=>.
 
-I<TAG> may contain one or more leading family 0, 1 or 2 group names,
+I<TAG> may contain one or more leading family 0, 1, 2 or 7 group names,
 prefixed by optional family numbers, and separated colons.  If no group name
 is specified, the tag is created in the preferred group, and updated in any
 other location where a same-named tag already exists.  The preferred group
@@ -4680,7 +4734,7 @@ the specified group(s) are removed individually, and in this case is it
 possible to exclude individual tags from a mass delete.  For example,
 C<-time:all --Exif:Time:All> removes all deletable Time tags except those in
 the EXIF.  This difference also applies if family 2 is specified when
-deleting all groups. For example, C<-2all:all=> deletes tags individually,
+deleting all groups.  For example, C<-2all:all=> deletes tags individually,
 while C<-all:all=> deletes entire blocks.
 
 5) The "APP" group names ("APP0" through "APP15") are used to delete JPEG
@@ -4992,8 +5046,11 @@ tag names (with optional group names) for each column of the file, and
 values must be separated by commas.  A special "SourceFile" column specifies
 the files associated with each row of information (and a SourceFile of "*"
 may be used to define default tags to be imported for all files which are
-combined with any tags specified for the specific SourceFile processed).
-The following examples demonstrate basic use of this option:
+combined with any tags specified for the specific SourceFile processed). The
+B<-csvDelim> option may be used to change the input/output field delimiter
+if something other than a comma is required.
+
+The following examples demonstrate basic use of the B<-csv> option:
 
     # generate CSV file with common tags from all images in a directory
     exiftool -common -csv dir > out.csv
@@ -5040,6 +5097,13 @@ option.  When processing a large number of files, it is recommended to
 either use the JSON (B<-j>) or XML (B<-X>) output format, or use B<-p> to
 generate a fixed-column CSV file instead of using the B<-csv> option.
 
+=item B<-csvDelim> I<STR>
+
+Set the delimiter for separating CSV entries for CSV file input/output via
+the B<-csv> option.  I<STR> may contain "\t", "\n", "\r" and "\\" to
+represent TAB, LF, CR and '\' respectively.  A double quote is not allowed
+in the delimiter.  Default is ','.
+
 =item B<-d> I<FMT> (B<-dateFormat>)
 
 Set the format for date/time tag values.  The I<FMT> string may contain
@@ -5080,13 +5144,13 @@ B<-csv>=I<CSVFILE> feature.
 
 Organize output by tag group.  I<NUM> specifies a group family number, and
 may be 0 (general location), 1 (specific location), 2 (category), 3
-(document number), 4 (instance number), 5 (metadata path) or 6 (EXIF/TIFF
-format).  B<-g0> is assumed if a family number is not specified, and family
-numbers may be added wherever B<-g> is mentioned in the documentation. 
-Multiple families may be specified by separating them with colons.  By
-default the resulting group name is simplified by removing any leading
+(document number), 4 (instance number), 5 (metadata path), 6 (EXIF/TIFF
+format) or 7 (tag ID).  B<-g0> is assumed if a family number is not
+specified.  May be combined with other options to add group names to the
+output.  Multiple families may be specified by separating them with colons. 
+By default the resulting group name is simplified by removing any leading
 C<Main:> and collapsing adjacent identical group names, but this can be
-avoided by placing a colon before the first family number (eg. B<-g:3:1>). 
+avoided by placing a colon before the first family number (eg. B<-g:3:1>).
 Use the B<-listg> option to list group names for a specified family.  The
 SavePath and SaveFormat API options are automatically enabled if the
 respective family 5 or 6 group names are requested.  See the
@@ -5291,7 +5355,7 @@ with this command:
 
 produces output like this:
 
-    -- Generated by ExifTool 12.00 --
+    -- Generated by ExifTool 12.12 --
     File: a.jpg - 2003:10:31 15:44:19
     (f/5.6, 1/60s, ISO 100)
     File: b.jpg - 2006:05:23 11:57:38
@@ -5699,7 +5763,8 @@ extracting any EXIF MakerNote information.  B<-fast3> avoids extracting
 metadata from the file, and returns only pseudo System tags, but still reads
 the file header to obtain an educated guess at FileType.  B<-fast4> doesn't
 even read the file header, and returns only System tags and a FileType based
-on the file extension.  Has no effect when writing.
+on the file extension.  B<-fast5> also disables generation of the Composite
+tags (like B<-e>).  Has no effect when writing.
 
 Note that a separate B<-fast> setting may be used for evaluation of a B<-if>
 condition, or when ordering files with the B<-fileOrder> option.  See the
@@ -5724,7 +5789,9 @@ involves an additional processing pass of each file, but this impact may be
 reduced by specifying a I<NUM> for the B<-fast> level used during the
 metadata-extraction phase.  For example, B<-fileOrder4> may be used if
 I<TAG> is a pseudo System tag.  If multiple B<-fileOrder> options are used,
-the extraction is done at the lowest B<-fast> level.
+the extraction is done at the lowest B<-fast> level.  Note that files are
+sorted across directory boundaries if multiple input directories are
+specified.
 
 =item B<-i> I<DIR> (B<-ignore>)
 
@@ -5765,7 +5832,7 @@ Adding I<NUM> to the B<-if> option causes a separate processing pass to be
 executed for evaluating I<EXPR> at a B<-fast> level given by I<NUM> (see the
 B<-fast> option documentation for details).  Without I<NUM>, only one
 processing pass is done at the level specified by the B<-fast> option.  For
-example, using B<-if4> is possible if I<EXPR> uses only pseudo System tags,
+example, using B<-if5> is possible if I<EXPR> uses only pseudo System tags,
 and may significantly speed processing if enough files fail the condition.
 
 The expression has access to the current ExifTool object through C<$self>,
@@ -5774,7 +5841,8 @@ of the file processing.  Both functions have a return value of 1.  Case is
 significant for function names.
 
     End()    - end processing after this file
-    EndDir() - end processing of files in this directory
+    EndDir() - end processing of files in this directory (not
+               compatible with the B<-fileOrder> option)
 
 Notes:
 
@@ -6236,7 +6304,9 @@ about the configuration file syntax.
 Echo I<TEXT> to stdout (B<-echo> or B<-echo1>) or stderr (B<-echo2>).  Text
 is output as the command line is parsed, before the processing of any input
 files.  I<NUM> may also be 3 or 4 to output text (to stdout or stderr
-respectively) after processing is complete.
+respectively) after processing is complete.  For B<-echo3> and B<-echo4>,
+"${status}" may be used in the I<TEXT> string to represent the numerical
+exit status of the command (see L</EXIT STATUS>).
 
 =item B<-efile>[I<NUM>][!] I<ERRFILE>
 
@@ -6257,7 +6327,8 @@ commands were executed as separate command lines (with the exception of the
 B<-config> and B<-use> options which remain in effect for subsequent
 commands).  Allows multiple commands to be executed from a single command
 line.  I<NUM> is an optional number that is echoed in the "{ready}" message
-when using the B<-stay_open> feature.
+when using the B<-stay_open> feature.  If a I<NUM> is specified, the B<-q>
+option no longer suppresses the output "{readyNUM}" message.
 
 =item B<-srcfile> I<FMT>
 
@@ -6302,12 +6373,15 @@ line (see the B<-@> option for details).
 
 3) Write C<-execute\n> to I<ARGFILE>, where C<\n> represents a newline
 sequence.  (Note: You may need to flush your write buffers here if using
-buffered output.)  Exiftool will then execute the command with the arguments
+buffered output.)  ExifTool will then execute the command with the arguments
 received up to this point, send a "{ready}" message to stdout when done
 (unless the B<-q> or B<-T> option is used), and continue trying to read
 arguments for the next command from I<ARGFILE>.  To aid in command/response
 synchronization, any number appended to the C<-execute> option is echoed in
-the "{ready}" message.  For example, C<-execute613> results in "{ready613}".
+the "{ready}" message.  For example, C<-execute613> results in "{ready613}". 
+When this number is added, B<-q> no longer suppresses the "{ready}" message.
+(Also, see the B<-echo3> and B<-echo4> options for additional ways to pass
+signals back to your application.)
 
 4) Repeat steps 2 and 3 for each command.
 
@@ -6322,7 +6396,7 @@ writing the following lines to the currently open I<ARGFILE>:
     -@
     NEWARGFILE
 
-This causes I<ARGFILE> to be closed, and I<NEWARGFILE> to be kept open.
+This causes I<ARGFILE> to be closed, and I<NEWARGFILE> to be kept open. 
 (Without the B<-stay_open> here, exiftool would have returned to reading
 arguments from I<ARGFILE> after reaching the end of I<NEWARGFILE>.)
 

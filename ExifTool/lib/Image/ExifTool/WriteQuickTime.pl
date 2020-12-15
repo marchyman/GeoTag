@@ -144,7 +144,7 @@ sub PrintInvGPSCoordinates($)
         $v[2] = Image::ExifTool::ToFloat($v[2]) * ($below ? -1 : 1) if @v == 3;
         return "@v";
     }
-    return $val if $val =~ /^([-+]\d+(\.\d*)?){2,3}(CRS.*)?$/; # already in ISO6709 format?
+    return $val if $val =~ /^([-+]\d+(\.\d*)?){2,3}(CRS.*)?\/?$/; # already in ISO6709 format?
     return undef;
 }
 
@@ -159,15 +159,16 @@ sub ConvInvISO6709($)
     my @a = split ' ', $val;
     if (@a == 2 or @a == 3) {
         # latitude must have 2 digits before the decimal, and longitude 3,
-        # and all values must start with a "+" or "-"
-        my @fmt = ('%s%02d','%s%03d','%s%d');
+        # and all values must start with a "+" or "-", and Google Photos
+        # requires at least 3 digits after the decimal point
+        my @fmt = ('%s%02d.%s%s','%s%03d.%s%s','%s%d.%s%s');
         foreach (@a) {
             return undef unless Image::ExifTool::IsFloat($_);
-            $_ =~ s/^([-+]?)(\d+)/sprintf(shift(@fmt), $1 || '+', $2)/e;
+            $_ =~ s/^([-+]?)(\d+)\.?(\d*)/sprintf(shift(@fmt),$1||'+',$2,$3,length($3)<3 ? '0'x(3-length($3)) : '')/e;
         }
-        return join '', @a;
+        return join '', @a, '/';
     }
-    return $val if $val =~ /^([-+]\d+(\.\d*)?){2,3}(CRS.*)?$/; # already in ISO6709 format?
+    return $val if $val =~ /^([-+]\d+(\.\d*)?){2,3}(CRS.*)?\/?$/; # already in ISO6709 format?
     return undef;
 }
 
@@ -300,15 +301,19 @@ sub CheckQTValue($$$)
 
 #------------------------------------------------------------------------------
 # Format QuickTime value for writing
-# Inputs: 0) ExifTool ref, 1) value ref, 2) Format (or undef)
+# Inputs: 0) ExifTool ref, 1) value ref, 2) Format (or undef), 3) Writable (or undef)
 # Returns: Flags for QT data type, and reformats value as required
-sub FormatQTValue($$;$)
+sub FormatQTValue($$;$$)
 {
-    my ($et, $valPt, $format) = @_;
+    my ($et, $valPt, $format, $writable) = @_;
     my $flags;
     if ($format and $format ne 'string') {
         $$valPt = WriteValue($$valPt, $format);
-        $flags = $qtFormat{$format} || 0;
+        if ($writable and $qtFormat{$writable}) {
+            $flags = $qtFormat{$writable};
+        } else {
+            $flags = $qtFormat{$format} || 0;
+        }
     } elsif ($$valPt =~ /^\xff\xd8\xff/) {
         $flags = 0x0d;  # JPG
     } elsif ($$valPt =~ /^(\x89P|\x8aM|\x8bJ)NG\r\n\x1a\n/) {
@@ -1122,9 +1127,9 @@ sub WriteQuickTime($$$)
                                         my $newVal = $et->GetNewValue($nvHash);
                                         next unless defined $newVal;
                                         my $prVal = $newVal;
-                                        my $flags = FormatQTValue($et, \$newVal, $format);
+                                        my $flags = FormatQTValue($et, \$newVal, $format, $$tagInfo{Writable});
                                         next unless defined $newVal;
-                                        my ($ctry, $lang) = (0, $undLang);
+                                        my ($ctry, $lang) = (0, 0);
                                         if ($$ti{LangCode}) {
                                             unless ($$ti{LangCode} =~ /^([A-Z]{3})?[-_]?([A-Z]{2})?$/i) {
                                                 $et->Warn("Invalid language code for $$ti{Name}");
@@ -1180,7 +1185,11 @@ sub WriteQuickTime($$$)
                                 } else {
                                     if ($format) {
                                         # update flags for the format we are writing
-                                        $flags = $qtFormat{$format} if $qtFormat{$format};
+                                        if ($$tagInfo{Writable} and $qtFormat{$$tagInfo{Writable}}) {
+                                            $flags = $qtFormat{$$tagInfo{Writable}};
+                                        } elsif ($qtFormat{$format}) {
+                                            $flags = $qtFormat{$format};
+                                        }
                                     } else {
                                         $format = QuickTimeFormat($flags, $len);
                                     }
@@ -1199,12 +1208,13 @@ sub WriteQuickTime($$$)
                                     }
                                     my $prVal = $newVal;
                                     # format new value for writing (and get new flags)
-                                    $flags = FormatQTValue($et, \$newVal, $format);
+                                    $flags = FormatQTValue($et, \$newVal, $format, $$tagInfo{Writable});
                                     my $grp = $et->GetGroup($langInfo, 1);
                                     $et->VerboseValue("- $grp:$$langInfo{Name}", $val);
                                     $et->VerboseValue("+ $grp:$$langInfo{Name}", $prVal);
                                     $newData = substr($buff, 0, $pos-16) unless defined $newData;
-                                    $newData .= pack('Na4Nnn', length($newVal)+16, $type, $flags, $ctry, $lang);
+                                    my $wLang = $lang eq $undLang ? 0 : $lang;
+                                    $newData .= pack('Na4Nnn', length($newVal)+16, $type, $flags, $ctry, $wLang);
                                     $newData .= $newVal;
                                     ++$$et{CHANGED};
                                 } elsif (defined $newData) {
@@ -1268,10 +1278,11 @@ sub WriteQuickTime($$$)
                             # add back necessary header and encode as necessary
                             if (defined $lang) {
                                 $newData = $et->Encode($newData, $lang < 0x400 ? $charsetQuickTime : 'UTF8');
+                                my $wLang = $lang eq $undLang ? 0 : $lang;
                                 if ($$tagInfo{IText} and $$tagInfo{IText} == 6) {
-                                    $newData = pack('Nn', 0, $lang) . $newData . "\0";
+                                    $newData = pack('Nn', 0, $wLang) . $newData . "\0";
                                 } else {
-                                    $newData = pack('nn', length($newData), $lang) . $newData;
+                                    $newData = pack('nn', length($newData), $wLang) . $newData;
                                 }
                             } elsif (not $format or $format =~ /^string/ and
                                      not $$tagInfo{Binary} and not $$tagInfo{ValueConv})
@@ -1406,9 +1417,9 @@ sub WriteQuickTime($$$)
                 my $newVal = $et->GetNewValue($nvHash);
                 next unless defined $newVal;
                 my $prVal = $newVal;
-                my $flags = FormatQTValue($et, \$newVal, $$tagInfo{Format});
+                my $flags = FormatQTValue($et, \$newVal, $$tagInfo{Format}, $$tagInfo{Writable});
                 next unless defined $newVal;
-                my ($ctry, $lang) = (0,0);
+                my ($ctry, $lang) = (0, 0);
                 # handle alternate languages
                 if ($$tagInfo{LangCode}) {
                     $tag = substr($tag, 0, 4);  # strip language code from tag ID
@@ -1424,10 +1435,8 @@ sub WriteQuickTime($$$)
                 }
                 if ($$dirInfo{HasData}) {
                     # add 'data' header
-                    $lang or $lang = $undLang;
                     $newVal = pack('Na4Nnn',16+length($newVal),'data',$flags,$ctry,$lang).$newVal;
                 } elsif ($tag =~ /^\xa9/ or $$tagInfo{IText}) {
-                    $lang or $lang = $undLang;
                     if ($ctry) {
                         my $grp = $et->GetGroup($tagInfo,1);
                         $et->Warn("Can't use country code for $grp:$$tagInfo{Name}");

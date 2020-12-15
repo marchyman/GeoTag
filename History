@@ -5,6 +5,8 @@
 * Add preference item to preserve the original image file
   modification time when updating GeoLocation data.
 
+* Update to exiftool 12.12
+
 ## GeoTag 4.9
 
 ### New Feature

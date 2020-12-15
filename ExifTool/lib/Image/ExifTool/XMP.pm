@@ -25,7 +25,8 @@
 #               10) http://www.adobe.com/devnet/xmp/pdfs/XMPSpecificationPart2.pdf (Oct 2008)
 #               11) http://www.extensis.com/en/support/kb_article.jsp?articleNumber=6102211
 #               12) http://www.cipa.jp/std/documents/e/DC-010-2012_E.pdf
-#               13) http://www.cipa.jp/std/documents/e/DC-010-2017_E.pdf
+#               13) http://www.cipa.jp/std/documents/e/DC-010-2017_E.pdf (changed to
+#                   http://www.cipa.jp/std/documents/e/DC-X010-2017.pdf)
 #
 # Notes:      - Property qualifiers are handled as if they were separate
 #               properties (with no associated namespace).
@@ -49,7 +50,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.33';
+$VERSION = '3.36';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -889,6 +890,7 @@ my %sRetouchArea = (
     ModifyDate  => { Groups => { 2 => 'Time' }, %dateTimeInfo, Priority => 0 },
     Nickname    => { },
     Rating      => { Writable => 'real', Notes => 'a value from 0 to 5, or -1 for "rejected"' },
+    RatingPercent=>{ Writable => 'real', Avoid => 1, Notes => 'non-standard' },
     Thumbnails  => {
         FlatName => 'Thumbnail',
         Struct => \%sThumbnail,
@@ -1144,7 +1146,7 @@ my %sPantryItem = (
             LayerText => { },
         },
     },
-    TransmissionReference   => { },
+    TransmissionReference => { Notes => 'Now used as a job identifier' },
     Urgency         => {
         Writable => 'integer',
         Notes => 'should be in the range 1-8 to conform with the XMP spec',
@@ -1289,11 +1291,11 @@ my %sPantryItem = (
     SharpenDetail               => { Writable => 'integer' },
     SharpenEdgeMasking          => { Writable => 'integer' },
     SharpenRadius               => { Writable => 'real' },
-    SplitToningBalance          => { Writable => 'integer' },
-    SplitToningHighlightHue     => { Writable => 'integer' },
-    SplitToningHighlightSaturation => { Writable => 'integer' },
-    SplitToningShadowHue        => { Writable => 'integer' },
-    SplitToningShadowSaturation => { Writable => 'integer' },
+    SplitToningBalance          => { Writable => 'integer', Notes => 'also used for newer ColorGrade settings' },
+    SplitToningHighlightHue     => { Writable => 'integer', Notes => 'also used for newer ColorGrade settings' },
+    SplitToningHighlightSaturation => { Writable => 'integer', Notes => 'also used for newer ColorGrade settings' },
+    SplitToningShadowHue        => { Writable => 'integer', Notes => 'also used for newer ColorGrade settings' },
+    SplitToningShadowSaturation => { Writable => 'integer', Notes => 'also used for newer ColorGrade settings' },
     Vibrance                    => { Writable => 'integer' },
     # new tags written by LR 1.4 (not sure in what version they first appeared)
     GrayMixerRed                => { Writable => 'integer' },
@@ -1482,7 +1484,28 @@ my %sPantryItem = (
         Struct => {
             STRUCT_NAME => 'Look',
             NAMESPACE   => 'crs',
-            Name   => { },
+            Name        => { },
+            Amount      => { },
+            Cluster     => { },
+            UUID        => { },
+            SupportsMonochrome => { },
+            SupportsAmount     => { },
+            SupportsOutputReferred => { },
+            Copyright   => { },
+            Group       => { Writable => 'lang-alt' },
+            Parameters => {
+                Struct => {
+                    STRUCT_NAME => 'LookParms',
+                    NAMESPACE   => 'crs',
+                    Version         => { },
+                    ProcessVersion  => { },
+                    Clarity2012     => { },
+                    ConvertToGrayscale => { },
+                    CameraProfile   => { },
+                    LookTable       => { },
+                    ToneCurvePV2012 => { List => 'Seq' },
+                },
+            },
         }
     },
     # more again (ref forum11258)
@@ -1508,6 +1531,24 @@ my %sPantryItem = (
     SortName    => { Writable => 'lang-alt' },
     Group       => { Writable => 'lang-alt', Avoid => 1 },
     Description => { Writable => 'lang-alt', Avoid => 1 },
+    # new for DNG converter 13.0
+    LookName => { NotFlat => 1 }, # (grr... conflicts with "Name" element of "Look" struct!)
+    # new for Lightroom CC 2021 (ref forum11745)
+    ColorGradeMidtoneHue    => { Writable => 'integer' },
+    ColorGradeMidtoneSat    => { Writable => 'integer' },
+    ColorGradeShadowLum     => { Writable => 'integer' },
+    ColorGradeMidtoneLum    => { Writable => 'integer' },
+    ColorGradeHighlightLum  => { Writable => 'integer' },
+    ColorGradeBlending      => { Writable => 'integer' },
+    ColorGradeGlobalHue     => { Writable => 'integer' },
+    ColorGradeGlobalSat     => { Writable => 'integer' },
+    ColorGradeGlobalLum     => { Writable => 'integer' },
+    # new for Adobe Camera Raw 13 (ref forum11745)
+    LensProfileIsEmbedded   => { Writable => 'boolean'},
+    AutoToneDigest          => { },
+    AutoToneDigestNoSat     => { },
+    ToggleStyleDigest       => { },
+    ToggleStyleAmount       => { Writable => 'integer' },
 );
 
 # Tiff namespace properties (tiff)
@@ -2065,7 +2106,7 @@ my %sPantryItem = (
     PRIORITY => 0, # not as reliable as actual EXIF tags
     NOTES => q{
         EXIF tags added by the EXIF 2.31 for XMP specification (see
-        L<http://www.cipa.jp/std/documents/e/DC-010-2017_E.pdf>).
+        L<http://www.cipa.jp/std/documents/e/DC-X010-2017.pdf>).
     },
     Gamma                       => { Writable => 'rational' },
     PhotographicSensitivity     => { Writable => 'integer' },
@@ -2770,8 +2811,9 @@ sub AddFlattenedTags($;$$)
             if ($flatInfo) {
                 ref $flatInfo eq 'HASH' or warn("$flatInfo is not a HASH!\n"), next; # (to be safe)
                 # pre-defined flattened tags should have Flat flag set
-                if (not defined $$flatInfo{Flat} and $Image::ExifTool::debug) {
-                    warn "Missing Flat flag for $$flatInfo{Name}\n";
+                if (not defined $$flatInfo{Flat}) {
+                    next if $$flatInfo{NotFlat};
+                    warn "Missing Flat flag for $$flatInfo{Name}\n" if $Image::ExifTool::debug;
                 }
                 $$flatInfo{Flat} = 0;
                 # copy all missing entries from field information
@@ -3213,8 +3255,9 @@ NoLoop:
         #} elsif (grep / /, @$props) {
         #    $$tagInfo{List} = 1;
         }
+        # save property list for verbose "adding" message unless this tag already exists
+        $added = \@tagList unless $$tagTablePtr{$tagID};
         AddTagToTable($tagTablePtr, $tagID, $tagInfo);
-        $added = 1;
         last;
     }
     # decode value if necessary (et:encoding was used before exiftool 7.71)
@@ -3298,8 +3341,16 @@ NoLoop:
     }
     if ($$et{OPTIONS}{Verbose}) {
         if ($added) {
+            my $props;
+            if (@$added > 1) {
+                $$tagInfo{Flat} = 0;    # this is a flattened tag
+                my @props = map { $$_[0] } @$added;
+                $props = ' (' . join('/',@props) . ')';
+            } else {
+                $props = '';
+            }
             my $g1 = $et->GetGroup($key, 1);
-            $et->VPrint(0, $$et{INDENT}, "[adding $g1:$tag]\n");
+            $et->VPrint(0, $$et{INDENT}, "[adding $g1:$tag]$props\n");
         }
         my $tagID = join('/',@$props);
         $et->VerboseInfo($tagID, $tagInfo, Value => $rawVal || $val);
@@ -3556,6 +3607,11 @@ sub ParseXMPElement($$$;$$$$)
             if ($prop eq 'svg' or $prop eq 'metadata') {
                 # add svg namespace prefix if missing to ignore these entries in the tag name
                 $$propList[-1] = "svg:$prop";
+            }
+        } elsif ($$et{XmpIgnoreProps}) { # ignore specified properties for tag name
+            foreach (@{$$et{XmpIgnoreProps}}) {
+                last unless @$propList;
+                pop @$propList if $_ eq $$propList[0];
             }
         }
 

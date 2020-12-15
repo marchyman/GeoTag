@@ -62,7 +62,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '3.84';
+$VERSION = '3.89';
 
 sub LensIDConv($$$);
 sub ProcessNikonAVI($$$);
@@ -349,6 +349,7 @@ sub GetAFPointGrid($$;$);
     'FE 47 00 00 24 24 4B 06' => 'Sigma 4.5mm F2.8 EX DC HSM Circular Fisheye', #JD
     '26 48 11 11 30 30 1C 02' => 'Sigma 8mm F4 EX Circular Fisheye',
     '79 40 11 11 2C 2C 1C 06' => 'Sigma 8mm F3.5 EX Circular Fisheye', #JD
+    'DB 40 11 11 2C 2C 1C 06' => 'Sigma 8mm F3.5 EX DG Circular Fisheye', #30
     'DC 48 19 19 24 24 4B 06' => 'Sigma 10mm F2.8 EX DC HSM Fisheye',
     'C2 4C 24 24 14 14 4B 06' => 'Sigma 14mm F1.8 DG HSM | A', #IB
     '48 48 24 24 24 24 4B 02' => 'Sigma 14mm F2.8 EX Aspherical HSM',
@@ -449,6 +450,7 @@ sub GetAFPointGrid($$;$);
   # '92 3E 2D 88 2C 40 4B 0E' (22mm)
   # '92 40 2D 88 2C 40 4B 0E' (18mm)
     '26 48 31 49 24 24 1C 02' => 'Sigma 20-40mm F2.8',
+    '7B 48 37 44 18 18 4B 06' => 'Sigma 24-35mm F2.0 DG HSM | A', #30
     '02 3A 37 50 31 3D 02 00' => 'Sigma 24-50mm F4-5.6 UC',
     '26 48 37 56 24 24 1C 02' => 'Sigma 24-60mm F2.8 EX DG',
     'B6 48 37 56 24 24 1C 02' => 'Sigma 24-60mm F2.8 EX DG',
@@ -1399,6 +1401,7 @@ my %binaryDataAttrs = (
              16 => 'Electronic',
            # 33 => ? seen for 1J2
              48 => 'Electronic Front Curtain',
+           # 80 => ? seen for the Z6II
            # 81 => ? seen for Z50
         },
     },
@@ -1879,6 +1882,7 @@ my %binaryDataAttrs = (
             7 => 'Unpacked 12 bits', #IB (padded to 16)
             8 => 'Small', #IB
             9 => 'Packed 12 bits', #IB (2 pixels in 3 bytes)
+            10 => 'Packed 14 bits', #28 (4 pixels in 7 bytes, eg. D6 uncompressed 14 bit)
         },
     },
     0x0094 => { Name => 'SaturationAdj',    Writable => 'int16s' },
@@ -2080,7 +2084,7 @@ my %binaryDataAttrs = (
             },
         },
         {
-            Condition => '$$valPt =~ /^0800/', # Z6/Z7
+            Condition => '$$valPt =~ /^080[01]/', # Z6/Z7
             Name => 'LensData0800',
             SubDirectory => {
                 TagTable => 'Image::ExifTool::Nikon::LensData0800',
@@ -3777,7 +3781,7 @@ my %binaryDataAttrs = (
         },{ #PH (D500, see forum11190)
             Name => 'AFPointsInFocus',
             Condition => '$$self{AFInfo2Version} eq "0101" and $$self{PhaseDetectAF} == 7',
-            Notes => 'AF points in use at the time time image was captured',
+            Notes => 'AF points in focus at the time time image was captured',
             Format => 'undef[20]',
             ValueConv => 'join(" ", unpack("H2"x20, $val))',
             ValueConvInv => '$val=~tr/ //d; pack("H*",$val)',
@@ -4655,6 +4659,12 @@ my %nikonFocalConversions = (
             13 => 'Nikkor Z 24-70mm f/2.8 S',
             14 => 'Nikkor Z 85mm f/1.8 S',
             15 => 'Nikkor Z 24mm f/1.8 S', #IB
+            16 => 'Nikkor Z 70-200mm f/2.8 VR S', #IB
+            17 => 'Nikkor Z 20mm f/1.8 S', #IB
+            18 => 'Nikkor Z 24-200mm f/4-6.3 VR', #IB
+            21 => 'Nikkor Z 50mm f/1.2 S', #IB
+            22 => 'Nikkor Z 24-50mm f/4-6.3', #IB
+            23 => 'Nikkor Z 14-24mm f/2.8 S', #IB
         },
     },
     0x36 => {
@@ -8990,7 +9000,7 @@ my %nikonFocalConversions = (
             },
         },
         {
-            Condition => '$$valPt =~ /^0800/', # Z6/Z7
+            Condition => '$$valPt =~ /^080[01]/', # Z6/Z7
             Name => 'LensData0800',
             SubDirectory => {
                 TagTable => 'Image::ExifTool::Nikon::LensData0800',

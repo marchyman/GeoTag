@@ -20,7 +20,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.17';
+$VERSION = '1.18';
 
 # road map of directory locations in GIF images
 my %gifMap = (
@@ -115,6 +115,11 @@ my %gifMap = (
         ValueConv => '$val + 1',
     },
     5 => 'BackgroundColor',
+    6 => {
+        Name => 'PixelAspectRatio',
+        RawConv => '$val ? $val : undef',
+        ValueConv => '($val + 15) / 64',
+    },
 );
 
 # GIF Netscape 2.0 animation extension (ref 3)

@@ -28,7 +28,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %mimeType $swapBytes $swapWords $currentByteOrder %unpackStd
             %jpegMarker %specialTags %fileTypeLookup $testLen $exePath);
 
-$VERSION = '12.00';
+$VERSION = '12.12';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -137,17 +137,18 @@ sub ReadValue($$$;$$$);
 @loadAllTables = qw(
     PhotoMechanic Exif GeoTiff CanonRaw KyoceraRaw Lytro MinoltaRaw PanasonicRaw
     SigmaRaw JPEG GIMP Jpeg2000 GIF BMP BMP::OS2 BMP::Extra BPG BPG::Extensions
-    PICT PNG MNG FLIF DjVu DPX OpenEXR MIFF PCX PGF PSP PhotoCD Radiance PDF
-    PostScript Photoshop::Header Photoshop::Layers Photoshop::ImageData
+    PICT PNG MNG FLIF DjVu DPX OpenEXR ZISRAW MIFF PCX PGF PSP PhotoCD Radiance
+    PDF PostScript Photoshop::Header Photoshop::Layers Photoshop::ImageData
     FujiFilm::RAF FujiFilm::IFD Samsung::Trailer Sony::SRF2 Sony::SR2SubIFD
-    Sony::PMP ITC ID3 FLAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible
-    MPC MPEG::Audio MPEG::Video MPEG::Xing M2TS QuickTime QuickTime::ImageFile
-    QuickTime::Stream QuickTime::Tags360Fly Matroska MOI MXF DV Flash Flash::FLV
-    Real::Media Real::Audio Real::Metafile Red RIFF AIFF ASF WTV DICOM FITS MIE
-    JSON HTML XMP::SVG Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion
-    EXE::PEString EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard
-    Text VCard::VCalendar RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR RTF OOXML iWork ISO
-    FLIR::AFF FLIR::FPF MacOS::MDItem MacOS::XAttr FlashPix::DocTable
+    Sony::PMP ITC ID3 ID3::Lyrics3 FLAC Ogg Vorbis APE APE::NewHeader
+    APE::OldHeader Audible MPC MPEG::Audio MPEG::Video MPEG::Xing M2TS QuickTime
+    QuickTime::ImageFile QuickTime::Stream QuickTime::Tags360Fly Matroska MOI
+    MXF DV Flash Flash::FLV Real::Media Real::Audio Real::Metafile Red RIFF AIFF
+    ASF WTV DICOM FITS MIE JSON HTML XMP::SVG Palm Palm::MOBI Palm::EXTH Torrent
+    EXE EXE::PEVersion EXE::PEString EXE::MachO EXE::PEF EXE::ELF EXE::AR
+    EXE::CHM LNK Font VCard Text VCard::VCalendar RSRC Rawzor ZIP ZIP::GZIP
+    ZIP::RAR RTF OOXML iWork ISO FLIR::AFF FLIR::FPF MacOS MacOS::MDItem
+    FlashPix::DocTable
 );
 
 # alphabetical list of current Lang modules
@@ -186,9 +187,9 @@ $defaultLang = 'en';    # default language
                 PSD XMP BMP BPG PPM RIFF AIFF ASF MOV MPEG Real SWF PSP FLV OGG
                 FLAC APE MPC MKV MXF DV PMP IND PGF ICC ITC FLIR FLIF FPF LFP
                 HTML VRD RTF FITS XCF DSS QTIF FPX PICT ZIP GZIP PLIST RAR BZ2
-                TAR  EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC M2TS PHP
-                PCX DCX DWF DWG WTV Torrent VCard LRI R3D AA PDB MOI ISO ALIAS
-                JSON MP3 DICOM PCD TXT);
+                CZI TAR  EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC M2TS
+                MacOS PHP PCX DCX DWF DWG WTV Torrent VCard LRI R3D AA PDB MOI
+                ISO ALIAS JSON MP3 DICOM PCD TXT);
 
 # file types that we can write (edit)
 my @writeTypes = qw(JPEG TIFF GIF CRW MRW ORF RAF RAW PNG MIE PSD XMP PPM EPS
@@ -207,10 +208,11 @@ my %writeTypes; # lookup for writable file types (hash filled if required)
 # - must update CanCreate() documentation if this list is changed!
 my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
 
-# file type lookup for all recognized file extensions
+# file type lookup for all recognized file extensions (upper case)
 # (if extension may be more than one type, the type is a list where
 #  the writable type should come first if it exists)
 %fileTypeLookup = (
+   '360' => ['MOV',  'GoPro 360 video'],
    '3FR' => ['TIFF', 'Hasselblad RAW format'],
    '3G2' => ['MOV',  '3rd Gen. Partnership Project 2 audio/video'],
    '3GP' => ['MOV',  '3rd Gen. Partnership Project audio/video'],
@@ -253,6 +255,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     CRW  => ['CRW',  'Canon RAW format'],
     CS1  => ['PSD',  'Sinar CaptureShop 1-Shot RAW'],
     CSV  => ['TXT',  'Comma-Separated Values'],
+    CZI  => ['CZI',  'Zeiss Integrated Software RAW'],
     DC3  =>  'DICM',
     DCM  =>  'DICM',
     DCP  => ['TIFF', 'DNG Camera Profile'],
@@ -410,6 +413,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     OFR  => ['RIFF', 'OptimFROG audio'],
     OGG  => ['OGG',  'Ogg Vorbis audio file'],
     OGV  => ['OGG',  'Ogg Video file'],
+    ONP  => ['JSON', 'ON1 Presets'],
     OPUS => ['OGG',  'Ogg Opus audio file'],
     ORF  => ['ORF',  'Olympus RAW format'],
     OTF  => ['Font', 'Open Type Font'],
@@ -515,6 +519,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     WMV  => ['ASF',  'Windows Media Video'],
     WV   => ['RIFF', 'WavePack lossless audio'],
     X3F  => ['X3F',  'Sigma RAW format'],
+    MACOS=> ['MacOS','MacOS ._ sidecar file'],
     XCF  => ['XCF',  'GIMP native image format'],
     XHTML=> ['HTML', 'Extensible HyperText Markup Language'],
     XLA  => ['FPX',  'Microsoft Excel Add-in'],
@@ -583,6 +588,7 @@ my %fileDescription = (
     CRM  => 'video/x-canon-crm',
     CRW  => 'image/x-canon-crw',
     CSV  => 'text/csv',
+    CZI  => 'image/x-zeiss-czi', #PH (NC)
     DCP  => 'application/octet-stream', #PH (NC)
     DCR  => 'image/x-kodak-dcr',
     DCX  => 'image/dcx',
@@ -683,6 +689,7 @@ my %fileDescription = (
     ODT  => 'application/vnd.oasis.opendocument.text',
     OGG  => 'audio/ogg',
     OGV  => 'video/ogg',
+    ONP  => 'application/on1',
     ORF  => 'image/x-olympus-orf',
     OTF  => 'application/x-font-otf',
     PAGES=> 'application/x-iwork-pages-sffpages',
@@ -783,6 +790,7 @@ my %moduleName = (
     CRW  => 'CanonRaw',
     CHM  => 'EXE',
     COS  => 'CaptureOne',
+    CZI  => 'ZISRAW',
     DEX  => 0,
     DOCX => 'OOXML',
     DCX  => 0,
@@ -853,6 +861,7 @@ $testLen = 1024;    # number of bytes to read when testing for magic number
     BZ2  => 'BZh[1-9]\x31\x41\x59\x26\x53\x59',
     CHM  => 'ITSF.{20}\x10\xfd\x01\x7c\xaa\x7b\xd0\x11\x9e\x0c\0\xa0\xc9\x22\xe6\xec',
     CRW  => '(II|MM).{4}HEAP(CCDR|JPGM)',
+    CZI  => 'ZISRAWFILE\0{6}',
     DCX  => '\xb1\x68\xde\x3a',
     DEX  => "dex\n035\0",
     DICOM=> '(.{128}DICM|\0[\x02\x04\x06\x08]\0[\0-\x20]|[\x02\x04\x06\x08]\0[\0-\x20]\0)',
@@ -937,6 +946,7 @@ $testLen = 1024;    # number of bytes to read when testing for magic number
     WMF  => '(\xd7\xcd\xc6\x9a\0\0|\x01\0\x09\0\0\x03)',
     WTV  => '\xb7\xd8\x00\x20\x37\x49\xda\x11\xa6\x4e\x00\x07\xe9\x5e\xad\x8d',
     X3F  => 'FOVb',
+    MacOS=> '\0\x05\x16\x07\0.\0\0Mac OS X        ',
     XCF  => 'gimp xcf ',
     XMP  => '\0{0,3}(\xfe\xff|\xff\xfe|\xef\xbb\xbf)?\0{0,3}\s*<',
     ZIP  => 'PK\x03\x04',
@@ -1446,6 +1456,11 @@ my %systemTagsNotes = (
             require Image::ExifTool::XMP;
             return Image::ExifTool::XMP::CheckXMP($self, $tagInfo, \$val);
         },
+    },
+    XML => {
+        Notes => 'the XML data block, extracted for some file types',
+        Groups => { 0 => 'XML', 1 => 'XML' },
+        Binary => 1,
     },
     ICC_Profile => {
         Notes => q{
@@ -2238,6 +2253,7 @@ sub ClearOptions($)
         GeoSpeedRef => undef,   # geotag GPSSpeedRef
         GlobalTimeShift => undef,   # apply time shift to all extracted date/time values
     #   Group#      => undef,   # return tags for specified groups in family #
+        HexTagIDs   => 0,       # use hex tag ID's in family 7 group names
         HtmlDump    => 0,       # HTML dump (0-3, higher # = bigger limit)
         HtmlDumpBase => undef,  # base address for HTML dump
         IgnoreMinorErrors => undef, # ignore minor errors when reading/writing
@@ -2489,6 +2505,7 @@ sub ExtractInfo($;@)
             } else {
                 $self->Error('Unknown file type');
             }
+            $self->BuildCompositeTags() if $fast == 4 and $$options{Composite};
             last;   # don't read the file
         }
         if (@fileTypeList) {
@@ -3098,30 +3115,9 @@ sub GetValue($$;$)
                 }
                 if (ref $conv eq 'HASH') {
                     # look up converted value in hash
-                    my $lc;
-                    if (defined($value = $$conv{$val})) {
-                        # override with our localized language PrintConv if available
-                        if ($$self{CUR_LANG} and $convType eq 'PrintConv' and
-                            # (no need to check for lang-alt tag names -- they won't have a PrintConv)
-                            ref($lc = $$self{CUR_LANG}{$$tagInfo{Name}}) eq 'HASH' and
-                            ($lc = $$lc{PrintConv}) and ($lc = $$lc{$value}))
-                        {
-                            $value = $self->Decode($lc, 'UTF8');
-                        }
-                    } else {
+                    if (not defined($value = $$conv{$val})) {
                         if ($$conv{BITMASK}) {
                             $value = DecodeBits($val, $$conv{BITMASK}, $$tagInfo{BitsPerWord});
-                            # override with localized language strings
-                            if (defined $value and $$self{CUR_LANG} and $convType eq 'PrintConv' and
-                                ref($lc = $$self{CUR_LANG}{$$tagInfo{Name}}) eq 'HASH' and
-                                ($lc = $$lc{PrintConv}))
-                            {
-                                my @vals = split ', ', $value;
-                                foreach (@vals) {
-                                    $_ = $$lc{$_} if defined $$lc{$_};
-                                }
-                                $value = join ', ', @vals;
-                            }
                         } else {
                              # use alternate conversion routine if available
                             if ($$conv{OTHER}) {
@@ -3134,10 +3130,28 @@ sub GetValue($$;$)
                                 if ($$tagInfo{PrintHex} and $val and IsInt($val) and
                                     $convType eq 'PrintConv')
                                 {
-                                    $val = sprintf('0x%x',$val);
+                                    $value = sprintf('Unknown (0x%x)',$val);
+                                } else {
+                                    $value = "Unknown ($val)";
                                 }
-                                $value = "Unknown ($val)";
                             }
+                        }
+                    }
+                    # override with our localized language PrintConv if available
+                    my $tmp;
+                    if ($$self{CUR_LANG} and $convType eq 'PrintConv' and
+                        # (no need to check for lang-alt tag names -- they won't have a PrintConv)
+                        ref($tmp = $$self{CUR_LANG}{$$tagInfo{Name}}) eq 'HASH' and
+                        ($tmp = $$tmp{PrintConv}))
+                    {
+                        if ($$conv{BITMASK} and not defined $$conv{$val}) {
+                            my @vals = split ', ', $value;
+                            foreach (@vals) {
+                                $_ = $$tmp{$_} if defined $$tmp{$_};
+                            }
+                            $value = join ', ', @vals;
+                        } elsif (defined($tmp = $$tmp{$value})) {
+                            $value = $self->Decode($tmp, 'UTF8');
                         }
                     }
                 } else {
@@ -3297,7 +3311,7 @@ sub GetGroup($$;$)
 {
     local $_;
     my ($self, $tag, $family) = @_;
-    my ($tagInfo, @groups, @families, $simplify, $byTagInfo, $ex);
+    my ($tagInfo, @groups, @families, $simplify, $byTagInfo, $ex, $noID);
     if (ref $tag eq 'HASH') {
         $tagInfo = $tag;
         $tag = $$tagInfo{Name};
@@ -3328,6 +3342,7 @@ sub GetGroup($$;$)
             $simplify = 1 unless $family =~ /^:/;
             undef $family;
             foreach (0..2) { $groups[$_] = $$groups{$_}; }
+            $noID = 1 if @families == 1 and $families[0] != 7;
         } else {
             return(($ex && $$ex{"G$family"}) || $$groups{$family}) if $family == 0 or $family == 2;
             $groups[1] = $$groups{1};
@@ -3339,14 +3354,29 @@ sub GetGroup($$;$)
     $groups[3] = 'Main';
     $groups[4] = ($tag =~ /\((\d+)\)$/) ? "Copy$1" : '';
     # handle dynamic group names if necessary
-    if ($ex and not $byTagInfo) {
-        $groups[0] = $$ex{G0} if $$ex{G0};
-        $groups[1] = $$ex{G1} =~ /^\+(.*)/ ? "$groups[1]$1" : $$ex{G1} if $$ex{G1};
-        $groups[3] = 'Doc' . $$ex{G3} if $$ex{G3};
-        $groups[5] = $$ex{G5} || $groups[1] if defined $$ex{G5};
-        if (defined $$ex{G6}) {
-            $groups[5] = '' unless defined $groups[5];  # (can't leave a hole in the array)
-            $groups[6] = $$ex{G6};
+    unless ($byTagInfo) {
+        if ($ex) {
+            $groups[0] = $$ex{G0} if $$ex{G0};
+            $groups[1] = $$ex{G1} =~ /^\+(.*)/ ? "$groups[1]$1" : $$ex{G1} if $$ex{G1};
+            $groups[3] = 'Doc' . $$ex{G3} if $$ex{G3};
+            $groups[5] = $$ex{G5} || $groups[1] if defined $$ex{G5};
+            if (defined $$ex{G6}) {
+                $groups[5] = '' unless defined $groups[5];  # (can't leave a hole in the array)
+                $groups[6] = $$ex{G6};
+            }
+        }
+        # generate tag ID group names unless obviously not needed
+        unless ($noID) {
+            my $id = $$tagInfo{TagID};
+            if (not defined $id) {
+                $id = '';   # (just to be safe)
+            } elsif ($id =~ /^\d+$/) {
+                $id = sprintf('0x%x', $id) if $$self{OPTIONS}{HexTagIDs};
+            } else {
+                $id =~ s/([^-_A-Za-z0-9])/sprintf('%.2x',ord $1)/ge;
+            }
+            $groups[7] = 'ID-' . $id;
+            defined $groups[$_] or $groups[$_] = '' foreach (5,6);
         }
     }
     if ($family) {
@@ -3972,7 +4002,9 @@ sub Open($*$;$)
             }
             my $share = 0;
             eval {
-                $share = Win32API::File::FILE_SHARE_READ() unless $access & Win32API::File::GENERIC_WRITE();
+                unless ($access & Win32API::File::GENERIC_WRITE()) {
+                    $share = Win32API::File::FILE_SHARE_READ() | Win32API::File::FILE_SHARE_WRITE();
+                }
             };
             my $wh = eval { Win32API::File::CreateFileW($file, $access, $share, [], $create, 0, []) };
             return undef unless $wh;
@@ -4195,6 +4227,22 @@ sub ParseArguments($;@)
 }
 
 #------------------------------------------------------------------------------
+# Does group name match the tag ID?
+# Inputs: 0) tag ID, 1) group name (with "ID-" removed)
+# Returns: true on success
+sub IsSameID($$)
+{
+    my ($id, $grp) = @_;
+    return 1 if $grp eq $id;    # decimal ID's or raw ID's
+    if ($id =~ /^\d+$/) {       # numerical numerical ID's may be in hex
+        return 1 if $grp =~ s/^0x0*// and $grp eq sprintf('%x', $id);
+    } else {                    # other ID's may conform to ExifTool group name conventions
+        return 1 if $id =~ s/([^-_A-Za-z0-9])/sprintf('%.2x',ord $1)/ge and $grp eq $id;
+    }
+    return 0;
+}
+
+#------------------------------------------------------------------------------
 # Get list of tags in specified group
 # Inputs: 0) ExifTool ref, 1) group spec, 2) tag key or reference to list of tag keys
 # Returns: list of matching tags in list context, or first match in scalar context
@@ -4205,40 +4253,41 @@ sub GroupMatches($$$)
     my ($self, $group, $tagList) = @_;
     $tagList = [ $tagList ] unless ref $tagList;
     my ($tag, @matches);
-    if ($group =~ /:/) {
-        # check each group name individually (eg. "Author:1IPTC")
-        my @grps = split ':', lc $group;
-        my (@fmys, $g);
+    # check each group name individually (eg. "Author:1IPTC")
+    my @grps = split ':', $group;
+    my (@fmys, $g);
+    for ($g=0; $g<@grps; ++$g) {
+        if ($grps[$g] =~ s/^(\d*)(id-)?//i) {
+            $fmys[$g] = $1 if length $1;
+            if ($2) {
+                $fmys[$g] = 7;
+                next;   # (don't convert tag ID's to lower case)
+            }
+        }
+        $grps[$g] = lc $grps[$g];
+        $grps[$g] = '' if $grps[$g] eq 'copy0'; # accept 'Copy0' for primary tag
+    }
+    foreach $tag (@$tagList) {
+        my @groups = $self->GetGroup($tag, -1);
         for ($g=0; $g<@grps; ++$g) {
-            $fmys[$g] = $1 if $grps[$g] =~ s/^(\d+)//;
-            $grps[$g] = '' if $grps[$g] eq 'copy0'; # accept 'Copy0' for primary tag
-        }
-        foreach $tag (@$tagList) {
-            my @groups = $self->GetGroup($tag, -1);
-            for ($g=0; $g<@grps; ++$g) {
-                my $grp = $grps[$g];
-                next if $grp eq '*' or $grp eq 'all';
-                if (defined $fmys[$g]) {
-                    my $f = $fmys[$g];
-                    last unless defined $groups[$f] and $grp eq lc $groups[$f];
+            my $grp = $grps[$g];
+            next if $grp eq '*' or $grp eq 'all';
+            my $f;
+            if (defined($f = $fmys[$g])) {
+                last unless defined $groups[$f];
+                if ($f == 7) {
+                    next if IsSameID($self->GetTagID($tag), $grp);
                 } else {
-                    last unless grep /^$grp$/i, @groups;
+                    next if $grp eq lc $groups[$f];
                 }
-            }
-            if ($g == @grps) {
-                return $tag unless wantarray;
-                push @matches, $tag;
+                last;
+            } else {
+                last unless grep /^$grp$/i, @groups;
             }
         }
-    } else {
-        my $family = ($group =~ s/^(\d+)//) ? $1 : -1;
-        $group = '' if lc $group eq 'copy0';        # accept 'Copy0' for primary tag
-        foreach $tag (@$tagList) {
-            my @groups = $self->GetGroup($tag, $family);
-            if (grep(/^$group$/i, @groups)) {
-                return $tag unless wantarray;
-                push @matches, $tag;
-            }
+        if ($g == @grps) {
+            return $tag unless wantarray;
+            push @matches, $tag;
         }
     }
     return wantarray ? @matches : $matches[0];
@@ -4697,13 +4746,13 @@ sub AddCompositeTags($;$)
     my ($module, $prefix, $tagID);
     unless (ref $add) {
         ($prefix = $add) =~ s/.*:://;
-        $prefix .= '::';
         $module = $add;
         $add .= '::Composite';
         no strict 'refs';
         $add = \%$add;
+        $prefix .= '-';
     } else {
-        $prefix = 'UserDefined::';
+        $prefix = 'UserDefined-';
     }
     my $defaultGroups = $$add{GROUPS};
     my $compTable = GetTagTable('Image::ExifTool::Composite');
@@ -5686,12 +5735,12 @@ sub ConvertFileSize($)
 {
     my $val = shift;
     $val < 2048 and return "$val bytes";
-    $val < 10240 and return sprintf('%.1f kB', $val / 1024);
-    $val < 2097152 and return sprintf('%.0f kB', $val / 1024);
-    $val < 10485760 and return sprintf('%.1f MB', $val / 1048576);
-    $val < 2147483648 and return sprintf('%.0f MB', $val / 1048576);
-    $val < 10737418240 and return sprintf('%.1f GB', $val / 1073741824);
-    return sprintf('%.0f GB', $val / 1073741824);
+    $val < 10240 and return sprintf('%.1f KiB', $val / 1024);
+    $val < 2097152 and return sprintf('%.0f KiB', $val / 1024);
+    $val < 10485760 and return sprintf('%.1f MiB', $val / 1048576);
+    $val < 2147483648 and return sprintf('%.0f MiB', $val / 1048576);
+    $val < 10737418240 and return sprintf('%.1f GiB', $val / 1073741824);
+    return sprintf('%.0f GiB', $val / 1073741824);
 }
 
 #------------------------------------------------------------------------------
@@ -7101,6 +7150,7 @@ sub DoProcessTIFF($$;$)
   # no longer do this because various files use different values
   # (TIFF=0x2a, RW2/RWL=0x55, HDP=0xbc, BTF=0x2b, ORF=0x4f52/0x5352/0x????)
   #  return 0 unless $identifier == 0x2a;
+    $self->Warn('Invalid magic number in EXIF TIFF header') if $fileType eq 'APP1' and $identifier != 0x2a;
 
     # get offset to IFD0
     return 0 if length $$dataPt < 8;
@@ -7560,7 +7610,7 @@ sub ProcessDirectory($$$;$)
 
 #------------------------------------------------------------------------------
 # Get Metadata path
-# Inputs: 0) Exiftool object ref
+# Inputs: 0) ExifTool object ref
 # Return: Metadata path string
 sub MetadataPath($)
 {
@@ -7752,7 +7802,7 @@ sub HandleTag($$$$;%)
     my ($subdir, $format, $noTagInfo, $rational);
 
     if ($tagInfo) {
-        $subdir = $$tagInfo{SubDirectory}
+        $subdir = $$tagInfo{SubDirectory};
     } else {
         return undef unless $verbose;
         $tagInfo = { Name => "tag $tag" };  # create temporary tagInfo hash
