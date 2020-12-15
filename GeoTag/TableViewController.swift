@@ -298,6 +298,9 @@ final class TableViewController: NSViewController {
         case #selector(discard(_:)):
             // OK if there are changes pending
             return !saveInProgress && appDelegate.modified
+        case #selector(discardTracks(_:)):
+            // OK if tracks exist
+            return !mapViewController.mapLines.isEmpty
         case #selector(cut(_:)),
              #selector(copy(_:)):
             // OK if only one row with a valid location selected
@@ -361,6 +364,10 @@ final class TableViewController: NSViewController {
         }
         appDelegate.modified = false
         reloadAllRows()
+    }
+
+    @IBAction func discardTracks(_ sender: Any) {
+        mapViewController.removeTracks()
     }
 
     /// copy the selected item location into the pasteboard then delete from item

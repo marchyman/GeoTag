@@ -278,6 +278,15 @@ class MapViewController: NSViewController {
         }
     }
 
+    @objc
+    func removeTracks() {
+        let overlays = mapView.overlays
+        if !overlays.isEmpty {
+            mapView.removeOverlays(overlays)
+        }
+        mapLines = []
+    }
+
 }
 
 extension MapViewController: MKMapViewDelegate {

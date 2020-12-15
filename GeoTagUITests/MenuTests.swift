@@ -41,12 +41,13 @@ class B_MenuTests: XCTestCase {
         let fileMenu = menuBarsQuery.menuBarItems["File"]
         fileMenu.click()
         let fileMenuSearch = fileMenu.descendants(matching: .menuItem)
-        XCTAssertEqual(fileMenuSearch.count, 8)
+        XCTAssertEqual(fileMenuSearch.count, 9)
 
         let menuNames = [("Open…", true),
                          ("Close", true),
                          ("Save", false),
                          ("Discard changes", false),
+                         ("Discard tracks", false),
                          ("Clear image list", false)]
 
         for (name, enabled) in menuNames {
