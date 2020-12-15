@@ -183,7 +183,7 @@ class ImageDataTests: XCTestCase {
         guard let img = tryImg else { fail("can't process testUrl2") }
         img.location = testLoc
         XCTAssertNotNil(img.location)
-        XCTAssert(img.stringRepresentation == "35.1234 -120.9876",
+        XCTAssert(img.stringRepresentation == "35.1234 | -120.9876",
                   "stringRepresentation \(img.stringRepresentation) not as expected")
         img.revert()
         XCTAssertNil(img.location)

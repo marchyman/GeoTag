@@ -316,8 +316,8 @@ final class TableViewController: NSViewController {
             if !saveInProgress && tableView.numberOfSelectedRows > 0 {
                 let pb = NSPasteboard.general
                 if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string) {
-                    // pasteVal should look like "lat lon"
-                    let values = pasteVal.components(separatedBy: " ")
+                    // pasteVal should look like "lat | lon"
+                    let values = pasteVal.components(separatedBy: "|")
                     if values.count == 2 {
                         return true
                     }
@@ -412,12 +412,14 @@ final class TableViewController: NSViewController {
     func paste(_: AnyObject) {
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string) {
-            // pasteVal should look like "lat lon"
-            let values = pasteVal.components(separatedBy: " ")
-            if values.count == 2 {
-                let latitude = values[0].doubleValue
-                let longitude = values[1].doubleValue
-                _ = updateSelectedRows(coord: Coord(latitude: latitude, longitude: longitude))
+            // pasteVal should look like "lat | lon"
+            let values = pasteVal.components(separatedBy: "|")
+            if values.count == 2,
+               let latitude = values[0].validateLocation(range: 0...90,
+                                                       reference: ["N", "S"]),
+               let longitude = values[1].validateLocation(range: 0...180,
+                                                        reference: ["E", "W"]) {
+                updateSelectedRows(coord: Coord(latitude: latitude, longitude: longitude))
                 appDelegate.undoManager.setActionName("paste")
             }
         }
@@ -714,6 +716,7 @@ final class TableViewController: NSViewController {
     ///
     /// Update all selected rows as a single undo group.
 
+    @discardableResult
     func updateSelectedRows(coord: Coord) -> Bool {
         let rows = tableView.selectedRowIndexes
         guard !rows.isEmpty else { return false }
@@ -899,7 +902,7 @@ extension TableViewController: MapViewDelegate {
     func mouseClicked(mapView: MapView!,
                       location: CLLocationCoordinate2D) {
         if !saveInProgress {
-            _ = updateSelectedRows(coord: location)
+            updateSelectedRows(coord: location)
             appDelegate.undoManager.setActionName("location change")
         }
     }
@@ -927,16 +930,5 @@ extension NSTableView {
             deselectAll(self)
         }
         super.rightMouseDown(with: theEvent)
-    }
-}
-
-//MARK: String extension -> Double
-
-/// Convert a string to a double through a cast to NSString.
-/// Used in paste code to handle lat and lon as a string value.
-
-extension String {
-    var doubleValue: Double {
-        return (self as NSString).doubleValue
     }
 }

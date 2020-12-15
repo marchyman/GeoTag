@@ -477,7 +477,7 @@ extension ImageData {
 extension ImageData {
     var stringRepresentation: String {
         if let location = location {
-            return "\(location.latitude) \(location.longitude)"
+            return "\(location.latitude) | \(location.longitude)"
         } else {
             return ""
         }
