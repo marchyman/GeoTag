@@ -19,6 +19,14 @@ GeoTag is available from several sources
   `brew cask install geotag` to install.
 * [GitHub](https://github.com/marchyman/GeoTag)
 
+## Work In Progress
+
+### Bug Fix
+
+* pull date/time from image file if an XMP file exists but does not
+  include date/time metadata.  Reportedly FastRawViewer creates XMP files
+  that only contain modified metadata.
+
 ## GeoTag 4.10
 
 ### New Feature

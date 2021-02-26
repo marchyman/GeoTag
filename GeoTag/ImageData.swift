@@ -50,11 +50,11 @@ final class ImageData: NSObject {
 
     // MARK: instance variables -- file URLs
 
-    let url: URL                // URL of the image
-    let xmpUrl: URL             // URL of sidecar file (may not exist)
-    let xmpFile: XmpFile		//
-    var sandboxUrl: URL         // URL of the sandbox copy of the image
-    var sandboxXmp: URL?        // URL of sandbox copy of sidecar file
+    let url: URL               // URL of the image
+    let xmpUrl: URL            // URL of sidecar file (may not exist)
+    let xmpFile: XmpFile		  // Sidecar file info (if it exists)
+    var sandboxUrl: URL        // URL of the sandbox copy of the image
+    var sandboxXmp: URL?       // URL of sandbox copy of sidecar file
     
     // MARK: failed backup and update flag
     
@@ -63,9 +63,9 @@ final class ImageData: NSObject {
 
     // MARK: instance variables -- date/time related values
 
-    var dateTime = ""			// image date/time
-    var originalDateTime = ""	// date/time before any modification
-    var timeZone: TimeZone?		// timezone where image was taken
+    var dateTime = ""           // image date/time
+    var originalDateTime = ""   // date/time before any modification
+    var timeZone: TimeZone?     // timezone where image was taken
 
     // MARK: Date/Time format
     let dateFormatter = DateFormatter()
@@ -137,7 +137,7 @@ final class ImageData: NSObject {
 
             try? fileManager.removeItem(at: sandboxUrl)
             try fileManager.createSymbolicLink(at: sandboxUrl,
-                                               withDestinationURL: url)
+                                             withDestinationURL: url)
 
             // Create a link for any matching sidecare file, i.e. a file with
             // the same path components but with an extension of XMP, if one
@@ -161,10 +161,14 @@ final class ImageData: NSObject {
         if Exiftool.helper.fileTypeIsWritable(for: url) {
             if let xmp = sandboxXmp,
                fileManager.fileExists(atPath: xmpUrl.path) {
-                validImage = loadXmpData(xmp)
-            } else {
-                validImage = loadImageData()
+                // if an XMP file exists the image is assumed to be valid
+                validImage = true
+                loadXmpData(xmp)
+                if dateTime != "" {
+                    return
+                }
             }
+            validImage = loadImageData()
         }
     }
 
@@ -301,13 +305,12 @@ final class ImageData: NSObject {
 
     /// obtain metadata from XMP file
     /// - Parameter xmp: URL of XMP file for an image
-    /// - Returns: true if successful
     ///
     /// Extract desired metadata from an XMP file using ExifTool.  Apple
     /// ImageIO functions do not work with XMP sidecar files.
     
     private
-    func loadXmpData(_ xmp: URL) -> Bool {
+    func loadXmpData(_ xmp: URL) {
         var errorCode: NSError?
         let coordinator = NSFileCoordinator(filePresenter: xmpFile)
         coordinator.coordinate(readingItemAt: xmp,
@@ -315,15 +318,15 @@ final class ImageData: NSObject {
                                error: &errorCode) {
             url in
             let results = Exiftool.helper.metadataFrom(xmp: url)
-            guard results.dto != "" else { return }
-            dateTime = results.dto
-            originalDateTime = dateTime
+            if results.dto != "" {
+                dateTime = results.dto
+                originalDateTime = dateTime
+            }
             if results.valid {
                 location = results.location
                 originalLocation = location
             }
         }
-        return true
     }
 
     /// obtain image metadata
@@ -332,6 +335,7 @@ final class ImageData: NSObject {
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file
     
+    @discardableResult
     private
     func loadImageData() -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
@@ -352,8 +356,10 @@ final class ImageData: NSObject {
             originalDateTime = dateTime
         }
 
-        // extract image existing gps info
-        if let gpsData = imgProps[GPSDictionary] as? [String: AnyObject] {
+        // extract image existing gps info unless a location has already
+        // been retrieved -- XMP files are processed first
+        if location == nil,
+           let gpsData = imgProps[GPSDictionary] as? [String: AnyObject] {
             // some Leica write GPS tags with a status tag of "V" (void) when no
             // GPS info is available.   If a status tag exists and its value
             // is "V" ignore the GPS data.
