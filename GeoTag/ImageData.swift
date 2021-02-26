@@ -52,7 +52,7 @@ final class ImageData: NSObject {
 
     let url: URL               // URL of the image
     let xmpUrl: URL            // URL of sidecar file (may not exist)
-    let xmpFile: XmpFile		  // Sidecar file info (if it exists)
+    let xmpFile: XmpFile	   // Sidecar file info (if it exists)
     var sandboxUrl: URL        // URL of the sandbox copy of the image
     var sandboxXmp: URL?       // URL of sandbox copy of sidecar file
     
@@ -89,7 +89,7 @@ final class ImageData: NSObject {
             }
         }
     }
-    var originalLocation: Coord?    // location before any modification
+    var originalLocation: Coord?  // location before any modification
 
     // MARK: instance variables -- image state and thumbnail
 
@@ -335,7 +335,6 @@ final class ImageData: NSObject {
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file
     
-    @discardableResult
     private
     func loadImageData() -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil) else {
