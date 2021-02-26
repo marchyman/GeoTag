@@ -158,17 +158,16 @@ final class ImageData: NSObject {
         }
         super.init()
 
+        // If the image type is writable grab the needed metadata from
+        // the image.  If there is an XMP file check it for metadata
+        // overrides.
         if Exiftool.helper.fileTypeIsWritable(for: url) {
-            if let xmp = sandboxXmp,
-               fileManager.fileExists(atPath: xmpUrl.path) {
-                // if an XMP file exists the image is assumed to be valid
-                validImage = true
-                loadXmpData(xmp)
-                if dateTime != "" {
-                    return
-                }
-            }
             validImage = loadImageData()
+            if validImage,
+               let xmp = sandboxXmp,
+               fileManager.fileExists(atPath: xmpUrl.path) {
+                loadXmpData(xmp)
+            }
         }
     }
 
