@@ -56,7 +56,7 @@ use vars qw($VERSION $AUTOLOAD @formatSize @formatName %formatNumber %intFormat
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::MakerNotes;
 
-$VERSION = '4.31';
+$VERSION = '4.33';
 
 sub ProcessExif($$$);
 sub WriteExif($$$);
@@ -1377,6 +1377,12 @@ my %opcodeInfo = (
         Count => 6,
         Priority => 0,
     },
+  # 0x220 - int32u: 0 (IFD0, Xaiomi Redmi models)
+  # 0x221 - int32u: 0 (IFD0, Xaiomi Redmi models)
+  # 0x222 - int32u: 0 (IFD0, Xaiomi Redmi models)
+  # 0x223 - int32u: 0 (IFD0, Xaiomi Redmi models)
+  # 0x224 - int32u: 0,1 (IFD0, Xaiomi Redmi models)
+  # 0x225 - string: "" (IFD0, Xaiomi Redmi models)
     0x22f => 'StripRowCounts',
     0x2bc => {
         Name => 'ApplicationNotes', # (writable directory!)
@@ -1446,6 +1452,7 @@ my %opcodeInfo = (
             1 => 'Sony Uncompressed 12-bit RAW', #IB
             2 => 'Sony Compressed RAW', # (lossy, ref IB)
             3 => 'Sony Lossless Compressed RAW', #IB
+            4 => 'Sony Lossless Compressed RAW 2', #JR (ILCE-1)
         },
     },
     # 0x7001 - int16u[1] (in SubIFD of Sony ARW images) - values: 0,1
@@ -1466,6 +1473,7 @@ my %opcodeInfo = (
         PrintConv => {
             256 => 'Off',
             257 => 'Auto',
+            272 => 'Auto (ILCE-1)', #JR
             511 => 'No correction params available',
         },
     },
@@ -1998,6 +2006,7 @@ my %opcodeInfo = (
     0x885d => 'FaxSubAddress', #9
     0x885e => 'FaxRecvTime', #9
     0x8871 => 'FedexEDR', #exifprobe (NC)
+  # 0x8889 - string: "portrait" (ExifIFD, Xiaomi POCO F1)
     0x888a => { #PH
         Name => 'LeafSubIFD',
         Format => 'int32u',     # Leaf incorrectly uses 'undef' format!
@@ -2008,6 +2017,10 @@ my %opcodeInfo = (
             Start => '$val',
         },
     },
+  # 0x8891 - int16u: 35 (ExifIFD, Xiaomi POCO F1)
+  # 0x8894 - int16u: 0 (ExifIFD, Xiaomi POCO F1)
+  # 0x8895 - int16u: 0 (ExifIFD, Xiaomi POCO F1)
+  # 0x889a - int16u: 0 (ExifIFD, Xiaomi POCO F1)
   # 0x89ab - seen "11 100 130 16 0 0 0 0" in IFD0 of TIFF image from IR scanner (forum8470)
     0x9000 => {
         Name => 'ExifVersion',
@@ -2368,6 +2381,8 @@ my %opcodeInfo = (
         Name => 'CameraElevationAngle',
         Writable => 'rational64s',
     },
+  # 0x9999 - string: camera settings (ExifIFD, Xiaomi POCO F1)
+  # 0x9aaa - int8u[2176]: ? (ExifIFD, Xiaomi POCO F1)
     0x9c9b => {
         Name => 'XPTitle',
         Format => 'undef',
@@ -2547,6 +2562,7 @@ my %opcodeInfo = (
             5 => 'Color sequential area',
             7 => 'Trilinear',
             8 => 'Color sequential linear',
+            # 15 - used by DJI XT2
         },
     },
     0xa300 => {
@@ -4715,8 +4731,8 @@ my %subSecConv = (
     },
     LensID => {
         Groups => { 2 => 'Camera' },
+        Require => 'LensType',
         Desire => {
-            0 => 'LensType',
             1 => 'FocalLength',
             2 => 'MaxAperture',
             3 => 'MaxApertureValue',
@@ -4735,25 +4751,16 @@ my %subSecConv = (
             Applies only to LensType values with a lookup table.  May be configured
             by adding user-defined lenses
         },
-        # this LensID is only valid if the LensType has a PrintConv,
-        # or LensType or LensModel are the model name
+        # this LensID is only valid if the LensType has a PrintConv or is a model name
         RawConv => q{
             my $printConv = $$self{TAG_INFO}{LensType}{PrintConv};
-            return $val if ref $printConv eq 'HASH' or
-                (ref $printConv eq 'ARRAY' and ref $$printConv[0] eq 'HASH') or
-                (defined $val[0] and $val[0] =~ /(mm|\d\/F)/) or
-                (defined $val[6] and $val[6] =~ /(mm|\d\/F)/);
+            return $val if ref $printConv eq 'HASH' or (ref $printConv eq 'ARRAY' and
+                ref $$printConv[0] eq 'HASH') or $val[0] =~ /(mm|\d\/F)/;
             return undef;
         },
-        ValueConv => '$val[0] || $val[6]',
+        ValueConv => '$val',
         PrintConv => q{
             my $pcv;
-            # use LensModel ([6]) if LensType ([0]) is not populated
-            # (iPhone populates LensModel but not LensType)
-            if (not defined $val[0] and defined $val[6]) {
-                $val[0] = $val[6];
-                $prt[0] = $prt[6];
-            }
             # use LensType2 instead of LensType if available and valid (Sony E-mount lenses)
             # (0x8000 or greater; 0 for several older/3rd-party E-mount lenses)
             if (defined $val[9] and ($val[9] & 0x8000 or $val[9] == 0)) {
@@ -4780,6 +4787,30 @@ my %subSecConv = (
             }
             return $lens;
         },
+    },
+    'LensID-2' => {
+        Name => 'LensID',
+        Groups => { 2 => 'Camera' },
+        Desire => {
+            0 => 'LensModel',
+            1 => 'Lens',
+            2 => 'XMP-aux:LensID',
+            3 => 'Make',
+        },
+        Inhibit => {
+            4 => 'Composite:LensID',
+        },
+        RawConv => q{
+            return undef if defined $val[2] and defined $val[3];
+            return $val if defined $val[0] and $val[0] =~ /(mm|\d\/F)/;
+            return $val if defined $val[1] and $val[1] =~ /(mm|\d\/F)/;
+            return undef;
+        },
+        ValueConv => q{
+            return $val[0] if defined $val[0] and $val[0] =~ /(mm|\d\/F)/;
+            return $val[1];
+        },
+        PrintConv => '$_=$val; s/(\d)\/F/$1mm F/; s/mmF/mm F/; s/(\d) mm/${1}mm/; s/ - /-/; $_',
     },
 );
 
@@ -5767,7 +5798,8 @@ sub ProcessExif($$$)
             $numEntries = Get16u($dataPt, $dirStart);
         } else {
             $et->Warn("Bad $dir directory", $inMakerNotes);
-            return 0 unless $inMakerNotes and $dirLen >= 14;
+            return 0 unless $inMakerNotes and $dirLen >= 14 and $dirStart >= 0 and
+                            $dirStart + $dirLen <= length($$dataPt);
             $dirSize = $dirLen;
             $numEntries = int(($dirSize - 2) / 12); # read what we can
             Set16u($numEntries, $dataPt, $dirStart);
@@ -6591,7 +6623,7 @@ EXIF and TIFF meta information.
 
 =head1 AUTHOR
 
-Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

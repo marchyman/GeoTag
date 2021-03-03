@@ -15,7 +15,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.04';
+$VERSION = '1.05';
 
 # DPX tags
 %Image::ExifTool::DPX::Main = (
@@ -158,11 +158,11 @@ $VERSION = '1.04';
     1588=> { Name => 'InputDeviceSerialNumber', Format => 'string[32]' },
     # 1620=> { Name => 'AspectRatio',       Format => 'int32u' },
     1724 => { Name => 'OriginalFrameRate',Format => 'float' },
-    1728 => { Name => 'ShutterAngle',     Format => 'float', RawConv => '$val =~ /\d/ ? $val : undef' }, #2
+    1728 => { Name => 'ShutterAngle',     Format => 'float', RawConv => '($val =~ /\d/ and $val !~ /nan/i) ? $val : undef' }, #2
     1732 => { Name => 'FrameID',          Format => 'string[32]' },
     1764 => { Name => 'SlateInformation', Format => 'string[100]' },
     1920 => { Name => 'TimeCode',         Format => 'int32u' }, #2
-    1940 => { Name => 'FrameRate',        Format => 'float', RawConv => '$val =~ /\d/ ? $val : undef' }, #2
+    1940 => { Name => 'FrameRate',        Format => 'float', RawConv => '($val =~ /\d/ and $val !~ /nan/i) ? $val : undef' }, #2
     1972 => { Name => 'Reserved5',        Format => 'string[76]', Unknown => 1 },
     2048 => { Name => 'UserID',           Format => 'string[32]' },
 );
@@ -214,7 +214,7 @@ metadata from DPX (Digital Picture Exchange) images.
 
 =head1 AUTHOR
 
-Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

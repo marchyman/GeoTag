@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.55';
+$VERSION = '2.60';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -214,7 +214,7 @@ my %ftypLookup = (
     'crx ' => 'Canon Raw (.CRX)', #PH (CR3 or CRM; use Canon CompressorVersion to decide)
 );
 
-# information for time/date-based tags (time zero is Jan 1, 1904)
+# information for int32u date/time tags (time zero is Jan 1, 1904)
 my %timeInfo = (
     Notes => 'converted from UTC to local time if the QuickTimeUTC option is set',
     Shift => 'Time',
@@ -243,7 +243,11 @@ my %timeInfo = (
     },
     # (all CR3 files store UTC times - PH)
     ValueConv => 'ConvertUnixTime($val, $self->Options("QuickTimeUTC") || $$self{FileType} eq "CR3")',
-    ValueConvInv => 'GetUnixTime($val, $self->Options("QuickTimeUTC")) + (66 * 365 + 17) * 24 * 3600',
+    ValueConvInv => q{
+        $val = GetUnixTime($val, $self->Options("QuickTimeUTC"));
+        return undef unless defined $val;
+        return $val + (66 * 365 + 17) * 24 * 3600;
+    },
     PrintConv => '$self->ConvertDateTime($val)',
     PrintConvInv => '$self->InverseDateTime($val)',
     # (can't put Groups here because they aren't constant!)
@@ -258,11 +262,15 @@ my %unknownInfo = (
     Unknown => 1,
     ValueConv => '$val =~ /^([\x20-\x7e]*)\0*$/ ? $1 : \$val',
 );
+
+# multi-language text with 6-byte header
+my %langText = ( IText => 6 );
+
 # parsing for most of the 3gp udta language text boxes
-my %langText = (
+my %langText3gp = (
     Notes => 'used in 3gp videos',
-    IText => 6,
     Avoid => 1,
+    IText => 6,
 );
 
 # 4-character Vendor ID codes (ref PH)
@@ -424,7 +432,6 @@ my %eeBox = (
     # (note: vide is only processed if specific atoms exist in the VideoSampleDesc)
     vide => { %eeStd,
         JPEG => 'stsd',
-      # avcC => 'stsd', # (uncomment to parse H264 stream)
     },
     text => { %eeStd },
     meta => { %eeStd },
@@ -433,6 +440,10 @@ my %eeBox = (
     camm => { %eeStd }, # (Insta360)
     ctbx => { %eeStd }, # (GM cars)
     ''   => { 'gps ' => 'moov', 'GPS ' => 'main' }, # (no handler -- in top level 'moov' box, and main)
+);
+# boxes to save when ExtractEmbedded is set to 2 or higher
+my %eeBox2 = (
+    vide => { avcC => 'stsd' }, # (parses H264 video stream)
 );
 
 # QuickTime atoms
@@ -682,7 +693,7 @@ my %eeBox = (
         ValueConv => '$val=~tr/-/:/; $val',
         ValueConvInv => '$val=~s/(\d+):(\d+):/$1-$2-/; $val',
         PrintConv => '$self->ConvertDateTime($val)',
-        PrintConvInv => '$self->InverseDateTime($val)',
+        PrintConvInv => '$self->InverseDateTime($val,1)', # (add time zone if it didn't exist)
     },
     gps0 => { #PH (DuDuBell M1, VSYS M6L)
         Name => 'GPSTrack',
@@ -1415,7 +1426,7 @@ my %eeBox = (
             return $val;
         },
         PrintConv => '$self->ConvertDateTime($val)',
-        PrintConvInv => '$self->InverseDateTime($val)',
+        PrintConvInv => '$self->InverseDateTime($val,1)', # (add time zone if it didn't exist)
     },
     "\xa9ART" => 'Artist', #PH (iTunes 8.0.2)
     "\xa9alb" => 'Album', #PH (iTunes 8.0.2)
@@ -1542,15 +1553,15 @@ my %eeBox = (
     # the following are 3gp tags, references:
     # http://atomicparsley.sourceforge.net
     # http://www.3gpp.org/ftp/tsg_sa/WG4_CODEC/TSGS4_25/Docs/
-    # (note that all %langText tags are Avoid => 1)
-    cprt => { Name => 'Copyright',  %langText, Groups => { 2 => 'Author' } },
-    auth => { Name => 'Author',     %langText, Groups => { 2 => 'Author' } },
-    titl => { Name => 'Title',      %langText },
-    dscp => { Name => 'Description',%langText },
-    perf => { Name => 'Performer',  %langText },
-    gnre => { Name => 'Genre',      %langText },
-    albm => { Name => 'Album',      %langText },
-    coll => { Name => 'CollectionName', %langText }, #17
+    # (note that all %langText3gp tags are Avoid => 1)
+    cprt => { Name => 'Copyright',  %langText3gp, Groups => { 2 => 'Author' } },
+    auth => { Name => 'Author',     %langText3gp, Groups => { 2 => 'Author' } },
+    titl => { Name => 'Title',      %langText3gp },
+    dscp => { Name => 'Description',%langText3gp },
+    perf => { Name => 'Performer',  %langText3gp },
+    gnre => { Name => 'Genre',      %langText3gp },
+    albm => { Name => 'Album',      %langText3gp },
+    coll => { Name => 'CollectionName', %langText3gp }, #17
     rtng => {
         Name => 'Rating',
         # (4-byte flags, 4-char entity, 4-char criteria, 2-byte lang, string)
@@ -1581,8 +1592,11 @@ my %eeBox = (
     },
     kywd => {
         Name => 'Keywords',
-        # (4 byte flags, 2-byte lang, 1-byte count, count x pascal strings)
+        # (4 byte flags, 2-byte lang, 1-byte count, count x pascal strings, ref 17)
+        # (but I have also seen a simple string written by iPhone)
         RawConv => q{
+            my $sep = $self->Options('ListSep');
+            return join($sep, split /\0+/, $val) unless $val =~ /^\0/; # (iPhone)
             return '<err>' unless length $val >= 7;
             my $lang = Image::ExifTool::QuickTime::UnpackLang(Get16u(\$val, 4));
             $lang = $lang ? "($lang) " : '';
@@ -1598,7 +1612,6 @@ my %eeBox = (
                 push @vals, $v;
                 $pos += $len;
             }
-            my $sep = $self->Options('ListSep');
             return $lang . join($sep, @vals);
         },
     },
@@ -1689,7 +1702,7 @@ my %eeBox = (
             return $val;
         },
         PrintConv => '$self->ConvertDateTime($val)',
-        PrintConvInv => '$self->InverseDateTime($val)',
+        PrintConvInv => '$self->InverseDateTime($val,1)', # (add time zone if it didn't exist)
     },
     manu => { # (SX280)
         Name => 'Make',
@@ -1985,7 +1998,11 @@ my %eeBox = (
     # ---- Microsoft ----
     Xtra => { #PH (microsoft)
         Name => 'MicrosoftXtra',
-        SubDirectory => { TagTable => 'Image::ExifTool::Microsoft::Xtra' },
+        WriteGroup => 'Microsoft',
+        SubDirectory => {
+            DirName => 'Microsoft',
+            TagTable => 'Image::ExifTool::Microsoft::Xtra',
+        },
     },
     # ---- Minolta ----
     MMA0 => { #PH (DiMage 7Hi)
@@ -2034,7 +2051,7 @@ my %eeBox = (
             SubDirectory => { TagTable => 'Image::ExifTool::Olympus::thmb' },
         },{ #17 (format is in bytes 3-7)
             Name => 'ThumbnailImage',
-            Condition => '$$valPt =~ /^.{8}\xff\xd8\xff\xdb/s',
+            Condition => '$$valPt =~ /^.{8}\xff\xd8\xff[\xdb\xe0]/s',
             Groups => { 2 => 'Preview' },
             RawConv => 'substr($val, 8)',
             Binary => 1,
@@ -2124,7 +2141,7 @@ my %eeBox = (
             return $val;
         },
         PrintConv => '$self->ConvertDateTime($val)',
-        PrintConvInv => '$self->InverseDateTime($val)',
+        PrintConvInv => '$self->InverseDateTime($val,1)', # (add time zone if it didn't exist)
     },
     '@xyz' => { #PH (iPhone 3GS)
         Name => 'GPSCoordinates',
@@ -2991,9 +3008,9 @@ my %eeBox = (
         3-character ISO 639-2 language code and an optional ISO 3166-1 alpha 2
         country code to the tag name (eg. "ItemList:Title-fra" or
         "ItemList::Title-fra-FR").  When creating a new Meta box to contain the
-        ItemList directory, by default ExifTool does not specify a
-        L<Handler|Image::ExifTool::TagNames/QuickTime Handler Tags>, but the
-        API L<QuickTimeHandler|../ExifTool.html#QuickTimeHandler> option may be used to include an 'mdir' Handler box.
+        ItemList directory, by default ExifTool adds an 'mdir' (Metadata) Handler
+        box because Apple software may ignore ItemList tags otherwise, but the API
+        L<QuickTimeHandler|../ExifTool.html#QuickTimeHandler> option may be set to 0 to avoid this.
     },
     # in this table, binary 1 and 2-byte "data"-type tags are interpreted as
     # int8u and int16u.  Multi-byte binary "data" tags are extracted as binary data.
@@ -3022,7 +3039,7 @@ my %eeBox = (
             return $val;
         },
         PrintConv => '$self->ConvertDateTime($val)',
-        PrintConvInv => '$self->InverseDateTime($val)',
+        PrintConvInv => '$self->InverseDateTime($val,1)', # (add time zone if it didn't exist)
     },
     "\xa9des" => 'Description', #4
     "\xa9enc" => 'EncodedBy', #10
@@ -6154,13 +6171,12 @@ my %eeBox = (
     PROCESS_PROC => \&ProcessKeys,
     WRITE_PROC => \&WriteKeys,
     CHECK_PROC => \&CheckQTValue,
-    VARS => { LONG_TAGS => 3 },
+    VARS => { LONG_TAGS => 7 },
     WRITABLE => 1,
     # (not PREFERRED when writing)
     GROUPS => { 1 => 'Keys' },
     WRITE_GROUP => 'Keys',
     LANG_INFO => \&GetLangInfo,
-    FORMAT => 'string',
     NOTES => q{
         This directory contains a list of key names which are used to decode tags
         written by the "mdta" handler.  Also in this table are a few tags found in
@@ -6200,7 +6216,7 @@ my %eeBox = (
             return $val;
         },
         PrintConv => '$self->ConvertDateTime($val)',
-        PrintConvInv => '$self->InverseDateTime($val)',
+        PrintConvInv => '$self->InverseDateTime($val,1)', # (add time zone if it didn't exist)
     },
     description => { },
     director    => { },
@@ -6260,8 +6276,13 @@ my %eeBox = (
             return $val;
         },
         PrintConv => '$self->ConvertDateTime($val)',
-        PrintConvInv => '$self->InverseDateTime($val)',
+        PrintConvInv => '$self->InverseDateTime($val,1)', # (add time zone if it didn't exist)
     },
+    'location.accuracy.horizontal' => { Name => 'LocationAccuracyHorizontal' },
+    'live-photo.auto'           => { Name => 'LivePhotoAuto', Writable => 'int8u' },
+    'live-photo.vitality-score' => { Name => 'LivePhotoVitalityScore', Writable => 'float' },
+    'live-photo.vitality-scoring-version' => { Name => 'LivePhotoVitalityScoringVersion', Writable => 'int64s' },
+    'apple.photos.variation-identifier'   => { Name => 'ApplePhotosVariationIdentifier',  Writable => 'int64s' },
     'direction.facing' => { Name => 'CameraDirection', Groups => { 2 => 'Location' } },
     'direction.motion' => { Name => 'CameraMotion',    Groups => { 2 => 'Location' } },
     'location.body'    => { Name => 'LocationBody',    Groups => { 2 => 'Location' } },
@@ -8571,7 +8592,7 @@ sub QuickTimeFormat($$)
     my ($flags, $len) = @_;
     my $format;
     if ($flags == 0x15 or $flags == 0x16) {
-        $format = { 1=>'int8', 2=>'int16', 4=>'int32' }->{$len};
+        $format = { 1=>'int8', 2=>'int16', 4=>'int32', 8=>'int64' }->{$len};
         $format .= $flags == 0x15 ? 's' : 'u' if $format;
     } elsif ($flags == 0x17) {
         $format = 'float';
@@ -8884,7 +8905,7 @@ sub ProcessMOV($$;$)
     my $dirID = $$dirInfo{DirID} || '';
     my $charsetQuickTime = $et->Options('CharsetQuickTime');
     my ($buff, $tag, $size, $track, $isUserData, %triplet, $doDefaultLang, $index);
-    my ($dirEnd, $ee, $unkOpt, %saveOptions, $atomCount);
+    my ($dirEnd, $unkOpt, %saveOptions, $atomCount);
 
     my $topLevel = not $$et{InQuickTime};
     $$et{InQuickTime} = 1;
@@ -8948,8 +8969,8 @@ sub ProcessMOV($$;$)
     }
     $$raf{NoBuffer} = 1 if $et->Options('FastScan'); # disable buffering in FastScan mode
 
-    if ($$et{OPTIONS}{ExtractEmbedded}) {
-        $ee = 1;
+    my $ee = $$et{OPTIONS}{ExtractEmbedded};
+    if ($ee) {
         $unkOpt = $$et{OPTIONS}{Unknown};
         require 'Image/ExifTool/QuickTimeStream.pl';
     }
@@ -9032,6 +9053,9 @@ sub ProcessMOV($$;$)
             } elsif ($handlerType ne 'vide' and not $$et{OPTIONS}{Validate}) {
                 EEWarn($et);
             }
+        } elsif ($ee and $ee > 1 and $eeBox2{$handlerType} and $eeBox2{$handlerType}{$tag}) {
+            $eeTag = 1;
+            $$et{OPTIONS}{Unknown} = 1;
         }
         my $tagInfo = $et->GetTagInfo($tagTablePtr, $tag);
 
@@ -9500,7 +9524,7 @@ information from QuickTime and MP4 video, M4A audio, and HEIC image files.
 
 =head1 AUTHOR
 
-Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

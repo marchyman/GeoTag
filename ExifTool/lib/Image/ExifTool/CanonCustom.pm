@@ -19,7 +19,7 @@ use Image::ExifTool qw(:DataAccess);
 use Image::ExifTool::Canon;
 use Image::ExifTool::Exif;
 
-$VERSION = '1.57';
+$VERSION = '1.58';
 
 sub ProcessCanonCustom($$$);
 sub ProcessCanonCustom2($$$);
@@ -2098,6 +2098,24 @@ my %convPFn = ( PrintConv => \&ConvertPfn, PrintConvInv => \&ConvertPfnInv );
             '$val=~/(\d+)/ ? $1 : 0',
             '$val=~/(\d+)/ ? $1 : 0',
         ],
+    },{ # (1DXmkIII firmware 1.3)
+        Name => 'ContinuousShootingSpeed',
+        Condition => '$count == 5',
+        Count => 5,
+        PrintConv => [
+            '"Hi $val"',
+            '"Cont $val"',
+            '"Lo $val"',
+            '"Soft $val"',
+            '"Soft LS $val"',
+        ],
+        PrintConvInv => [
+            '$val=~/(\d+)/ ? $1 : 0',
+            '$val=~/(\d+)/ ? $1 : 0',
+            '$val=~/(\d+)/ ? $1 : 0',
+            '$val=~/(\d+)/ ? $1 : 0',
+            '$val=~/(\d+)/ ? $1 : 0',
+        ],
     },{ # others
         Name => 'ContinuousShootingSpeed',
         Count => 3,
@@ -2845,7 +2863,7 @@ Image::ExifTool to read this information.
 
 =head1 AUTHOR
 
-Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -5,7 +5,7 @@
 #
 # URL:          https://exiftool.org/
 #
-# Legal:        Copyright (c) 2003-2020, Phil Harvey (philharvey66 at gmail.com)
+# Legal:        Copyright (c) 2003-2021, Phil Harvey (philharvey66 at gmail.com)
 #               This library is free software; you can redistribute it and/or
 #               modify it under the same terms as Perl itself.
 #------------------------------------------------------------------------------
@@ -626,7 +626,9 @@ XMP to be extracted.
 Flag to extract information from embedded documents in EPS files, embedded
 EPS information and JPEG and Jpeg2000 images in PDF files, embedded MPF
 images in JPEG and MPO files, timed metadata in videos, and the resource
-fork of Mac OS files.  Default is undef.
+fork of Mac OS files.  A setting of 2 also causes the H264 video stream in
+MP4 files to be parsed until the first SEI message is decoded, or 3 to
+parse the entire stream.  Default is undef.
 
 =item FastScan
 
@@ -735,8 +737,8 @@ group names.
 
 =item HexTagIDs
 
-Use hexadecimal instead of decimal for the family 7 group names of tags with
-numerical ID's.
+Return hexadecimal instead of decimal for the family 7 group names of tags
+with numerical ID's.
 
 =item HtmlDump
 
@@ -841,8 +843,9 @@ print conversion for writing.  Default is 1.
 
 Flag set to add an 'mdir' Handler to a newly created Meta box when adding
 QuickTime ItemList tags.  Adobe Bridge does not add this Handler, but it is
-commonly found in samples from other software, so it is possible that this
-could affect the interoperability of ItemList tags.  Default is undef.
+commonly found in samples from other software, and it has been reported that
+Apple QuickTime Player and Photos.apps will ignore ItemList tags if this is
+missing.  Default is 1.
 
 =item QuickTimeUTC
 
@@ -1902,7 +1905,9 @@ file or creating the link.
 
 =item Notes:
 
-Will not overwrite existing files. New directories are created as necessary.
+Will not overwrite existing files. New directories are created as necessary. 
+If the file is successfully renamed, the new file name may be accessed via
+C<$$exifTool{NewName}>.
 
 =back
 
@@ -2045,6 +2050,7 @@ The group family numbers are currently available:
     4) Instance Number          (eg. Copy1, Copy2, Copy3...)
     5) Metadata Path            (eg. JPEG-APP1-IFD0-ExifIFD)
     6) EXIF/TIFF Format         (eg. int8u, int32u, undef, string)
+    7) Tag ID                   (eg. ID-271, ID-rights, ID-a9aut)
 
 Families 0 and 1 are based on the file structure, and are similar except
 that family 1 is more specific and sub-divides some groups to give more
@@ -2088,13 +2094,14 @@ Family 6 is currently used only for EXIF/TIFF metadata, and gives the format
 type of the extracted value.  Generated only if the L</SaveFormat> option is
 used when extracting.
 
-Family 7 is used for tag ID's.  The group names are "ID-" followed by the
-tag ID with characters other than [-_A-Za-z0-9] converted to hex.  Numerical
-tag ID's are given in hex if the L</HexTagIDs> option is set.  When
-specifying a family 7 group name, numerical ID's may be in hex or decimal,
-and non-numercal ID's may or may not have characters other than
-[-_A-Za-z0-9] converted to hex.  Note that unlike other group names, family
-7 group names are case sensitive (except for the leading "ID-").
+Family 7 is used for tag ID's.  The group names are the actual tag ID's,
+with a leading "ID-" string.  Non-numerical ID's have characters other than
+[-_A-Za-z0-9] converted to hex.  Numerical tag ID's are returned in hex if
+the L</HexTagIDs> option is set, otherwise decimal is used.  When specifying
+a family 7 group name, numerical ID's may be in hex or decimal, and
+non-numerical ID's may or may not have characters other than [-_A-Za-z0-9]
+converted to hex.  Note that unlike other group names, the tag ID's of
+family 7 group names are case sensitive (but the leading "ID-" is not).
 
 See L</GetAllGroups [static]> for complete lists of group names.
 
@@ -2251,7 +2258,7 @@ Get list of all group names in specified family.
 
 =item Inputs:
 
-0) Group family number (0-4)
+0) Group family number (0-7)
 
 =item Return Values:
 
@@ -2296,10 +2303,10 @@ MIE-Orient, MIE-Preview, MIE-Thumbnail, MIE-UTM, MIE-Unknown, MIE-Video,
 MIFF, MNG, MOBI, MOI, MPC, MPEG, MPF0, MPImage, MS-DOC, MXF, MacOS,
 MakerNotes, MakerUnknown, Matroska, MediaJukebox, Meta, MetaIFD, Microsoft,
 Minolta, MinoltaRaw, Motorola, NITF, Nikon, NikonCapture, NikonCustom,
-NikonScan, Nintendo, Ocad, Ogg, Olympus, OpenEXR, Opus, PDF, PICT, PNG,
-PNG-pHYs, PSP, Palm, Panasonic, PanasonicRaw, Pentax, PhaseOne, PhotoCD,
-PhotoMechanic, Photoshop, PictureInfo, PostScript, PreviewIFD, PrintIM,
-ProfileIFD, Qualcomm, QuickTime, RAF, RAF2, RIFF, RMETA, RSRC, RTF,
+NikonScan, NikonSettings, Nintendo, Ocad, Ogg, Olympus, OpenEXR, Opus, PDF,
+PICT, PNG, PNG-pHYs, PSP, Palm, Panasonic, PanasonicRaw, Pentax, PhaseOne,
+PhotoCD, PhotoMechanic, Photoshop, PictureInfo, PostScript, PreviewIFD,
+PrintIM, ProfileIFD, Qualcomm, QuickTime, RAF, RAF2, RIFF, RMETA, RSRC, RTF,
 Radiance, Rawzor, Real, Real-CONT, Real-MDPR, Real-PROP, Real-RA3, Real-RA4,
 Real-RA5, Real-RJMD, Reconyx, Red, Ricoh, SPIFF, SR2, SR2DataIFD, SR2SubIFD,
 SRF#, SVG, Samsung, Sanyo, Scalado, Sigma, SigmaRaw, Sony, SonyIDC, Stim,
@@ -2340,11 +2347,15 @@ rational64s, float, double, ifd, unicode, complex, int64u, int64s, ifd64
 
 =item Family 7 (Tag ID):
 
-ID-xxx (where xxx is the tag ID.  Numerical ID's are given in hex with a
-leading "0x" if the HexTagIDs option is set, as are characters in
-non-numerical ID's which are not valid in a group name)
+ID-xxx (Where xxx is the tag ID.  Numerical ID's are returned in hex with a
+leading "0x" if the HexTagIDs option is set, or decimal otherwise. 
+Characters in non-numerical ID's which are not valid in a group name are
+returned as 2 hex digits.)
 
 =back
+
+Note:  This function may also be called as an ExifTool member function to
+allow the HexTagIDs option to be set when retrieving family 7 group names.
 
 =head2 GetDeleteGroups [static]
 
@@ -2709,7 +2720,7 @@ specified by the L</Charset> option.
 
 =head1 AUTHOR
 
-Copyright 2003-2020, Phil Harvey
+Copyright 2003-2021, Phil Harvey
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.39';
+$VERSION = '3.44';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -141,6 +141,9 @@ my %formatOK = (
     signed      => 1,
     unsigned    => 1,
     utf8        => 1,
+    Unicode     => 1, # (Microsoft Xtra)
+    GUID        => 1, # (Microsoft Xtra)
+    vt_filetime => 1, # (Microsoft Xtra)
 );
 
 # Descriptions for the TagNames documentation
@@ -310,9 +313,10 @@ C<integer> is a string of digits (possibly beginning with a '+' or '-'),
 C<real> is a floating point number, C<rational> is entered as a floating
 point number but stored as two C<integer> strings separated by a '/'
 character, C<date> is a date/time string entered in the format "YYYY:mm:dd
-HH:MM:SS[.ss][+/-HH:MM]", C<boolean> is either "True" or "False", C<struct>
-indicates a structured tag, and C<lang-alt> is a tag that supports alternate
-languages.
+HH:MM:SS[.ss][+/-HH:MM]", C<boolean> is either "True" or "False" (but "true"
+and "false" may be written as a ValueConv value for compatibility with
+non-conforming applications), C<struct> indicates a structured tag, and
+C<lang-alt> is a tag that supports alternate languages.
 
 When reading, C<struct> tags are extracted only if the L<Struct|../ExifTool.html#Struct> (-struct)
 option is used.  Otherwise the corresponding I<Flattened> tags, indicated by
@@ -430,11 +434,13 @@ L<UserData|Image::ExifTool::TagNames/QuickTime UserData Tags>, and
 finally in L<Keys|Image::ExifTool::TagNames/QuickTime Keys Tags>,
 but this order may be changed by setting the PREFERRED level of the
 appropriate table in the config file (see
-L<example.config|../config.html#PREF> in the full distribution for
-an example).  ExifTool currently writes only top-level metadata in
-QuickTime-based files; it extracts other track-specific and timed
-metadata, but can not yet edit tags in these locations (with the
-exception of track-level date/time tags).
+L<example.config|../config.html#PREF> in the full distribution for an
+example).  Note that some tags with the same name but different ID's may
+exist in the same location, but the family 7 group names may be used to
+differentiate these.  ExifTool currently writes only top-level metadata in
+QuickTime-based files; it extracts other track-specific and timed metadata,
+but can not yet edit tags in these locations (with the exception of
+track-level date/time tags).
 
 Alternate language tags may be accessed for
 L<ItemList|Image::ExifTool::TagNames/QuickTime ItemList Tags> and
@@ -456,6 +462,11 @@ this reason, by default ExifTool does not assume a time zone for these
 values.  However, if the L<QuickTimeUTC|../ExifTool.html#QuickTimeUTC> API option is set, then ExifTool will
 assume these values are properly stored as UTC, and will convert them to
 local time when extracting.
+
+When writing string-based date/time tags, the system time zone is added if
+the PrintConv option is enabled and no time zone is specified.  This is
+because Apple software may display crazy values if the time zone is missing
+for some tags.
 
 See
 L<https://developer.apple.com/library/archive/documentation/QuickTime/QTFF/>
@@ -628,7 +639,8 @@ overlapping EXIF, IPTC and XMP tags to be reconciled when reading, and
 synchronized when writing.  The MWG Composite tags below are designed to aid
 in the implementation of these recommendations.  As well, the MWG defines
 new XMP tags which are listed in the subsequent tables below.  See
-L<http://www.metadataworkinggroup.org/> for the official MWG specification.
+L<https://web.archive.org/web/20181006115950/http://www.metadataworkinggroup.org/specs/>
+for the official MWG specification.
 },
     MacOS => q{
 On MacOS systems, the there are additional MDItem and XAttr Finder tags that
@@ -651,7 +663,7 @@ L<Image::ExifTool::BuildTagLookup|Image::ExifTool::BuildTagLookup>.
 
 ~head1 AUTHOR
 
-Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -691,6 +703,11 @@ my %shortcutNotes = (
     LargeTags => q{
         large binary data tags which may be excluded to reduce memory usage if
         memory limitations are a problem
+    },
+   'ls-l' => q{
+        mimics columns shown by Unix "ls -l" command.  Includes some tags which are
+        extracted only if the API L<SystemTags|../ExifTool.html#SystemTags> option
+        is enabled
     },
 );
 
@@ -1313,6 +1330,7 @@ TagID:  foreach $tagID (@keys) {
                         my $count = $$tagInfo{Count} || 1;
                         # adjust count to Writable size if different than Format
                         if ($writable and $format and $writable ne $format and
+                            $writable ne 'string' and $format ne 'string' and
                             $Image::ExifTool::Exif::formatNumber{$writable} and
                             $Image::ExifTool::Exif::formatNumber{$format})
                         {
@@ -2726,7 +2744,7 @@ Returned list of writable pseudo tags.
 
 =head1 AUTHOR
 
-Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
