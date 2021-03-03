@@ -19,41 +19,16 @@ GeoTag is available from several sources
   `brew cask install geotag` to install.
 * [GitHub](https://github.com/marchyman/GeoTag)
 
-## Work In Progress
-
-### Bug Fix
-
-* pull date/time from image file if an XMP file exists but does not
-  include date/time metadata.  Reportedly FastRawViewer creates XMP files
-  that only contain modified metadata.
-
-## GeoTag 4.10
+## GeoTag 4.11
 
 ### New Feature
 
-* Add preference item to preserve the original image file
-  modification time when updating GeoLocation data.
+* ExifTool version 12.21
 
-* Add "Discard tracks" under the File menu. All tracks are cleared from the map.
+### Bug Fix
 
-* Allow paste into change timestamp and update location windows.
-
-* Paste into images when not using the Update Location window now has a new
-  format.  The format is "lat | lon" where lat and lon may be one of the
-  following formats.
-
-  -dd.dddd R            Coordinate in degrees
-  -dd mm.mmmm R         Coordinate in degrees and minutes
-  -dd mm ss.ssss R      Coordinate in degrees, minutes, and seconds
-
-  S latitudes and W longitudes can be indicated by a negative number
-  of degrees or the appropriate reference (R) value.  It is an error if both
-  are used.  Degree (°), Minute ('), and Second (") marks are optional
-  and ignored if found at the end of a value.
-
-* Update to exiftool 12.12
-
-* Compiled to also run on Apple Silicon
+* pull date/time and existing location from image file if an XMP file exists.
+  Data from the XMP file has prioritty and will override data in the image file.
 
 ### Known Bugs
 

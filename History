@@ -1,10 +1,13 @@
-## Work In Progress
+## GeoTag 4.11
+
+### New Feature
+
+* ExifTool version 12.21
 
 ### Bug Fix
 
-* pull date/time from image file if an XMP file exists but does not
-  include date/time metadata.  Reportedly FastRawViewer creates XMP files
-  that only contain modified metadata.
+* pull date/time and existing location from image file if an XMP file exists.
+  Data from the XMP file has prioritty and will override data in the image file.
 
 ## GeoTag 4.10
 
