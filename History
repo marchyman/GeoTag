@@ -6,8 +6,9 @@
 
 ### Bug Fix
 
-* pull date/time and existing location from image file if an XMP file exists.
-  Data from the XMP file has prioritty and will override data in the image file.
+* Pull date/time and existing location information from the image file
+  even when an XMP file exists.  The same metadata from an XMP file, if
+  present, will have priority and override the metadata from the image file.
 
 ## GeoTag 4.10
 
