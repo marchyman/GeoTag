@@ -742,6 +742,8 @@ extension TableViewController: NSTableViewDelegate {
         var value = ""
         var tip: String? = nil
         if let id = tableColumn?.identifier {
+            var dtColumnChanged = false
+            var llColumnChanged = false
             switch id {
             case NSUserInterfaceItemIdentifier("imageName"):
                 value = image.imageName
@@ -751,7 +753,9 @@ extension TableViewController: NSTableViewDelegate {
                 tip = image.url.path
             case NSUserInterfaceItemIdentifier("dateTime"):
                 value = image.dateTime
+                dtColumnChanged = image.dateTime != image.originalDateTime
             case NSUserInterfaceItemIdentifier("latitude"):
+                llColumnChanged = image.location != image.originalLocation
                 if let coord = image.location {
                     switch Preferences.coordFormat() {
                     case .deg:
@@ -763,6 +767,7 @@ extension TableViewController: NSTableViewDelegate {
                     }
                 }
             case NSUserInterfaceItemIdentifier("longitude"):
+                llColumnChanged = image.location != image.originalLocation
                 if let coord = image.location {
                     switch Preferences.coordFormat() {
                     case .deg:
@@ -795,6 +800,8 @@ extension TableViewController: NSTableViewDelegate {
                 colView.textField?.textColor = NSColor.systemOrange
             } else if image.updateFailed {
                 colView.textField?.textColor = NSColor.systemRed
+            } else if dtColumnChanged || llColumnChanged {
+            	colView.textField?.textColor = NSColor.systemGreen
             }
             return colView
         }

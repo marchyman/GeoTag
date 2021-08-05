@@ -19,6 +19,14 @@ GeoTag is available from several sources
   `brew cask install geotag` to install.
 * [GitHub](https://github.com/marchyman/GeoTag)
 
+## WIP
+
+### New Feature
+
+* Change display color of changed but not yet saved fields to green.  This
+  helps identify work in progress when changing the location or timestamp
+  of several images.
+
 ## GeoTag 4.11
 
 ### New Feature

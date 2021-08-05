@@ -1,3 +1,11 @@
+## WIP
+
+### New Feature
+
+* Change display color of changed but not yet saved fields to green. This
+  helps identify work in progress when changing the location or timestamp
+  of several images.
+
 ## GeoTag 4.11
 
 ### New Feature
