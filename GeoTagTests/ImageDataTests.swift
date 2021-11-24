@@ -3,7 +3,7 @@
 //  GeoTagTests
 //
 //  Created by Marco S Hyman on 5/24/19.
-//  Copyright © 2019 Marco S Hyman. All rights reserved.
+//  Copyright © 2019, 2021 Marco S Hyman. All rights reserved.
 //
 
 import XCTest
@@ -73,6 +73,9 @@ class ImageDataTests: XCTestCase {
             XCTFail("Cannot set save folder")
             return
         }
+        // needed for Sidecar file portions of the test
+        defaults.set(true, forKey: Preferences.sidecarKey)
+
         // The returned saveFolder has symlinks resolved.
         // resolvingSymlinksInPath doesn't work for folders
         // adjust the url path (add /private as the first component) and

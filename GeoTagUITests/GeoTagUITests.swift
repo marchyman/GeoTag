@@ -3,7 +3,7 @@
 //  GeoTagUITests
 //
 //  Created by Marco S Hyman on 8/6/18.
-//  Copyright © 2018 Marco S Hyman. All rights reserved.
+//  Copyright © 2018, 2021 Marco S Hyman. All rights reserved.
 //
 
 import XCTest
@@ -30,38 +30,18 @@ class A_GeoTagUITests: XCTestCase {
         // setup will make sure it happens for each test method.
         // UITESTS causes defaults to be cleared upon startup.
         let app = XCUIApplication()
-        app.launchEnvironment = ["UITESTS":"1"]
+        // app.launchEnvironment = ["UITESTS":"1"]
         app.launch()
 
         // Now set up user defaults for testing.  The app should have opened
         // the preferences window.  Find and click on the path field.
-
-        let window = app.windows["GeoTag Preferences"]
-        XCTAssertTrue(window.exists)
-        let path = window.descendants(matching: .other).element
-        XCTAssertTrue(path.exists)
-        path.click()
-
-        // an open dialog should have been opened. Use key shortcuts to
-        // set the Trash folder to a known location.
-
-        let dialog = app.dialogs.element
-        XCTAssertTrue(dialog.exists)
-        dialog.typeKey("G", modifierFlags: [.shift, .command])
-        let sheet = dialog.descendants(matching: .sheet).element
-        XCTAssertTrue(sheet.exists)
-        sheet.typeText(trashFile)
-        XCTAssertTrue(sheet.buttons["Go"].exists)
-        sheet.buttons["Go"].click()
-        let button = dialog.buttons["Open"]
-        XCTAssertTrue(button.exists)
-        button.click()
-
-        // now close the window.
-
-        let close = window.buttons[XCUIIdentifierCloseWindow]
-        XCTAssertTrue(close.exists)
-        close.click()
+        // ^^^^^^^
+        // That won't work any more because clicking on the path no longer opens
+        // a sheet that can be accessed by UI tests. I would set the path
+        // programatically but the UI tests can't access the app internals even
+        // when @testable import is used.  Or I'm doing something wrong.
+        //
+        // Instead set up prefs by hand and do not set UITESTS in the environment.
     }
 
     override func tearDown() {
