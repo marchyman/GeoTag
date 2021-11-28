@@ -30,18 +30,30 @@ class A_GeoTagUITests: XCTestCase {
         // setup will make sure it happens for each test method.
         // UITESTS causes defaults to be cleared upon startup.
         let app = XCUIApplication()
-        // app.launchEnvironment = ["UITESTS":"1"]
+        app.launchEnvironment = ["UITESTS":"1"]
         app.launch()
 
         // Now set up user defaults for testing.  The app should have opened
-        // the preferences window.  Find and click on the path field.
-        // ^^^^^^^
-        // That won't work any more because clicking on the path no longer opens
-        // a sheet that can be accessed by UI tests. I would set the path
-        // programatically but the UI tests can't access the app internals even
-        // when @testable import is used.  Or I'm doing something wrong.
-        //
-        // Instead set up prefs by hand and do not set UITESTS in the environment.
+        // the preferences window.
+
+        let window = app.windows["GeoTag Preferences"]
+        XCTAssertTrue(window.exists)
+        let path = window.descendants(matching: .other).element
+        XCTAssertTrue(path.exists)
+        path.click()
+
+        // can't get the open selection window... type blind into the app
+
+		app.typeKey("g", modifierFlags: [.shift, .command])
+		app.typeText(trashFile)
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+
+        // close the preferences window
+
+        let close = window.buttons[XCUIIdentifierCloseWindow]
+        XCTAssertTrue(close.exists)
+        close.click()
     }
 
     override func tearDown() {
@@ -63,6 +75,7 @@ class A_GeoTagUITests: XCTestCase {
         
         // check the latitude/longitude display formats
         let buttons = preferences.descendants(matching: .radioButton)
+        print(buttons.debugDescription)
         XCTAssertEqual(buttons.count, 3)
         let deg = buttons.matching(identifier: "deg").element
         XCTAssertEqual(deg.value as! Int, 1)
