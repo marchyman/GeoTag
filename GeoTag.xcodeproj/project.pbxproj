@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4901B8C22754692B0073BFDD /* ChangeZoneWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901B8C12754692B0073BFDD /* ChangeZoneWindow.swift */; };
+		4901B8C4275469A80073BFDD /* ChangeZoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901B8C3275469A80073BFDD /* ChangeZoneViewController.swift */; };
+		4901B8C627546A910073BFDD /* ChangeZone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4901B8C527546A910073BFDD /* ChangeZone.storyboard */; };
 		490DE1C62297A650000AEAB5 /* GeoTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EECC19495FB100293C73 /* GeoTagTests.swift */; };
 		4924E31923EF329200021B32 /* SaveFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4924E31823EF329200021B32 /* SaveFolder.swift */; };
 		492978901984B48D00BE0706 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 4929788F1984B48D00BE0706 /* GeoTag Help */; };
@@ -64,6 +67,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4901B8C12754692B0073BFDD /* ChangeZoneWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeZoneWindow.swift; sourceTree = "<group>"; };
+		4901B8C3275469A80073BFDD /* ChangeZoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeZoneViewController.swift; sourceTree = "<group>"; };
+		4901B8C527546A910073BFDD /* ChangeZone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ChangeZone.storyboard; sourceTree = "<group>"; };
 		490410E42297689B00B34F81 /* old-preferences.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "old-preferences.jpg"; sourceTree = "<group>"; };
 		490410E52297689B00B34F81 /* track.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = track.jpg; sourceTree = "<group>"; };
 		490410E62297689B00B34F81 /* geotag.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = geotag.jpg; sourceTree = "<group>"; };
@@ -217,6 +223,9 @@
 				494E94FF210E9F740076B58F /* ChangeTime.storyboard */,
 				494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */,
 				494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */,
+				4901B8C527546A910073BFDD /* ChangeZone.storyboard */,
+				4901B8C12754692B0073BFDD /* ChangeZoneWindow.swift */,
+				4901B8C3275469A80073BFDD /* ChangeZoneViewController.swift */,
 				49D6BD8F22864E65001A69E0 /* ChangeLocation.storyboard */,
 				49D6BD9122864EBC001A69E0 /* ChangeLocationWindow.swift */,
 				49D6BD9322865064001A69E0 /* ChangeLocationViewController.swift */,
@@ -407,6 +416,7 @@
 			files = (
 				49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */,
 				494E9500210E9F740076B58F /* ChangeTime.storyboard in Resources */,
+				4901B8C627546A910073BFDD /* ChangeZone.storyboard in Resources */,
 				49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */,
 				49DDA5111D82538E00DEFAAF /* ExifTool in Resources */,
 				49D6BD9022864E65001A69E0 /* ChangeLocation.storyboard in Resources */,
@@ -475,10 +485,12 @@
 				4982FFA2229F554300C1D312 /* PreferencesWindow.swift in Sources */,
 				494E9502210EA1B40076B58F /* ChangeTimeWindow.swift in Sources */,
 				4982FFA4229F582800C1D312 /* PreferencesView.swift in Sources */,
+				4901B8C22754692B0073BFDD /* ChangeZoneWindow.swift in Sources */,
 				498BC9EA210524160070A528 /* Gpx.swift in Sources */,
 				4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */,
 				49F928741D1CB34E00D49F08 /* MapView.swift in Sources */,
 				497EE5D3195CAE6300306283 /* ImageData.swift in Sources */,
+				4901B8C4275469A80073BFDD /* ChangeZoneViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

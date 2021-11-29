@@ -337,6 +337,8 @@ final class TableViewController: NSViewController {
                    !Gpx.gpxTracks.isEmpty &&
                    tableView.numberOfSelectedRows > 0 &&
                    images[tableView.selectedRow].validImage
+        case #selector(modifyTimeZone(_:)):
+            return true
         case #selector(modifyDateTime(_:)):
             return !saveInProgress &&
                    tableView.numberOfSelectedRows > 0 &&
@@ -578,6 +580,17 @@ final class TableViewController: NSViewController {
             self.appDelegate.undoManager.endUndoGrouping()
             self.appDelegate.undoManager.setActionName("locn from track")
         }
+    }
+
+    /// Set the time zone used for image timestamps.
+    ///
+    ///
+    /// - Parameter Any: unused
+    ///
+    /// Normally the system time zone is assumed for image timestamps.  If images were timestamped
+    /// with the camera set to some other zone that zone can be entered here.
+    @IBAction func modifyTimeZone(_ sender: Any) {
+        openChangeZoneWindow()
     }
 
     /// Modify Date/Time menu item action
