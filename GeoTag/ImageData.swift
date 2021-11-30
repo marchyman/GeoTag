@@ -470,6 +470,14 @@ extension ImageData {
         }
         return 0
     }
+
+    func intervalFromEpoch(with zone: TimeZone?) -> TimeInterval {
+        dateFormatter.timeZone = zone
+        if let convertedDate = dateFormatter.date(from: dateTime) {
+            return convertedDate.timeIntervalSince1970
+        }
+        return 0
+    }
 }
 
 

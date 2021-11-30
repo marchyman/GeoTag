@@ -29,6 +29,11 @@ import Foundation
 /// GPX file processing
 
 class Gpx: NSObject {
+    /// TimeZone
+    ///
+    /// Holds the optional timezone to use with image timestamp when matching image to tracklog.
+    static var timeZone: TimeZone?
+
     /// All GPX objects
     static var gpxTracks = [Gpx]()
 
@@ -150,7 +155,7 @@ class Gpx: NSObject {
 
     func search(image: ImageData,
                 found: (Coord) -> ()) {
-        let imageTime = image.dateFromEpoch
+        let imageTime = image.intervalFromEpoch(with: Self.timeZone)
         var lastPoint: Point?
 
         // search every track for the last point with a timestamp <= the
