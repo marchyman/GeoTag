@@ -12,7 +12,6 @@
 		4901B8C627546A910073BFDD /* ChangeZone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4901B8C527546A910073BFDD /* ChangeZone.storyboard */; };
 		490DE1C62297A650000AEAB5 /* GeoTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EECC19495FB100293C73 /* GeoTagTests.swift */; };
 		4924E31923EF329200021B32 /* SaveFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4924E31823EF329200021B32 /* SaveFolder.swift */; };
-		492978901984B48D00BE0706 /* GeoTag Help in Resources */ = {isa = PBXBuildFile; fileRef = 4929788F1984B48D00BE0706 /* GeoTag Help */; };
 		492AFD23211A906200F74AC1 /* TableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492AFD22211A906200F74AC1 /* TableTests.swift */; };
 		493988B4229A40210067E081 /* TestPictures in Resources */ = {isa = PBXBuildFile; fileRef = 493988B3229A40210067E081 /* TestPictures */; };
 		493988B5229A40520067E081 /* TestPictures in Resources */ = {isa = PBXBuildFile; fileRef = 493988B3229A40210067E081 /* TestPictures */; };
@@ -421,7 +420,6 @@
 				49D6BD9022864E65001A69E0 /* ChangeLocation.storyboard in Resources */,
 				49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */,
 				4982FFA0229F399A00C1D312 /* Preferences.storyboard in Resources */,
-				492978901984B48D00BE0706 /* GeoTag Help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
