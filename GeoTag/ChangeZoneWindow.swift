@@ -29,10 +29,12 @@ import AppKit
 /// Global function to open the time zone change window
 ///
 
-func openChangeZoneWindow(_ callback: @escaping (_ timeZone: TimeZone) -> ()) {
+func openChangeZoneWindow(currentZone: TimeZone?,
+                          _ callback: @escaping (_ timeZone: TimeZone) -> ()) {
     let id = ChangeZoneWindowController.storyboardName
     let storyboard = NSStoryboard(name: id, bundle: nil)
     if let czc = storyboard.instantiateInitialController() as? ChangeZoneWindowController {
+        czc.currentZone = currentZone
         czc.callback = callback
         czc.window?.makeKeyAndOrderFront(nil)
         return
@@ -43,6 +45,7 @@ func openChangeZoneWindow(_ callback: @escaping (_ timeZone: TimeZone) -> ()) {
 
 final class ChangeZoneWindowController: NSWindowController {
     static let storyboardName = NSStoryboard.Name("ChangeZone")
+    var currentZone: TimeZone?
     var callback: ((_ timeZone: TimeZone) -> ())? = nil
 
     override func windowDidLoad() {

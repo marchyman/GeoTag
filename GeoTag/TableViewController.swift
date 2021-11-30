@@ -590,7 +590,7 @@ final class TableViewController: NSViewController {
     /// Normally the system time zone is assumed for image timestamps.  If images were timestamped
     /// with the camera set to some other zone that zone can be entered here.
     @IBAction func modifyTimeZone(_ sender: Any) {
-        openChangeZoneWindow() { timeZone in
+        openChangeZoneWindow(currentZone: Gpx.timeZone) { timeZone in
             Gpx.timeZone = timeZone
         }
     }

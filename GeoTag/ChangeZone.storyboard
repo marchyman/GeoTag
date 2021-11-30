@@ -77,26 +77,35 @@ Gw
                                 </connections>
                             </button>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1FF-qz-kC5">
-                                <rect key="frame" x="18" y="186" width="414" height="87"/>
+                                <rect key="frame" x="18" y="195" width="414" height="78"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" selectable="YES" alignment="justified" id="58C-DI-0WS">
                                     <font key="font" metaFont="system"/>
-                                    <string key="title">When matching images to a GPS track log GeoTag assumes image Time Zones are the local-to-this-computer Time Zone. If the camera was set to the local time in some other timezone select the appropriate time zone here. </string>
+                                    <string key="title">When matching images to a GPS track log GeoTag assumes image Time Zones are the local-to-this-computer Time Zone. If the camera was set to the local time in some other time zone select the appropriate time zone here. </string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="B4A-Gh-vmW">
-                                <rect key="frame" x="18" y="156" width="108" height="16"/>
+                                <rect key="frame" x="18" y="156" width="122" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Local Time Zone:" id="gGb-4s-rBz">
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Current Time Zone:" id="gGb-4s-rBz">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pQe-nX-kob">
+                                <rect key="frame" x="159" y="132" width="273" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="id" id="P3E-Jg-zHG">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NfR-5A-QBc">
-                                <rect key="frame" x="147" y="156" width="34" height="16"/>
+                                <rect key="frame" x="159" y="156" width="75" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="-24" id="T0L-zL-tWB">
                                     <font key="font" metaFont="system"/>
@@ -105,16 +114,16 @@ Gw
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jVP-Uf-PMe">
-                                <rect key="frame" x="18" y="97" width="123" height="16"/>
+                                <rect key="frame" x="18" y="97" width="103" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Camera Time Zone:" id="kQ5-qO-HCn">
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="New Time Zone:" id="kQ5-qO-HCn">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ns2-RX-T9F">
-                                <rect key="frame" x="146" y="90" width="78" height="25"/>
+                                <rect key="frame" x="158" y="90" width="85" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <popUpButtonCell key="cell" type="push" title="-10:30" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Sef-vp-tMo" id="Znv-5H-HUD">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -130,7 +139,7 @@ Gw
                                 </connections>
                             </popUpButton>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Yr-Su-OzM">
-                                <rect key="frame" x="147" y="73" width="285" height="16"/>
+                                <rect key="frame" x="159" y="69" width="285" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="camera" id="VAS-LB-zNa">
                                     <font key="font" metaFont="system"/>
@@ -150,22 +159,13 @@ Gw
                                 <rect key="frame" x="20" y="58" width="410" height="5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </box>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pQe-nX-kob">
-                                <rect key="frame" x="147" y="132" width="285" height="16"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="id" id="P3E-Jg-zHG">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="currentTimeZone" destination="pQe-nX-kob" id="589-cE-ryD"/>
+                        <outlet property="currentUtc" destination="NfR-5A-QBc" id="6Xp-QY-0iP"/>
                         <outlet property="selectedId" destination="8Yr-Su-OzM" id="L4j-SZ-ixj"/>
                         <outlet property="selectedZone" destination="Ns2-RX-T9F" id="pAF-2E-k0g"/>
-                        <outlet property="thisTimeZone" destination="pQe-nX-kob" id="589-cE-ryD"/>
-                        <outlet property="thisUtc" destination="NfR-5A-QBc" id="6Xp-QY-0iP"/>
                     </connections>
                 </viewController>
                 <customObject id="9uD-mB-xHs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -27,6 +27,7 @@ import Cocoa
 import MapKit
 
 class ChangeZoneViewController: NSViewController {
+    var currentZone: TimeZone?
     var callback: ((_ timeZone: TimeZone) -> ())?
     var newTimeZone: TimeZone? = nil
 
@@ -36,20 +37,26 @@ class ChangeZoneViewController: NSViewController {
         "+4:30", "+5", "+5:30", "+5:45", "+6", "+6:30", "+7", "+8", "+8:45",
         "+9", "+9:30", "+10", "+10:30", "+11", "+12", "+12:45", "+13", "+14"
     ]
-    @IBOutlet weak var thisUtc: NSTextField!
-    @IBOutlet weak var thisTimeZone: NSTextField!
+    @IBOutlet weak var currentUtc: NSTextField!
+    @IBOutlet weak var currentTimeZone: NSTextField!
     @IBOutlet weak var selectedZone: NSPopUpButton!
     @IBOutlet weak var selectedId: NSTextField!
 
     override func viewWillAppear() {
         super.viewWillAppear()
         if let wc = view.window?.windowController as? ChangeZoneWindowController {
+            currentZone = wc.currentZone
             callback = wc.callback
-            // current time zone
-            let seconds = TimeZone.autoupdatingCurrent.secondsFromGMT()
+
+            if currentZone == nil {
+                currentZone = TimeZone.autoupdatingCurrent
+            }
+            guard let zone = currentZone else { return }
+
+            let seconds = zone.secondsFromGMT()
             let zoneTitle = timeZoneTitle(from: seconds)
-            thisUtc.stringValue = zoneTitle
-            thisTimeZone.stringValue = TimeZone.autoupdatingCurrent.identifier
+            currentUtc.stringValue = zoneTitle
+            currentTimeZone.stringValue = zone.identifier
             selectedZone.removeAllItems()
             selectedZone.addItems(withTitles: validTimeZones)
             selectedZone.selectItem(withTitle: zoneTitle)
@@ -91,7 +98,7 @@ class ChangeZoneViewController: NSViewController {
     // given a time zone as number of seconds from GMT return a string that
     // matches the nearest valid time zone.
     func timeZoneTitle(from seconds: Int) -> String {
-        // special case UTC
+        // special case UTC/GMT
         if seconds == 0 {
             return "±0"
         }
