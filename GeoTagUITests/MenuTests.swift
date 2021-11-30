@@ -61,8 +61,8 @@ class B_MenuTests: XCTestCase {
     func editMenu() {
         let menuNames = ["Undo", "Redo", "Cut", "Copy", "Paste", "Delete",
                          "Select All", "Show In Finder", "Interpolate",
-                         "Set Time Offset", "Locn from track", "Modify Date/Time",
-                         "Modify Location"]
+                         "Locn from track", "Adjust Time Zone",
+                         "Modify Date/Time", "Modify Location"]
 
         let editMenu = menuBarsQuery.menuBarItems["Edit"]
         editMenu.click()
@@ -74,7 +74,11 @@ class B_MenuTests: XCTestCase {
         for name in menuNames {
             let item = editMenuSearch[name]
             XCTAssertTrue(item.exists)
-            XCTAssertFalse(item.isEnabled)
+            if name == "Adjust Time Zone" {
+                XCTAssertTrue(item.isEnabled)
+            } else {
+                XCTAssertFalse(item.isEnabled)
+            }
         }
     }
 
@@ -107,8 +111,8 @@ class B_MenuTests: XCTestCase {
 
     func rightClickMenu() {
         let menuNames = ["Cut", "Copy", "Paste", "Delete", "Show In Finder",
-                         "Interpolate", "Set Time Offset", "Locn from track",
-                         "Modify Date/Time", "Modify Location", "Clear image list" ]
+                         "Interpolate", "Locn from track", "Modify Date/Time",
+                         "Modify Location", "Clear image list" ]
 
         let table = app.windows["GeoTag"].tables.firstMatch
         table.rightClick()

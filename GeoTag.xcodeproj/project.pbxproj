@@ -355,7 +355,6 @@
 					};
 					49B0EEB319495FB100293C73 = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = A3UXBEBE8Z;
 						LastSwiftMigration = 1020;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -775,6 +774,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = A3UXBEBE8Z;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/GeoTag/Info.plist";
@@ -802,6 +802,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = A3UXBEBE8Z;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/GeoTag/Info.plist";
