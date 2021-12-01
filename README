@@ -40,18 +40,6 @@ GeoTag is available from several sources
 * Remove broken help page.  Instead link to the help information on
   www.snafu.org.
 
-## GeoTag 4.11
-
-### New Feature
-
-* ExifTool version 12.21
-
-### Bug Fix
-
-* Pull date/time and existing location information from the image file
-  even when an XMP file exists.  The same metadata from an XMP file, if
-  present, will have priority and override the metadata from the image file.
-
 ### Known Bugs
 
 * Race condition: When photos with the same name are among multiple images
@@ -63,7 +51,7 @@ GeoTag is available from several sources
   and macOS libraries handle date and time.  One hopes that the year 2034 limit
   will eventually be removed ;)
 
-### See the file named *History* for other changes and bug fixes
+### See the file named *History* for earlier changes and bug fixes
 
 ### Image Backups
 

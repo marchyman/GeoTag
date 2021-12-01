@@ -76,7 +76,6 @@
 		490F7EAA1B339A6C00DB36B5 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
 		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
 		4924E31823EF329200021B32 /* SaveFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveFolder.swift; sourceTree = "<group>"; };
-		4929788F1984B48D00BE0706 /* GeoTag Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "GeoTag Help"; sourceTree = "<group>"; };
 		492AFCEC211A5DF900F74AC1 /* TestTrack.GPX */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestTrack.GPX; sourceTree = "<group>"; };
 		492AFD22211A906200F74AC1 /* TableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableTests.swift; sourceTree = "<group>"; };
 		493988B3229A40210067E081 /* TestPictures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestPictures; sourceTree = "<group>"; };
@@ -249,7 +248,6 @@
 				49B0EEBD19495FB100293C73 /* Images.xcassets */,
 				49B0EEB819495FB100293C73 /* Info.plist */,
 				49BC3D0B195A62F2009BEC94 /* Localizable.strings */,
-				4929788F1984B48D00BE0706 /* GeoTag Help */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -771,6 +769,7 @@
 				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = A3UXBEBE8Z;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -784,6 +783,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.snafu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = GeoTag;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = DEBUG;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -799,6 +799,7 @@
 				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = A3UXBEBE8Z;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -812,6 +813,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.snafu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = GeoTag;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 5.0;
 			};
