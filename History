@@ -12,6 +12,8 @@
   helps identify work in progress when changing the location or timestamp
   of several images.
 
+* ExifTool 12.30
+
 ### Bug Fix
 
 * Remove broken help page.  Instead link to the help information on
