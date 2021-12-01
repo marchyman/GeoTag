@@ -12,7 +12,7 @@ meta information extracted from or written to a file.
 =head1 TAG TABLES
 
 The tables listed below give the names of all tags recognized by ExifTool.
-They contain a total of 24089 tags, with 15594 unique tag names.
+They contain a total of 24297 tags, with 15752 unique tag names.
 
 B<Tag ID>, B<Index#> or B<Sequence> is given in the first column of each
 table.  A B<Tag ID> is the computer-readable equivalent of a tag name, and
@@ -115,6 +115,7 @@ L<https://www.w3.org/Graphics/JPEG/jfif3.pdf> for the JPEG specification.
                PreviewImage                     no
   'APP3'       Meta                             Kodak Meta
                Stim                             Stim
+               JPS                              JPEG JPS
                ThermalData                      no
                PreviewImage                     no
   'APP4'       Scalado                          Scalado
@@ -137,6 +138,7 @@ L<https://www.w3.org/Graphics/JPEG/jfif3.pdf> for the JPEG specification.
   'APP9'       MediaJukebox                     JPEG MediaJukebox
   'APP10'      Comment                          no
   'APP11'      JPEG-HDR                         JPEG HDR
+               JUMBF                            Jpeg2000
   'APP12'      PictureInfo                      APP12 PictureInfo
                Ducky                            APP12 Ducky
   'APP13'      Photoshop                        Photoshop
@@ -172,6 +174,18 @@ images).
   Tag ID   Tag Name                             Writable
   ------   --------                             --------
   'Rev'    OcadRevision                         no
+
+=head3 JPEG JPS Tags
+
+Tags found in JPEG Stereo (JPS) images.
+
+  Index1   Tag Name                             Writable
+  ------   --------                             --------
+     10    JPSSeparation                        no
+     11    JPSFlags                             no
+     12    JPSLayout                            no
+     13    JPSType                              no
+     16    JPSComment                           no
 
 =head3 JPEG EPPIM Tags
 
@@ -3505,7 +3519,8 @@ These tags belong to the ExifTool XMP-iptcCore family 1 group.
 
 This table contains tags defined by the IPTC Extension schema version 1.5.
 The actual namespace prefix is "Iptc4xmpExt", but ExifTool shortens this for
-the family 1 group name. (see L<http://www.iptc.org/IPTC4XMP/>)
+the family 1 group name. (see
+L<http://www.iptc.org/standards/photo-metadata/iptc-standard/>)
 
 These tags belong to the ExifTool XMP-iptcExt family 1 group.
 
@@ -5923,6 +5938,7 @@ Unknown only to reduce the volume of the normal output.
   0x0023   FocusPointWrap                       no
   0x0025   ManualFocusPointIllumination         no
   0x0026   AF-AssistIlluminator                 no
+  0x0027   ManualFocusRingInAFMode              no
   0x0029   ISOStepSize                          no
   0x002a   ExposureControlStepSize              no
   0x002b   EasyExposureCompensation             no
@@ -6100,6 +6116,9 @@ Unknown only to reduce the volume of the normal output.
   0x016b   LimitAF-AreaModeSelWideLPeople?      no
   0x016c   LimitAF-AreaModeSelWideLAnimals?     no
   0x016e   AFAreaMode                           no
+  0x0170   PreferSubSelectorCenter              no
+  0x0171   KeepExposureWithTeleconverter        no
+  0x0174   FocusPointSelectionSpeed             no
 
 =head2 Canon Tags
 
@@ -9932,6 +9951,8 @@ Tags extracted from FLIR Public image Format (FPF) files.
   0x1100   AutoBracketing                       int16u
   0x1101   SequenceNumber                       int16u
   0x1103   DriveSettings                        FujiFilm DriveSettings
+  0x1105   PixelShiftShots                      int16u
+  0x1106   PixelShiftOffset                     rational64s[2]
   0x1153   PanoramaAngle                        int16u
   0x1154   PanoramaDirection                    int16u
   0x1201   AdvancedFilter                       int32u
@@ -9988,10 +10009,11 @@ Tags extracted from FLIR Public image Format (FPF) files.
 
   Index4   Tag Name                             Writable
   ------   --------                             --------
-    0.1    FocusMode2                           int32u & 0xff
-    0.2    AFAreaMode                           int32u & 0xf00
-    0.3    AFAreaPointSize                      int32u & 0xf000
-    0.4    AFAreaZoneSize                       int32u & 0xf0000
+    0.1    FocusMode2                           int32u & 0x0f
+    0.2    PreAF                                int32u & 0xf0
+    0.3    AFAreaMode                           int32u & 0xf00
+    0.4    AFAreaPointSize                      int32u & 0xf000
+    0.5    AFAreaZoneSize                       int32u & 0xf0000
 
 =head3 FujiFilm AFCSettings Tags
 
@@ -15600,6 +15622,7 @@ These tags are used in Panasonic/Leica cameras.
   0x00d1   ISO                                  int32u
   0x00d2   MonochromeGrainEffect                int16u
   0x00d6   NoiseReductionStrength               rational64s
+  0x00e4   LensTypeModel                        int16u
   0x0e00   PrintIM                              PrintIM
   0x2003   TimeInfo                             Panasonic TimeInfo
   0x8000   MakerNoteVersion                     undef
@@ -15801,6 +15824,9 @@ This information is written by the Leica S (Typ 007) and M10 models.
   0x034c   UserProfile                          string
   0x0359   ISOSelected                          int32s
   0x035a   FNumber                              int32s
+  0x035b   CorrelatedColorTemp                  int16u
+  0x035c   ColorTint                            int16s
+  0x035d   WhitePoint                           rational64u[2]
 
 =head3 Panasonic Type2 Tags
 
@@ -15954,6 +15980,7 @@ These tags are used in Pentax/Asahi cameras.
   0x008b   ISO                                  int32u
   0x0092   IntervalShooting                     int16u[2]
   0x0095   SkinToneCorrection                   int8s[2]
+           SkinToneCorrection                   int8s[3]
   0x0096   ClarityControl                       int8s[2]
   0x0200   BlackPoint                           int16u[4]
   0x0201   WhitePoint                           int16u[4]
@@ -15986,6 +16013,8 @@ These tags are used in Pentax/Asahi cameras.
   0x0215   CameraInfo                           Pentax CameraInfo
   0x0216   BatteryInfo                          Pentax BatteryInfo
   0x021b   SaturationInfo?                      no
+  0x021c   ColorMatrixA2                        undef[18]
+  0x021d   ColorMatrixB2                        undef[18]
   0x021f   AFInfo                               Pentax AFInfo
   0x0220   HuffmanTable?                        no
   0x0221   KelvinWB                             Pentax KelvinWB
@@ -17014,11 +17043,13 @@ Camera orientation information written by the Gear 360 (SM-C200).
 
 Tags extracted from the trailer of JPEG images written when using certain
 features (such as "Sound & Shot" or "Shot & More") from Samsung models such
-as the Galaxy S4 and Tab S.
+as the Galaxy S4 and Tab S, and from the 'sefd' atom in HEIC images from the
+Samsung S10+.
 
   Tag Name                                      Writable
   --------                                      --------
   DepthMapData                                  no
+  DepthMapData2                                 no
   DepthMapName                                  no
   DualCameraImage                               no
   DualCameraImageName                           no
@@ -17026,9 +17057,11 @@ as the Galaxy S4 and Tab S.
   EmbeddedAudioFile                             no
   EmbeddedAudioFileName                         no
   EmbeddedImage                                 no
+  EmbeddedImage2                                no
   EmbeddedImageName                             no
   EmbeddedVideoFile                             no
   EmbeddedVideoType                             no
+  MCCData                                       no
   SingleShotDepthMap                            no
   SingleShotMeta                                Samsung SingleShotMeta
   SurroundShotVideo                             no
@@ -17513,6 +17546,13 @@ MakerNotes.
   0x202e   Quality                              int16u[2]
   0x202f   PixelShiftInfo                       undef
   0x2031   SerialNumber                         string
+  0x2032   Shadows                              int32s
+  0x2033   Highlights                           int32s
+  0x2034   Fade                                 int32s
+  0x2035   SharpnessRange                       int32s
+  0x2036   Clarity                              int32s
+  0x2037   FocusFrameSize                       no
+  0x2039   JPEG-HEIFSwitch                      int16u
   0x3000   ShotInfo                             Sony ShotInfo
   0x900b   Tag900b                              Sony Tag900b
   0x9050   Tag9050a                             Sony Tag9050a
@@ -18599,7 +18639,7 @@ Valid from July 2015 for ILCE-6100/6300/6400/6500/6600/7C/7M3/7RM2/7RM3/7RM4/
 
 =head3 Sony Tag9050c Tags
 
-Valid from July 2020 for ILCE-1/7SM3.
+Valid from July 2020 for ILCE-1/7SM3, ILME-FX3.
 
   Index1   Tag Name                             Writable
   ------   --------                             --------
@@ -18614,6 +18654,7 @@ Valid from July 2020 for ILCE-1/7SM3.
     104    SonyFNumber                          int16u
     107    ReleaseMode2                         int8u
     136    InternalSerialNumber                 int8u[6]~
+    138    InternalSerialNumber                 int8u[6]~
 
 =head3 Sony Tag9400a Tags
 
@@ -18815,7 +18856,7 @@ These tags are currently extracted for SLT models only.
 
 =head3 Sony Tag940c Tags
 
-NEX and ILCE models only.
+E-mount cameras only.
 
   Index1   Tag Name                             Writable
   ------   --------                             --------
@@ -19005,7 +19046,7 @@ E-mount models.
 
 =head3 Sony Tag9416 Tags
 
-Valid for the ILCE-1/7SM3.
+Valid for the ILCE-1/7SM3, ILME-FX3.
 
   Index1   Tag Name                             Writable
   ------   --------                             --------
@@ -19200,8 +19241,11 @@ some models when the ExtractEmbedded option is used.
 
   Tag ID   Tag Name                             Writable
   ------   --------                             --------
+  0x8000   FNumber                              no
   0x8109   ExposureTime                         no
+  0x810a   MasterGainAdjustment                 no
   0x810b   ISO                                  no
+  0x810c   ElectricalExtenderMagnification      no
   0x8500   GPSVersionID                         no
   0x8501   GPSLatitudeRef                       no
   0x8502   GPSLatitude                          no
@@ -19212,7 +19256,10 @@ some models when the ExtractEmbedded option is used.
   0x850a   GPSMeasureMode                       no
   0x8512   GPSMapDatum                          no
   0x851d   GPSDateStamp                         no
+  0xe303   WhiteBalance                         no
   0xe304   DateTime                             no
+  0xe43b   PitchRollYaw                         no
+  0xe44b   Accelerometer                        no
 
 =head2 SonyIDC Tags
 
@@ -21767,6 +21814,178 @@ even if it is not listed in this table.
   YhiYloCorK1                                   no
   YhiYloCorK2                                   no
 
+=head2 Jpeg2000 Tags
+
+The tags below are extracted from JPEG 2000 images and the JUMBF metadata in
+JPEG images.  Note that ExifTool currently writes only EXIF, IPTC and XMP
+tags in Jpeg2000 images.
+
+  Tag ID   Tag Name                             Writable
+  ------   --------                             --------
+  'Exif'   EXIF                                 EXIF
+  'asoc'   Association                          Jpeg2000
+  'bfil'   BinaryFilter                         no
+  'bpcc'   BitsPerComponent                     no
+  'cdef'   ComponentDefinition                  no
+  'cgrp'   ColorGroup                           no
+  'chck'   DigitalSignature                     no
+  'cmap'   ComponentMapping                     no
+  'colr'   ColorSpecification                   Jpeg2000 ColorSpec
+  'comp'   Composition                          no
+  'copt'   CompositionOptions                   no
+  'cref'   Cross-Reference                      no
+  'creg'   CodestreamRegistration               no
+  'drep'   DesiredReproductions                 no
+  'dtbl'   DataReference                        no
+  'flst'   FragmentList                         no
+  'free'   Free                                 no
+  'ftbl'   FragmentTable                        no
+  'ftyp'   FileType                             Jpeg2000 FileType
+  'gtso'   GraphicsTechnologyStandardOutput     no
+  'ihdr'   ImageHeader                          Jpeg2000 ImageHeader
+  'inst'   InstructionSet                       no
+  'jP  '   JP2Signature                         no
+  'jp2c'   ContiguousCodestream                 no
+           PreviewImage                         no
+  'jp2h'   JP2Header                            Jpeg2000
+  'jp2i'   IntellectualProperty                 XMP
+  'jpch'   CodestreamHeader                     Jpeg2000
+  'jplh'   CompositingLayerHeader               Jpeg2000
+  'json'   JSONData                             JSON
+  'jumb'   JUMBFBox                             Jpeg2000
+  'jumd'   JUMBFDescr                           Jpeg2000 JUMD
+  'jxlc'   JXLCodestream                        no
+  'lbl '   Label                                no
+  'mdat'   MediaData                            no
+  'mp7b'   MPEG7Binary                          no
+  'nlst'   NumberList                           no
+  'opct'   Opacity                              no
+  'pclr'   Palette                              no
+  'prfl'   Profile                              no
+  'res '   Resolution                           Jpeg2000
+  'resc'   CaptureResolution                    Jpeg2000 CaptureResolution
+  'resd'   DisplayResolution                    Jpeg2000 DisplayResolution
+  'roid'   ROIDescription                       no
+  'rreq'   ReaderRequirements                   no
+  'uinf'   UUIDInfo                             Jpeg2000
+  'ulst'   UUIDList                             no
+  'url '   URL                                  no
+  'uuid'   UUID-EXIF                            EXIF
+           UUID-EXIF2                           EXIF
+           UUID-EXIF_bad                        EXIF
+           UUID-IPTC                            IPTC
+           UUID-IPTC2                           IPTC
+           UUID-XMP                             XMP
+           UUID-GeoJP2                          EXIF
+           UUID-Photoshop                       Photoshop
+           UUID-Signature                       no
+           UUID-Unknown                         no
+  'xml '   XML                                  XMP XML
+           XMP                                  -
+                                                XMP
+
+=head3 Jpeg2000 ColorSpec Tags
+
+  Index1   Tag Name                             Writable
+  ------   --------                             --------
+      0    ColorSpecMethod                      no
+      1    ColorSpecPrecedence                  no
+      2    ColorSpecApproximation               no
+      3    ICC_Profile                          ICC_Profile
+           ColorSpace                           no
+           ColorSpecData                        no
+
+=head3 Jpeg2000 FileType Tags
+
+  Index4   Tag Name                             Writable
+  ------   --------                             --------
+      0    MajorBrand                           no
+      1    MinorVersion                         no
+      2    CompatibleBrands                     no
+
+=head3 Jpeg2000 ImageHeader Tags
+
+  Index1   Tag Name                             Writable
+  ------   --------                             --------
+      0    ImageHeight                          no
+      4    ImageWidth                           no
+      8    NumberOfComponents                   no
+     10    BitsPerComponent                     no
+     11    Compression                          no
+
+=head3 Jpeg2000 JUMD Tags
+
+Information extracted from the JUMBF description box.
+
+  Tag ID       Tag Name                         Writable
+  ------       --------                         --------
+  'id'         JUMDID                           no
+  'label'      JUMDLabel                        no
+  'sig'        JUMDSignature                    no
+  'toggles'    JUMDToggles?                     no
+  'type'       JUMDType                         no
+
+=head3 Jpeg2000 CaptureResolution Tags
+
+  Index1   Tag Name                             Writable
+  ------   --------                             --------
+      0    CaptureYResolution                   no
+      4    CaptureXResolution                   no
+      8    CaptureYResolutionUnit               no
+      9    CaptureXResolutionUnit               no
+
+=head3 Jpeg2000 DisplayResolution Tags
+
+  Index1   Tag Name                             Writable
+  ------   --------                             --------
+      0    DisplayYResolution                   no
+      4    DisplayXResolution                   no
+      8    DisplayYResolutionUnit               no
+      9    DisplayXResolutionUnit               no
+
+=head2 JSON Tags
+
+Other than a few tags in the table below, JSON tags have not been
+pre-defined.  However, ExifTool will read any existing tags from basic
+JSON-formatted files.
+
+  Tag Name                                      Writable
+  --------                                      --------
+  ON1_SettingsData                              PLIST
+  ON1_SettingsMetadataCreated                   no
+  ON1_SettingsMetadataModified                  no
+  ON1_SettingsMetadataName                      no
+  ON1_SettingsMetadataPluginID                  no
+  ON1_SettingsMetadataTimestamp                 no
+  ON1_SettingsMetadataUsage                     no
+  ON1_SettingsMetadataVisibleToUser             no
+
+=head2 PLIST Tags
+
+Apple Property List tags.  ExifTool reads both XML and binary-format PLIST
+files, and will extract any existing tags even if they aren't listed below.
+These tags belong to the family 0 "PLIST" group, but family 1 group may be
+either "XML" or "PLIST" depending on whether the format is XML or binary.
+
+  Tag ID                       Tag Name         Writable
+  ------                       --------         --------
+  'MetaDataList//DateTimeOriginal'
+                               DateTimeOriginal no
+  'MetaDataList//Duration'     Duration         no
+  'MetaDataList//Geolocation/Latitude'
+                               GPSLatitude      no
+  'MetaDataList//Geolocation/Longitude'
+                               GPSLongitude     no
+  'MetaDataList//Geolocation/MapDatum'
+                               GPSMapDatum      no
+  'XMLFileType'                XMLFileType      no
+  'cast//name'                 Cast             no+
+  'codirectors//name'          Codirectors      no+
+  'directors//name'            Directors        no+
+  'producers//name'            Producers        no+
+  'screenwriters//name'        Screenwriters    no+
+  'studio//name'               Studio           no+
+
 =head2 APP12 Tags
 
 =head3 APP12 PictureInfo Tags
@@ -22515,7 +22734,9 @@ Tags found in the Microsoft "Xtra" atom of QuickTime videos.  Tag ID's are
 not shown because some are unruly GUID's.  Currently most of these tags are
 not writable because the Microsoft documentation is poor and samples were
 not available, but more tags may be made writable in the future if samples
-are provided.
+are provided.  Note that writable tags in this table are are flagged to
+"Avoid", which means that other more common tags will be written instead if
+possible unless the Microsoft group is specified explicitly.
 
   Tag Name                                      Writable
   --------                                      --------
@@ -23320,113 +23541,6 @@ to avoid name conflicts.
   'Codec'      Codec                            string
   'Duration'   Duration                         rational64u~
   'data'       RelatedVideoFile                 undef
-
-=head2 Jpeg2000 Tags
-
-The tags below are extracted from JPEG 2000 images, however ExifTool
-currently writes only EXIF, IPTC and XMP tags in these images.
-
-  Tag ID   Tag Name                             Writable
-  ------   --------                             --------
-  'asoc'   Association                          Jpeg2000
-  'bfil'   BinaryFilter                         no
-  'bpcc'   BitsPerComponent                     no
-  'cdef'   ComponentDefinition                  no
-  'cgrp'   ColorGroup                           no
-  'chck'   DigitalSignature                     no
-  'cmap'   ComponentMapping                     no
-  'colr'   ColorSpecification                   Jpeg2000 ColorSpec
-  'comp'   Composition                          no
-  'copt'   CompositionOptions                   no
-  'cref'   Cross-Reference                      no
-  'creg'   CodestreamRegistration               no
-  'drep'   DesiredReproductions                 no
-  'dtbl'   DataReference                        no
-  'flst'   FragmentList                         no
-  'free'   Free                                 no
-  'ftbl'   FragmentTable                        no
-  'ftyp'   FileType                             Jpeg2000 FileType
-  'gtso'   GraphicsTechnologyStandardOutput     no
-  'ihdr'   ImageHeader                          Jpeg2000 ImageHeader
-  'inst'   InstructionSet                       no
-  'jP  '   JP2Signature                         no
-  'jp2c'   ContiguousCodestream                 no
-  'jp2h'   JP2Header                            Jpeg2000
-  'jp2i'   IntellectualProperty                 XMP
-  'jpch'   CodestreamHeader                     Jpeg2000
-  'jplh'   CompositingLayerHeader               Jpeg2000
-  'lbl '   Label                                no
-  'mdat'   MediaData                            no
-  'mp7b'   MPEG7Binary                          no
-  'nlst'   NumberList                           no
-  'opct'   Opacity                              no
-  'pclr'   Palette                              no
-  'prfl'   Profile                              no
-  'res '   Resolution                           Jpeg2000
-  'resc'   CaptureResolution                    Jpeg2000 CaptureResolution
-  'resd'   DisplayResolution                    Jpeg2000 DisplayResolution
-  'roid'   ROIDescription                       no
-  'rreq'   ReaderRequirements                   no
-  'uinf'   UUIDInfo                             Jpeg2000
-  'ulst'   UUIDList                             no
-  'url '   URL                                  no
-  'uuid'   UUID-EXIF                            EXIF
-           UUID-EXIF2                           EXIF
-           UUID-EXIF_bad                        EXIF
-           UUID-IPTC                            IPTC
-           UUID-IPTC2                           IPTC
-           UUID-XMP                             XMP
-           UUID-GeoJP2                          EXIF
-           UUID-Photoshop                       Photoshop
-           UUID-Unknown                         no
-  'xml '   XML                                  XMP XML
-
-=head3 Jpeg2000 ColorSpec Tags
-
-  Index1   Tag Name                             Writable
-  ------   --------                             --------
-      0    ColorSpecMethod                      no
-      1    ColorSpecPrecedence                  no
-      2    ColorSpecApproximation               no
-      3    ICC_Profile                          ICC_Profile
-           ColorSpace                           no
-           ColorSpecData                        no
-
-=head3 Jpeg2000 FileType Tags
-
-  Index4   Tag Name                             Writable
-  ------   --------                             --------
-      0    MajorBrand                           no
-      1    MinorVersion                         no
-      2    CompatibleBrands                     no
-
-=head3 Jpeg2000 ImageHeader Tags
-
-  Index1   Tag Name                             Writable
-  ------   --------                             --------
-      0    ImageHeight                          no
-      4    ImageWidth                           no
-      8    NumberOfComponents                   no
-     10    BitsPerComponent                     no
-     11    Compression                          no
-
-=head3 Jpeg2000 CaptureResolution Tags
-
-  Index1   Tag Name                             Writable
-  ------   --------                             --------
-      0    CaptureYResolution                   no
-      4    CaptureXResolution                   no
-      8    CaptureYResolutionUnit               no
-      9    CaptureXResolutionUnit               no
-
-=head3 Jpeg2000 DisplayResolution Tags
-
-  Index1   Tag Name                             Writable
-  ------   --------                             --------
-      0    DisplayYResolution                   no
-      4    DisplayXResolution                   no
-      8    DisplayYResolutionUnit               no
-      9    DisplayXResolutionUnit               no
 
 =head2 GIF Tags
 
@@ -24340,6 +24454,165 @@ files.
      48    PrimaryFileGUID                      no
      64    FileGUID                             no
 
+=head2 MRC Tags
+
+Tags extracted from Medical Research Council (MRC) format imaging files.
+See L<https://www.ccpem.ac.uk/mrc_format/mrc2014.php> for the specification.
+
+  Index4   Tag Name                             Writable
+  ------   --------                             --------
+      0    ImageWidth                           no
+      1    ImageHeight                          no
+      2    ImageDepth                           no
+      3    ImageMode                            no
+      4    StartPoint                           no
+      7    GridSize                             no
+     10    CellWidth                            no
+     11    CellHeight                           no
+     12    CellDepth                            no
+     13    CellAlpha                            no
+     14    CellBeta                             no
+     15    CellGamma                            no
+     16    ImageWidthAxis                       no
+     17    ImageHeightAxis                      no
+     18    ImageDepthAxis                       no
+     19    DensityMin                           no
+     20    DensityMax                           no
+     21    DensityMean                          no
+     22    SpaceGroupNumber                     no
+     23    ExtendedHeaderSize                   no
+     26    ExtendedHeaderType                   no
+     27    MRCVersion                           no
+     49    Origin                               no
+     53    MachineStamp                         no
+     54    RMSDeviation                         no
+     55    NumberOfLabels                       no
+     56    Label0                               no
+     76    Label1                               no
+     96    Label2                               no
+    116    Label3                               no
+    136    Label4                               no
+    156    Label5                               no
+    176    Label6                               no
+    196    Label7                               no
+    216    Label8                               no
+    236    Label9                               no
+
+=head3 MRC FEI12 Tags
+
+Tags extracted from FEI1 and FEI2 extended headers.
+
+  Index1   Tag Name                             Writable
+  ------   --------                             --------
+      0    MetadataSize                         no
+      4    MetadataVersion                      no
+      8    Bitmask1                             no
+     12    TimeStamp                            no
+     20    MicroscopeType                       no
+     36    MicroscopeID                         no
+     52    Application                          no
+     68    AppVersion                           no
+     84    HighTension                          no
+     92    Dose                                 no
+    100    AlphaTilt                            no
+    108    BetaTilt                             no
+    116    XStage                               no
+    124    YStage                               no
+    132    ZStage                               no
+    140    TiltAxisAngle                        no
+    148    DualAxisRot                          no
+    156    PixelSizeX                           no
+    164    PixelSizeY                           no
+    220    Defocus                              no
+    228    STEMDefocus                          no
+    236    AppliedDefocus                       no
+    244    InstrumentMode                       no
+    248    ProjectionMode                       no
+    252    ObjectiveLens                        no
+    268    HighMagnificationMode                no
+    284    ProbeMode                            no
+    288    EFTEMOn                              no
+    289    Magnification                        no
+    297    Bitmask2                             no
+    301    CameraLength                         no
+    309    SpotIndex                            no
+    313    IlluminationArea                     no
+    321    Intensity                            no
+    329    ConvergenceAngle                     no
+    337    IlluminationMode                     no
+    353    WideConvergenceAngleRange            no
+    354    SlitInserted                         no
+    355    SlitWidth                            no
+    363    AccelVoltOffset                      no
+    371    DriftTubeVolt                        no
+    379    EnergyShift                          no
+    387    ShiftOffsetX                         no
+    395    ShiftOffsetY                         no
+    403    ShiftX                               no
+    411    ShiftY                               no
+    419    IntegrationTime                      no
+    427    BinningWidth                         no
+    431    BinningHeight                        no
+    435    CameraName                           no
+    451    ReadoutAreaLeft                      no
+    455    ReadoutAreaTop                       no
+    459    ReadoutAreaRight                     no
+    463    ReadoutAreaBottom                    no
+    467    CetaNoiseReduct                      no
+    468    CetaFramesSummed                     no
+    472    DirectDetElectronCounting            no
+    473    DirectDetAlignFrames                 no
+    490    Bitmask3                             no
+    518    PhasePlate                           no
+    519    STEMDetectorName                     no
+    535    Gain                                 no
+    543    Offset                               no
+    571    DwellTime                            no
+    579    FrameTime                            no
+    587    ScanSizeLeft                         no
+    591    ScanSizeTop                          no
+    595    ScanSizeRight                        no
+    599    ScanSizeBottom                       no
+    603    FullScanFOV_X                        no
+    611    FullScanFOV_Y                        no
+    619    Element                              no
+    635    EnergyIntervalLower                  no
+    643    EnergyIntervalHigher                 no
+    651    Method                               no
+    655    IsDoseFraction                       no
+    656    FractionNumber                       no
+    660    StartFrame                           no
+    664    EndFrame                             no
+    668    InputStackFilename                   no
+    748    Bitmask4                             no
+    752    AlphaTiltMin                         no
+    760    AlphaTiltMax                         no
+    768    ScanRotation                         no
+    776    DiffractionPatternRotation           no
+    784    ImageRotation                        no
+    792    ScanModeEnumeration                  no
+    796    AcquisitionTimeStamp                 no
+    804    DetectorCommercialName               no
+    820    StartTiltAngle                       no
+    828    EndTiltAngle                         no
+    836    TiltPerImage                         no
+    844    TitlSpeed                            no
+    852    BeamCenterX                          no
+    856    BeamCenterY                          no
+    860    CFEGFlashTimeStamp                   no
+    868    PhasePlatePosition                   no
+    872    ObjectiveAperture                    no
+
+=head2 LIF Tags
+
+Tags extracted from Leica Image Format (LIF) imaging files.  As well as the
+tags listed below, all available information is extracted from the
+XML-format metadata in the LIF header.
+
+  Tag Name                                      Writable
+  --------                                      --------
+  TimeStampList                                 no
+
 =head2 MIFF Tags
 
 The MIFF (Magick Image File Format) format allows aribrary tag names to be
@@ -24525,6 +24798,18 @@ specification.
   'primaries'          ColorPrimaries           no
   'software'           Software                 no
   'view'               View                     no
+
+=head3 Other PFM Tags
+
+Tags extracted from Portable FloatMap images. See
+L<http://www.pauldebevec.com/Research/HDR/PFM/> for the specification.
+
+  Tag Name                                      Writable
+  --------                                      --------
+  ByteOrder                                     no
+  ColorSpace                                    no
+  ImageHeight                                   no
+  ImageWidth                                    no
 
 =head2 PDF Tags
 
@@ -24837,8 +25122,8 @@ Additional document permissions imposed by digital signatures.
 
 =head2 ID3 Tags
 
-ExifTool extracts ID3 and Lyrics3 information from MP3, MPEG, AIFF, OGG,
-FLAC, APE, MPC and RealAudio files.  ID3v2 tags which support multiple
+ExifTool extracts ID3 and Lyrics3 information from MP3, MPEG, WAV, AIFF,
+OGG, FLAC, APE, MPC and RealAudio files.  ID3v2 tags which support multiple
 languages (eg. Comment and Lyrics) are extracted by specifying the tag name,
 followed by a dash ('-'), then a 3-character ISO 639-2 language code (eg.
 "Comment-spa"). See L<http://www.id3.org/> for the official ID3
@@ -25768,6 +26053,7 @@ for the official specification.
   'pict'               PreviewPICT              no
   'pnot'               Preview                  QuickTime Preview
   'prrt'               ARDroneTelemetry         no
+  'sefd'               SamsungTrailer           Samsung Trailer
   'skip'               CanonSkip                Canon Skip
                        PreviewImage             no
                        Skip?                    no
@@ -25809,10 +26095,10 @@ Tags found in Pittasoft Blackvue dashcam "free" data.
 
 =head3 QuickTime Stream Tags
 
-Timed metadata extracted from QuickTime media data and some AVI videos when
-the ExtractEmbedded option is used.  Although most of these tags are
-combined into the single table below, ExifTool currently reads 49 different
-formats of timed GPS metadata from video files.
+The tags below are extracted from timed metadata in QuickTime and other
+formats of video files when the ExtractEmbedded option is used.  Although
+most of these tags are combined into the single table below, ExifTool
+currently reads 55 different formats of timed GPS metadata from video files.
 
   Tag Name                                      Writable
   --------                                      --------
@@ -25842,6 +26128,7 @@ formats of timed GPS metadata from video files.
   INSV                                          QuickTime INSV_MakerNotes
   ISO                                           no
   JpgFromRaw                                    no
+  KiloCalories                                  no
   PreviewInfo                                   QuickTime PreviewInfo
   RVMI_gReV                                     QuickTime RVMI_gReV
   RVMI_sReV                                     QuickTime RVMI_sReV
@@ -25867,8 +26154,9 @@ formats of timed GPS metadata from video files.
   camm6                                         QuickTime camm6
   camm7                                         QuickTime camm7
   fdsc                                          GoPro fdsc
-  gpmd_GoPro                                    GoPro GPMF
+  gpmd_Kingslim                                 QuickTime Stream
   gpmd_Rove                                     QuickTime Stream
+  gpmd_GoPro                                    GoPro GPMF
   marl                                          QuickTime marl
   mebx                                          QuickTime Keys
   mett                                          Parrot mett
@@ -26943,7 +27231,7 @@ the config file.
   'chpl'       ChapterList                      no
   'clfn'       ClipFileName                     string
   'clid'       ClipID                           string
-  'clsf'       Classification                   no
+  'clsf'       Classification                   undef/
   'cmid'       CameraID                         string
   'cmnm'       Model                            string/
   'coll'       CollectionName                   string/
@@ -26961,10 +27249,11 @@ the config file.
   'infu'       InfoURL                          string
   'kgtt'       TrackType                        string
   'kywd'       Keywords                         no
-  'loci'       LocationInformation              no
+  'loci'       LocationInformation              undef/
   'lrcu'       LyricsURI                        string
   'lvlm'       LevelMeter?                      rational64s
   'manu'       Make                             no
+  'mcvr'       PreviewImage                     string
   'meta'       Meta                             QuickTime Meta
   'modl'       Model                            no
   'name'       Name                             string
@@ -26976,7 +27265,7 @@ the config file.
   'rads'       Rads?                            rational64s
   'reel'       ReelName                         string
   'roll'       Roll                             rational64s/
-  'rtng'       Rating                           no
+  'rtng'       Rating                           undef/
   'scen'       Scene                            string
   'scrn'       OlympusPreview                   Olympus scrn
   'shot'       ShotName                         string
@@ -26989,12 +27278,12 @@ the config file.
                ThumbnailPNG                     string
                UnknownThumbnail                 string
   'titl'       Title                            string/
-  'urat'       UserRating                       no
+  'urat'       UserRating                       undef/
   'uuid'       GarminSoftware                   string
                UUID-Unknown?                    no
   'vndr'       Vendor                           string
   'vrot'       AccelerometerData                no
-  'yrrc'       Year                             no
+  'yrrc'       Year                             undef/
   "\xa9ART"    Artist                           string
   "\xa9TIM"    StartTimecode                    string
   "\xa9TSC"    StartTimeScale                   string
@@ -27435,32 +27724,6 @@ Parrot streaming metadata automation extension.
      24    GPSDestAltitude                      no
      28    AutomationAnimation                  no
      29    AutomationFlags                      no
-
-=head2 PLIST Tags
-
-Apple Property List tags.  ExifTool reads both XML and binary-format PLIST
-files, and will extract any existing tags even if they aren't listed below.
-These tags belong to the family 0 "PLIST" group, but family 1 group may be
-either "XML" or "PLIST" depending on whether the format is XML or binary.
-
-  Tag ID                       Tag Name         Writable
-  ------                       --------         --------
-  'MetaDataList//DateTimeOriginal'
-                               DateTimeOriginal no
-  'MetaDataList//Duration'     Duration         no
-  'MetaDataList//Geolocation/Latitude'
-                               GPSLatitude      no
-  'MetaDataList//Geolocation/Longitude'
-                               GPSLongitude     no
-  'MetaDataList//Geolocation/MapDatum'
-                               GPSMapDatum      no
-  'XMLFileType'                XMLFileType      no
-  'cast//name'                 Cast             no+
-  'codirectors//name'          Codirectors      no+
-  'directors//name'            Directors        no+
-  'producers//name'            Producers        no+
-  'screenwriters//name'        Screenwriters    no+
-  'studio//name'               Studio           no+
 
 =head2 Matroska Tags
 
@@ -29325,7 +29588,7 @@ because they are bulky 16-byte binary values.
   VideoAndFilmFrameRelationship                 no
   VideoAverageBitrate                           no
   VideoClipDuration                             no
-  VideoCodingSchemeID?                          no
+  VideoCodingSchemeID                           no
   VideoColorKind                                no
   VideoCompressionAlgorithm                     no
   VideoDeviceKind                               no
@@ -29828,6 +30091,7 @@ sub-documents, but the Duration is calculated for the full video.
   'LIST_INF0'          Info                     RIFF Info
   'LIST_INFO'          Info                     RIFF Info
   'LIST_Tdat'          Tdat                     RIFF Tdat
+  'LIST_adtl'          AssociatedDataList       RIFF
   'LIST_exif'          Exif                     RIFF Exif
   'LIST_hdrl'          Hdrl                     RIFF Hdrl
   'LIST_hydt'          PentaxData               Pentax AVI
@@ -29850,9 +30114,15 @@ sub-documents, but the Duration is calculated for the full video.
   'gps0'               GPSTrack                 QuickTime Stream
   'gsen'               GSensor                  QuickTime Stream
   'iXML'               IXML                     XMP XML
-  'labl'               Label                    RIFF Label
+  'id3 '               ID3                      ID3
+  'inst'               Instrument               RIFF Instrument
+  'labl'               CuePointLabel            no
   'list'               ListType                 no
+  'ltxt'               LabeledText              no
+  'note'               CuePointNote             no
   'olym'               Olym                     Olympus WAV
+  'plst'               Playlist                 no
+  'smpl'               Sampler                  RIFF Sampler
   'tx_USER'            UserText                 RIFF UserText
   'tx_Unknown'         Text                     no
 
@@ -29966,6 +30236,7 @@ by some software.
   'ISTD'   ProductionStudio                     no
   'ISTR'   Starring                             no
   'ITCH'   Technician                           no
+  'ITRK'   TrackNumber                          no
   'IWMU'   WatermarkURL                         no
   'IWRI'   WrittenBy                            no
   'LANG'   Language                             no
@@ -30149,12 +30420,32 @@ L<https://tech.ebu.ch/docs/tech/tech3306-2009.pdf> for the specification.
       1    DataSize64                           no
       2    NumberOfSamples64                    no
 
-=head3 RIFF Label Tags
+=head3 RIFF Instrument Tags
+
+  Index1   Tag Name                             Writable
+  ------   --------                             --------
+      0    UnshiftedNote                        no
+      1    FineTune                             no
+      2    Gain                                 no
+      3    LowNote                              no
+      4    HighNote                             no
+      5    LowVelocity                          no
+      6    HighVelocity                         no
+
+=head3 RIFF Sampler Tags
 
   Index4   Tag Name                             Writable
   ------   --------                             --------
-      0    LabelID                              no
-      1    LabelText                            no
+      0    Manufacturer                         no
+      1    Product                              no
+      2    SamplePeriod                         no
+      3    MIDIUnityNote                        no
+      4    MIDIPitchFraction                    no
+      5    SMPTEFormat                          no
+      6    SMPTEOffset                          no
+      7    NumSampleLoops                       no
+      8    SamplerDataLen                       no
+      9    SamplerData                          no
 
 =head3 RIFF UserText Tags
 
@@ -33772,23 +34063,6 @@ L<https://fits.gsfc.nasa.gov/fits_standard.html> for the specification.
   'TIME-END'   ObservationTimeEnd               no
   'TIME-OBS'   ObservationTime                  no
 
-=head2 JSON Tags
-
-Other than a few tags in the table below, JSON tags have not been
-pre-defined.  However, ExifTool will read any existing tags from basic
-JSON-formatted files.
-
-  Tag Name                                      Writable
-  --------                                      --------
-  ON1_SettingsData                              PLIST
-  ON1_SettingsMetadataCreated                   no
-  ON1_SettingsMetadataModified                  no
-  ON1_SettingsMetadataName                      no
-  ON1_SettingsMetadataPluginID                  no
-  ON1_SettingsMetadataTimestamp                 no
-  ON1_SettingsMetadataUsage                     no
-  ON1_SettingsMetadataVisibleToUser             no
-
 =head2 HTML Tags
 
 Meta information extracted from the header of HTML and XHTML files.  This is
@@ -34868,7 +35142,7 @@ options, but these files are not writable directly.
 XAttr tags are extracted using the "xattr" utility.  They are extracted if
 any "XAttr*" tag or the MacOS group is specifically requested, or by setting
 the XAttrTags API option to 1 or the RequestAll API option to 2 or higher.
-And they extracted by default from MacOS "._" files when reading
+And they are extracted by default from MacOS "._" files when reading
 these files directly.
 
   Tag Name                                      Writable
@@ -35045,6 +35319,7 @@ FileName.
   Tag Name                   Group              Writable
   --------                   -----              --------
   Adobe                      Adobe              yes!
+  BaseName                   System             no
   CanonDR4                   CanonVRD           yes!^
   CanonVRD                   CanonVRD           yes!^
   Comment                    File               yes
@@ -35692,7 +35967,7 @@ overlapping EXIF, IPTC and XMP tags to be reconciled when reading, and
 synchronized when writing.  The MWG Composite tags below are designed to aid
 in the implementation of these recommendations.  As well, the MWG defines
 new XMP tags which are listed in the subsequent tables below.  See
-L<https://web.archive.org/web/20181006115950/http://www.metadataworkinggroup.org/specs/>
+L<https://web.archive.org/web/20180919181934/http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf>
 for the official MWG specification.
 
 =head3 MWG Composite Tags
@@ -35803,7 +36078,7 @@ implements this policy and changes EXIF:Artist to a list-type tag.
 
 Image region metadata defined by the MWG 2.0 specification.  These tags
 may be accessed without the need to load the MWG Composite tags above.  See
-L<https://web.archive.org/web/20181006115950/http://www.metadataworkinggroup.org/specs/>
+L<https://web.archive.org/web/20180919181934/http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf>
 for the official specification.
 
 These tags belong to the ExifTool XMP-mwg-rs family 1 group.
@@ -35873,7 +36148,7 @@ Hierarchical keywords metadata defined by the MWG 2.0 specification.
 ExifTool unrolls keyword structures to an arbitrary depth of 6 to allow
 individual levels to be accessed with different tag names, and to avoid
 infinite recursion.  See
-L<https://web.archive.org/web/20181006115950/http://www.metadataworkinggroup.org/specs/>
+L<https://web.archive.org/web/20180919181934/http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf>
 for the official specification.
 
 These tags belong to the ExifTool XMP-mwg-kw family 1 group.
@@ -35917,7 +36192,7 @@ These tags belong to the ExifTool XMP-mwg-kw family 1 group.
 =head3 MWG Collections Tags
 
 Collections metadata defined by the MWG 2.0 specification.  See
-L<https://web.archive.org/web/20181006115950/http://www.metadataworkinggroup.org/specs/>
+L<https://web.archive.org/web/20180919181934/http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf>
 for the official specification.
 
 These tags belong to the ExifTool XMP-mwg-coll family 1 group.
