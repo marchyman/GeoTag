@@ -3,7 +3,7 @@
 //  GeoTagUITests
 //
 //  Created by Marco S Hyman on 8/6/18.
-//  Copyright © 2018 Marco S Hyman. All rights reserved.
+//  Copyright © 2018, 2021 Marco S Hyman. All rights reserved.
 //
 
 import XCTest
@@ -38,17 +38,18 @@ class B_MenuTests: XCTestCase {
     }
 
     func fileMenu() {
-        let fileMenu = menuBarsQuery.menuBarItems["File"]
-        fileMenu.click()
-        let fileMenuSearch = fileMenu.descendants(matching: .menuItem)
-        XCTAssertEqual(fileMenuSearch.count, 9)
-
         let menuNames = [("Open…", true),
                          ("Close", true),
                          ("Save", false),
                          ("Discard changes", false),
                          ("Discard tracks", false),
                          ("Clear image list", false)]
+
+        let fileMenu = menuBarsQuery.menuBarItems["File"]
+        fileMenu.click()
+        let fileMenuSearch = fileMenu.descendants(matching: .menuItem)
+        // items that the programs is responsible for, the OS may add more
+        XCTAssert(fileMenuSearch.count >= menuNames.count)
 
         for (name, enabled) in menuNames {
             let item = fileMenuSearch[name]
@@ -58,33 +59,39 @@ class B_MenuTests: XCTestCase {
     }
 
     func editMenu() {
+        let menuNames = ["Undo", "Redo", "Cut", "Copy", "Paste", "Delete",
+                         "Select All", "Show In Finder", "Interpolate",
+                         "Locn from track", "Adjust Time Zone",
+                         "Modify Date/Time", "Modify Location"]
+
         let editMenu = menuBarsQuery.menuBarItems["Edit"]
         editMenu.click()
         let editMenuSearch = editMenu.descendants(matching: .menuItem)
-        // 11 items that the programs is responsible for, the OS may add more
-        XCTAssert(editMenuSearch.count >= 11)
-
-        let menuNames = ["Undo", "Redo", "Cut", "Copy", "Paste", "Delete",
-                         "Interpolate", "Locn from track", "Modify Date/Time"]
+        // items that the programs is responsible for, the OS may add more
+        XCTAssert(editMenuSearch.count >= menuNames.count)
 
         // all of the above listed menu items must exist and not be enabled.
         for name in menuNames {
             let item = editMenuSearch[name]
             XCTAssertTrue(item.exists)
-            XCTAssertFalse(item.isEnabled)
+            if name == "Adjust Time Zone" {
+                XCTAssertTrue(item.isEnabled)
+            } else {
+                XCTAssertFalse(item.isEnabled)
+            }
         }
     }
 
     func windowMenu() {
+        let menuNames = ["Minimize", "Zoom", "Tile Window to Left of Screen",
+                         "Tile Window to Right of Screen", "Enter Full Screen",
+                         "Bring All to Front", "GeoTag"]
+
         let windowMenu = menuBarsQuery.menuBarItems["Window"]
         windowMenu.click()
         let windowMenuSearch = windowMenu.descendants(matching: .menuItem)
         // The count includes option key variants
-        XCTAssertGreaterThanOrEqual(windowMenuSearch.count, 14)
-
-        let menuNames = ["Minimize", "Zoom", "Tile Window to Left of Screen",
-                         "Tile Window to Right of Screen", "Enter Full Screen",
-                         "Bring All to Front", "GeoTag"]
+        XCTAssertGreaterThanOrEqual(windowMenuSearch.count, menuNames.count)
 
         // all of the above listed menu items must exist and be enabled.
         for name in menuNames {
@@ -103,16 +110,17 @@ class B_MenuTests: XCTestCase {
     }
 
     func rightClickMenu() {
+        let menuNames = ["Cut", "Copy", "Paste", "Delete", "Show In Finder",
+                         "Interpolate", "Locn from track", "Modify Date/Time",
+                         "Modify Location", "Clear image list" ]
+
         let table = app.windows["GeoTag"].tables.firstMatch
         table.rightClick()
         let tableMenu = app.menus["tableMenu"]
         XCTAssert(tableMenu.exists)
         let tableMenuSearch = tableMenu.descendants(matching: .menuItem)
-        XCTAssertEqual(tableMenuSearch.count, 12)
-
-        let menuNames = ["Cut", "Copy", "Paste", "Delete", "Interpolate",
-                         "Locn from track", "Modify Date/Time",
-                         "Modify Location", "Clear image list" ]
+        // items that the programs is responsible for, the OS may add more
+        XCTAssert(tableMenuSearch.count >= menuNames.count)
 
         // all of the above listed menu items must exist and not be enabled.
         for name in menuNames {

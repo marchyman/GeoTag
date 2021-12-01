@@ -19,13 +19,26 @@ GeoTag is available from several sources
   `brew cask install geotag` to install.
 * [GitHub](https://github.com/marchyman/GeoTag)
 
-## WIP
+## GeoTag 4.12
 
-### New Feature
+### New Features
+
+* Add the ability to adjust the Time Zone used by the code that matches image
+  timestamps to track log timestamps when assinging locations from a track
+  log.  Edit -> Adjust Time Zone is the new menu item to initiate selection
+  of a Time Zone. It is only necessary to adjust time zones when the Camera
+  date/time does not match the date/time of the computer running GeoTag.
 
 * Change display color of changed but not yet saved fields to green.  This
   helps identify work in progress when changing the location or timestamp
   of several images.
+
+* ExifTool 12.30
+
+### Bug Fix
+
+* Remove broken help page.  Instead link to the help information on
+  www.snafu.org.
 
 ## GeoTag 4.11
 

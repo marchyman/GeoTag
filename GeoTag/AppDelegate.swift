@@ -80,6 +80,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return modified
         case #selector(openPreferences(_:)):
             return true
+        case #selector(showHelp(_:)):
+            return true
         default:
             print("#function \(item) not handled")
         }
@@ -199,6 +201,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction
     func openPreferences(_ sender: AnyObject!) {
         openPreferencesWindow()
+    }
+
+    @IBAction
+    func showHelp(_ sender: AnyObject) {
+        let helpPagePath = "https://www.snafu.org/GeoTag/NewGeoTagHelp/"
+        let helpPage = URL(string: helpPagePath)!
+        NSWorkspace.shared.open(helpPage)
     }
 
     //MARK: app termination

@@ -3,7 +3,7 @@
 //  GeoTagUITests
 //
 //  Created by Marco S Hyman on 8/6/18.
-//  Copyright © 2018 Marco S Hyman. All rights reserved.
+//  Copyright © 2018, 2021 Marco S Hyman. All rights reserved.
 //
 
 import XCTest
@@ -34,7 +34,7 @@ class A_GeoTagUITests: XCTestCase {
         app.launch()
 
         // Now set up user defaults for testing.  The app should have opened
-        // the preferences window.  Find and click on the path field.
+        // the preferences window.
 
         let window = app.windows["GeoTag Preferences"]
         XCTAssertTrue(window.exists)
@@ -42,22 +42,14 @@ class A_GeoTagUITests: XCTestCase {
         XCTAssertTrue(path.exists)
         path.click()
 
-        // an open dialog should have been opened. Use key shortcuts to
-        // set the Trash folder to a known location.
+        // can't get the open selection window... type blind into the app
 
-        let dialog = app.dialogs.element
-        XCTAssertTrue(dialog.exists)
-        dialog.typeKey("G", modifierFlags: [.shift, .command])
-        let sheet = dialog.descendants(matching: .sheet).element
-        XCTAssertTrue(sheet.exists)
-        sheet.typeText(trashFile)
-        XCTAssertTrue(sheet.buttons["Go"].exists)
-        sheet.buttons["Go"].click()
-        let button = dialog.buttons["Open"]
-        XCTAssertTrue(button.exists)
-        button.click()
+		app.typeKey("g", modifierFlags: [.shift, .command])
+		app.typeText(trashFile)
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
 
-        // now close the window.
+        // close the preferences window
 
         let close = window.buttons[XCUIIdentifierCloseWindow]
         XCTAssertTrue(close.exists)
@@ -83,6 +75,7 @@ class A_GeoTagUITests: XCTestCase {
         
         // check the latitude/longitude display formats
         let buttons = preferences.descendants(matching: .radioButton)
+        print(buttons.debugDescription)
         XCTAssertEqual(buttons.count, 3)
         let deg = buttons.matching(identifier: "deg").element
         XCTAssertEqual(deg.value as! Int, 1)

@@ -14,7 +14,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '1.48';
+$VERSION = '1.49';
 
 sub ProcessMIE($$);
 sub ProcessMIEGroup($$$);
@@ -393,7 +393,7 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
         ValueConv    => 'Image::ExifTool::GPS::ToDegrees($val, 1)',
         ValueConvInv => 'Image::ExifTool::GPS::ToDMS($self, $val, 0)',
         PrintConv    => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "N")',
-        PrintConvInv => 'Image::ExifTool::GPS::ToDegrees($val, 1)',
+        PrintConvInv => 'Image::ExifTool::GPS::ToDegrees($val, 1, "lat")',
     },
     Longitude => {
         Name => 'GPSLongitude',
@@ -406,7 +406,7 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
         ValueConv    => 'Image::ExifTool::GPS::ToDegrees($val, 1)',
         ValueConvInv => 'Image::ExifTool::GPS::ToDMS($self, $val, 0)',
         PrintConv    => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "E")',
-        PrintConvInv => 'Image::ExifTool::GPS::ToDegrees($val, 1)',
+        PrintConvInv => 'Image::ExifTool::GPS::ToDegrees($val, 1, "lon")',
     },
     MeasureMode => {
         Name => 'GPSMeasureMode',
@@ -1023,6 +1023,7 @@ sub WriteMIEGroup($$$)
             # we are writing the new tag now
             my ($newVal, $writable, $oldVal, $newFormat, $compress);
             my $newTag = shift @editTags;
+            length($newTag) > 255 and $et->Warn('Tag name too long'), next; # (just to be safe)
             my $newInfo = $$editDirs{$newTag};
             if ($newInfo) {
                 # create the new subdirectory or rewrite existing non-MIE directory

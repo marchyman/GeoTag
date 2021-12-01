@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
-        <plugIn identifier="com.apple.MapKitIBPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="19455"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -176,6 +176,12 @@ CA
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="5RZ-E2-PYq"/>
+                            <menuItem title="Show In Finder" id="ueU-UH-WnV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showInFinder:" target="er7-2A-M57" id="Kv7-gC-ONz"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Interpolate" keyEquivalent="I" id="bga-UQ-Sqa">
                                 <connections>
                                     <action selector="interpolate:" target="er7-2A-M57" id="9Os-AS-YeY"/>
@@ -184,6 +190,12 @@ CA
                             <menuItem title="Locn from track" keyEquivalent="l" id="zOv-fq-8jk">
                                 <connections>
                                     <action selector="locnFromTrack:" target="er7-2A-M57" id="3sm-dj-fhX"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Adjust Time Zone" id="TED-Oe-iCl">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="modifyTimeZone:" target="er7-2A-M57" id="hKr-1s-7sm"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Modify Date/Time" keyEquivalent="t" id="wZk-Ky-vsg">
@@ -230,14 +242,14 @@ CA
                         <items>
                             <menuItem title="GeoTag Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                 <connections>
-                                    <action selector="showHelp:" target="-1" id="y7X-2Q-9no"/>
+                                    <action selector="showHelp:" target="Voe-Tx-rLC" id="YJk-oc-mf3"/>
                                 </connections>
                             </menuItem>
                         </items>
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-240" y="-104"/>
+            <point key="canvasLocation" x="-126" y="-196"/>
         </menu>
         <window title="GeoTag" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="GeoTagMain" animationBehavior="default" tabbingMode="disallowed" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
@@ -245,25 +257,26 @@ CA
             <rect key="contentRect" x="335" y="390" width="1100" height="816"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="800" height="600"/>
-            <view key="contentView" misplaced="YES" id="EiT-Mj-1SZ">
+            <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="1100" height="816"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView autosaveName="GeoTagLeftRight" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pMq-xL-Jwc">
-                        <rect key="frame" x="20" y="20" width="1060" height="489"/>
+                        <rect key="frame" x="20" y="20" width="1060" height="776"/>
                         <subviews>
-                            <customView misplaced="YES" id="Gwc-9o-vlc" userLabel="Left Pane">
-                                <rect key="frame" x="0.0" y="0.0" width="530" height="489"/>
+                            <customView fixedFrame="YES" id="Gwc-9o-vlc" userLabel="Left Pane">
+                                <rect key="frame" x="0.0" y="0.0" width="530" height="776"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <scrollView borderType="line" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ARi-Ei-bTG">
-                                        <rect key="frame" x="0.0" y="-24" width="517" height="489"/>
+                                    <scrollView fixedFrame="YES" borderType="line" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ARi-Ei-bTG">
+                                        <rect key="frame" x="0.0" y="-20" width="530" height="796"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <clipView key="contentView" id="gmY-qF-zsb">
-                                            <rect key="frame" x="1" y="1" width="515" height="487"/>
+                                            <rect key="frame" x="1" y="1" width="528" height="794"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveName="ImageTable" rowSizeStyle="automatic" headerView="acu-99-iMm" viewBased="YES" id="skl-pj-P9m">
-                                                    <rect key="frame" x="0.0" y="0.0" width="515" height="464"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="528" height="771"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -287,7 +300,7 @@ CA
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="OEU-KB-5T7">
-                                                                            <rect key="frame" x="0.0" y="1" width="168" height="16"/>
+                                                                            <rect key="frame" x="0.0" y="1" width="167" height="16"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="p-yydddhhmm-nnnn.typ" id="eOy-hW-eGU">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -296,9 +309,9 @@ CA
                                                                         </textField>
                                                                     </subviews>
                                                                     <constraints>
-                                                                        <constraint firstAttribute="trailing" secondItem="OEU-KB-5T7" secondAttribute="trailing" constant="1" id="5Xj-Eu-ofQ"/>
-                                                                        <constraint firstItem="OEU-KB-5T7" firstAttribute="centerY" secondItem="hmU-7m-8FG" secondAttribute="centerY" id="ISc-Vv-J4G"/>
-                                                                        <constraint firstItem="OEU-KB-5T7" firstAttribute="leading" secondItem="hmU-7m-8FG" secondAttribute="leading" constant="2" id="Zyu-N2-NDk"/>
+                                                                        <constraint firstItem="OEU-KB-5T7" firstAttribute="centerY" secondItem="hmU-7m-8FG" secondAttribute="centerY" id="0xl-jq-iUn"/>
+                                                                        <constraint firstItem="OEU-KB-5T7" firstAttribute="centerX" secondItem="hmU-7m-8FG" secondAttribute="centerX" id="Hgr-WP-r6H"/>
+                                                                        <constraint firstItem="OEU-KB-5T7" firstAttribute="leading" secondItem="hmU-7m-8FG" secondAttribute="leading" constant="2" id="oC1-gD-eid"/>
                                                                     </constraints>
                                                                     <connections>
                                                                         <outlet property="textField" destination="OEU-KB-5T7" id="wpH-b3-xyH"/>
@@ -333,9 +346,9 @@ CA
                                                                         </textField>
                                                                     </subviews>
                                                                     <constraints>
-                                                                        <constraint firstItem="Gmo-tg-1MM" firstAttribute="leading" secondItem="J4a-hA-T1u" secondAttribute="leading" constant="2" id="4kx-ZI-ncB"/>
-                                                                        <constraint firstItem="Gmo-tg-1MM" firstAttribute="centerY" secondItem="J4a-hA-T1u" secondAttribute="centerY" id="clD-9y-Ty0"/>
-                                                                        <constraint firstAttribute="trailing" secondItem="Gmo-tg-1MM" secondAttribute="trailing" constant="14" id="hg8-UW-PhJ"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="Gmo-tg-1MM" secondAttribute="trailing" constant="14" id="A8m-v1-s5f"/>
+                                                                        <constraint firstItem="Gmo-tg-1MM" firstAttribute="centerY" secondItem="J4a-hA-T1u" secondAttribute="centerY" id="ErM-dH-bdA"/>
+                                                                        <constraint firstItem="Gmo-tg-1MM" firstAttribute="leading" secondItem="J4a-hA-T1u" secondAttribute="leading" constant="2" id="vkh-2H-SvG"/>
                                                                     </constraints>
                                                                     <connections>
                                                                         <outlet property="textField" destination="Gmo-tg-1MM" id="aS6-kK-oqk"/>
@@ -361,7 +374,7 @@ CA
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tyW-mI-5bT">
-                                                                            <rect key="frame" x="0.0" y="1" width="97" height="16"/>
+                                                                            <rect key="frame" x="1" y="1" width="96" height="16"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="-47.123456" id="6ou-9x-wx5">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -370,9 +383,9 @@ CA
                                                                         </textField>
                                                                     </subviews>
                                                                     <constraints>
-                                                                        <constraint firstItem="tyW-mI-5bT" firstAttribute="leading" secondItem="JX3-4H-ItO" secondAttribute="leading" constant="2" id="2GF-1v-uEo"/>
-                                                                        <constraint firstItem="tyW-mI-5bT" firstAttribute="centerY" secondItem="JX3-4H-ItO" secondAttribute="centerY" id="2eq-8w-NcQ"/>
-                                                                        <constraint firstAttribute="trailing" secondItem="tyW-mI-5bT" secondAttribute="trailing" constant="3" id="N17-5C-eAX"/>
+                                                                        <constraint firstItem="tyW-mI-5bT" firstAttribute="centerX" secondItem="JX3-4H-ItO" secondAttribute="centerX" id="1gR-3P-Ukk"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="tyW-mI-5bT" secondAttribute="trailing" constant="3" id="2or-Bm-R9q"/>
+                                                                        <constraint firstItem="tyW-mI-5bT" firstAttribute="centerY" secondItem="JX3-4H-ItO" secondAttribute="centerY" id="BZ5-QT-wH2"/>
                                                                     </constraints>
                                                                     <connections>
                                                                         <outlet property="textField" destination="tyW-mI-5bT" id="bo0-UW-G15"/>
@@ -380,7 +393,7 @@ CA
                                                                 </tableCellView>
                                                             </prototypeCellViews>
                                                         </tableColumn>
-                                                        <tableColumn identifier="longitude" editable="NO" width="51" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
+                                                        <tableColumn identifier="longitude" editable="NO" width="49" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Bk-nM-nLV">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Longitude">
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -394,7 +407,7 @@ CA
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="longitude" id="4Km-RM-P0Q">
-                                                                    <rect key="frame" x="429" y="1" width="55" height="17"/>
+                                                                    <rect key="frame" x="429" y="1" width="53" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fNU-Jf-yeQ">
@@ -407,9 +420,9 @@ CA
                                                                         </textField>
                                                                     </subviews>
                                                                     <constraints>
-                                                                        <constraint firstItem="fNU-Jf-yeQ" firstAttribute="leading" secondItem="4Km-RM-P0Q" secondAttribute="leading" constant="2" id="Tno-tz-BQt"/>
-                                                                        <constraint firstItem="fNU-Jf-yeQ" firstAttribute="centerY" secondItem="4Km-RM-P0Q" secondAttribute="centerY" id="bFY-zH-DCx"/>
-                                                                        <constraint firstAttribute="trailing" secondItem="fNU-Jf-yeQ" secondAttribute="trailing" constant="14" id="peg-F2-dTe"/>
+                                                                        <constraint firstItem="fNU-Jf-yeQ" firstAttribute="centerY" secondItem="4Km-RM-P0Q" secondAttribute="centerY" id="7Ef-zK-iFM"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="fNU-Jf-yeQ" secondAttribute="trailing" constant="12" id="QNS-AQ-8jD"/>
+                                                                        <constraint firstItem="fNU-Jf-yeQ" firstAttribute="leading" secondItem="4Km-RM-P0Q" secondAttribute="leading" constant="2" id="v20-i0-hm6"/>
                                                                     </constraints>
                                                                     <connections>
                                                                         <outlet property="textField" destination="fNU-Jf-yeQ" id="aRp-MU-wvo"/>
@@ -435,7 +448,7 @@ CA
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <tableHeaderView key="headerView" wantsLayer="YES" id="acu-99-iMm">
-                                            <rect key="frame" x="0.0" y="0.0" width="515" height="23"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="528" height="23"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                         <connections>
@@ -443,53 +456,50 @@ CA
                                         </connections>
                                     </scrollView>
                                 </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="ARi-Ei-bTG" secondAttribute="trailing" constant="8" id="2a5-ab-uTm"/>
-                                    <constraint firstItem="ARi-Ei-bTG" firstAttribute="leading" secondItem="Gwc-9o-vlc" secondAttribute="leading" id="Phx-zq-gKm"/>
-                                    <constraint firstAttribute="bottom" secondItem="ARi-Ei-bTG" secondAttribute="bottom" id="XI4-Ob-InC"/>
-                                    <constraint firstItem="ARi-Ei-bTG" firstAttribute="top" secondItem="Gwc-9o-vlc" secondAttribute="top" id="kVb-Br-vmd"/>
-                                </constraints>
                             </customView>
-                            <customView misplaced="YES" id="v4A-KZ-PzD" userLabel="Right Pane">
-                                <rect key="frame" x="539" y="0.0" width="521" height="489"/>
+                            <customView fixedFrame="YES" id="v4A-KZ-PzD" userLabel="Right Pane">
+                                <rect key="frame" x="539" y="0.0" width="521" height="776"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <splitView autosaveName="GeoTagUpDown" translatesAutoresizingMaskIntoConstraints="NO" id="Owq-8L-C5q">
-                                        <rect key="frame" x="0.0" y="-24" width="526" height="489"/>
+                                    <splitView fixedFrame="YES" autosaveName="GeoTagUpDown" translatesAutoresizingMaskIntoConstraints="NO" id="Owq-8L-C5q">
+                                        <rect key="frame" x="0.0" y="-20" width="526" height="796"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <subviews>
-                                            <customView misplaced="YES" id="VLF-DZ-LKW" userLabel="Image pane">
-                                                <rect key="frame" x="0.0" y="0.0" width="526" height="215"/>
+                                            <customView fixedFrame="YES" id="VLF-DZ-LKW" userLabel="Image pane">
+                                                <rect key="frame" x="0.0" y="0.0" width="526" height="389"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <subviews>
-                                                    <imageView translatesAutoresizingMaskIntoConstraints="NO" id="xuH-yg-55o">
-                                                        <rect key="frame" x="-3" y="-14" width="532" height="221"/>
+                                                    <progressIndicator fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Leb-gI-5bq">
+                                                        <rect key="frame" x="167" y="423" width="193" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    </progressIndicator>
+                                                    <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xuH-yg-55o">
+                                                        <rect key="frame" x="-3" y="-3" width="532" height="395"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" id="giZ-5r-50G"/>
                                                     </imageView>
-                                                    <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Leb-gI-5bq">
-                                                        <rect key="frame" x="167" y="87" width="193" height="20"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="193" id="BMR-vd-JD0"/>
-                                                        </constraints>
-                                                    </progressIndicator>
                                                 </subviews>
-                                                <constraints>
-                                                    <constraint firstItem="xuH-yg-55o" firstAttribute="leading" secondItem="VLF-DZ-LKW" secondAttribute="leading" id="9yC-EC-h9V"/>
-                                                    <constraint firstAttribute="trailing" secondItem="xuH-yg-55o" secondAttribute="trailing" id="ACq-Gi-pl1"/>
-                                                    <constraint firstItem="Leb-gI-5bq" firstAttribute="centerY" secondItem="VLF-DZ-LKW" secondAttribute="centerY" id="Ixh-VJ-TXd"/>
-                                                    <constraint firstAttribute="bottom" secondItem="xuH-yg-55o" secondAttribute="bottom" id="Jnv-Uo-roo"/>
-                                                    <constraint firstItem="xuH-yg-55o" firstAttribute="top" secondItem="VLF-DZ-LKW" secondAttribute="top" id="pqC-Od-MUL"/>
-                                                    <constraint firstAttribute="centerX" secondItem="Leb-gI-5bq" secondAttribute="centerX" id="rHJ-rN-MCW"/>
-                                                </constraints>
                                             </customView>
-                                            <customView misplaced="YES" id="mR8-Yl-B58" userLabel="Map pane">
-                                                <rect key="frame" x="0.0" y="224" width="526" height="265"/>
+                                            <customView id="mR8-Yl-B58" userLabel="Map pane">
+                                                <rect key="frame" x="0.0" y="398" width="526" height="398"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <subviews>
+                                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
+                                                        <rect key="frame" x="18" y="355" width="279" height="24"/>
+                                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="248-FW-Avl">
+                                                            <font key="font" metaFont="system"/>
+                                                            <segments>
+                                                                <segment label="Standard" width="90"/>
+                                                                <segment label="Hybrid" width="89" selected="YES" tag="1"/>
+                                                                <segment label="Satellite" width="88"/>
+                                                            </segments>
+                                                        </segmentedCell>
+                                                        <connections>
+                                                            <action selector="changeMapType:" target="Go6-yP-GH9" id="3Ly-Dz-fL1"/>
+                                                        </connections>
+                                                    </segmentedControl>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jOB-Xu-ExJ">
-                                                        <rect key="frame" x="375" y="213" width="138" height="32"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="SvS-X7-UYa"/>
-                                                        </constraints>
+                                                        <rect key="frame" x="374" y="350" width="138" height="32"/>
                                                         <buttonCell key="cell" type="push" title="Save Map Layout" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7D7-7V-JIv">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
@@ -498,28 +508,8 @@ CA
                                                             <action selector="saveMapSetting:" target="Go6-yP-GH9" id="BMB-0r-9Ss"/>
                                                         </connections>
                                                     </button>
-                                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UAa-bh-Wko">
-                                                        <rect key="frame" x="18" y="217" width="286" height="24"/>
-                                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="248-FW-Avl">
-                                                            <font key="font" metaFont="system"/>
-                                                            <segments>
-                                                                <segment label="Standard" width="92"/>
-                                                                <segment label="Hybrid" width="91" selected="YES" tag="1"/>
-                                                                <segment label="Satellite" width="91"/>
-                                                            </segments>
-                                                        </segmentedCell>
-                                                        <connections>
-                                                            <action selector="changeMapType:" target="Go6-yP-GH9" id="3Ly-Dz-fL1"/>
-                                                        </connections>
-                                                    </segmentedControl>
-                                                    <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zwv-MK-4Du" customClass="MapView" customModule="GeoTag" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="-13" width="526" height="224"/>
-                                                        <connections>
-                                                            <outlet property="delegate" destination="Go6-yP-GH9" id="xhZ-dn-nDA"/>
-                                                        </connections>
-                                                    </mapView>
                                                     <searchField wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cBm-xR-XMN">
-                                                        <rect key="frame" x="182" y="190" width="323" height="22"/>
+                                                        <rect key="frame" x="182" y="323" width="323" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                                                         <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" maximumRecents="10" recentsAutosaveName="Searches" id="KmR-EN-cxb">
                                                             <font key="font" metaFont="system"/>
@@ -530,17 +520,24 @@ CA
                                                             <action selector="searchMapLocation:" target="Go6-yP-GH9" id="FcQ-o1-WLQ"/>
                                                         </connections>
                                                     </searchField>
+                                                    <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zwv-MK-4Du" customClass="MapView" customModule="GeoTag" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="520" height="348"/>
+                                                        <connections>
+                                                            <outlet property="delegate" destination="Go6-yP-GH9" id="xhZ-dn-nDA"/>
+                                                        </connections>
+                                                    </mapView>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstAttribute="trailing" secondItem="jOB-Xu-ExJ" secondAttribute="trailing" constant="20" id="5rg-Nu-woP"/>
-                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="41" id="9FX-y0-0J7"/>
-                                                    <constraint firstAttribute="bottom" secondItem="Zwv-MK-4Du" secondAttribute="bottom" id="AbC-aA-sh4"/>
-                                                    <constraint firstItem="UAa-bh-Wko" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="IBD-aM-s8A"/>
-                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" id="kuE-Rp-GKs"/>
-                                                    <constraint firstItem="jOB-Xu-ExJ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" symbolic="YES" id="n6X-hq-z6F"/>
-                                                    <constraint firstItem="jOB-Xu-ExJ" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="12" id="xrB-Bz-x8a"/>
-                                                    <constraint firstItem="UAa-bh-Wko" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" id="zgJ-sW-cGB"/>
-                                                    <constraint firstAttribute="trailing" secondItem="Zwv-MK-4Du" secondAttribute="trailing" id="ziW-xO-3nP"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Zwv-MK-4Du" secondAttribute="trailing" constant="6" id="3VM-P0-Cc9"/>
+                                                    <constraint firstAttribute="trailing" secondItem="jOB-Xu-ExJ" secondAttribute="trailing" constant="21" id="EWO-er-Atg"/>
+                                                    <constraint firstItem="UAa-bh-Wko" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" constant="20" symbolic="YES" id="Gev-0h-YZy"/>
+                                                    <constraint firstItem="jOB-Xu-ExJ" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="21" id="Ina-Hl-Z9K"/>
+                                                    <constraint firstItem="jOB-Xu-ExJ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="UAa-bh-Wko" secondAttribute="trailing" symbolic="YES" id="Ubj-TJ-JQ1"/>
+                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="top" secondItem="UAa-bh-Wko" secondAttribute="bottom" constant="8" symbolic="YES" id="ajL-Uk-Gfj"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Zwv-MK-4Du" secondAttribute="bottom" id="iQT-Qi-RQA"/>
+                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="top" secondItem="UAa-bh-Wko" secondAttribute="bottom" constant="8" symbolic="YES" id="mhL-DP-R2N"/>
+                                                    <constraint firstItem="Zwv-MK-4Du" firstAttribute="leading" secondItem="mR8-Yl-B58" secondAttribute="leading" id="nM1-Bc-0DV"/>
+                                                    <constraint firstItem="UAa-bh-Wko" firstAttribute="top" secondItem="mR8-Yl-B58" secondAttribute="top" constant="20" id="uFn-Eu-FDL"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
@@ -550,12 +547,6 @@ CA
                                         </holdingPriorities>
                                     </splitView>
                                 </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="Owq-8L-C5q" secondAttribute="bottom" id="DiD-1q-0Kf"/>
-                                    <constraint firstItem="Owq-8L-C5q" firstAttribute="top" secondItem="v4A-KZ-PzD" secondAttribute="top" id="Khz-lu-DFP"/>
-                                    <constraint firstAttribute="trailing" secondItem="Owq-8L-C5q" secondAttribute="trailing" id="auq-sE-weR"/>
-                                    <constraint firstItem="Owq-8L-C5q" firstAttribute="leading" secondItem="v4A-KZ-PzD" secondAttribute="leading" id="ppQ-kF-inV"/>
-                                </constraints>
                             </customView>
                         </subviews>
                         <holdingPriorities>
@@ -565,17 +556,17 @@ CA
                     </splitView>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="pMq-xL-Jwc" secondAttribute="trailing" constant="20" id="8CR-JP-Xpp"/>
-                    <constraint firstAttribute="bottom" secondItem="pMq-xL-Jwc" secondAttribute="bottom" constant="20" id="WcZ-ch-L2v"/>
-                    <constraint firstAttribute="centerX" secondItem="pMq-xL-Jwc" secondAttribute="centerX" id="ccS-hY-WUI"/>
-                    <constraint firstItem="pMq-xL-Jwc" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="tqP-Dd-2Fe"/>
+                    <constraint firstItem="pMq-xL-Jwc" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="FUl-Cj-qxB"/>
+                    <constraint firstAttribute="trailing" secondItem="pMq-xL-Jwc" secondAttribute="trailing" constant="20" symbolic="YES" id="GWh-4l-ztC"/>
+                    <constraint firstItem="pMq-xL-Jwc" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="an0-3d-pIh"/>
+                    <constraint firstAttribute="bottom" secondItem="pMq-xL-Jwc" secondAttribute="bottom" constant="20" symbolic="YES" id="zee-Go-lI3"/>
                 </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="Voe-Tx-rLC" id="YQK-Qt-HzN"/>
                 <outlet property="initialFirstResponder" destination="ARi-Ei-bTG" id="Jxz-i1-P4S"/>
             </connections>
-            <point key="canvasLocation" x="-914" y="55"/>
+            <point key="canvasLocation" x="-1271" y="-303"/>
         </window>
         <menu title="TableMenu" identifier="tableMenu" id="RI2-ul-n9D">
             <items>
@@ -643,7 +634,7 @@ CA
                 </menuItem>
             </items>
             <accessibility identifier="tableMenu"/>
-            <point key="canvasLocation" x="-327" y="272"/>
+            <point key="canvasLocation" x="-242" y="266"/>
         </menu>
     </objects>
 </document>

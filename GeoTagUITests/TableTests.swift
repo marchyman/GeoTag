@@ -3,12 +3,16 @@
 //  GeoTagUITests
 //
 //  Created by Marco S Hyman on 8/7/18.
-//  Copyright © 2018 Marco S Hyman. All rights reserved.
+//  Copyright © 2018, 2021 Marco S Hyman. All rights reserved.
 //
 
 import XCTest
 
 /// tests pertaining to the table view portion of the app window.
+///
+/// None of these tests will work right now.  I can no longer access the "sheet"
+/// in commonOpen because of Xcode and/or macOS changes.
+
 
 class C_TableTests: XCTestCase {
 
@@ -60,6 +64,7 @@ class C_TableTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+
     @discardableResult
     func commonOpen(fileOrFolder: String) -> XCUIElement {
         let app = XCUIApplication()
@@ -67,19 +72,14 @@ class C_TableTests: XCTestCase {
         XCTAssertTrue(table.exists)
         table.typeKey("o", modifierFlags:.command)
 
-        // The open files dialog should be on the screen
+        // Assume open files dialog should be on the screen and type
+        // blindly into the app.
 
-        let dialog = app.dialogs.element
-        XCTAssertTrue(dialog.exists)
-        dialog.typeKey("G", modifierFlags: [.shift, .command])
-        let sheet = dialog.descendants(matching: .sheet).element
-        XCTAssertTrue(sheet.exists)
-        sheet.typeText(fileOrFolder)
-        XCTAssertTrue(sheet.buttons["Go"].exists)
-        sheet.buttons["Go"].click()
-        let button = dialog.buttons["Open"]
-        XCTAssertTrue(button.exists)
-        button.click()
+        table.typeKey("G", modifierFlags: [.shift, .command])
+        table.typeText(fileOrFolder)
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+
         // wait a good long while for background tasks to finish
         sleep(5)
         return table
@@ -90,24 +90,22 @@ class C_TableTests: XCTestCase {
         let table = app.windows["GeoTag"].tables.element
         XCTAssertTrue(table.exists)
         table.typeKey("o", modifierFlags:.command)
-        let dialog = app.dialogs.element
-        XCTAssertTrue(dialog.exists)
-        dialog.typeKey("G", modifierFlags: [.shift, .command])
-        let sheet = dialog.descendants(matching: .sheet).element
-        XCTAssertTrue(sheet.exists)
-        sheet.typeText(testFolder + "/" + jpgImage)
-        XCTAssertTrue(sheet.buttons["Go"].exists)
-        sheet.buttons["Go"].click()
-//        dialog.textFields[jpgImage].click()
-        XCUIElement.perform(withKeyModifiers: .command) {
-            dialog.textFields[cr2Image].click()
-        }
-        let button = dialog.buttons["Open"]
-        XCTAssertTrue(button.exists)
-        // wait a good long while for background tasks to finish
-        button.click()
+
+        app.typeKey("G", modifierFlags: [.shift, .command])
+        app.typeText(testFolder + "/" + jpgImage)
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+
+        table.typeKey("o", modifierFlags:.command)
+        app.typeKey("G", modifierFlags: [.shift, .command])
+        app.typeText(cr2Image)
+        app.typeKey(.enter, modifierFlags: [])
+
+        app.typeKey(.enter, modifierFlags: [])
+
         sleep(2)
     }
+
 
     /// Wait for an elements value that is being updated asynchronously to change
 
@@ -148,7 +146,7 @@ class C_TableTests: XCTestCase {
         XCTAssertTrue(fooItem.exists)
         fooItem.click()
         XCTAssertFalse(fooItem.isSelected)
-}
+    }
 
     /// open a gpx track log
     func test2Open() {
@@ -244,6 +242,7 @@ class C_TableTests: XCTestCase {
 
         discardChanges()
     }
-
     /// undo/redo tests were not working.  Removed for now
 }
+
+

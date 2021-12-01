@@ -88,7 +88,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '4.45';
+$VERSION = '4.50';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -473,7 +473,8 @@ $VERSION = '4.45';
     253 => 'Canon EF 70-200mm f/2.8L IS II USM + 2x', #PH (NC)
     253.1 => 'Canon EF 70-200mm f/2.8L IS III USM + 2x', #PH (NC)
     # 253.2 => 'Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025) + 2x', #forum9367
-    254 => 'Canon EF 100mm f/2.8L Macro IS USM', #42
+    254 => 'Canon EF 100mm f/2.8L Macro IS USM or Tamron Lens', #42
+    254.1 => 'Tamron SP 90mm f/2.8 Di VC USD 1:1 Macro (F017)', #PH
     255 => 'Sigma 24-105mm f/4 DG OS HSM | A or Other Lens', #50
     255.1 => 'Sigma 180mm f/2.8 EX DG OS HSM APO Macro', #50
     255.2 => 'Tamron SP 70-200mm f/2.8 Di VC USD', #exiv issue 1202 (A009)
@@ -556,7 +557,8 @@ $VERSION = '4.45';
     4158 => 'Canon EF-S 18-55mm f/4-5.6 IS STM', #PH
     4159 => 'Canon EF-M 32mm f/1.4 STM', #42
     4160 => 'Canon EF-S 35mm f/2.8 Macro IS STM', #42
-    4208 => 'Sigma 56mm f/1.4 DC DN | C', #forum10603
+    4208 => 'Sigma 56mm f/1.4 DC DN | C or other Sigma Lens', #forum10603
+    4208.1 => 'Sigma 30mm F1.4 DC DN | C', #git issue#83 (016)
     # (Nano USM lenses - 0x90xx)
     36910 => 'Canon EF 70-300mm f/4-5.6 IS II USM', #42
     36912 => 'Canon EF-S 18-135mm f/3.5-5.6 IS USM', #42
@@ -578,19 +580,19 @@ $VERSION = '4.45';
     61182.7 => 'Canon RF 15-35mm F2.8L IS USM',
     61182.8 => 'Canon RF 24-240mm F4-6.3 IS USM',
     61182.9 => 'Canon RF 70-200mm F2.8L IS USM',
-    61182.10 => 'Canon RF 85mm F2 MACRO IS STM',
-    61182.11 => 'Canon RF 600mm F11 IS STM',
-    61182.12 => 'Canon RF 600mm F11 IS STM + RF1.4x',
-    61182.13 => 'Canon RF 600mm F11 IS STM + RF2x',
-    61182.14 => 'Canon RF 800mm F11 IS STM',
-    61182.15 => 'Canon RF 800mm F11 IS STM + RF1.4x',
-    61182.16 => 'Canon RF 800mm F11 IS STM + RF2x',
-    61182.17 => 'Canon RF 24-105mm F4-7.1 IS STM',
-    61182.18 => 'Canon RF 100-500mm F4.5-7.1L IS USM',
-    61182.19 => 'Canon RF 100-500mm F4.5-7.1L IS USM + RF1.4x',
-    61182.20 => 'Canon RF 100-500mm F4.5-7.1L IS USM + RF2x',
-    61182.21 => 'Canon RF 70-200mm F4L IS USM', #42
-    61182.22 => 'Canon RF 50mm F1.8 STM', #42
+   '61182.10' => 'Canon RF 85mm F2 MACRO IS STM',
+   '61182.11' => 'Canon RF 600mm F11 IS STM',
+   '61182.12' => 'Canon RF 600mm F11 IS STM + RF1.4x',
+   '61182.13' => 'Canon RF 600mm F11 IS STM + RF2x',
+   '61182.14' => 'Canon RF 800mm F11 IS STM',
+   '61182.15' => 'Canon RF 800mm F11 IS STM + RF1.4x',
+   '61182.16' => 'Canon RF 800mm F11 IS STM + RF2x',
+   '61182.17' => 'Canon RF 24-105mm F4-7.1 IS STM',
+   '61182.18' => 'Canon RF 100-500mm F4.5-7.1L IS USM',
+   '61182.19' => 'Canon RF 100-500mm F4.5-7.1L IS USM + RF1.4x',
+   '61182.20' => 'Canon RF 100-500mm F4.5-7.1L IS USM + RF2x',
+   '61182.21' => 'Canon RF 70-200mm F4L IS USM', #42
+   '61182.22' => 'Canon RF 50mm F1.8 STM', #42
     65535 => 'n/a',
 );
 
@@ -947,6 +949,7 @@ $VERSION = '4.45';
     0x80000437 => 'EOS 90D', #IB
     0x80000453 => 'EOS R6', #PH
     0x80000467 => 'PowerShot ZOOM',
+    0x80000468 => 'EOS M50 Mark II / Kiss M2', #IB
     0x80000520 => 'EOS D2000C', #IB
     0x80000560 => 'EOS D6000C', #PH (guess)
 );
@@ -9251,8 +9254,9 @@ sub PrintLensID(@)
                 push @likely, $tclens;
                 if ($maxAperture) {
                     # (not 100% sure that TC affects MaxAperture, but it should!)
-                    next if $maxAperture < $sa * $tc - 0.15;
-                    next if $maxAperture > $la * $tc + 0.15;
+                    # (RF 24-105mm F4L IS USM shows a MaxAperture of 4.177)
+                    next if $maxAperture < $sa * $tc - 0.18;
+                    next if $maxAperture > $la * $tc + 0.18;
                 }
                 push @matches, $tclens;
             }

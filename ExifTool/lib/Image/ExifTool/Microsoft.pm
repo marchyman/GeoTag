@@ -17,7 +17,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::XMP;
 
-$VERSION = '1.22';
+$VERSION = '1.23';
 
 sub ProcessXtra($$$);
 sub WriteXtra($$$);
@@ -210,7 +210,9 @@ my %sRegions = (
         not shown because some are unruly GUID's.  Currently most of these tags are
         not writable because the Microsoft documentation is poor and samples were
         not available, but more tags may be made writable in the future if samples
-        are provided.
+        are provided.  Note that writable tags in this table are are flagged to
+        "Avoid", which means that other more common tags will be written instead if
+        possible unless the Microsoft group is specified explicitly.
     },
     Abstract                    => { },
     AcquisitionTime             => { Groups => { 2 => 'Time' } },
@@ -887,12 +889,14 @@ sub WriteXtraValue($$$)
         } elsif ($format eq 'date') {
             $dat = Image::ExifTool::GetUnixTime($val, 1);   # (convert to UTC, NC)
             if ($dat) {
+                # 100ns intervals since Jan 1, 1601
                 $dat = Set64u(($dat + 11644473600) * 1e7);
                 $type = 21;
             }
-        } elsif ($format eq 'vt_filetime') {
+        } elsif ($format eq 'vt_filetime') { # 'date' value inside a VT_VARIANT
             $dat = Image::ExifTool::GetUnixTime($val);  # (leave as local time, NC)
             if ($dat) {
+                # 100ns intervals since Jan 1, 1601
                 $dat = Set32u(64) . Set64u(($dat + 11644473600) * 1e7);
                 $type = 65;
             }
@@ -985,11 +989,11 @@ sub WriteXtra($$$)
             last;   # (it was a cheap goto)
         }
         if ($done{$tag}) {
+            $changed = 1;
             # write changed values
             my $buff = WriteXtraValue($et, $$newTags{$tag}, \@newVals);
             if (length $buff) {
                 $newData .= Set32u(8+length($tag)+length($buff)) . Set32u(length($tag)) . $tag . $buff;
-                $changed = 1;
             }
         } else {
             # nothing changed; just copy over
