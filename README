@@ -26,6 +26,8 @@ GeoTag is available from several sources
 * The map search bar got buried under the map and somehow I didn't notice
   before releasing 4.12.
 
+* Resizing window did bad things
+
 ## GeoTag 4.12
 
 ### New Features
