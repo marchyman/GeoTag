@@ -508,8 +508,14 @@ CA
                                                             <action selector="saveMapSetting:" target="Go6-yP-GH9" id="BMB-0r-9Ss"/>
                                                         </connections>
                                                     </button>
+                                                    <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zwv-MK-4Du" customClass="MapView" customModule="GeoTag" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="520" height="348"/>
+                                                        <connections>
+                                                            <outlet property="delegate" destination="Go6-yP-GH9" id="xhZ-dn-nDA"/>
+                                                        </connections>
+                                                    </mapView>
                                                     <searchField wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cBm-xR-XMN">
-                                                        <rect key="frame" x="182" y="323" width="323" height="22"/>
+                                                        <rect key="frame" x="182" y="315" width="323" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                                                         <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" maximumRecents="10" recentsAutosaveName="Searches" id="KmR-EN-cxb">
                                                             <font key="font" metaFont="system"/>
@@ -520,12 +526,6 @@ CA
                                                             <action selector="searchMapLocation:" target="Go6-yP-GH9" id="FcQ-o1-WLQ"/>
                                                         </connections>
                                                     </searchField>
-                                                    <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zwv-MK-4Du" customClass="MapView" customModule="GeoTag" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="520" height="348"/>
-                                                        <connections>
-                                                            <outlet property="delegate" destination="Go6-yP-GH9" id="xhZ-dn-nDA"/>
-                                                        </connections>
-                                                    </mapView>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="Zwv-MK-4Du" secondAttribute="trailing" constant="6" id="3VM-P0-Cc9"/>
