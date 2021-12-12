@@ -614,10 +614,15 @@ final class TableViewController: NSViewController {
                 self.appDelegate.undoManager.beginUndoGrouping()
                 rows.forEach {
                     let img = self.images[$0]
-                    if img.validImage,
-                       let date = img.dateValue {
-                        let newDateValue = Date(timeInterval: delta,
+                    var newDateValue = dateValue
+                    // if the image contains a datevalue adjust it by the
+                    // calculated delta. Otherwise assign the dateValue given
+                    // by the user.
+                    if img.validImage {
+                        if let date = img.dateValue {
+                            newDateValue = Date(timeInterval: delta,
                                                 since: date)
+                        }
                         self.update(row: $0, dateValue: newDateValue)
                     }
                 }

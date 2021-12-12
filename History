@@ -1,3 +1,10 @@
+## WIP
+
+### Bug Fix
+
+* Date/Times could only be modified.  A Date/Time could not be assigned
+  to an image that did not have a create date.  Fixed.
+
 ## GeoTag 4.13
 
 ### Bug Fix
