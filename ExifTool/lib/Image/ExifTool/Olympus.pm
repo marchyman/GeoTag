@@ -40,7 +40,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::APP12;
 
-$VERSION = '2.74';
+$VERSION = '2.75';
 
 sub PrintLensInfo($$$);
 
@@ -3609,6 +3609,10 @@ my %indexInfo = (
         Format => 'string[24]',
         Groups => { 2 => 'Time' },
     },
+    0x17f => {
+        Name => 'LensModel',
+        Format => 'string[32]'
+    },
 );
 
 # yet a different "thmb" atom format (PH, E-M5)
@@ -4067,7 +4071,7 @@ Olympus or Epson maker notes in EXIF information.
 
 =head1 AUTHOR
 
-Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

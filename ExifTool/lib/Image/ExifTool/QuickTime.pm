@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.68';
+$VERSION = '2.73';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -483,6 +483,17 @@ my %eeBox2 = (
             Condition => '$$valPt =~ /^\0\0..(cprt|sttm|ptnm|ptrh|thum|gps |3gf )/s',
             SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::Pittasoft' },
         },{
+            Name => 'ThumbnailImage',
+            # (DJI Zenmuse XT2 thermal camera)
+            Groups => { 2 => 'Preview' },
+            Condition => '$$valPt =~ /^.{4}mdat\xff\xd8\xff/s',
+            RawConv => q{
+                my $len = unpack('N', $val);
+                return undef if $len <= 8 or $len > length($val);
+                return substr($val, 8, $len-8);
+            },
+            Binary => 1,
+        },{
             Unknown => 1,
             Binary => 1,
         },
@@ -558,6 +569,7 @@ my %eeBox2 = (
             # *** this is where ExifTool writes XMP in MP4 videos (as per XMP spec) ***
             Condition => '$$valPt=~/^\xbe\x7a\xcf\xcb\x97\xa9\x42\xe8\x9c\x71\x99\x94\x91\xe3\xaf\xac/',
             WriteGroup => 'XMP',    # (write main XMP tags here)
+            PreservePadding => 1,
             SubDirectory => {
                 TagTable => 'Image::ExifTool::XMP::Main',
                 Start => 16,
@@ -607,6 +619,7 @@ my %eeBox2 = (
             Name => 'PreviewImage',
             Condition => '$$valPt=~/^\xea\xf4\x2b\x5e\x1c\x98\x4b\x88\xb9\xfb\xb7\xdc\x40\x6e\x4d\x16/',
             Groups => { 2 => 'Preview' },
+            PreservePadding => 1,
             # 0x00 - undef[16]: UUID
             # 0x10 - int32u[2]: "0 1" (version and/or item count?)
             # 0x18 - int32u: PRVW atom size
@@ -738,6 +751,7 @@ my %eeBox2 = (
         Name => 'SamsungTrailer',
         SubDirectory => { TagTable => 'Image::ExifTool::Samsung::Trailer' },
     },
+    # 'samn'? - seen in Vantrue N2S sample video
 );
 
 # MPEG-4 'ftyp' atom
@@ -6356,7 +6370,7 @@ my %eeBox2 = (
     'player.movie.visual.tint'      => 'Tint',
     'player.movie.visual.contrast'  => 'Contrast',
     'player.movie.audio.gain'       => 'AudioGain',
-    'player.movie.audio.treble'     => 'Trebel',
+    'player.movie.audio.treble'     => 'Treble',
     'player.movie.audio.bass'       => 'Bass',
     'player.movie.audio.balance'    => 'Balance',
     'player.movie.audio.pitchshift' => 'PitchShift',
@@ -6450,10 +6464,12 @@ my %eeBox2 = (
 # iTunes info ('----') atoms
 %Image::ExifTool::QuickTime::iTunesInfo = (
     PROCESS_PROC => \&ProcessMOV,
-    GROUPS => { 2 => 'Audio' },
+    GROUPS => { 1 => 'iTunes', 2 => 'Audio' },
+    VARS => { LONG_TAGS => 0 }, # (hack for discrepancy in the way long tags are counted in BuildTagLookup)
     NOTES => q{
         ExifTool will extract any iTunesInfo tags that exist, even if they are not
-        defined in this table.
+        defined in this table.  These tags belong to the family 1 "iTunes" group,
+        and are not currently writable.
     },
     # 'mean'/'name'/'data' atoms form a triplet, but unfortunately
     # I haven't been able to find any documentation on this.
@@ -6514,9 +6530,45 @@ my %eeBox2 = (
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::EncodingParams' },
     },
     # also heard about 'iTunPGAP', but I haven't seen a sample
-    DISCNUMBER => 'DiscNumber', #PH
-    TRACKNUMBER => 'TrackNumber', #PH
-    popularimeter => 'Popularimeter', #PH
+    # all tags below were added based on samples I have seen - PH
+    DISCNUMBER          => 'DiscNumber',
+    TRACKNUMBER         => 'TrackNumber',
+    ARTISTS             => 'Artists',
+    CATALOGNUMBER       => 'CatalogNumber',
+    RATING              => 'Rating',
+    MEDIA               => 'Media',
+    SCRIPT              => 'Script', # character set? (seen 'Latn')
+    BARCODE             => 'Barcode',
+    LABEL               => 'Label',
+    MOOD                => 'Mood',
+    popularimeter       => 'Popularimeter',
+    'Dynamic Range (DR)'=> 'DynamicRange',
+    initialkey          => 'InitialKey',
+    originalyear        => 'OriginalYear',
+    originaldate        => 'OriginalDate',
+    '~length'           => 'Length', # play length? (ie. duration?)
+    replaygain_track_gain=>'ReplayTrackGain',
+    replaygain_track_peak=>'ReplayTrackPeak',
+   'Volume Level (ReplayGain)'=> 'ReplayVolumeLevel',
+   'Dynamic Range (R128)'=> 'DynamicRangeR128',
+   'Volume Level (R128)' => 'VolumeLevelR128',
+   'Peak Level (Sample)' => 'PeakLevelSample',
+   'Peak Level (R128)'   => 'PeakLevelR128',
+    # also seen (many from forum12777):
+    # 'MusicBrainz Album Release Country'
+    # 'MusicBrainz Album Type'
+    # 'MusicBrainz Album Status'
+    # 'MusicBrainz Track Id'
+    # 'MusicBrainz Release Track Id'
+    # 'MusicBrainz Album Id'
+    # 'MusicBrainz Album Artist Id'
+    # 'MusicBrainz Artist Id'
+    # 'Acoustid Id' (sic)
+    # 'Tool Version'
+    # 'Tool Name'
+    # 'ISRC'
+    # 'HDCD'
+    # 'Waveform'
 );
 
 # iTunes audio encoding parameters
@@ -9075,6 +9127,12 @@ sub ProcessMOV($$;$)
                 } else {
                     my $t = PrintableTagID($tag,2);
                     $et->VPrint(0,"$$et{INDENT}Tag '${t}' extends to end of file");
+                    if ($$tagTablePtr{"$tag-size"}) {
+                        my $pos = $raf->Tell();
+                        $raf->Seek(0, 2);
+                        $et->HandleTag($tagTablePtr, "$tag-size", $raf->Tell() - $pos);
+                        $et->HandleTag($tagTablePtr, "$tag-offset", $pos) if $$tagTablePtr{"$tag-offset"};
+                    }
                 }
                 last;
             }
@@ -9301,6 +9359,7 @@ ItemID:         foreach $id (keys %$items) {
                             Name => $name,
                             Description => $desc,
                         };
+                        $et->VPrint(0, $$et{INDENT}, "[adding QuickTime:$name]\n");
                         AddTagToTable($tagTablePtr, $tag, $tagInfo);
                     }
                     # ignore 8-byte header
@@ -9312,9 +9371,9 @@ ItemID:         foreach $id (keys %$items) {
                             $val = \$buff;
                         }
                     }
-                    undef %triplet;
+                    $$tagInfo{List} = 1; # (allow any of these tags to have multiple data elements)
+                    $et->VerboseInfo($tag, $tagInfo, Value => $val) if $verbose;
                 } else {
-                    undef %triplet if $tag eq 'mean';
                     $triplet{$tag} = substr($val,4) if length($val) > 4;
                     undef $tagInfo;  # don't store this tag
                 }
@@ -9380,7 +9439,7 @@ ItemID:         foreach $id (keys %$items) {
                     for (;;) {
                         last if $pos + 16 > $size;
                         my ($len, $type, $flags, $ctry, $lang) = unpack("x${pos}Na4Nnn", $val);
-                        last if $pos + $len > $size;
+                        last if $pos + $len > $size or not $len;
                         my ($value, $langInfo, $oldDir);
                         my $format = $$tagInfo{Format};
                         if ($type eq 'data' and $len >= 16) {
@@ -9626,7 +9685,7 @@ information from QuickTime and MP4 video, M4A audio, and HEIC image files.
 
 =head1 AUTHOR
 
-Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

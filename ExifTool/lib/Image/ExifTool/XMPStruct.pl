@@ -32,7 +32,9 @@ sub SerializeStruct($;$)
     my ($key, $val, @vals, $rtnVal);
 
     if (ref $obj eq 'HASH') {
-        foreach $key (sort keys %$obj) {
+        # support hashes with ordered keys
+        my @keys = $$obj{_ordered_keys_} ? @{$$obj{_ordered_keys_}} : sort keys %$obj;
+        foreach $key (@keys) {
             push @vals, $key . '=' . SerializeStruct($$obj{$key}, '}');
         }
         $rtnVal = '{' . join(',', @vals) . '}';
@@ -853,7 +855,7 @@ information.
 
 =head1 AUTHOR
 
-Copyright 2003-2021, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
