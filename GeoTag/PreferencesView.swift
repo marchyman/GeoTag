@@ -36,6 +36,10 @@ class PreferencesViewController: NSViewController {
         super.viewWillAppear()
 
         preferencesViewController = self
+
+        doNotBackupButton.state = Preferences.doNotBackup() ?
+                                        NSControl.StateValue.on :
+                                        NSControl.StateValue.off
         saveFolderPath.url = Preferences.saveFolder()
         switch Preferences.coordFormat() {
         case .deg:
@@ -56,6 +60,16 @@ class PreferencesViewController: NSViewController {
                                         NSControl.StateValue.off
         trackColorWell.color = Preferences.trackColor()
         trackWidth.doubleValue = Preferences.trackWidth()
+    }
+
+    @IBOutlet
+    weak var doNotBackupButton: NSButton!
+
+    @IBAction func doNotBackupButtonChanged(_ sender: NSButton) {
+        let defaults = UserDefaults.standard
+        defaults.set(sender.state == NSControl.StateValue.on,
+                     forKey: Preferences.doNotBackupKey)
+
     }
 
     @IBOutlet
