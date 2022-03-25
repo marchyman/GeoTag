@@ -145,6 +145,7 @@ final class Preferences  {
     class
     func resetDefaults() {
         let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: doNotBackupKey)
         defaults.removeObject(forKey: coordFormatKey)
         defaults.removeObject(forKey: sidecarKey)
         defaults.removeObject(forKey: saveBookmarkKey)
