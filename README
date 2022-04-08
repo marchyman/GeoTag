@@ -19,6 +19,14 @@ GeoTag is available from several sources
   `brew cask install geotag` to install.
 * [GitHub](https://github.com/marchyman/GeoTag)
 
+## WIP
+
+### Updates
+
+* Add a do not backup option to program preferences.  Not recommended, but
+  provided for those who know they always have backups of all their images and
+  see no need to create any more.
+
 ## GeoTag 4.14
 
 ### Update
