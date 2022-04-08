@@ -29,6 +29,7 @@ import AppKit
 final class Preferences  {
 
     // class constants
+    static let doNotBackupKey = "DoNotBackupKey"
     static let saveBookmarkKey = "SaveBookmarkKey"
     static let coordFormatKey = "CoordFormatKey"
     static let sidecarKey = "SidecarKey"
@@ -45,6 +46,12 @@ final class Preferences  {
         case deg
         case degMin
         case degMinSec
+    }
+
+    class
+    func doNotBackup() -> Bool {
+        let defaults = UserDefaults.standard
+        return defaults.bool(forKey: doNotBackupKey)
     }
 
     /// fetch the URL of the optional save folder
@@ -138,6 +145,7 @@ final class Preferences  {
     class
     func resetDefaults() {
         let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: doNotBackupKey)
         defaults.removeObject(forKey: coordFormatKey)
         defaults.removeObject(forKey: sidecarKey)
         defaults.removeObject(forKey: saveBookmarkKey)

@@ -281,7 +281,7 @@ final class ImageData: NSObject {
                dateTime != originalDateTime) else {
             return 0     // nothing to update
         }
-        if saveOriginalFile() {
+        if Preferences.doNotBackup() || saveOriginalFile() {
             backupFailed = false
             let result = Exiftool.helper.updateLocation(from: self)
             if result == 0 {

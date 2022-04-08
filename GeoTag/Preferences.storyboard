@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="GMY-Vl-9oZ">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="GMY-Vl-9oZ">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -216,6 +216,17 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                                     <action selector="close:" target="0lh-S3-hCN" id="NCi-cn-A9V"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e2b-ea-tZN">
+                                <rect key="frame" x="292" y="428" width="235" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Do not backup files (not recommended)" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Fsw-oJ-fYr">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system" size="11"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="doNotBackupButtonChanged:" target="0lh-S3-hCN" id="wvE-gn-ant"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="0DR-3T-UaS" firstAttribute="top" secondItem="z38-Lm-kvU" secondAttribute="bottom" constant="8" symbolic="YES" id="2ig-mb-jtJ"/>
@@ -264,6 +275,7 @@ Please select a folder to hold these backup copies.  The backups can be removed 
                         <outlet property="coordFormatDeg" destination="gcF-0V-Kzp" id="Pgh-WY-zgk"/>
                         <outlet property="coordFormatDegMin" destination="R6t-cD-FbL" id="jAL-X8-nMF"/>
                         <outlet property="coordFormatDegMinSec" destination="wEF-7J-BVU" id="wm4-A5-8BM"/>
+                        <outlet property="doNotBackupButton" destination="e2b-ea-tZN" id="v9n-ie-hUR"/>
                         <outlet property="dtGPSButton" destination="GDs-Ky-946" id="fth-m0-wOl"/>
                         <outlet property="modTimeButton" destination="qbN-eC-bHf" id="jCY-uN-eeO"/>
                         <outlet property="saveFolderPath" destination="KR1-bn-ydR" id="qls-TC-LZE"/>
