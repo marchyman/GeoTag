@@ -88,7 +88,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '4.55';
+$VERSION = '4.57';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -208,6 +208,7 @@ $VERSION = '4.55';
     53 => 'Canon EF-S 18-55mm f/3.5-5.6 III', #Jon Charnas
     54 => 'Canon EF-S 55-250mm f/4-5.6 IS II', #47
     60 => 'Irix 11mm f/4', #50
+    63 => 'Irix 30mm F1.4 Dragonfly', #IB
     80 => 'Canon TS-E 50mm f/2.8L Macro', #42
     81 => 'Canon TS-E 90mm f/2.8L Macro', #42
     82 => 'Canon TS-E 135mm f/4L Macro', #42
@@ -599,6 +600,9 @@ $VERSION = '4.55';
    '61182.25' => 'Canon RF 100-400mm F5.6-8 IS USM + RF1.4x', #42 (NC)
    '61182.26' => 'Canon RF 100-400mm F5.6-8 IS USM + RF2x', #42 (NC)
    '61182.27' => 'Canon RF 16mm F2.8 STM', #42
+   '61182.28' => 'Canon RF 400mm F2.8L IS USM', #IB
+   '61182.29' => 'Canon RF 400mm F2.8L IS USM + RF1.4x', #IB
+   '61182.30' => 'Canon RF 400mm F2.8L IS USM + RF2x', #IB
   #'61182.xx' => 'Canon RF 100mm F2.8L MACRO IS USM',
     65535 => 'n/a',
 );
@@ -970,8 +974,8 @@ my %canonQuality = (
     4 => 'RAW',
     5 => 'Superfine',
     7 => 'CRAW', #42
-    130 => 'Normal Movie', #22
-    131 => 'Movie (2)', #PH (7DmkII 1920x1080)
+    130 => 'Light (RAW)', #github#119
+    131 => 'Standard (RAW)', #github#119
 );
 my %canonImageSize = (
    -1 => 'n/a',
@@ -1018,7 +1022,7 @@ my %canonWhiteBalance = (
     20 => 'PC Set4', #PH
     21 => 'PC Set5', #PH
     # 22 - Custom 2?
-    23 => 'Auto (ambience priority)', #PH (5DS)
+    23 => 'Auto (ambience priority)', #PH (5DS) (perhaps this needs re-thinking?: forum13295)
     # 30 - Click White Balance?
     # 31 - Shot Settings?
     # 137 - Tungsten?
@@ -2053,6 +2057,13 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
             TagTable => 'Image::ExifTool::Canon::HDRInfo',
         }
     },
+    0x4026 => { #github#119
+        Name => 'LogInfo',
+        SubDirectory => {
+            Validate => 'Image::ExifTool::Canon::Validate($dirData,$subdirStart,$size)',
+            TagTable => 'Image::ExifTool::Canon::LogInfo',
+        }
+    },
     0x4028 => { #PH
         Name => 'AFConfig', # (AFTabInfo)
         SubDirectory => {
@@ -2126,6 +2137,7 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
             4 => 'Continuous, Low', #PH
             5 => 'Continuous, High', #PH
             6 => 'Silent Single', #PH
+            8 => 'Continuous, High+', #WolfgangGulcker
             # ref A: https://exiftool.org/forum/index.php/topic,5701.msg27843.html#msg27843
             9 => 'Single, Silent', #A
             10 => 'Continuous, Silent', #A
@@ -6789,6 +6801,9 @@ my %ciMaxFocal = (
             284 => 'Canon RF 100-400mm F5.6-8 IS USM + RF1.4x', #42 (NC)
             285 => 'Canon RF 100-400mm F5.6-8 IS USM + RF2x', #42 (NC)
             288 => 'Canon RF 16mm F2.8 STM', #42
+            289 => 'Canon RF 400mm F2.8L IS USM', #IB
+            290 => 'Canon RF 400mm F2.8L IS USM + RF1.4x', #IB
+            291 => 'Canon RF 400mm F2.8L IS USM + RF2x', #IB
            #xxx => 'Canon RF 100mm F2.8L MACRO IS USM',
             # Note: add new RF lenses to %canonLensTypes with ID 61182
         },
@@ -8699,6 +8714,65 @@ my %filterConv = (
         },
     },
     # 3 - maybe related to AutoImageAlign?
+);
+
+# More color information (MakerNotes tag 0x4026) (ref github issue #119)
+%Image::ExifTool::Canon::LogInfo = (
+    %binaryDataAttrs,
+    FORMAT => 'int32s',
+    FIRST_ENTRY => 1,
+    PRIORITY => 0,
+    4 => {
+        Name => 'CompressionFormat',
+        PrintConv => {
+             0 => 'Editing (ALL-I)',
+             1 => 'Standard (IPB)',
+             2 => 'Light (IPB)',
+             3 => 'Motion JPEG',
+             4 => 'RAW', # either Standard or Light, depending on Quality
+        },
+    },
+    6 => {  # 0 to 7
+        Name => 'Sharpness',
+        RawConv => '$val == 0x7fffffff ? undef : $val',
+    },
+    7 => {  # -4 to 4
+        Name => 'Saturation', 
+        RawConv => '$val == 0x7fffffff ? undef : $val',
+        %Image::ExifTool::Exif::printParameter,
+    },
+    8 => {  # -4 to 4
+        Name => 'ColorTone',
+        RawConv => '$val == 0x7fffffff ? undef : $val',
+        %Image::ExifTool::Exif::printParameter,
+    },
+    9 => {
+        Name => 'ColorSpace2',
+        RawConv => '$val == 0x7fffffff ? undef : $val',
+        PrintConv => {
+            0 => 'BT.709',
+            1 => 'BT.2020',
+            2 => 'CinemaGamut',
+        },
+    },
+    10 => {
+        Name => 'ColorMatrix',
+        RawConv => '$val == 0x7fffffff ? undef : $val',
+        PrintConv => {
+            0 => 'EOS Original',
+            1 => 'Neutral',
+        },
+    },
+    11 => {
+        Name => 'CanonLogVersion', # (increases dynamic range of sensor data)
+        RawConv => '$val == 0x7fffffff ? undef : $val',
+        PrintConv => {
+            0 => 'OFF',
+            1 => 'CLogV1',
+            2 => 'CLogV2', # (NC)
+            3 => 'CLogV3',
+        },
+    },
 );
 
 # AF configuration info (MakerNotes tag 0x4028) (ref PH)

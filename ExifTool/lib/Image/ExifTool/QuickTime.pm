@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.73';
+$VERSION = '2.74';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -2232,7 +2232,7 @@ my %eeBox2 = (
     #  4 ? - "1e 00"
     #  6 int16u - record length in bytes
     #  8 ? - "23 01 00 00 00 00 00 00"
-    #  16 - start of records (each record ends in an int64u timestamp in ns)
+    #  16 - start of records (each record ends in an int64u timestamp "ts" in ns)
     # RDTA - float[4],ts: "-0.31289672 -0.2245330 11.303817 0 775.780"
     # RDTB - float[4],ts: "-0.04841613 -0.2166595 0.0724792 0 775.780"
     # RDTC - float[4],ts: "27.60925 -27.10037 -13.27285 0 775.829"
@@ -8795,15 +8795,19 @@ sub ProcessSampleDesc($$$)
 
     my $num = Get32u($dataPt, 4);   # get number of sample entries in table
     $pos += 8;
-    my $i;
+    my ($i, $err);
     for ($i=0; $i<$num; ++$i) {     # loop through sample entries
-        last if $pos + 8 > $dirLen;
+        $pos + 8 > $dirLen and $err = 1, last;
         my $size = Get32u($dataPt, $pos);
-        last if $pos + $size > $dirLen;
+        $pos + $size > $dirLen and $err = 1, last;
         $$dirInfo{DirStart} = $pos;
         $$dirInfo{DirLen} = $size;
         ProcessHybrid($et, $dirInfo, $tagTablePtr);
         $pos += $size;
+    }
+    if ($err and $$et{HandlerType}) {
+        my $grp = $$et{SET_GROUP1} || $$dirInfo{Parent} || 'unknown';
+        $et->Warn("Truncated $$et{HandlerType} sample table for $grp");
     }
     return 1;
 }

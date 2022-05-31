@@ -27,6 +27,8 @@ GeoTag is available from several sources
   provided for those who know they always have backups of all their images and
   see no need to create any more.
 
+* Exiftool 12.41; adds support for OM-1 (OM Digital Systems)
+
 ## GeoTag 4.14
 
 ### Update

@@ -40,7 +40,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::APP12;
 
-$VERSION = '2.75';
+$VERSION = '2.77';
 
 sub PrintLensInfo($$$);
 
@@ -432,6 +432,7 @@ my %olympusCameraTypes = (
     S0089 => 'E-M5MarkIII',
     S0092 => 'E-M1MarkIII', #IB
     S0093 => 'E-P7', #IB
+    S0095 => 'OM-1', #IB
     SR45 => 'D220',
     SR55 => 'D320L',
     SR83 => 'D340L',
@@ -3430,7 +3431,7 @@ my %indexInfo = (
     0x2a => {
         Name => 'FNumber',
         Format => 'rational64u',
-        PrintConv => 'sprintf("%.1f",$val)',
+        PrintConv => 'Image::ExifTool::Exif::PrintFNumber($val)',
     },
     0x32 => { #(NC)
         Name => 'ExposureCompensation',
@@ -3476,7 +3477,7 @@ my %indexInfo = (
     0x3a => {
         Name => 'FNumber',
         Format => 'rational64u',
-        PrintConv => 'sprintf("%.1f",$val)',
+        PrintConv => 'Image::ExifTool::Exif::PrintFNumber($val)',
     },
     0x42 => { #(NC)
         Name => 'ExposureCompensation',
@@ -3527,7 +3528,7 @@ my %indexInfo = (
     0x28 => {
         Name => 'FNumber',
         Format => 'rational64u',
-        PrintConv => 'sprintf("%.1f",$val)',
+        PrintConv => 'Image::ExifTool::Exif::PrintFNumber($val)',
     },
     0x30 => { #(NC)
         Name => 'ExposureCompensation',
@@ -3744,7 +3745,7 @@ my %indexInfo = (
     0x5a => {
         Name => 'FNumber',
         Format => 'rational64u',
-        PrintConv => 'sprintf("%.1f",$val)',
+        PrintConv => 'Image::ExifTool::Exif::PrintFNumber($val)',
     },
     0x7f => {
         Name => 'DateTimeOriginal', #(NC)
@@ -3789,7 +3790,7 @@ my %indexInfo = (
     0x5e => {
         Name => 'FNumber',
         Format => 'rational64u',
-        PrintConv => 'sprintf("%.1f",$val)',
+        PrintConv => 'Image::ExifTool::Exif::PrintFNumber($val)',
     },
     0x83 => {
         Name => 'DateTime1',
