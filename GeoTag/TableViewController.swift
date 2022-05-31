@@ -75,9 +75,13 @@ final class TableViewController: NSViewController {
         appDelegate.progressIndicator.startAnimation(self)
         var reloadNeeded = false
         var duplicateFound = false
+
         // silently ignore xmp sidecar files
+        // also ignore jpeg files if they are part of a raw/jpg pair
+        let filteredUrls = filterImage(urls: urls)
+
         let updateGroup = DispatchGroup()
-        for url in urls where url.pathExtension.lowercased() != "xmp" {
+        for url in filteredUrls {
             if imageUrls.contains(url) {
                 duplicateFound = true
             } else {
@@ -111,7 +115,36 @@ final class TableViewController: NSViewController {
         }
         return duplicateFound
     }
-    
+
+    /// Remove xmp and jpg/jpeg half of raw/jpg pairs from an array of image urls
+    ///
+    /// - Parameter urls: the array of URLs to filter
+    /// - Returns: the filtered array of URLs
+    ///
+    private
+    func filterImage(urls: [URL]) -> [URL] {
+        let filteredUrls = urls.filter { element in
+            let ext = element.pathExtension.lowercased()
+            guard ext != "xmp" else { return false }
+            guard ext == "jpg" || ext == "jpeg" else { return true }
+
+            // fn is the url of a jpeg file without its extension.  If it
+            // matches the url (less extension) of any other file in the array
+            // of urls fn is assumed to be part of a raw/jpeg pair and
+            // will be filtered from the resulting array
+
+            let fn = element.deletingPathExtension()
+            for f in urls {
+                guard element != f else { continue }
+                if fn == f.deletingPathExtension() {
+                    return false
+                }
+            }
+            return true
+        }
+        return filteredUrls
+    }
+
     /// Force a reload of the entire table when the coordinate format changes
     @objc
     private

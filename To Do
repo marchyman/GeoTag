@@ -1,7 +1,5 @@
 Feature Requests:
 
-* ignore jpg if both jpg and raw files exist?
-
 * Add and option to show the location of all selected images.
 
 * check for overlap before assigning locations from a track log and warn the user

@@ -6,6 +6,12 @@
   provided for those who know they always have backups of all their images and
   see no need to create any more.
 
+* Ignore jpg/jpeg files that are part of a raw+jpg pair. Such files are only
+  ignored when both files of a pair are in the same folder and are opened
+  at the same time.
+
+* Exiftool 12.41; adds support for OM-1 (OM Digital Systems)
+
 ## GeoTag 4.14
 
 ### Update
