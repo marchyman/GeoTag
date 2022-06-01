@@ -30,21 +30,37 @@ else
     fi
 fi
 NAME=GeoTag-${SHORT_VERSION}
-DIR=~/Desktop/${NAME}
+WORK=~/Desktop/${NAME}-work.dmg
+DIR=/Volumes/${NAME}
 DMG=~/Desktop/${NAME}.dmg
 
-rm -rf ${DIR}
-mkdir ${DIR}
+# create read/write DMG and open it
+rm -rf ${WORK}
+hdiutil create -size 100m -fs 'Case-sensitive APFS' -volname ${NAME} ${WORK}
+open ${WORK}
+sleep 2 # give time for the volume to open
+open ${DIR}
 
+# Add a background image
+BG_DIR=${DIR}/.background
+mkdir ${BG_DIR}
+cp background.png ${BG_DIR}
+
+# Add the files and Applications link
 ln -s /Applications ${DIR}
 cp -R ~/Desktop/GeoTag.app ${DIR}
 cp README ${DIR}/Readme.txt
 echo ${BUILD_VERSION} > ${DIR}/Version.txt
 
-rm -f ${DMG}
-hdiutil create -srcfolder ${DIR} -volname ${NAME} -format UDZO ${DMG}
-rm -rf ${DIR}
+# make it look pretty and eject the dmg
+osascript dmg-pretty.scpt ${NAME}
 
+# convert the DNG to format UDZ0 and clean up
+rm -f ${DMG}
+hdiutil convert ${WORK} -format UDZO -o ${DMG}
+rm -rf ${WORK}
+
+# codesign the dmg
 # use `security find-identity -p codesigning` to find the appropriate ID
 
 codesign --deep --force --verify --verbose -s 1BC4A429EE4A7435268EA4605A22C535E80049EE --options runtime ${DMG}
