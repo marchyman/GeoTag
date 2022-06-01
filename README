@@ -19,7 +19,7 @@ GeoTag is available from several sources
   `brew cask install geotag` to install.
 * [GitHub](https://github.com/marchyman/GeoTag)
 
-## WIP
+## 4.15
 
 ### Updates
 
@@ -32,17 +32,6 @@ GeoTag is available from several sources
   at the same time.
 
 * Exiftool 12.41; adds support for OM-1 (OM Digital Systems)
-
-## GeoTag 4.14
-
-### Update
-
-* Exiftool version 12.39
-
-### Bug Fix
-
-* Date/Times could only be modified.  A Date/Time could not be assigned
-  to an image that did not have a create date.  Fixed.
 
 ### Known Bugs
 
@@ -58,6 +47,9 @@ GeoTag is available from several sources
 ### See the file named *History* for earlier changes and bug fixes
 
 ### Image Backups
+
+A "backup folder" should be used but may be disabled in preferences. If not
+disabled the following points are applicable:
 
 * A "backup folder" location is required.  If a backup folder is not configured
   when GeoTag starts the program will open the preferences window for you to
