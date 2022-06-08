@@ -7,13 +7,15 @@
 # 1) Xcode: Archive app
 # 2) Notarize App
 # 3) Export Notarized app.  It will wind up on the Desktop
-# 4) Run this script to create a READ ONLY DMG
-# 5) Note the returned Request-UUID.
-# 6) Check status using this command:
-#    xcrun altool --notarization-info Request-UUID --username "marc+developer@snafu.org" --password "@keychain:Notarizing"
-# 7) Wait until that status is "Package Approved" -- or you get an email from apple
-# 8) Staple the notarization ticket to the dmg
-#    xcrun stapler staple -v ${DMG}
+# 4) Run this script to create a notarized READ ONLY DMG
+#
+# Script changed to use notarytool in place of altool.  Notarytool
+# Sstore credentials named "notary-snafu.org" were created using this command:
+#   xcrun notarytool store-credentials \
+#       --apple-id "marc+developer@snafu.org" \
+#       --team-id "A3UXBEBE8Z"
+# then entering the profile name and the "Notarizing" password stored in
+# the keychain.
 
 set -ex
 
@@ -65,9 +67,12 @@ rm -rf ${WORK}
 
 codesign --deep --force --verify --verbose -s 1BC4A429EE4A7435268EA4605A22C535E80049EE --options runtime ${DMG}
 
-# Upload to apple for notarization.  Use org.snafu.$NAME as the bundle ID
+# Upload to apple for notarization.
 
-xcrun altool -type osx --notarize-app --primary-bundle-id "org.snafu.${NAME}" --username "marc+developer@snafu.org" --password "@keychain:Notarizing" --file ${DMG}
+xcrun notarytool submit ${DMG} \
+    --keychain-profile "notary-snafu.org" \
+    --wait
 
+xcrun stapler staple -v ${DMG}
 
 exit 0
