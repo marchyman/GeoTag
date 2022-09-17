@@ -10,3 +10,10 @@ Feature Requests:
 * Would it be worth putting in the preferences or somewhere the ability
   to put in a tag to indicate that the photo has GPS data in it.   On a
   save if GPS data is there it also saves the Tag.  Just an idea.
+
+* raw/jpg file changes thoughts
+  - instead of hiding jpgs, show them in gray
+  - create sidecar file if changes made so both files get update
+  - make hiding/graying the jpeg files optional.
+
+* Add altitude update if retrieved from a track log.
