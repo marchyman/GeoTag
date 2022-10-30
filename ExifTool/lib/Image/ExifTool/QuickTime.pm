@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.74';
+$VERSION = '2.79';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -66,6 +66,7 @@ sub ProcessRIFFTrailer($$$);
 sub ProcessTTAD($$$);
 sub ProcessNMEA($$$);
 sub ProcessGPSLog($$$);
+sub ProcessGarminGPS($$$);
 sub SaveMetaKeys($$$);
 # ++^^^^^^^^^^^^++
 sub ParseItemLocation($$);
@@ -556,12 +557,16 @@ my %eeBox2 = (
     mdat => { Name => 'MediaData', Unknown => 1, Binary => 1 },
     'mdat-size' => {
         Name => 'MediaDataSize',
+        RawConv => '$$self{MediaDataSize} = $val',
         Notes => q{
             not a real tag ID, this tag represents the size of the 'mdat' data in bytes
             and is used in the AvgBitrate calculation
         },
     },
-    'mdat-offset' => 'MediaDataOffset',
+    'mdat-offset' => {
+        Name  => 'MediaDataOffset',
+        RawConv => '$$self{MediaDataOffset} = $val',
+    },
     junk => { Unknown => 1, Binary => 1 }, #8
     uuid => [
         { #9 (MP4 files)
@@ -897,7 +902,7 @@ my %eeBox2 = (
     },
     colr => {
         Name => 'ColorRepresentation',
-        ValueConv => 'join(" ", substr($val,0,4), unpack("x4n*",$val))',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::ColorRep' },
     },
     pasp => {
         Name => 'PixelAspectRatio',
@@ -1116,6 +1121,23 @@ my %eeBox2 = (
             SubDirectory => {
                 TagTable => 'Image::ExifTool::Canon::uuid',
                 Start => 16,
+            },
+        },
+        {
+            Name => 'GarminGPS',
+            Condition => '$$valPt=~/^\x9b\x63\x0f\x8d\x63\x74\x40\xec\x82\x04\xbc\x5f\xf5\x09\x17\x28/ and $$self{OPTIONS}{ExtractEmbedded}',
+            SubDirectory => {
+                TagTable => 'Image::ExifTool::QuickTime::Stream',
+                ProcessProc => \&ProcessGarminGPS,
+            },
+        },
+        {
+            Name => 'GarminGPS',
+            Condition => '$$valPt=~/^\x9b\x63\x0f\x8d\x63\x74\x40\xec\x82\x04\xbc\x5f\xf5\x09\x17\x28/',
+            Notes => 'Garmin GPS sensor data',
+            RawConv => q{
+                $self->WarnOnce('Use the ExtractEmbedded option to decode timed Garmin GPS',3);
+                return \$val;
             },
         },
         {
@@ -2732,7 +2754,7 @@ my %eeBox2 = (
         },
     },{
         Name => 'ColorRepresentation',
-        ValueConv => 'join(" ", substr($val,0,4), unpack("x4n*",$val))',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::ColorRep' },
     }],
     irot => {
         Name => 'Rotation',
@@ -2789,6 +2811,78 @@ my %eeBox2 = (
     av1C => {
         Name => 'AV1Configuration',
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::AV1Config' },
+    },
+);
+
+# ref https://aomediacodec.github.io/av1-spec/av1-spec.pdf
+%Image::ExifTool::QuickTime::ColorRep = (
+    PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
+    GROUPS => { 2 => 'Video' },
+    FIRST_ENTRY => 0,
+    0 => { Name => 'ColorProfiles', Format => 'undef[4]' },
+    4 => {
+        Name => 'ColorPrimaries',
+        Format => 'int16u',
+        PrintConv => {
+                1 => 'BT.709',
+                2 => 'Unspecified',
+                4 => 'BT.470 System M (historical)',
+                5 => 'BT.470 System B, G (historical)',
+                6 => 'BT.601',
+                7 => 'SMPTE 240',
+                8 => 'Generic film (color filters using illuminant C)',
+                9 => 'BT.2020, BT.2100',
+                10 => 'SMPTE 428 (CIE 1921 XYZ)',
+                11 => 'SMPTE RP 431-2',
+                12 => 'SMPTE EG 432-1',
+                22 => 'EBU Tech. 3213-E',
+            },
+    },
+    6 => {
+        Name => 'TransferCharacteristics',
+        Format => 'int16u',
+        PrintConv => {
+                0 => 'For future use (0)',
+                1 => 'BT.709',
+                2 => 'Unspecified',
+                3 => 'For future use (3)',
+                4 => 'BT.470 System M (historical)',
+                5 => 'BT.470 System B, G (historical)',
+                6 => 'BT.601',
+                7 => 'SMPTE 240 M',
+                8 => 'Linear',
+                9 => 'Logarithmic (100 : 1 range)',
+                10 => 'Logarithmic (100 * Sqrt(10) : 1 range)',
+                11 => 'IEC 61966-2-4',
+                12 => 'BT.1361',
+                13 => 'sRGB or sYCC',
+                14 => 'BT.2020 10-bit systems',
+                15 => 'BT.2020 12-bit systems',
+                16 => 'SMPTE ST 2084, ITU BT.2100 PQ',
+                17 => 'SMPTE ST 428',
+                18 => 'BT.2100 HLG, ARIB STD-B67',
+            },
+    },
+    8 => {
+        Name => 'MatrixCoefficients',
+        Format => 'int16u',
+        PrintConv => {
+                0 => 'Identity matrix',
+                1 => 'BT.709',
+                2 => 'Unspecified',
+                3 => 'For future use (3)',
+                4 => 'US FCC 73.628',
+                5 => 'BT.470 System B, G (historical)',
+                6 => 'BT.601',
+                7 => 'SMPTE 240 M',
+                8 => 'YCgCo',
+                9 => 'BT.2020 non-constant luminance, BT.2100 YCbCr',
+                10 => 'BT.2020 constant luminance',
+                11 => 'SMPTE ST 2085 YDzDx',
+                12 => 'Chromaticity-derived non-constant luminance',
+                13 => 'Chromaticity-derived constant luminance',
+                14 => 'BT.2100 ICtCp',
+            },
     },
 );
 
@@ -7516,6 +7610,12 @@ my %eeBox2 = (
         Format => 'undef[4]',
         RawConv => '$$self{MetaFormat} = $val',
     },
+    8 => { # starts at 8 for MetaFormat eq 'camm', and 17 for 'mett'
+        Name => 'MetaType',
+        Format => 'undef[$size-8]',
+        # may start at various locations!
+        RawConv => '$$self{MetaType} = ($val=~/(application[^\0]+)/ ? $1 : undef)',
+    },
 #
 # Observed offsets for child atoms of various MetaFormat types:
 #
@@ -7547,6 +7647,11 @@ my %eeBox2 = (
         Name => 'OtherFormat',
         Format => 'undef[4]',
         RawConv => '$$self{MetaFormat} = $val', # (yes, use MetaFormat for this too)
+    },
+    24 => {
+        Condition => '$$self{MetaFormat} eq "tmcd"',
+        Name => 'PlaybackFrameRate', # (may differ from recorded FrameRate eg. ../pics/FujiFilmX-H1.mov)
+        Format => 'rational64u',
     },
 #
 # Observed offsets for child atoms of various OtherFormat types:
@@ -8000,9 +8105,12 @@ sub AUTOLOAD
 # Returns: 9-element rotation matrix as a string (with 0 x/y offsets)
 sub GetRotationMatrix($)
 {
-    my $ang = 3.1415926536 * shift() / 180;
+    my $ang = 3.14159265358979323846264 * shift() / 180;
     my $cos = cos $ang;
     my $sin = sin $ang;
+    # round to zero
+    $cos = 0 if abs($cos) < 1e-12;
+    $sin = 0 if abs($sin) < 1e-12;
     my $msn = -$sin;
     return "$cos $sin 0 $msn $cos 0 0 0 1";
 }
@@ -9555,10 +9663,14 @@ ItemID:         foreach $id (keys %$items) {
                                     require Image::ExifTool::Font;
                                     $lang = $Image::ExifTool::Font::ttLang{Macintosh}{$lang};
                                 }
+                            } else {
+                                # for the default language code of 0x0000, use UTF-8 instead
+                                # of the CharsetQuickTime setting if obviously UTF8
+                                $enc = 'UTF8' if Image::ExifTool::IsUTF8(\$str) > 0;
                             }
                             # the spec says only "Macintosh text encoding", but
                             # allow this to be configured by the user
-                            $enc = $charsetQuickTime;
+                            $enc = $charsetQuickTime unless $enc;
                         } else {
                             # convert language code to ASCII (ignore read-only bit)
                             $lang = UnpackLang($lang);
@@ -9599,8 +9711,7 @@ ItemID:         foreach $id (keys %$items) {
                         if (not ref $$vp and length($$vp) <= 65536 and $$vp =~ /[\x80-\xff]/) {
                             # the encoding of this is not specified, so use CharsetQuickTime
                             # unless the string is valid UTF-8
-                            require Image::ExifTool::XMP;
-                            my $enc = Image::ExifTool::XMP::IsUTF8($vp) > 0 ? 'UTF8' : $charsetQuickTime;
+                            my $enc = Image::ExifTool::IsUTF8($vp) > 0 ? 'UTF8' : $charsetQuickTime;
                             $$vp = $et->Decode($$vp, $enc);
                         }
                     }

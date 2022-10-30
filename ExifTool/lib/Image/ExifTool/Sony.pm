@@ -34,7 +34,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::Minolta;
 
-$VERSION = '3.50';
+$VERSION = '3.54';
 
 sub ProcessSRF($$$);
 sub ProcessSR2($$$);
@@ -154,7 +154,12 @@ sub PrintInvLensSpec($;$$);
     32866 => 'Sony FE 24mm F2.8 G', #IB
     32867 => 'Sony FE 40mm F2.5 G', #IB
     32868 => 'Sony FE 50mm F2.5 G', #IB
+    32871 => 'Sony FE PZ 16-35mm F4 G', #JR
+    32873 => 'Sony E PZ 10-20mm F4 G', #JR
     32874 => 'Sony FE 70-200mm F2.8 GM OSS II', #IB
+    32875 => 'Sony FE 24-70mm F2.8 GM II', #JR
+    32876 => 'Sony E 11mm F1.8', #JR
+    32877 => 'Sony E 15mm F1.4 G', #JR
 
   # (comment this out so LensID will report the LensModel, which is more useful)
   # 32952 => 'Metabones Canon EF Speed Booster Ultra', #JR (corresponds to 184, but 'Advanced' mode, LensMount reported as E-mount)
@@ -200,12 +205,14 @@ sub PrintInvLensSpec($;$$);
     49468 => 'Tamron 18-300mm F3.5-6.3 Di III-A VC VXD', #JR (Model B061)
     49469 => 'Tamron 35-150mm F2-F2.8 Di III VXD', #JR (Model A058)
     49470 => 'Tamron 28-75mm F2.8 Di III VXD G2', #JR (Model A063)
+    49471 => 'Tamron 50-400mm F4.5-6.3 Di III VC VXD', #JR (Model A067)
 
     49473 => 'Tokina atx-m 85mm F1.8 FE or Viltrox lens', #JR
     49473.1 => 'Viltrox 23mm F1.4 E', #JR
     49473.2 => 'Viltrox 56mm F1.4 E', #JR
     49712 => 'Tokina FiRIN 20mm F2 FE AF',       # (firmware Ver.01)
     49713 => 'Tokina FiRIN 100mm F2.8 FE MACRO', # (firmware Ver.01)
+    49714 => 'Tokina atx-m 11-18mm F2.8 E', #JR
 
     50480 => 'Sigma 30mm F1.4 DC DN | C', #IB/JR (016)
     50481 => 'Sigma 50mm F1.4 DG HSM | A', #JR (014 + MC-11 or 018)
@@ -245,6 +252,7 @@ sub PrintInvLensSpec($;$$);
     50530 => 'Sigma 24mm F2 DG DN | C', #JR (021)
     50531 => 'Sigma 18-50mm F2.8 DC DN | C', #IB/JR (021)
     50532 => 'Sigma 20mm F2 DG DN | C', #JR (022)
+    50533 => 'Sigma 16-28mm F2.8 DG DN | C', #JR (022)
 
     50992 => 'Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III', #JR
     50993 => 'Voigtlander HELIAR-HYPER WIDE 10mm F5.6', #IB
@@ -1042,7 +1050,7 @@ my %hidUnk = ( Hidden => 1, Unknown => 1 );
         SubDirectory => { TagTable => 'Image::ExifTool::Sony::Tag2010h' },
     },{
         Name => 'Tag2010i', # ?
-        Condition => '$$self{Model} =~ /^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2)|DSC-(RX10M4|RX100M6|RX100M5A|RX100M7|HX99|RX0M2)|ZV-(1|E10))\b/',
+        Condition => '$$self{Model} =~ /^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2)|DSC-(RX10M4|RX100M6|RX100M5A|RX100M7|HX99|RX0M2)|ZV-(1F?|E10))\b/',
         SubDirectory => { TagTable => 'Image::ExifTool::Sony::Tag2010i' },
     },{
         Name => 'Tag_0x2010',
@@ -2043,6 +2051,8 @@ my %hidUnk = ( Hidden => 1, Unknown => 1 );
             386 => 'ILCE-7RM3A', #JR
             387 => 'ILCE-7RM4A', #forum12542
             388 => 'ILCE-7M4', #IB/JR
+            389 => 'ZV-1F', #IB
+            391 => 'ILME-FX30', #JR
         },
     },
     0xb020 => { #2
@@ -8244,9 +8254,10 @@ my %isoSetting2010 = (
     FIRST_ENTRY => 0,
     GROUPS => { 0 => 'MakerNotes', 2 => 'Image' },
     DATAMEMBER => [ 0 ],
-    IS_SUBDIR => [ 0x0498, 0x049d, 0x04a1, 0x04a2, 0x059d, 0x0634, 0x0636, 0x064c, 0x0653, 0x0678, 0x06b8, 0x06de, 0x06e7 ],
+    IS_SUBDIR => [ 0x044e, 0x0498, 0x049d, 0x04a1, 0x04a2, 0x059d, 0x0634, 0x0636, 0x064c, 0x0653, 0x0678, 0x06b8, 0x06de, 0x06e7 ],
     0x0000 => { Name => 'Ver9401', Hidden => 1, RawConv => '$$self{Ver9401} = $val; $$self{OPTIONS}{Unknown}<2 ? undef : $val' },
 
+    0x044e => { Name => 'ISOInfo', Condition => '$$self{Ver9401} == 178',          Format => 'int8u[5]', SubDirectory => { TagTable => 'Image::ExifTool::Sony::ISOInfo' } },
     0x0498 => { Name => 'ISOInfo', Condition => '$$self{Ver9401} == 148',          Format => 'int8u[5]', SubDirectory => { TagTable => 'Image::ExifTool::Sony::ISOInfo' } },
     0x049d => { Name => 'ISOInfo', Condition => '$$self{Ver9401} == 167',          Format => 'int8u[5]', SubDirectory => { TagTable => 'Image::ExifTool::Sony::ISOInfo' } },
     0x04a1 => { Name => 'ISOInfo', Condition => '$$self{Ver9401} =~ /^(160|164)/', Format => 'int8u[5]', SubDirectory => { TagTable => 'Image::ExifTool::Sony::ISOInfo' } },
@@ -9937,20 +9948,22 @@ my %isoSetting2010 = (
     WRITE_PROC => \&Image::ExifTool::Exif::WriteExif,
     CHECK_PROC => \&Image::ExifTool::Exif::CheckExif,
     GROUPS => { 0 => 'MakerNotes', 1 => 'SR2SubIFD', 2 => 'Camera' },
+    WRITE_GROUP => 'SR2SubIFD',
+    PERMANENT => 1,
     SET_GROUP1 => 1, # set group1 name to directory name for all tags in table
     NOTES => 'Tags in the encrypted SR2SubIFD',
-    0x7300 => 'BlackLevel', #IB (R1)
-    0x7302 => 'WB_GRBGLevelsAuto', #IB (R1)
-    0x7303 => 'WB_GRBGLevels', #1 (R1 "as shot", ref IB)
-    0x7310 => 'BlackLevel', #IB (divide by 4)
-    0x7312 => 'WB_RGGBLevelsAuto', #IB
-    0x7313 => 'WB_RGGBLevels', #6
-    0x7480 => 'WB_RGBLevelsDaylight', #IB (R1)
-    0x7481 => 'WB_RGBLevelsCloudy', #IB (R1)
-    0x7482 => 'WB_RGBLevelsTungsten', #IB (R1)
-    0x7483 => 'WB_RGBLevelsFlash', #IB (R1)
-    0x7484 => 'WB_RGBLevels4500K', #IB (R1)
-    0x7486 => 'WB_RGBLevelsFluorescent', #IB (R1)
+    0x7300 => { Name => 'BlackLevel',           Writable => 'int16u', Count => 4, Protected => 1 },
+    0x7302 => { Name => 'WB_GRBGLevelsAuto',    Writable => 'int16s', Count => 4, Protected => 1 }, #IB (R1)
+    0x7303 => { Name => 'WB_GRBGLevels',        Writable => 'int16s', Count => 4, Protected => 1 }, #1 (R1 "as shot", ref IB)
+    0x7310 => { Name => 'BlackLevel',           Writable => 'int16u', Count => 4, Protected => 1 }, #IB (divide by 4)
+    0x7312 => { Name => 'WB_RGGBLevelsAuto',    Writable => 'int16s', Count => 4, Protected => 1 }, #IB
+    0x7313 => { Name => 'WB_RGGBLevels',        Writable => 'int16s', Count => 4, Protected => 1 }, #6
+    0x7480 => { Name => 'WB_RGBLevelsDaylight', Writable => 'int16s', Count => 4, Protected => 1 }, #IB (R1)
+    0x7481 => { Name => 'WB_RGBLevelsCloudy',   Writable => 'int16s', Count => 4, Protected => 1 }, #IB (R1)
+    0x7482 => { Name => 'WB_RGBLevelsTungsten', Writable => 'int16s', Count => 4, Protected => 1 }, #IB (R1)
+    0x7483 => { Name => 'WB_RGBLevelsFlash',    Writable => 'int16s', Count => 4, Protected => 1 }, #IB (R1)
+    0x7484 => { Name => 'WB_RGBLevels4500K',    Writable => 'int16s', Count => 4, Protected => 1 }, #IB (R1)
+    0x7486 => { Name => 'WB_RGBLevelsFluorescent',  Writable => 'int16s', Count => 4, Protected => 1 }, #IB (R1)
     0x74a0 => 'MaxApertureAtMaxFocal', #PH
     0x74a1 => 'MaxApertureAtMinFocal', #PH
     0x74a2 => { #IB (R1)
@@ -9972,21 +9985,21 @@ my %isoSetting2010 = (
         },
     },
     0x7800 => 'ColorMatrix', #IB (divide by 1024)
-    0x7820 => 'WB_RGBLevelsDaylight', #6 (or 5300K, ref IB)
-    0x7821 => 'WB_RGBLevelsCloudy', #6 (or 6100K, ref IB)
-    0x7822 => 'WB_RGBLevelsTungsten', #6
-    0x7823 => 'WB_RGBLevelsFlash', #IB
-    0x7824 => 'WB_RGBLevels4500K', #IB
-    0x7825 => 'WB_RGBLevelsShade', #6 (or 7500K, ref IB)
-    0x7826 => 'WB_RGBLevelsFluorescent', #6 (~4000K)
-    0x7827 => 'WB_RGBLevelsFluorescentP1', #IB (~5000K)
-    0x7828 => 'WB_RGBLevelsFluorescentP2', #IB (~6500K) (was Flash, ref 6)
-    0x7829 => 'WB_RGBLevelsFluorescentM1', #IB (~3500K)
-    0x782a => 'WB_RGBLevels8500K', #IB
-    0x782b => 'WB_RGBLevels6000K', #IB
-    0x782c => 'WB_RGBLevels3200K', #IB
-    0x782d => 'WB_RGBLevels2500K', #IB
-    0x787f => 'WhiteLevel', #IB (divide by 4)
+    0x7820 => { Name => 'WB_RGBLevelsDaylight', Writable => 'int16s', Count => 3, Protected => 1 }, #6 (or 5300K, ref IB)
+    0x7821 => { Name => 'WB_RGBLevelsCloudy',   Writable => 'int16s', Count => 3, Protected => 1 }, #6 (or 6100K, ref IB)
+    0x7822 => { Name => 'WB_RGBLevelsTungsten', Writable => 'int16s', Count => 3, Protected => 1 }, #6
+    0x7823 => { Name => 'WB_RGBLevelsFlash',    Writable => 'int16s', Count => 3, Protected => 1 }, #IB
+    0x7824 => { Name => 'WB_RGBLevels4500K',    Writable => 'int16s', Count => 3, Protected => 1 }, #IB
+    0x7825 => { Name => 'WB_RGBLevelsShade',    Writable => 'int16s', Count => 3, Protected => 1 }, #6 (or 7500K, ref IB)
+    0x7826 => { Name => 'WB_RGBLevelsFluorescent',   Writable => 'int16s', Count => 3, Protected => 1 }, #6 (~4000K)
+    0x7827 => { Name => 'WB_RGBLevelsFluorescentP1', Writable => 'int16s', Count => 3, Protected => 1 }, #IB (~5000K)
+    0x7828 => { Name => 'WB_RGBLevelsFluorescentP2', Writable => 'int16s', Count => 3, Protected => 1 }, #IB (~6500K) (was Flash, ref 6)
+    0x7829 => { Name => 'WB_RGBLevelsFluorescentM1', Writable => 'int16s', Count => 3, Protected => 1 }, #IB (~3500K)
+    0x782a => { Name => 'WB_RGBLevels8500K',    Writable => 'int16s', Count => 3, Protected => 1 }, #IB
+    0x782b => { Name => 'WB_RGBLevels6000K',    Writable => 'int16s', Count => 3, Protected => 1 }, #IB
+    0x782c => { Name => 'WB_RGBLevels3200K',    Writable => 'int16s', Count => 3, Protected => 1 }, #IB
+    0x782d => { Name => 'WB_RGBLevels2500K',    Writable => 'int16s', Count => 3, Protected => 1 }, #IB
+    0x787f => { Name => 'WhiteLevel',           Writable => 'int16u', Count => 3, Protected => 1 }, #IB (divide by 4)
     0x797d => 'VignettingCorrParams', #forum7640
     0x7980 => 'ChromaticAberrationCorrParams', #forum6509 (Sony A7 ARW)
     0x7982 => 'DistortionCorrParams', #forum6509 (Sony A7 ARW)

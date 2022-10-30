@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.47';
+$VERSION = '3.49';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -501,11 +501,13 @@ been decoded.  Use the L<Unknown|../ExifTool.html#Unknown> (-u) option to extrac
 },
     GeoTiff => q{
 ExifTool extracts the following tags from GeoTIFF images.  See
-L<http://www.remotesensing.org/geotiff/spec/geotiffhome.html> for the
-complete GeoTIFF specification.  Also included in the table below are
-ChartTIFF tags (see L<http://www.charttiff.com/whitepapers.shtml>). GeoTIFF
-tags are not writable individually, but they may be copied en mass via the
-block tags GeoTiffDirectory, GeoTiffDoubleParams and GeoTiffAsciiParams.
+L<https://web.archive.org/web/20070820121549/http://www.remotesensing.org/geotiff/spec/geotiffhome.html>
+for the complete GeoTIFF specification.  Also included in the table below
+are ChartTIFF tags (see
+L<https://web.archive.org/web/20020828193928/http://www.charttiff.com/whitepapers.shtml>).
+GeoTIFF tags are not writable individually, but they may be copied en mass
+via the block tags GeoTiffDirectory, GeoTiffDoubleParams and
+GeoTiffAsciiParams.
 },
     JFIF => q{
 The following information is extracted from the JPEG JFIF header.  See
@@ -1324,9 +1326,12 @@ TagID:  foreach $tagID (@keys) {
                     if ($writable) {
                         foreach ('PrintConv','ValueConv') {
                             next unless $$tagInfo{$_};
-                            next if $$tagInfo{$_ . 'Inv'};
-                            next if ref($$tagInfo{$_}) =~ /^(HASH|ARRAY)$/;
-                            next if $$tagInfo{WriteAlso};
+                            next if defined $$tagInfo{$_ . 'Inv'};
+                            # (undefined inverse conversion overrides hash lookup)
+                            unless (exists $$tagInfo{$_ . 'Inv'}) {
+                                next if ref($$tagInfo{$_}) =~ /^(HASH|ARRAY)$/;
+                                next if $$tagInfo{WriteAlso};
+                            }
                             if ($_ eq 'ValueConv') {
                                 undef $writable;
                             } else {
@@ -2570,6 +2575,9 @@ sub WriteTagNames($$)
                 $tip = '';
                 # use copyright symbol in QuickTime UserData tags
                 $tagIDstr =~ s/^"\\xa9/"&copy;/;
+                # escape necessary characters in html
+                $tagIDstr =~ s/>/&gt;/g;
+                $tagIDstr =~ s/</&lt;/g;
             }
             # add tooltip for special writable attributes
             my $wtip = '';
