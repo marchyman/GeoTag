@@ -7,14 +7,25 @@
 
 import SwiftUI
 
+// look and feel values
+let borderColor = Color.gray
+let minWidth = 400.0
+let minHeight = 800.0
+
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        HSplitView {
+            Text("Table view goes here")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            VSplitView {
+                Text("Image View goes here")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                Text("Map View goes here")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
+        .frame(minWidth: minWidth, minHeight: minHeight)
+        .border(borderColor)
         .padding()
     }
 }
