@@ -72,6 +72,10 @@
 			<string>Editor</string>
 			<key>LSHandlerRank</key>
 			<string>Alternate</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>gpx</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeName</key>
@@ -80,6 +84,12 @@
 			<string>Editor</string>
 			<key>LSHandlerRank</key>
 			<string>Alternate</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>xmp</string>
+			</array>
+			<key>NSIsRelatedItemType</key>
+			<true/>
 		</dict>
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
