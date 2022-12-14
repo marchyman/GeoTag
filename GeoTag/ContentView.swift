@@ -13,9 +13,11 @@ let minWidth = 400.0
 let minHeight = 800.0
 
 struct ContentView: View {
+    @EnvironmentObject var appState: AppState
+
     var body: some View {
         HSplitView {
-            Text("Table view goes here")
+            ImageTableView(images: $appState.images)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             VSplitView {
                 Text("Image View goes here")
