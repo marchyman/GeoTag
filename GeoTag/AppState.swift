@@ -9,4 +9,5 @@ import Foundation
 
 final class AppState: ObservableObject {
     @Published var images = [ImageModel]()
+    @Published var gpxTracks = [Gpx]()
 }

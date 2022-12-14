@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		492175792949743E00A5EA83 /* OpenPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492175782949743E00A5EA83 /* OpenPanel.swift */; };
+		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
+		4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757C294986DC00A5EA83 /* UnexpectedError.swift */; };
 		492E3F5E29481A7D0044C1F3 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 492E3F5D29481A7D0044C1F3 /* Credits.rtf */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
 		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
@@ -23,6 +25,8 @@
 
 /* Begin PBXFileReference section */
 		492175782949743E00A5EA83 /* OpenPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPanel.swift; sourceTree = "<group>"; };
+		4921757A2949863A00A5EA83 /* Gpx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
+		4921757C294986DC00A5EA83 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,10 +80,12 @@
 				49B039592944429E003B7C53 /* ContentView.swift */,
 				49B9EDE22949442700574D18 /* AppState.swift */,
 				492175782949743E00A5EA83 /* OpenPanel.swift */,
+				4921757A2949863A00A5EA83 /* Gpx.swift */,
 				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
 				49B9EDE029493F4000574D18 /* Coord.swift */,
 				492E3F5F2948361D0044C1F3 /* ImageView.swift */,
 				49B9EDDC29493CC200574D18 /* ImageTableView.swift */,
+				4921757C294986DC00A5EA83 /* UnexpectedError.swift */,
 				492E3F5D29481A7D0044C1F3 /* Credits.rtf */,
 				49B0395B2944429F003B7C53 /* Assets.xcassets */,
 				49B039602944429F003B7C53 /* GeoTag.entitlements */,
@@ -133,7 +139,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					49B039532944429E003B7C53 = {
 						CreatedOnToolsVersion = 14.1;
@@ -199,11 +205,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
+				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
 				49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */,
 				49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */,
 				49B9EDE32949442700574D18 /* AppState.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenPanel.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coord.swift in Sources */,
+				4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */,
 				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
 			);
@@ -245,6 +253,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -305,6 +314,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -332,9 +342,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"GeoTag/Preview Content\"";
 				DEVELOPMENT_TEAM = A3UXBEBE8Z;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -363,9 +375,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"GeoTag/Preview Content\"";
 				DEVELOPMENT_TEAM = A3UXBEBE8Z;
 				ENABLE_HARDENED_RUNTIME = YES;
