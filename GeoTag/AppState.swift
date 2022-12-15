@@ -18,4 +18,6 @@ final class AppState: ObservableObject {
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
 
+    // Set of image URLs used to detect duplicate images
+    var imageURLs = Set<URL>()
 }
