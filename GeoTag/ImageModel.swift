@@ -90,6 +90,10 @@ final class ImageModel: Identifiable {
 
         if Exiftool.helper.fileTypeIsWritable(for: fileURL) {
             validImage = loadImageMetadata()
+            if validImage, let sandboxXmpURL,
+               FileManager.default.fileExists(atPath: xmpURL.path) {
+                loadXmpMetadata(sandboxXmpURL)
+            }
         }
     }
 
@@ -168,6 +172,32 @@ final class ImageModel: Identifiable {
         }
         return true
     }
+
+    /// obtain metadata from XMP file
+    /// - Parameter xmp: URL of XMP file for an image
+    ///
+    /// Extract desired metadata from an XMP file using ExifTool.  Apple
+    /// ImageIO functions do not work with XMP sidecar files.
+
+    private
+    func loadXmpMetadata(_ xmp: URL) {
+        var errorCode: NSError?
+        let coordinator = NSFileCoordinator(filePresenter: xmpFile)
+        coordinator.coordinate(readingItemAt: xmp,
+                               options: NSFileCoordinator.ReadingOptions.resolvesSymbolicLink,
+                               error: &errorCode) { url in
+            let results = Exiftool.helper.metadataFrom(xmp: url)
+            if results.dto != "" {
+                dateTimeCreated = results.dto
+                originalDateTimeCreated = results.dto
+            }
+            if results.valid {
+                location = results.location
+                originalLocation = location
+            }
+        }
+    }
+
 }
 
 // Stand alone helper functions used when initializing an ImageModel
