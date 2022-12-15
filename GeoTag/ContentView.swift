@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-// look and feel values
-let borderColor = Color.gray
-let minWidth = 400.0
-let minHeight = 800.0
+/// Window look and feel values
+let windowBorderColor = Color.gray
+let windowMinWidth = 400.0
+let windowMinHeight = 800.0
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
@@ -26,9 +26,12 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .frame(minWidth: minWidth, minHeight: minHeight)
-        .border(borderColor)
+        .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)
+        .border(windowBorderColor)
         .padding()
+        .sheet(item: $appState.sheetType) { sheetType in
+            ContentViewSheet(type: sheetType)
+        }
     }
 }
 

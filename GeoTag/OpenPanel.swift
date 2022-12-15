@@ -26,10 +26,16 @@ func showOpenPanel(_ appState: AppState) {
 
     // process any URLs selected to open.
     if panel.runModal() == NSApplication.ModalResponse.OK {
+        appState.gpxGoodFileNames.removeAll()
+        appState.gpxBadFileNames.removeAll()
         var urls = [URL]()
         for url in panel.urls {
-            if !findUrlsInFolder(appState, url: url, toUrls: &urls) {
-                if !isGpxFile(appState, url) {
+            if isFolder(url: url) {
+                findUrlsInFolder(appState, url: url, toUrls: &urls)
+            } else {
+                if url.pathExtension.lowercased() == "gpx" {
+                    parseGpxFile(appState, url)
+                } else {
                     urls.append(url)
                 }
             }
@@ -45,7 +51,16 @@ func showOpenPanel(_ appState: AppState) {
     }
 }
 
-/// If a given URL is a folder iterate over the folder looking for files.
+/// Check if a given file URL refers to a folder
+///
+private func isFolder(url: URL) -> Bool {
+    let fileManager = FileManager.default
+    var dir = ObjCBool(false)
+    return fileManager.fileExists(atPath: url.path, isDirectory: &dir) &&
+        dir.boolValue
+}
+
+/// iterate over a folder looking for files.
 /// - Parameters:
 ///   - appState: program state variables
 ///   - url: The URL to check.  It will be
@@ -55,70 +70,44 @@ private func findUrlsInFolder(
     _ appState: AppState,
     url: URL,
     toUrls urls: inout [URL]
-) -> Bool {
+) {
     let fileManager = FileManager.default
-    var dir = ObjCBool(false)
-    if fileManager.fileExists(atPath: url.path, isDirectory: &dir) &&
-        dir.boolValue {
-        guard let urlEnumerator =
+    guard let urlEnumerator =
             fileManager.enumerator(at: url,
                                    includingPropertiesForKeys: [.isDirectoryKey],
                                    options: [.skipsHiddenFiles],
-                                   errorHandler: nil) else { return false }
-        while let fileUrl = urlEnumerator.nextObject() as? URL {
-            guard let resources =
-                try? fileUrl.resourceValues(forKeys: [.isDirectoryKey]),
-                let directory = resources.isDirectory
-                else { continue }
-            if !directory {
-                if !isGpxFile(appState, fileUrl) {
-                    urls.append(fileUrl)
-                }
+                                   errorHandler: nil) else { return }
+    while let fileUrl = urlEnumerator.nextObject() as? URL {
+        guard let resources =
+              try? fileUrl.resourceValues(forKeys: [.isDirectoryKey]),
+              let directory = resources.isDirectory
+        else { continue }
+        if !directory {
+            if fileUrl.pathExtension.lowercased() == "gpx" {
+                parseGpxFile(appState, fileUrl)
+            } else {
+                urls.append(fileUrl)
             }
         }
-        return true
     }
-    return false
 }
 
-
-/// check if the given url is a valid gpx file.  A valid gpx file ends in .gpx and can be parsed
+/// Parse the given url is a valid gpx file.  A valid gpx file ends in .gpx and can be parsed
 /// by the GPX parser without error.
 ///
 /// - Parameters:
 ///   - appState: program state variables
-///   - url: URL of file to check
+///   - url: URL of file to parse
 /// - Returns: true if file is a gpx file, otherwise false
-private func isGpxFile(
-    _ appState: AppState,
-    _ url: URL
-) -> Bool {
-    if url.pathExtension.lowercased() == "gpx" {
-        if let gpx = Gpx(contentsOf: url) {
-            if gpx.parse() {
-                // add the track to the map
-                appState.gpxTracks.append(gpx)
-                // put up an alert
-                let alert = NSAlert()
-                alert.alertStyle = NSAlert.Style.informational
-                alert.addButton(withTitle: "Close")
-                alert.messageText = "GPX file loaded"
-                alert.informativeText = url.path
-                alert.informativeText += "GPX file loaded"
-                alert.runModal() //  should be a sheet
-            } else {
-                // put up an alert
-                let alert = NSAlert()
-                alert.alertStyle = NSAlert.Style.informational
-                alert.addButton(withTitle: "Close")
-                alert.messageText = "Bad GPX file"
-                alert.informativeText = url.path
-                alert.informativeText += "Bad GPX file"
-                alert.runModal() // should be a sheet
-            }
-//                progressIndicator.stopAnimation(self)
+private func parseGpxFile(_ appState: AppState, _ url: URL) {
+    if let gpx = Gpx(contentsOf: url) {
+        appState.sheetType = .gpxFileNameSheet
+        if gpx.parse() {
+            // add the track to the map
+            appState.gpxTracks.append(gpx)
+            appState.gpxGoodFileNames.append(url.path)
+        } else {
+            appState.gpxBadFileNames.append(url.path)
         }
-        return true
     }
-    return false
 }

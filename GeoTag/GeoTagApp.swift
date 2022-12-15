@@ -50,13 +50,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         }
     }
 
-    // this delegate function is not being called.  I do not know why.
+    // Called when window that was hidden is now visible
     //
     func applicationShouldHandleReopen(
         _ sender: NSApplication,
         hasVisibleWindows flag: Bool
     ) -> Bool {
-        print("flag is \(flag)")
+        // print("flag is \(flag)")
         return true
     }
 
