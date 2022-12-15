@@ -13,6 +13,235 @@
 		492E3F5E29481A7D0044C1F3 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 492E3F5D29481A7D0044C1F3 /* Credits.rtf */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
+		498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpFile.swift */; };
+		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
+		498AE69E294AD6AC0063B1C1 /* exiftool in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5B5294AD6AC0063B1C1 /* exiftool */; };
+		498AE69F294AD6AC0063B1C1 /* RandomAccess.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5B8294AD6AC0063B1C1 /* RandomAccess.pm */; };
+		498AE6A0294AD6AC0063B1C1 /* RandomAccess.pod in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5B9294AD6AC0063B1C1 /* RandomAccess.pod */; };
+		498AE6A1294AD6AC0063B1C1 /* DjVu.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5BC294AD6AC0063B1C1 /* DjVu.pm */; };
+		498AE6A2294AD6AC0063B1C1 /* IPTC.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5BD294AD6AC0063B1C1 /* IPTC.pm */; };
+		498AE6A3294AD6AC0063B1C1 /* NikonSettings.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5BE294AD6AC0063B1C1 /* NikonSettings.pm */; };
+		498AE6A4294AD6AC0063B1C1 /* DarwinCore.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5BF294AD6AC0063B1C1 /* DarwinCore.pm */; };
+		498AE6A5294AD6AC0063B1C1 /* PLIST.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C0294AD6AC0063B1C1 /* PLIST.pm */; };
+		498AE6A6294AD6AC0063B1C1 /* QuickTime.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C1294AD6AC0063B1C1 /* QuickTime.pm */; };
+		498AE6A7294AD6AC0063B1C1 /* JPEGDigest.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C2294AD6AC0063B1C1 /* JPEGDigest.pm */; };
+		498AE6A8294AD6AC0063B1C1 /* Canon.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C3294AD6AC0063B1C1 /* Canon.pm */; };
+		498AE6A9294AD6AC0063B1C1 /* MPEG.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C4294AD6AC0063B1C1 /* MPEG.pm */; };
+		498AE6AA294AD6AC0063B1C1 /* Matroska.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C5294AD6AC0063B1C1 /* Matroska.pm */; };
+		498AE6AB294AD6AC0063B1C1 /* PhotoMechanic.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C6294AD6AC0063B1C1 /* PhotoMechanic.pm */; };
+		498AE6AC294AD6AC0063B1C1 /* RIFF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C7294AD6AC0063B1C1 /* RIFF.pm */; };
+		498AE6AD294AD6AC0063B1C1 /* Kodak.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C8294AD6AC0063B1C1 /* Kodak.pm */; };
+		498AE6AE294AD6AC0063B1C1 /* Minolta.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5C9294AD6AC0063B1C1 /* Minolta.pm */; };
+		498AE6AF294AD6AC0063B1C1 /* Import.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5CA294AD6AC0063B1C1 /* Import.pm */; };
+		498AE6B0294AD6AC0063B1C1 /* GeoTiff.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5CB294AD6AC0063B1C1 /* GeoTiff.pm */; };
+		498AE6B1294AD6AC0063B1C1 /* PPM.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5CC294AD6AC0063B1C1 /* PPM.pm */; };
+		498AE6B2294AD6AC0063B1C1 /* APE.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5CD294AD6AC0063B1C1 /* APE.pm */; };
+		498AE6B3294AD6AC0063B1C1 /* MNG.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5CE294AD6AC0063B1C1 /* MNG.pm */; };
+		498AE6B4294AD6AC0063B1C1 /* FLAC.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5CF294AD6AC0063B1C1 /* FLAC.pm */; };
+		498AE6B5294AD6AC0063B1C1 /* GoPro.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D0294AD6AC0063B1C1 /* GoPro.pm */; };
+		498AE6B6294AD6AC0063B1C1 /* Olympus.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D1294AD6AC0063B1C1 /* Olympus.pm */; };
+		498AE6B7294AD6AC0063B1C1 /* Microsoft.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D2294AD6AC0063B1C1 /* Microsoft.pm */; };
+		498AE6B8294AD6AC0063B1C1 /* Ogg.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D3294AD6AC0063B1C1 /* Ogg.pm */; };
+		498AE6B9294AD6AC0063B1C1 /* GPS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D4294AD6AC0063B1C1 /* GPS.pm */; };
+		498AE6BA294AD6AC0063B1C1 /* FujiFilm.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D5294AD6AC0063B1C1 /* FujiFilm.pm */; };
+		498AE6BB294AD6AC0063B1C1 /* Audible.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D6294AD6AC0063B1C1 /* Audible.pm */; };
+		498AE6BC294AD6AC0063B1C1 /* Shortcuts.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D7294AD6AC0063B1C1 /* Shortcuts.pm */; };
+		498AE6BD294AD6AC0063B1C1 /* APP12.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D8294AD6AC0063B1C1 /* APP12.pm */; };
+		498AE6BE294AD6AC0063B1C1 /* HtmlDump.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5D9294AD6AC0063B1C1 /* HtmlDump.pm */; };
+		498AE6BF294AD6AC0063B1C1 /* Qualcomm.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5DA294AD6AC0063B1C1 /* Qualcomm.pm */; };
+		498AE6C0294AD6AC0063B1C1 /* MXF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5DB294AD6AC0063B1C1 /* MXF.pm */; };
+		498AE6C1294AD6AC0063B1C1 /* CanonCustom.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5DC294AD6AC0063B1C1 /* CanonCustom.pm */; };
+		498AE6C2294AD6AC0063B1C1 /* PSP.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5DD294AD6AC0063B1C1 /* PSP.pm */; };
+		498AE6C3294AD6AC0063B1C1 /* MIEUnits.pod in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5DE294AD6AC0063B1C1 /* MIEUnits.pod */; };
+		498AE6C4294AD6AC0063B1C1 /* iWork.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5DF294AD6AC0063B1C1 /* iWork.pm */; };
+		498AE6C5294AD6AC0063B1C1 /* FITS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E0294AD6AC0063B1C1 /* FITS.pm */; };
+		498AE6C6294AD6AC0063B1C1 /* BPG.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E1294AD6AC0063B1C1 /* BPG.pm */; };
+		498AE6C7294AD6AC0063B1C1 /* LIF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E2294AD6AC0063B1C1 /* LIF.pm */; };
+		498AE6C8294AD6AC0063B1C1 /* MIFF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E3294AD6AC0063B1C1 /* MIFF.pm */; };
+		498AE6C9294AD6AC0063B1C1 /* PLUS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E4294AD6AC0063B1C1 /* PLUS.pm */; };
+		498AE6CA294AD6AC0063B1C1 /* Sony.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E5294AD6AC0063B1C1 /* Sony.pm */; };
+		498AE6CB294AD6AC0063B1C1 /* Palm.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E6294AD6AC0063B1C1 /* Palm.pm */; };
+		498AE6CC294AD6AC0063B1C1 /* MacOS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E7294AD6AC0063B1C1 /* MacOS.pm */; };
+		498AE6CD294AD6AC0063B1C1 /* XMPStruct.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E8294AD6AC0063B1C1 /* XMPStruct.pl */; };
+		498AE6CE294AD6AC0063B1C1 /* MISB.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5E9294AD6AC0063B1C1 /* MISB.pm */; };
+		498AE6CF294AD6AC0063B1C1 /* KyoceraRaw.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5EA294AD6AC0063B1C1 /* KyoceraRaw.pm */; };
+		498AE6D0294AD6AC0063B1C1 /* InDesign.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5EB294AD6AC0063B1C1 /* InDesign.pm */; };
+		498AE6D1294AD6AC0063B1C1 /* AFCP.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5EC294AD6AC0063B1C1 /* AFCP.pm */; };
+		498AE6D2294AD6AC0063B1C1 /* FotoStation.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5ED294AD6AC0063B1C1 /* FotoStation.pm */; };
+		498AE6D3294AD6AC0063B1C1 /* HTML.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5EE294AD6AC0063B1C1 /* HTML.pm */; };
+		498AE6D4294AD6AC0063B1C1 /* BigTIFF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5EF294AD6AC0063B1C1 /* BigTIFF.pm */; };
+		498AE6D5294AD6AC0063B1C1 /* CaptureOne.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F0294AD6AC0063B1C1 /* CaptureOne.pm */; };
+		498AE6D6294AD6AC0063B1C1 /* EXE.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F1294AD6AC0063B1C1 /* EXE.pm */; };
+		498AE6D7294AD6AC0063B1C1 /* GIF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F2294AD6AC0063B1C1 /* GIF.pm */; };
+		498AE6D8294AD6AC0063B1C1 /* QuickTimeStream.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F3294AD6AC0063B1C1 /* QuickTimeStream.pl */; };
+		498AE6D9294AD6AC0063B1C1 /* MOI.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F4294AD6AC0063B1C1 /* MOI.pm */; };
+		498AE6DA294AD6AC0063B1C1 /* Stim.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F5294AD6AC0063B1C1 /* Stim.pm */; };
+		498AE6DB294AD6AC0063B1C1 /* Sanyo.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F6294AD6AC0063B1C1 /* Sanyo.pm */; };
+		498AE6DC294AD6AC0063B1C1 /* Vorbis.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F7294AD6AC0063B1C1 /* Vorbis.pm */; };
+		498AE6DD294AD6AC0063B1C1 /* H264.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F8294AD6AC0063B1C1 /* H264.pm */; };
+		498AE6DE294AD6AC0063B1C1 /* AES.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5F9294AD6AC0063B1C1 /* AES.pm */; };
+		498AE6DF294AD6AC0063B1C1 /* Torrent.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5FA294AD6AC0063B1C1 /* Torrent.pm */; };
+		498AE6E0294AD6AC0063B1C1 /* Reconyx.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5FB294AD6AC0063B1C1 /* Reconyx.pm */; };
+		498AE6E1294AD6AC0063B1C1 /* PanasonicRaw.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5FC294AD6AC0063B1C1 /* PanasonicRaw.pm */; };
+		498AE6E2294AD6AC0063B1C1 /* Geotag.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5FD294AD6AC0063B1C1 /* Geotag.pm */; };
+		498AE6E3294AD6AC0063B1C1 /* Leaf.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5FE294AD6AC0063B1C1 /* Leaf.pm */; };
+		498AE6E4294AD6AC0063B1C1 /* Sigma.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE5FF294AD6AC0063B1C1 /* Sigma.pm */; };
+		498AE6E5294AD6AC0063B1C1 /* XMP.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE600294AD6AC0063B1C1 /* XMP.pm */; };
+		498AE6E6294AD6AC0063B1C1 /* WritePNG.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE601294AD6AC0063B1C1 /* WritePNG.pl */; };
+		498AE6E7294AD6AC0063B1C1 /* WriteExif.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE602294AD6AC0063B1C1 /* WriteExif.pl */; };
+		498AE6E8294AD6AC0063B1C1 /* Red.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE603294AD6AC0063B1C1 /* Red.pm */; };
+		498AE6E9294AD6AC0063B1C1 /* PGF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE604294AD6AC0063B1C1 /* PGF.pm */; };
+		498AE6EA294AD6AC0063B1C1 /* ITC.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE605294AD6AC0063B1C1 /* ITC.pm */; };
+		498AE6EB294AD6AC0063B1C1 /* GIMP.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE606294AD6AC0063B1C1 /* GIMP.pm */; };
+		498AE6EC294AD6AC0063B1C1 /* PICT.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE607294AD6AC0063B1C1 /* PICT.pm */; };
+		498AE6ED294AD6AC0063B1C1 /* Nintendo.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE608294AD6AC0063B1C1 /* Nintendo.pm */; };
+		498AE6EE294AD6AC0063B1C1 /* Font.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE609294AD6AC0063B1C1 /* Font.pm */; };
+		498AE6EF294AD6AC0063B1C1 /* FLIR.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE60A294AD6AC0063B1C1 /* FLIR.pm */; };
+		498AE6F0294AD6AC0063B1C1 /* SonyIDC.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE60B294AD6AC0063B1C1 /* SonyIDC.pm */; };
+		498AE6F1294AD6AC0063B1C1 /* CanonRaw.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE60C294AD6AC0063B1C1 /* CanonRaw.pm */; };
+		498AE6F2294AD6AC0063B1C1 /* WritePhotoshop.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE60D294AD6AC0063B1C1 /* WritePhotoshop.pl */; };
+		498AE6F3294AD6AC0063B1C1 /* Other.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE60E294AD6AC0063B1C1 /* Other.pm */; };
+		498AE6F4294AD6AC0063B1C1 /* Real.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE60F294AD6AC0063B1C1 /* Real.pm */; };
+		498AE6F5294AD6AC0063B1C1 /* Panasonic.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE610294AD6AC0063B1C1 /* Panasonic.pm */; };
+		498AE6F6294AD6AC0063B1C1 /* PDF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE611294AD6AC0063B1C1 /* PDF.pm */; };
+		498AE6F7294AD6AC0063B1C1 /* FlashPix.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE612294AD6AC0063B1C1 /* FlashPix.pm */; };
+		498AE6F8294AD6AC0063B1C1 /* JPEG.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE613294AD6AC0063B1C1 /* JPEG.pm */; };
+		498AE6F9294AD6AC0063B1C1 /* README in Resources */ = {isa = PBXBuildFile; fileRef = 498AE614294AD6AC0063B1C1 /* README */; };
+		498AE6FA294AD6AC0063B1C1 /* Exif.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE615294AD6AC0063B1C1 /* Exif.pm */; };
+		498AE6FB294AD6AC0063B1C1 /* WritePDF.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE616294AD6AC0063B1C1 /* WritePDF.pl */; };
+		498AE6FC294AD6AC0063B1C1 /* DV.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE617294AD6AC0063B1C1 /* DV.pm */; };
+		498AE6FD294AD6AC0063B1C1 /* Motorola.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE618294AD6AC0063B1C1 /* Motorola.pm */; };
+		498AE6FE294AD6AC0063B1C1 /* JVC.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE619294AD6AC0063B1C1 /* JVC.pm */; };
+		498AE6FF294AD6AC0063B1C1 /* ja.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE61B294AD6AC0063B1C1 /* ja.pm */; };
+		498AE700294AD6AC0063B1C1 /* en_ca.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE61C294AD6AC0063B1C1 /* en_ca.pm */; };
+		498AE701294AD6AC0063B1C1 /* pl.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE61D294AD6AC0063B1C1 /* pl.pm */; };
+		498AE702294AD6AC0063B1C1 /* ko.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE61E294AD6AC0063B1C1 /* ko.pm */; };
+		498AE703294AD6AC0063B1C1 /* fi.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE61F294AD6AC0063B1C1 /* fi.pm */; };
+		498AE704294AD6AC0063B1C1 /* ru.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE620294AD6AC0063B1C1 /* ru.pm */; };
+		498AE705294AD6AC0063B1C1 /* sv.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE621294AD6AC0063B1C1 /* sv.pm */; };
+		498AE706294AD6AC0063B1C1 /* zh_cn.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE622294AD6AC0063B1C1 /* zh_cn.pm */; };
+		498AE707294AD6AC0063B1C1 /* fr.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE623294AD6AC0063B1C1 /* fr.pm */; };
+		498AE708294AD6AC0063B1C1 /* nl.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE624294AD6AC0063B1C1 /* nl.pm */; };
+		498AE709294AD6AC0063B1C1 /* cs.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE625294AD6AC0063B1C1 /* cs.pm */; };
+		498AE70A294AD6AC0063B1C1 /* it.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE626294AD6AC0063B1C1 /* it.pm */; };
+		498AE70B294AD6AC0063B1C1 /* es.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE627294AD6AC0063B1C1 /* es.pm */; };
+		498AE70C294AD6AC0063B1C1 /* zh_tw.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE628294AD6AC0063B1C1 /* zh_tw.pm */; };
+		498AE70D294AD6AC0063B1C1 /* tr.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE629294AD6AC0063B1C1 /* tr.pm */; };
+		498AE70E294AD6AC0063B1C1 /* en_gb.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE62A294AD6AC0063B1C1 /* en_gb.pm */; };
+		498AE70F294AD6AC0063B1C1 /* de.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE62B294AD6AC0063B1C1 /* de.pm */; };
+		498AE710294AD6AC0063B1C1 /* PhaseOne.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE62C294AD6AC0063B1C1 /* PhaseOne.pm */; };
+		498AE711294AD6AC0063B1C1 /* BMP.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE62D294AD6AC0063B1C1 /* BMP.pm */; };
+		498AE712294AD6AC0063B1C1 /* ZIP.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE62E294AD6AC0063B1C1 /* ZIP.pm */; };
+		498AE713294AD6AC0063B1C1 /* WriteCanonRaw.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE62F294AD6AC0063B1C1 /* WriteCanonRaw.pl */; };
+		498AE714294AD6AC0063B1C1 /* Validate.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE630294AD6AC0063B1C1 /* Validate.pm */; };
+		498AE715294AD6AC0063B1C1 /* TagNames.pod in Resources */ = {isa = PBXBuildFile; fileRef = 498AE631294AD6AC0063B1C1 /* TagNames.pod */; };
+		498AE716294AD6AC0063B1C1 /* WritePostScript.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE632294AD6AC0063B1C1 /* WritePostScript.pl */; };
+		498AE717294AD6AC0063B1C1 /* PCX.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE633294AD6AC0063B1C1 /* PCX.pm */; };
+		498AE718294AD6AC0063B1C1 /* Pentax.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE634294AD6AC0063B1C1 /* Pentax.pm */; };
+		498AE719294AD6AC0063B1C1 /* RTF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE635294AD6AC0063B1C1 /* RTF.pm */; };
+		498AE71A294AD6AC0063B1C1 /* PNG.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE636294AD6AC0063B1C1 /* PNG.pm */; };
+		498AE71B294AD6AC0063B1C1 /* WriteXMP.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE637294AD6AC0063B1C1 /* WriteXMP.pl */; };
+		498AE71C294AD6AC0063B1C1 /* Shift.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE638294AD6AC0063B1C1 /* Shift.pl */; };
+		498AE71D294AD6AC0063B1C1 /* DPX.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE639294AD6AC0063B1C1 /* DPX.pm */; };
+		498AE71E294AD6AC0063B1C1 /* Casio.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE63A294AD6AC0063B1C1 /* Casio.pm */; };
+		498AE71F294AD6AC0063B1C1 /* Theora.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE63B294AD6AC0063B1C1 /* Theora.pm */; };
+		498AE720294AD6AC0063B1C1 /* Radiance.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE63C294AD6AC0063B1C1 /* Radiance.pm */; };
+		498AE721294AD6AC0063B1C1 /* ICC_Profile.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE63D294AD6AC0063B1C1 /* ICC_Profile.pm */; };
+		498AE722294AD6AC0063B1C1 /* DNG.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE63E294AD6AC0063B1C1 /* DNG.pm */; };
+		498AE723294AD6AC0063B1C1 /* CanonVRD.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE63F294AD6AC0063B1C1 /* CanonVRD.pm */; };
+		498AE724294AD6AC0063B1C1 /* Flash.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE640294AD6AC0063B1C1 /* Flash.pm */; };
+		498AE725294AD6AC0063B1C1 /* LNK.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE641294AD6AC0063B1C1 /* LNK.pm */; };
+		498AE726294AD6AC0063B1C1 /* WriteQuickTime.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE642294AD6AC0063B1C1 /* WriteQuickTime.pl */; };
+		498AE727294AD6AC0063B1C1 /* WTV.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE643294AD6AC0063B1C1 /* WTV.pm */; };
+		498AE728294AD6AC0063B1C1 /* SigmaRaw.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE644294AD6AC0063B1C1 /* SigmaRaw.pm */; };
+		498AE729294AD6AC0063B1C1 /* HP.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE645294AD6AC0063B1C1 /* HP.pm */; };
+		498AE72A294AD6AC0063B1C1 /* Text.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE646294AD6AC0063B1C1 /* Text.pm */; };
+		498AE72B294AD6AC0063B1C1 /* Parrot.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE647294AD6AC0063B1C1 /* Parrot.pm */; };
+		498AE72C294AD6AC0063B1C1 /* Writer.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE648294AD6AC0063B1C1 /* Writer.pl */; };
+		498AE72D294AD6AC0063B1C1 /* ID3.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE649294AD6AC0063B1C1 /* ID3.pm */; };
+		498AE72E294AD6AC0063B1C1 /* Opus.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE64A294AD6AC0063B1C1 /* Opus.pm */; };
+		498AE72F294AD6AC0063B1C1 /* XMP2.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE64B294AD6AC0063B1C1 /* XMP2.pl */; };
+		498AE730294AD6AC0063B1C1 /* M2TS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE64C294AD6AC0063B1C1 /* M2TS.pm */; };
+		498AE731294AD6AC0063B1C1 /* Charset.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE64D294AD6AC0063B1C1 /* Charset.pm */; };
+		498AE732294AD6AC0063B1C1 /* ZISRAW.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE64E294AD6AC0063B1C1 /* ZISRAW.pm */; };
+		498AE733294AD6AC0063B1C1 /* DICOM.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE64F294AD6AC0063B1C1 /* DICOM.pm */; };
+		498AE734294AD6AC0063B1C1 /* TagInfoXML.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE650294AD6AC0063B1C1 /* TagInfoXML.pm */; };
+		498AE735294AD6AC0063B1C1 /* MPC.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE651294AD6AC0063B1C1 /* MPC.pm */; };
+		498AE736294AD6AC0063B1C1 /* NikonCapture.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE652294AD6AC0063B1C1 /* NikonCapture.pm */; };
+		498AE737294AD6AC0063B1C1 /* BZZ.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE653294AD6AC0063B1C1 /* BZZ.pm */; };
+		498AE738294AD6AC0063B1C1 /* AIFF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE654294AD6AC0063B1C1 /* AIFF.pm */; };
+		498AE739294AD6AC0063B1C1 /* Jpeg2000.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE655294AD6AC0063B1C1 /* Jpeg2000.pm */; };
+		498AE73A294AD6AC0063B1C1 /* PostScript.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE656294AD6AC0063B1C1 /* PostScript.pm */; };
+		498AE73B294AD6AC0063B1C1 /* DJI.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE657294AD6AC0063B1C1 /* DJI.pm */; };
+		498AE73C294AD6AC0063B1C1 /* ISO.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE658294AD6AC0063B1C1 /* ISO.pm */; };
+		498AE73D294AD6AC0063B1C1 /* NikonCustom.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE659294AD6AC0063B1C1 /* NikonCustom.pm */; };
+		498AE73E294AD6AC0063B1C1 /* RSRC.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE65A294AD6AC0063B1C1 /* RSRC.pm */; };
+		498AE73F294AD6AC0063B1C1 /* MRC.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE65B294AD6AC0063B1C1 /* MRC.pm */; };
+		498AE740294AD6AC0063B1C1 /* Photoshop.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE65C294AD6AC0063B1C1 /* Photoshop.pm */; };
+		498AE741294AD6AC0063B1C1 /* Scalado.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE65D294AD6AC0063B1C1 /* Scalado.pm */; };
+		498AE742294AD6AC0063B1C1 /* OOXML.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE65E294AD6AC0063B1C1 /* OOXML.pm */; };
+		498AE743294AD6AC0063B1C1 /* Ricoh.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE65F294AD6AC0063B1C1 /* Ricoh.pm */; };
+		498AE744294AD6AC0063B1C1 /* PhotoCD.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE660294AD6AC0063B1C1 /* PhotoCD.pm */; };
+		498AE745294AD6AC0063B1C1 /* OpenEXR.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE661294AD6AC0063B1C1 /* OpenEXR.pm */; };
+		498AE746294AD6AC0063B1C1 /* ICO.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE662294AD6AC0063B1C1 /* ICO.pm */; };
+		498AE747294AD6AC0063B1C1 /* CBOR.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE663294AD6AC0063B1C1 /* CBOR.pm */; };
+		498AE748294AD6AC0063B1C1 /* WriteIPTC.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE664294AD6AC0063B1C1 /* WriteIPTC.pl */; };
+		498AE749294AD6AC0063B1C1 /* ASF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE665294AD6AC0063B1C1 /* ASF.pm */; };
+		498AE74A294AD6AC0063B1C1 /* MPF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE666294AD6AC0063B1C1 /* MPF.pm */; };
+		498AE74B294AD6AC0063B1C1 /* Lytro.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE667294AD6AC0063B1C1 /* Lytro.pm */; };
+		498AE74C294AD6AC0063B1C1 /* GE.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE668294AD6AC0063B1C1 /* GE.pm */; };
+		498AE74D294AD6AC0063B1C1 /* MIE.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE669294AD6AC0063B1C1 /* MIE.pm */; };
+		498AE74E294AD6AC0063B1C1 /* DOSCyrillic.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE66B294AD6AC0063B1C1 /* DOSCyrillic.pm */; };
+		498AE74F294AD6AC0063B1C1 /* Turkish.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE66C294AD6AC0063B1C1 /* Turkish.pm */; };
+		498AE750294AD6AC0063B1C1 /* Greek.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE66D294AD6AC0063B1C1 /* Greek.pm */; };
+		498AE751294AD6AC0063B1C1 /* Cyrillic.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE66E294AD6AC0063B1C1 /* Cyrillic.pm */; };
+		498AE752294AD6AC0063B1C1 /* MacCroatian.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE66F294AD6AC0063B1C1 /* MacCroatian.pm */; };
+		498AE753294AD6AC0063B1C1 /* MacTurkish.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE670294AD6AC0063B1C1 /* MacTurkish.pm */; };
+		498AE754294AD6AC0063B1C1 /* Baltic.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE671294AD6AC0063B1C1 /* Baltic.pm */; };
+		498AE755294AD6AC0063B1C1 /* MacRomanian.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE672294AD6AC0063B1C1 /* MacRomanian.pm */; };
+		498AE756294AD6AC0063B1C1 /* Thai.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE673294AD6AC0063B1C1 /* Thai.pm */; };
+		498AE757294AD6AC0063B1C1 /* PDFDoc.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE674294AD6AC0063B1C1 /* PDFDoc.pm */; };
+		498AE758294AD6AC0063B1C1 /* Vietnam.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE675294AD6AC0063B1C1 /* Vietnam.pm */; };
+		498AE759294AD6AC0063B1C1 /* Latin.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE676294AD6AC0063B1C1 /* Latin.pm */; };
+		498AE75A294AD6AC0063B1C1 /* Symbol.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE677294AD6AC0063B1C1 /* Symbol.pm */; };
+		498AE75B294AD6AC0063B1C1 /* MacCyrillic.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE678294AD6AC0063B1C1 /* MacCyrillic.pm */; };
+		498AE75C294AD6AC0063B1C1 /* MacIceland.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE679294AD6AC0063B1C1 /* MacIceland.pm */; };
+		498AE75D294AD6AC0063B1C1 /* MacGreek.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE67A294AD6AC0063B1C1 /* MacGreek.pm */; };
+		498AE75E294AD6AC0063B1C1 /* MacArabic.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE67B294AD6AC0063B1C1 /* MacArabic.pm */; };
+		498AE75F294AD6AC0063B1C1 /* Arabic.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE67C294AD6AC0063B1C1 /* Arabic.pm */; };
+		498AE760294AD6AC0063B1C1 /* DOSLatin1.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE67D294AD6AC0063B1C1 /* DOSLatin1.pm */; };
+		498AE761294AD6AC0063B1C1 /* MacHebrew.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE67E294AD6AC0063B1C1 /* MacHebrew.pm */; };
+		498AE762294AD6AC0063B1C1 /* MacRoman.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE67F294AD6AC0063B1C1 /* MacRoman.pm */; };
+		498AE763294AD6AC0063B1C1 /* Hebrew.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE680294AD6AC0063B1C1 /* Hebrew.pm */; };
+		498AE764294AD6AC0063B1C1 /* MacThai.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE681294AD6AC0063B1C1 /* MacThai.pm */; };
+		498AE765294AD6AC0063B1C1 /* MacRSymbol.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE682294AD6AC0063B1C1 /* MacRSymbol.pm */; };
+		498AE766294AD6AC0063B1C1 /* DOSLatinUS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE683294AD6AC0063B1C1 /* DOSLatinUS.pm */; };
+		498AE767294AD6AC0063B1C1 /* MacChineseTW.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE684294AD6AC0063B1C1 /* MacChineseTW.pm */; };
+		498AE768294AD6AC0063B1C1 /* JIS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE685294AD6AC0063B1C1 /* JIS.pm */; };
+		498AE769294AD6AC0063B1C1 /* MacKorean.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE686294AD6AC0063B1C1 /* MacKorean.pm */; };
+		498AE76A294AD6AC0063B1C1 /* MacChineseCN.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE687294AD6AC0063B1C1 /* MacChineseCN.pm */; };
+		498AE76B294AD6AC0063B1C1 /* MacLatin2.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE688294AD6AC0063B1C1 /* MacLatin2.pm */; };
+		498AE76C294AD6AC0063B1C1 /* MacJapanese.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE689294AD6AC0063B1C1 /* MacJapanese.pm */; };
+		498AE76D294AD6AC0063B1C1 /* Latin2.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE68A294AD6AC0063B1C1 /* Latin2.pm */; };
+		498AE76E294AD6AC0063B1C1 /* ShiftJIS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE68B294AD6AC0063B1C1 /* ShiftJIS.pm */; };
+		498AE76F294AD6AC0063B1C1 /* WriteRIFF.pl in Resources */ = {isa = PBXBuildFile; fileRef = 498AE68C294AD6AC0063B1C1 /* WriteRIFF.pl */; };
+		498AE770294AD6AC0063B1C1 /* VCard.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE68D294AD6AC0063B1C1 /* VCard.pm */; };
+		498AE771294AD6AC0063B1C1 /* Unknown.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE68E294AD6AC0063B1C1 /* Unknown.pm */; };
+		498AE772294AD6AC0063B1C1 /* Samsung.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE68F294AD6AC0063B1C1 /* Samsung.pm */; };
+		498AE773294AD6AC0063B1C1 /* Apple.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE690294AD6AC0063B1C1 /* Apple.pm */; };
+		498AE774294AD6AC0063B1C1 /* Nikon.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE691294AD6AC0063B1C1 /* Nikon.pm */; };
+		498AE775294AD6AC0063B1C1 /* Fixup.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE692294AD6AC0063B1C1 /* Fixup.pm */; };
+		498AE776294AD6AC0063B1C1 /* BuildTagLookup.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE693294AD6AC0063B1C1 /* BuildTagLookup.pm */; };
+		498AE777294AD6AC0063B1C1 /* Rawzor.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE694294AD6AC0063B1C1 /* Rawzor.pm */; };
+		498AE778294AD6AC0063B1C1 /* PrintIM.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE695294AD6AC0063B1C1 /* PrintIM.pm */; };
+		498AE779294AD6AC0063B1C1 /* TagLookup.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE696294AD6AC0063B1C1 /* TagLookup.pm */; };
+		498AE77A294AD6AC0063B1C1 /* FLIF.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE697294AD6AC0063B1C1 /* FLIF.pm */; };
+		498AE77B294AD6AC0063B1C1 /* MWG.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE698294AD6AC0063B1C1 /* MWG.pm */; };
+		498AE77C294AD6AC0063B1C1 /* MakerNotes.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE699294AD6AC0063B1C1 /* MakerNotes.pm */; };
+		498AE77D294AD6AC0063B1C1 /* MinoltaRaw.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE69A294AD6AC0063B1C1 /* MinoltaRaw.pm */; };
+		498AE77E294AD6AC0063B1C1 /* JSON.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE69B294AD6AC0063B1C1 /* JSON.pm */; };
+		498AE77F294AD6AC0063B1C1 /* ExifTool.pod in Resources */ = {isa = PBXBuildFile; fileRef = 498AE69C294AD6AC0063B1C1 /* ExifTool.pod */; };
+		498AE780294AD6AC0063B1C1 /* ExifTool.pm in Resources */ = {isa = PBXBuildFile; fileRef = 498AE69D294AD6AC0063B1C1 /* ExifTool.pm */; };
 		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
 		49B0395A2944429E003B7C53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039592944429E003B7C53 /* ContentView.swift */; };
 		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
@@ -31,6 +260,235 @@
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
+		498AE5B0294AB78A0063B1C1 /* XmpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
+		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
+		498AE5B5294AD6AC0063B1C1 /* exiftool */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = exiftool; sourceTree = "<group>"; };
+		498AE5B8294AD6AC0063B1C1 /* RandomAccess.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = RandomAccess.pm; sourceTree = "<group>"; };
+		498AE5B9294AD6AC0063B1C1 /* RandomAccess.pod */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RandomAccess.pod; sourceTree = "<group>"; };
+		498AE5BC294AD6AC0063B1C1 /* DjVu.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DjVu.pm; sourceTree = "<group>"; };
+		498AE5BD294AD6AC0063B1C1 /* IPTC.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = IPTC.pm; sourceTree = "<group>"; };
+		498AE5BE294AD6AC0063B1C1 /* NikonSettings.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = NikonSettings.pm; sourceTree = "<group>"; };
+		498AE5BF294AD6AC0063B1C1 /* DarwinCore.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DarwinCore.pm; sourceTree = "<group>"; };
+		498AE5C0294AD6AC0063B1C1 /* PLIST.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PLIST.pm; sourceTree = "<group>"; };
+		498AE5C1294AD6AC0063B1C1 /* QuickTime.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = QuickTime.pm; sourceTree = "<group>"; };
+		498AE5C2294AD6AC0063B1C1 /* JPEGDigest.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = JPEGDigest.pm; sourceTree = "<group>"; };
+		498AE5C3294AD6AC0063B1C1 /* Canon.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Canon.pm; sourceTree = "<group>"; };
+		498AE5C4294AD6AC0063B1C1 /* MPEG.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MPEG.pm; sourceTree = "<group>"; };
+		498AE5C5294AD6AC0063B1C1 /* Matroska.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Matroska.pm; sourceTree = "<group>"; };
+		498AE5C6294AD6AC0063B1C1 /* PhotoMechanic.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PhotoMechanic.pm; sourceTree = "<group>"; };
+		498AE5C7294AD6AC0063B1C1 /* RIFF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = RIFF.pm; sourceTree = "<group>"; };
+		498AE5C8294AD6AC0063B1C1 /* Kodak.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Kodak.pm; sourceTree = "<group>"; };
+		498AE5C9294AD6AC0063B1C1 /* Minolta.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Minolta.pm; sourceTree = "<group>"; };
+		498AE5CA294AD6AC0063B1C1 /* Import.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Import.pm; sourceTree = "<group>"; };
+		498AE5CB294AD6AC0063B1C1 /* GeoTiff.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = GeoTiff.pm; sourceTree = "<group>"; };
+		498AE5CC294AD6AC0063B1C1 /* PPM.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PPM.pm; sourceTree = "<group>"; };
+		498AE5CD294AD6AC0063B1C1 /* APE.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = APE.pm; sourceTree = "<group>"; };
+		498AE5CE294AD6AC0063B1C1 /* MNG.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MNG.pm; sourceTree = "<group>"; };
+		498AE5CF294AD6AC0063B1C1 /* FLAC.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = FLAC.pm; sourceTree = "<group>"; };
+		498AE5D0294AD6AC0063B1C1 /* GoPro.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = GoPro.pm; sourceTree = "<group>"; };
+		498AE5D1294AD6AC0063B1C1 /* Olympus.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Olympus.pm; sourceTree = "<group>"; };
+		498AE5D2294AD6AC0063B1C1 /* Microsoft.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Microsoft.pm; sourceTree = "<group>"; };
+		498AE5D3294AD6AC0063B1C1 /* Ogg.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Ogg.pm; sourceTree = "<group>"; };
+		498AE5D4294AD6AC0063B1C1 /* GPS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = GPS.pm; sourceTree = "<group>"; };
+		498AE5D5294AD6AC0063B1C1 /* FujiFilm.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = FujiFilm.pm; sourceTree = "<group>"; };
+		498AE5D6294AD6AC0063B1C1 /* Audible.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Audible.pm; sourceTree = "<group>"; };
+		498AE5D7294AD6AC0063B1C1 /* Shortcuts.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Shortcuts.pm; sourceTree = "<group>"; };
+		498AE5D8294AD6AC0063B1C1 /* APP12.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = APP12.pm; sourceTree = "<group>"; };
+		498AE5D9294AD6AC0063B1C1 /* HtmlDump.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = HtmlDump.pm; sourceTree = "<group>"; };
+		498AE5DA294AD6AC0063B1C1 /* Qualcomm.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Qualcomm.pm; sourceTree = "<group>"; };
+		498AE5DB294AD6AC0063B1C1 /* MXF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MXF.pm; sourceTree = "<group>"; };
+		498AE5DC294AD6AC0063B1C1 /* CanonCustom.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CanonCustom.pm; sourceTree = "<group>"; };
+		498AE5DD294AD6AC0063B1C1 /* PSP.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PSP.pm; sourceTree = "<group>"; };
+		498AE5DE294AD6AC0063B1C1 /* MIEUnits.pod */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MIEUnits.pod; sourceTree = "<group>"; };
+		498AE5DF294AD6AC0063B1C1 /* iWork.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = iWork.pm; sourceTree = "<group>"; };
+		498AE5E0294AD6AC0063B1C1 /* FITS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = FITS.pm; sourceTree = "<group>"; };
+		498AE5E1294AD6AC0063B1C1 /* BPG.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = BPG.pm; sourceTree = "<group>"; };
+		498AE5E2294AD6AC0063B1C1 /* LIF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = LIF.pm; sourceTree = "<group>"; };
+		498AE5E3294AD6AC0063B1C1 /* MIFF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MIFF.pm; sourceTree = "<group>"; };
+		498AE5E4294AD6AC0063B1C1 /* PLUS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PLUS.pm; sourceTree = "<group>"; };
+		498AE5E5294AD6AC0063B1C1 /* Sony.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Sony.pm; sourceTree = "<group>"; };
+		498AE5E6294AD6AC0063B1C1 /* Palm.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Palm.pm; sourceTree = "<group>"; };
+		498AE5E7294AD6AC0063B1C1 /* MacOS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacOS.pm; sourceTree = "<group>"; };
+		498AE5E8294AD6AC0063B1C1 /* XMPStruct.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = XMPStruct.pl; sourceTree = "<group>"; };
+		498AE5E9294AD6AC0063B1C1 /* MISB.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MISB.pm; sourceTree = "<group>"; };
+		498AE5EA294AD6AC0063B1C1 /* KyoceraRaw.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = KyoceraRaw.pm; sourceTree = "<group>"; };
+		498AE5EB294AD6AC0063B1C1 /* InDesign.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = InDesign.pm; sourceTree = "<group>"; };
+		498AE5EC294AD6AC0063B1C1 /* AFCP.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = AFCP.pm; sourceTree = "<group>"; };
+		498AE5ED294AD6AC0063B1C1 /* FotoStation.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = FotoStation.pm; sourceTree = "<group>"; };
+		498AE5EE294AD6AC0063B1C1 /* HTML.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = HTML.pm; sourceTree = "<group>"; };
+		498AE5EF294AD6AC0063B1C1 /* BigTIFF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = BigTIFF.pm; sourceTree = "<group>"; };
+		498AE5F0294AD6AC0063B1C1 /* CaptureOne.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CaptureOne.pm; sourceTree = "<group>"; };
+		498AE5F1294AD6AC0063B1C1 /* EXE.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = EXE.pm; sourceTree = "<group>"; };
+		498AE5F2294AD6AC0063B1C1 /* GIF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = GIF.pm; sourceTree = "<group>"; };
+		498AE5F3294AD6AC0063B1C1 /* QuickTimeStream.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = QuickTimeStream.pl; sourceTree = "<group>"; };
+		498AE5F4294AD6AC0063B1C1 /* MOI.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MOI.pm; sourceTree = "<group>"; };
+		498AE5F5294AD6AC0063B1C1 /* Stim.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Stim.pm; sourceTree = "<group>"; };
+		498AE5F6294AD6AC0063B1C1 /* Sanyo.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Sanyo.pm; sourceTree = "<group>"; };
+		498AE5F7294AD6AC0063B1C1 /* Vorbis.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Vorbis.pm; sourceTree = "<group>"; };
+		498AE5F8294AD6AC0063B1C1 /* H264.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = H264.pm; sourceTree = "<group>"; };
+		498AE5F9294AD6AC0063B1C1 /* AES.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = AES.pm; sourceTree = "<group>"; };
+		498AE5FA294AD6AC0063B1C1 /* Torrent.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Torrent.pm; sourceTree = "<group>"; };
+		498AE5FB294AD6AC0063B1C1 /* Reconyx.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Reconyx.pm; sourceTree = "<group>"; };
+		498AE5FC294AD6AC0063B1C1 /* PanasonicRaw.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PanasonicRaw.pm; sourceTree = "<group>"; };
+		498AE5FD294AD6AC0063B1C1 /* Geotag.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Geotag.pm; sourceTree = "<group>"; };
+		498AE5FE294AD6AC0063B1C1 /* Leaf.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Leaf.pm; sourceTree = "<group>"; };
+		498AE5FF294AD6AC0063B1C1 /* Sigma.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Sigma.pm; sourceTree = "<group>"; };
+		498AE600294AD6AC0063B1C1 /* XMP.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = XMP.pm; sourceTree = "<group>"; };
+		498AE601294AD6AC0063B1C1 /* WritePNG.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WritePNG.pl; sourceTree = "<group>"; };
+		498AE602294AD6AC0063B1C1 /* WriteExif.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WriteExif.pl; sourceTree = "<group>"; };
+		498AE603294AD6AC0063B1C1 /* Red.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Red.pm; sourceTree = "<group>"; };
+		498AE604294AD6AC0063B1C1 /* PGF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PGF.pm; sourceTree = "<group>"; };
+		498AE605294AD6AC0063B1C1 /* ITC.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ITC.pm; sourceTree = "<group>"; };
+		498AE606294AD6AC0063B1C1 /* GIMP.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = GIMP.pm; sourceTree = "<group>"; };
+		498AE607294AD6AC0063B1C1 /* PICT.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PICT.pm; sourceTree = "<group>"; };
+		498AE608294AD6AC0063B1C1 /* Nintendo.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Nintendo.pm; sourceTree = "<group>"; };
+		498AE609294AD6AC0063B1C1 /* Font.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Font.pm; sourceTree = "<group>"; };
+		498AE60A294AD6AC0063B1C1 /* FLIR.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = FLIR.pm; sourceTree = "<group>"; };
+		498AE60B294AD6AC0063B1C1 /* SonyIDC.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = SonyIDC.pm; sourceTree = "<group>"; };
+		498AE60C294AD6AC0063B1C1 /* CanonRaw.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CanonRaw.pm; sourceTree = "<group>"; };
+		498AE60D294AD6AC0063B1C1 /* WritePhotoshop.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WritePhotoshop.pl; sourceTree = "<group>"; };
+		498AE60E294AD6AC0063B1C1 /* Other.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Other.pm; sourceTree = "<group>"; };
+		498AE60F294AD6AC0063B1C1 /* Real.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Real.pm; sourceTree = "<group>"; };
+		498AE610294AD6AC0063B1C1 /* Panasonic.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Panasonic.pm; sourceTree = "<group>"; };
+		498AE611294AD6AC0063B1C1 /* PDF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PDF.pm; sourceTree = "<group>"; };
+		498AE612294AD6AC0063B1C1 /* FlashPix.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = FlashPix.pm; sourceTree = "<group>"; };
+		498AE613294AD6AC0063B1C1 /* JPEG.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = JPEG.pm; sourceTree = "<group>"; };
+		498AE614294AD6AC0063B1C1 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		498AE615294AD6AC0063B1C1 /* Exif.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Exif.pm; sourceTree = "<group>"; };
+		498AE616294AD6AC0063B1C1 /* WritePDF.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WritePDF.pl; sourceTree = "<group>"; };
+		498AE617294AD6AC0063B1C1 /* DV.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DV.pm; sourceTree = "<group>"; };
+		498AE618294AD6AC0063B1C1 /* Motorola.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Motorola.pm; sourceTree = "<group>"; };
+		498AE619294AD6AC0063B1C1 /* JVC.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = JVC.pm; sourceTree = "<group>"; };
+		498AE61B294AD6AC0063B1C1 /* ja.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ja.pm; sourceTree = "<group>"; };
+		498AE61C294AD6AC0063B1C1 /* en_ca.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = en_ca.pm; sourceTree = "<group>"; };
+		498AE61D294AD6AC0063B1C1 /* pl.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = pl.pm; sourceTree = "<group>"; };
+		498AE61E294AD6AC0063B1C1 /* ko.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ko.pm; sourceTree = "<group>"; };
+		498AE61F294AD6AC0063B1C1 /* fi.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = fi.pm; sourceTree = "<group>"; };
+		498AE620294AD6AC0063B1C1 /* ru.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ru.pm; sourceTree = "<group>"; };
+		498AE621294AD6AC0063B1C1 /* sv.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = sv.pm; sourceTree = "<group>"; };
+		498AE622294AD6AC0063B1C1 /* zh_cn.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = zh_cn.pm; sourceTree = "<group>"; };
+		498AE623294AD6AC0063B1C1 /* fr.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = fr.pm; sourceTree = "<group>"; };
+		498AE624294AD6AC0063B1C1 /* nl.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = nl.pm; sourceTree = "<group>"; };
+		498AE625294AD6AC0063B1C1 /* cs.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = cs.pm; sourceTree = "<group>"; };
+		498AE626294AD6AC0063B1C1 /* it.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = it.pm; sourceTree = "<group>"; };
+		498AE627294AD6AC0063B1C1 /* es.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = es.pm; sourceTree = "<group>"; };
+		498AE628294AD6AC0063B1C1 /* zh_tw.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = zh_tw.pm; sourceTree = "<group>"; };
+		498AE629294AD6AC0063B1C1 /* tr.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = tr.pm; sourceTree = "<group>"; };
+		498AE62A294AD6AC0063B1C1 /* en_gb.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = en_gb.pm; sourceTree = "<group>"; };
+		498AE62B294AD6AC0063B1C1 /* de.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = de.pm; sourceTree = "<group>"; };
+		498AE62C294AD6AC0063B1C1 /* PhaseOne.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PhaseOne.pm; sourceTree = "<group>"; };
+		498AE62D294AD6AC0063B1C1 /* BMP.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = BMP.pm; sourceTree = "<group>"; };
+		498AE62E294AD6AC0063B1C1 /* ZIP.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ZIP.pm; sourceTree = "<group>"; };
+		498AE62F294AD6AC0063B1C1 /* WriteCanonRaw.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WriteCanonRaw.pl; sourceTree = "<group>"; };
+		498AE630294AD6AC0063B1C1 /* Validate.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Validate.pm; sourceTree = "<group>"; };
+		498AE631294AD6AC0063B1C1 /* TagNames.pod */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TagNames.pod; sourceTree = "<group>"; };
+		498AE632294AD6AC0063B1C1 /* WritePostScript.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WritePostScript.pl; sourceTree = "<group>"; };
+		498AE633294AD6AC0063B1C1 /* PCX.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PCX.pm; sourceTree = "<group>"; };
+		498AE634294AD6AC0063B1C1 /* Pentax.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Pentax.pm; sourceTree = "<group>"; };
+		498AE635294AD6AC0063B1C1 /* RTF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = RTF.pm; sourceTree = "<group>"; };
+		498AE636294AD6AC0063B1C1 /* PNG.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PNG.pm; sourceTree = "<group>"; };
+		498AE637294AD6AC0063B1C1 /* WriteXMP.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WriteXMP.pl; sourceTree = "<group>"; };
+		498AE638294AD6AC0063B1C1 /* Shift.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Shift.pl; sourceTree = "<group>"; };
+		498AE639294AD6AC0063B1C1 /* DPX.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DPX.pm; sourceTree = "<group>"; };
+		498AE63A294AD6AC0063B1C1 /* Casio.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Casio.pm; sourceTree = "<group>"; };
+		498AE63B294AD6AC0063B1C1 /* Theora.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Theora.pm; sourceTree = "<group>"; };
+		498AE63C294AD6AC0063B1C1 /* Radiance.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Radiance.pm; sourceTree = "<group>"; };
+		498AE63D294AD6AC0063B1C1 /* ICC_Profile.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ICC_Profile.pm; sourceTree = "<group>"; };
+		498AE63E294AD6AC0063B1C1 /* DNG.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DNG.pm; sourceTree = "<group>"; };
+		498AE63F294AD6AC0063B1C1 /* CanonVRD.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CanonVRD.pm; sourceTree = "<group>"; };
+		498AE640294AD6AC0063B1C1 /* Flash.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Flash.pm; sourceTree = "<group>"; };
+		498AE641294AD6AC0063B1C1 /* LNK.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = LNK.pm; sourceTree = "<group>"; };
+		498AE642294AD6AC0063B1C1 /* WriteQuickTime.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WriteQuickTime.pl; sourceTree = "<group>"; };
+		498AE643294AD6AC0063B1C1 /* WTV.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WTV.pm; sourceTree = "<group>"; };
+		498AE644294AD6AC0063B1C1 /* SigmaRaw.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = SigmaRaw.pm; sourceTree = "<group>"; };
+		498AE645294AD6AC0063B1C1 /* HP.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = HP.pm; sourceTree = "<group>"; };
+		498AE646294AD6AC0063B1C1 /* Text.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Text.pm; sourceTree = "<group>"; };
+		498AE647294AD6AC0063B1C1 /* Parrot.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Parrot.pm; sourceTree = "<group>"; };
+		498AE648294AD6AC0063B1C1 /* Writer.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Writer.pl; sourceTree = "<group>"; };
+		498AE649294AD6AC0063B1C1 /* ID3.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ID3.pm; sourceTree = "<group>"; };
+		498AE64A294AD6AC0063B1C1 /* Opus.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Opus.pm; sourceTree = "<group>"; };
+		498AE64B294AD6AC0063B1C1 /* XMP2.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = XMP2.pl; sourceTree = "<group>"; };
+		498AE64C294AD6AC0063B1C1 /* M2TS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = M2TS.pm; sourceTree = "<group>"; };
+		498AE64D294AD6AC0063B1C1 /* Charset.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Charset.pm; sourceTree = "<group>"; };
+		498AE64E294AD6AC0063B1C1 /* ZISRAW.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ZISRAW.pm; sourceTree = "<group>"; };
+		498AE64F294AD6AC0063B1C1 /* DICOM.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DICOM.pm; sourceTree = "<group>"; };
+		498AE650294AD6AC0063B1C1 /* TagInfoXML.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = TagInfoXML.pm; sourceTree = "<group>"; };
+		498AE651294AD6AC0063B1C1 /* MPC.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MPC.pm; sourceTree = "<group>"; };
+		498AE652294AD6AC0063B1C1 /* NikonCapture.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = NikonCapture.pm; sourceTree = "<group>"; };
+		498AE653294AD6AC0063B1C1 /* BZZ.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = BZZ.pm; sourceTree = "<group>"; };
+		498AE654294AD6AC0063B1C1 /* AIFF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = AIFF.pm; sourceTree = "<group>"; };
+		498AE655294AD6AC0063B1C1 /* Jpeg2000.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Jpeg2000.pm; sourceTree = "<group>"; };
+		498AE656294AD6AC0063B1C1 /* PostScript.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PostScript.pm; sourceTree = "<group>"; };
+		498AE657294AD6AC0063B1C1 /* DJI.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DJI.pm; sourceTree = "<group>"; };
+		498AE658294AD6AC0063B1C1 /* ISO.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ISO.pm; sourceTree = "<group>"; };
+		498AE659294AD6AC0063B1C1 /* NikonCustom.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = NikonCustom.pm; sourceTree = "<group>"; };
+		498AE65A294AD6AC0063B1C1 /* RSRC.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = RSRC.pm; sourceTree = "<group>"; };
+		498AE65B294AD6AC0063B1C1 /* MRC.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MRC.pm; sourceTree = "<group>"; };
+		498AE65C294AD6AC0063B1C1 /* Photoshop.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Photoshop.pm; sourceTree = "<group>"; };
+		498AE65D294AD6AC0063B1C1 /* Scalado.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Scalado.pm; sourceTree = "<group>"; };
+		498AE65E294AD6AC0063B1C1 /* OOXML.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = OOXML.pm; sourceTree = "<group>"; };
+		498AE65F294AD6AC0063B1C1 /* Ricoh.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Ricoh.pm; sourceTree = "<group>"; };
+		498AE660294AD6AC0063B1C1 /* PhotoCD.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PhotoCD.pm; sourceTree = "<group>"; };
+		498AE661294AD6AC0063B1C1 /* OpenEXR.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = OpenEXR.pm; sourceTree = "<group>"; };
+		498AE662294AD6AC0063B1C1 /* ICO.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ICO.pm; sourceTree = "<group>"; };
+		498AE663294AD6AC0063B1C1 /* CBOR.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CBOR.pm; sourceTree = "<group>"; };
+		498AE664294AD6AC0063B1C1 /* WriteIPTC.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WriteIPTC.pl; sourceTree = "<group>"; };
+		498AE665294AD6AC0063B1C1 /* ASF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ASF.pm; sourceTree = "<group>"; };
+		498AE666294AD6AC0063B1C1 /* MPF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MPF.pm; sourceTree = "<group>"; };
+		498AE667294AD6AC0063B1C1 /* Lytro.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Lytro.pm; sourceTree = "<group>"; };
+		498AE668294AD6AC0063B1C1 /* GE.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = GE.pm; sourceTree = "<group>"; };
+		498AE669294AD6AC0063B1C1 /* MIE.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MIE.pm; sourceTree = "<group>"; };
+		498AE66B294AD6AC0063B1C1 /* DOSCyrillic.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DOSCyrillic.pm; sourceTree = "<group>"; };
+		498AE66C294AD6AC0063B1C1 /* Turkish.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Turkish.pm; sourceTree = "<group>"; };
+		498AE66D294AD6AC0063B1C1 /* Greek.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Greek.pm; sourceTree = "<group>"; };
+		498AE66E294AD6AC0063B1C1 /* Cyrillic.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Cyrillic.pm; sourceTree = "<group>"; };
+		498AE66F294AD6AC0063B1C1 /* MacCroatian.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacCroatian.pm; sourceTree = "<group>"; };
+		498AE670294AD6AC0063B1C1 /* MacTurkish.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacTurkish.pm; sourceTree = "<group>"; };
+		498AE671294AD6AC0063B1C1 /* Baltic.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Baltic.pm; sourceTree = "<group>"; };
+		498AE672294AD6AC0063B1C1 /* MacRomanian.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacRomanian.pm; sourceTree = "<group>"; };
+		498AE673294AD6AC0063B1C1 /* Thai.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Thai.pm; sourceTree = "<group>"; };
+		498AE674294AD6AC0063B1C1 /* PDFDoc.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PDFDoc.pm; sourceTree = "<group>"; };
+		498AE675294AD6AC0063B1C1 /* Vietnam.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Vietnam.pm; sourceTree = "<group>"; };
+		498AE676294AD6AC0063B1C1 /* Latin.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Latin.pm; sourceTree = "<group>"; };
+		498AE677294AD6AC0063B1C1 /* Symbol.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Symbol.pm; sourceTree = "<group>"; };
+		498AE678294AD6AC0063B1C1 /* MacCyrillic.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacCyrillic.pm; sourceTree = "<group>"; };
+		498AE679294AD6AC0063B1C1 /* MacIceland.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacIceland.pm; sourceTree = "<group>"; };
+		498AE67A294AD6AC0063B1C1 /* MacGreek.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacGreek.pm; sourceTree = "<group>"; };
+		498AE67B294AD6AC0063B1C1 /* MacArabic.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacArabic.pm; sourceTree = "<group>"; };
+		498AE67C294AD6AC0063B1C1 /* Arabic.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Arabic.pm; sourceTree = "<group>"; };
+		498AE67D294AD6AC0063B1C1 /* DOSLatin1.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DOSLatin1.pm; sourceTree = "<group>"; };
+		498AE67E294AD6AC0063B1C1 /* MacHebrew.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacHebrew.pm; sourceTree = "<group>"; };
+		498AE67F294AD6AC0063B1C1 /* MacRoman.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacRoman.pm; sourceTree = "<group>"; };
+		498AE680294AD6AC0063B1C1 /* Hebrew.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Hebrew.pm; sourceTree = "<group>"; };
+		498AE681294AD6AC0063B1C1 /* MacThai.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacThai.pm; sourceTree = "<group>"; };
+		498AE682294AD6AC0063B1C1 /* MacRSymbol.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacRSymbol.pm; sourceTree = "<group>"; };
+		498AE683294AD6AC0063B1C1 /* DOSLatinUS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = DOSLatinUS.pm; sourceTree = "<group>"; };
+		498AE684294AD6AC0063B1C1 /* MacChineseTW.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacChineseTW.pm; sourceTree = "<group>"; };
+		498AE685294AD6AC0063B1C1 /* JIS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = JIS.pm; sourceTree = "<group>"; };
+		498AE686294AD6AC0063B1C1 /* MacKorean.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacKorean.pm; sourceTree = "<group>"; };
+		498AE687294AD6AC0063B1C1 /* MacChineseCN.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacChineseCN.pm; sourceTree = "<group>"; };
+		498AE688294AD6AC0063B1C1 /* MacLatin2.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacLatin2.pm; sourceTree = "<group>"; };
+		498AE689294AD6AC0063B1C1 /* MacJapanese.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MacJapanese.pm; sourceTree = "<group>"; };
+		498AE68A294AD6AC0063B1C1 /* Latin2.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Latin2.pm; sourceTree = "<group>"; };
+		498AE68B294AD6AC0063B1C1 /* ShiftJIS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ShiftJIS.pm; sourceTree = "<group>"; };
+		498AE68C294AD6AC0063B1C1 /* WriteRIFF.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = WriteRIFF.pl; sourceTree = "<group>"; };
+		498AE68D294AD6AC0063B1C1 /* VCard.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = VCard.pm; sourceTree = "<group>"; };
+		498AE68E294AD6AC0063B1C1 /* Unknown.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Unknown.pm; sourceTree = "<group>"; };
+		498AE68F294AD6AC0063B1C1 /* Samsung.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Samsung.pm; sourceTree = "<group>"; };
+		498AE690294AD6AC0063B1C1 /* Apple.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Apple.pm; sourceTree = "<group>"; };
+		498AE691294AD6AC0063B1C1 /* Nikon.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Nikon.pm; sourceTree = "<group>"; };
+		498AE692294AD6AC0063B1C1 /* Fixup.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Fixup.pm; sourceTree = "<group>"; };
+		498AE693294AD6AC0063B1C1 /* BuildTagLookup.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = BuildTagLookup.pm; sourceTree = "<group>"; };
+		498AE694294AD6AC0063B1C1 /* Rawzor.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = Rawzor.pm; sourceTree = "<group>"; };
+		498AE695294AD6AC0063B1C1 /* PrintIM.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = PrintIM.pm; sourceTree = "<group>"; };
+		498AE696294AD6AC0063B1C1 /* TagLookup.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = TagLookup.pm; sourceTree = "<group>"; };
+		498AE697294AD6AC0063B1C1 /* FLIF.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = FLIF.pm; sourceTree = "<group>"; };
+		498AE698294AD6AC0063B1C1 /* MWG.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MWG.pm; sourceTree = "<group>"; };
+		498AE699294AD6AC0063B1C1 /* MakerNotes.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MakerNotes.pm; sourceTree = "<group>"; };
+		498AE69A294AD6AC0063B1C1 /* MinoltaRaw.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MinoltaRaw.pm; sourceTree = "<group>"; };
+		498AE69B294AD6AC0063B1C1 /* JSON.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = JSON.pm; sourceTree = "<group>"; };
+		498AE69C294AD6AC0063B1C1 /* ExifTool.pod */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ExifTool.pod; sourceTree = "<group>"; };
+		498AE69D294AD6AC0063B1C1 /* ExifTool.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = ExifTool.pm; sourceTree = "<group>"; };
 		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B039572944429E003B7C53 /* GeoTagApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagApp.swift; sourceTree = "<group>"; };
 		49B039592944429E003B7C53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -57,6 +515,288 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		498AE5B4294AD6AC0063B1C1 /* ExifTool */ = {
+			isa = PBXGroup;
+			children = (
+				498AE5B5294AD6AC0063B1C1 /* exiftool */,
+				498AE5B6294AD6AC0063B1C1 /* lib */,
+			);
+			path = ExifTool;
+			sourceTree = SOURCE_ROOT;
+		};
+		498AE5B6294AD6AC0063B1C1 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				498AE5B7294AD6AC0063B1C1 /* File */,
+				498AE5BA294AD6AC0063B1C1 /* Image */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		498AE5B7294AD6AC0063B1C1 /* File */ = {
+			isa = PBXGroup;
+			children = (
+				498AE5B8294AD6AC0063B1C1 /* RandomAccess.pm */,
+				498AE5B9294AD6AC0063B1C1 /* RandomAccess.pod */,
+			);
+			path = File;
+			sourceTree = "<group>";
+		};
+		498AE5BA294AD6AC0063B1C1 /* Image */ = {
+			isa = PBXGroup;
+			children = (
+				498AE5BB294AD6AC0063B1C1 /* ExifTool */,
+				498AE69C294AD6AC0063B1C1 /* ExifTool.pod */,
+				498AE69D294AD6AC0063B1C1 /* ExifTool.pm */,
+			);
+			path = Image;
+			sourceTree = "<group>";
+		};
+		498AE5BB294AD6AC0063B1C1 /* ExifTool */ = {
+			isa = PBXGroup;
+			children = (
+				498AE5BC294AD6AC0063B1C1 /* DjVu.pm */,
+				498AE5BD294AD6AC0063B1C1 /* IPTC.pm */,
+				498AE5BE294AD6AC0063B1C1 /* NikonSettings.pm */,
+				498AE5BF294AD6AC0063B1C1 /* DarwinCore.pm */,
+				498AE5C0294AD6AC0063B1C1 /* PLIST.pm */,
+				498AE5C1294AD6AC0063B1C1 /* QuickTime.pm */,
+				498AE5C2294AD6AC0063B1C1 /* JPEGDigest.pm */,
+				498AE5C3294AD6AC0063B1C1 /* Canon.pm */,
+				498AE5C4294AD6AC0063B1C1 /* MPEG.pm */,
+				498AE5C5294AD6AC0063B1C1 /* Matroska.pm */,
+				498AE5C6294AD6AC0063B1C1 /* PhotoMechanic.pm */,
+				498AE5C7294AD6AC0063B1C1 /* RIFF.pm */,
+				498AE5C8294AD6AC0063B1C1 /* Kodak.pm */,
+				498AE5C9294AD6AC0063B1C1 /* Minolta.pm */,
+				498AE5CA294AD6AC0063B1C1 /* Import.pm */,
+				498AE5CB294AD6AC0063B1C1 /* GeoTiff.pm */,
+				498AE5CC294AD6AC0063B1C1 /* PPM.pm */,
+				498AE5CD294AD6AC0063B1C1 /* APE.pm */,
+				498AE5CE294AD6AC0063B1C1 /* MNG.pm */,
+				498AE5CF294AD6AC0063B1C1 /* FLAC.pm */,
+				498AE5D0294AD6AC0063B1C1 /* GoPro.pm */,
+				498AE5D1294AD6AC0063B1C1 /* Olympus.pm */,
+				498AE5D2294AD6AC0063B1C1 /* Microsoft.pm */,
+				498AE5D3294AD6AC0063B1C1 /* Ogg.pm */,
+				498AE5D4294AD6AC0063B1C1 /* GPS.pm */,
+				498AE5D5294AD6AC0063B1C1 /* FujiFilm.pm */,
+				498AE5D6294AD6AC0063B1C1 /* Audible.pm */,
+				498AE5D7294AD6AC0063B1C1 /* Shortcuts.pm */,
+				498AE5D8294AD6AC0063B1C1 /* APP12.pm */,
+				498AE5D9294AD6AC0063B1C1 /* HtmlDump.pm */,
+				498AE5DA294AD6AC0063B1C1 /* Qualcomm.pm */,
+				498AE5DB294AD6AC0063B1C1 /* MXF.pm */,
+				498AE5DC294AD6AC0063B1C1 /* CanonCustom.pm */,
+				498AE5DD294AD6AC0063B1C1 /* PSP.pm */,
+				498AE5DE294AD6AC0063B1C1 /* MIEUnits.pod */,
+				498AE5DF294AD6AC0063B1C1 /* iWork.pm */,
+				498AE5E0294AD6AC0063B1C1 /* FITS.pm */,
+				498AE5E1294AD6AC0063B1C1 /* BPG.pm */,
+				498AE5E2294AD6AC0063B1C1 /* LIF.pm */,
+				498AE5E3294AD6AC0063B1C1 /* MIFF.pm */,
+				498AE5E4294AD6AC0063B1C1 /* PLUS.pm */,
+				498AE5E5294AD6AC0063B1C1 /* Sony.pm */,
+				498AE5E6294AD6AC0063B1C1 /* Palm.pm */,
+				498AE5E7294AD6AC0063B1C1 /* MacOS.pm */,
+				498AE5E8294AD6AC0063B1C1 /* XMPStruct.pl */,
+				498AE5E9294AD6AC0063B1C1 /* MISB.pm */,
+				498AE5EA294AD6AC0063B1C1 /* KyoceraRaw.pm */,
+				498AE5EB294AD6AC0063B1C1 /* InDesign.pm */,
+				498AE5EC294AD6AC0063B1C1 /* AFCP.pm */,
+				498AE5ED294AD6AC0063B1C1 /* FotoStation.pm */,
+				498AE5EE294AD6AC0063B1C1 /* HTML.pm */,
+				498AE5EF294AD6AC0063B1C1 /* BigTIFF.pm */,
+				498AE5F0294AD6AC0063B1C1 /* CaptureOne.pm */,
+				498AE5F1294AD6AC0063B1C1 /* EXE.pm */,
+				498AE5F2294AD6AC0063B1C1 /* GIF.pm */,
+				498AE5F3294AD6AC0063B1C1 /* QuickTimeStream.pl */,
+				498AE5F4294AD6AC0063B1C1 /* MOI.pm */,
+				498AE5F5294AD6AC0063B1C1 /* Stim.pm */,
+				498AE5F6294AD6AC0063B1C1 /* Sanyo.pm */,
+				498AE5F7294AD6AC0063B1C1 /* Vorbis.pm */,
+				498AE5F8294AD6AC0063B1C1 /* H264.pm */,
+				498AE5F9294AD6AC0063B1C1 /* AES.pm */,
+				498AE5FA294AD6AC0063B1C1 /* Torrent.pm */,
+				498AE5FB294AD6AC0063B1C1 /* Reconyx.pm */,
+				498AE5FC294AD6AC0063B1C1 /* PanasonicRaw.pm */,
+				498AE5FD294AD6AC0063B1C1 /* Geotag.pm */,
+				498AE5FE294AD6AC0063B1C1 /* Leaf.pm */,
+				498AE5FF294AD6AC0063B1C1 /* Sigma.pm */,
+				498AE600294AD6AC0063B1C1 /* XMP.pm */,
+				498AE601294AD6AC0063B1C1 /* WritePNG.pl */,
+				498AE602294AD6AC0063B1C1 /* WriteExif.pl */,
+				498AE603294AD6AC0063B1C1 /* Red.pm */,
+				498AE604294AD6AC0063B1C1 /* PGF.pm */,
+				498AE605294AD6AC0063B1C1 /* ITC.pm */,
+				498AE606294AD6AC0063B1C1 /* GIMP.pm */,
+				498AE607294AD6AC0063B1C1 /* PICT.pm */,
+				498AE608294AD6AC0063B1C1 /* Nintendo.pm */,
+				498AE609294AD6AC0063B1C1 /* Font.pm */,
+				498AE60A294AD6AC0063B1C1 /* FLIR.pm */,
+				498AE60B294AD6AC0063B1C1 /* SonyIDC.pm */,
+				498AE60C294AD6AC0063B1C1 /* CanonRaw.pm */,
+				498AE60D294AD6AC0063B1C1 /* WritePhotoshop.pl */,
+				498AE60E294AD6AC0063B1C1 /* Other.pm */,
+				498AE60F294AD6AC0063B1C1 /* Real.pm */,
+				498AE610294AD6AC0063B1C1 /* Panasonic.pm */,
+				498AE611294AD6AC0063B1C1 /* PDF.pm */,
+				498AE612294AD6AC0063B1C1 /* FlashPix.pm */,
+				498AE613294AD6AC0063B1C1 /* JPEG.pm */,
+				498AE614294AD6AC0063B1C1 /* README */,
+				498AE615294AD6AC0063B1C1 /* Exif.pm */,
+				498AE616294AD6AC0063B1C1 /* WritePDF.pl */,
+				498AE617294AD6AC0063B1C1 /* DV.pm */,
+				498AE618294AD6AC0063B1C1 /* Motorola.pm */,
+				498AE619294AD6AC0063B1C1 /* JVC.pm */,
+				498AE61A294AD6AC0063B1C1 /* Lang */,
+				498AE62C294AD6AC0063B1C1 /* PhaseOne.pm */,
+				498AE62D294AD6AC0063B1C1 /* BMP.pm */,
+				498AE62E294AD6AC0063B1C1 /* ZIP.pm */,
+				498AE62F294AD6AC0063B1C1 /* WriteCanonRaw.pl */,
+				498AE630294AD6AC0063B1C1 /* Validate.pm */,
+				498AE631294AD6AC0063B1C1 /* TagNames.pod */,
+				498AE632294AD6AC0063B1C1 /* WritePostScript.pl */,
+				498AE633294AD6AC0063B1C1 /* PCX.pm */,
+				498AE634294AD6AC0063B1C1 /* Pentax.pm */,
+				498AE635294AD6AC0063B1C1 /* RTF.pm */,
+				498AE636294AD6AC0063B1C1 /* PNG.pm */,
+				498AE637294AD6AC0063B1C1 /* WriteXMP.pl */,
+				498AE638294AD6AC0063B1C1 /* Shift.pl */,
+				498AE639294AD6AC0063B1C1 /* DPX.pm */,
+				498AE63A294AD6AC0063B1C1 /* Casio.pm */,
+				498AE63B294AD6AC0063B1C1 /* Theora.pm */,
+				498AE63C294AD6AC0063B1C1 /* Radiance.pm */,
+				498AE63D294AD6AC0063B1C1 /* ICC_Profile.pm */,
+				498AE63E294AD6AC0063B1C1 /* DNG.pm */,
+				498AE63F294AD6AC0063B1C1 /* CanonVRD.pm */,
+				498AE640294AD6AC0063B1C1 /* Flash.pm */,
+				498AE641294AD6AC0063B1C1 /* LNK.pm */,
+				498AE642294AD6AC0063B1C1 /* WriteQuickTime.pl */,
+				498AE643294AD6AC0063B1C1 /* WTV.pm */,
+				498AE644294AD6AC0063B1C1 /* SigmaRaw.pm */,
+				498AE645294AD6AC0063B1C1 /* HP.pm */,
+				498AE646294AD6AC0063B1C1 /* Text.pm */,
+				498AE647294AD6AC0063B1C1 /* Parrot.pm */,
+				498AE648294AD6AC0063B1C1 /* Writer.pl */,
+				498AE649294AD6AC0063B1C1 /* ID3.pm */,
+				498AE64A294AD6AC0063B1C1 /* Opus.pm */,
+				498AE64B294AD6AC0063B1C1 /* XMP2.pl */,
+				498AE64C294AD6AC0063B1C1 /* M2TS.pm */,
+				498AE64D294AD6AC0063B1C1 /* Charset.pm */,
+				498AE64E294AD6AC0063B1C1 /* ZISRAW.pm */,
+				498AE64F294AD6AC0063B1C1 /* DICOM.pm */,
+				498AE650294AD6AC0063B1C1 /* TagInfoXML.pm */,
+				498AE651294AD6AC0063B1C1 /* MPC.pm */,
+				498AE652294AD6AC0063B1C1 /* NikonCapture.pm */,
+				498AE653294AD6AC0063B1C1 /* BZZ.pm */,
+				498AE654294AD6AC0063B1C1 /* AIFF.pm */,
+				498AE655294AD6AC0063B1C1 /* Jpeg2000.pm */,
+				498AE656294AD6AC0063B1C1 /* PostScript.pm */,
+				498AE657294AD6AC0063B1C1 /* DJI.pm */,
+				498AE658294AD6AC0063B1C1 /* ISO.pm */,
+				498AE659294AD6AC0063B1C1 /* NikonCustom.pm */,
+				498AE65A294AD6AC0063B1C1 /* RSRC.pm */,
+				498AE65B294AD6AC0063B1C1 /* MRC.pm */,
+				498AE65C294AD6AC0063B1C1 /* Photoshop.pm */,
+				498AE65D294AD6AC0063B1C1 /* Scalado.pm */,
+				498AE65E294AD6AC0063B1C1 /* OOXML.pm */,
+				498AE65F294AD6AC0063B1C1 /* Ricoh.pm */,
+				498AE660294AD6AC0063B1C1 /* PhotoCD.pm */,
+				498AE661294AD6AC0063B1C1 /* OpenEXR.pm */,
+				498AE662294AD6AC0063B1C1 /* ICO.pm */,
+				498AE663294AD6AC0063B1C1 /* CBOR.pm */,
+				498AE664294AD6AC0063B1C1 /* WriteIPTC.pl */,
+				498AE665294AD6AC0063B1C1 /* ASF.pm */,
+				498AE666294AD6AC0063B1C1 /* MPF.pm */,
+				498AE667294AD6AC0063B1C1 /* Lytro.pm */,
+				498AE668294AD6AC0063B1C1 /* GE.pm */,
+				498AE669294AD6AC0063B1C1 /* MIE.pm */,
+				498AE66A294AD6AC0063B1C1 /* Charset */,
+				498AE68C294AD6AC0063B1C1 /* WriteRIFF.pl */,
+				498AE68D294AD6AC0063B1C1 /* VCard.pm */,
+				498AE68E294AD6AC0063B1C1 /* Unknown.pm */,
+				498AE68F294AD6AC0063B1C1 /* Samsung.pm */,
+				498AE690294AD6AC0063B1C1 /* Apple.pm */,
+				498AE691294AD6AC0063B1C1 /* Nikon.pm */,
+				498AE692294AD6AC0063B1C1 /* Fixup.pm */,
+				498AE693294AD6AC0063B1C1 /* BuildTagLookup.pm */,
+				498AE694294AD6AC0063B1C1 /* Rawzor.pm */,
+				498AE695294AD6AC0063B1C1 /* PrintIM.pm */,
+				498AE696294AD6AC0063B1C1 /* TagLookup.pm */,
+				498AE697294AD6AC0063B1C1 /* FLIF.pm */,
+				498AE698294AD6AC0063B1C1 /* MWG.pm */,
+				498AE699294AD6AC0063B1C1 /* MakerNotes.pm */,
+				498AE69A294AD6AC0063B1C1 /* MinoltaRaw.pm */,
+				498AE69B294AD6AC0063B1C1 /* JSON.pm */,
+			);
+			path = ExifTool;
+			sourceTree = "<group>";
+		};
+		498AE61A294AD6AC0063B1C1 /* Lang */ = {
+			isa = PBXGroup;
+			children = (
+				498AE61B294AD6AC0063B1C1 /* ja.pm */,
+				498AE61C294AD6AC0063B1C1 /* en_ca.pm */,
+				498AE61D294AD6AC0063B1C1 /* pl.pm */,
+				498AE61E294AD6AC0063B1C1 /* ko.pm */,
+				498AE61F294AD6AC0063B1C1 /* fi.pm */,
+				498AE620294AD6AC0063B1C1 /* ru.pm */,
+				498AE621294AD6AC0063B1C1 /* sv.pm */,
+				498AE622294AD6AC0063B1C1 /* zh_cn.pm */,
+				498AE623294AD6AC0063B1C1 /* fr.pm */,
+				498AE624294AD6AC0063B1C1 /* nl.pm */,
+				498AE625294AD6AC0063B1C1 /* cs.pm */,
+				498AE626294AD6AC0063B1C1 /* it.pm */,
+				498AE627294AD6AC0063B1C1 /* es.pm */,
+				498AE628294AD6AC0063B1C1 /* zh_tw.pm */,
+				498AE629294AD6AC0063B1C1 /* tr.pm */,
+				498AE62A294AD6AC0063B1C1 /* en_gb.pm */,
+				498AE62B294AD6AC0063B1C1 /* de.pm */,
+			);
+			path = Lang;
+			sourceTree = "<group>";
+		};
+		498AE66A294AD6AC0063B1C1 /* Charset */ = {
+			isa = PBXGroup;
+			children = (
+				498AE66B294AD6AC0063B1C1 /* DOSCyrillic.pm */,
+				498AE66C294AD6AC0063B1C1 /* Turkish.pm */,
+				498AE66D294AD6AC0063B1C1 /* Greek.pm */,
+				498AE66E294AD6AC0063B1C1 /* Cyrillic.pm */,
+				498AE66F294AD6AC0063B1C1 /* MacCroatian.pm */,
+				498AE670294AD6AC0063B1C1 /* MacTurkish.pm */,
+				498AE671294AD6AC0063B1C1 /* Baltic.pm */,
+				498AE672294AD6AC0063B1C1 /* MacRomanian.pm */,
+				498AE673294AD6AC0063B1C1 /* Thai.pm */,
+				498AE674294AD6AC0063B1C1 /* PDFDoc.pm */,
+				498AE675294AD6AC0063B1C1 /* Vietnam.pm */,
+				498AE676294AD6AC0063B1C1 /* Latin.pm */,
+				498AE677294AD6AC0063B1C1 /* Symbol.pm */,
+				498AE678294AD6AC0063B1C1 /* MacCyrillic.pm */,
+				498AE679294AD6AC0063B1C1 /* MacIceland.pm */,
+				498AE67A294AD6AC0063B1C1 /* MacGreek.pm */,
+				498AE67B294AD6AC0063B1C1 /* MacArabic.pm */,
+				498AE67C294AD6AC0063B1C1 /* Arabic.pm */,
+				498AE67D294AD6AC0063B1C1 /* DOSLatin1.pm */,
+				498AE67E294AD6AC0063B1C1 /* MacHebrew.pm */,
+				498AE67F294AD6AC0063B1C1 /* MacRoman.pm */,
+				498AE680294AD6AC0063B1C1 /* Hebrew.pm */,
+				498AE681294AD6AC0063B1C1 /* MacThai.pm */,
+				498AE682294AD6AC0063B1C1 /* MacRSymbol.pm */,
+				498AE683294AD6AC0063B1C1 /* DOSLatinUS.pm */,
+				498AE684294AD6AC0063B1C1 /* MacChineseTW.pm */,
+				498AE685294AD6AC0063B1C1 /* JIS.pm */,
+				498AE686294AD6AC0063B1C1 /* MacKorean.pm */,
+				498AE687294AD6AC0063B1C1 /* MacChineseCN.pm */,
+				498AE688294AD6AC0063B1C1 /* MacLatin2.pm */,
+				498AE689294AD6AC0063B1C1 /* MacJapanese.pm */,
+				498AE68A294AD6AC0063B1C1 /* Latin2.pm */,
+				498AE68B294AD6AC0063B1C1 /* ShiftJIS.pm */,
+			);
+			path = Charset;
+			sourceTree = "<group>";
+		};
 		49B0394B2944429E003B7C53 = {
 			isa = PBXGroup;
 			children = (
@@ -86,12 +826,15 @@
 				4921757A2949863A00A5EA83 /* Gpx.swift */,
 				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
 				49B9EDE029493F4000574D18 /* Coord.swift */,
+				498AE5B0294AB78A0063B1C1 /* XmpFile.swift */,
+				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
 				492E3F5F2948361D0044C1F3 /* ImageView.swift */,
 				49B9EDDC29493CC200574D18 /* ImageTableView.swift */,
 				4921757C294986DC00A5EA83 /* UnexpectedError.swift */,
 				492E3F5D29481A7D0044C1F3 /* Credits.rtf */,
 				49B0395B2944429F003B7C53 /* Assets.xcassets */,
 				49B039602944429F003B7C53 /* GeoTag.entitlements */,
+				498AE5B4294AD6AC0063B1C1 /* ExifTool */,
 				49B0395D2944429F003B7C53 /* Preview Content */,
 			);
 			path = GeoTag;
@@ -172,9 +915,236 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				498AE756294AD6AC0063B1C1 /* Thai.pm in Resources */,
+				498AE765294AD6AC0063B1C1 /* MacRSymbol.pm in Resources */,
+				498AE6E5294AD6AC0063B1C1 /* XMP.pm in Resources */,
+				498AE6E1294AD6AC0063B1C1 /* PanasonicRaw.pm in Resources */,
+				498AE6D4294AD6AC0063B1C1 /* BigTIFF.pm in Resources */,
+				498AE6C5294AD6AC0063B1C1 /* FITS.pm in Resources */,
+				498AE780294AD6AC0063B1C1 /* ExifTool.pm in Resources */,
+				498AE71B294AD6AC0063B1C1 /* WriteXMP.pl in Resources */,
+				498AE6B8294AD6AC0063B1C1 /* Ogg.pm in Resources */,
+				498AE6F3294AD6AC0063B1C1 /* Other.pm in Resources */,
+				498AE6E0294AD6AC0063B1C1 /* Reconyx.pm in Resources */,
+				498AE76B294AD6AC0063B1C1 /* MacLatin2.pm in Resources */,
+				498AE6A4294AD6AC0063B1C1 /* DarwinCore.pm in Resources */,
+				498AE705294AD6AC0063B1C1 /* sv.pm in Resources */,
+				498AE6B5294AD6AC0063B1C1 /* GoPro.pm in Resources */,
+				498AE70E294AD6AC0063B1C1 /* en_gb.pm in Resources */,
+				498AE732294AD6AC0063B1C1 /* ZISRAW.pm in Resources */,
+				498AE745294AD6AC0063B1C1 /* OpenEXR.pm in Resources */,
+				498AE730294AD6AC0063B1C1 /* M2TS.pm in Resources */,
+				498AE701294AD6AC0063B1C1 /* pl.pm in Resources */,
+				498AE6C3294AD6AC0063B1C1 /* MIEUnits.pod in Resources */,
+				498AE778294AD6AC0063B1C1 /* PrintIM.pm in Resources */,
+				498AE6E6294AD6AC0063B1C1 /* WritePNG.pl in Resources */,
+				498AE716294AD6AC0063B1C1 /* WritePostScript.pl in Resources */,
+				498AE750294AD6AC0063B1C1 /* Greek.pm in Resources */,
+				498AE6BD294AD6AC0063B1C1 /* APP12.pm in Resources */,
+				498AE746294AD6AC0063B1C1 /* ICO.pm in Resources */,
+				498AE6F4294AD6AC0063B1C1 /* Real.pm in Resources */,
+				498AE719294AD6AC0063B1C1 /* RTF.pm in Resources */,
+				498AE6CC294AD6AC0063B1C1 /* MacOS.pm in Resources */,
+				498AE6E7294AD6AC0063B1C1 /* WriteExif.pl in Resources */,
+				498AE6D0294AD6AC0063B1C1 /* InDesign.pm in Resources */,
+				498AE77D294AD6AC0063B1C1 /* MinoltaRaw.pm in Resources */,
+				498AE709294AD6AC0063B1C1 /* cs.pm in Resources */,
+				498AE759294AD6AC0063B1C1 /* Latin.pm in Resources */,
+				498AE69F294AD6AC0063B1C1 /* RandomAccess.pm in Resources */,
+				498AE75D294AD6AC0063B1C1 /* MacGreek.pm in Resources */,
+				498AE6C9294AD6AC0063B1C1 /* PLUS.pm in Resources */,
+				498AE739294AD6AC0063B1C1 /* Jpeg2000.pm in Resources */,
+				498AE6E9294AD6AC0063B1C1 /* PGF.pm in Resources */,
+				498AE700294AD6AC0063B1C1 /* en_ca.pm in Resources */,
+				498AE71D294AD6AC0063B1C1 /* DPX.pm in Resources */,
+				498AE6F6294AD6AC0063B1C1 /* PDF.pm in Resources */,
+				498AE6D5294AD6AC0063B1C1 /* CaptureOne.pm in Resources */,
+				498AE6A5294AD6AC0063B1C1 /* PLIST.pm in Resources */,
+				498AE767294AD6AC0063B1C1 /* MacChineseTW.pm in Resources */,
+				498AE74D294AD6AC0063B1C1 /* MIE.pm in Resources */,
+				498AE744294AD6AC0063B1C1 /* PhotoCD.pm in Resources */,
+				498AE6FD294AD6AC0063B1C1 /* Motorola.pm in Resources */,
+				498AE6AF294AD6AC0063B1C1 /* Import.pm in Resources */,
+				498AE6AC294AD6AC0063B1C1 /* RIFF.pm in Resources */,
+				498AE6B3294AD6AC0063B1C1 /* MNG.pm in Resources */,
+				498AE6A9294AD6AC0063B1C1 /* MPEG.pm in Resources */,
+				498AE753294AD6AC0063B1C1 /* MacTurkish.pm in Resources */,
+				498AE6D3294AD6AC0063B1C1 /* HTML.pm in Resources */,
+				498AE6C8294AD6AC0063B1C1 /* MIFF.pm in Resources */,
+				498AE775294AD6AC0063B1C1 /* Fixup.pm in Resources */,
+				498AE6BB294AD6AC0063B1C1 /* Audible.pm in Resources */,
+				498AE774294AD6AC0063B1C1 /* Nikon.pm in Resources */,
+				498AE724294AD6AC0063B1C1 /* Flash.pm in Resources */,
+				498AE76C294AD6AC0063B1C1 /* MacJapanese.pm in Resources */,
+				498AE76D294AD6AC0063B1C1 /* Latin2.pm in Resources */,
 				49B0395F2944429F003B7C53 /* Preview Assets.xcassets in Resources */,
+				498AE6FA294AD6AC0063B1C1 /* Exif.pm in Resources */,
+				498AE6E8294AD6AC0063B1C1 /* Red.pm in Resources */,
+				498AE6C6294AD6AC0063B1C1 /* BPG.pm in Resources */,
+				498AE749294AD6AC0063B1C1 /* ASF.pm in Resources */,
+				498AE729294AD6AC0063B1C1 /* HP.pm in Resources */,
+				498AE741294AD6AC0063B1C1 /* Scalado.pm in Resources */,
+				498AE776294AD6AC0063B1C1 /* BuildTagLookup.pm in Resources */,
+				498AE731294AD6AC0063B1C1 /* Charset.pm in Resources */,
+				498AE762294AD6AC0063B1C1 /* MacRoman.pm in Resources */,
+				498AE6CB294AD6AC0063B1C1 /* Palm.pm in Resources */,
+				498AE728294AD6AC0063B1C1 /* SigmaRaw.pm in Resources */,
+				498AE6B9294AD6AC0063B1C1 /* GPS.pm in Resources */,
+				498AE6D7294AD6AC0063B1C1 /* GIF.pm in Resources */,
+				498AE6A2294AD6AC0063B1C1 /* IPTC.pm in Resources */,
+				498AE777294AD6AC0063B1C1 /* Rawzor.pm in Resources */,
+				498AE73B294AD6AC0063B1C1 /* DJI.pm in Resources */,
+				498AE779294AD6AC0063B1C1 /* TagLookup.pm in Resources */,
+				498AE73F294AD6AC0063B1C1 /* MRC.pm in Resources */,
+				498AE710294AD6AC0063B1C1 /* PhaseOne.pm in Resources */,
+				498AE755294AD6AC0063B1C1 /* MacRomanian.pm in Resources */,
+				498AE733294AD6AC0063B1C1 /* DICOM.pm in Resources */,
+				498AE6E4294AD6AC0063B1C1 /* Sigma.pm in Resources */,
+				498AE77A294AD6AC0063B1C1 /* FLIF.pm in Resources */,
+				498AE761294AD6AC0063B1C1 /* MacHebrew.pm in Resources */,
+				498AE737294AD6AC0063B1C1 /* BZZ.pm in Resources */,
+				498AE760294AD6AC0063B1C1 /* DOSLatin1.pm in Resources */,
+				498AE6BA294AD6AC0063B1C1 /* FujiFilm.pm in Resources */,
+				498AE702294AD6AC0063B1C1 /* ko.pm in Resources */,
+				498AE6DD294AD6AC0063B1C1 /* H264.pm in Resources */,
+				498AE77B294AD6AC0063B1C1 /* MWG.pm in Resources */,
+				498AE75A294AD6AC0063B1C1 /* Symbol.pm in Resources */,
+				498AE748294AD6AC0063B1C1 /* WriteIPTC.pl in Resources */,
+				498AE6CF294AD6AC0063B1C1 /* KyoceraRaw.pm in Resources */,
+				498AE754294AD6AC0063B1C1 /* Baltic.pm in Resources */,
+				498AE726294AD6AC0063B1C1 /* WriteQuickTime.pl in Resources */,
+				498AE747294AD6AC0063B1C1 /* CBOR.pm in Resources */,
+				498AE6BC294AD6AC0063B1C1 /* Shortcuts.pm in Resources */,
+				498AE752294AD6AC0063B1C1 /* MacCroatian.pm in Resources */,
+				498AE6DB294AD6AC0063B1C1 /* Sanyo.pm in Resources */,
 				492E3F5E29481A7D0044C1F3 /* Credits.rtf in Resources */,
+				498AE6F0294AD6AC0063B1C1 /* SonyIDC.pm in Resources */,
+				498AE6FB294AD6AC0063B1C1 /* WritePDF.pl in Resources */,
+				498AE711294AD6AC0063B1C1 /* BMP.pm in Resources */,
+				498AE6D1294AD6AC0063B1C1 /* AFCP.pm in Resources */,
+				498AE6E2294AD6AC0063B1C1 /* Geotag.pm in Resources */,
+				498AE6E3294AD6AC0063B1C1 /* Leaf.pm in Resources */,
+				498AE70D294AD6AC0063B1C1 /* tr.pm in Resources */,
+				498AE74C294AD6AC0063B1C1 /* GE.pm in Resources */,
+				498AE6BE294AD6AC0063B1C1 /* HtmlDump.pm in Resources */,
+				498AE757294AD6AC0063B1C1 /* PDFDoc.pm in Resources */,
+				498AE712294AD6AC0063B1C1 /* ZIP.pm in Resources */,
+				498AE74E294AD6AC0063B1C1 /* DOSCyrillic.pm in Resources */,
+				498AE751294AD6AC0063B1C1 /* Cyrillic.pm in Resources */,
+				498AE6CE294AD6AC0063B1C1 /* MISB.pm in Resources */,
+				498AE772294AD6AC0063B1C1 /* Samsung.pm in Resources */,
+				498AE6B4294AD6AC0063B1C1 /* FLAC.pm in Resources */,
+				498AE713294AD6AC0063B1C1 /* WriteCanonRaw.pl in Resources */,
+				498AE74F294AD6AC0063B1C1 /* Turkish.pm in Resources */,
+				498AE76A294AD6AC0063B1C1 /* MacChineseCN.pm in Resources */,
+				498AE721294AD6AC0063B1C1 /* ICC_Profile.pm in Resources */,
+				498AE6DC294AD6AC0063B1C1 /* Vorbis.pm in Resources */,
+				498AE6AB294AD6AC0063B1C1 /* PhotoMechanic.pm in Resources */,
+				498AE6C2294AD6AC0063B1C1 /* PSP.pm in Resources */,
+				498AE75E294AD6AC0063B1C1 /* MacArabic.pm in Resources */,
+				498AE74B294AD6AC0063B1C1 /* Lytro.pm in Resources */,
+				498AE70A294AD6AC0063B1C1 /* it.pm in Resources */,
+				498AE6BF294AD6AC0063B1C1 /* Qualcomm.pm in Resources */,
+				498AE717294AD6AC0063B1C1 /* PCX.pm in Resources */,
+				498AE6DF294AD6AC0063B1C1 /* Torrent.pm in Resources */,
+				498AE6ED294AD6AC0063B1C1 /* Nintendo.pm in Resources */,
+				498AE6EF294AD6AC0063B1C1 /* FLIR.pm in Resources */,
+				498AE6EB294AD6AC0063B1C1 /* GIMP.pm in Resources */,
+				498AE6CA294AD6AC0063B1C1 /* Sony.pm in Resources */,
+				498AE6F7294AD6AC0063B1C1 /* FlashPix.pm in Resources */,
+				498AE74A294AD6AC0063B1C1 /* MPF.pm in Resources */,
+				498AE773294AD6AC0063B1C1 /* Apple.pm in Resources */,
+				498AE736294AD6AC0063B1C1 /* NikonCapture.pm in Resources */,
+				498AE6CD294AD6AC0063B1C1 /* XMPStruct.pl in Resources */,
+				498AE769294AD6AC0063B1C1 /* MacKorean.pm in Resources */,
+				498AE75B294AD6AC0063B1C1 /* MacCyrillic.pm in Resources */,
+				498AE6C4294AD6AC0063B1C1 /* iWork.pm in Resources */,
+				498AE6F8294AD6AC0063B1C1 /* JPEG.pm in Resources */,
+				498AE76F294AD6AC0063B1C1 /* WriteRIFF.pl in Resources */,
+				498AE75F294AD6AC0063B1C1 /* Arabic.pm in Resources */,
+				498AE71C294AD6AC0063B1C1 /* Shift.pl in Resources */,
+				498AE6F2294AD6AC0063B1C1 /* WritePhotoshop.pl in Resources */,
+				498AE69E294AD6AC0063B1C1 /* exiftool in Resources */,
+				498AE735294AD6AC0063B1C1 /* MPC.pm in Resources */,
+				498AE6B7294AD6AC0063B1C1 /* Microsoft.pm in Resources */,
+				498AE703294AD6AC0063B1C1 /* fi.pm in Resources */,
+				498AE718294AD6AC0063B1C1 /* Pentax.pm in Resources */,
+				498AE72C294AD6AC0063B1C1 /* Writer.pl in Resources */,
+				498AE77F294AD6AC0063B1C1 /* ExifTool.pod in Resources */,
+				498AE6AA294AD6AC0063B1C1 /* Matroska.pm in Resources */,
+				498AE6A1294AD6AC0063B1C1 /* DjVu.pm in Resources */,
+				498AE77E294AD6AC0063B1C1 /* JSON.pm in Resources */,
+				498AE771294AD6AC0063B1C1 /* Unknown.pm in Resources */,
+				498AE72E294AD6AC0063B1C1 /* Opus.pm in Resources */,
+				498AE720294AD6AC0063B1C1 /* Radiance.pm in Resources */,
+				498AE770294AD6AC0063B1C1 /* VCard.pm in Resources */,
+				498AE6C7294AD6AC0063B1C1 /* LIF.pm in Resources */,
+				498AE6A3294AD6AC0063B1C1 /* NikonSettings.pm in Resources */,
+				498AE6FC294AD6AC0063B1C1 /* DV.pm in Resources */,
+				498AE715294AD6AC0063B1C1 /* TagNames.pod in Resources */,
+				498AE6D8294AD6AC0063B1C1 /* QuickTimeStream.pl in Resources */,
+				498AE727294AD6AC0063B1C1 /* WTV.pm in Resources */,
+				498AE766294AD6AC0063B1C1 /* DOSLatinUS.pm in Resources */,
+				498AE722294AD6AC0063B1C1 /* DNG.pm in Resources */,
+				498AE704294AD6AC0063B1C1 /* ru.pm in Resources */,
+				498AE6DA294AD6AC0063B1C1 /* Stim.pm in Resources */,
+				498AE6AE294AD6AC0063B1C1 /* Minolta.pm in Resources */,
+				498AE72B294AD6AC0063B1C1 /* Parrot.pm in Resources */,
+				498AE6D2294AD6AC0063B1C1 /* FotoStation.pm in Resources */,
+				498AE742294AD6AC0063B1C1 /* OOXML.pm in Resources */,
+				498AE72F294AD6AC0063B1C1 /* XMP2.pl in Resources */,
+				498AE6FF294AD6AC0063B1C1 /* ja.pm in Resources */,
+				498AE76E294AD6AC0063B1C1 /* ShiftJIS.pm in Resources */,
+				498AE6B6294AD6AC0063B1C1 /* Olympus.pm in Resources */,
+				498AE73D294AD6AC0063B1C1 /* NikonCustom.pm in Resources */,
+				498AE707294AD6AC0063B1C1 /* fr.pm in Resources */,
+				498AE70C294AD6AC0063B1C1 /* zh_tw.pm in Resources */,
+				498AE6EA294AD6AC0063B1C1 /* ITC.pm in Resources */,
+				498AE708294AD6AC0063B1C1 /* nl.pm in Resources */,
+				498AE6FE294AD6AC0063B1C1 /* JVC.pm in Resources */,
+				498AE6DE294AD6AC0063B1C1 /* AES.pm in Resources */,
+				498AE763294AD6AC0063B1C1 /* Hebrew.pm in Resources */,
+				498AE72D294AD6AC0063B1C1 /* ID3.pm in Resources */,
+				498AE764294AD6AC0063B1C1 /* MacThai.pm in Resources */,
+				498AE714294AD6AC0063B1C1 /* Validate.pm in Resources */,
+				498AE73E294AD6AC0063B1C1 /* RSRC.pm in Resources */,
+				498AE706294AD6AC0063B1C1 /* zh_cn.pm in Resources */,
+				498AE743294AD6AC0063B1C1 /* Ricoh.pm in Resources */,
+				498AE6EE294AD6AC0063B1C1 /* Font.pm in Resources */,
+				498AE6F1294AD6AC0063B1C1 /* CanonRaw.pm in Resources */,
+				498AE6EC294AD6AC0063B1C1 /* PICT.pm in Resources */,
+				498AE6B1294AD6AC0063B1C1 /* PPM.pm in Resources */,
+				498AE6A7294AD6AC0063B1C1 /* JPEGDigest.pm in Resources */,
+				498AE768294AD6AC0063B1C1 /* JIS.pm in Resources */,
+				498AE723294AD6AC0063B1C1 /* CanonVRD.pm in Resources */,
+				498AE6C0294AD6AC0063B1C1 /* MXF.pm in Resources */,
+				498AE77C294AD6AC0063B1C1 /* MakerNotes.pm in Resources */,
+				498AE6C1294AD6AC0063B1C1 /* CanonCustom.pm in Resources */,
+				498AE6A8294AD6AC0063B1C1 /* Canon.pm in Resources */,
+				498AE6AD294AD6AC0063B1C1 /* Kodak.pm in Resources */,
+				498AE725294AD6AC0063B1C1 /* LNK.pm in Resources */,
+				498AE6A0294AD6AC0063B1C1 /* RandomAccess.pod in Resources */,
+				498AE740294AD6AC0063B1C1 /* Photoshop.pm in Resources */,
+				498AE6D6294AD6AC0063B1C1 /* EXE.pm in Resources */,
+				498AE71A294AD6AC0063B1C1 /* PNG.pm in Resources */,
+				498AE70F294AD6AC0063B1C1 /* de.pm in Resources */,
+				498AE6F5294AD6AC0063B1C1 /* Panasonic.pm in Resources */,
+				498AE73A294AD6AC0063B1C1 /* PostScript.pm in Resources */,
+				498AE6D9294AD6AC0063B1C1 /* MOI.pm in Resources */,
+				498AE72A294AD6AC0063B1C1 /* Text.pm in Resources */,
+				498AE75C294AD6AC0063B1C1 /* MacIceland.pm in Resources */,
+				498AE71F294AD6AC0063B1C1 /* Theora.pm in Resources */,
+				498AE73C294AD6AC0063B1C1 /* ISO.pm in Resources */,
+				498AE6F9294AD6AC0063B1C1 /* README in Resources */,
+				498AE6B0294AD6AC0063B1C1 /* GeoTiff.pm in Resources */,
 				49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */,
+				498AE6A6294AD6AC0063B1C1 /* QuickTime.pm in Resources */,
+				498AE6B2294AD6AC0063B1C1 /* APE.pm in Resources */,
+				498AE71E294AD6AC0063B1C1 /* Casio.pm in Resources */,
+				498AE70B294AD6AC0063B1C1 /* es.pm in Resources */,
+				498AE758294AD6AC0063B1C1 /* Vietnam.pm in Resources */,
+				498AE738294AD6AC0063B1C1 /* AIFF.pm in Resources */,
+				498AE734294AD6AC0063B1C1 /* TagInfoXML.pm in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,6 +1178,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
+				498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */,
 				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
 				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
 				49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */,
@@ -217,6 +1188,7 @@
 				49B9EDE129493F4000574D18 /* Coord.swift in Sources */,
 				4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */,
 				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
+				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

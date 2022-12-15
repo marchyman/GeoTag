@@ -19,12 +19,12 @@ struct ImageTableView: View {
                 Text(image.name)
                     .help("Full path: \(image.fileURL.path)")
             }
-            TableColumn("Timestamp", value: \.dateTimeCreated)
-            TableColumn("Latitude", value: \.location.latitude) { image in
-                Text(image.location.dms.latitude)
+            TableColumn("Timestamp", value: \.timeStamp)
+            TableColumn("Latitude", value: \.latitude) { image in
+                Text(image.latitude)
             }
-            TableColumn("Longitude", value: \.location.longitude) { image in
-                Text(image.location.dms.longitude)
+            TableColumn("Longitude", value: \.longitude) { image in
+                Text(image.longitude)
             }
         }
         .onChange(of: sortOrder) { newOrder in
@@ -45,17 +45,20 @@ extension ImageModel {
     var name: String {
         fileURL.lastPathComponent
     }
+    var timeStamp: String {
+        dateTimeCreated ?? ""
+    }
     var latitude: String {
-        location.dms.latitude
+        location?.dms.latitude ?? ""
     }
     var longitude: String {
-        location.dms.longitude
+        location?.dms.longitude ?? ""
     }
 
 }
 
-struct ImageTableView_Previews: PreviewProvider {
-    static var previews: some View {
-        ImageTableView(images: .constant([ImageModel.sample]))
-    }
-}
+//struct ImageTableView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ImageTableView(images: .constant([ImageModel.sample!]))
+//    }
+//}
