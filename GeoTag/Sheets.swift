@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// sheet size
-let sheetMinWidth = 600.0
+let sheetWidth = 600.0
 let sheetMinHeight = 400.0
 
 /// types of sheets that may be attached to the content view
@@ -19,6 +19,7 @@ enum SheetType: Identifiable {
 
     case gpxFileNameSheet
     case saveChangesSheet
+    case duplicateImageSheet
 }
 
 /// select a view depending upon the current app state sheet type
@@ -31,6 +32,8 @@ struct ContentViewSheet: View {
             GpxLoadView()
         case .saveChangesSheet:
             EmptyView()
+        case .duplicateImageSheet:
+            DuplicateImageView()
         }
     }
 }
@@ -42,7 +45,7 @@ struct GpxLoadView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
                 Spacer()
                 Button("Dismiss") {
@@ -51,14 +54,52 @@ struct GpxLoadView: View {
             }
             if (appState.gpxGoodFileNames.count > 0) {
                 Text("GPX Files Loaded")
+                    .font(.title)
                 List (appState.gpxGoodFileNames, id: \.self) { Text($0) }
+                    .frame(maxHeight: .infinity)
+                Text("The above GPX file(s) have been processed and will show as tracks on the map.")
+                    .lineLimit(nil)
+                    .padding()
             }
             if (appState.gpxBadFileNames.count > 0) {
-                Text("Bad GPX Files NOT Loaded")
+                Text("GPX Files NOT Loaded")
+                    .font(.title)
                 List (appState.gpxBadFileNames, id: \.self) { Text($0) }
+                    .frame(maxHeight: .infinity)
+                Text("No valid tracks found in above GPX file(s).")
+                    .font(.title)
+                    .padding()
+                Text("Either no tracks could be found or the GPX file was corrupted such that it could not be properly processed. Any track log information in the file has been ignored.")
+                    .lineLimit(nil)
+                    .padding([.leading, .bottom, .trailing])
             }
         }
-        .frame(minWidth: sheetMinWidth, minHeight: sheetMinHeight)
+        .frame(minWidth: sheetWidth, maxWidth: sheetWidth,
+               minHeight: sheetMinHeight, maxHeight: .infinity)
         .padding()
     }
+}
+
+struct DuplicateImageView: View {
+    @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack() {
+            HStack {
+                Spacer()
+                Button("Dismiss") {
+                    dismiss()
+                }
+            }
+            Text("One or more files not opened")
+                .font(.title)
+                .padding()
+            Text("One or more files were not opened. Unopened files were duplicates of files previously opened for editing.")
+                .lineLimit(nil)
+        }
+        .frame(maxWidth: 400, minHeight: 150, alignment: .top)
+        .padding()
+    }
+
 }
