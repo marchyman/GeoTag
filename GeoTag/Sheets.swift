@@ -24,25 +24,9 @@ enum SheetType: Identifiable {
 
 /// select a view depending upon the current app state sheet type
 struct ContentViewSheet: View {
-    var type: SheetType
-
-    var body: some View {
-        switch type {
-        case .gpxFileNameSheet:
-            GpxLoadView()
-        case .saveChangesSheet:
-            EmptyView()
-        case .duplicateImageSheet:
-            DuplicateImageView()
-        }
-    }
-}
-
-/// show lists of GPX files that were loaded or failed to load
-/// Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
-struct GpxLoadView: View {
-    @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) private var dismiss
+
+    var type: SheetType
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -52,6 +36,27 @@ struct GpxLoadView: View {
                     dismiss()
                 }
             }
+            switch type {
+            case .gpxFileNameSheet:
+                GpxLoadView()
+            case .saveChangesSheet:
+                EmptyView()
+            case .duplicateImageSheet:
+                DuplicateImageView()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .padding()
+    }
+}
+
+/// show lists of GPX files that were loaded or failed to load
+/// Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
+struct GpxLoadView: View {
+    @EnvironmentObject var appState: AppState
+
+    var body: some View {
+        VStack(alignment: .leading) {
             if (appState.gpxGoodFileNames.count > 0) {
                 Text("GPX Files Loaded")
                     .font(.title)
@@ -75,31 +80,22 @@ struct GpxLoadView: View {
             }
         }
         .frame(minWidth: sheetWidth, maxWidth: sheetWidth,
-               minHeight: sheetMinHeight, maxHeight: .infinity)
-        .padding()
+               minHeight: sheetMinHeight)
     }
 }
 
 struct DuplicateImageView: View {
     @EnvironmentObject var appState: AppState
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack() {
-            HStack {
-                Spacer()
-                Button("Dismiss") {
-                    dismiss()
-                }
-            }
             Text("One or more files not opened")
                 .font(.title)
                 .padding()
             Text("One or more files were not opened. Unopened files were duplicates of files previously opened for editing.")
                 .lineLimit(nil)
         }
-        .frame(maxWidth: 400, minHeight: 150, alignment: .top)
-        .padding()
+        .frame(maxWidth: 400, minHeight: 100)
     }
 
 }
