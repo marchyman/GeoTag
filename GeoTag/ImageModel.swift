@@ -76,8 +76,17 @@ final class ImageModel: Identifiable {
     let xmpURL: URL
     let xmpFile: XmpFile
 
-    init(imageURL: URL) throws {
+    init(imageURL: URL, forPreview: Bool = false) throws {
         fileURL = imageURL
+        if forPreview {
+            // these fields are unused when creating instances for preview
+            // any bogus value will work
+            sandboxURL = imageURL
+            xmpURL = imageURL
+            xmpFile = XmpFile(url: imageURL)
+            sandboxXmpURL = nil
+            return
+        }
         try sandboxURL = createSandboxUrl(fileURL: fileURL)
         xmpURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
         xmpFile = XmpFile(url: sandboxURL)
@@ -198,6 +207,27 @@ final class ImageModel: Identifiable {
         }
     }
 
+}
+
+// Add convenience init for preview model creation
+
+extension ImageModel {
+    convenience init(imageURL: URL,
+                     validImage: Bool,
+                     dateTimeCreated: String,
+                     latitude: Double?,
+                     longitude: Double?) {
+        do {
+            try self.init(imageURL: imageURL, forPreview: true)
+        } catch {
+            fatalError("ImageModel preview init failed")
+        }
+        self.validImage = validImage
+        self.dateTimeCreated = dateTimeCreated
+        if let latitude, let longitude {
+            location = Coord(latitude: latitude, longitude: longitude)
+        }
+    }
 }
 
 // ImageModel instances are compared and hashed on id

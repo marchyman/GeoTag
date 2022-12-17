@@ -11,7 +11,6 @@
 		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
 		4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757C294986DC00A5EA83 /* UnexpectedError.swift */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
-		49610954294D19C0008782C9 /* ImageModelImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49610953294D19C0008782C9 /* ImageModelImage.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
 		498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpFile.swift */; };
 		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
@@ -34,7 +33,6 @@
 		4921757C294986DC00A5EA83 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
-		49610953294D19C0008782C9 /* ImageModelImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelImage.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
 		498AE5B0294AB78A0063B1C1 /* XmpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
 		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
@@ -95,7 +93,6 @@
 				492175782949743E00A5EA83 /* OpenPanel.swift */,
 				4921757A2949863A00A5EA83 /* Gpx.swift */,
 				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
-				49610953294D19C0008782C9 /* ImageModelImage.swift */,
 				49B9EDE029493F4000574D18 /* Coord.swift */,
 				498AE5B0294AB78A0063B1C1 /* XmpFile.swift */,
 				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
@@ -223,7 +220,6 @@
 			files = (
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
 				498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */,
-				49610954294D19C0008782C9 /* ImageModelImage.swift in Sources */,
 				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
 				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
 				49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */,
@@ -365,6 +361,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -398,6 +395,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;

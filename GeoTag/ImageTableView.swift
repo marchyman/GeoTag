@@ -63,8 +63,26 @@ extension ImageModel {
 
 }
 
-//struct ImageTableView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ImageTableView(images: .constant([ImageModel.testImage]))
-//    }
-//}
+struct ImageTableView_Previews: PreviewProvider {
+    static var images = [
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
+                   validImage: true,
+                   dateTimeCreated: "2022:12:12 11:22:33",
+                   latitude: 33.123,
+                   longitude: 123.456),
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image2"),
+                   validImage: false,
+                   dateTimeCreated: "",
+                   latitude: nil,
+                   longitude: nil),
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image3"),
+                   validImage: true,
+                   dateTimeCreated: "2022:12:13 14:15:16",
+                   latitude: 35.505,
+                   longitude: -123.456),
+
+    ]
+    static var previews: some View {
+        ImageTableView(images: .constant(images))
+    }
+}
