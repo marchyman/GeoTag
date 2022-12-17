@@ -43,31 +43,23 @@ func showOpenPanel(_ appState: AppState) {
 
         // add the selected images to the array of images to be edited
 
-        let updateGroup = DispatchGroup()
         for url in urls {
             if appState.imageURLs.contains(url) {
                 appState.sheetType = .duplicateImageSheet
             } else {
                 appState.imageURLs.insert(url)
-                updateGroup.enter()
-                DispatchQueue.global(qos: .userInitiated).async {
-                    do {
-                        let imageData = try ImageModel(imageURL: url)
-                        DispatchQueue.main.async {
-                            appState.images.append(imageData)
-                            updateGroup.leave()
-                        }
-                    } catch let error as NSError {
-                        print("Error: \(error)")
+                do {
+                    let imageData = try ImageModel(imageURL: url)
+                    appState.images.append(imageData)
+                } catch let error as NSError {
+                    print("Error: \(error)")
 //                        DispatchQueue.main.async {
 //                            let desc = NSLocalizedString("WARN_DESC_2",
 //                                                         comment: "cant process file error")
 //                            + "\(url.path)\n\nReason: "
 //                            unexpected(error: error, desc)
 //                        }
-                        // alert here
-                        updateGroup.leave()
-                    }
+                    // alert here
                 }
             }
         }

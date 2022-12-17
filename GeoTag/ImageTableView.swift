@@ -14,7 +14,7 @@ struct ImageTableView: View {
     @State private var selection = Set<ImageModel.ID>()
 
     var body: some View {
-        Table(images, sortOrder: $sortOrder) {
+        Table(images, selection: $selection, sortOrder: $sortOrder) {
             TableColumn("Image Name", value: \.name) { image in
                 Text(image.name)
                     .help("Full path: \(image.fileURL.path)")
@@ -39,6 +39,7 @@ struct ImageTableView: View {
     }
 }
 
+
 /// Computed properties to convert elements of an imageModel into strings for use with
 /// this view
 extension ImageModel {
@@ -57,8 +58,8 @@ extension ImageModel {
 
 }
 
-//struct ImageTableView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ImageTableView(images: .constant([ImageModel.sample!]))
-//    }
-//}
+struct ImageTableView_Previews: PreviewProvider {
+    static var previews: some View {
+        ImageTableView(images: .constant([ImageModel.testImage]))
+    }
+}

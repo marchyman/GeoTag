@@ -11,10 +11,12 @@
 		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
 		4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757C294986DC00A5EA83 /* UnexpectedError.swift */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
+		49610954294D19C0008782C9 /* ImageModelImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49610953294D19C0008782C9 /* ImageModelImage.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
 		498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpFile.swift */; };
 		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
 		49A1326F294BFB9300F1B393 /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49A1326E294BFB9300F1B393 /* ExifTool */; };
+		49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A13270294C040F00F1B393 /* ImageNameColumnView.swift */; };
 		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
 		49B0395A2944429E003B7C53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039592944429E003B7C53 /* ContentView.swift */; };
 		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
@@ -32,10 +34,12 @@
 		4921757C294986DC00A5EA83 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		49610953294D19C0008782C9 /* ImageModelImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelImage.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
 		498AE5B0294AB78A0063B1C1 /* XmpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
 		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
 		49A1326E294BFB9300F1B393 /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ExifTool; sourceTree = "<group>"; };
+		49A13270294C040F00F1B393 /* ImageNameColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNameColumnView.swift; sourceTree = "<group>"; };
 		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B039572944429E003B7C53 /* GeoTagApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagApp.swift; sourceTree = "<group>"; };
 		49B039592944429E003B7C53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -91,11 +95,13 @@
 				492175782949743E00A5EA83 /* OpenPanel.swift */,
 				4921757A2949863A00A5EA83 /* Gpx.swift */,
 				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
+				49610953294D19C0008782C9 /* ImageModelImage.swift */,
 				49B9EDE029493F4000574D18 /* Coord.swift */,
 				498AE5B0294AB78A0063B1C1 /* XmpFile.swift */,
 				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
 				492E3F5F2948361D0044C1F3 /* ImageView.swift */,
 				49B9EDDC29493CC200574D18 /* ImageTableView.swift */,
+				49A13270294C040F00F1B393 /* ImageNameColumnView.swift */,
 				4921757C294986DC00A5EA83 /* UnexpectedError.swift */,
 				492E3F5D29481A7D0044C1F3 /* Credits.rtf */,
 				49B0395B2944429F003B7C53 /* Assets.xcassets */,
@@ -217,6 +223,7 @@
 			files = (
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
 				498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */,
+				49610954294D19C0008782C9 /* ImageModelImage.swift in Sources */,
 				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
 				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
 				49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */,
@@ -224,6 +231,7 @@
 				49B9EDE32949442700574D18 /* AppState.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenPanel.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coord.swift in Sources */,
+				49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */,
 				4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */,
 				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
