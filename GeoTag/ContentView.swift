@@ -19,6 +19,12 @@ struct ContentView: View {
         HSplitView {
             ImageTableView(images: $appState.images)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .contextMenu {
+                    Text("Item 1")
+                    Text("Item 2")
+                    Divider()
+                    Text("Item 3")
+                }
             VSplitView {
                 Text("Image View goes here")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
