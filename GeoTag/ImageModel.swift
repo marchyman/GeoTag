@@ -200,6 +200,19 @@ final class ImageModel: Identifiable {
 
 }
 
+// ImageModel instances are compared and hashed on id
+
+extension ImageModel: Equatable, Hashable {
+    static func == (lhs: ImageModel, rhs: ImageModel) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+
 // Stand alone helper functions used when initializing an ImageModel
 // instance. They can't be member functions as they are called before the
 // instance is fully initialized.  They need not be member functions as
