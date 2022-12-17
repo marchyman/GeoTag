@@ -31,7 +31,12 @@ struct ImageTableView: View {
             images.sort(using: newOrder)
         }
         .onChange(of: selection) { selection in
-            print("Selection changed: \(selection)")
+            for item in selection {
+                let image = images.first { $0.id == item }
+                if let image, !image.validImage {
+                    print("This item should be removed from selection \(item)")
+                }
+            }
         }
         .onAppear {
             selection = Set()
@@ -58,8 +63,8 @@ extension ImageModel {
 
 }
 
-struct ImageTableView_Previews: PreviewProvider {
-    static var previews: some View {
-        ImageTableView(images: .constant([ImageModel.testImage]))
-    }
-}
+//struct ImageTableView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ImageTableView(images: .constant([ImageModel.testImage]))
+//    }
+//}
