@@ -20,4 +20,29 @@ final class AppState: ObservableObject {
 
     // Set of image URLs used to detect duplicate images
     var imageURLs = Set<URL>()
+
+    // Image Selection
+    @Published var selectedIndex: Int? = nil
+    @Published var selectedIndexes = [Int]()
+
+    func selections(selected: Set<ImageModel.ID>) {
+        if selected.isEmpty {
+            selectedIndex = nil
+            selectedIndexes = []
+        } else {
+            if selectedIndex == nil ||
+               !selected.contains(images[selectedIndex!].id) {
+                // set the "most" selected item as the first item selected
+                selectedIndex = images.firstIndex { $0.id == selected.first }
+            }
+            // create the array of all selected images
+            selectedIndexes = images.compactMap { image in
+                if selected.contains(image.id) {
+                    return images.firstIndex{ $0 == image }
+                }
+                return nil
+            }
+        }
+    }
+
 }

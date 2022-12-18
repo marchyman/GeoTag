@@ -17,7 +17,7 @@ struct ContentView: View {
 
     var body: some View {
         HSplitView {
-            ImageTableView(images: $appState.images)
+            ImageTableView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .contextMenu {
                     Text("Item 1")
@@ -26,10 +26,14 @@ struct ContentView: View {
                     Text("Item 3")
                 }
             VSplitView {
-                Text("Image View goes here")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ImageView()
+                    .frame(maxWidth: .infinity,
+                           minHeight: windowMinHeight/2,
+                           maxHeight: .infinity)
                 Text("Map View goes here")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity,
+                           minHeight: windowMinHeight/2,
+                           maxHeight: .infinity)
             }
         }
         .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)

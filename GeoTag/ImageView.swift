@@ -8,15 +8,26 @@
 import SwiftUI
 
 struct ImageView: View {
-    let image: Image
+    @EnvironmentObject var appState: AppState
 
     var body: some View {
-        image
+        if let selectedIndex = appState.selectedIndex {
+            Image(nsImage: appState.images[selectedIndex].thumbnail)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .padding()
+        } else {
+            Image(systemName: "photo")
+                .font(.system(size: 96))
+                .opacity(0.18)
+                .padding()
+        }
     }
 }
 
 struct ImageView_Previews: PreviewProvider {
     static var previews: some View {
-        ImageView(image: Image(systemName: "photo"))
+        ImageView()
+            .environmentObject(AppState())
     }
 }

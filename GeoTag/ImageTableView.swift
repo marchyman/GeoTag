@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct ImageTableView: View {
-    @Binding var images: [ImageModel]
+    @EnvironmentObject var appState: AppState
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
     @State private var selection = Set<ImageModel.ID>()
 
     var body: some View {
-        Table(images, selection: $selection, sortOrder: $sortOrder) {
+        Table(appState.images, selection: $selection, sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
                 ImageNameColumnView(image: image)
             }
@@ -33,15 +33,11 @@ struct ImageTableView: View {
             .width(min: 120)
         }
         .onChange(of: sortOrder) { newOrder in
-            images.sort(using: newOrder)
+            appState.images.sort(using: newOrder)
+            selection = Set()
         }
         .onChange(of: selection) { selection in
-            for item in selection {
-                let image = images.first { $0.id == item }
-                if let image, !image.validImage {
-                    print("This item should be removed from selection \(item)")
-                }
-            }
+            appState.selections(selected: selection)
         }
         .onAppear {
             selection = Set()
@@ -88,6 +84,6 @@ struct ImageTableView_Previews: PreviewProvider {
 
     ]
     static var previews: some View {
-        ImageTableView(images: .constant(images))
+        ImageTableView()
     }
 }
