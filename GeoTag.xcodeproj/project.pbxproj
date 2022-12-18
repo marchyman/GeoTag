@@ -16,6 +16,7 @@
 		498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */; };
 		498A7352294EA5A600C62B14 /* ImageLatitudeColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */; };
 		498A7356294EADC300C62B14 /* ImageLongitudeColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */; };
+		498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
 		498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpFile.swift */; };
 		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
@@ -43,6 +44,7 @@
 		498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTimestampColumnView.swift; sourceTree = "<group>"; };
 		498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLatitudeColumnView.swift; sourceTree = "<group>"; };
 		498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLongitudeColumnView.swift; sourceTree = "<group>"; };
+		498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIDoubleClickModifier.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
 		498AE5B0294AB78A0063B1C1 /* XmpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
 		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
@@ -86,6 +88,15 @@
 			name = "Image Table Views";
 			sourceTree = "<group>";
 		};
+		498A7357294EC36C00C62B14 /* Utility files */ = {
+			isa = PBXGroup;
+			children = (
+				498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */,
+				4921757C294986DC00A5EA83 /* UnexpectedError.swift */,
+			);
+			name = "Utility files";
+			sourceTree = "<group>";
+		};
 		49B0394B2944429E003B7C53 = {
 			isa = PBXGroup;
 			children = (
@@ -122,7 +133,7 @@
 				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
 				492E3F5F2948361D0044C1F3 /* ImageView.swift */,
 				498A7354294EA67A00C62B14 /* Image Table Views */,
-				4921757C294986DC00A5EA83 /* UnexpectedError.swift */,
+				498A7357294EC36C00C62B14 /* Utility files */,
 				492E3F5D29481A7D0044C1F3 /* Credits.rtf */,
 				49B0395B2944429F003B7C53 /* Assets.xcassets */,
 				49B039602944429F003B7C53 /* GeoTag.entitlements */,
@@ -253,6 +264,7 @@
 				49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */,
 				49B9EDE32949442700574D18 /* AppState.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenPanel.swift in Sources */,
+				498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coord.swift in Sources */,
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
 				49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */,

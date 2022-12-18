@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ImageTimestampColumnView: View {
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
+    @State private var showPopover = false
 
     let image: ImageModel
 
@@ -16,6 +17,13 @@ struct ImageTimestampColumnView: View {
         Text(image.timeStamp)
             .foregroundColor(image.validImage ?
                              AppSettings.textColor(colorScheme) : .gray)
+            .onDoubleClick() {
+                showPopover.toggle()
+            }
+            .popover(isPresented: self.$showPopover) {
+                Text("Popover -- this is where date/time change will take place.")
+                    .padding()
+            }
     }
 }
 
