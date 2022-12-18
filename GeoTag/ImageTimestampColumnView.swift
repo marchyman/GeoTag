@@ -1,27 +1,25 @@
 //
-//  ImageNameColumnView.swift
+//  ImageTimestampColumnView.swift
 //  GeoTag
 //
-//  Created by Marco S Hyman on 12/15/22.
+//  Created by Marco S Hyman on 12/17/22.
 //
 
 import SwiftUI
 
-struct ImageNameColumnView: View {
+struct ImageTimestampColumnView: View {
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
 
     let image: ImageModel
 
     var body: some View {
-        Text(image.name)
+        Text(image.timeStamp)
             .foregroundColor(image.validImage ?
                              AppSettings.textColor(colorScheme) : .gray)
-            .help("Full path: \(image.fileURL.path)")
     }
-
 }
 
-struct ImageNameColumnView_Previews: PreviewProvider {
+struct ImageTimestampColumnView_Previews: PreviewProvider {
     static var image =
         ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
                    validImage: true,
@@ -29,6 +27,6 @@ struct ImageNameColumnView_Previews: PreviewProvider {
                    latitude: 33.123,
                    longitude: 123.456)
     static var previews: some View {
-        ImageNameColumnView(image: image)
+        ImageTimestampColumnView(image: image)
     }
 }

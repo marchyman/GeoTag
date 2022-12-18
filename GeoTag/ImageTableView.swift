@@ -16,8 +16,7 @@ struct ImageTableView: View {
     var body: some View {
         Table(images, selection: $selection, sortOrder: $sortOrder) {
             TableColumn("Image Name", value: \.name) { image in
-                Text(image.name)
-                    .help("Full path: \(image.fileURL.path)")
+                ImageNameColumnView(image: image)
             }
             TableColumn("Timestamp", value: \.timeStamp)
             TableColumn("Latitude", value: \.latitude) { image in
