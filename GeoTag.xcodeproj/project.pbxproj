@@ -97,6 +97,47 @@
 			name = "Utility files";
 			sourceTree = "<group>";
 		};
+		498A735A294EC5F800C62B14 /* App Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B0396A29444BD8003B7C53 /* Info.plist */,
+				49B039572944429E003B7C53 /* GeoTagApp.swift */,
+				49B9EDE22949442700574D18 /* AppState.swift */,
+				492175782949743E00A5EA83 /* OpenPanel.swift */,
+				4921757A2949863A00A5EA83 /* Gpx.swift */,
+			);
+			name = "App Group";
+			sourceTree = "<group>";
+		};
+		498A735B294EC78700C62B14 /* Settings Group */ = {
+			isa = PBXGroup;
+			children = (
+				498A734D294E949B00C62B14 /* AppSetting.swift */,
+				498A734B294E916700C62B14 /* SettingsView.swift */,
+			);
+			name = "Settings Group";
+			sourceTree = "<group>";
+		};
+		498A735C294EC7BC00C62B14 /* Image Model Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
+				49B9EDE029493F4000574D18 /* Coord.swift */,
+				498AE5B0294AB78A0063B1C1 /* XmpFile.swift */,
+				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
+			);
+			name = "Image Model Group";
+			sourceTree = "<group>";
+		};
+		498A735D294EC7D800C62B14 /* Content View Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B039592944429E003B7C53 /* ContentView.swift */,
+				498AE5AE294A6E430063B1C1 /* Sheets.swift */,
+			);
+			name = "Content View Group";
+			sourceTree = "<group>";
+		};
 		49B0394B2944429E003B7C53 = {
 			isa = PBXGroup;
 			children = (
@@ -118,19 +159,10 @@
 		49B039562944429E003B7C53 /* GeoTag */ = {
 			isa = PBXGroup;
 			children = (
-				49B0396A29444BD8003B7C53 /* Info.plist */,
-				49B039572944429E003B7C53 /* GeoTagApp.swift */,
-				498A734D294E949B00C62B14 /* AppSetting.swift */,
-				498A734B294E916700C62B14 /* SettingsView.swift */,
-				49B9EDE22949442700574D18 /* AppState.swift */,
-				49B039592944429E003B7C53 /* ContentView.swift */,
-				498AE5AE294A6E430063B1C1 /* Sheets.swift */,
-				492175782949743E00A5EA83 /* OpenPanel.swift */,
-				4921757A2949863A00A5EA83 /* Gpx.swift */,
-				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
-				49B9EDE029493F4000574D18 /* Coord.swift */,
-				498AE5B0294AB78A0063B1C1 /* XmpFile.swift */,
-				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
+				498A735A294EC5F800C62B14 /* App Group */,
+				498A735B294EC78700C62B14 /* Settings Group */,
+				498A735D294EC7D800C62B14 /* Content View Group */,
+				498A735C294EC7BC00C62B14 /* Image Model Group */,
 				492E3F5F2948361D0044C1F3 /* ImageView.swift */,
 				498A7354294EA67A00C62B14 /* Image Table Views */,
 				498A7357294EC36C00C62B14 /* Utility files */,

@@ -20,7 +20,7 @@ struct GeoTagApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("Open…") {
-                    showOpenPanel(appState)
+                    appState.showOpenPanel()
                 }.keyboardShortcut("o")
             }
         }
