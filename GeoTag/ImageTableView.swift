@@ -15,16 +15,22 @@ struct ImageTableView: View {
 
     var body: some View {
         Table(images, selection: $selection, sortOrder: $sortOrder) {
-            TableColumn("Image Name", value: \.name) { image in
+            TableColumn("Name", value: \.name) { image in
                 ImageNameColumnView(image: image)
             }
-            TableColumn("Timestamp", value: \.timeStamp)
+            .width(min: 100)
+            TableColumn("Timestamp", value: \.timeStamp) { image in
+                ImageTimestampColumnView(image: image)
+            }
+            .width(min: 130)
             TableColumn("Latitude", value: \.latitude) { image in
-                Text(image.latitude)
+                ImageLatitudeColumnView(image:image)
             }
+            .width(min: 120)
             TableColumn("Longitude", value: \.longitude) { image in
-                Text(image.longitude)
+                ImageLongitudeColumnView(image:image)
             }
+            .width(min: 120)
         }
         .onChange(of: sortOrder) { newOrder in
             images.sort(using: newOrder)
@@ -53,11 +59,11 @@ extension ImageModel {
     var timeStamp: String {
         dateTimeCreated ?? ""
     }
-    var latitude: String {
-        location?.dms.latitude ?? ""
+    var latitude: Double {
+        location?.latitude ?? 0.0
     }
-    var longitude: String {
-        location?.dms.longitude ?? ""
+    var longitude: Double {
+        location?.longitude ?? 0.0
     }
 
 }

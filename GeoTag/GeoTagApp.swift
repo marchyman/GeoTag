@@ -24,6 +24,11 @@ struct GeoTagApp: App {
                 }.keyboardShortcut("o")
             }
         }
+
+        Settings {
+            SettingsView()
+        }
+
     }
 }
 
