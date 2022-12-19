@@ -19,7 +19,7 @@ final class AppState: ObservableObject {
     var gpxBadFileNames = [String]()
 
     // Set of image URLs used to detect duplicate images
-    var imageURLs = Set<URL>()
+    var processedURLs = Set<URL>()
 
     // Image Selection
     @Published var selectedIndex: Int? = nil

@@ -8,7 +8,8 @@
 import UniformTypeIdentifiers
 import AppKit
 
-// Extension to our Application State that handles file open
+// Extension to our Application State that handles file open and dropping
+// URLs onto the app's table of images to edit.
 
 extension AppState {
 
@@ -30,44 +31,60 @@ extension AppState {
 
         // process any URLs selected to open.
         if panel.runModal() == NSApplication.ModalResponse.OK {
-            gpxGoodFileNames.removeAll()
-            gpxBadFileNames.removeAll()
-            var urls = [URL]()
-            for url in panel.urls {
-                if isFolder(url: url) {
-                    findUrlsInFolder(url: url, toUrls: &urls)
-                } else {
-                    if url.pathExtension.lowercased() == "gpx" {
-                        parseGpxFile(url)
-                    } else {
-                        urls.append(url)
-                    }
-                }
-            }
+            prepareForEdit(inputURLs: panel.urls)
+        }
+    }
 
-            // add the selected images to the array of images to be edited
+    /// process URLs opened or dragged to the app.  In the case of a drag a URL may
+    /// be of any type.  The path of non-image files will be listed in the app's table but will
+    /// not be flagged as a valid image.
+    ///
+    func prepareForEdit(inputURLs: [URL]) {
+        // dragged urls are duplicated for some reason.  Convert the input
+        // array to a set then back to an array to get rid of any dups.
+        let urls = inputURLs.uniqued()
+        var imageURLs = [URL]()
+        gpxGoodFileNames.removeAll()
+        gpxBadFileNames.removeAll()
 
-            for url in urls {
-                if imageURLs.contains(url) {
-                    sheetType = .duplicateImageSheet
+        // check the given URLs.  Iterate into folders and special case
+        // gpx files.  Add what may be image URLs to the imageURLs array.
+
+        for url in urls {
+            if isFolder(url: url) {
+                findUrlsInFolder(url: url, toUrls: &imageURLs)
+            } else {
+                if url.pathExtension.lowercased() == "gpx" {
+                    parseGpxFile(url)
                 } else {
-                    imageURLs.insert(url)
-                    do {
-                        let imageData = try ImageModel(imageURL: url)
-                        images.append(imageData)
-                    } catch let error as NSError {
-                        print("Error: \(error)")
-                        //                        DispatchQueue.main.async {
-                        //                            let desc = NSLocalizedString("WARN_DESC_2",
-                        //                                                         comment: "cant process file error")
-                        //                            + "\(url.path)\n\nReason: "
-                        //                            unexpected(error: error, desc)
-                        //                        }
-                        // alert here
-                    }
+                    imageURLs.append(url)
                 }
             }
         }
+
+        // check for imageURLs that match files previously loaded. Process
+        // non-duplicates as ImageModel
+        for url in imageURLs {
+            if processedURLs.contains(url) {
+                sheetType = .duplicateImageSheet
+            } else {
+                processedURLs.insert(url)
+                do {
+                    let imageData = try ImageModel(imageURL: url)
+                    images.append(imageData)
+                } catch let error as NSError {
+                    print("Error: \(error)")
+                    //                        DispatchQueue.main.async {
+                    //                            let desc = NSLocalizedString("WARN_DESC_2",
+                    //                                                         comment: "cant process file error")
+                    //                            + "\(url.path)\n\nReason: "
+                    //                            unexpected(error: error, desc)
+                    //                        }
+                    // alert here
+                }
+            }
+        }
+
     }
 
     /// Check if a given file URL refers to a folder
@@ -127,4 +144,15 @@ extension AppState {
         }
     }
 
+}
+
+// make sure the entries in an array are not unique
+// Code from: https://stackoverflow.com/questions/25738817/removing-duplicate-elements-from-an-array-in-swift
+// which is much cleaner then any home grown solution I was thinking about.
+
+extension Sequence where Element: Hashable {
+    func uniqued() -> [Element] {
+        var set = Set<Element>()
+        return filter { set.insert($0).inserted }
+    }
 }

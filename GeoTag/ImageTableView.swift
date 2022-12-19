@@ -39,6 +39,10 @@ struct ImageTableView: View {
         .onChange(of: selection) { selection in
             appState.selections(selected: selection)
         }
+        .dropDestination(for: URL.self) {items, location in
+            appState.prepareForEdit(inputURLs: items)
+            return true
+        }
         .onAppear {
             selection = Set()
         }
