@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MapKit
 
 final class AppState: ObservableObject {
     @Published var images = [ImageModel]()
@@ -44,5 +45,30 @@ final class AppState: ObservableObject {
             }
         }
     }
+
+    // Map pin info
+
+    @Published var pin: MKPointAnnotation? = nil
+    @Published var pinEnabled = false
+
+    /// the optional location assigned to a pin on the map
+    var location: Coords? {
+        return pin?.coordinate
+    }
+
+    // create a point annotation if needed and assign to it the given location
+    //
+    func update(location: Coords) {
+        if pin == nil {
+            pin = MKPointAnnotation()
+        }
+// undo stuff here
+//            undoManager?.registerUndo(withTarget: self) { handler in
+//                let oldLocation = pin!.coordinate
+//                self.pin!.coordinate = oldLocation
+//           }
+        pin!.coordinate = location
+    }
+
 
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 /// Window look and feel values
 let windowBorderColor = Color.gray
-let windowMinWidth = 400.0
+let windowMinWidth = 800.0
 let windowMinHeight = 800.0
 
 struct ContentView: View {
@@ -27,12 +27,12 @@ struct ContentView: View {
                 }
             VSplitView {
                 ImageView()
-                    .frame(maxWidth: .infinity,
-                           minHeight: windowMinHeight/2,
+                    .frame(minWidth: 400,
+                           maxWidth: .infinity,
+                           minHeight: 300,
                            maxHeight: .infinity)
-                Text("Map View goes here")
+                MapPaneView()
                     .frame(maxWidth: .infinity,
-                           minHeight: windowMinHeight/2,
                            maxHeight: .infinity)
             }
         }
@@ -48,5 +48,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(AppState())
     }
 }

@@ -170,7 +170,7 @@ struct Exiftool {
     /// files.  ExifTool is used for that purpose.
     func metadataFrom(xmp: URL) -> (dto: String,
                                     valid: Bool,
-                                    location: Coord,
+                                    location: Coords,
                                     elevation: Double?) {
         let exiftool = Process()
         let pipe = Pipe()
@@ -184,7 +184,7 @@ struct Exiftool {
         exiftool.waitUntilExit()
 
         var createDate = ""
-        var location = Coord()
+        var location = Coords()
         var elevation: Double?
         var validGPS = false
 

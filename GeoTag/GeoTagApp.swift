@@ -13,7 +13,7 @@ struct GeoTagApp: App {
     @StateObject private var appState = AppState()
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup("GeoTag Version Five") {
             ContentView()
                 .environmentObject(appState)
         }

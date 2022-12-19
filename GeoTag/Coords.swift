@@ -28,7 +28,7 @@ import Foundation
 import MapKit
 
 /// A shorter name for a type I'll often use
-typealias Coord = CLLocationCoordinate2D
+typealias Coords = CLLocationCoordinate2D
 
 /// extend string to validate and return a latitude./longitude as a double
 

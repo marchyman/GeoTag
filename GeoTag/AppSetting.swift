@@ -10,6 +10,11 @@ import SwiftUI
 
 struct AppSettings {
     static let coordFormatKey = "CoordFormatKey"
+    static let mapTypeIndexKey = "MapTypeIndexKey"
+    static let mapLatitudeKey = "MapLatitudeKey"
+    static let mapLongitudeKey = "MapLongitudeKey"
+    static let mapAltitudeKey = "MapAltitudeKey"
+
 
     enum CoordFormat: Int {
             case deg

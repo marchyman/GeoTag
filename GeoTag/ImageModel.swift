@@ -43,7 +43,7 @@ final class ImageModel: Identifiable {
 
     var dateTimeCreated: String?
     var timeZone: TimeZone?
-    var location: Coord? {
+    var location: Coords? {
         didSet {
             if let location {
                 let coder = CLGeocoder();
@@ -66,7 +66,7 @@ final class ImageModel: Identifiable {
     // should the user decide to change their mind
 
     var originalDateTimeCreated: String?
-    var originalLocation: Coord?
+    var originalLocation: Coords?
     var originalElevation: Double?
 
     // Sandbox references to this image and any related sidecar file
@@ -178,7 +178,7 @@ final class ImageModel: Identifiable {
                let latRef = gpsData[GPSLatitudeRef] as? String,
                let lon = gpsData[GPSLongitude] as? Double,
                let lonRef = gpsData[GPSLongitudeRef] as? String {
-                location = Coord(latitude: latRef == "N" ? lat : -lat,
+                location = Coords(latitude: latRef == "N" ? lat : -lat,
                                  longitude: lonRef == "E" ? lon : -lon)
                 originalLocation = location
             }
@@ -229,7 +229,7 @@ extension ImageModel {
         self.validImage = validImage
         self.dateTimeCreated = dateTimeCreated
         if let latitude, let longitude {
-            location = Coord(latitude: latitude, longitude: longitude)
+            location = Coords(latitude: latitude, longitude: longitude)
         }
     }
 }
