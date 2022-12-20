@@ -72,3 +72,13 @@ final class AppState: ObservableObject {
 
 
 }
+
+// convenience init for use with swiftui previews.  Provide a list
+// of test images suitable for swiftui previews.
+
+extension AppState {
+    convenience init(images: [ImageModel]) {
+        self.init()
+        self.images = images
+    }
+}

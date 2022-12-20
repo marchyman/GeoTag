@@ -8,14 +8,11 @@
 import SwiftUI
 
 struct ImageNameColumnView: View {
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
-
     let image: ImageModel
 
     var body: some View {
         Text(image.name + ((image.sandboxXmpURL == nil) ? "" : "*"))
-            .foregroundColor(image.validImage ?
-                             AppSettings.textColor(colorScheme) : .gray)
+            .foregroundColor(image.validImage ? .primary : .gray)
             .help("Full path: \(image.fileURL.path)")
     }
 

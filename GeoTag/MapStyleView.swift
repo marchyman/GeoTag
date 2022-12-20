@@ -10,6 +10,22 @@ import MapKit
 
 let mapTypes = [MKMapType.standard, MKMapType.satellite, MKMapType.hybrid]
 
+/// Extension to map an MKMapType to a String
+extension MKMapType {
+    var name: String {
+        switch self {
+        case .standard:
+            return "Map"
+        case .hybrid:
+            return "Hybrid"
+        case .satellite:
+            return "Satellite"
+        default:
+            return "Other"
+        }
+    }
+}
+
 struct MapStyleView: View {
     @AppStorage(AppSettings.mapTypeIndexKey) private var mapTypeIndex = 0
     @AppStorage(AppSettings.mapLatitudeKey) private var mapLatitude = 37.7244
@@ -20,9 +36,20 @@ struct MapStyleView: View {
 
     var body: some View {
         HStack {
-            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-                .padding(.leading)
+            Picker("Map Type", selection: $mapTypeIndex) {
+                ForEach(0 ..< mapTypes.count, id: \.self) { index in
+                    Text(mapTypes[index].name).tag(index)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.segmented)
+            .background(RoundedRectangle(cornerRadius: 5)
+                .fill(Color(white: 0.7)))
+            .padding(.leading)
+            .frame(maxWidth: 250)
+
             Spacer()
+
             Button("Save map location") {
                 guard let view = MapView.view else {
                     // put up some type of alert here
@@ -54,6 +81,7 @@ struct SaveLocationPopoverView: View {
             }
     }
 }
+
 
 struct MapStyleView_Previews: PreviewProvider {
     static var previews: some View {

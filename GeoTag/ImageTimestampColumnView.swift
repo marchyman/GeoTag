@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct ImageTimestampColumnView: View {
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
     @State private var showPopover = false
 
     let image: ImageModel
 
     var body: some View {
         Text(image.timeStamp)
-            .foregroundColor(image.validImage ?
-                             AppSettings.textColor(colorScheme) : .gray)
+            .foregroundColor(image.validImage ? .primary : .gray)
             .onDoubleClick() {
                 showPopover.toggle()
             }

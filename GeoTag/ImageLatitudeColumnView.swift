@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct ImageLatitudeColumnView: View {
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
     let image: ImageModel
 
     var body: some View {
         Text(latitudeToString())
-            .foregroundColor(image.validImage ?
-                             AppSettings.textColor(colorScheme) : .gray)
+            .foregroundColor(image.validImage ? .primary : .gray)
     }
 
     func latitudeToString() -> String {

@@ -89,5 +89,6 @@ struct ImageTableView_Previews: PreviewProvider {
     ]
     static var previews: some View {
         ImageTableView()
+            .environmentObject(AppState(images: images))
     }
 }
