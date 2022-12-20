@@ -11,17 +11,18 @@ struct ImageView: View {
     @EnvironmentObject var appState: AppState
 
     var body: some View {
-        if let selectedIndex = appState.selectedIndex {
-            Image(nsImage: appState.images[selectedIndex].thumbnail)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .padding()
-        } else {
-            Image(systemName: "photo")
-                .font(.system(size: 96))
-                .opacity(0.18)
-                .padding()
+        Group {
+            if let selectedIndex = appState.selectedIndex {
+                Image(nsImage: appState.images[selectedIndex].thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            } else {
+                Image(systemName: "photo")
+                    .font(.system(size: 96))
+                    .opacity(0.18)
+            }
         }
+        .padding()
     }
 }
 

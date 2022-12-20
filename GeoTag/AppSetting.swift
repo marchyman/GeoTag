@@ -15,12 +15,11 @@ struct AppSettings {
     static let mapLongitudeKey = "MapLongitudeKey"
     static let mapAltitudeKey = "MapAltitudeKey"
 
-
     enum CoordFormat: Int {
-            case deg
-            case degMin
-            case degMinSec
-        }
+        case deg
+        case degMin
+        case degMinSec
+    }
 
     // select a text color the opposite of the color scheme when a color
     // must be specified
