@@ -27,13 +27,10 @@ struct ContentView: View {
                 }
             VSplitView {
                 ImageView()
-                    .frame(minWidth: 400,
-                           maxWidth: .infinity,
-                           minHeight: 300,
-                           maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                    .sizeReader { size in print(size) }
                 MapPaneView()
-                    .frame(maxWidth: .infinity,
-                           maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)
