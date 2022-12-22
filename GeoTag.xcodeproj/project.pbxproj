@@ -14,6 +14,7 @@
 		4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757C294986DC00A5EA83 /* UnexpectedError.swift */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
 		4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */; };
+		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
 		4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4955351C29526D4E004AF5F2 /* SizeReader.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
@@ -53,6 +54,7 @@
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuView.swift; sourceTree = "<group>"; };
+		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
 		4955351C29526D4E004AF5F2 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 			children = (
 				49B0396A29444BD8003B7C53 /* Info.plist */,
 				49B039572944429E003B7C53 /* GeoTagApp.swift */,
+				4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */,
 				49B9EDE22949442700574D18 /* AppState.swift */,
 				492175782949743E00A5EA83 /* OpenPanel.swift */,
 				4921757A2949863A00A5EA83 /* Gpx.swift */,
@@ -350,6 +353,7 @@
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
 				49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */,
 				4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */,
+				4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */,
 				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
