@@ -14,6 +14,7 @@ let windowMinHeight = 800.0
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
+    @ObservedObject var dividerControl = DividerControl()
 
     var body: some View {
         HSplitView {
@@ -25,13 +26,7 @@ struct ContentView: View {
                     Divider()
                     Text("Item 3")
                 }
-            VSplitView {
-                ImageView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                    .sizeReader { size in print(size) }
-                MapPaneView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+            ImageMapView(control: dividerControl)
         }
         .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)
         .border(windowBorderColor)

@@ -25,6 +25,8 @@
 		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
 		49A1326F294BFB9300F1B393 /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49A1326E294BFB9300F1B393 /* ExifTool */; };
 		49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A13270294C040F00F1B393 /* ImageNameColumnView.swift */; };
+		49A729B02953E72200DF1AAF /* DividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729AF2953E72200DF1AAF /* DividerView.swift */; };
+		49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729B12953E7AA00DF1AAF /* ImageMapView.swift */; };
 		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
 		49B0395A2944429E003B7C53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039592944429E003B7C53 /* ContentView.swift */; };
 		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
@@ -61,6 +63,8 @@
 		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
 		49A1326E294BFB9300F1B393 /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ExifTool; sourceTree = "<group>"; };
 		49A13270294C040F00F1B393 /* ImageNameColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNameColumnView.swift; sourceTree = "<group>"; };
+		49A729AF2953E72200DF1AAF /* DividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DividerView.swift; sourceTree = "<group>"; };
+		49A729B12953E7AA00DF1AAF /* ImageMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMapView.swift; sourceTree = "<group>"; };
 		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B039572944429E003B7C53 /* GeoTagApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagApp.swift; sourceTree = "<group>"; };
 		49B039592944429E003B7C53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -152,6 +156,8 @@
 			isa = PBXGroup;
 			children = (
 				49B039592944429E003B7C53 /* ContentView.swift */,
+				49A729B12953E7AA00DF1AAF /* ImageMapView.swift */,
+				49A729AF2953E72200DF1AAF /* DividerView.swift */,
 				498AE5AE294A6E430063B1C1 /* Sheets.swift */,
 			);
 			name = "Content View Group";
@@ -331,6 +337,8 @@
 				49E29F002951011300804B74 /* MapView.swift in Sources */,
 				49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */,
 				49B9EDE32949442700574D18 /* AppState.swift in Sources */,
+				49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */,
+				49A729B02953E72200DF1AAF /* DividerView.swift in Sources */,
 				49E29F03295101D600804B74 /* MapSearchView.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenPanel.swift in Sources */,
 				498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */,
