@@ -40,7 +40,9 @@ struct ImageTableView: View {
             appState.selections(selected: selection)
         }
         .dropDestination(for: URL.self) {items, location in
-            appState.prepareForEdit(inputURLs: items)
+            Task.detached {
+                await appState.prepareForEdit(inputURLs: items)
+            }
             return true
         }
         .onAppear {
