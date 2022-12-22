@@ -23,6 +23,31 @@ struct GeoTagApp: App {
                     appState.showOpenPanel()
                 }.keyboardShortcut("o")
             }
+//            CommandGroup(replacing: .pasteboard) {
+//                Button("Cut") {
+//
+//                }
+//                .keyboardShortcut("x")
+//                .disabled(appState.selectedIndex == nil)
+//
+//                Button("Copy") {
+//
+//                }
+//                .keyboardShortcut("c")
+//                .disabled(appState.selectedIndex == nil)
+//
+//                Button("Paste") {
+//
+//                }
+//                .keyboardShortcut("v")
+//                .disabled(appState.selectedIndex == nil)
+//
+//                Button("Delete") {
+//
+//                }
+//                .keyboardShortcut(.delete)
+//                .disabled(appState.selectedIndex == nil)
+//            }
         }
 
         Settings {

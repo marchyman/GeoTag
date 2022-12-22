@@ -21,10 +21,7 @@ struct ContentView: View {
             ImageTableView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .contextMenu {
-                    Text("Item 1")
-                    Text("Item 2")
-                    Divider()
-                    Text("Item 3")
+                    ContextMenuView()
                 }
             ImageMapView(control: dividerControl)
         }
