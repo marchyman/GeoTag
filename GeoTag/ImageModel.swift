@@ -77,8 +77,10 @@ final class ImageModel: Identifiable {
     let xmpFile: XmpFile
 
     // The thumbnail image displayed when and image is selected for editing
+    // Thumbnail will not be created until it is needed.  Once created
+    // it will be saved here.
 
-    lazy var thumbnail = makeThumbnail()
+    var thumbnail: NSImage?
 
     init(imageURL: URL, forPreview: Bool = false) throws {
         fileURL = imageURL

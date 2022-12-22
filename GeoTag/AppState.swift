@@ -5,9 +5,10 @@
 //  Created by Marco S Hyman on 12/13/22.
 //
 
-import Foundation
+import SwiftUI
 import MapKit
 
+@MainActor
 final class AppState: ObservableObject {
     @Published var images = [ImageModel]()
     @Published var gpxTracks = [Gpx]()
@@ -23,11 +24,13 @@ final class AppState: ObservableObject {
     var processedURLs = Set<URL>()
 
     // Image Selection
+    @Published var selectedImage: NSImage?
     @Published var selectedIndex: Int? = nil
     @Published var selectedIndexes = [Int]()
 
     func selections(selected: Set<ImageModel.ID>) {
         if selected.isEmpty {
+            selectedImage = nil
             selectedIndex = nil
             selectedIndexes = []
         } else {
@@ -35,6 +38,9 @@ final class AppState: ObservableObject {
                !selected.contains(images[selectedIndex!].id) {
                 // set the "most" selected item as the first item selected
                 selectedIndex = images.firstIndex { $0.id == selected.first }
+                Task {
+                    selectedImage = await images[selectedIndex!].makeThumbnail()
+                }
             }
             // create the array of all selected images
             selectedIndexes = images.compactMap { image in
