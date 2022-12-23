@@ -36,14 +36,17 @@ struct DividerView: View {
     }
 
     var body: some View {
-        VStack {
-            Rectangle()
-                .foregroundColor(Color(NSColor.separatorColor))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .frame(height: 2)
-        }
-        .offset(y: offset)
-        .gesture(drag)
+        Divider()
+            .frame(minHeight: 5)
+            .offset(y: offset)
+            .onHover { isHovered in
+                if (isHovered) {
+                    NSCursor.resizeUpDown.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
+            .gesture(drag)
     }
 
     var drag: some Gesture {
