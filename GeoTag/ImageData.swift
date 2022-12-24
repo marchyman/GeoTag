@@ -91,6 +91,10 @@ final class ImageData: NSObject {
     }
     var originalLocation: Coord?  // location before any modification
 
+    // Elevation is available when processing track logs
+    var elevation: Double?
+    var originalElevation: Double?
+
     // MARK: instance variables -- image state and thumbnail
 
     var validImage = false        // does URL point to a valid image file?
@@ -194,6 +198,7 @@ final class ImageData: NSObject {
     func revert() {
         location = originalLocation
         dateTime = originalDateTime
+        elevation = originalElevation
     }
 
     // MARK: Backup and Save (functions do not run on main thread)
@@ -278,6 +283,7 @@ final class ImageData: NSObject {
         guard validImage &&
               (location?.latitude != originalLocation?.latitude ||
                location?.longitude != originalLocation?.longitude ||
+               elevation != originalElevation ||
                dateTime != originalDateTime) else {
             return 0     // nothing to update
         }
@@ -287,6 +293,7 @@ final class ImageData: NSObject {
             if result == 0 {
                 originalLocation = location
                 originalDateTime = dateTime
+                originalElevation = elevation
                 updateFailed = false
             } else {
                 updateFailed = true

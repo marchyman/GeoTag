@@ -168,7 +168,10 @@ struct Exiftool {
     ///
     /// Apple's ImageIO functions can not extract metadata from XMP sidecar
     /// files.  ExifTool is used for that purpose.
-    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool, location: Coord) {
+    func metadataFrom(xmp: URL) -> (dto: String,
+                                    valid: Bool,
+                                    location: Coord,
+                                    elevation: Double?) {
         let exiftool = Process()
         let pipe = Pipe()
         exiftool.standardOutput = pipe
@@ -176,12 +179,13 @@ struct Exiftool {
         exiftool.launchPath = url.path
         exiftool.arguments = [ "-args", "-c", "%.15f", "-createdate",
                                "-gpsstatus", "-gpslatitude", "-gpslongitude",
-                               xmp.path ]
+                               "-gpsaltitude", xmp.path ]
         exiftool.launch()
         exiftool.waitUntilExit()
 
         var createDate = ""
         var location = Coord()
+        var elevation: Double?
         var validGPS = false
 
         if exiftool.terminationStatus == 0 {
@@ -226,14 +230,25 @@ struct Exiftool {
                             }
                             gpsLon = true
                         }
+                    case "GPSAltitude":
+                        let parts = value.split(separator: " ")
+                        if let eleValue = Double(parts[0]),
+                            parts.count == 2 {
+                            elevation = eleValue
+//                            if parts[1] == "W" {
+//                                location.longitude = -location.longitude
+//                            }
+                        }
+
                     default:
                         break
                     }
                 }
+                // elevation (altitude) is optional
                 validGPS = gpsStatus && gpsLat && gpsLon
             }
         }
-        return (createDate, validGPS, location)
+        return (createDate, validGPS, location, elevation)
     }
 
     /// return image date and time stamp including time zone

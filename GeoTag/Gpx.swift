@@ -3,7 +3,7 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 7/22/18.
-//  Copyright © 2018,2019 Marco S Hyman. All rights reserved.
+//  Copyright © 2018,2019, 2022 Marco S Hyman. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in the
@@ -44,6 +44,7 @@ class Gpx: NSObject {
         case trkSeg     // <trkseg> seen
         case trkPt      // <trkpt> seen
         case time       // <time> inside of a <trkpt>
+        case ele        // <ele> inside of a <trkpt>
         case error      // bad GPX file
     }
 
@@ -64,6 +65,7 @@ class Gpx: NSObject {
     struct Point : Equatable {
         let lat: Double
         let lon: Double
+        var ele: Double?
         var time: String
         var timeFromEpoch: TimeInterval {
             let trimmedTime = time.replacingOccurrences(of: "\\.\\d+", with: "",
@@ -241,7 +243,7 @@ extension Gpx: XMLParserDelegate {
                        let lat = Double(latString),
                        let lonString = attributeDict["lon"],
                        let lon = Double(lonString) {
-                        lastPoint = Point(lat: lat, lon: lon, time: "")
+                        lastPoint = Point(lat: lat, lon: lon, ele: nil, time: "")
                         parseState = .trkPt
                     } else {
                         parseState = .error
@@ -259,13 +261,15 @@ extension Gpx: XMLParserDelegate {
             case "trk", "trkseg", "trkpt":
                 // nested tracks, track segments, and track points not allowed
                 parseState = .error
+            case "ele":
+                parseState = .ele
             case "time":
                 parseState = .time
             default:
                 // ignore everything else
                 break
             }
-        case .time, .error:
+        case .ele, .time, .error:
             break
         }
     }
@@ -277,6 +281,10 @@ extension Gpx: XMLParserDelegate {
                 namespaceURI: String?,
                 qualifiedName qName: String?) {
         switch elementName {
+        case "ele":
+            if parseState == .ele {
+                parseState = .trkPt
+            }
         case "time":
             if parseState == .time {
                 parseState = .trkPt
@@ -305,22 +313,29 @@ extension Gpx: XMLParserDelegate {
     }
 
     /// process the string of characters for the current element.  This
-    /// program only cares about characters for the time element
+    /// program only cares about characters for the time element and the ele element
 
     func parser(_ parser: XMLParser,
                 foundCharacters string: String) {
-        if parseState == .time {
+        switch parseState {
+        case .ele, .time:
             // find the latest point
             let trackIx = tracks.count - 1
             if !tracks.isEmpty && !tracks[trackIx].segments.isEmpty {
                 let segmentIx = tracks[trackIx].segments.count - 1
                 if !tracks[trackIx].segments[segmentIx].points.isEmpty {
                     let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
-                    tracks[trackIx].segments[segmentIx].points[pointIx].time += string
+                    if parseState == .ele {
+                        tracks[trackIx].segments[segmentIx].points[pointIx].ele = Double(string)
+                    } else {
+                        tracks[trackIx].segments[segmentIx].points[pointIx].time += string
+                    }
                     return
                 }
+                parseState = .error
             }
-            parseState = .error
+        default:
+            break
         }
     }
 }
