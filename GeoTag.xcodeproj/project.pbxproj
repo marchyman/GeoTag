@@ -1,0 +1,584 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */; };
+		4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */; };
+		492175792949743E00A5EA83 /* OpenPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492175782949743E00A5EA83 /* OpenPanel.swift */; };
+		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
+		4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757C294986DC00A5EA83 /* UnexpectedError.swift */; };
+		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
+		494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */; };
+		494FED0E29568A8F005FFC23 /* SwiftUIRightClickModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0D29568A8F005FFC23 /* SwiftUIRightClickModifier.swift */; };
+		494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0F2956BC97005FFC23 /* ClickMapView.swift */; };
+		4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */; };
+		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
+		4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4955351C29526D4E004AF5F2 /* SizeReader.swift */; };
+		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
+		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
+		498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */; };
+		498A7352294EA5A600C62B14 /* ImageLatitudeColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */; };
+		498A7356294EADC300C62B14 /* ImageLongitudeColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */; };
+		498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */; };
+		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
+		498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpFile.swift */; };
+		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
+		49A1326F294BFB9300F1B393 /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49A1326E294BFB9300F1B393 /* ExifTool */; };
+		49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A13270294C040F00F1B393 /* ImageNameColumnView.swift */; };
+		49A729B02953E72200DF1AAF /* DividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729AF2953E72200DF1AAF /* DividerView.swift */; };
+		49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729B12953E7AA00DF1AAF /* ImageMapView.swift */; };
+		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
+		49B0395A2944429E003B7C53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039592944429E003B7C53 /* ContentView.swift */; };
+		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
+		49B0395F2944429F003B7C53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395E2944429F003B7C53 /* Preview Assets.xcassets */; };
+		49B0396929444855003B7C53 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B0396829444855003B7C53 /* MapKit.framework */; };
+		49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDDC29493CC200574D18 /* ImageTableView.swift */; };
+		49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDDE29493D5600574D18 /* ImageModel.swift */; };
+		49B9EDE129493F4000574D18 /* Coords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDE029493F4000574D18 /* Coords.swift */; };
+		49B9EDE32949442700574D18 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDE22949442700574D18 /* AppState.swift */; };
+		49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFB2951009500804B74 /* MapPaneView.swift */; };
+		49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFD295100A600804B74 /* MapStyleView.swift */; };
+		49E29F002951011300804B74 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFF2951011300804B74 /* MapView.swift */; };
+		49E29F03295101D600804B74 /* MapSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29F02295101D600804B74 /* MapSearchView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelHelpers.swift; sourceTree = "<group>"; };
+		4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelThumbnail.swift; sourceTree = "<group>"; };
+		492175782949743E00A5EA83 /* OpenPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPanel.swift; sourceTree = "<group>"; };
+		4921757A2949863A00A5EA83 /* Gpx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
+		4921757C294986DC00A5EA83 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
+		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardCommandGroup.swift; sourceTree = "<group>"; };
+		494FED0D29568A8F005FFC23 /* SwiftUIRightClickModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIRightClickModifier.swift; sourceTree = "<group>"; };
+		494FED0F2956BC97005FFC23 /* ClickMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickMapView.swift; sourceTree = "<group>"; };
+		4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuView.swift; sourceTree = "<group>"; };
+		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
+		4955351C29526D4E004AF5F2 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
+		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
+		498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTimestampColumnView.swift; sourceTree = "<group>"; };
+		498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLatitudeColumnView.swift; sourceTree = "<group>"; };
+		498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLongitudeColumnView.swift; sourceTree = "<group>"; };
+		498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIDoubleClickModifier.swift; sourceTree = "<group>"; };
+		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
+		498AE5B0294AB78A0063B1C1 /* XmpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
+		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
+		49A1326E294BFB9300F1B393 /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ExifTool; sourceTree = "<group>"; };
+		49A13270294C040F00F1B393 /* ImageNameColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNameColumnView.swift; sourceTree = "<group>"; };
+		49A729AF2953E72200DF1AAF /* DividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DividerView.swift; sourceTree = "<group>"; };
+		49A729B12953E7AA00DF1AAF /* ImageMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMapView.swift; sourceTree = "<group>"; };
+		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		49B039572944429E003B7C53 /* GeoTagApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagApp.swift; sourceTree = "<group>"; };
+		49B039592944429E003B7C53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		49B0395B2944429F003B7C53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		49B0395E2944429F003B7C53 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		49B039602944429F003B7C53 /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GeoTag.entitlements; sourceTree = "<group>"; };
+		49B0396829444855003B7C53 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		49B0396A29444BD8003B7C53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		49B9EDDC29493CC200574D18 /* ImageTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableView.swift; sourceTree = "<group>"; };
+		49B9EDDE29493D5600574D18 /* ImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModel.swift; sourceTree = "<group>"; };
+		49B9EDE029493F4000574D18 /* Coords.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coords.swift; sourceTree = "<group>"; };
+		49B9EDE22949442700574D18 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		49E29EFB2951009500804B74 /* MapPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPaneView.swift; sourceTree = "<group>"; };
+		49E29EFD295100A600804B74 /* MapStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleView.swift; sourceTree = "<group>"; };
+		49E29EFF2951011300804B74 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		49E29F02295101D600804B74 /* MapSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		49B039512944429E003B7C53 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		498A7354294EA67A00C62B14 /* Image Table Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B9EDDC29493CC200574D18 /* ImageTableView.swift */,
+				49A13270294C040F00F1B393 /* ImageNameColumnView.swift */,
+				498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */,
+				498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */,
+				498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */,
+			);
+			name = "Image Table Group";
+			sourceTree = "<group>";
+		};
+		498A7357294EC36C00C62B14 /* Utility files */ = {
+			isa = PBXGroup;
+			children = (
+				498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */,
+				494FED0D29568A8F005FFC23 /* SwiftUIRightClickModifier.swift */,
+				4921757C294986DC00A5EA83 /* UnexpectedError.swift */,
+				4955351C29526D4E004AF5F2 /* SizeReader.swift */,
+			);
+			name = "Utility files";
+			sourceTree = "<group>";
+		};
+		498A735A294EC5F800C62B14 /* App Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B0396A29444BD8003B7C53 /* Info.plist */,
+				49B039572944429E003B7C53 /* GeoTagApp.swift */,
+				4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */,
+				494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */,
+				49B9EDE22949442700574D18 /* AppState.swift */,
+				492175782949743E00A5EA83 /* OpenPanel.swift */,
+				4921757A2949863A00A5EA83 /* Gpx.swift */,
+			);
+			name = "App Group";
+			sourceTree = "<group>";
+		};
+		498A735B294EC78700C62B14 /* Settings Group */ = {
+			isa = PBXGroup;
+			children = (
+				498A734D294E949B00C62B14 /* AppSetting.swift */,
+				498A734B294E916700C62B14 /* SettingsView.swift */,
+			);
+			name = "Settings Group";
+			sourceTree = "<group>";
+		};
+		498A735C294EC7BC00C62B14 /* Image Model Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
+				4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */,
+				49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */,
+				49B9EDE029493F4000574D18 /* Coords.swift */,
+				498AE5B0294AB78A0063B1C1 /* XmpFile.swift */,
+				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
+			);
+			name = "Image Model Group";
+			sourceTree = "<group>";
+		};
+		498A735D294EC7D800C62B14 /* Content View Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B039592944429E003B7C53 /* ContentView.swift */,
+				4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */,
+				49A729B12953E7AA00DF1AAF /* ImageMapView.swift */,
+				49A729AF2953E72200DF1AAF /* DividerView.swift */,
+				498AE5AE294A6E430063B1C1 /* Sheets.swift */,
+			);
+			name = "Content View Group";
+			sourceTree = "<group>";
+		};
+		49B0394B2944429E003B7C53 = {
+			isa = PBXGroup;
+			children = (
+				49A1326E294BFB9300F1B393 /* ExifTool */,
+				49B039562944429E003B7C53 /* GeoTag */,
+				49B039552944429E003B7C53 /* Products */,
+				49B0396729444855003B7C53 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		49B039552944429E003B7C53 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				49B039542944429E003B7C53 /* GeoTag.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		49B039562944429E003B7C53 /* GeoTag */ = {
+			isa = PBXGroup;
+			children = (
+				498A735A294EC5F800C62B14 /* App Group */,
+				498A735B294EC78700C62B14 /* Settings Group */,
+				498A735D294EC7D800C62B14 /* Content View Group */,
+				498A735C294EC7BC00C62B14 /* Image Model Group */,
+				498A7354294EA67A00C62B14 /* Image Table Group */,
+				492E3F5F2948361D0044C1F3 /* ImageView.swift */,
+				49E29F012951012400804B74 /* Map View Group */,
+				498A7357294EC36C00C62B14 /* Utility files */,
+				492E3F5D29481A7D0044C1F3 /* Credits.rtf */,
+				49B0395B2944429F003B7C53 /* Assets.xcassets */,
+				49B039602944429F003B7C53 /* GeoTag.entitlements */,
+				49B0395D2944429F003B7C53 /* Preview Content */,
+			);
+			path = GeoTag;
+			sourceTree = "<group>";
+		};
+		49B0395D2944429F003B7C53 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				49B0395E2944429F003B7C53 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		49B0396729444855003B7C53 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				49B0396829444855003B7C53 /* MapKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		49E29F012951012400804B74 /* Map View Group */ = {
+			isa = PBXGroup;
+			children = (
+				49E29EFB2951009500804B74 /* MapPaneView.swift */,
+				49E29EFD295100A600804B74 /* MapStyleView.swift */,
+				49E29EFF2951011300804B74 /* MapView.swift */,
+				494FED0F2956BC97005FFC23 /* ClickMapView.swift */,
+				49E29F02295101D600804B74 /* MapSearchView.swift */,
+			);
+			name = "Map View Group";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		49B039532944429E003B7C53 /* GeoTag */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49B039632944429F003B7C53 /* Build configuration list for PBXNativeTarget "GeoTag" */;
+			buildPhases = (
+				49B039502944429E003B7C53 /* Sources */,
+				49B039512944429E003B7C53 /* Frameworks */,
+				49B039522944429E003B7C53 /* Resources */,
+				49B03966294444C9003B7C53 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GeoTag;
+			productName = GeoTag;
+			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		49B0394C2944429E003B7C53 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1410;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					49B039532944429E003B7C53 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+				};
+			};
+			buildConfigurationList = 49B0394F2944429E003B7C53 /* Build configuration list for PBXProject "GeoTag" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 49B0394B2944429E003B7C53;
+			productRefGroup = 49B039552944429E003B7C53 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				49B039532944429E003B7C53 /* GeoTag */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		49B039522944429E003B7C53 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49A1326F294BFB9300F1B393 /* ExifTool in Resources */,
+				49B0395F2944429F003B7C53 /* Preview Assets.xcassets in Resources */,
+				49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		49B03966294444C9003B7C53 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n\n# This script automatically sets the version and short version string of\n# an Xcode project from the Git repository containing the project.\n#\n# To use this script in Xcode, add the script's path to a \"Run Script\" build\n# phase for your application target.\n\nset -o errexit\nset -o nounset\n\n# First, check for git in $PATH\nhash git 2>/dev/null || { echo >&2 \"Git required, not in path.  Aborting build number update script.\"; exit 0; }\n\n# Run Script build phases that operate on product files of the target that defines them should use the value of this\n# build setting [TARGET_BUILD_DIR].\nINFO_PLIST=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n\n# Build version (closest-tag-or-branch \"-\" commits-since-tag \"-\" short-hash dirty-flag)\n# Bundle version starts with the total number of commits\nBUILD_VERSION=$(git describe --tags --always --dirty=+)\nBUNDLE_VERSION=$(git rev-list --count HEAD)\n\n# Use the latest tag for short version (expected tag format \"vn[.n[.n]]\")\n# or if there are no tags, we make up version 0.0.<commit count>\nLATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG=\"HEAD\"\nif [ $LATEST_TAG = \"HEAD\" ]; then\n    SHORT_VERSION=\"0.0.$BUNDLE_VERSION\"\nelse\n    COMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..HEAD)\n    SHORT_VERSION=${LATEST_TAG##v}\n    if [ ${COMMIT_COUNT_SINCE_TAG} -ne \"0\" ]; then\n        SHORT_VERSION=\"${SHORT_VERSION}.${COMMIT_COUNT_SINCE_TAG}\"\n    fi\nfi\n\n# Append a \".1\" to the bundle version if the working dir is dirty\nif [ -n \"$(git status --porcelain)\" ]; then\n    BUNDLE_VERSION=\"${BUNDLE_VERSION}.1\"\nfi\n\n# For debugging:\necho \"BUILD VERSION: $BUILD_VERSION\"\necho \"LATEST_TAG: $LATEST_TAG\"\necho \"SHORT VERSION: $SHORT_VERSION\"\necho \"BUNDLE_VERSION: $BUNDLE_VERSION\"\n\n/usr/libexec/PlistBuddy -c \"Add :CFBundleBuildVersion string $BUILD_VERSION\" \"$INFO_PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :CFBundleBuildVersion $BUILD_VERSION\" \"$INFO_PLIST\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $SHORT_VERSION\" \"$INFO_PLIST\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUNDLE_VERSION\" \"$INFO_PLIST\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		49B039502944429E003B7C53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				498A734C294E916700C62B14 /* SettingsView.swift in Sources */,
+				498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */,
+				494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */,
+				494FED0E29568A8F005FFC23 /* SwiftUIRightClickModifier.swift in Sources */,
+				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
+				498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */,
+				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
+				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
+				498A7352294EA5A600C62B14 /* ImageLatitudeColumnView.swift in Sources */,
+				49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */,
+				49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */,
+				4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */,
+				498A7356294EADC300C62B14 /* ImageLongitudeColumnView.swift in Sources */,
+				49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */,
+				49E29F002951011300804B74 /* MapView.swift in Sources */,
+				49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */,
+				494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */,
+				49B9EDE32949442700574D18 /* AppState.swift in Sources */,
+				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
+				49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */,
+				49A729B02953E72200DF1AAF /* DividerView.swift in Sources */,
+				49E29F03295101D600804B74 /* MapSearchView.swift in Sources */,
+				492175792949743E00A5EA83 /* OpenPanel.swift in Sources */,
+				498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */,
+				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
+				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
+				49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */,
+				4921757D294986DC00A5EA83 /* UnexpectedError.swift in Sources */,
+				4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */,
+				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
+				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
+				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
+				4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */,
+				49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		49B039612944429F003B7C53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		49B039622944429F003B7C53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		49B039642944429F003B7C53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"GeoTag/Preview Content\"";
+				DEVELOPMENT_TEAM = A3UXBEBE8Z;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GeoTag/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Marco S Hyman";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTag;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		49B039652944429F003B7C53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"GeoTag/Preview Content\"";
+				DEVELOPMENT_TEAM = A3UXBEBE8Z;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GeoTag/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Marco S Hyman";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTag;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		49B0394F2944429E003B7C53 /* Build configuration list for PBXProject "GeoTag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49B039612944429F003B7C53 /* Debug */,
+				49B039622944429F003B7C53 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		49B039632944429F003B7C53 /* Build configuration list for PBXNativeTarget "GeoTag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49B039642944429F003B7C53 /* Debug */,
+				49B039652944429F003B7C53 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 49B0394C2944429E003B7C53 /* Project object */;
+}
