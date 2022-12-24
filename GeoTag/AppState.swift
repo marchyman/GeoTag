@@ -10,15 +10,15 @@ import MapKit
 
 @MainActor
 final class AppState: ObservableObject {
-    @Published var images = [ImageModel]()
-    @Published var gpxTracks = [Gpx]()
+    // MARK: Items pertaining to the main window
 
     // Type of sheet to attach to the content view
     @Published var sheetType: SheetType?
 
-    // GPX File Loading sheet information
-    var gpxGoodFileNames = [String]()
-    var gpxBadFileNames = [String]()
+    // MARK: Items pertaining to the Table of images
+
+    // Images to edit
+    @Published var images = [ImageModel]()
 
     // Set of image URLs used to detect duplicate images
     var processedURLs = Set<URL>()
@@ -52,6 +52,56 @@ final class AppState: ObservableObject {
         }
     }
 
+    // State changes that will triger actions as a result of selection
+    // of a menu item
+
+    @Published var selectedMenuAction: MenuAction = .none
+
+    enum MenuAction: Identifiable {
+        var id: Self {
+            return self
+        }
+
+        case none
+        case cut
+        case copy
+        case paste
+        case delete
+        case selectAll
+        case clearList
+    }
+
+    func menuAction(_ action: MenuAction) {
+        self.selectedMenuAction = .none
+        switch action {
+        case .none:
+            return
+        case .cut:
+            print("action: \(action)")
+        case .copy:
+            print("action: \(action)")
+        case .paste:
+            print("action: \(action)")
+        case .delete:
+            print("action: \(action)")
+        case .selectAll:
+            print("action: \(action)")
+        case .clearList:
+            print("action: \(action)")
+        }
+    }
+
+    // MARK: Items related to GPX track loading
+
+    // Tracks displayed on may
+    @Published var gpxTracks = [Gpx]()
+
+    // GPX File Loading sheet information
+    var gpxGoodFileNames = [String]()
+    var gpxBadFileNames = [String]()
+
+    // MARK: Items pertaining to the Map pins
+
     // Map pin info
 
     @Published var pin: MKPointAnnotation? = nil
@@ -78,6 +128,9 @@ final class AppState: ObservableObject {
 
 
 }
+
+
+
 
 // convenience init for use with swiftui previews.  Provide a list
 // of test images suitable for swiftui previews.

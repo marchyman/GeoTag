@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    @StateObject private var appState = AppState()
+    @StateObject var appState = AppState()
 
     var body: some Scene {
         WindowGroup("GeoTag Version Five") {
@@ -18,7 +18,8 @@ struct GeoTagApp: App {
                 .environmentObject(appState)
         }
         .commands {
-            NewItemCommandGroup(appState: appState)
+            newItemCommandGroup
+            pasteBoardCommandGroup
         }
 
         Settings {

@@ -7,13 +7,21 @@
 
 import SwiftUI
 
+// Duplicates many of the menu commands
+
 struct ContextMenuView: View {
+    @EnvironmentObject var appState: AppState
+
     var body: some View {
         Group {
-            Text("Cut")
-            Text("Copy")
-            Text("Paste")
-            Text("Delete")
+            Button("Cut") { appState.selectedMenuAction = .cut }
+                .disabled(appState.selectedIndex == nil)
+            Button("Copy") { appState.selectedMenuAction = .copy }
+                .disabled(appState.selectedIndex == nil)
+            Button("Paste") { appState.selectedMenuAction = .paste }
+                .disabled(appState.selectedIndex == nil)
+            Button("Delete") { appState.selectedMenuAction = .delete }
+                .disabled(appState.selectedIndex == nil)
         }
         Divider()
         Group {
@@ -23,7 +31,8 @@ struct ContextMenuView: View {
             Text("Modify Location")
         }
         Divider()
-         Text("Clear Image List")
+        Button("Clear Image List") { appState.selectedMenuAction = .clearList }
+            .disabled(appState.images.isEmpty)
     }
 }
 

@@ -39,6 +39,11 @@ struct ImageTableView: View {
         .onChange(of: selection) { selection in
             appState.selections(selected: selection)
         }
+        .onChange(of: appState.selectedMenuAction) { action in
+            if action != .none {
+                appState.menuAction(action)
+            }
+        }
         .dropDestination(for: URL.self) {items, location in
             Task.detached {
                 await appState.prepareForEdit(inputURLs: items)
