@@ -23,33 +23,46 @@ final class AppState: ObservableObject {
     // Set of image URLs used to detect duplicate images
     var processedURLs = Set<URL>()
 
-    // Image Selection
-    @Published var selectedImage: NSImage?
-    @Published var selectedIndex: Int? = nil
-    @Published var selectedIndexes = [Int]()
+    // Selected Image(s) by ID, the most selected image, and its thumbnail
+    @Published var selection = Set<ImageModel.ID>()
+    @Published var selectedImage: ImageModel?
+    @Published var selectedImageThumbnail: NSImage?
 
-    func selections(selected: Set<ImageModel.ID>) {
-        if selected.isEmpty {
+    // Process the set of selected images.  Pick one as the "most" selected
+    // and make its thumbnail NSImage.
+    func selectionChanged(newSelection: Set<ImageModel.ID>) {
+        guard !newSelection.isEmpty else {
             selectedImage = nil
-            selectedIndex = nil
-            selectedIndexes = []
-        } else {
-            if selectedIndex == nil ||
-               !selected.contains(images[selectedIndex!].id) {
-                // set the "most" selected item as the first item selected
-                selectedIndex = images.firstIndex { $0.id == selected.first }
-                Task {
-                    selectedImage = await images[selectedIndex!].makeThumbnail()
-                }
-            }
-            // create the array of all selected images
-            selectedIndexes = images.compactMap { image in
-                if selected.contains(image.id) {
-                    return images.firstIndex{ $0 == image }
-                }
-                return nil
+            selectedImageThumbnail = nil
+            return
+        }
+
+        // filter out any ids in the selection that don't reference valid images
+        let filteredImagesIds = images.filter { $0.validImage }.map { $0.id }
+        let filteredSelection = newSelection.filter {
+            filteredImagesIds.contains($0)
+        }
+
+        // Update the selection if the counts don't match
+        if selection.count != filteredSelection.count {
+            selection = filteredSelection
+            guard !selection.isEmpty else {
+                selectedImage = nil
+                selectedImageThumbnail = nil
+                return
             }
         }
+
+        // set the most selected image and its thumbnail
+        selectedImage = images.first { $0.id == selection.first }
+        Task {
+            selectedImageThumbnail = await selectedImage!.makeThumbnail()
+        }
+    }
+
+    // Is there a selected and valid image?
+    var isSelectedImageValid: Bool {
+        selectedImage?.validImage ?? false
     }
 
     // State changes that will triger actions as a result of selection
@@ -85,7 +98,7 @@ final class AppState: ObservableObject {
         case .delete:
             print("action: \(action)")
         case .selectAll:
-            print("action: \(action)")
+            selection = Set(images.map { $0.id })
         case .clearList:
             print("action: \(action)")
         }

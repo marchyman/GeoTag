@@ -12,8 +12,8 @@ struct ImageView: View {
 
     var body: some View {
         Group {
-            if let selectedImage = appState.selectedImage {
-                Image(nsImage: selectedImage)
+            if let image = appState.selectedImageThumbnail {
+                Image(nsImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             } else {

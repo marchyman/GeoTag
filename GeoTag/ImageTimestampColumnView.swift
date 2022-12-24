@@ -15,7 +15,10 @@ struct ImageTimestampColumnView: View {
     var body: some View {
         Text(image.timeStamp)
             .foregroundColor(image.validImage ? .primary : .gray)
-            .onDoubleClick() {
+            .onRightClick {
+                print("Right Click -- on timestamp")
+            }
+            .onDoubleClick {
                 showPopover.toggle()
             }
             .popover(isPresented: self.$showPopover) {

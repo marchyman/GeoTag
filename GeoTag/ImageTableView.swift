@@ -11,10 +11,10 @@ struct ImageTableView: View {
     @EnvironmentObject var appState: AppState
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
-    @State private var selection = Set<ImageModel.ID>()
 
     var body: some View {
-        Table(appState.images, selection: $selection, sortOrder: $sortOrder) {
+        Table(appState.images, selection: $appState.selection,
+              sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
                 ImageNameColumnView(image: image)
             }
@@ -34,10 +34,10 @@ struct ImageTableView: View {
         }
         .onChange(of: sortOrder) { newOrder in
             appState.images.sort(using: newOrder)
-            selection = Set()
+            appState.selection = Set()
         }
-        .onChange(of: selection) { selection in
-            appState.selections(selected: selection)
+        .onChange(of: appState.selection) { selection in
+            appState.selectionChanged(newSelection: selection)
         }
         .onChange(of: appState.selectedMenuAction) { action in
             if action != .none {
@@ -51,8 +51,13 @@ struct ImageTableView: View {
             return true
         }
         .onAppear {
-            selection = Set()
+            appState.selection = Set()
         }
+        .onRightClick {
+            // clear selection
+            appState.selection = Set()
+        }
+
     }
 }
 

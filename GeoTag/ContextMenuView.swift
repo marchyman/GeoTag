@@ -15,13 +15,13 @@ struct ContextMenuView: View {
     var body: some View {
         Group {
             Button("Cut") { appState.selectedMenuAction = .cut }
-                .disabled(appState.selectedIndex == nil)
+                .disabled(appState.isSelectedImageValid)
             Button("Copy") { appState.selectedMenuAction = .copy }
-                .disabled(appState.selectedIndex == nil)
+                .disabled(appState.isSelectedImageValid)
             Button("Paste") { appState.selectedMenuAction = .paste }
-                .disabled(appState.selectedIndex == nil)
+                .disabled(appState.isSelectedImageValid)
             Button("Delete") { appState.selectedMenuAction = .delete }
-                .disabled(appState.selectedIndex == nil)
+                .disabled(appState.isSelectedImageValid)
         }
         Divider()
         Group {
