@@ -13,16 +13,16 @@ extension GeoTagApp {
         CommandGroup(replacing: .pasteboard) {
             Button("Cut") { appState.selectedMenuAction = .cut }
                 .keyboardShortcut("x")
-                .disabled(appState.isSelectedImageValid)
+                .disabled(!appState.canCutOrCopy)
             Button("Copy") { appState.selectedMenuAction = .copy }
                 .keyboardShortcut("c")
-                .disabled(appState.isSelectedImageValid)
+                .disabled(!appState.canCutOrCopy)
             Button("Paste") { appState.selectedMenuAction = .paste }
                 .keyboardShortcut("v")
-                .disabled(appState.isSelectedImageValid)
+                .disabled(!appState.isSelectedImageValid)
             Button("Delete") { appState.selectedMenuAction = .delete }
-                .keyboardShortcut(.delete)
-                .disabled(appState.isSelectedImageValid)
+                .keyboardShortcut(.delete, modifiers: EventModifiers())
+                .disabled(!appState.canDelete)
             Button("Select All") { appState.selectedMenuAction = .selectAll }
                 .keyboardShortcut("a")
                 .disabled(appState.images.isEmpty)

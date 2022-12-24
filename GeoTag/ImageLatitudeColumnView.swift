@@ -14,7 +14,7 @@ struct ImageLatitudeColumnView: View {
 
     var body: some View {
         Text(latitudeToString())
-            .foregroundColor(image.validImage ? .primary : .gray)
+            .foregroundColor(image.isValid ? .primary : .gray)
     }
 
     func latitudeToString() -> String {

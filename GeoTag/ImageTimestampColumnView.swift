@@ -14,7 +14,7 @@ struct ImageTimestampColumnView: View {
 
     var body: some View {
         Text(image.timeStamp)
-            .foregroundColor(image.validImage ? .primary : .gray)
+            .foregroundColor(image.isValid ? .primary : .gray)
             .onRightClick {
                 print("Right Click -- on timestamp")
             }

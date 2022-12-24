@@ -14,7 +14,7 @@ struct ImageLongitudeColumnView: View {
 
     var body: some View {
         Text(longitudeToString())
-            .foregroundColor(image.validImage ? .primary : .gray)
+            .foregroundColor(image.isValid ? .primary : .gray)
     }
 
     func longitudeToString() -> String {

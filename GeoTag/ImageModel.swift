@@ -36,7 +36,7 @@ final class ImageModel: Identifiable {
 
     // is this an image file or something else
 
-    var validImage = false
+    var isValid = false
 
     // data shown to and adjusted by the user.  The TimeZone is calculated
     // whenever image location is updated
@@ -104,8 +104,8 @@ final class ImageModel: Identifiable {
         // metadata if we can
 
         if Exiftool.helper.fileTypeIsWritable(for: fileURL) {
-            validImage = loadImageMetadata()
-            if validImage, let sandboxXmpURL,
+            isValid = loadImageMetadata()
+            if isValid, let sandboxXmpURL,
                FileManager.default.fileExists(atPath: xmpURL.path) {
                 loadXmpMetadata(sandboxXmpURL)
             }
@@ -228,7 +228,7 @@ extension ImageModel {
         } catch {
             fatalError("ImageModel preview init failed")
         }
-        self.validImage = validImage
+        self.isValid = validImage
         self.dateTimeCreated = dateTimeCreated
         if let latitude, let longitude {
             location = Coords(latitude: latitude, longitude: longitude)

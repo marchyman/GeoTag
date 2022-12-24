@@ -38,7 +38,7 @@ final class AppState: ObservableObject {
         }
 
         // filter out any ids in the selection that don't reference valid images
-        let filteredImagesIds = images.filter { $0.validImage }.map { $0.id }
+        let filteredImagesIds = images.filter { $0.isValid }.map { $0.id }
         let filteredSelection = newSelection.filter {
             filteredImagesIds.contains($0)
         }
@@ -62,7 +62,21 @@ final class AppState: ObservableObject {
 
     // Is there a selected and valid image?
     var isSelectedImageValid: Bool {
-        selectedImage?.validImage ?? false
+        selectedImage?.isValid ?? false
+    }
+
+    // Should the cut or copy action be enabled for the selected image
+    var canCutOrCopy: Bool {
+        isSelectedImageValid && selectedImage?.location != nil
+    }
+
+    // should the delete action be enabled
+    var canDelete: Bool {
+        images.contains { image in
+            selection.contains(image.id) &&
+            image.isValid &&
+            image.location != nil
+        }
     }
 
     // State changes that will triger actions as a result of selection

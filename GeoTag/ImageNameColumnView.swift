@@ -12,7 +12,7 @@ struct ImageNameColumnView: View {
 
     var body: some View {
         Text(image.name + ((image.sandboxXmpURL == nil) ? "" : "*"))
-            .foregroundColor(image.validImage ? .primary : .gray)
+            .foregroundColor(image.isValid ? .primary : .gray)
             .help("Full path: \(image.fileURL.path)")
     }
 
