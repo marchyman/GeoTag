@@ -15,6 +15,7 @@
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
 		494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */; };
 		494FED0E29568A8F005FFC23 /* SwiftUIRightClickModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0D29568A8F005FFC23 /* SwiftUIRightClickModifier.swift */; };
+		494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0F2956BC97005FFC23 /* ClickMapView.swift */; };
 		4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */; };
 		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
 		4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4955351C29526D4E004AF5F2 /* SizeReader.swift */; };
@@ -44,7 +45,6 @@
 		49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFD295100A600804B74 /* MapStyleView.swift */; };
 		49E29F002951011300804B74 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFF2951011300804B74 /* MapView.swift */; };
 		49E29F03295101D600804B74 /* MapSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29F02295101D600804B74 /* MapSearchView.swift */; };
-		49E29F052951160B00804B74 /* ClickMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29F042951160B00804B74 /* ClickMapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +57,7 @@
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardCommandGroup.swift; sourceTree = "<group>"; };
 		494FED0D29568A8F005FFC23 /* SwiftUIRightClickModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIRightClickModifier.swift; sourceTree = "<group>"; };
+		494FED0F2956BC97005FFC23 /* ClickMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickMapView.swift; sourceTree = "<group>"; };
 		4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuView.swift; sourceTree = "<group>"; };
 		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
 		4955351C29526D4E004AF5F2 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
@@ -89,7 +90,6 @@
 		49E29EFD295100A600804B74 /* MapStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleView.swift; sourceTree = "<group>"; };
 		49E29EFF2951011300804B74 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		49E29F02295101D600804B74 /* MapSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchView.swift; sourceTree = "<group>"; };
-		49E29F042951160B00804B74 /* ClickMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ClickMapView.swift; path = ../ClickMapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,7 +234,7 @@
 				49E29EFB2951009500804B74 /* MapPaneView.swift */,
 				49E29EFD295100A600804B74 /* MapStyleView.swift */,
 				49E29EFF2951011300804B74 /* MapView.swift */,
-				49E29F042951160B00804B74 /* ClickMapView.swift */,
+				494FED0F2956BC97005FFC23 /* ClickMapView.swift */,
 				49E29F02295101D600804B74 /* MapSearchView.swift */,
 			);
 			name = "Map View Group";
@@ -336,6 +336,7 @@
 			files = (
 				498A734C294E916700C62B14 /* SettingsView.swift in Sources */,
 				498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */,
+				494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */,
 				494FED0E29568A8F005FFC23 /* SwiftUIRightClickModifier.swift in Sources */,
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
 				498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */,
@@ -367,7 +368,6 @@
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
 				4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */,
 				49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */,
-				49E29F052951160B00804B74 /* ClickMapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
