@@ -45,9 +45,9 @@ struct ImageTableView: View {
             }
         }
         .dropDestination(for: URL.self) {items, location in
-            Task.detached {
-                await appState.prepareForEdit(inputURLs: items)
-            }
+            // appstate is @MainActor yet I want to run this in the
+            // background.   How to do that?
+            appState.prepareForEdit(inputURLs: items)
             return true
         }
         .onAppear {

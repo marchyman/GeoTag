@@ -15,6 +15,7 @@ struct GeoTagApp: App {
     var body: some Scene {
         WindowGroup("GeoTag Version Five") {
             ContentView()
+                .background(WindowAccessor(window: $appState.window))
                 .environmentObject(appState)
         }
         .commands {
@@ -79,4 +80,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 //        return .terminateCancel
         return .terminateNow
     }
+}
+
+// Access to main window
+struct WindowAccessor: NSViewRepresentable {
+    @Binding var window: NSWindow?
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async {
+            self.window = view.window
+        }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {}
 }

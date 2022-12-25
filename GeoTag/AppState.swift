@@ -11,6 +11,7 @@ import MapKit
 @MainActor
 final class AppState: ObservableObject {
     // MARK: Items pertaining to the main window
+    var window: NSWindow!
 
     // Type of sheet to attach to the content view
     @Published var sheetType: SheetType?
@@ -70,15 +71,6 @@ final class AppState: ObservableObject {
         isSelectedImageValid && selectedImage?.location != nil
     }
 
-    // should the delete action be enabled
-    var canDelete: Bool {
-        images.contains { image in
-            selection.contains(image.id) &&
-            image.isValid &&
-            image.location != nil
-        }
-    }
-
     // State changes that will triger actions as a result of selection
     // of a menu item
 
@@ -114,13 +106,13 @@ final class AppState: ObservableObject {
         case .selectAll:
             selection = Set(images.map { $0.id })
         case .clearList:
-            print("action: \(action)")
+            clearImageListAction()
         }
     }
 
     // MARK: Items related to GPX track loading
 
-    // Tracks displayed on may
+    // Tracks displayed on map
     @Published var gpxTracks = [Gpx]()
 
     // GPX File Loading sheet information
@@ -152,8 +144,6 @@ final class AppState: ObservableObject {
 //           }
         pin!.coordinate = location
     }
-
-
 }
 
 

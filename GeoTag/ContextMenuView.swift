@@ -32,7 +32,7 @@ struct ContextMenuView: View {
         }
         Divider()
         Button("Clear Image List") { appState.selectedMenuAction = .clearList }
-            .disabled(appState.images.isEmpty)
+            .disabled(!appState.canClearImageList)
     }
 }
 

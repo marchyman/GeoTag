@@ -31,9 +31,7 @@ extension AppState {
 
         // process any URLs selected to open on a detached task
         if panel.runModal() == NSApplication.ModalResponse.OK {
-            Task.detached {
-                await self.prepareForEdit(inputURLs: panel.urls)
-            }
+            prepareForEdit(inputURLs: panel.urls)
         }
     }
 
@@ -41,7 +39,7 @@ extension AppState {
     /// be of any type.  The path of non-image files will be listed in the app's table but will
     /// not be flagged as a valid image.
     ///
-    func prepareForEdit(inputURLs: [URL]) async {
+    func prepareForEdit(inputURLs: [URL]) {
         // dragged urls are duplicated for some reason.  Convert the input
         // array to a set then back to an array to get rid of any dups.
         let urls = inputURLs.uniqued()
