@@ -100,23 +100,28 @@ extension AppState {
         return foundURLs
     }
 
-    /// Parse the given url is a valid gpx file.  A valid gpx file ends in .gpx and can be parsed
+    /// Parse the given url to see if it is a valid gpx file.  A valid gpx file ends in .gpx and can be parsed
     /// by the GPX parser without error.
     ///
     /// - Parameters:
-    ///   - appState: program state variables
     ///   - url: URL of file to parse
     /// - Returns: true if file is a gpx file, otherwise false
     private func parseGpxFile(_ url: URL) {
-        if let gpx = Gpx(contentsOf: url) {
+        do {
+            let gpx = try Gpx(contentsOf: url)
+            try gpx.parse()
+            gpxTracks.append(gpx)
+            gpxGoodFileNames.append(url.path)
             sheetType = .gpxFileNameSheet
-            if gpx.parse() {
-                // add the track to the map
-                gpxTracks.append(gpx)
-                gpxGoodFileNames.append(url.path)
-            } else {
-                gpxBadFileNames.append(url.path)
+        } catch Gpx.GpxParseError.gpxParsingError {
+            gpxBadFileNames.append(url.path)
+            if sheetType == .none {
+                sheetMessage = "\(url.path) is not a valid GPX file"
+                sheetType = .unexpectedErrorSheet
             }
+        } catch {
+            gpxBadFileNames.append(url.path)
+            sheetType = .gpxFileNameSheet
         }
     }
 

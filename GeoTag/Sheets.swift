@@ -113,16 +113,17 @@ struct UnexpectedErrorView: View {
                 .padding()
             if let message = appState.sheetMessage {
                 Text(message)
-                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding()
             }
             if let error = appState.sheetError {
                 Text(error.localizedDescription)
-                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding()
             }
         }
-        .frame(maxWidth: 400, minHeight: 100)
+        .lineLimit(nil)
+        .frame(maxWidth: 400, minHeight: 100, maxHeight: .infinity)
     }
 
 }

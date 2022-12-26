@@ -25,6 +25,10 @@ let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
 let dateFormatter = DateFormatter()
 let dateFormat = "yyyy:MM:dd HH:mm:ss"
 
+enum ImageError: Error {
+    case cgSourceError
+}
+
 // Data about an image that may have its geo-location metadata changed.
 // A class instead of a struct as instances of the class are intended
 // to be mutated.
@@ -104,7 +108,12 @@ final class ImageModel: Identifiable {
         // metadata if we can
 
         if Exiftool.helper.fileTypeIsWritable(for: fileURL) {
-            isValid = loadImageMetadata()
+            do {
+                isValid = try loadImageMetadata()
+            } catch let error {
+                isValid = false
+                throw error
+            }
             if isValid, let sandboxXmpURL,
                FileManager.default.fileExists(atPath: xmpURL.path) {
                 loadXmpMetadata(sandboxXmpURL)
@@ -140,10 +149,9 @@ final class ImageModel: Identifiable {
     /// do not exist the file is assumed to be a non-image file
 
     private
-    func loadImageMetadata() -> Bool {
+    func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
-            unexpected(error: nil, "CGImageSourceCreateWithURL for \(fileURL) failed")
-            return false
+            throw ImageError.cgSourceError
         }
 
         // grab the image properties and extract height and width

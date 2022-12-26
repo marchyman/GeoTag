@@ -34,6 +34,13 @@ class Gpx: NSObject {
     /// Holds the optional timezone to use with image timestamp when matching image to tracklog.
     static var timeZone: TimeZone?
 
+    // GPX Parsing errors
+    enum GpxParseError: Error {
+        case gpxOpenError
+        case gpxNoPoints
+        case gpxParsingError
+    }
+
     // parser states
     enum ParseState {
         case none       // starting state
@@ -117,10 +124,9 @@ class Gpx: NSObject {
     }
 
     /// init from contents of a URL
-    init?(contentsOf url: URL) {
+    init(contentsOf url: URL) throws {
         guard let parser = XMLParser(contentsOf: url) else {
-            unexpected(error: nil, "Gpx init failed")
-            return nil
+            throw GpxParseError.gpxOpenError
         }
         self.parser = parser
         super.init()
@@ -130,7 +136,7 @@ class Gpx: NSObject {
     /// parse the XML in the URL associated with this object
     /// - Returns: true if the file was parsed without error
 
-    func parse() -> Bool {
+    func parse() throws {
         if parser.parse() && parseState != .error {
             var segments = 0
             var points = 0
@@ -140,9 +146,12 @@ class Gpx: NSObject {
                     points += segment.points.count
                 }
             }
-            return points > 0
+            if points == 0 {
+                throw GpxParseError.gpxNoPoints
+            }
+        } else {
+            throw GpxParseError.gpxParsingError
         }
-        return false
     }
 
     /// Search for the last point in the track log with a timestamp <= the
@@ -218,8 +227,6 @@ extension Gpx: XMLParserDelegate {
                     lastSegment = Segment()
                     parseState = .trkSeg
                 } else {
-                    unexpected(error: nil,
-                               "Internal error! GPX file will be ignored")
                     parseState = .error
                 }
             case "trkpt":
@@ -246,8 +253,7 @@ extension Gpx: XMLParserDelegate {
                         parseState = .error
                     }
                 } else {
-                    unexpected(error: nil,
-                               "Internal error! GPX file will be ignored")
+                    parseState = .error
                 }
             default:
                 // ignore everything else
