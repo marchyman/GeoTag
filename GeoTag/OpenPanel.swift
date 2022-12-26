@@ -40,32 +40,26 @@ extension AppState {
     /// not be flagged as a valid image.
     ///
     func prepareForEdit(inputURLs: [URL]) {
-        // dragged urls are duplicated for some reason.  Convert the input
-        // array to a set then back to an array to get rid of any dups.
+        // dragged urls are duplicated for some reason. Make an array
+        // if unique URLs.
         let urls = inputURLs.uniqued()
         var imageURLs = [URL]()
         gpxGoodFileNames.removeAll()
         gpxBadFileNames.removeAll()
 
+        // expand the list of inputURLs by recursing into folders
+        imageURLs = urls.flatMap { url in
+            isFolder(url: url) ? urlsIn(folder: url) : [url]
+        }
+
         // check the given URLs.  Iterate into folders and special case
         // gpx files.  Add what may be image URLs to the imageURLs array.
 
-        for url in urls {
-            if isFolder(url: url) {
-                findUrlsInFolder(url: url, toUrls: &imageURLs)
-            } else {
-                if url.pathExtension.lowercased() == "gpx" {
-                    parseGpxFile(url)
-                } else {
-                    imageURLs.append(url)
-                }
-            }
-        }
-
-        // check for imageURLs that match files previously loaded. Process
-        // non-duplicates as ImageModel
+        // Process the URLs
         for url in imageURLs {
-            if processedURLs.contains(url) {
+            if url.pathExtension.lowercased() == "gpx" {
+                parseGpxFile(url)
+            } else if processedURLs.contains(url) {
                 sheetType = .duplicateImageSheet
             } else {
                 processedURLs.insert(url)
@@ -73,55 +67,37 @@ extension AppState {
                     let imageData = try ImageModel(imageURL: url)
                     images.append(imageData)
                 } catch let error as NSError {
-                    print("Error: \(error)")
-                    //                        DispatchQueue.main.async {
-                    //                            let desc = NSLocalizedString("WARN_DESC_2",
-                    //                                                         comment: "cant process file error")
-                    //                            + "\(url.path)\n\nReason: "
-                    //                            unexpected(error: error, desc)
-                    //                        }
-                    // alert here
+                    sheetMessage = "Failed to open file \(url.path)"
+                    sheetError = error
+                    sheetType = .unexpectedErrorSheet
                 }
             }
         }
-
     }
 
     /// Check if a given file URL refers to a folder
     ///
     private func isFolder(url: URL) -> Bool {
-        let fileManager = FileManager.default
-        var dir = ObjCBool(false)
-        return fileManager.fileExists(atPath: url.path, isDirectory: &dir) &&
-        dir.boolValue
+        let resources = try? url.resourceValues(forKeys: [.isDirectoryKey])
+        return resources?.isDirectory ?? false
     }
 
     /// iterate over a folder looking for files.
-    /// - Parameters:
-    ///   - appState: program state variables
-    ///   - url: The URL to check.  It will be
-    ///   - urls: an array of URLs to which non folder URLs will be added
-    /// - Returns: true when url referenced a folder, otherwise fasle
-    private func findUrlsInFolder(url: URL, toUrls urls: inout [URL]) {
+    /// Returns an array of contained the urls
+    private func urlsIn(folder url: URL) -> [URL] {
+        var foundURLs = [URL]()
         let fileManager = FileManager.default
         guard let urlEnumerator =
                 fileManager.enumerator(at: url,
                                        includingPropertiesForKeys: [.isDirectoryKey],
                                        options: [.skipsHiddenFiles],
-                                       errorHandler: nil) else { return }
+                                       errorHandler: nil) else { return []}
         while let fileUrl = urlEnumerator.nextObject() as? URL {
-            guard let resources =
-                    try? fileUrl.resourceValues(forKeys: [.isDirectoryKey]),
-                  let directory = resources.isDirectory
-            else { continue }
-            if !directory {
-                if fileUrl.pathExtension.lowercased() == "gpx" {
-                    parseGpxFile(fileUrl)
-                } else {
-                    urls.append(fileUrl)
-                }
+            if !isFolder(url: fileUrl) {
+                foundURLs.append(fileUrl)
             }
         }
+        return foundURLs
     }
 
     /// Parse the given url is a valid gpx file.  A valid gpx file ends in .gpx and can be parsed
@@ -146,7 +122,7 @@ extension AppState {
 
 }
 
-// make sure the entries in an array are not unique
+// make sure the entries in an array are unique
 // Code from: https://stackoverflow.com/questions/25738817/removing-duplicate-elements-from-an-array-in-swift
 // which is much cleaner then any home grown solution I was thinking about.
 

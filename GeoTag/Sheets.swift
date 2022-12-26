@@ -20,6 +20,7 @@ enum SheetType: Identifiable {
     case gpxFileNameSheet
     case saveChangesSheet
     case duplicateImageSheet
+    case unexpectedErrorSheet
 }
 
 /// select a view depending upon the current app state sheet type
@@ -43,6 +44,8 @@ struct ContentViewSheet: View {
                 EmptyView()
             case .duplicateImageSheet:
                 DuplicateImageView()
+            case .unexpectedErrorSheet:
+                UnexpectedErrorView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -94,6 +97,30 @@ struct DuplicateImageView: View {
                 .padding()
             Text("One or more files were not opened. Unopened files were duplicates of files previously opened for editing.")
                 .lineLimit(nil)
+        }
+        .frame(maxWidth: 400, minHeight: 100)
+    }
+
+}
+
+struct UnexpectedErrorView: View {
+    @EnvironmentObject var appState: AppState
+
+    var body: some View {
+        VStack() {
+            Text("Unexpected Error")
+                .font(.title)
+                .padding()
+            if let message = appState.sheetMessage {
+                Text(message)
+                    .lineLimit(nil)
+                    .padding()
+            }
+            if let error = appState.sheetError {
+                Text(error.localizedDescription)
+                    .lineLimit(nil)
+                    .padding()
+            }
         }
         .frame(maxWidth: 400, minHeight: 100)
     }

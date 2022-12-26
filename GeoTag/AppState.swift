@@ -10,11 +10,16 @@ import MapKit
 
 @MainActor
 final class AppState: ObservableObject {
-    // MARK: Items pertaining to the main window
+    // MARK: Items pertaining to the main window and content view
+
+    // The Apps main window.
     var window: NSWindow!
 
-    // Type of sheet to attach to the content view
+    // Type of optional sheet to attach to the content view
+    // some sheets are associated with errors
     @Published var sheetType: SheetType?
+    var sheetError: NSError?
+    var sheetMessage: String?
 
     // MARK: Items pertaining to the Table of images
 
@@ -61,7 +66,7 @@ final class AppState: ObservableObject {
         }
     }
 
-    // Is there a selected and valid image?
+    // Is there a selected and valid image?  THIS SHOULD GO AWAY
     var isSelectedImageValid: Bool {
         selectedImage?.isValid ?? false
     }
@@ -70,6 +75,8 @@ final class AppState: ObservableObject {
     var canCutOrCopy: Bool {
         isSelectedImageValid && selectedImage?.location != nil
     }
+
+    // MARK: Menu actions
 
     // State changes that will triger actions as a result of selection
     // of a menu item
@@ -89,6 +96,8 @@ final class AppState: ObservableObject {
         case selectAll
         case clearList
     }
+
+    // Do the requested action
 
     func menuAction(_ action: MenuAction) {
         self.selectedMenuAction = .none

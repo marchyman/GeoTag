@@ -28,9 +28,15 @@ struct ContentView: View {
         .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)
         .border(windowBorderColor)
         .padding()
-        .sheet(item: $appState.sheetType) { sheetType in
+        .sheet(item: $appState.sheetType, onDismiss: sheetDismissed) { sheetType in
             ContentViewSheet(type: sheetType)
         }
+    }
+
+    // clear out sheet content when the sheet is dismissed.
+    func sheetDismissed() {
+        appState.sheetMessage = nil
+        appState.sheetError = nil
     }
 }
 
