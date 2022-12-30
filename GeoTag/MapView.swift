@@ -113,8 +113,10 @@ extension MapView {
             didChange newState: MKAnnotationView.DragState,
             fromOldState oldState: MKAnnotationView.DragState
         ) {
-            if (newState == .ending) {
-                appState.updateImage(location: view.annotation!.coordinate)
+            if let image = appState.selectedImage,
+               (newState == .ending) {
+                appState.update(image: image,
+                                location: view.annotation!.coordinate)
             }
         }
     }

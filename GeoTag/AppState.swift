@@ -34,46 +34,6 @@ final class AppState: ObservableObject {
     @Published var selectedImage: ImageModel?
     @Published var selectedImageThumbnail: NSImage?
 
-    // Process the set of selected images.  Pick one as the "most" selected
-    // and make its thumbnail NSImage.
-    func selectionChanged(newSelection: Set<ImageModel.ID>) {
-        guard !newSelection.isEmpty else {
-            selectedImage = nil
-            selectedImageThumbnail = nil
-            pinEnabled = false
-            return
-        }
-
-        // filter out any ids in the selection that don't reference valid images
-        let filteredImagesIds = images.filter { $0.isValid }.map { $0.id }
-        let filteredSelection = newSelection.filter {
-            filteredImagesIds.contains($0)
-        }
-
-        // Update the selection if the counts don't match
-        if selection.count != filteredSelection.count {
-            selection = filteredSelection
-            guard !selection.isEmpty else {
-                selectedImage = nil
-                selectedImageThumbnail = nil
-                pinEnabled = false
-                return
-            }
-        }
-
-        // set the most selected image and its thumbnail.  Mark it's
-        // location on the map.
-        selectedImage = images.first { $0.id == selection.first }
-        updatePin(location: selectedImage?.location)
-        Task {
-            selectedImageThumbnail = await selectedImage!.makeThumbnail()
-        }
-    }
-
-    // Is there a selected and valid image?  THIS SHOULD GO AWAY
-    var isSelectedImageValid: Bool {
-        selectedImage?.isValid ?? false
-    }
 
     // Should the cut or copy action be enabled for the selected image
     var canCutOrCopy: Bool {
@@ -115,7 +75,7 @@ final class AppState: ObservableObject {
         case .paste:
             print("action: \(action)")
         case .delete:
-            print("action: \(action)")
+            deleteAction()
         case .selectAll:
             selection = Set(images.map { $0.id })
         case .clearList:
@@ -157,10 +117,10 @@ final class AppState: ObservableObject {
         }
     }
 
-    // Update the image with a location.
+    // Update the image with a location
     // Handle UNDO!
-    func updateImage(location: Coords?) {
-        selectedImage?.location = location
+    func update(image: ImageModel, location: Coords?) {
+        image.location = location
         window.isDocumentEdited = true
     }
 }

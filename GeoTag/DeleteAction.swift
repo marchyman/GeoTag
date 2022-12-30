@@ -11,7 +11,7 @@ import Foundation
 // selected images
 
 extension AppState {
-    // should the delete action be enabled
+    // should the delete action be enabled for selected items
     var canDelete: Bool {
         images.contains { image in
             selection.contains(image.id) &&
@@ -20,12 +20,20 @@ extension AppState {
         }
     }
 
+    // Context menu: right click on item uses item, otherwise use selection.
+    func canDelete(context: ImageModel?) -> Bool {
+        if let context {
+            return context.isValid && context.location != nil
+        }
+        return canDelete
+    }
+
     func deleteAction() {
         // UNDO here
         for image in images.filter({ selection.contains($0.id) &&
                                      $0.isValid && $0.location != nil }) {
-            image.location = nil
-            window.isDocumentEdited = true
+            pinEnabled = false
+            update(image: image, location: nil)
         }
     }
 }

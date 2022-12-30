@@ -20,9 +20,6 @@ struct ContentView: View {
         HSplitView {
             ImageTableView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .contextMenu {
-                    ContextMenuView()
-                }
             ImageMapView(control: dividerControl)
         }
         .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)

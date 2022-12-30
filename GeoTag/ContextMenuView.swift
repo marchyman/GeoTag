@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ContextMenuView: View {
     @EnvironmentObject var appState: AppState
+    let context: ImageModel?
 
     var body: some View {
         Group {
@@ -21,7 +22,7 @@ struct ContextMenuView: View {
             Button("Paste") { appState.selectedMenuAction = .paste }
                 .disabled(!appState.isSelectedImageValid)
             Button("Delete") { appState.selectedMenuAction = .delete }
-                .disabled(!appState.canDelete)
+                .disabled(!appState.canDelete(context: context))
         }
         Divider()
         Group {
@@ -38,6 +39,6 @@ struct ContextMenuView: View {
 
 struct ContextMenuView_Previews: PreviewProvider {
     static var previews: some View {
-        ContextMenuView()
+        ContextMenuView(context: nil)
     }
 }
