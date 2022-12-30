@@ -40,6 +40,7 @@ final class AppState: ObservableObject {
         guard !newSelection.isEmpty else {
             selectedImage = nil
             selectedImageThumbnail = nil
+            pinEnabled = false
             return
         }
 
@@ -55,12 +56,15 @@ final class AppState: ObservableObject {
             guard !selection.isEmpty else {
                 selectedImage = nil
                 selectedImageThumbnail = nil
+                pinEnabled = false
                 return
             }
         }
 
-        // set the most selected image and its thumbnail
+        // set the most selected image and its thumbnail.  Mark it's
+        // location on the map.
         selectedImage = images.first { $0.id == selection.first }
+        updatePin(location: selectedImage?.location)
         Task {
             selectedImageThumbnail = await selectedImage!.makeThumbnail()
         }
@@ -128,30 +132,36 @@ final class AppState: ObservableObject {
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
 
-    // MARK: Items pertaining to the Map pins
+    // MARK: Items pertaining to the Map pins and Image Locations
 
     // Map pin info
 
     @Published var pin: MKPointAnnotation? = nil
     @Published var pinEnabled = false
 
-    /// the optional location assigned to a pin on the map
-    var location: Coords? {
-        return pin?.coordinate
-    }
-
-    // create a point annotation if needed and assign to it the given location
+    // create a map pin annotation if needed and assign to it the given location
     //
-    func update(location: Coords) {
+    func updatePin(location: Coords?) {
         if pin == nil {
             pin = MKPointAnnotation()
         }
-// undo stuff here
-//            undoManager?.registerUndo(withTarget: self) { handler in
-//                let oldLocation = pin!.coordinate
-//                self.pin!.coordinate = oldLocation
-//           }
-        pin!.coordinate = location
+        if let location {
+            let point = MKMapPoint(location);
+            if !MapView.view.visibleMapRect.contains(point) {
+                MapView.view.setCenter(location, animated: false)
+            }
+            pin!.coordinate = location
+            pinEnabled = true
+        } else {
+            pinEnabled = false
+        }
+    }
+
+    // Update the image with a location.
+    // Handle UNDO!
+    func updateImage(location: Coords?) {
+        selectedImage?.location = location
+        window.isDocumentEdited = true
     }
 }
 

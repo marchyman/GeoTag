@@ -33,7 +33,7 @@ import MapKit
 // Stick with this version for now.
 //
 struct MapView: NSViewRepresentable {
-    static var view: MKMapView?
+    static var view: MKMapView!
     let mapType: MKMapType
     let center: CLLocationCoordinate2D
     let altitude: Double
@@ -63,7 +63,6 @@ struct MapView: NSViewRepresentable {
         }
         if !appState.pinEnabled && appState.pin != nil {
             view.removeAnnotation(appState.pin!)
-            appState.pin = nil
         }
     }
 }
@@ -87,19 +86,19 @@ extension MapView {
         ) -> MKAnnotationView? {
             let identifier = "pinAnnotation"
             var annotationView =
-                mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+                mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
             if annotationView != nil {
                 annotationView!.annotation = annotation
             } else {
-                annotationView = MKMarkerAnnotationView(annotation: annotation,
+                annotationView = MKPinAnnotationView(annotation: annotation,
                                                         reuseIdentifier: identifier)
                 if let av = annotationView {
                     av.isEnabled = true
-                    av.markerTintColor = .red
+                    av.pinTintColor = .red
                     av.canShowCallout = false
                     av.isDraggable = true
                 } else {
-                    fatalError("Can't create MKMarkerAnnotationView")
+                    fatalError("Can't create MKPinAnnotationView")
                 }
             }
             return annotationView
@@ -115,7 +114,7 @@ extension MapView {
             fromOldState oldState: MKAnnotationView.DragState
         ) {
             if (newState == .ending) {
-                appState.update(location: view.annotation!.coordinate)
+                appState.updateImage(location: view.annotation!.coordinate)
             }
         }
     }

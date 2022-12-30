@@ -41,9 +41,7 @@ class ClickMapView: MKMapView {
     override
     func mouseUp(with theEvent: NSEvent) {
         super.mouseUp(with: theEvent)
-        if viewModel.pinEnabled &&
-           theEvent.clickCount == 1 &&
-           !dragInProgress {
+        if theEvent.clickCount == 1 && !dragInProgress {
             // start a timer for this location.  The location will be marked
             // when the timer fires unless this is a double click
             let point = convert(theEvent.locationInWindow, from: nil)
@@ -61,9 +59,7 @@ class ClickMapView: MKMapView {
 
     override
     func mouseDragged(with theEvent: NSEvent) {
-        if viewModel.pinEnabled {
-            dragInProgress = true
-        }
+        dragInProgress = true
     }
 
     /// Mark the saved location when the click timer expires
@@ -72,6 +68,7 @@ class ClickMapView: MKMapView {
         let coords = timer.userInfo as! CLLocationCoordinate2D
         clickTimer?.invalidate()
         clickTimer = nil
-        viewModel.update(location: coords)
+        viewModel.updatePin(location: coords)
+        viewModel.updateImage(location: coords)
     }
 }
