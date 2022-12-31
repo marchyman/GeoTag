@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct ImageView: View {
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var vm: AppState
 
     var body: some View {
         Group {
-            if let image = appState.selectedImageThumbnail {
+            if let id = vm.selectedImage, let image = vm[id].thumbnail {
                 Image(nsImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)

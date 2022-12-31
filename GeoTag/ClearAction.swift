@@ -10,13 +10,13 @@ import Foundation
 // Program "Clear List" action removes removes
 
 extension AppState {
-    // should the delete action be enabled
-    var canClearImageList: Bool {
-        !images.isEmpty && !window.isDocumentEdited
+    // return true if the Clear Image List meny item should be disabled
+    var clearDisabled: Bool {
+        images.isEmpty || window.isDocumentEdited
     }
 
     func clearImageListAction() {
-        if canClearImageList {
+        if !clearDisabled {
             selection = Set()
             images = []
         }

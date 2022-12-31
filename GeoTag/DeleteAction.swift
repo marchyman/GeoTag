@@ -11,29 +11,29 @@ import Foundation
 // selected images
 
 extension AppState {
-    // should the delete action be enabled for selected items
-    var canDelete: Bool {
-        images.contains { image in
-            selection.contains(image.id) &&
-            image.isValid &&
-            image.location != nil
+
+    // should the delete action be disabled for a specific item or for
+    // all selected items
+    func deleteDisabled(context: ImageModel.ID? = nil) -> Bool {
+        if let id = context {
+            return self[id].location == nil
         }
+        return !selection.contains(where: { self[$0].location != nil })
     }
 
-    // Context menu: right click on item uses item, otherwise use selection.
-    func canDelete(context: ImageModel?) -> Bool {
-        if let context {
-            return context.isValid && context.location != nil
-        }
-        return canDelete
-    }
-
-    func deleteAction() {
+    func deleteAction(context: ImageModel.ID? = nil) {
         // UNDO here
-        for image in images.filter({ selection.contains($0.id) &&
-                                     $0.isValid && $0.location != nil }) {
-            pinEnabled = false
-            update(image: image, location: nil)
+        if let id = context {
+            // delete location from a specific item
+            update(id: id, location: nil)
+        } else {
+            // delete location from all selected items
+            for id in selection {
+                if self[id].location != nil {
+                    update(id: id, location: nil)
+                }
+            }
         }
+        pinEnabled = false
     }
 }

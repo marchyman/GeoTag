@@ -8,13 +8,15 @@
 import SwiftUI
 import MapKit
 
+// maintain state for GeoTag when running.  An instance if this class is
+// created as a StateObject by GeoTagApp and passed in the environment.
+
 @MainActor
 final class AppState: ObservableObject {
-    // MARK: Items pertaining to the main window and content view
-
     // The Apps main window.
     var window: NSWindow!
 
+    // Let the user know the app is busy
     @Published var showingProgressView = false
 
     // Type of optional sheet to attach to the content view
@@ -23,21 +25,29 @@ final class AppState: ObservableObject {
     var sheetError: NSError?
     var sheetMessage: String?
 
-    // MARK: Items pertaining to the Table of images
-
     // Images to edit
     @Published var images = [ImageModel]()
 
+    // get/set an image from the table given its ID.
+    subscript(id: ImageModel.ID?) -> ImageModel {
+         get {
+             if let id {
+                 return images.first(where: { $0.id == id })!
+             }
+             // should never occur. Return a made up invalid image
+             return ImageModel()
+         }
+
+         set(newValue) {
+             if let index = images.firstIndex(where: { $0.id == newValue.id }) {
+                 images[index] = newValue
+             }
+         }
+     }
+
     // Selected Image(s) by ID, the most selected image, and its thumbnail
     @Published var selection = Set<ImageModel.ID>()
-    @Published var selectedImage: ImageModel?
-    @Published var selectedImageThumbnail: NSImage?
-
-
-    // Should the cut or copy action be enabled for the selected image
-    var canCutOrCopy: Bool {
-        isSelectedImageValid && selectedImage?.location != nil
-    }
+    @Published var selectedImage: ImageModel.ID?
 
     // MARK: Menu actions
 
@@ -116,10 +126,10 @@ final class AppState: ObservableObject {
         }
     }
 
-    // Update the image with a location
+    // Update an image with a location. Image is identified by its ID.
     // Handle UNDO!
-    func update(image: ImageModel, location: Coords?) {
-        image.location = location
+    func update(id: ImageModel.ID, location: Coords?) {
+        self[id].location = location
         window.isDocumentEdited = true
     }
 }

@@ -8,34 +8,34 @@
 import SwiftUI
 
 struct ImageTableView: View {
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var vm: AppState
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
     var body: some View {
-        Table(selection: $appState.selection,
+        Table(selection: $vm.selection,
               sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
-                ImageNameColumnView(image: image)
+                ImageNameColumnView(id: image.id)
             }
             .width(min: 100)
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                ImageTimestampColumnView(image: image)
+                ImageTimestampColumnView(id: image.id)
             }
             .width(min: 130)
             TableColumn("Latitude", value: \.latitude) { image in
-                ImageLatitudeColumnView(image:image)
+                ImageLatitudeColumnView(id: image.id)
             }
             .width(min: 120)
             TableColumn("Longitude", value: \.longitude) { image in
-                ImageLongitudeColumnView(image:image)
+                ImageLongitudeColumnView(id: image.id)
             }
             .width(min: 120)
         } rows: {
-            ForEach(appState.images) { image in
+            ForEach(vm.images) { image in
                 TableRow(image)
                     .contextMenu {
-                        ContextMenuView(context: image)
+                        ContextMenuView(context: image.id)
                     }
             }
         }
@@ -43,25 +43,22 @@ struct ImageTableView: View {
             ContextMenuView(context: nil)
         }
         .onChange(of: sortOrder) { newOrder in
-            appState.images.sort(using: newOrder)
-            appState.selection = Set()
+            vm.images.sort(using: newOrder)
         }
-        .onChange(of: appState.selection) { selection in
-            appState.selectionChanged(newSelection: selection)
+        .onChange(of: vm.selection) { selection in
+            vm.selectionChanged(newSelection: selection)
         }
-        .onChange(of: appState.selectedMenuAction) { action in
+        .onChange(of: vm.selectedMenuAction) { action in
             if action != .none {
-                appState.menuAction(action)
+                vm.menuAction(action)
             }
         }
         .dropDestination(for: URL.self) {items, location in
-            // appstate is @MainActor yet I want to run this in the
-            // background.   How to do that?
-            appState.prepareForEdit(inputURLs: items)
+            vm.prepareForEdit(inputURLs: items)
             return true
         }
         .onAppear {
-            appState.selection = Set()
+            vm.selection = Set()
         }
     }
 }

@@ -8,13 +8,6 @@
 import Foundation
 import AppKit
 
-// CFString to String casts for Image constants
-
-let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
-let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
-let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
-let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
-
 extension ImageModel {
 
     /// Create an image thumbnail
@@ -24,15 +17,14 @@ extension ImageModel {
     /// do not exist the file is assumed to be a non-image file and a zero
     /// sized empty image is returned.
 
-    func makeThumbnail() async -> NSImage {
-        // if a thumbail has already been created return it
-        if let thumbnail {
-            return thumbnail
-        }
+    mutating func makeThumbnail() {
+        // if a thumbail has already been created we're done
+        guard thumbnail == nil else { return }
+
         var image = NSImage(size: NSMakeRect(0, 0, 0, 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
             thumbnail = image
-            return image
+            return
         }
         // Create a "preview" of the image. If the image is larger than
         // 512x512 constrain the preview to that size.  512x512 is an
@@ -40,9 +32,9 @@ extension ImageModel {
         // performance hit when using large raw images
         let maxDimension = 512
         var imgOpts: [String: AnyObject] = [
-            createThumbnailWithTransform : kCFBooleanTrue,
-            createThumbnailFromImageIfAbsent : kCFBooleanTrue,
-            thumbnailMaxPixelSize : maxDimension as AnyObject
+            ImageModel.createThumbnailWithTransform : kCFBooleanTrue,
+            ImageModel.createThumbnailFromImageIfAbsent : kCFBooleanTrue,
+            ImageModel.thumbnailMaxPixelSize : maxDimension as AnyObject
         ]
         var checkSize = true
         repeat {
@@ -50,11 +42,11 @@ extension ImageModel {
                 // Create an NSImage from the preview
                 let imgHeight = CGFloat(imgPreview.height)
                 let imgWidth = CGFloat(imgPreview.width)
-                if imgOpts[createThumbnailFromImageAlways] == nil &&
+                if imgOpts[ImageModel.createThumbnailFromImageAlways] == nil &&
                     imgHeight < 512 && imgWidth < 512 {
                     // thumbnail too small.   Build a larger thumbnail
-                    imgOpts[createThumbnailFromImageIfAbsent] = nil
-                    imgOpts[createThumbnailFromImageAlways] = kCFBooleanTrue
+                    imgOpts[ImageModel.createThumbnailFromImageIfAbsent] = nil
+                    imgOpts[ImageModel.createThumbnailFromImageAlways] = kCFBooleanTrue
                     continue
                 }
                 let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
@@ -69,6 +61,14 @@ extension ImageModel {
             checkSize = false
         } while checkSize
         thumbnail = image
-        return image
     }
+}
+
+// CFString to String casts for Image constants
+
+extension ImageModel {
+    static let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
+    static let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
+    static let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
+    static let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
 }

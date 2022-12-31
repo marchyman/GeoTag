@@ -70,8 +70,8 @@ class ClickMapView: MKMapView {
         clickTimer?.invalidate()
         clickTimer = nil
         viewModel.updatePin(location: coords)
-        if let image = viewModel.selectedImage {
-            viewModel.update(image: image, location: coords)
+        if let id = viewModel.selectedImage {
+            viewModel.update(id: id, location: coords)
         }
     }
 }

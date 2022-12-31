@@ -38,16 +38,16 @@ struct MapView: NSViewRepresentable {
     let center: CLLocationCoordinate2D
     let altitude: Double
 
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var vm: AppState
 
     func makeCoordinator() -> MapView.Coordinator {
-        Coordinator(appState: appState)
+        Coordinator(vm: vm)
     }
 
     func makeNSView(context: Context) -> ClickMapView {
         let view = ClickMapView(frame: .zero)
         MapView.view = view
-        view.viewModel = appState
+        view.viewModel = vm
         view.delegate = context.coordinator
         view.camera = MKMapCamera(lookingAtCenter: center,
                                  fromEyeCoordinate: center,
@@ -58,11 +58,11 @@ struct MapView: NSViewRepresentable {
 
     func updateNSView(_ view: ClickMapView, context: Context) {
         view.mapType = mapType
-        if appState.pinEnabled, let pin = appState.pin {
+        if vm.pinEnabled, let pin = vm.pin {
             view.addAnnotation(pin)
         }
-        if !appState.pinEnabled && appState.pin != nil {
-            view.removeAnnotation(appState.pin!)
+        if !vm.pinEnabled && vm.pin != nil {
+            view.removeAnnotation(vm.pin!)
         }
     }
 }
@@ -72,10 +72,10 @@ extension MapView {
     /// Coordinator class conforming to MKMapViewDelegate
     ///
     class Coordinator: NSObject, MKMapViewDelegate {
-        let appState: AppState
+        let vm: AppState
 
-        init(appState: AppState) {
-            self.appState = appState
+        init(vm: AppState) {
+            self.vm = vm
         }
 
         /// return a pinAnnotationView for a red pin
@@ -113,9 +113,9 @@ extension MapView {
             didChange newState: MKAnnotationView.DragState,
             fromOldState oldState: MKAnnotationView.DragState
         ) {
-            if let image = appState.selectedImage,
+            if let id = vm.selectedImage,
                (newState == .ending) {
-                appState.update(image: image,
+                vm.update(id: id,
                                 location: view.annotation!.coordinate)
             }
         }

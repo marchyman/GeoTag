@@ -11,18 +11,18 @@ import SwiftUI
 
 struct ContextMenuView: View {
     @EnvironmentObject var appState: AppState
-    let context: ImageModel?
+    let context: ImageModel.ID?
 
     var body: some View {
         Group {
             Button("Cut") { appState.selectedMenuAction = .cut }
-                .disabled(!appState.canCutOrCopy)
+                .disabled(appState.cutCopyDisabled(context: context))
             Button("Copy") { appState.selectedMenuAction = .copy }
-                .disabled(!appState.canCutOrCopy)
+                .disabled(appState.cutCopyDisabled(context: context))
             Button("Paste") { appState.selectedMenuAction = .paste }
-                .disabled(!appState.isSelectedImageValid)
+                .disabled(appState.pasteDisabled(context: context))
             Button("Delete") { appState.selectedMenuAction = .delete }
-                .disabled(!appState.canDelete(context: context))
+                .disabled(!appState.deleteDisabled(context: context))
         }
         Divider()
         Group {
@@ -33,7 +33,7 @@ struct ContextMenuView: View {
         }
         Divider()
         Button("Clear Image List") { appState.selectedMenuAction = .clearList }
-            .disabled(!appState.canClearImageList)
+            .disabled(appState.clearDisabled)
     }
 }
 

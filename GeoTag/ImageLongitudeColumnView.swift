@@ -9,16 +9,16 @@ import SwiftUI
 
 struct ImageLongitudeColumnView: View {
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
-
-    let image: ImageModel
+    @EnvironmentObject var vm: AppState
+    let id: ImageModel.ID
 
     var body: some View {
         Text(longitudeToString())
-            .foregroundColor(image.isValid ? .primary : .gray)
+            .foregroundColor(vm[id].isValid ? .primary : .gray)
     }
 
     func longitudeToString() -> String {
-        if let location = image.location {
+        if let location = vm[id].location {
             switch coordFormat {
             case .deg:
                 return String(format: "% 2.6f", location.longitude)
@@ -29,18 +29,5 @@ struct ImageLongitudeColumnView: View {
             }
         }
         return ""
-    }
-}
-
-struct ImageLongitudeColumnView_Previews: PreviewProvider {
-    static var image =
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
-                   validImage: true,
-                   dateTimeCreated: "2022:12:12 11:22:33",
-                   latitude: 33.123,
-                   longitude: -123.456)
-
-    static var previews: some View {
-        ImageLongitudeColumnView(image: image)
     }
 }

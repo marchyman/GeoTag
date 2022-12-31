@@ -15,49 +15,34 @@ extension AppState {
     func selectionChanged(newSelection: Set<ImageModel.ID>) {
         guard !newSelection.isEmpty else {
             selectedImage = nil
-            selectedImageThumbnail = nil
             pinEnabled = false
             return
         }
 
         // filter out any ids in the selection that don't reference valid images
         let filteredImagesIds = images.filter { $0.isValid }.map { $0.id }
-        let filteredSelection = newSelection.filter {
+        let selection = newSelection.filter {
             filteredImagesIds.contains($0)
         }
 
-        // Update the selection if the counts don't match
-        if selection.count != filteredSelection.count {
-            selection = filteredSelection
-            guard !selection.isEmpty else {
-                selectedImage = nil
-                selectedImageThumbnail = nil
-                pinEnabled = false
-                return
-            }
+        // Handle the case where nothing is selected
+        guard !selection.isEmpty else {
+            selectedImage = nil
+            pinEnabled = false
+            return
         }
 
-        // If an image was selected and is in the new group of selected images
-        // leave it alone.
-        // Mark the location of any new selection on the map.
-
-        if let image = selectedImage,
-           selection.contains(where: { $0 == image.id }) {
+        // If the image that was the "most" selected is in the current
+        // selection set there is nothing more to do.
+        if selection.contains(where: { $0 == selectedImage }) {
             return
         }
 
         // set the most selected image and its thumbnail. Mark its location
         // on the map.
 
-        selectedImage = images.first { $0.id == selection.first }
-        updatePin(location: selectedImage?.location)
-        Task {
-            selectedImageThumbnail = await selectedImage!.makeThumbnail()
-        }
-    }
-
-    // Is there a selected and valid image?  THIS SHOULD GO AWAY
-    var isSelectedImageValid: Bool {
-        selectedImage?.isValid ?? false
+        selectedImage = selection.first
+        updatePin(location: self[selectedImage!].location)
+        self[selectedImage!].makeThumbnail()
     }
 }

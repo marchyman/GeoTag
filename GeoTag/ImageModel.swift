@@ -8,32 +8,11 @@
 import Foundation
 import MapKit
 
-// CFString to (NS)*String casts for Image Property constants
-
-let exifDictionary = kCGImagePropertyExifDictionary as NSString
-let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
-let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
-let GPSStatus = kCGImagePropertyGPSStatus as String
-let GPSLatitude = kCGImagePropertyGPSLatitude as String
-let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
-let GPSLongitude = kCGImagePropertyGPSLongitude as String
-let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
-
-
-// Date formatter used to put timestamps in the form used by exiftool
-
-let dateFormatter = DateFormatter()
-let dateFormat = "yyyy:MM:dd HH:mm:ss"
-
-enum ImageError: Error {
-    case cgSourceError
-}
-
 // Data about an image that may have its geo-location metadata changed.
 // A class instead of a struct as instances of the class are intended
 // to be mutated.
 
-final class ImageModel: Identifiable {
+struct ImageModel: Identifiable {
     // Identifying data
     let id = UUID()
     let fileURL: URL
@@ -50,18 +29,19 @@ final class ImageModel: Identifiable {
     var location: Coords? {
         didSet {
             if let location {
+                var locationTimeZone: TimeZone?
                 let coder = CLGeocoder();
                 let loc = CLLocation(latitude: location.latitude,
                                      longitude: location.longitude)
                 coder.reverseGeocodeLocation(loc) {
                     (placemarks, error) in
                     let place = placemarks?.last
-                    self.timeZone = place?.timeZone
+                    locationTimeZone = place?.timeZone
                 }
+                timeZone = locationTimeZone
             } else {
                 timeZone = nil
             }
-
         }
     }
     var elevation: Double?
@@ -86,6 +66,8 @@ final class ImageModel: Identifiable {
 
     var thumbnail: NSImage?
 
+    // initialization of image data given its URL.
+
     init(imageURL: URL, forPreview: Bool = false) throws {
         fileURL = imageURL
         if forPreview {
@@ -97,12 +79,12 @@ final class ImageModel: Identifiable {
             sandboxXmpURL = nil
             return
         }
-        try sandboxURL = createSandboxUrl(fileURL: fileURL)
+        try sandboxURL = ImageModel.createSandboxUrl(fileURL: fileURL)
         xmpURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
         xmpFile = XmpFile(url: sandboxURL)
-        try sandboxXmpURL = createSandboxXmpURL(fileURL: fileURL,
-                                                xmpURL: xmpURL,
-                                                xmpFile: xmpFile)
+        try sandboxXmpURL = ImageModel.createSandboxXmpURL(fileURL: fileURL,
+                                                           xmpURL: xmpURL,
+                                                           xmpFile: xmpFile)
 
         // verify this file type us writable with Exiftool and load image
         // metadata if we can
@@ -124,19 +106,19 @@ final class ImageModel: Identifiable {
     // remove the symbolic link created in the sandboxed document directory
     // during instance initialization
 
-    deinit
-    {
-        let fileManager = FileManager.default
-        try? fileManager.removeItem(at: sandboxURL)
-        if let sandboxXmpURL {
-            try? fileManager.removeItem(at: sandboxXmpURL)
-        }
-    }
+//    deinit
+//    {
+//        let fileManager = FileManager.default
+//        try? fileManager.removeItem(at: sandboxURL)
+//        if let sandboxXmpURL {
+//            try? fileManager.removeItem(at: sandboxXmpURL)
+//        }
+//    }
 
     // reset the timestamp and location to their initial values.  Initial
     // values are updated whenever an image is saved.
 
-    func revert() {
+    mutating func revert() {
         dateTimeCreated = originalDateTimeCreated
         location = originalLocation
         elevation = originalElevation
@@ -149,8 +131,11 @@ final class ImageModel: Identifiable {
     /// do not exist the file is assumed to be a non-image file
 
     private
-    func loadImageMetadata() throws -> Bool {
+    mutating func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
+            enum ImageError: Error {
+                case cgSourceError
+            }
             throw ImageError.cgSourceError
         }
 
@@ -163,8 +148,8 @@ final class ImageModel: Identifiable {
 
         // extract image date/time created
 
-        if let exifData = imgProps[exifDictionary] as? [String: AnyObject],
-           let dto = exifData[exifDateTimeOriginal] as? String {
+        if let exifData = imgProps[ImageModel.exifDictionary] as? [String: AnyObject],
+           let dto = exifData[ImageModel.exifDateTimeOriginal] as? String {
             dateTimeCreated = dto
             originalDateTimeCreated = dto
         }
@@ -173,21 +158,21 @@ final class ImageModel: Identifiable {
         // been retrieved -- XMP files are processed first
 
         if location == nil,
-           let gpsData = imgProps[GPSDictionary] as? [String: AnyObject] {
+           let gpsData = imgProps[ImageModel.GPSDictionary] as? [String: AnyObject] {
 
             // some Leica write GPS tags with a status tag of "V" (void) when no
             // GPS info is available.   If a status tag exists and its value
             // is "V" ignore the GPS data.
 
-            if let status = gpsData[GPSStatus] as? String {
+            if let status = gpsData[ImageModel.GPSStatus] as? String {
                 if status == "V" {
                     return true
                 }
             }
-            if let lat = gpsData[GPSLatitude] as? Double,
-               let latRef = gpsData[GPSLatitudeRef] as? String,
-               let lon = gpsData[GPSLongitude] as? Double,
-               let lonRef = gpsData[GPSLongitudeRef] as? String {
+            if let lat = gpsData[ImageModel.GPSLatitude] as? Double,
+               let latRef = gpsData[ImageModel.GPSLatitudeRef] as? String,
+               let lon = gpsData[ImageModel.GPSLongitude] as? Double,
+               let lonRef = gpsData[ImageModel.GPSLongitudeRef] as? String {
                 location = Coords(latitude: latRef == "N" ? lat : -lat,
                                  longitude: lonRef == "E" ? lon : -lon)
                 originalLocation = location
@@ -203,7 +188,7 @@ final class ImageModel: Identifiable {
     /// ImageIO functions do not work with XMP sidecar files.
 
     private
-    func loadXmpMetadata(_ xmp: URL) {
+    mutating func loadXmpMetadata(_ xmp: URL) {
         var errorCode: NSError?
         let coordinator = NSFileCoordinator(filePresenter: xmpFile)
         coordinator.coordinate(readingItemAt: xmp,
@@ -223,14 +208,15 @@ final class ImageModel: Identifiable {
 
 }
 
-// Add convenience init for preview model creation
+// Add init functions for preview models and a just-in-case no-image model
 
 extension ImageModel {
-    convenience init(imageURL: URL,
-                     validImage: Bool,
-                     dateTimeCreated: String,
-                     latitude: Double?,
-                     longitude: Double?) {
+    // create a model for SwiftUI preview
+    init(imageURL: URL,
+         validImage: Bool,
+         dateTimeCreated: String,
+         latitude: Double?,
+         longitude: Double?) {
         do {
             try self.init(imageURL: imageURL, forPreview: true)
         } catch {
@@ -240,6 +226,16 @@ extension ImageModel {
         self.dateTimeCreated = dateTimeCreated
         if let latitude, let longitude {
             location = Coords(latitude: latitude, longitude: longitude)
+        }
+    }
+
+    // create an instance of an ImageModel for "no-image".  Should never
+    // be used but catch a bug that would otherwise crash the program.
+    init() {
+        do {
+            try self.init(imageURL: URL(filePath: "no-image"), forPreview: true)
+        } catch {
+            fatalError("ImageModel no-image init failed")
         }
     }
 }
@@ -257,3 +253,21 @@ extension ImageModel: Equatable, Hashable {
 }
 
 
+// Date formatter used to put timestamps in the form used by exiftool
+
+extension ImageModel {
+    static let dateFormatter = DateFormatter()
+    static let dateFormat = "yyyy:MM:dd HH:mm:ss"
+}
+
+// CFString to (NS)*String casts for Image Property constants
+extension ImageModel {
+    static let exifDictionary = kCGImagePropertyExifDictionary as NSString
+    static let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
+    static let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
+    static let GPSStatus = kCGImagePropertyGPSStatus as String
+    static let GPSLatitude = kCGImagePropertyGPSLatitude as String
+    static let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
+    static let GPSLongitude = kCGImagePropertyGPSLongitude as String
+    static let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
+}

@@ -10,13 +10,13 @@ import SwiftUI
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    @StateObject var appState = AppState()
+    @StateObject var vm = AppState()
 
     var body: some Scene {
         WindowGroup("GeoTag Version Five") {
             ContentView()
-                .background(WindowAccessor(window: $appState.window))
-                .environmentObject(appState)
+                .background(WindowAccessor(window: $vm.window))
+                .environmentObject(vm)
         }
         .commands {
             newItemCommandGroup

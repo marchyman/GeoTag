@@ -11,21 +11,21 @@ import SwiftUI
 extension GeoTagApp {
     var pasteBoardCommandGroup: some Commands {
         CommandGroup(replacing: .pasteboard) {
-            Button("Cut") { appState.selectedMenuAction = .cut }
+            Button("Cut") { vm.selectedMenuAction = .cut }
                 .keyboardShortcut("x")
-                .disabled(!appState.canCutOrCopy)
-            Button("Copy") { appState.selectedMenuAction = .copy }
+                .disabled(vm.cutCopyDisabled())
+            Button("Copy") { vm.selectedMenuAction = .copy }
                 .keyboardShortcut("c")
-                .disabled(!appState.canCutOrCopy)
-            Button("Paste") { appState.selectedMenuAction = .paste }
+                .disabled(vm.cutCopyDisabled())
+            Button("Paste") { vm.selectedMenuAction = .paste }
                 .keyboardShortcut("v")
-                .disabled(!appState.isSelectedImageValid)
-            Button("Delete") { appState.selectedMenuAction = .delete }
+                .disabled(vm.pasteDisabled())
+            Button("Delete") { vm.selectedMenuAction = .delete }
                 .keyboardShortcut(.delete, modifiers: EventModifiers())
-                .disabled(!appState.canDelete)
-            Button("Select All") { appState.selectedMenuAction = .selectAll }
+                .disabled(vm.deleteDisabled())
+            Button("Select All") { vm.selectedMenuAction = .selectAll }
                 .keyboardShortcut("a")
-                .disabled(appState.images.isEmpty)
+                .disabled(vm.images.isEmpty)
         }
     }
 }
