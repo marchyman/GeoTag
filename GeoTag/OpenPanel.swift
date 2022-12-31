@@ -40,37 +40,39 @@ extension AppState {
     /// not be flagged as a valid image.
     ///
     func prepareForEdit(inputURLs: [URL]) {
+        showingProgressView = true
+
         // dragged urls are duplicated for some reason. Make an array
-        // if unique URLs.
+        // of unique URLs.
         let urls = inputURLs.uniqued()
         var imageURLs = [URL]()
-        gpxGoodFileNames.removeAll()
-        gpxBadFileNames.removeAll()
 
-        // expand the list of inputURLs by recursing into folders
+        // expand the list of inputURLs by processing all folders
         imageURLs = urls.flatMap { url in
             isFolder(url: url) ? urlsIn(folder: url) : [url]
         }
 
-        // check the given URLs.  Iterate into folders and special case
-        // gpx files.  Add what may be image URLs to the imageURLs array.
+        // check the given URLs.  They may point to GPX files or image
+        // files.  Work for each image is done in an image group.
 
-        // Process the URLs
+        var helper = URLToImageHelper(knownImages: images)
+        let group = DispatchGroup()
         for url in imageURLs {
-            if url.pathExtension.lowercased() == "gpx" {
-                parseGpxFile(url)
-            } else if processedURLs.contains(url) {
-                sheetType = .duplicateImageSheet
-            } else {
-                processedURLs.insert(url)
-                do {
-                    let imageData = try ImageModel(imageURL: url)
-                    images.append(imageData)
-                } catch let error as NSError {
-                    sheetMessage = "Failed to open file \(url.path)"
-                    sheetError = error
-                    sheetType = .unexpectedErrorSheet
-                }
+            group.enter()
+            helper.urlToImage(group: group, url: url)
+        }
+
+        // Update the app state once all the images have been processed.
+        group.notify(queue: .global(qos: .userInitiated)) {
+            DispatchQueue.main.async {
+                self.images.append(contentsOf: helper.images)
+                self.gpxTracks.append(contentsOf: helper.gpxTracks)
+                self.gpxGoodFileNames = helper.gpxGoodFileNames
+                self.gpxBadFileNames = helper.gpxBadFileNames
+                self.sheetType = helper.sheetType
+                self.sheetError = helper.sheetError
+                self.sheetMessage = helper.sheetMessage
+                self.showingProgressView = false
             }
         }
     }
@@ -99,32 +101,6 @@ extension AppState {
         }
         return foundURLs
     }
-
-    /// Parse the given url to see if it is a valid gpx file.  A valid gpx file ends in .gpx and can be parsed
-    /// by the GPX parser without error.
-    ///
-    /// - Parameters:
-    ///   - url: URL of file to parse
-    /// - Returns: true if file is a gpx file, otherwise false
-    private func parseGpxFile(_ url: URL) {
-        do {
-            let gpx = try Gpx(contentsOf: url)
-            try gpx.parse()
-            gpxTracks.append(gpx)
-            gpxGoodFileNames.append(url.path)
-            sheetType = .gpxFileNameSheet
-        } catch Gpx.GpxParseError.gpxParsingError {
-            gpxBadFileNames.append(url.path)
-            if sheetType == .none {
-                sheetMessage = "\(url.path) is not a valid GPX file"
-                sheetType = .unexpectedErrorSheet
-            }
-        } catch {
-            gpxBadFileNames.append(url.path)
-            sheetType = .gpxFileNameSheet
-        }
-    }
-
 }
 
 // make sure the entries in an array are unique

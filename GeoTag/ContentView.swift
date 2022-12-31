@@ -18,8 +18,13 @@ struct ContentView: View {
 
     var body: some View {
         HSplitView {
-            ImageTableView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ZStack {
+                ImageTableView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                if appState.showingProgressView {
+                    ProgressView("Processing image files...")
+                }
+            }
             ImageMapView(control: dividerControl)
         }
         .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)

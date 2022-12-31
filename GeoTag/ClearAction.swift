@@ -18,7 +18,6 @@ extension AppState {
     func clearImageListAction() {
         if canClearImageList {
             selection = Set()
-            processedURLs = Set()
             images = []
         }
     }

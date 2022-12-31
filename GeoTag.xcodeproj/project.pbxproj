@@ -19,6 +19,7 @@
 		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
 		4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4955351C29526D4E004AF5F2 /* SizeReader.swift */; };
 		495F2F63295EB1A5002A8A88 /* Selections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F2F62295EB1A5002A8A88 /* Selections.swift */; };
+		4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
 		498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */; };
@@ -63,6 +64,7 @@
 		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
 		4955351C29526D4E004AF5F2 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
 		495F2F62295EB1A5002A8A88 /* Selections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selections.swift; sourceTree = "<group>"; };
+		4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLToImageHelper.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
 		498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTimestampColumnView.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				49B4D34A2957D05D00A4BCFD /* DeleteAction.swift */,
 				49B4D34C2957E21500A4BCFD /* ClearAction.swift */,
 				492175782949743E00A5EA83 /* OpenPanel.swift */,
+				4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */,
 				4921757A2949863A00A5EA83 /* Gpx.swift */,
 			);
 			name = "App Group";
@@ -360,6 +363,7 @@
 				49B4D34D2957E21500A4BCFD /* ClearAction.swift in Sources */,
 				494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */,
 				49B9EDE32949442700574D18 /* AppState.swift in Sources */,
+				4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */,
 				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
 				49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */,
 				49A729B02953E72200DF1AAF /* DividerView.swift in Sources */,

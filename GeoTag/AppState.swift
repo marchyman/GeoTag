@@ -15,6 +15,8 @@ final class AppState: ObservableObject {
     // The Apps main window.
     var window: NSWindow!
 
+    @Published var showingProgressView = false
+
     // Type of optional sheet to attach to the content view
     // some sheets are associated with errors
     @Published var sheetType: SheetType?
@@ -25,9 +27,6 @@ final class AppState: ObservableObject {
 
     // Images to edit
     @Published var images = [ImageModel]()
-
-    // Set of image URLs used to detect duplicate images
-    var processedURLs = Set<URL>()
 
     // Selected Image(s) by ID, the most selected image, and its thumbnail
     @Published var selection = Set<ImageModel.ID>()
