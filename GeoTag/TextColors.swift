@@ -8,6 +8,6 @@
 import SwiftUI
 
 extension Color {
-    static let changed = Color("ChangedColor")
-    static let mostSelected = Color("MostSelectedColor")
+    static let changed = Color(nsColor: .systemGreen)
+    static let mostSelected = Color(nsColor: .systemYellow)
 }

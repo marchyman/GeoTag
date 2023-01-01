@@ -21,9 +21,7 @@ extension AppState {
 
         // filter out any ids in the selection that don't reference valid images
         let filteredImagesIds = images.filter { $0.isValid }.map { $0.id }
-        let selection = newSelection.filter {
-            filteredImagesIds.contains($0)
-        }
+        selection = newSelection.filter { filteredImagesIds.contains($0) }
 
         // Handle the case where nothing is selected
         guard !selection.isEmpty else {
