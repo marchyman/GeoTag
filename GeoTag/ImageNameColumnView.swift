@@ -20,7 +20,7 @@ struct ImageNameColumnView: View {
 
     func textColor() -> Color {
         if vm[id].isValid {
-            if id == vm.selectedImage {
+            if id == vm.mostSelected {
                 return .mostSelected
             }
             return .primary
@@ -29,7 +29,7 @@ struct ImageNameColumnView: View {
     }
 
     func textWeight() -> Font.Weight {
-        id == vm.selectedImage ? .semibold : .regular
+        id == vm.mostSelected ? .semibold : .regular
     }
 }
 

@@ -15,7 +15,7 @@ extension AppState {
     // if context is nil use selectedImage
     func pasteDisabled(context: ImageModel.ID? = nil) -> Bool {
         // checl pasteboard, too
-        if context != nil || selectedImage != nil {
+        if context != nil || mostSelected != nil {
             return false
         }
         return true

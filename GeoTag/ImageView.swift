@@ -12,7 +12,7 @@ struct ImageView: View {
 
     var body: some View {
         Group {
-            if let id = vm.selectedImage, let image = vm[id].thumbnail {
+            if let id = vm.mostSelected, let image = vm[id].thumbnail {
                 Image(nsImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)

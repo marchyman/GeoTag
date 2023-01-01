@@ -47,7 +47,7 @@ final class AppState: ObservableObject {
 
     // Selected Image(s) by ID, the most selected image, and its thumbnail
     @Published var selection = Set<ImageModel.ID>()
-    @Published var selectedImage: ImageModel.ID?
+    @Published var mostSelected: ImageModel.ID?
 
     // MARK: Menu actions
 

@@ -14,7 +14,7 @@ extension AppState {
 
     func selectionChanged(newSelection: Set<ImageModel.ID>) {
         guard !newSelection.isEmpty else {
-            selectedImage = nil
+            mostSelected = nil
             pinEnabled = false
             return
         }
@@ -27,22 +27,22 @@ extension AppState {
 
         // Handle the case where nothing is selected
         guard !selection.isEmpty else {
-            selectedImage = nil
+            mostSelected = nil
             pinEnabled = false
             return
         }
 
         // If the image that was the "most" selected is in the current
         // selection set there is nothing more to do.
-        if selection.contains(where: { $0 == selectedImage }) {
+        if selection.contains(where: { $0 == mostSelected }) {
             return
         }
 
         // set the most selected image and its thumbnail. Mark its location
         // on the map.
 
-        selectedImage = selection.first
-        updatePin(location: self[selectedImage!].location)
-        self[selectedImage!].makeThumbnail()
+        mostSelected = selection.first
+        updatePin(location: self[mostSelected!].location)
+        self[mostSelected!].makeThumbnail()
     }
 }
