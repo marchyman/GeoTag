@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-// Replace the help button with something a button that will link to
-// on line help pages.
+// Add a help button that will link to the on line help pages.
 
 extension GeoTagApp {
     var helpCommandGroup: some Commands {
