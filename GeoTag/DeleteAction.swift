@@ -22,7 +22,6 @@ extension AppState {
     }
 
     func deleteAction(context: ImageModel.ID? = nil) {
-        // UNDO here
         if let id = context {
             // delete location from a specific item
             update(id: id, location: nil)

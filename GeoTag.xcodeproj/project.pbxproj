@@ -13,7 +13,7 @@
 		490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A72960DE9B00ACA9FD /* PasteAction.swift */; };
 		490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A929611DD900ACA9FD /* TextColors.swift */; };
 		490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */; };
-		492175792949743E00A5EA83 /* OpenPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492175782949743E00A5EA83 /* OpenPanel.swift */; };
+		492175792949743E00A5EA83 /* OpenAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492175782949743E00A5EA83 /* OpenAction.swift */; };
 		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
 		494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */; };
@@ -50,6 +50,12 @@
 		49B9EDE32949442700574D18 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDE22949442700574D18 /* AppState.swift */; };
 		49BA299D296223F700B26F03 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA299C296223F700B26F03 /* AppDelegate.swift */; };
 		49BA299F2962250200B26F03 /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA299E2962250200B26F03 /* WindowAccessor.swift */; };
+		49BA29A12962272B00B26F03 /* MenuAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A02962272B00B26F03 /* MenuAction.swift */; };
+		49BA29A32962285300B26F03 /* Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A22962285300B26F03 /* Updates.swift */; };
+		49BA29A629622B5200B26F03 /* SaveItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A529622B5200B26F03 /* SaveItemCommandGroup.swift */; };
+		49BA29A82962370200B26F03 /* SaveAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A72962370200B26F03 /* SaveAction.swift */; };
+		49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A9296237C500B26F03 /* DiscardChangesAction.swift */; };
+		49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */; };
 		49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFB2951009500804B74 /* MapPaneView.swift */; };
 		49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFD295100A600804B74 /* MapStyleView.swift */; };
 		49E29F002951011300804B74 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFF2951011300804B74 /* MapView.swift */; };
@@ -63,7 +69,7 @@
 		490A17A72960DE9B00ACA9FD /* PasteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteAction.swift; sourceTree = "<group>"; };
 		490A17A929611DD900ACA9FD /* TextColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextColors.swift; sourceTree = "<group>"; };
 		490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCommandGroup.swift; sourceTree = "<group>"; };
-		492175782949743E00A5EA83 /* OpenPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenPanel.swift; sourceTree = "<group>"; };
+		492175782949743E00A5EA83 /* OpenAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAction.swift; sourceTree = "<group>"; };
 		4921757A2949863A00A5EA83 /* Gpx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
@@ -104,6 +110,13 @@
 		49B9EDE22949442700574D18 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		49BA299C296223F700B26F03 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		49BA299E2962250200B26F03 /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
+		49BA29A02962272B00B26F03 /* MenuAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuAction.swift; sourceTree = "<group>"; };
+		49BA29A22962285300B26F03 /* Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updates.swift; sourceTree = "<group>"; };
+		49BA29A42962296600B26F03 /* ToDo */ = {isa = PBXFileReference; lastKnownFileType = text; path = ToDo; sourceTree = "<group>"; };
+		49BA29A529622B5200B26F03 /* SaveItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveItemCommandGroup.swift; sourceTree = "<group>"; };
+		49BA29A72962370200B26F03 /* SaveAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveAction.swift; sourceTree = "<group>"; };
+		49BA29A9296237C500B26F03 /* DiscardChangesAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardChangesAction.swift; sourceTree = "<group>"; };
+		49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardTracksAction.swift; sourceTree = "<group>"; };
 		49E29EFB2951009500804B74 /* MapPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPaneView.swift; sourceTree = "<group>"; };
 		49E29EFD295100A600804B74 /* MapStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleView.swift; sourceTree = "<group>"; };
 		49E29EFF2951011300804B74 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -122,20 +135,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		490A17A22960B32700ACA9FD /* Store group */ = {
+		490A17A22960B32700ACA9FD /* View Model Group */ = {
 			isa = PBXGroup;
 			children = (
 				49B9EDE22949442700574D18 /* AppState.swift */,
 				495F2F62295EB1A5002A8A88 /* Selections.swift */,
+				49BA29A22962285300B26F03 /* Updates.swift */,
+				49BA29A02962272B00B26F03 /* MenuAction.swift */,
+				492175782949743E00A5EA83 /* OpenAction.swift */,
+				49BA29A72962370200B26F03 /* SaveAction.swift */,
+				49BA29A9296237C500B26F03 /* DiscardChangesAction.swift */,
+				49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */,
 				490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */,
 				490A17A72960DE9B00ACA9FD /* PasteAction.swift */,
 				49B4D34A2957D05D00A4BCFD /* DeleteAction.swift */,
 				49B4D34C2957E21500A4BCFD /* ClearAction.swift */,
-				492175782949743E00A5EA83 /* OpenPanel.swift */,
 				4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */,
 				4921757A2949863A00A5EA83 /* Gpx.swift */,
 			);
-			name = "Store group";
+			name = "View Model Group";
 			sourceTree = "<group>";
 		};
 		498A7354294EA67A00C62B14 /* Image Table Group */ = {
@@ -170,6 +188,7 @@
 				49BA299C296223F700B26F03 /* AppDelegate.swift */,
 				49BA299E2962250200B26F03 /* WindowAccessor.swift */,
 				4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */,
+				49BA29A529622B5200B26F03 /* SaveItemCommandGroup.swift */,
 				494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */,
 				490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */,
 			);
@@ -212,6 +231,7 @@
 		49B0394B2944429E003B7C53 = {
 			isa = PBXGroup;
 			children = (
+				49BA29A42962296600B26F03 /* ToDo */,
 				49A1326E294BFB9300F1B393 /* ExifTool */,
 				49B039562944429E003B7C53 /* GeoTag */,
 				49B039552944429E003B7C53 /* Products */,
@@ -231,7 +251,7 @@
 			isa = PBXGroup;
 			children = (
 				498A735A294EC5F800C62B14 /* App Group */,
-				490A17A22960B32700ACA9FD /* Store group */,
+				490A17A22960B32700ACA9FD /* View Model Group */,
 				498A735C294EC7BC00C62B14 /* Image Model Group */,
 				498A735B294EC78700C62B14 /* Settings Group */,
 				498A735D294EC7D800C62B14 /* Content View Group */,
@@ -373,6 +393,7 @@
 				498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */,
 				490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */,
 				49BA299F2962250200B26F03 /* WindowAccessor.swift in Sources */,
+				49BA29A82962370200B26F03 /* SaveAction.swift in Sources */,
 				494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */,
 				494FED0E29568A8F005FFC23 /* SwiftUIRightClickModifier.swift in Sources */,
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
@@ -383,6 +404,7 @@
 				490A17A42960BA1D00ACA9FD /* CutCopyAction.swift in Sources */,
 				49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */,
 				49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */,
+				49BA29A32962285300B26F03 /* Updates.swift in Sources */,
 				4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */,
 				498A7356294EADC300C62B14 /* ImageLongitudeColumnView.swift in Sources */,
 				49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */,
@@ -393,16 +415,20 @@
 				49B4D34D2957E21500A4BCFD /* ClearAction.swift in Sources */,
 				494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */,
 				49B9EDE32949442700574D18 /* AppState.swift in Sources */,
+				49BA29A629622B5200B26F03 /* SaveItemCommandGroup.swift in Sources */,
 				4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */,
 				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
+				49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */,
 				490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */,
 				49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */,
 				49A729B02953E72200DF1AAF /* DividerView.swift in Sources */,
 				49E29F03295101D600804B74 /* MapSearchView.swift in Sources */,
-				492175792949743E00A5EA83 /* OpenPanel.swift in Sources */,
+				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
 				498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
+				49BA29A12962272B00B26F03 /* MenuAction.swift in Sources */,
+				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
 				495F2F63295EB1A5002A8A88 /* Selections.swift in Sources */,
 				490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */,
 				49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */,

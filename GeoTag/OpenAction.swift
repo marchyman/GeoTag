@@ -1,5 +1,5 @@
 //
-//  OpenPanel.swift
+//  OpenAction.swift
 //  GeoTag
 //
 //  Created by Marco S Hyman on 12/13/22.

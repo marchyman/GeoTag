@@ -14,7 +14,7 @@ import MapKit
 @MainActor
 final class AppState: ObservableObject {
     // The Apps main window.
-    var window: NSWindow!
+    var window: NSWindow?
 
     // Let the user know the app is busy
     @Published var showingProgressView = false
@@ -28,7 +28,7 @@ final class AppState: ObservableObject {
     // Images to edit
     @Published var images = [ImageModel]()
 
-    // get/set an image from the table given its ID.
+    // get/set an image from the table of images  given its ID.
     subscript(id: ImageModel.ID?) -> ImageModel {
          get {
              if let id {
@@ -45,54 +45,12 @@ final class AppState: ObservableObject {
          }
      }
 
-    // Selected Image(s) by ID, the most selected image, and its thumbnail
+    // Selected Image(s) by ID and the most selected image
     @Published var selection = Set<ImageModel.ID>()
     @Published var mostSelected: ImageModel.ID?
 
-    // MARK: Menu actions
-
-    // State changes that will triger actions as a result of selection
-    // of a menu item
-
+    // State that changes when a menu item is picked.
     @Published var selectedMenuAction: MenuAction = .none
-
-    enum MenuAction: Identifiable {
-        var id: Self {
-            return self
-        }
-
-        case none
-        case cut
-        case copy
-        case paste
-        case delete
-        case selectAll
-        case clearList
-    }
-
-    // Do the requested action
-
-    func menuAction(_ action: MenuAction) {
-        self.selectedMenuAction = .none
-        switch action {
-        case .none:
-            return
-        case .cut:
-            print("action: \(action)")
-        case .copy:
-            print("action: \(action)")
-        case .paste:
-            print("action: \(action)")
-        case .delete:
-            deleteAction()
-        case .selectAll:
-            selection = Set(images.map { $0.id })
-        case .clearList:
-            clearImageListAction()
-        }
-    }
-
-    // MARK: Items related to GPX track loading
 
     // Tracks displayed on map
     @Published var gpxTracks = [Gpx]()
@@ -101,37 +59,10 @@ final class AppState: ObservableObject {
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
 
-    // MARK: Items pertaining to the Map pins and Image Locations
-
     // Map pin info
-
     @Published var pin: MKPointAnnotation? = nil
     @Published var pinEnabled = false
 
-    // create a map pin annotation if needed and assign to it the given location
-    //
-    func updatePin(location: Coords?) {
-        if pin == nil {
-            pin = MKPointAnnotation()
-        }
-        if let location {
-            let point = MKMapPoint(location);
-            if !MapView.view.visibleMapRect.contains(point) {
-                MapView.view.setCenter(location, animated: false)
-            }
-            pin!.coordinate = location
-            pinEnabled = true
-        } else {
-            pinEnabled = false
-        }
-    }
-
-    // Update an image with a location. Image is identified by its ID.
-    // Handle UNDO!
-    func update(id: ImageModel.ID, location: Coords?) {
-        self[id].location = location
-        window.isDocumentEdited = true
-    }
 }
 
 

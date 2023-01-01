@@ -57,9 +57,6 @@ struct ImageTableView: View {
             vm.prepareForEdit(inputURLs: items)
             return true
         }
-        .onAppear {
-            vm.selection = Set()
-        }
     }
 }
 

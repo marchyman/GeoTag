@@ -20,6 +20,7 @@ struct GeoTagApp: App {
         }
         .commands {
             newItemCommandGroup
+            saveItemCommandGroup
             pasteBoardCommandGroup
             helpCommandGroup
         }

@@ -7,12 +7,12 @@
 
 import Foundation
 
-// Program "Clear List" action removes removes
+// Program "Clear List" action removes all images from the table
 
 extension AppState {
     // return true if the Clear Image List meny item should be disabled
     var clearDisabled: Bool {
-        images.isEmpty || window.isDocumentEdited
+        images.isEmpty || (window?.isDocumentEdited ?? false)
     }
 
     func clearImageListAction() {

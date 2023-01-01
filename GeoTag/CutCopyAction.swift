@@ -18,7 +18,6 @@ extension AppState {
     }
 
     func cutAction(context: ImageModel.ID? = nil) {
-        // UNDO here
         copyAction(context: context)
         if let id = context != nil ? context : mostSelected {
             deleteAction(context: id)
@@ -28,7 +27,6 @@ extension AppState {
     }
 
     func copyAction(context: ImageModel.ID? = nil) {
-        // UNDO here
         if let id = context != nil ? context : mostSelected {
             print("copy \(self[id].location)")
         }
