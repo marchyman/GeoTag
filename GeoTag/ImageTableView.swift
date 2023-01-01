@@ -64,8 +64,8 @@ struct ImageTableView: View {
 }
 
 
-/// Computed properties to convert elements of an imageModel into strings for use with
-/// this view
+/// Computed properties to convert elements of an imageModel into values for use with
+/// this view, espeically with regard to sorting.
 extension ImageModel {
     var name: String {
         fileURL.lastPathComponent

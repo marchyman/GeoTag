@@ -14,7 +14,7 @@ struct ImageLongitudeColumnView: View {
 
     var body: some View {
         Text(longitudeToString())
-            .foregroundColor(vm[id].isValid ? .primary : .gray)
+            .foregroundColor(textColor())
     }
 
     func longitudeToString() -> String {
@@ -29,5 +29,29 @@ struct ImageLongitudeColumnView: View {
             }
         }
         return ""
+    }
+
+    func textColor() -> Color {
+        if vm[id].isValid {
+            if vm[id].location == vm[id].originalLocation {
+                return .primary
+            }
+            return .changed
+        }
+        return .secondary
+    }
+}
+
+struct ImageLongitudeColumnView_Previews: PreviewProvider {
+    static var image =
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
+                   validImage: true,
+                   dateTimeCreated: "2022:12:12 11:22:33",
+                   latitude: 33.123,
+                   longitude: 123.456)
+
+    static var previews: some View {
+        ImageLongitudeColumnView(id: image.id)
+            .environmentObject(AppState(images: [image]))
     }
 }
