@@ -230,14 +230,11 @@ struct Exiftool {
                             }
                             gpsLon = true
                         }
-                    case "GPSAltitude":
+                    case "-GPSAltitude":
                         let parts = value.split(separator: " ")
                         if let eleValue = Double(parts[0]),
                             parts.count == 2 {
-                            elevation = eleValue
-//                            if parts[1] == "W" {
-//                                location.longitude = -location.longitude
-//                            }
+                            elevation = parts[1] == "1" ? eleValue : -eleValue
                         }
 
                     default:

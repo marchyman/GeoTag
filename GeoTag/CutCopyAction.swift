@@ -28,7 +28,7 @@ extension AppState {
 
     func copyAction(context: ImageModel.ID? = nil) {
         if let id = context != nil ? context : mostSelected {
-            print("copy \(self[id].location)")
+            print("copy \(id)")
         }
     }
 

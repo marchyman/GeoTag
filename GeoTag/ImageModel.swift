@@ -177,6 +177,11 @@ struct ImageModel: Identifiable {
                                  longitude: lonRef == "E" ? lon : -lon)
                 originalLocation = location
             }
+            if let alt = gpsData[ImageModel.GPSAltitude] as? Double,
+               let altRef = gpsData[ImageModel.GPSAltitudeRef] as? Int {
+                elevation = altRef == 0 ? alt : -alt
+                originalElevation = elevation
+            }
         }
         return true
     }
@@ -202,6 +207,8 @@ struct ImageModel: Identifiable {
             if results.valid {
                 location = results.location
                 originalLocation = location
+                elevation = results.elevation
+                originalElevation = elevation
             }
         }
     }
@@ -252,7 +259,6 @@ extension ImageModel: Equatable, Hashable {
     }
 }
 
-
 // Date formatter used to put timestamps in the form used by exiftool
 
 extension ImageModel {
@@ -260,6 +266,7 @@ extension ImageModel {
 }
 
 // CFString to (NS)*String casts for Image Property constants
+
 extension ImageModel {
     static let exifDictionary = kCGImagePropertyExifDictionary as NSString
     static let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
@@ -269,4 +276,6 @@ extension ImageModel {
     static let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
     static let GPSLongitude = kCGImagePropertyGPSLongitude as String
     static let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
+    static let GPSAltitude = kCGImagePropertyGPSAltitude as String
+    static let GPSAltitudeRef = kCGImagePropertyGPSAltitudeRef as String
 }
