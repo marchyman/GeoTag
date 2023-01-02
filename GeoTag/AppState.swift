@@ -59,8 +59,10 @@ final class AppState: ObservableObject {
     @Published var selectedMenuAction: MenuAction = .none
     var menuContext: ImageModel.ID?
 
-    // Tracks displayed on map
+    // Tracks displayed on map and a timezone to use when matching image
+    // timestamps to track logs.
     @Published var gpxTracks = [Gpx]()
+    var timeZone: TimeZone?
 
     // GPX File Loading sheet information
     var gpxGoodFileNames = [String]()

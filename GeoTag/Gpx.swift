@@ -29,11 +29,6 @@ import Foundation
 /// GPX file processing
 
 class Gpx: NSObject {
-    /// TimeZone
-    ///
-    /// Holds the optional timezone to use with image timestamp when matching image to tracklog.
-    static var timeZone: TimeZone?
-
     // GPX Parsing errors
     enum GpxParseError: Error {
         case gpxOpenError

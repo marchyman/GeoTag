@@ -30,9 +30,11 @@ extension AppState {
     }
 
     // Update an image with a location. Image is identified by its ID.
+    // Elevation is optional and is only provided when matching track logs
     // Handle UNDO!
-    func update(id: ImageModel.ID, location: Coords?) {
+    func update(id: ImageModel.ID, location: Coords?, elevation: Double? = nil) {
         self[id].location = location
+        self[id].elevation = elevation
         window?.isDocumentEdited = true
     }
 }

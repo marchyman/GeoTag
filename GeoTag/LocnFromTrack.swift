@@ -28,15 +28,27 @@ extension AppState {
             imagesToUpdate = selection
         }
 
+        // image timestamps must be converted to seconds from the epoch
+        // to match track logs.  Prepare a dateformatter to handle the
+        // conversion.
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = ImageModel.dateFormat
+        dateFormatter.timeZone = timeZone
+
         // Handle UNDO grouping here
         let updateGroup = DispatchGroup()
         imagesToUpdate.forEach { id in
             DispatchQueue.global(qos: .userInitiated).async {
                 updateGroup.enter()
-                self.gpxTracks.forEach {
-                    $0.search(timeStamp: self[id].timeStamp) { location in
-                        DispatchQueue.main.async {
-                            self.update(id: id, location: location)
+                // don't bother looking for a tracklog match if we can't
+                // process the image date
+                if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
+                    self.gpxTracks.forEach {
+                        $0.search(imageTime: convertedDate.timeIntervalSince1970) { location, elevation in
+                            DispatchQueue.main.async {
+                                self.update(id: id, location: location, elevation: elevation)
+                            }
                         }
                     }
                 }
