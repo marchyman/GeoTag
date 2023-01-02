@@ -14,7 +14,12 @@ extension AppState {
     }
 
     func discardChangesAction() {
-        // handle here
+        // walk through the array of images calling the revert() function
+        var index = images.startIndex
+        while index < images.endIndex {
+            images[index].revert()
+            index = images.index(after: index)
+        }
         window?.isDocumentEdited = false
     }
 }
