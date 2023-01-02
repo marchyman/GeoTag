@@ -15,6 +15,7 @@ struct ImageLatitudeColumnView: View {
     var body: some View {
         Text(latitudeToString())
             .foregroundColor(textColor())
+            .help(vm.elevationAsString(id: id))
     }
 
     func latitudeToString() -> String {

@@ -76,7 +76,19 @@ extension ImageModel {
     var longitude: Double {
         location?.longitude ?? 0.0
     }
+}
 
+extension AppState {
+    func elevationAsString(id: ImageModel.ID) -> String {
+        var value = "Elevation: "
+        if let elevation = self[id].elevation {
+            value += String(format: "% 4.2f", elevation)
+            value += " meters"
+        } else {
+            value += "Unknown"
+        }
+        return value
+    }
 }
 
 struct ImageTableView_Previews: PreviewProvider {

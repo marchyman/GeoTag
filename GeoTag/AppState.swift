@@ -71,7 +71,6 @@ final class AppState: ObservableObject {
     // Map pin info
     @Published var pin: MKPointAnnotation? = nil
     @Published var pinEnabled = false
-
 }
 
 
