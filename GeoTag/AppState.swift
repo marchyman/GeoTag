@@ -29,12 +29,17 @@ final class AppState: ObservableObject {
     @Published var images = [ImageModel]()
 
     // get/set an image from the table of images  given its ID.
+
     subscript(id: ImageModel.ID?) -> ImageModel {
          get {
              if let id {
-                 return images.first(where: { $0.id == id })!
+                 if let image = images.first(where: { $0.id == id }) {
+                     return image
+                 }
              }
-             // should never occur. Return a made up invalid image
+             // A view may hold on to an ID that is no longer in the table
+             // If it tries to access the image associated with that id
+             // return a fake image
              return ImageModel()
          }
 
@@ -49,8 +54,10 @@ final class AppState: ObservableObject {
     @Published var selection = Set<ImageModel.ID>()
     @Published var mostSelected: ImageModel.ID?
 
-    // State that changes when a menu item is picked.
+    // State that changes when a menu item is picked.  Some menu actions
+    // optionally need a context -- the image.id of the image to act upon
     @Published var selectedMenuAction: MenuAction = .none
+    var menuContext: ImageModel.ID?
 
     // Tracks displayed on map
     @Published var gpxTracks = [Gpx]()

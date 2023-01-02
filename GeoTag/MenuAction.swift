@@ -14,15 +14,22 @@ extension AppState {
         }
 
         case none
+        // file menu
+        case save
+        case discardChanges
+        case discardTracks
+        case clearList
+        // edit menu
         case cut
         case copy
         case paste
         case delete
         case selectAll
-        case save
-        case discardChanges
-        case discardTracks
-        case clearList
+        case showInFinder
+        case locnFromTrack
+        case adjustTimeZone
+        case modifyDateTime
+        case modifyLocation
     }
 
     // Do the requested action
@@ -32,6 +39,14 @@ extension AppState {
         switch action {
         case .none:
             return
+        case .save:
+            saveAction()
+        case .discardChanges:
+            discardChangesAction()
+        case .discardTracks:
+            discardTracksAction()
+        case .clearList:
+            clearImageListAction()
         case .cut:
             cutAction()
         case .copy:
@@ -42,14 +57,16 @@ extension AppState {
             deleteAction()
         case .selectAll:
             selection = Set(images.map { $0.id })
-        case .save:
-            saveAction()
-        case .discardChanges:
-            discardChangesAction()
-        case .discardTracks:
-            discardTracksAction()
-        case .clearList:
-            clearImageListAction()
+        case .showInFinder:
+            showInFinderAction()
+        case .locnFromTrack:
+            return
+        case .adjustTimeZone:
+            return
+        case .modifyDateTime:
+            return
+        case .modifyLocation:
+            return
         }
     }
 }

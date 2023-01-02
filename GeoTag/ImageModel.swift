@@ -229,11 +229,11 @@ extension ImageModel {
         }
     }
 
-    // create an instance of an ImageModel for "no-image".  Should never
-    // be used but catch a bug that would otherwise crash the program.
+    // create an instance of an ImageModel when one is needed but there
+    // is otherwise no instance to return.
     init() {
         do {
-            try self.init(imageURL: URL(filePath: "no-image"), forPreview: true)
+            try self.init(imageURL: URL(filePath: ""), forPreview: true)
         } catch {
             fatalError("ImageModel no-image init failed")
         }
