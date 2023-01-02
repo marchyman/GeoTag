@@ -29,6 +29,7 @@ struct ContextMenuView: View {
             Button("Show In Finder") { setContextMenuAction(.showInFinder) }
                 .disabled(vm.showInFinderDisabled(context: context))
             Button("Locn From Track") { setContextMenuAction(.locnFromTrack) }
+                .disabled(vm.locnFromTrackDisabled(context: context))
             Button("Modify Date/Time") { setContextMenuAction(.modifyDateTime) }
             Button("Modify Location") { setContextMenuAction(.modifyLocation) }
         }

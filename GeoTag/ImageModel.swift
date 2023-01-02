@@ -256,7 +256,6 @@ extension ImageModel: Equatable, Hashable {
 // Date formatter used to put timestamps in the form used by exiftool
 
 extension ImageModel {
-    static let dateFormatter = DateFormatter()
     static let dateFormat = "yyyy:MM:dd HH:mm:ss"
 }
 

@@ -60,7 +60,7 @@ extension AppState {
         case .showInFinder:
             showInFinderAction()
         case .locnFromTrack:
-            return
+            locnFromTrackAction()
         case .adjustTimeZone:
             return
         case .modifyDateTime:

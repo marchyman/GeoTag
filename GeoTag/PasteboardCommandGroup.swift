@@ -35,6 +35,7 @@ extension GeoTagApp {
 //                Button("Interpolate") { }
 //                    .disabled(true)
                 Button("Locn from track") { setPastboardItemAction(.locnFromTrack) }
+                    .disabled(vm.locnFromTrackDisabled())
                 Button("Adjust Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
                 Button("Modify Date/Time…") { setPastboardItemAction(.modifyDateTime) }
                 Button("Modify Location…") { setPastboardItemAction(.modifyLocation) }
