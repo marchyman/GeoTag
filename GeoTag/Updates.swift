@@ -76,14 +76,11 @@ extension AppState {
             }
         }
         if newOverlay {
-            let span = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
-                                        longitudeDelta:  maxlon - minlon)
-            let center = Coords(latitude: (minlat + maxlat)/2,
-                                longitude: (minlon + maxlon)/2)
+            mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
+                                       longitudeDelta:  maxlon - minlon)
+            mapCenter = Coords(latitude: (minlat + maxlat)/2,
+                               longitude: (minlon + maxlon)/2)
             refreshTracks = true
-
-//            mapView.setRegion(MKCoordinateRegion(center: center, span: span),
-//                              animated: false)
         }
     }
 

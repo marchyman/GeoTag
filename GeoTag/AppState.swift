@@ -68,8 +68,10 @@ final class AppState: ObservableObject {
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
 
-    // Map Track Lines
+    // Map Tracks and the containing span of the last track added
     var mapLines = [MKPolyline]()
+    var mapSpan: MKCoordinateSpan?
+    var mapCenter: Coords?
     @Published var refreshTracks = false
 
     // Map pin info
