@@ -32,6 +32,9 @@ struct SettingsView: View {
                 .padding([.bottom, .horizontal] )
 
                 ColorPicker("GPS Track Color:", selection: $trackColor)
+                    .onChange(of: trackColor.rawValue) { color in
+                        vm.refreshTracks = true
+                    }
                     .padding(.horizontal)
 
                 TextField("GPS Track width:", value: $trackWidth, format: .number)
@@ -58,32 +61,5 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
-    }
-}
-
-// Color extension to allow storage in AppStorage
-// Code taken from:
-// https://gist.github.com/vibrazy/b105e3138105f604ab1ee4cfcdb67075
-
-extension Color: RawRepresentable {
-    public init?(rawValue: Int) {
-        let red =   Double((rawValue & 0xFF0000) >> 16) / 0xFF
-        let green = Double((rawValue & 0x00FF00) >> 8) / 0xFF
-        let blue =  Double(rawValue & 0x0000FF) / 0xFF
-        self = Color(red: red, green: green, blue: blue)
-    }
-
-    public var rawValue: Int {
-        guard let coreImageColor = coreImageColor else {
-            return 0
-        }
-        let red = Int(coreImageColor.red * 255 + 0.5)
-        let green = Int(coreImageColor.green * 255 + 0.5)
-        let blue = Int(coreImageColor.blue * 255 + 0.5)
-        return (red << 16) | (green << 8) | blue
-    }
-
-    private var coreImageColor: CIColor? {
-        return CIColor(color: NSColor(self))
     }
 }
