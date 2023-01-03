@@ -17,6 +17,7 @@ struct ImageLongitudeColumnView: View {
         Text(longitudeToString())
             .foregroundColor(textColor())
             .onDoubleClick {
+                vm.menuContext = id
                 openWindow(id: GeoTagApp.modifyLocation)
             }
             .help(vm.elevationAsString(id: id))

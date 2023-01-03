@@ -17,6 +17,7 @@ struct ImageTimestampColumnView: View {
         Text(vm[id].timeStamp)
             .foregroundColor(textColor())
             .onDoubleClick {
+                vm.menuContext = id
                 openWindow(id: GeoTagApp.modifyDateTime)
             }
     }
