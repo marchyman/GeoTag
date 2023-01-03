@@ -13,8 +13,14 @@ extension AppState {
         return gpxTracks.isEmpty
     }
 
+    // clear out all track related data and trigger a refresh which will
+    // remove any existing tracks from the map.
     func discardTracksAction() {
-        // handle here
+        gpxTracks = []
+        mapLines = []
+        mapSpan = nil
+        mapCenter = nil
+        refreshTracks = true
     }
 }
 

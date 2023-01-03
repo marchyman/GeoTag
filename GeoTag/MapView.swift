@@ -68,9 +68,7 @@ struct MapView: NSViewRepresentable {
             if !overlays.isEmpty {
                 view.removeOverlays(overlays)
             }
-            for mapLine in vm.mapLines {
-                view.addOverlay(mapLine)
-            }
+            view.addOverlays(vm.mapLines)
             if let center = vm.mapCenter, let span = vm.mapSpan {
                 view.setRegion(MKCoordinateRegion(center: center,
                                                   span: span),
