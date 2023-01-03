@@ -37,8 +37,11 @@ extension GeoTagApp {
                 Button("Locn from track") { setPastboardItemAction(.locnFromTrack) }
                     .disabled(vm.locnFromTrackDisabled())
                 Button("Adjust Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
+                    .disabled(vm.gpxTracks.isEmpty)
                 Button("Modify Date/Time…") { setPastboardItemAction(.modifyDateTime) }
+                    .disabled(vm.mostSelected == nil)
                 Button("Modify Location…") { setPastboardItemAction(.modifyLocation) }
+                    .disabled(vm.mostSelected == nil)
             }
         }
     }

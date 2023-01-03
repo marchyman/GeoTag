@@ -25,6 +25,21 @@ struct GeoTagApp: App {
             helpCommandGroup
         }
 
+        Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
+            AdjustTimezoneView()
+                .environmentObject(vm)
+        }
+
+        Window(GeoTagApp.modifyDateTime, id: GeoTagApp.modifyDateTime) {
+            ModifyDateTimeView()
+                .environmentObject(vm)
+       }
+
+        Window(GeoTagApp.modifyLocation, id: GeoTagApp.modifyLocation) {
+            ModifyLocationView()
+                .environmentObject(vm)
+        }
+
         Settings {
             SettingsView()
                 .environmentObject(vm)
@@ -33,3 +48,8 @@ struct GeoTagApp: App {
     }
 }
 
+extension GeoTagApp {
+    static var adjustTimeZone = "Adjust Time Zone"
+    static var modifyDateTime = "Modify Image Date/Time"
+    static var modifyLocation = "Modify Image Location"
+}

@@ -10,11 +10,15 @@ import SwiftUI
 struct ImageLongitudeColumnView: View {
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
     @EnvironmentObject var vm: AppState
+    @Environment(\.openWindow) var openWindow
     let id: ImageModel.ID
 
     var body: some View {
         Text(longitudeToString())
             .foregroundColor(textColor())
+            .onDoubleClick {
+                openWindow(id: GeoTagApp.modifyLocation)
+            }
             .help(vm.elevationAsString(id: id))
     }
 

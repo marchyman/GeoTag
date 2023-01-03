@@ -23,6 +23,9 @@
 		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
 		4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4955351C29526D4E004AF5F2 /* SizeReader.swift */; };
 		495F2F63295EB1A5002A8A88 /* Selections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F2F62295EB1A5002A8A88 /* Selections.swift */; };
+		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
+		4969ACA32963DFE700BBC219 /* ModifyDateTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA22963DFE700BBC219 /* ModifyDateTimeView.swift */; };
+		4969ACA62963E05000BBC219 /* ModifyLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA52963E05000BBC219 /* ModifyLocationView.swift */; };
 		4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
@@ -83,6 +86,9 @@
 		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
 		4955351C29526D4E004AF5F2 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
 		495F2F62295EB1A5002A8A88 /* Selections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selections.swift; sourceTree = "<group>"; };
+		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
+		4969ACA22963DFE700BBC219 /* ModifyDateTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyDateTimeView.swift; sourceTree = "<group>"; };
+		4969ACA52963E05000BBC219 /* ModifyLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyLocationView.swift; sourceTree = "<group>"; };
 		4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLToImageHelper.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
@@ -163,6 +169,30 @@
 				49BA29B12962676E00B26F03 /* GpxSearch.swift */,
 			);
 			name = "View Model Group";
+			sourceTree = "<group>";
+		};
+		4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */ = {
+			isa = PBXGroup;
+			children = (
+				4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */,
+			);
+			name = "Adjust Time Zone Group";
+			sourceTree = "<group>";
+		};
+		4969AC9F2963CC3E00BBC219 /* Modify DateTime Group */ = {
+			isa = PBXGroup;
+			children = (
+				4969ACA22963DFE700BBC219 /* ModifyDateTimeView.swift */,
+			);
+			name = "Modify DateTime Group";
+			sourceTree = "<group>";
+		};
+		4969ACA42963E02D00BBC219 /* Modify Location Group */ = {
+			isa = PBXGroup;
+			children = (
+				4969ACA52963E05000BBC219 /* ModifyLocationView.swift */,
+			);
+			name = "Modify Location Group";
 			sourceTree = "<group>";
 		};
 		498A7354294EA67A00C62B14 /* Image Table Group */ = {
@@ -260,6 +290,9 @@
 			isa = PBXGroup;
 			children = (
 				498A735A294EC5F800C62B14 /* App Group */,
+				4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */,
+				4969AC9F2963CC3E00BBC219 /* Modify DateTime Group */,
+				4969ACA42963E02D00BBC219 /* Modify Location Group */,
 				490A17A22960B32700ACA9FD /* View Model Group */,
 				498A735C294EC7BC00C62B14 /* Image Model Group */,
 				498A735B294EC78700C62B14 /* Settings Group */,
@@ -427,6 +460,7 @@
 				49B9EDE32949442700574D18 /* AppState.swift in Sources */,
 				49BA29A629622B5200B26F03 /* SaveItemCommandGroup.swift in Sources */,
 				4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */,
+				4969ACA32963DFE700BBC219 /* ModifyDateTimeView.swift in Sources */,
 				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
 				49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */,
 				490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */,
@@ -434,6 +468,7 @@
 				49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */,
 				49A729B02953E72200DF1AAF /* DividerView.swift in Sources */,
 				49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */,
+				4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */,
 				49E29F03295101D600804B74 /* MapSearchView.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
 				498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */,
@@ -441,6 +476,7 @@
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
 				49BA29A12962272B00B26F03 /* MenuAction.swift in Sources */,
 				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
+				4969ACA62963E05000BBC219 /* ModifyLocationView.swift in Sources */,
 				495F2F63295EB1A5002A8A88 /* Selections.swift in Sources */,
 				490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */,
 				49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */,

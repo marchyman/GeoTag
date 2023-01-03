@@ -8,6 +8,7 @@
 import SwiftUI
 
 extension AppState {
+    
     enum MenuAction: Identifiable {
         var id: Self {
             return self
@@ -34,7 +35,7 @@ extension AppState {
 
     // Do the requested action
 
-    func menuAction(_ action: MenuAction) {
+    func menuAction(_ action: MenuAction, openWindow: OpenWindowAction) {
         self.selectedMenuAction = .none
         switch action {
         case .none:
@@ -62,11 +63,11 @@ extension AppState {
         case .locnFromTrack:
             locnFromTrackAction()
         case .adjustTimeZone:
-            return
+            openWindow(id: GeoTagApp.adjustTimeZone)
         case .modifyDateTime:
-            return
+            openWindow(id: GeoTagApp.modifyDateTime)
         case .modifyLocation:
-            return
+            openWindow(id: GeoTagApp.modifyLocation)
         }
     }
 }

@@ -30,8 +30,10 @@ struct ContextMenuView: View {
                 .disabled(vm.showInFinderDisabled(context: context))
             Button("Locn From Track") { setContextMenuAction(.locnFromTrack) }
                 .disabled(vm.locnFromTrackDisabled(context: context))
-            Button("Modify Date/Time") { setContextMenuAction(.modifyDateTime) }
-            Button("Modify Location") { setContextMenuAction(.modifyLocation) }
+            Button("Modify Date/Time…") { setContextMenuAction(.modifyDateTime) }
+                .disabled(context == nil && vm.mostSelected == nil)
+            Button("Modify Location…") { setContextMenuAction(.modifyLocation) }
+                .disabled(context == nil && vm.mostSelected == nil)
         }
         Divider()
         Button("Clear Image List") { setContextMenuAction(.clearList) }
@@ -41,6 +43,7 @@ struct ContextMenuView: View {
     func setContextMenuAction(_ action: AppState.MenuAction) {
         vm.menuContext = context
         vm.selectedMenuAction = action
+        print("\(action) for \(context)")
     }
 }
 

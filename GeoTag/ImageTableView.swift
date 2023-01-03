@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ImageTableView: View {
     @EnvironmentObject var vm: AppState
+    @Environment(\.openWindow) var openWindow
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
@@ -50,7 +51,7 @@ struct ImageTableView: View {
         }
         .onChange(of: vm.selectedMenuAction) { action in
             if action != .none {
-                vm.menuAction(action)
+                vm.menuAction(action, openWindow: openWindow)
             }
         }
         .dropDestination(for: URL.self) {items, location in
