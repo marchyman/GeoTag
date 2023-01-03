@@ -27,6 +27,7 @@ struct GeoTagApp: App {
 
         Settings {
             SettingsView()
+                .environmentObject(vm)
         }
 
     }

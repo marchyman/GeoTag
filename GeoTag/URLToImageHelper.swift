@@ -22,8 +22,7 @@ struct URLToImageHelper {
         processedURLs = Set(knownImages.map {$0.fileURL })
     }
 
-    mutating func urlToImage(group: DispatchGroup, url: URL) {
-        defer { group.leave() }
+    mutating func urlToImage(url: URL) {
         if url.pathExtension.lowercased() == "gpx" {
             parseGpxFile(url)
         } else if processedURLs.contains(url) {

@@ -68,6 +68,10 @@ final class AppState: ObservableObject {
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
 
+    // Map Track Lines
+    var mapLines = [MKPolyline]()
+    @Published var refreshTracks = false
+
     // Map pin info
     @Published var pin: MKPointAnnotation? = nil
     @Published var pinEnabled = false

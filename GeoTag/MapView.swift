@@ -37,7 +37,6 @@ struct MapView: NSViewRepresentable {
     let mapType: MKMapType
     let center: CLLocationCoordinate2D
     let altitude: Double
-
     @EnvironmentObject var vm: AppState
 
     func makeCoordinator() -> MapView.Coordinator {
@@ -64,6 +63,15 @@ struct MapView: NSViewRepresentable {
         if !vm.pinEnabled && vm.pin != nil {
             view.removeAnnotation(vm.pin!)
         }
+        if vm.refreshTracks {
+            let overlays = view.overlays
+            if !overlays.isEmpty {
+                view.removeOverlays(overlays)
+            }
+            for mapLine in vm.mapLines {
+                view.addOverlay(mapLine)
+            }
+        }
     }
 }
 
@@ -72,6 +80,8 @@ extension MapView {
     /// Coordinator class conforming to MKMapViewDelegate
     ///
     class Coordinator: NSObject, MKMapViewDelegate {
+        @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+        @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
         let vm: AppState
 
         init(vm: AppState) {
@@ -80,10 +90,8 @@ extension MapView {
 
         /// return a pinAnnotationView for a red pin
         ///
-        func mapView(
-            _ mapView: MKMapView,
-            viewFor annotation: MKAnnotation
-        ) -> MKAnnotationView? {
+        func mapView(_ mapView: MKMapView,
+                     viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             let identifier = "pinAnnotation"
             var annotationView =
                 mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
@@ -107,17 +115,27 @@ extension MapView {
         /// update the location of a dragged pin
         ///
         @MainActor
-        func mapView(
-            _ mapView: MKMapView,
-            annotationView view: MKAnnotationView,
-            didChange newState: MKAnnotationView.DragState,
-            fromOldState oldState: MKAnnotationView.DragState
-        ) {
+        func mapView(_ mapView: MKMapView,
+                     annotationView view: MKAnnotationView,
+                     didChange newState: MKAnnotationView.DragState,
+                     fromOldState oldState: MKAnnotationView.DragState) {
             if let id = vm.mostSelected,
                (newState == .ending) {
-                vm.update(id: id,
-                                location: view.annotation!.coordinate)
+                vm.update(id: id, location: view.annotation!.coordinate)
             }
+        }
+
+        @MainActor
+        func mapView(_ mapview: MKMapView,
+                     rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            let polyline = overlay as! MKPolyline
+            if vm.mapLines.contains(polyline) {
+                let renderer = MKPolylineRenderer(polyline: polyline)
+                renderer.strokeColor = NSColor(trackColor)
+                renderer.lineWidth = CGFloat(trackWidth)
+                return renderer
+            }
+            return MKOverlayRenderer(overlay: overlay)
         }
     }
 }

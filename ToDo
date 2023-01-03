@@ -1,10 +1,11 @@
 Undo/Redo
 Map Tracks
+Map track color reference
+Map track line width preference
 timezone selection
 change date/time
 change location
 save changes (file menu)
-discard changes (file menu)
 discard tracks (file menu)
 copy
 paste

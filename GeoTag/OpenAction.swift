@@ -43,12 +43,9 @@ extension AppState {
         showingProgressView = true
 
         // dragged urls are duplicated for some reason. Make an array
-        // of unique URLs.
-        let urls = inputURLs.uniqued()
-        var imageURLs = [URL]()
+        // of unique URLs including those in any containing folder
 
-        // expand the list of inputURLs by processing all folders
-        imageURLs = urls.flatMap { url in
+        let imageURLs = inputURLs.uniqued().flatMap { url in
             isFolder(url: url) ? urlsIn(folder: url) : [url]
         }
 
@@ -59,14 +56,18 @@ extension AppState {
         let group = DispatchGroup()
         for url in imageURLs {
             group.enter()
-            helper.urlToImage(group: group, url: url)
+            helper.urlToImage(url: url)
+            group.leave()
         }
 
         // Update the app state once all the images have been processed.
         group.notify(queue: .global(qos: .userInitiated)) {
             DispatchQueue.main.async {
                 self.images.append(contentsOf: helper.images)
-                self.gpxTracks.append(contentsOf: helper.gpxTracks)
+                for gpxTrack in helper.gpxTracks {
+                    self.updateTracks(gpx: gpxTrack)
+                    self.gpxTracks.append(gpxTrack)
+                }
                 self.gpxGoodFileNames = helper.gpxGoodFileNames
                 self.gpxBadFileNames = helper.gpxBadFileNames
                 self.sheetType = helper.sheetType

@@ -15,6 +15,9 @@ struct AppSettings {
     static let mapLongitudeKey = "MapLongitudeKey"
     static let mapAltitudeKey = "MapAltitudeKey"
     static let dividerPositionKey = "DividerPositionKey"
+    static let trackColorKey = "TrackColorKey"
+    static let trackWidthKey = "TrackWidthKey"
+
 
     enum CoordFormat: Int {
         case deg
