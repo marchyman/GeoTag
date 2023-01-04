@@ -57,11 +57,18 @@ struct MapView: NSViewRepresentable {
 
     func updateNSView(_ view: ClickMapView, context: Context) {
         view.mapType = mapType
-        if vm.pinEnabled, let pin = vm.pin {
-            view.addAnnotation(pin)
-        }
-        if !vm.pinEnabled && vm.pin != nil {
-            view.removeAnnotation(vm.pin!)
+        if vm.pinEnabled {
+            if let pin = vm.pin {
+                let point = MKMapPoint(pin.coordinate)
+                if !view.visibleMapRect.contains(point) {
+                    view.setCenter(pin.coordinate, animated: false)
+                }
+                view.addAnnotation(pin)
+            }
+        } else {
+            if let pin = vm.pin {
+                view.removeAnnotation(pin)
+            }
         }
         if vm.refreshTracks {
             let overlays = view.overlays

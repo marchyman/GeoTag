@@ -43,7 +43,6 @@ struct ContextMenuView: View {
     func setContextMenuAction(_ action: AppState.MenuAction) {
         vm.menuContext = context
         vm.selectedMenuAction = action
-        print("\(action) for \(context)")
     }
 }
 

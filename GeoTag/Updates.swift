@@ -27,10 +27,6 @@ extension AppState {
             pin = MKPointAnnotation()
         }
         if let location {
-            let point = MKMapPoint(location);
-            if !MapView.view.visibleMapRect.contains(point) {
-                MapView.view.setCenter(location, animated: false)
-            }
             pin!.coordinate = location
             pinEnabled = true
         } else {
