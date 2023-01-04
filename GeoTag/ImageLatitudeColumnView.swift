@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ImageLatitudeColumnView: View {
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
     @Environment(\.openWindow) var openWindow
     let id: ImageModel.ID
 
@@ -58,6 +58,6 @@ struct ImageLatitudeColumnView_Previews: PreviewProvider {
 
     static var previews: some View {
         ImageLatitudeColumnView(id: image.id)
-            .environmentObject(AppState(images: [image]))
+            .environmentObject(ViewModel(images: [image]))
     }
 }

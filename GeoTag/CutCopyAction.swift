@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension AppState {
+extension ViewModel {
     // return true if cut or copy actions should be disabled
     // if context is nil use selectedImage
     func cutCopyDisabled(context: ImageModel.ID? = nil) -> Bool {

@@ -13,7 +13,7 @@ let windowMinWidth = 800.0
 let windowMinHeight = 800.0
 
 struct ContentView: View {
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var vm: ViewModel
     @ObservedObject var dividerControl = DividerControl()
 
     var body: some View {
@@ -21,7 +21,7 @@ struct ContentView: View {
             ZStack {
                 ImageTableView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                if appState.showingProgressView {
+                if vm.showingProgressView {
                     ProgressView("Processing image files...")
                 }
             }
@@ -30,21 +30,21 @@ struct ContentView: View {
         .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)
         .border(windowBorderColor)
         .padding()
-        .sheet(item: $appState.sheetType, onDismiss: sheetDismissed) { sheetType in
+        .sheet(item: $vm.sheetType, onDismiss: sheetDismissed) { sheetType in
             ContentViewSheet(type: sheetType)
         }
     }
 
     // clear out sheet content when the sheet is dismissed.
     func sheetDismissed() {
-        appState.sheetMessage = nil
-        appState.sheetError = nil
+        vm.sheetMessage = nil
+        vm.sheetError = nil
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(AppState())
+            .environmentObject(ViewModel())
     }
 }

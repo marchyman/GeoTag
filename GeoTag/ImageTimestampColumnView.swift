@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageTimestampColumnView: View {
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
     @Environment(\.openWindow) var openWindow
 
     let id: ImageModel.ID
@@ -43,6 +43,6 @@ struct ImageTimestampColumnView_Previews: PreviewProvider {
 
     static var previews: some View {
         ImageTimestampColumnView(id: image.id)
-            .environmentObject(AppState(images: [image]))
+            .environmentObject(ViewModel(images: [image]))
     }
 }

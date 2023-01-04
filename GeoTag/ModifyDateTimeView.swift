@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ModifyDateTimeView: View {
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
 
     var body: some View {
         VStack {
@@ -25,6 +25,6 @@ struct ModifyDateTimeView: View {
 struct ModifyDateTimeView_Previews: PreviewProvider {
     static var previews: some View {
         ModifyDateTimeView()
-            .environmentObject(AppState())
+            .environmentObject(ViewModel())
     }
 }

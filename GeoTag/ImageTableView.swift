@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageTableView: View {
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
     @Environment(\.openWindow) var openWindow
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
@@ -79,7 +79,7 @@ extension ImageModel {
     }
 }
 
-extension AppState {
+extension ViewModel {
     func elevationAsString(id: ImageModel.ID) -> String {
         var value = "Elevation: "
         if let elevation = self[id].elevation {
@@ -113,6 +113,6 @@ struct ImageTableView_Previews: PreviewProvider {
     ]
     static var previews: some View {
         ImageTableView()
-            .environmentObject(AppState(images: images))
+            .environmentObject(ViewModel(images: images))
     }
 }

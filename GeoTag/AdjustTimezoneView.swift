@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AdjustTimezoneView: View {
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
 
     var body: some View {
         VStack {
@@ -20,6 +20,6 @@ struct AdjustTimezoneView: View {
 struct AdjustTimezoneView_Previews: PreviewProvider {
     static var previews: some View {
         AdjustTimezoneView()
-            .environmentObject(AppState())
+            .environmentObject(ViewModel())
     }
 }

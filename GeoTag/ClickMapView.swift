@@ -32,7 +32,7 @@ import MapKit
 /// function on a mouse).
 /// 
 class ClickMapView: MKMapView {
-    var viewModel: AppState!
+    var viewModel: ViewModel!
     var clickTimer: Timer?
     var dragInProgress = false
 

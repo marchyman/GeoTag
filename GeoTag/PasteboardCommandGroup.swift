@@ -46,7 +46,7 @@ extension GeoTagApp {
         }
     }
 
-    func setPastboardItemAction(_ action: AppState.MenuAction) {
+    func setPastboardItemAction(_ action: ViewModel.MenuAction) {
         vm.menuContext = nil
         vm.selectedMenuAction = action
     }

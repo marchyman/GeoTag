@@ -56,23 +56,23 @@ struct ContentViewSheet: View {
 /// show lists of GPX files that were loaded or failed to load
 /// Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
 struct GpxLoadView: View {
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var vm: ViewModel
 
     var body: some View {
         VStack(alignment: .leading) {
-            if (appState.gpxGoodFileNames.count > 0) {
+            if (vm.gpxGoodFileNames.count > 0) {
                 Text("GPX Files Loaded")
                     .font(.title)
-                List (appState.gpxGoodFileNames, id: \.self) { Text($0) }
+                List (vm.gpxGoodFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("The above GPX file(s) have been processed and will show as tracks on the map.")
                     .lineLimit(nil)
                     .padding()
             }
-            if (appState.gpxBadFileNames.count > 0) {
+            if (vm.gpxBadFileNames.count > 0) {
                 Text("GPX Files NOT Loaded")
                     .font(.title)
-                List (appState.gpxBadFileNames, id: \.self) { Text($0) }
+                List (vm.gpxBadFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
@@ -88,8 +88,6 @@ struct GpxLoadView: View {
 }
 
 struct DuplicateImageView: View {
-    @EnvironmentObject var appState: AppState
-
     var body: some View {
         VStack() {
             Text("One or more files not opened")
@@ -104,19 +102,19 @@ struct DuplicateImageView: View {
 }
 
 struct UnexpectedErrorView: View {
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var vm: ViewModel
 
     var body: some View {
         VStack() {
             Text("Unexpected Error")
                 .font(.title)
                 .padding()
-            if let message = appState.sheetMessage {
+            if let message = vm.sheetMessage {
                 Text(message)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding()
             }
-            if let error = appState.sheetError {
+            if let error = vm.sheetError {
                 Text(error.localizedDescription)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding()

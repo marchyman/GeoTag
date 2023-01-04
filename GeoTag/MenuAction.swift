@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension AppState {
+extension ViewModel {
     
     enum MenuAction: Identifiable {
         var id: Self {

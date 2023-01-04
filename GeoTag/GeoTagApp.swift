@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    @StateObject var vm = AppState()
+    @StateObject var vm = ViewModel()
 
     var body: some Scene {
         WindowGroup("GeoTag Version Five") {

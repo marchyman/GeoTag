@@ -1,5 +1,5 @@
 //
-//  AppState.swift
+//  ViewModel.swift
 //  GeoTag
 //
 //  Created by Marco S Hyman on 12/13/22.
@@ -12,7 +12,7 @@ import MapKit
 // created as a StateObject by GeoTagApp and passed in the environment.
 
 @MainActor
-final class AppState: ObservableObject {
+final class ViewModel: ObservableObject {
     // The Apps main window.
     var window: NSWindow?
 
@@ -81,7 +81,7 @@ final class AppState: ObservableObject {
 // convenience init for use with swiftui previews.  Provide a list
 // of test images suitable for swiftui previews.
 
-extension AppState {
+extension ViewModel {
     convenience init(images: [ImageModel]) {
         self.init()
         self.images = images

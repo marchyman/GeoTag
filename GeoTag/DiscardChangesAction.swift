@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension AppState {
+extension ViewModel {
     // return true if the save menu item should be disabled
     func discardChangesDisabled() -> Bool {
         return !(window?.isDocumentEdited ?? false)

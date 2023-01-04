@@ -26,7 +26,7 @@ extension GeoTagApp {
         }
     }
 
-    func setSaveItemAction(_ action: AppState.MenuAction) {
+    func setSaveItemAction(_ action: ViewModel.MenuAction) {
         vm.menuContext = nil
         vm.selectedMenuAction = action
     }

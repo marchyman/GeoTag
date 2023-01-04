@@ -10,7 +10,7 @@ import AppKit
 // Open a finder window at an images location. Image may be specified
 // in context or by selection
 
-extension AppState {
+extension ViewModel {
     
     // return true if Show In Finder menu items should be disabled.
     func showInFinderDisabled(context: ImageModel.ID? = nil) -> Bool {

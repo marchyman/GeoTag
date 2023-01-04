@@ -37,7 +37,7 @@ struct MapView: NSViewRepresentable {
     let mapType: MKMapType
     let center: CLLocationCoordinate2D
     let altitude: Double
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
     @State private var mapPin = MKPointAnnotation()
 
     func makeCoordinator() -> MapView.Coordinator {
@@ -105,9 +105,9 @@ extension MapView {
     class Coordinator: NSObject, MKMapViewDelegate {
         @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
         @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
-        let vm: AppState
+        let vm: ViewModel
 
-        init(vm: AppState) {
+        init(vm: ViewModel) {
             self.vm = vm
         }
 
@@ -170,7 +170,7 @@ struct MapView_Previews : PreviewProvider {
                center: CLLocationCoordinate2D(latitude: 37.7244,
                                             longitude: -122.4381),
                altitude: 50000.0)
-            .environmentObject(AppState())
+            .environmentObject(ViewModel())
     }
 }
 #endif

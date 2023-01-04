@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageNameColumnView: View {
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
     let id: ImageModel.ID
 
     var body: some View {
@@ -43,6 +43,6 @@ struct ImageNameColumnView_Previews: PreviewProvider {
 
     static var previews: some View {
         ImageNameColumnView(id: image.id)
-            .environmentObject(AppState(images: [image]))
+            .environmentObject(ViewModel(images: [image]))
     }
 }

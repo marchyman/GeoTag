@@ -10,7 +10,7 @@ import Foundation
 // "Paste" into all selected images or a specific image in context
 // selected images
 
-extension AppState {
+extension ViewModel {
     // return true if paste actions should be disabled
     // if context is nil use selectedImage
     func pasteDisabled(context: ImageModel.ID? = nil) -> Bool {

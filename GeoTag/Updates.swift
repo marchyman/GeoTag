@@ -10,7 +10,7 @@ import MapKit
 
 // functions that handle location changes for both the map and images
 
-extension AppState {
+extension ViewModel {
 
     // Update an image with a location. Image is identified by its ID.
     // Elevation is optional and is only provided when matching track logs

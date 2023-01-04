@@ -10,7 +10,7 @@ import Foundation
 // Program "Delete" action removes location information for all
 // selected images
 
-extension AppState {
+extension ViewModel {
 
     // should the delete action be disabled for a specific item or for
     // all selected items

@@ -11,11 +11,10 @@ import AppKit
 // Extension to our Application State that handles file open and dropping
 // URLs onto the app's table of images to edit.
 
-extension AppState {
+extension ViewModel {
 
     /// Display the File -> Open... panel for image and gpx files.  Folders may also be selected.
     ///
-    /// - Parameter appState: program state containing the array of images to process
     func showOpenPanel() {
 
         // allow image and gpx types

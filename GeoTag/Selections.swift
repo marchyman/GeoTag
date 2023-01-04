@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension AppState {
+extension ViewModel {
 
     // Process the set of selected images.  Pick one as the "most" selected
     // and make its thumbnail NSImage.

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageView: View {
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
 
     var body: some View {
         Group {
@@ -29,6 +29,6 @@ struct ImageView: View {
 struct ImageView_Previews: PreviewProvider {
     static var previews: some View {
         ImageView()
-            .environmentObject(AppState())
+            .environmentObject(ViewModel())
     }
 }

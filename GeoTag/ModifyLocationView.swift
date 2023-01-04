@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ModifyLocationView: View {
-    @EnvironmentObject var vm: AppState
+    @EnvironmentObject var vm: ViewModel
 
     var body: some View {
         VStack {
@@ -25,6 +25,6 @@ struct ModifyLocationView: View {
 struct _ModifyLocationView_Previews: PreviewProvider {
     static var previews: some View {
         ModifyLocationView()
-            .environmentObject(AppState())
+            .environmentObject(ViewModel())
     }
 }
