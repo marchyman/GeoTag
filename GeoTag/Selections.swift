@@ -13,12 +13,6 @@ extension AppState {
     // and make its thumbnail NSImage.
 
     func selectionChanged(newSelection: Set<ImageModel.ID>) {
-        guard !newSelection.isEmpty else {
-            mostSelected = nil
-            pinEnabled = false
-            return
-        }
-
         // filter out any ids in the selection that don't reference valid images
         let filteredImagesIds = images.filter { $0.isValid }.map { $0.id }
         selection = newSelection.filter { filteredImagesIds.contains($0) }
@@ -26,7 +20,6 @@ extension AppState {
         // Handle the case where nothing is selected
         guard !selection.isEmpty else {
             mostSelected = nil
-            pinEnabled = false
             return
         }
 
@@ -40,7 +33,6 @@ extension AppState {
         // on the map.
 
         mostSelected = selection.first
-        updatePin(location: self[mostSelected!].location)
         self[mostSelected!].makeThumbnail()
     }
 }

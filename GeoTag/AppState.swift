@@ -73,10 +73,6 @@ final class AppState: ObservableObject {
     var mapSpan: MKCoordinateSpan?
     var mapCenter: Coords?
     @Published var refreshTracks = false
-
-    // Map pin info
-    @Published var pin: MKPointAnnotation? = nil
-    @Published var pinEnabled = false
 }
 
 

@@ -38,6 +38,7 @@ struct MapView: NSViewRepresentable {
     let center: CLLocationCoordinate2D
     let altitude: Double
     @EnvironmentObject var vm: AppState
+    @State private var mapPin = MKPointAnnotation()
 
     func makeCoordinator() -> MapView.Coordinator {
         Coordinator(vm: vm)
@@ -57,19 +58,31 @@ struct MapView: NSViewRepresentable {
 
     func updateNSView(_ view: ClickMapView, context: Context) {
         view.mapType = mapType
-        if vm.pinEnabled {
-            if let pin = vm.pin {
-                let point = MKMapPoint(pin.coordinate)
-                if !view.visibleMapRect.contains(point) {
-                    view.setCenter(pin.coordinate, animated: false)
-                }
-                view.addAnnotation(pin)
-            }
+
+        if vm.mostSelected == nil {
+            view.removeAnnotation(mapPin)
+            mapPin.coordinate = Coords()
         } else {
-            if let pin = vm.pin {
-                view.removeAnnotation(pin)
+            if let location = vm[vm.mostSelected!].location {
+                if location != mapPin.coordinate {
+                    // location changed
+                    view.removeAnnotation(mapPin)
+                    mapPin.coordinate = location
+                    view.addAnnotation(mapPin)
+                    // make sure pin is in view
+                    if !view.visibleMapRect.contains(MKMapPoint(mapPin.coordinate)) {
+                        // I don't know of a better way?
+                        DispatchQueue.main.async {
+                            view.setCenter(mapPin.coordinate, animated: false)
+                        }
+                    }
+                }
+            } else {
+                view.removeAnnotation(mapPin)
+                mapPin.coordinate = Coords()
             }
         }
+
         if vm.refreshTracks {
             let overlays = view.overlays
             if !overlays.isEmpty {

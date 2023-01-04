@@ -21,19 +21,6 @@ extension AppState {
         window?.isDocumentEdited = true
     }
 
-    // create a map pin annotation if needed and assign to it the given location
-    func updatePin(location: Coords?) {
-        if pin == nil {
-            pin = MKPointAnnotation()
-        }
-        if let location {
-            pin!.coordinate = location
-            pinEnabled = true
-        } else {
-            pinEnabled = false
-        }
-    }
-
     // Add track overlays to the map
     func updateTracks(gpx: Gpx) {
         guard gpx.tracks.count > 0 else { return}

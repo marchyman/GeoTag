@@ -6,10 +6,3 @@ save changes (file menu)
 copy
 paste
 map search bar
-save changes
-Bug: select image
-    assign location
-    pan map such that pin is not in the view
-    select another image
-    map will re-center on the location of the previously placed pin
-    Why is it doing that?

@@ -33,6 +33,5 @@ extension AppState {
                 }
             }
         }
-        pinEnabled = false
     }
 }

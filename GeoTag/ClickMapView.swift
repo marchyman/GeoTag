@@ -69,7 +69,6 @@ class ClickMapView: MKMapView {
         let coords = timer.userInfo as! CLLocationCoordinate2D
         clickTimer?.invalidate()
         clickTimer = nil
-        viewModel.updatePin(location: coords)
         if let id = viewModel.mostSelected {
             viewModel.update(id: id, location: coords)
         }
