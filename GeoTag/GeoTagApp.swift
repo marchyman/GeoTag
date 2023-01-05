@@ -49,7 +49,7 @@ struct GeoTagApp: App {
 }
 
 extension GeoTagApp {
-    static var adjustTimeZone = "Adjust Time Zone"
+    static var adjustTimeZone = "Change Time Zone"
     static var modifyDateTime = "Modify Image Date/Time"
     static var modifyLocation = "Modify Image Location"
 }
