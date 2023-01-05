@@ -90,9 +90,12 @@ struct MapView: NSViewRepresentable {
             }
             view.addOverlays(vm.mapLines)
             if let center = vm.mapCenter, let span = vm.mapSpan {
-                view.setRegion(MKCoordinateRegion(center: center,
-                                                  span: span),
-                               animated: false)
+                // I still don't know of a better way?
+                DispatchQueue.main.async {
+                    view.setRegion(MKCoordinateRegion(center: center,
+                                                      span: span),
+                                   animated: false)
+                }
             }
         }
     }
