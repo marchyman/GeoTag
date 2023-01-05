@@ -33,6 +33,5 @@ extension ViewModel {
         // on the map.
 
         mostSelected = selection.first
-        self[mostSelected!].makeThumbnail()
     }
 }

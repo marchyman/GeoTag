@@ -9,10 +9,11 @@ import SwiftUI
 
 struct ImageView: View {
     @EnvironmentObject var vm: ViewModel
+    @State private var thumbnail: NSImage?
 
     var body: some View {
         Group {
-            if let id = vm.mostSelected, let image = vm[id].thumbnail {
+            if let image = thumbnail {
                 Image(nsImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -23,6 +24,14 @@ struct ImageView: View {
             }
         }
         .padding()
+        .onChange(of: vm.mostSelected) { id in
+            if let id {
+                vm[id].makeThumbnail()
+                thumbnail = vm[id].thumbnail
+            } else {
+                thumbnail = nil
+            }
+        }
     }
 }
 
