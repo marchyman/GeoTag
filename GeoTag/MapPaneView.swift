@@ -14,6 +14,8 @@ struct MapPaneView: View {
     @AppStorage(AppSettings.mapLongitudeKey) private var mapLongitude = -122.4381
     @AppStorage(AppSettings.mapAltitudeKey) private var mapAltitude = 50000.0
 
+    @State private var searchString = ""
+
     var body: some View {
         VStack {
             MapStyleView()
@@ -25,8 +27,11 @@ struct MapPaneView: View {
                         altitude: mapAltitude)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(5)
-                MapSearchView()
-                    .padding()
+                GeometryReader {geometry in
+                    MapSearchView(text: $searchString)
+                        .frame(width: geometry.size.width * 0.80)
+                }
+                .padding()
             }
         }
     }
