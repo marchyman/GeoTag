@@ -19,7 +19,6 @@ extension ViewModel {
         gpxTracks = []
         mapLines = []
         mapSpan = nil
-        mapCenter = nil
         refreshTracks = true
     }
 }

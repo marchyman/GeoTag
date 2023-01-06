@@ -33,10 +33,11 @@ import MapKit
 // Stick with this version for now.
 //
 struct MapView: NSViewRepresentable {
-    static var view: MKMapView!
     let mapType: MKMapType
     let center: CLLocationCoordinate2D
     let altitude: Double
+    @Binding var reCenter: Bool
+
     @EnvironmentObject var vm: ViewModel
     @State private var mapPin = MKPointAnnotation()
 
@@ -46,7 +47,6 @@ struct MapView: NSViewRepresentable {
 
     func makeNSView(context: Context) -> ClickMapView {
         let view = ClickMapView(frame: .zero)
-        MapView.view = view
         view.viewModel = vm
         view.delegate = context.coordinator
         view.camera = MKMapCamera(lookingAtCenter: center,
@@ -89,13 +89,21 @@ struct MapView: NSViewRepresentable {
                 view.removeOverlays(overlays)
             }
             view.addOverlays(vm.mapLines)
-            if let center = vm.mapCenter, let span = vm.mapSpan {
+            if let span = vm.mapSpan {
                 // I still don't know of a better way?
                 DispatchQueue.main.async {
-                    view.setRegion(MKCoordinateRegion(center: center,
+                    view.setRegion(MKCoordinateRegion(center: vm.mapCenter,
                                                       span: span),
                                    animated: false)
+                    vm.refreshTracks = false
                 }
+            }
+        }
+
+        if reCenter {
+            DispatchQueue.main.async {
+                view.setCenter(vm.mapCenter, animated: false)
+                reCenter = false
             }
         }
     }
@@ -112,6 +120,14 @@ extension MapView {
 
         init(vm: ViewModel) {
             self.vm = vm
+        }
+
+        /// track mapView center coordinate
+        ///
+        @MainActor
+        func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+            vm.mapCenter = mapView.camera.centerCoordinate
+            vm.mapAltitude = mapView.camera.altitude
         }
 
         /// return a pinAnnotationView for a red pin
@@ -172,7 +188,8 @@ struct MapView_Previews : PreviewProvider {
         MapView(mapType: .standard,
                center: CLLocationCoordinate2D(latitude: 37.7244,
                                             longitude: -122.4381),
-               altitude: 50000.0)
+               altitude: 50000.0,
+                reCenter: .constant(false))
             .environmentObject(ViewModel())
     }
 }

@@ -19,7 +19,7 @@ struct MapSearchView: NSViewRepresentable {
             _text = text
         }
 
-        func controlTextDidChange(_ obj: Notification) {
+        func controlTextDidEndEditing(_ obj: Notification) {
             if let searchField = obj.object as? NSSearchField {
                 text = searchField.stringValue
             }

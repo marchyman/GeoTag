@@ -32,6 +32,7 @@ struct MapStyleView: View {
     @AppStorage(AppSettings.mapLongitudeKey) private var mapLongitude = -122.4381
     @AppStorage(AppSettings.mapAltitudeKey) private var mapAltitude = 50000.0
 
+    @EnvironmentObject var vm: ViewModel
     @State private var showPopover = false
 
     var body: some View {
@@ -51,13 +52,9 @@ struct MapStyleView: View {
             Spacer()
 
             Button("Save map location") {
-                guard let view = MapView.view else {
-                    // put up some type of alert here
-                    return
-                }
-                mapLatitude = view.camera.centerCoordinate.latitude
-                mapLongitude = view.camera.centerCoordinate.longitude
-                mapAltitude = view.camera.altitude
+                mapLatitude = vm.mapCenter.latitude
+                mapLongitude = vm.mapCenter.longitude
+                mapAltitude = vm.mapAltitude
                 showPopover.toggle()
             }
             .padding(.trailing)

@@ -68,10 +68,13 @@ final class ViewModel: ObservableObject {
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
 
+    // Keep track of the coords for the center of the map
+    var mapCenter = Coords()
+    var mapAltitude = 50000.0
+
     // Map Tracks and the containing span of the last track added
     var mapLines = [MKPolyline]()
     var mapSpan: MKCoordinateSpan?
-    var mapCenter: Coords?
     @Published var refreshTracks = false
 }
 
