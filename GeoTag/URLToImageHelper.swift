@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct URLToImageHelper {
-    var images = [ImageModel]()
+actor URLToImageHelper {
     var gpxTracks = [Gpx]()
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
@@ -22,7 +21,11 @@ struct URLToImageHelper {
         processedURLs = Set(knownImages.map {$0.fileURL })
     }
 
-    mutating func urlToImage(url: URL) {
+    // see if the URL refers to an image, a gpx file, or other.  Instances
+    // of ImageModel that may be created are returned immediately.  Tracks
+    // and other info are stored for the life of the helper.
+
+    func urlToImage(url: URL) -> ImageModel? {
         if url.pathExtension.lowercased() == "gpx" {
             parseGpxFile(url)
         } else if processedURLs.contains(url) {
@@ -30,14 +33,14 @@ struct URLToImageHelper {
         } else {
             processedURLs.insert(url)
             do {
-                let imageData = try ImageModel(imageURL: url)
-                images.append(imageData)
+                return try ImageModel(imageURL: url)
             } catch let error as NSError {
                 sheetMessage = "Failed to open file \(url.path)"
                 sheetError = error
                 sheetType = .unexpectedErrorSheet
             }
         }
+        return nil
     }
 
     /// Parse the given url to see if it is a valid gpx file.  A valid gpx file
@@ -46,7 +49,7 @@ struct URLToImageHelper {
     /// - Parameters:
     ///   - url: URL of file to parse
     /// - Returns: true if file is a gpx file, otherwise false
-    mutating func parseGpxFile(_ url: URL) {
+    func parseGpxFile(_ url: URL) {
         do {
             let gpx = try Gpx(contentsOf: url)
             try gpx.parse()

@@ -48,32 +48,35 @@ extension ViewModel {
             isFolder(url: url) ? urlsIn(folder: url) : [url]
         }
 
-        // check the given URLs.  They may point to GPX files or image
-        // files.  Work for each image is done in an image group.
+        // check the given URLs.  They may point to GPX files or image files.
+        // Images are added to the table as soon as they are processed.
+        // Track are not added until all urls are processed.
 
-        var helper = URLToImageHelper(knownImages: images)
-        let group = DispatchGroup()
-        for url in imageURLs {
-            group.enter()
-            helper.urlToImage(url: url)
-            group.leave()
-        }
-
-        // Update the app state once all the images have been processed.
-        group.notify(queue: .global(qos: .userInitiated)) {
-            DispatchQueue.main.async {
-                self.images.append(contentsOf: helper.images)
-                for gpxTrack in helper.gpxTracks {
-                    self.updateTracks(gpx: gpxTrack)
-                    self.gpxTracks.append(gpxTrack)
+        Task {
+            let helper = URLToImageHelper(knownImages: images)
+            await withTaskGroup(of: ImageModel?.self) { group in
+                for url in imageURLs {
+                    group.addTask {
+                        let image = await helper.urlToImage(url: url)
+                        return image
+                    }
                 }
-                self.gpxGoodFileNames = helper.gpxGoodFileNames
-                self.gpxBadFileNames = helper.gpxBadFileNames
-                self.sheetType = helper.sheetType
-                self.sheetError = helper.sheetError
-                self.sheetMessage = helper.sheetMessage
-                self.showingProgressView = false
+                for await image in group {
+                    if let image {
+                        images.append(image)
+                    }
+                }
             }
+            for gpxTrack in await helper.gpxTracks {
+                updateTracks(gpx: gpxTrack)
+                gpxTracks.append(gpxTrack)
+            }
+            gpxGoodFileNames = await helper.gpxGoodFileNames
+            gpxBadFileNames = await helper.gpxBadFileNames
+            sheetType = await helper.sheetType
+            sheetError = await helper.sheetError
+            sheetMessage = await helper.sheetMessage
+            showingProgressView = false
         }
     }
 
