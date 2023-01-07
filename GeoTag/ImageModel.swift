@@ -14,8 +14,10 @@ import MapKit
 
 struct ImageModel: Identifiable {
     // Identifying data
-    let id = UUID()
     let fileURL: URL
+    var id: URL {
+        fileURL
+    }
 
     // is this an image file or something else
 
