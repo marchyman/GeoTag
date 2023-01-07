@@ -40,6 +40,7 @@ extension ViewModel {
 
         // use a separate task in a group to update each image
         Task {
+            showingProgressView = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
                 await imagesToUpdate.asyncForEach { id in
                     if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
@@ -63,7 +64,7 @@ extension ViewModel {
                     }
                 }
             }
-            print("Locn From Track finished")
+            showingProgressView = false
         }
     }
 }
