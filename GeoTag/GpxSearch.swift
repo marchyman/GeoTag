@@ -13,8 +13,7 @@ extension Gpx {
     ///
     /// - Parameter imageTime: the  time from epoch of an image whose coords are desired
     /// - Parameter found: A closure envoked for the nearest point in the tracklog found
-    func search(imageTime: TimeInterval,
-                found: (Coords, Double?) -> ()) {
+    func search(imageTime: TimeInterval) async -> (Coords, Double?)? {
         var lastPoint: Point?
 
         // search every track for the last point with a timestamp <= the
@@ -46,7 +45,8 @@ extension Gpx {
             }
         }
         if let last = lastPoint {
-            found(Coords(latitude: last.lat, longitude: last.lon), last.ele)
+            return (Coords(latitude: last.lat, longitude: last.lon), last.ele)
         }
+        return nil
     }
 }

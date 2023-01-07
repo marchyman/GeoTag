@@ -37,26 +37,43 @@ extension ViewModel {
         dateFormatter.timeZone = timeZone
 
         // Handle UNDO grouping here
-        let updateGroup = DispatchGroup()
-        imagesToUpdate.forEach { id in
-            DispatchQueue.global(qos: .userInitiated).async {
-                updateGroup.enter()
-                // don't bother looking for a tracklog match if we can't
-                // process the image date
-                if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
-                    self.gpxTracks.forEach {
-                        $0.search(imageTime: convertedDate.timeIntervalSince1970) { location, elevation in
-                            DispatchQueue.main.async {
-                                self.update(id: id, location: location, elevation: elevation)
+
+        // use a separate task in a group to update each image
+        Task {
+            await withTaskGroup(of: (Coords, Double?)?.self) { group in
+                await imagesToUpdate.asyncForEach { id in
+                    if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
+                        group.addTask { [self] in
+                            // do not use forEach/asyncForEach as once a match is
+                            // found there is no need to search other tracks for
+                            // the current image.
+                            for track in await gpxTracks {
+                                if let locn = await track.search(imageTime: convertedDate.timeIntervalSince1970) {
+                                    return locn
+                                }
+                            }
+                            return nil
+                        }
+                        for await locn in group {
+                            if let locn {
+                                update(id: id, location: locn.0,
+                                       elevation: locn.1)
                             }
                         }
                     }
                 }
-                updateGroup.leave()
             }
-        }
-        updateGroup.notify(queue: DispatchQueue.main) {
             print("Locn From Track finished")
+        }
+    }
+}
+
+// A version of forEach that allows async closures
+
+extension Sequence {
+    func asyncForEach(_ operation: (Element) async throws -> Void) async rethrows {
+        for element in self {
+            try await operation(element)
         }
     }
 }
