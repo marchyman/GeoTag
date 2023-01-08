@@ -53,5 +53,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 //        return .terminateCancel
         return .terminateNow
     }
+
+    // remove up the app sandbox before going away.  There is nothing in
+    // it that needs to be kept.
+
+    func applicationWillTerminate(_ notification: Notification) {
+        let environ = ProcessInfo.processInfo.environment
+        if environ["APP_SANDBOX_CONTAINER_ID"] != nil {
+            // we're sandboxed -- blow away the sandbox document directory
+            let fileManager = FileManager.default
+            if let docDir = try? fileManager.url(for: .documentDirectory,
+                                                 in: .userDomainMask,
+                                                 appropriateFor: nil,
+                                                 create: false) {
+                try? fileManager.removeItem(at: docDir)
+            }
+        }
+    }
 }
 

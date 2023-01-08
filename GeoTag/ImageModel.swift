@@ -9,24 +9,22 @@ import Foundation
 import MapKit
 
 // Data about an image that may have its geo-location metadata changed.
-// A class instead of a struct as instances of the class are intended
-// to be mutated.
 
 struct ImageModel: Identifiable {
 
-    // Identifying data
+    // Identifying data.
 
     let fileURL: URL
     var id: URL {
         fileURL
     }
 
-    // is this an image file or something else
+    // is this an image file or something else?
 
     var isValid = false
 
     // data shown to and adjusted by the user.  The TimeZone is calculated
-    // whenever image location is updated
+    // whenever image location is updated.
 
     var dateTimeCreated: String?
     var timeZone: TimeZone?
@@ -91,7 +89,7 @@ struct ImageModel: Identifiable {
                                                            xmpFile: xmpFile)
 
         // verify this file type us writable with Exiftool and load image
-        // metadata if we can
+        // metadata if we can.  If not mark it as not a valid image file.
 
         if Exiftool.helper.fileTypeIsWritable(for: fileURL) {
             do {

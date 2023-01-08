@@ -11,11 +11,10 @@ import AppKit
 extension ImageModel {
 
     /// Create an image thumbnail
-    /// - Returns: NSImage of the thumbnail
     ///
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file and a zero
-    /// sized empty image is returned.
+    /// sized empty image is created.
 
     mutating func makeThumbnail() {
         // if a thumbail has already been created we're done
