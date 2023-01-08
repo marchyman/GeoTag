@@ -8,7 +8,9 @@
 import SwiftUI
 
 extension ViewModel {
-    
+
+    // Actions triggered from a meny item
+
     enum MenuAction: Identifiable {
         var id: Self {
             return self
@@ -33,6 +35,13 @@ extension ViewModel {
         case modifyLocation
     }
 
+    // set the menuAction and context.
+
+    func setMenuAction(for action: MenuAction, context: ImageModel.ID? = nil) {
+        menuContext = context
+        selectedMenuAction = action
+    }
+
     // Do the requested action
 
     func menuAction(_ action: MenuAction, openWindow: OpenWindowAction) {
@@ -49,19 +58,19 @@ extension ViewModel {
         case .clearList:
             clearImageListAction()
         case .cut:
-            cutAction()
+            cutAction(context: menuContext)
         case .copy:
-            copyAction()
+            copyAction(context: menuContext)
         case .paste:
-            pasteAction()
+            pasteAction(context: menuContext)
         case .delete:
-            deleteAction()
+            deleteAction(context: menuContext)
         case .selectAll:
             selection = Set(images.map { $0.id })
         case .showInFinder:
-            showInFinderAction()
+            showInFinderAction(context: menuContext)
         case .locnFromTrack:
-            locnFromTrackAction()
+            locnFromTrackAction(context: menuContext)
         case .adjustTimeZone:
             openWindow(id: GeoTagApp.adjustTimeZone)
         case .modifyDateTime:

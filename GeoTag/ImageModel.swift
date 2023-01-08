@@ -13,7 +13,9 @@ import MapKit
 // to be mutated.
 
 struct ImageModel: Identifiable {
+
     // Identifying data
+
     let fileURL: URL
     var id: URL {
         fileURL

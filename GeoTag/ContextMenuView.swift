@@ -41,8 +41,7 @@ struct ContextMenuView: View {
     }
 
     func setContextMenuAction(_ action: ViewModel.MenuAction) {
-        vm.menuContext = context
-        vm.selectedMenuAction = action
+        vm.setMenuAction(for: action, context: context)
     }
 }
 

@@ -52,74 +52,74 @@ struct Exiftool {
     ///     of the original file plus the assigned location.
     /// - Returns: ExifTool exit status
 
-//    func updateLocation(from imageData: ImageData) -> Int32 {
-//
-//        // ExifTool latitude and longitude exiftool argument names
-//        var latArg = "-GPSLatitude="
-//        var lonArg = "-GPSLongitude="
-//        var latRefArg = "-GPSLatitudeRef="
-//        var lonRefArg = "-GPSLongitudeRef="
-//
-//        // ExifTool GSPDateTime arg storage
-//        var gpsDArg = "-GPSDateStamp="      // for non XMP files
-//        var gpsTArg = "-GPSTimeStamp="      // for non XMP files
-//        var gpsDTArg = "-GPSDateTime="      // for XMP files
-//
-//        // Build ExifTool latitude, longitude argument values
-//        if let location = imageData.location {
-//            let lat = location.latitude
-//            latArg += "\(lat)"
-//            latRefArg += "\(lat)"
-//            let lon = location.longitude
-//            lonArg += "\(lon)"
-//            lonRefArg += "\(lon)"
-//
-//            // set GPS date/time stamp for current location if enabled
-//            if let dto = dtoWithZone(from: imageData),
-//               Preferences.dateTimeGPS() {
-//                gpsDArg += "\(dto)"
-//                gpsTArg += "\(dto)"
-//                gpsDTArg += "\(dto)"
-//            }
-//        }
-//
-//        // path to image (or XMP) file to update
-//        var path = imageData.sandboxUrl.path
-//        if let xmp = imageData.sandboxXmp {
-//            path = xmp.path
-//        }
-//
-//        let exiftool = Process()
-//        exiftool.standardOutput = FileHandle.nullDevice
-//        exiftool.standardError = FileHandle.nullDevice
-//        exiftool.launchPath = url.path
-//        exiftool.arguments = ["-q",
-//                              "-m",
-//                              "-overwrite_original_in_place",
-//                              latArg, latRefArg,
-//                              lonArg, lonRefArg]
-//        if Preferences.modTime() {
-//            exiftool.arguments! += ["-P"]
-//        }
-//        if Preferences.dateTimeGPS() {
-//            if imageData.sandboxXmp == nil {
-//                exiftool.arguments! += [gpsDArg, gpsTArg]
-//            } else {
-//                exiftool.arguments?.append(gpsDTArg)
-//            }
-//        }
-//        // add args to update date/time if changed
-//        if imageData.dateTime != imageData.originalDateTime {
-//            let dtoArg = "-DateTimeOriginal=" + imageData.dateTime
-//            let cdArg = "-CreateDate=" + imageData.dateTime
-//            exiftool.arguments! += [dtoArg, cdArg]
-//        }
-//        exiftool.arguments! += ["-GPSStatus=", path]
-////      dump(exiftool.arguments!)
-//        exiftool.launch()
-//        exiftool.waitUntilExit()
-//        return exiftool.terminationStatus
-//    }
+    //    func updateLocation(from imageData: ImageData) -> Int32 {
+    //
+    //        // ExifTool latitude and longitude exiftool argument names
+    //        var latArg = "-GPSLatitude="
+    //        var lonArg = "-GPSLongitude="
+    //        var latRefArg = "-GPSLatitudeRef="
+    //        var lonRefArg = "-GPSLongitudeRef="
+    //
+    //        // ExifTool GSPDateTime arg storage
+    //        var gpsDArg = "-GPSDateStamp="      // for non XMP files
+    //        var gpsTArg = "-GPSTimeStamp="      // for non XMP files
+    //        var gpsDTArg = "-GPSDateTime="      // for XMP files
+    //
+    //        // Build ExifTool latitude, longitude argument values
+    //        if let location = imageData.location {
+    //            let lat = location.latitude
+    //            latArg += "\(lat)"
+    //            latRefArg += "\(lat)"
+    //            let lon = location.longitude
+    //            lonArg += "\(lon)"
+    //            lonRefArg += "\(lon)"
+    //
+    //            // set GPS date/time stamp for current location if enabled
+    //            if let dto = dtoWithZone(from: imageData),
+    //               Preferences.dateTimeGPS() {
+    //                gpsDArg += "\(dto)"
+    //                gpsTArg += "\(dto)"
+    //                gpsDTArg += "\(dto)"
+    //            }
+    //        }
+    //
+    //        // path to image (or XMP) file to update
+    //        var path = imageData.sandboxUrl.path
+    //        if let xmp = imageData.sandboxXmp {
+    //            path = xmp.path
+    //        }
+    //
+    //        let exiftool = Process()
+    //        exiftool.standardOutput = FileHandle.nullDevice
+    //        exiftool.standardError = FileHandle.nullDevice
+    //        exiftool.launchPath = url.path
+    //        exiftool.arguments = ["-q",
+    //                              "-m",
+    //                              "-overwrite_original_in_place",
+    //                              latArg, latRefArg,
+    //                              lonArg, lonRefArg]
+    //        if Preferences.modTime() {
+    //            exiftool.arguments! += ["-P"]
+    //        }
+    //        if Preferences.dateTimeGPS() {
+    //            if imageData.sandboxXmp == nil {
+    //                exiftool.arguments! += [gpsDArg, gpsTArg]
+    //            } else {
+    //                exiftool.arguments?.append(gpsDTArg)
+    //            }
+    //        }
+    //        // add args to update date/time if changed
+    //        if imageData.dateTime != imageData.originalDateTime {
+    //            let dtoArg = "-DateTimeOriginal=" + imageData.dateTime
+    //            let cdArg = "-CreateDate=" + imageData.dateTime
+    //            exiftool.arguments! += [dtoArg, cdArg]
+    //        }
+    //        exiftool.arguments! += ["-GPSStatus=", path]
+    ////      dump(exiftool.arguments!)
+    //        exiftool.launch()
+    //        exiftool.waitUntilExit()
+    //        return exiftool.terminationStatus
+    //    }
 
     /// File Type codes for the file types that exiftool can write
 
@@ -127,8 +127,8 @@ struct Exiftool {
     // read the resulting metadata.  Remove it from the table.
     // Last updated to match ExifTool version 12.30
     let writableTypes: Set = [
-    	"360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
-    	"CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
+        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
+        "CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
         "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
         "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
         "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
@@ -213,7 +213,7 @@ struct Exiftool {
                     case "-GPSLatitude":
                         let parts = value.split(separator: " ")
                         if let latValue = Double(parts[0]),
-                            parts.count == 2 {
+                           parts.count == 2 {
                             location.latitude = latValue
                             if parts[1] == "S" {
                                 location.latitude = -location.latitude
@@ -223,7 +223,7 @@ struct Exiftool {
                     case "-GPSLongitude":
                         let parts = value.split(separator: " ")
                         if let lonValue = Double(parts[0]),
-                            parts.count == 2 {
+                           parts.count == 2 {
                             location.longitude = lonValue
                             if parts[1] == "W" {
                                 location.longitude = -location.longitude
@@ -233,7 +233,7 @@ struct Exiftool {
                     case "-GPSAltitude":
                         let parts = value.split(separator: " ")
                         if let eleValue = Double(parts[0]),
-                            parts.count == 2 {
+                           parts.count == 2 {
                             elevation = parts[1] == "1" ? eleValue : -eleValue
                         }
 
@@ -248,21 +248,4 @@ struct Exiftool {
         return (createDate, validGPS, location, elevation)
     }
 
-    /// return image date and time stamp including time zone
-    /// - Parameter imageData: image used to obtain date/time
-    /// - Returns: optional date/time string with time zone
-    ///
-    /// Nil is returned if there was no date/time original or we couldn't get the
-    /// appropriate time zone from image geolocation data.
-
-//    private
-//    func dtoWithZone(from imageData: ImageData) -> String? {
-//        if imageData.timeZone != nil,
-//           let dateValue = imageData.dateValueWithZone {
-//            let format = DateFormatter()
-//            format.dateFormat = "yyyy:MM:dd HH:mm:ss xxx"
-//            return format.string(from: dateValue)
-//        }
-//        return nil
-//    }
 }

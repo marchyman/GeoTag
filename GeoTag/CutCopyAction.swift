@@ -5,7 +5,7 @@
 //  Created by Marco S Hyman on 12/31/22.
 //
 
-import Foundation
+import AppKit
 
 extension ViewModel {
     // return true if cut or copy actions should be disabled
@@ -17,20 +17,22 @@ extension ViewModel {
         return true
     }
 
-    func cutAction(context: ImageModel.ID? = nil) {
-        copyAction(context: context)
-        if let id = context != nil ? context : mostSelected {
+    func cutAction(context: ImageModel.ID?) {
+        let id = context != nil ? context : mostSelected
+        if let id {
+            copyAction(context: id)
             deleteAction(context: id)
         }
-
-        // handle context paste and selection paste
     }
 
-    func copyAction(context: ImageModel.ID? = nil) {
-        if let id = context != nil ? context : mostSelected {
-            print("copy \(id)")
+    func copyAction(context: ImageModel.ID?) {
+        let id = context != nil ? context : mostSelected
+        if let id {
+            let pb = NSPasteboard.general
+            pb.declareTypes([NSPasteboard.PasteboardType.string], owner: self)
+            pb.setString(self[id].stringRepresentation,
+                         forType: NSPasteboard.PasteboardType.string)
         }
     }
-
 }
 

@@ -17,12 +17,12 @@ extension ViewModel {
         return true
     }
 
-    func locnFromTrackAction() {
+    func locnFromTrackAction(context: ImageModel.ID?) {
         var imagesToUpdate = Set<ImageModel.ID>()
 
         // make the set of images to update.  It may be the single
         // image from a context menu or the entire set of selected images.
-        if let id = menuContext {
+        if let id = context {
             imagesToUpdate.insert(id)
         } else {
             imagesToUpdate = selection
