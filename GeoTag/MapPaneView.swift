@@ -64,9 +64,12 @@ struct MapPaneView: View {
                             reCenter = true
                         } else {
                             // update all selected items
+                            vm.undoManager.beginUndoGrouping()
                             vm.selection.forEach{ id in
                                 vm.update(id: id, location: location.coordinate)
                             }
+                            vm.undoManager.endUndoGrouping()
+                            vm.undoManager.setActionName("set location (search)")
                         }
                     }
                 }

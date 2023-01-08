@@ -71,6 +71,7 @@ class ClickMapView: MKMapView {
         clickTimer = nil
         if let id = viewModel.mostSelected {
             viewModel.update(id: id, location: coords)
+            viewModel.undoManager.setActionName("set location")
         }
     }
 }

@@ -20,6 +20,7 @@ extension ViewModel {
             images[index].revert()
             index = images.index(after: index)
         }
+        undoManager.removeAllActions()
         window?.isDocumentEdited = false
     }
 }

@@ -38,9 +38,12 @@ extension ViewModel {
             let pb = NSPasteboard.general
             if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
                let locn = ImageModel.decodeStringRep(value: pasteVal) {
+                undoManager.beginUndoGrouping()
                 imagesToUpdate.forEach { id in
                     update(id: id, location: locn.0, elevation: locn.1)
                 }
+                undoManager.endUndoGrouping()
+                undoManager.setActionName("paste location")
             }
         }
     }

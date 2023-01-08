@@ -11,10 +11,10 @@ import SwiftUI
 extension GeoTagApp {
     var undoRedoCommandGroup: some Commands {
         CommandGroup(replacing: .undoRedo) {
-            Button("Undo") { vm.setMenuAction(for: .undo) }
+            Button(vm.undoManager.undoMenuItemTitle) { vm.setMenuAction(for: .undo) }
                 .keyboardShortcut("z")
                 .disabled(vm.undoDisabled)
-            Button("Redo") { vm.setMenuAction(for: .redo) }
+            Button(vm.undoManager.redoMenuItemTitle) { vm.setMenuAction(for: .redo) }
                 .keyboardShortcut("z", modifiers: [.shift, .command])
                 .disabled(vm.redoDisabled)
         }

@@ -25,12 +25,18 @@ extension ViewModel {
         if let id = context {
             // delete location from a specific item
             update(id: id, location: nil)
+            undoManager.setActionName("delete location")
         } else {
             // delete location from all selected items
-            for id in selection {
-                if self[id].location != nil {
-                    update(id: id, location: nil)
+            if !selection.isEmpty {
+                undoManager.beginUndoGrouping()
+                for id in selection {
+                    if self[id].location != nil {
+                        update(id: id, location: nil)
+                    }
                 }
+                undoManager.endUndoGrouping()
+                undoManager.setActionName("delete locations")
             }
         }
     }

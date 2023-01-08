@@ -55,12 +55,15 @@ extension ViewModel {
                             }
                             return nil
                         }
+                        undoManager.beginUndoGrouping()
                         for await locn in group {
                             if let locn {
                                 update(id: id, location: locn.0,
                                        elevation: locn.1)
                             }
                         }
+                        undoManager.endUndoGrouping()
+                        undoManager.setActionName("locn from track")
                     }
                 }
             }

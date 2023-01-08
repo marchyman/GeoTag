@@ -164,6 +164,7 @@ extension MapView {
             if let id = vm.mostSelected,
                (newState == .ending) {
                 vm.update(id: id, location: view.annotation!.coordinate)
+                vm.undoManager.setActionName("set location (drag)")
             }
         }
 

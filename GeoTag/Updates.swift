@@ -25,7 +25,6 @@ extension ViewModel {
                           elevation: currentElevation,
                           documentedEdited: currentDocumentEdited)
         }
-        undoManager.setActionName("location update")
 
         self[id].location = location
         self[id].elevation = elevation
