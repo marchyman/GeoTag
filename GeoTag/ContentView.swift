@@ -33,6 +33,20 @@ struct ContentView: View {
         .sheet(item: $vm.sheetType, onDismiss: sheetDismissed) { sheetType in
             ContentViewSheet(type: sheetType)
         }
+        .confirmationDialog("Are you sure?", isPresented: $vm.presentConfirmation) {
+            Button("I'm sure", role: .destructive) {
+                if vm.confirmationAction != nil {
+                    vm.confirmationAction!()
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                vm.presentConfirmation = false
+            }
+            .keyboardShortcut(.defaultAction)
+        } message: {
+            let message = vm.confirmationMessage != nil ? vm.confirmationMessage! : ""
+            Text(message)
+        }
     }
 
     // clear out sheet content when the sheet is dismissed.

@@ -26,6 +26,11 @@ final class ViewModel: ObservableObject {
     var sheetError: NSError?
     var sheetMessage: String?
 
+    // Confirmatin required
+    @Published var presentConfirmation = false
+    var confirmationMessage: String?
+    var confirmationAction: (@MainActor () -> Void)?
+    
     // Images to edit
     @Published var images = [ImageModel]()
 

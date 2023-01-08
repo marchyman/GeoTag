@@ -15,8 +15,12 @@ extension GeoTagApp {
             Button("Save…") { setSaveItemAction(.save) }
                 .keyboardShortcut("s")
                 .disabled(vm.saveDisabled())
-            Button("Discard changes") { setSaveItemAction(.discardChanges) }
-                .disabled(vm.discardChangesDisabled())
+            Button("Discard changes") {
+                vm.confirmationAction = vm.discardChangesAction
+                vm.confirmationMessage = "Discarding all location changes is not undoable.  Are you sure this is what you want to do?"
+                vm.presentConfirmation = true
+            }
+            .disabled(vm.discardChangesDisabled())
             Button("Discard tracks") { setSaveItemAction(.discardTracks) }
                 .disabled(vm.discardTracksDisabled())
             Divider()
