@@ -15,8 +15,9 @@ import MapKit
 final class ViewModel: ObservableObject {
     // The Apps main window.
     var window: NSWindow?
+    var undoManager = UndoManager()
 
-    // Let the user know the app is busy
+    // Let the user know when the app is busy
     @Published var showingProgressView = false
 
     // Type of optional sheet to attach to the content view

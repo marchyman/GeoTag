@@ -21,6 +21,7 @@ struct GeoTagApp: App {
         .commands {
             newItemCommandGroup
             saveItemCommandGroup
+            undoRedoCommandGroup
             pasteBoardCommandGroup
             helpCommandGroup
         }

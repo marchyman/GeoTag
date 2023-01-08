@@ -23,6 +23,8 @@ extension ViewModel {
         case discardTracks
         case clearList
         // edit menu
+        case undo
+        case redo
         case cut
         case copy
         case paste
@@ -57,6 +59,10 @@ extension ViewModel {
             discardTracksAction()
         case .clearList:
             clearImageListAction()
+        case .undo:
+            undoAction()
+        case .redo:
+            redoAction()
         case .cut:
             cutAction(context: menuContext)
         case .copy:

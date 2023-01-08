@@ -14,11 +14,22 @@ extension ViewModel {
 
     // Update an image with a location. Image is identified by its ID.
     // Elevation is optional and is only provided when matching track logs
-    // Handle UNDO!
-    func update(id: ImageModel.ID, location: Coords?, elevation: Double? = nil) {
+
+    func update(id: ImageModel.ID, location: Coords?,
+                elevation: Double? = nil, documentedEdited: Bool = true) {
+        let currentLocation = self[id].location
+        let currentElevation = self[id].elevation
+        let currentDocumentEdited = window?.isDocumentEdited ?? true
+        undoManager.registerUndo(withTarget: self) { target in
+            target.update(id: id, location: currentLocation,
+                          elevation: currentElevation,
+                          documentedEdited: currentDocumentEdited)
+        }
+        undoManager.setActionName("location update")
+
         self[id].location = location
         self[id].elevation = elevation
-        window?.isDocumentEdited = true
+        window?.isDocumentEdited = documentedEdited
     }
 
     // Add track overlays to the map
