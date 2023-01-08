@@ -11,8 +11,10 @@ import AppKit
 ///
 /// App Delegate needed to get some desired behaviors such as terminate app when window closed
 final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
+    var viewModel: ViewModel?
+
     // things that can not (yet?) be done in SwiftUI (or can be done but
-    // I don't know how so do it this way.
+    // I don't know how so do it this way).
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // no tabbing in GeoTag
@@ -46,12 +48,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     // the app to quit.
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-//        if saveOrDontSave() {
-//            tableViewController.clear(self)
-//            return .terminateNow
-//        }
-//        return .terminateCancel
+        if let viewModel {
+            if let edited = viewModel.window?.isDocumentEdited, edited {
+                viewModel.confirmationMessage = "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
+                viewModel.confirmationAction = terminateIgnoringEdits
+                viewModel.presentConfirmation = true
+                return .terminateCancel
+            }
+        }
         return .terminateNow
+    }
+
+    @MainActor
+    func terminateIgnoringEdits() {
+        viewModel?.window?.isDocumentEdited = false
+        NSApp.terminate(NSApp)
     }
 
     // remove up the app sandbox before going away.  There is nothing in

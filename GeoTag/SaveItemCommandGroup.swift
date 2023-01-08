@@ -16,8 +16,8 @@ extension GeoTagApp {
                 .keyboardShortcut("s")
                 .disabled(vm.saveDisabled())
             Button("Discard changes") {
+                vm.confirmationMessage = "Discarding all changes is not undoable.  Are you sure this is what you want to do?"
                 vm.confirmationAction = vm.discardChangesAction
-                vm.confirmationMessage = "Discarding all location changes is not undoable.  Are you sure this is what you want to do?"
                 vm.presentConfirmation = true
             }
             .disabled(vm.discardChangesDisabled())

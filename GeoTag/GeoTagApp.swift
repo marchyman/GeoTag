@@ -17,6 +17,9 @@ struct GeoTagApp: App {
             ContentView()
                 .background(WindowAccessor(window: $vm.window))
                 .environmentObject(vm)
+                .onAppear {
+                    appDelegate.viewModel = vm
+                }
         }
         .commands {
             newItemCommandGroup
