@@ -126,6 +126,14 @@ struct ImageModel: Identifiable {
         elevation = originalElevation
     }
 
+    // oposite of revert.  After a save the original values are set to the
+    // current values.
+    mutating func setOriginalValues() {
+        originalDateTimeCreated = dateTimeCreated
+        originalLocation = location
+        originalElevation = elevation
+    }
+
     /// obtain image metadata
     /// - Returns: true if successful
     ///

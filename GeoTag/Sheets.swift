@@ -18,8 +18,8 @@ enum SheetType: Identifiable {
     }
 
     case gpxFileNameSheet
-    case saveChangesSheet
     case duplicateImageSheet
+    case savingUpdatesSheet
     case unexpectedErrorSheet
 }
 
@@ -36,14 +36,15 @@ struct ContentViewSheet: View {
                 Button("Dismiss") {
                     dismiss()
                 }
+                .keyboardShortcut(.return)
             }
             switch type {
             case .gpxFileNameSheet:
                 GpxLoadView()
-            case .saveChangesSheet:
-                EmptyView()
             case .duplicateImageSheet:
                 DuplicateImageView()
+            case .savingUpdatesSheet:
+                SavingUpdatesView()
             case .unexpectedErrorSheet:
                 UnexpectedErrorView()
             }
@@ -95,10 +96,27 @@ struct DuplicateImageView: View {
                 .padding()
             Text("One or more files were not opened. Unopened files were duplicates of files previously opened for editing.")
                 .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 40)
         }
         .frame(maxWidth: 400, minHeight: 100)
     }
 
+}
+
+struct SavingUpdatesView: View {
+    var body: some View {
+        VStack() {
+            Text("Save in progress")
+                .font(.title)
+                .padding()
+            Text("Image updates are still being processed.  Please wait for the updates to complete before quiting GeoTag.")
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 40)
+        }
+        .frame(maxWidth: 400, minHeight: 100)
+    }
 }
 
 struct UnexpectedErrorView: View {

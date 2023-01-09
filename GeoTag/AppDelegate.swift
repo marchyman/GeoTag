@@ -49,6 +49,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if let viewModel {
+            if viewModel.saveInProgress {
+                viewModel.sheetType = .savingUpdatesSheet
+                return .terminateCancel
+            }
+
             if let edited = viewModel.window?.isDocumentEdited, edited {
                 viewModel.confirmationMessage = "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
                 viewModel.confirmationAction = terminateIgnoringEdits

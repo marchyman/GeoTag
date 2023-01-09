@@ -33,6 +33,7 @@ final class ViewModel: ObservableObject {
     
     // Images to edit
     @Published var images = [ImageModel]()
+    var saveInProgress = false
 
     // get/set an image from the table of images  given its ID.
 
