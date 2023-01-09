@@ -13,10 +13,8 @@ save changes (file menu)
 - save each image in a task
 - if the save is good update the original values in viewmodel copy of image,
   not the copy. ✓
-- if all images were saved clear the isEdited flag
-  -- unless other edits happened when the save was in progress?
-  -- Clear the undo stack -- unless other edits occurred?
-     I could perhaps create a new UndoManager and use it to determine
-     if edits had been made?
+- if all images were saved clear the isEdited flag ✓
+  Note: flag and undo stack cleared before starting save.  Flag will be set
+  if changes occur while saving.
 - if there were errors during save indicate the errors, perhaps on a sheet
   showing which files had issues and maybe what the issue was.

@@ -21,6 +21,9 @@ extension ViewModel {
 
         struct SaveStatus {
             let id: ImageModel.ID
+            let dateTimeCreated: String?
+            let location: Coords?
+            let elevation: Double?
             let error: String?
         }
 
@@ -40,12 +43,21 @@ extension ViewModel {
                     group.addTask {
                         // pretend we did a save for now
                         try? await Task.sleep(for: .seconds(2))
-                        return SaveStatus(id: image.id, error: nil)
+                        return SaveStatus(id: image.id,
+                                          dateTimeCreated: image.dateTimeCreated,
+                                          location: image.location,
+                                          elevation: image.elevation,
+                                          error: nil)
                     }
                 }
+
+                // Update image original values after update if no errors
+
                 for await status in group {
                     // check for errors here
-                    self[status.id].setOriginalValues()
+                    self[status.id].originalDateTimeCreated = status.dateTimeCreated
+                    self[status.id].originalLocation = status.location
+                    self[status.id].originalElevation = status.elevation
                 }
             }
 
