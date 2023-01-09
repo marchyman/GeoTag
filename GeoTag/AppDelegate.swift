@@ -50,7 +50,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if let viewModel {
             if viewModel.saveInProgress {
-                viewModel.sheetType = .savingUpdatesSheet
+                viewModel.addSheet(type: .savingUpdatesSheet)
                 return .terminateCancel
             }
 

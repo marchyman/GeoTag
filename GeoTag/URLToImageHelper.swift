@@ -12,10 +12,9 @@ actor URLToImageHelper {
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
     var processedURLs = Set<URL>()
+    var duplicateImages = false
 
-    var sheetType: SheetType?
-    var sheetError: NSError?
-    var sheetMessage: String?
+    var sheetStack = [ViewModel.SheetInfo]()
 
     init(knownImages: [ImageModel]) {
         processedURLs = Set(knownImages.map {$0.fileURL })
@@ -29,15 +28,21 @@ actor URLToImageHelper {
         if url.pathExtension.lowercased() == "gpx" {
             parseGpxFile(url)
         } else if processedURLs.contains(url) {
-            sheetType = .duplicateImageSheet
+            // only one duplicate image sheet regardless the number of dups
+            if !duplicateImages {
+                sheetStack.append(ViewModel.SheetInfo(sheetType: .duplicateImageSheet,
+                                                      sheetError: nil,
+                                                      sheetMessage: nil))
+                duplicateImages.toggle()
+            }
         } else {
             processedURLs.insert(url)
             do {
                 return try ImageModel(imageURL: url)
             } catch let error as NSError {
-                sheetMessage = "Failed to open file \(url.path)"
-                sheetError = error
-                sheetType = .unexpectedErrorSheet
+                sheetStack.append(ViewModel.SheetInfo(sheetType: .unexpectedErrorSheet,
+                                                      sheetError: error,
+                                                      sheetMessage: "Failed to open file \(url.path)"))
             }
         }
         return nil
@@ -55,17 +60,18 @@ actor URLToImageHelper {
             try gpx.parse()
             gpxTracks.append(gpx)
             gpxGoodFileNames.append(url.path)
-            sheetType = .gpxFileNameSheet
         } catch Gpx.GpxParseError.gpxParsingError {
             gpxBadFileNames.append(url.path)
-            if sheetType == .none {
-                sheetMessage = "\(url.path) is not a valid GPX file"
-                sheetType = .unexpectedErrorSheet
-            }
+            sheetStack.append(ViewModel.SheetInfo(sheetType: .unexpectedErrorSheet,
+                                                  sheetError: nil,
+                                                  sheetMessage: "\(url.path) is not a valid GPX file"))
         } catch {
             gpxBadFileNames.append(url.path)
-            sheetType = .gpxFileNameSheet
         }
+        sheetStack.append(ViewModel.SheetInfo(sheetType: .gpxFileNameSheet,
+                                              sheetError: nil,
+                                              sheetMessage: nil))
+
     }
 
 }

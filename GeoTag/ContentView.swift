@@ -49,10 +49,17 @@ struct ContentView: View {
         }
     }
 
-    // clear out sheet content when the sheet is dismissed.
+    // when a sheet is dismissed check if there are more sheets to display
     func sheetDismissed() {
-        vm.sheetMessage = nil
-        vm.sheetError = nil
+        if vm.sheetStack.isEmpty {
+            vm.sheetMessage = nil
+            vm.sheetError = nil
+        } else {
+            let sheetInfo = vm.sheetStack.removeFirst()
+            vm.sheetMessage = sheetInfo.sheetMessage
+            vm.sheetError = sheetInfo.sheetError
+            vm.sheetType = sheetInfo.sheetType
+        }
     }
 }
 

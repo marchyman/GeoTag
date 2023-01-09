@@ -73,9 +73,13 @@ extension ViewModel {
             }
             gpxGoodFileNames = await helper.gpxGoodFileNames
             gpxBadFileNames = await helper.gpxBadFileNames
-            sheetType = await helper.sheetType
-            sheetError = await helper.sheetError
-            sheetMessage = await helper.sheetMessage
+            if await !helper.sheetStack.isEmpty {
+                sheetStack.append(contentsOf: await helper.sheetStack)
+                let sheetInfo = sheetStack.removeFirst()
+                sheetMessage = sheetInfo.sheetMessage
+                sheetError = sheetInfo.sheetError
+                sheetType = sheetInfo.sheetType
+            }
             showingProgressView = false
         }
     }

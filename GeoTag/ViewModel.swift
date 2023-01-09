@@ -22,6 +22,7 @@ final class ViewModel: ObservableObject {
 
     // Type of optional sheet to attach to the content view
     // some sheets are associated with errors
+    var sheetStack = [SheetInfo]()
     @Published var sheetType: SheetType?
     var sheetError: NSError?
     var sheetMessage: String?
@@ -85,8 +86,28 @@ final class ViewModel: ObservableObject {
     @Published var refreshTracks = false
 }
 
+// Add a sheet to display
 
+extension ViewModel {
+    struct SheetInfo {
+        let sheetType: SheetType
+        let sheetError: NSError?
+        let sheetMessage: String?
+    }
 
+    func addSheet(type: SheetType, error: NSError? = nil, message: String? = nil) {
+        if sheetType == nil {
+            sheetType = type
+            sheetError = error
+            sheetMessage = message
+        } else {
+            // create a SheetInfo and add it to the stack of pending sheets
+            sheetStack.append(SheetInfo(sheetType: type,
+                                        sheetError: error,
+                                        sheetMessage: message))
+        }
+    }
+}
 
 // convenience init for use with swiftui previews.  Provide a list
 // of test images suitable for swiftui previews.
