@@ -64,6 +64,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         return .terminateNow
     }
 
+    // passed as the action method to terminate confirmation view and
+    // called when the user wants to terminate without saving changes.
+
     @MainActor
     func terminateIgnoringEdits() {
         viewModel?.window?.isDocumentEdited = false

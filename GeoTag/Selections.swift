@@ -9,8 +9,7 @@ import Foundation
 
 extension ViewModel {
 
-    // Process the set of selected images.  Pick one as the "most" selected
-    // and make its thumbnail NSImage.
+    // Process the set of selected images.  Pick one as the "most" selected.
 
     func selectionChanged(newSelection: Set<ImageModel.ID>) {
         // filter out any ids in the selection that don't reference valid images
@@ -29,8 +28,7 @@ extension ViewModel {
             return
         }
 
-        // set the most selected image and its thumbnail. Mark its location
-        // on the map.
+        // set the most selected image
 
         mostSelected = selection.first
     }

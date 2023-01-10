@@ -16,15 +16,23 @@ struct AdjustTimezoneView: View {
         VStack {
             Text("Specify Camera Time Zone")
                 .font(.largeTitle)
+                .padding(.top)
             Text("""
-                 When matching images to a GPS track log GeoTag assumes the
-                 Time Zone of image timestamps to be the same as the
-                 local-to-this-computer Time Zone. If the camera was set to
-                 the local time in some other Time Zone or the Time Zone has
+                 When matching images to a GPS track log GeoTag assumes
+                 the time zone of image timestamps to be the same as the
+                 local-to-this-computer time zone. If the camera was set to
+                 the local time in some other time tone or the time zone has
                  changed since you took the pictures select the appropriate
-                 Time Zone here before matching image timestamps to a track
-                 log.
+                 value here before matching image timestamps to a track log.
+
+                 The time zone is also used to calculate the GPS Date/Time
+                 value when saving images (if enabled in GeoTag settings).
+                 GPS Date/Time is always saved using GMT/UTC. The time
+                 zone of the image timestamp is required to calculate the
+                 proper value.  When no Time Zone is specified the
+                 local-to-this-computer Time Zone is used.
                  """)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding()
 
             Divider()
@@ -58,7 +66,7 @@ struct AdjustTimezoneView: View {
 
             Divider()
 
-            HStack {
+            HStack(alignment: .bottom) {
                 Spacer()
                 Button("Cancel") {
                     NSApplication.shared.keyWindow?.close()
@@ -75,8 +83,6 @@ struct AdjustTimezoneView: View {
             }
             .padding()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .frame(width: 600.0, height: 500.0)
         .onAppear {
             currentZone = TimeZoneName.timeZoneCase(zone: vm.timeZone)
             selectedZone = currentZone

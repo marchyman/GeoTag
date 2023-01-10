@@ -32,8 +32,6 @@ extension GeoTagApp {
             Group {
                 Button("Show In Finder") { setPastboardItemAction(.showInFinder) }
                     .disabled(vm.showInFinderDisabled())
-//                Button("Interpolate") { }
-//                    .disabled(true)
                 Button("Locn From Track") { setPastboardItemAction(.locnFromTrack) }
                     .disabled(vm.locnFromTrackDisabled())
                 Button("Specify Time Zone…") { setPastboardItemAction(.adjustTimeZone) }

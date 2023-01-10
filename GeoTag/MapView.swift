@@ -59,6 +59,8 @@ struct MapView: NSViewRepresentable {
     func updateNSView(_ view: ClickMapView, context: Context) {
         view.mapType = mapType
 
+        // handle mostSelected changes
+
         if vm.mostSelected == nil {
             view.removeAnnotation(mapPin)
             mapPin.coordinate = Coords()
@@ -83,6 +85,8 @@ struct MapView: NSViewRepresentable {
             }
         }
 
+        // handle track changes
+
         if vm.refreshTracks {
             let overlays = view.overlays
             if !overlays.isEmpty {
@@ -99,6 +103,8 @@ struct MapView: NSViewRepresentable {
                 }
             }
         }
+
+        // re-center the map
 
         if reCenter {
             DispatchQueue.main.async {

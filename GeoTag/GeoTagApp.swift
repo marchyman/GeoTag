@@ -31,8 +31,10 @@ struct GeoTagApp: App {
 
         Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
             AdjustTimezoneView()
+                .frame(width: 500.0, height: 570.0)
                 .environmentObject(vm)
         }
+        .windowResizability(.contentSize)
 
         Window(GeoTagApp.modifyDateTime, id: GeoTagApp.modifyDateTime) {
             ModifyDateTimeView()
