@@ -1,15 +1,14 @@
 change date/time
 change location
 Backup file option and location
-Update GPS Date/Time stamps optiom
 Create sidecar option???
-preserve file modification time
-Do not allow quit while a file save is in progress.
 Right pane divider location on start
+When Metal validation enabled program crashes when divider is moved
 save changes (file menu)
 - copy image array ✓
 - create task group ✓
-- save each image in a task
+- save each image in a task ✓
+- backup image before saving
 - if the save is good update the original values in viewmodel copy of image,
   not the copy. ✓
 - if all images were saved clear the isEdited flag ✓

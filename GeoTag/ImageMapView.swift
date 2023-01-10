@@ -23,7 +23,7 @@ struct ImageMapView: View {
                 }
                 DividerView(control: control, geometry: geometry)
             }
-         }
+        }
     }
 }
 

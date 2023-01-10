@@ -19,6 +19,7 @@ struct AppSettings {
     static let trackColorKey = "TrackColorKey"
     static let trackWidthKey = "TrackWidthKey"
     static let fileModificationTimeKey = "FileModificationTimeKey"
+    static let gpsTimestampKey = "GPSTimestampKey"
 
 
     enum CoordFormat: Int {

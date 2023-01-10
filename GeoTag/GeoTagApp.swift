@@ -48,8 +48,10 @@ struct GeoTagApp: App {
 
         Settings {
             SettingsView()
+                .frame(width: 500.0, height: 500.0)
                 .environmentObject(vm)
         }
+        .windowResizability(.contentSize)
 
     }
 }

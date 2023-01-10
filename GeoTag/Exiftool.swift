@@ -29,7 +29,8 @@ import MapKit
 /// manage GeoTag's use of exiftool
 
 struct Exiftool {
-    @AppStorage(AppSettings.fileModificationTimeKey) var fileModTime = false
+    @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
+    @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
 
 
     /// singleton instance of this class
@@ -91,12 +92,6 @@ struct Exiftool {
             }
         }
 
-        // calculate the gps timestamp and update args
-        let gpsTimestamp = await gpsTimestamp(for: image, in: timeZone)
-        gpsDArg += "\(gpsTimestamp)"
-        gpsTArg += "\(gpsTimestamp)"
-        gpsDTArg += "\(gpsTimestamp)"
-
         // path to image (or XMP) file to update.
         var path = image.sandboxURL.path
         if let xmp = image.sandboxXmpURL {
@@ -113,18 +108,26 @@ struct Exiftool {
                               latArg, latRefArg,
                               lonArg, lonRefArg,
                               eleArg, eleRefArg]
-        if fileModTime {
+        if updateFileModTime {
             exiftool.arguments! += ["-P"]
         }
 
-        // args that vary depending upon saving to an image file or a GPX file
+        if updateGPSTimestamp {
+            // calculate the gps timestamp and update args
+            let gpsTimestamp = gpsTimestamp(for: image, in: timeZone)
+            gpsDArg += "\(gpsTimestamp)"
+            gpsTArg += "\(gpsTimestamp)"
+            gpsDTArg += "\(gpsTimestamp)"
 
-        if image.sandboxXmpURL == nil {
-            exiftool.arguments! += [gpsDArg, gpsTArg]
-        } else {
-            exiftool.arguments?.append(gpsDTArg)
+            // args vary depending upon saving to an image file or a GPX file
+            if image.sandboxXmpURL == nil {
+                exiftool.arguments! += [gpsDArg, gpsTArg]
+            } else {
+                exiftool.arguments?.append(gpsDTArg)
+            }
         }
-            // add args to update date/time if changed
+
+        // add args to update date/time if changed
         if image.dateTimeCreated != image.originalDateTimeCreated {
             let dtoArg = "-DateTimeOriginal=" + (image.dateTimeCreated ?? "")
             let cdArg = "-CreateDate=" + (image.dateTimeCreated ?? "")
@@ -142,7 +145,7 @@ struct Exiftool {
     // convert the dateTimeCreated string to a string with time zone to
     // update GPS timestamp fields.  Return an empty string
     func gpsTimestamp(for image: ImageModel,
-                      in timeZone: TimeZone?) async -> String {
+                      in timeZone: TimeZone?) -> String {
         if let dateTime = image.dateTimeCreated {
             dateFormatter.dateFormat = ImageModel.dateFormat
             dateFormatter.timeZone = timeZone
