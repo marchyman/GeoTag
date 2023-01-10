@@ -23,29 +23,10 @@ struct ImageModel: Identifiable {
 
     var isValid = false
 
-    // data shown to and adjusted by the user.  The TimeZone is calculated
-    // whenever image location is updated.
+    // data shown to and adjusted by the user.
 
     var dateTimeCreated: String?
-    var timeZone: TimeZone?
-    var location: Coords? {
-        didSet {
-            if let location {
-                var locationTimeZone: TimeZone?
-                let coder = CLGeocoder();
-                let loc = CLLocation(latitude: location.latitude,
-                                     longitude: location.longitude)
-                coder.reverseGeocodeLocation(loc) {
-                    (placemarks, error) in
-                    let place = placemarks?.last
-                    locationTimeZone = place?.timeZone
-                }
-                timeZone = locationTimeZone
-            } else {
-                timeZone = nil
-            }
-        }
-    }
+    var location: Coords?
     var elevation: Double?
 
     // when image data is modified the original data is kept to restore
@@ -54,6 +35,14 @@ struct ImageModel: Identifiable {
     var originalDateTimeCreated: String?
     var originalLocation: Coords?
     var originalElevation: Double?
+
+    // true if image location, elevation, or timestamp have changed
+
+    var changed: Bool {
+        isValid && (dateTimeCreated != originalDateTimeCreated ||
+                    location != originalLocation ||
+                    elevation != originalElevation)
+    }
 
     // Sandbox references to this image and any related sidecar file
 

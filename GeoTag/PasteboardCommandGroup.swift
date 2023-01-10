@@ -34,10 +34,9 @@ extension GeoTagApp {
                     .disabled(vm.showInFinderDisabled())
 //                Button("Interpolate") { }
 //                    .disabled(true)
-                Button("Locn from track") { setPastboardItemAction(.locnFromTrack) }
+                Button("Locn From Track") { setPastboardItemAction(.locnFromTrack) }
                     .disabled(vm.locnFromTrackDisabled())
-                Button("Adjust Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
-                    .disabled(vm.gpxTracks.isEmpty)
+                Button("Specify Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
                 Button("Modify Date/Time…") { setPastboardItemAction(.modifyDateTime) }
                     .disabled(vm.mostSelected == nil)
                 Button("Modify Location…") { setPastboardItemAction(.modifyLocation) }

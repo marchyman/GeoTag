@@ -18,6 +18,7 @@ struct AppSettings {
     static let dividerPositionKey = "DividerPositionKey"
     static let trackColorKey = "TrackColorKey"
     static let trackWidthKey = "TrackWidthKey"
+    static let fileModificationTimeKey = "FileModificationTimeKey"
 
 
     enum CoordFormat: Int {

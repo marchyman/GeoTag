@@ -20,6 +20,7 @@ enum SheetType: Identifiable {
     case gpxFileNameSheet
     case duplicateImageSheet
     case savingUpdatesSheet
+    case saveErrorSheet
     case unexpectedErrorSheet
 }
 
@@ -45,6 +46,8 @@ struct ContentViewSheet: View {
                 DuplicateImageView()
             case .savingUpdatesSheet:
                 SavingUpdatesView()
+            case .saveErrorSheet:
+                SaveErrorView()
             case .unexpectedErrorSheet:
                 UnexpectedErrorView()
             }
@@ -119,6 +122,21 @@ struct SavingUpdatesView: View {
     }
 }
 
+struct SaveErrorView: View {
+    var body: some View {
+        VStack() {
+            Text("One or more files could not be saved")
+                .font(.title)
+                .padding()
+            Text("The updates to one or more files could not be saved.")
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 40)
+        }
+        .frame(maxWidth: 400, minHeight: 100)
+    }
+
+}
 struct UnexpectedErrorView: View {
     @EnvironmentObject var vm: ViewModel
 

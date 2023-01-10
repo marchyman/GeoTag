@@ -11,6 +11,7 @@ struct SettingsView: View {
     @EnvironmentObject var vm: ViewModel
 
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.fileModificationTimeKey) var fileModTime = false
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
     @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
 
@@ -30,17 +31,26 @@ struct SettingsView: View {
                 }
                 .pickerStyle(.inline)
                 .padding([.bottom, .horizontal] )
+                .help("Select a format for latitude and longitude display")
+
+                LabeledContent("Preserve File Modification Times:") {
+                    Toggle("Preserve File Modification Time", isOn: $fileModTime)
+                        .labelsHidden()
+                }
+                .padding()
+                .help("Checking this box will preserve file modification times when GeoTag updates image metadata with location changes.  If the box is not checked image files modification times will be set to the time the image was last updated.")
 
                 ColorPicker("GPS Track Color:", selection: $trackColor)
                     .onChange(of: trackColor.rawValue) { color in
                         vm.refreshTracks = true
                     }
                     .padding(.horizontal)
+                    .help("Select the color used to display GPS tracks on the map.")
 
                 TextField("GPS Track width:", value: $trackWidth, format: .number)
                     .onSubmit { vm.refreshTracks = true }
                     .padding(.horizontal)
-                    .help("Use 0 for the system default width")
+                    .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
 
                 Spacer()
                 HStack {

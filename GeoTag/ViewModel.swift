@@ -68,7 +68,7 @@ final class ViewModel: ObservableObject {
     var menuContext: ImageModel.ID?
 
     // Tracks displayed on map and a timezone to use when matching image
-    // timestamps to track logs.
+    // timestamps to track logs and saving images.
     @Published var gpxTracks = [Gpx]()
     var timeZone: TimeZone?
 

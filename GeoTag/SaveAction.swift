@@ -40,24 +40,35 @@ extension ViewModel {
         Task {
             await withTaskGroup(of: SaveStatus.self) { group in
                 for image in imagesToSave {
-                    group.addTask {
-                        // pretend we did a save for now
-                        try? await Task.sleep(for: .seconds(2))
-                        return SaveStatus(id: image.id,
-                                          dateTimeCreated: image.dateTimeCreated,
-                                          location: image.location,
-                                          elevation: image.elevation,
-                                          error: nil)
+                    // only process images that have changed
+                    if image.changed {
+                        group.addTask {
+                            var errorDescription: String? = nil
+                            do {
+                                try await image.saveChanges(timeZone: self.timeZone)
+                            } catch {
+                                errorDescription = error.localizedDescription
+                            }
+                            return SaveStatus(id: image.id,
+                                              dateTimeCreated: image.dateTimeCreated,
+                                              location: image.location,
+                                              elevation: image.elevation,
+                                              error: errorDescription)
+                        }
                     }
                 }
 
-                // Update image original values after update if no errors
+                // Update image original values after update when no errors
 
                 for await status in group {
-                    // check for errors here
-                    self[status.id].originalDateTimeCreated = status.dateTimeCreated
-                    self[status.id].originalLocation = status.location
-                    self[status.id].originalElevation = status.elevation
+                    if status.error == nil {
+                        self[status.id].originalDateTimeCreated = status.dateTimeCreated
+                        self[status.id].originalLocation = status.location
+                        self[status.id].originalElevation = status.elevation
+                    } else {
+                        print("image \(status.id) failed to update with error: \(status.error!)")
+                        // ???
+                    }
                 }
             }
 
