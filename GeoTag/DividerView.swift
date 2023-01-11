@@ -7,11 +7,11 @@
 
 import SwiftUI
 
+// make this an observable object as otherwise updates to dividerPosition
+// do not cause view updates in ImageMapView.
+
 public class DividerControl: ObservableObject {
     @AppStorage(AppSettings.dividerPositionKey) var dividerPosition: Double = 0.50
-
-    @Published var currentOffset: CGFloat = 0
-    @Published var previousOffset: CGFloat = 0
 }
 
 // A draggable divider that moves vertically within a view.
@@ -19,6 +19,9 @@ public class DividerControl: ObservableObject {
 struct DividerView: View {
     @ObservedObject var control: DividerControl
     var geometry: GeometryProxy
+
+    @State private var currentOffset: CGFloat = 0
+    @State private var previousOffset: CGFloat = 0
 
     // The divider is offset from the middle of the view. Max divider movement
     // is capped to +/- 70% of the view height (-35% to +35% of offset)
@@ -38,7 +41,6 @@ struct DividerView: View {
     var body: some View {
         Divider()
             .frame(minHeight: 5)
-            .offset(y: offset)
             .onHover { isHovered in
                 if (isHovered) {
                     NSCursor.resizeUpDown.push()
@@ -46,6 +48,7 @@ struct DividerView: View {
                     NSCursor.pop()
                 }
             }
+            .offset(y: offset)
             .gesture(drag)
     }
 
@@ -56,14 +59,17 @@ struct DividerView: View {
     }
 
     func dragChanged(_ gesture: DragGesture.Value) {
-        let height = control.previousOffset + gesture.translation.height
-        control.currentOffset = max(negativeCap, min(positiveCap, height))
+        let height = previousOffset + gesture.translation.height
+        currentOffset = max(negativeCap, min(positiveCap, height))
         control.dividerPosition =
-            (geometry.size.height / 2 - control.currentOffset) / geometry.size.height
+            (geometry.size.height / 2 - currentOffset) / geometry.size.height
     }
 
     func dragEnded(_ gesture: DragGesture.Value) {
-        control.previousOffset = control.currentOffset
+        // update final value
+        dragChanged(gesture)
+        // and save the offset for future drags
+        previousOffset = currentOffset
     }
 }
 

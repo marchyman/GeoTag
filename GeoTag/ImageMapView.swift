@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ImageMapView: View {
-    @ObservedObject public var control: DividerControl
+    // defined here so control changes cause the Image and MapPane view
+    // to change.
+    @StateObject public var control = DividerControl()
 
     var body: some View {
         GeometryReader { geometry in
@@ -18,7 +20,7 @@ struct ImageMapView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                     MapPaneView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .frame(maxWidth: .infinity)
                         .frame(height: geometry.size.height * control.dividerPosition)
                 }
                 DividerView(control: control, geometry: geometry)
@@ -29,6 +31,6 @@ struct ImageMapView: View {
 
 struct ImageMapView_Previews: PreviewProvider {
     static var previews: some View {
-        ImageMapView(control: DividerControl())
+        ImageMapView()
     }
 }

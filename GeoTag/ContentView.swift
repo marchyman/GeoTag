@@ -14,7 +14,6 @@ let windowMinHeight = 800.0
 
 struct ContentView: View {
     @EnvironmentObject var vm: ViewModel
-    @ObservedObject var dividerControl = DividerControl()
 
     var body: some View {
         HSplitView {
@@ -25,7 +24,7 @@ struct ContentView: View {
                     ProgressView("Processing image files...")
                 }
             }
-            ImageMapView(control: dividerControl)
+            ImageMapView()
         }
         .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)
         .border(windowBorderColor)
