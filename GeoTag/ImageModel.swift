@@ -94,18 +94,6 @@ struct ImageModel: Identifiable {
         }
     }
 
-    // remove the symbolic link created in the sandboxed document directory
-    // during instance initialization
-
-//    deinit
-//    {
-//        let fileManager = FileManager.default
-//        try? fileManager.removeItem(at: sandboxURL)
-//        if let sandboxXmpURL {
-//            try? fileManager.removeItem(at: sandboxXmpURL)
-//        }
-//    }
-
     // reset the timestamp and location to their initial values.  Initial
     // values are updated whenever an image is saved.
 
@@ -146,7 +134,7 @@ struct ImageModel: Identifiable {
         }
 
         // extract image existing gps info unless a location has already
-        // been retrieved -- XMP files are processed first
+        // been retrieved
 
         if location == nil,
            let gpsData = imgProps[ImageModel.GPSDictionary] as? [String: AnyObject] {
@@ -164,8 +152,8 @@ struct ImageModel: Identifiable {
                let latRef = gpsData[ImageModel.GPSLatitudeRef] as? String,
                let lon = gpsData[ImageModel.GPSLongitude] as? Double,
                let lonRef = gpsData[ImageModel.GPSLongitudeRef] as? String {
-                location = Coords(latitude: latRef == "N" ? lat : -lat,
-                                 longitude: lonRef == "E" ? lon : -lon)
+                location = validCoords(latitude: latRef == "N" ? lat : -lat,
+                                       longitude: lonRef == "E" ? lon : -lon)
                 originalLocation = location
             }
             if let alt = gpsData[ImageModel.GPSAltitude] as? Double,
@@ -175,6 +163,19 @@ struct ImageModel: Identifiable {
             }
         }
         return true
+    }
+
+    // an invalid location read from metadata (corrupted file) will crash
+    // the program. Return a valid Coords or nil
+
+    func validCoords(latitude: Double, longitude: Double) -> Coords? {
+        var coords: Coords?
+
+        if (0...90).contains(latitude.magnitude) &&
+            (0...180).contains(longitude.magnitude) {
+            coords = Coords(latitude: latitude, longitude: longitude)
+        }
+        return coords
     }
 
     /// obtain metadata from XMP file
@@ -241,12 +242,18 @@ extension ImageModel {
 // ImageModel instances are compared and hashed on id
 
 extension ImageModel: Equatable, Hashable {
-    static func == (lhs: ImageModel, rhs: ImageModel) -> Bool {
+    public static func == (lhs: ImageModel, rhs: ImageModel) -> Bool {
         return lhs.id == rhs.id
     }
 
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+extension URL: Comparable {
+    public static func < (lhs: URL, rhs: URL) -> Bool {
+        lhs.path < rhs.path
     }
 }
 
