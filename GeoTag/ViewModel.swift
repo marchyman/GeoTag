@@ -26,6 +26,7 @@ final class ViewModel: ObservableObject {
     @Published var sheetType: SheetType?
     var sheetError: NSError?
     var sheetMessage: String?
+    var saveIssues = [ImageModel.ID : String ]()
 
     // Confirmatin required
     @Published var presentConfirmation = false

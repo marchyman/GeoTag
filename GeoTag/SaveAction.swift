@@ -10,7 +10,7 @@ import Foundation
 extension ViewModel {
     // return true if the save menu item should be disabled
     func saveDisabled() -> Bool {
-        return !(window?.isDocumentEdited ?? false)
+        return saveInProgress || !(window?.isDocumentEdited ?? false)
     }
 
     // Update image files with changed timestamp/location info
@@ -31,6 +31,7 @@ extension ViewModel {
         // tasks.
 
         saveInProgress = true
+        saveIssues = [:]
         let imagesToSave = images
         undoManager.removeAllActions()
         window?.isDocumentEdited = false
@@ -66,12 +67,13 @@ extension ViewModel {
                         self[status.id].originalLocation = status.location
                         self[status.id].originalElevation = status.elevation
                     } else {
-                        print("image \(status.id) failed to update with error: \(status.error!)")
-                        // ???
+                        saveIssues.updateValue(status.error!, forKey: status.id)
                     }
                 }
             }
-
+            if !saveIssues.isEmpty {
+                addSheet(type: .saveErrorSheet)
+            }
             saveInProgress = false
         }
     }

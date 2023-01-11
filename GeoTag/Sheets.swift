@@ -123,6 +123,8 @@ struct SavingUpdatesView: View {
 }
 
 struct SaveErrorView: View {
+    @EnvironmentObject var vm: ViewModel
+
     var body: some View {
         VStack() {
             Text("One or more files could not be saved")
@@ -132,8 +134,19 @@ struct SaveErrorView: View {
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
+            List {
+                ForEach(vm.saveIssues.sorted(by: >), id: \.key) { key, value in
+                    VStack(alignment: .leading) {
+                        Text(key.lastPathComponent)
+                            .bold()
+                        Text(value)
+                            .padding(.bottom)
+                    }
+                }
+            }
+            .frame(maxHeight: .infinity)
         }
-        .frame(maxWidth: 400, minHeight: 100)
+        .frame(maxWidth: 600, minHeight: 400)
     }
 
 }
