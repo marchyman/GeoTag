@@ -8,8 +8,38 @@
 import Foundation
 import SwiftUI
 
-struct AppSettings {
-    // AppStorage key
+class AppSettings: ObservableObject {
+    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+
+    enum CoordFormat: Int {
+        case deg
+        case degMin
+        case degMinSec
+    }
+
+    @Published var backupURL: URL?
+
+    // info needed to remove old backup files
+
+    var oldFiles = [URL]()
+    var folderSize = 0
+    var deletedSize = 0
+    @Published var removeOldFiles = false
+
+    // decode the image backup folder URL from the security scoped
+    // bookmark in AppStorage, assuming one exists.
+
+    init() {
+        backupURL = getURL()
+    }
+}
+
+
+// AppStorage keys for various settings
+
+extension AppSettings {
+    static let doNotBackupKey = "DoNotBackupKey"
+    static let saveBookmarkKey = "SaveBookmarkKey"
     static let coordFormatKey = "CoordFormatKey"
     static let mapTypeIndexKey = "MapTypeIndexKey"
     static let mapLatitudeKey = "MapLatitudeKey"
@@ -20,14 +50,6 @@ struct AppSettings {
     static let trackWidthKey = "TrackWidthKey"
     static let fileModificationTimeKey = "FileModificationTimeKey"
     static let gpsTimestampKey = "GPSTimestampKey"
-
-
-    enum CoordFormat: Int {
-        case deg
-        case degMin
-        case degMinSec
-    }
-
 }
 
 // an extension to Color that allows a Color to be stored in AppStorage

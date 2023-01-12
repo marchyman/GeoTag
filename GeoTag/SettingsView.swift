@@ -9,12 +9,16 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var vm: ViewModel
+    @StateObject var appSettings = AppSettings()
 
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
     @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+
+    @State private var backupURL: URL?
 
     var body: some View {
         VStack {
@@ -22,6 +26,21 @@ struct SettingsView: View {
                 .font(.largeTitle)
                 .padding()
             Form {
+                LabeledContent("Disable Image Backups:") {
+                    Toggle("Disable image backups", isOn: $doNotBackup.animation())
+                        .labelsHidden()
+                }
+                if doNotBackup {
+                    Text("Enabling image backups is strongly recommended")
+                        .font(.footnote)
+                        .padding(.bottom)
+                } else {
+                    LabeledContent("Backup folder:") {
+                        PathView(appSettings: appSettings)
+                            .frame(width: 280)
+                            .padding(.bottom)
+                    }
+                }
 
                 Picker("Choose a coordinate format:", selection: $coordFormat) {
                     Text("dd.dddddd")
@@ -74,11 +93,36 @@ struct SettingsView: View {
             }
         }
         .padding()
+        .alert("Delete old backup files?",
+               isPresented: $appSettings.removeOldFiles) { deleteOldFileView }
+    }
+
+    var deleteOldFileView: some View {
+        VStack {
+            Text("""
+                 Your current backup/save folder
+
+                     \(backupURL != nil ? backupURL!.path : "unknown")
+
+                 is using \(appSettings.folderSize / 1_000_000) MB to store backup files.
+                 \(appSettings.oldFiles.count) files using \(appSettings.deletedSize / 1_000_000) MB of storage were placed in the folder more than 7 days ago.
+
+                 Shall images that have been in the folder more than 7 days be deleted?
+                 """)
+
+            Button("Delete", role: .destructive,
+                   action: appSettings.deleteOldFiles)
+            Button("Cancel", role: .cancel) {
+                appSettings.removeOldFiles = false
+            }
+                .keyboardShortcut(.defaultAction)
+        }
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
+            .environmentObject(ViewModel())
     }
 }
