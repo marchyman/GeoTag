@@ -170,6 +170,7 @@
 				49BA29A02962272B00B26F03 /* MenuAction.swift */,
 				492175782949743E00A5EA83 /* OpenAction.swift */,
 				49BA29A72962370200B26F03 /* SaveAction.swift */,
+				49A99FBD296F8B4B00392EEA /* SaveFolder.swift */,
 				49BA29A9296237C500B26F03 /* DiscardChangesAction.swift */,
 				49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */,
 				4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */,
@@ -257,7 +258,6 @@
 				498A734D294E949B00C62B14 /* AppSetting.swift */,
 				498A734B294E916700C62B14 /* SettingsView.swift */,
 				49A99FBB296F6D5900392EEA /* PathView.swift */,
-				49A99FBD296F8B4B00392EEA /* SaveFolder.swift */,
 			);
 			name = "Settings Group";
 			sourceTree = "<group>";

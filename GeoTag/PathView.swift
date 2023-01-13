@@ -10,24 +10,24 @@ import SwiftUI
 // Make NSPathControl available with SwiftUI
 
 struct PathView: NSViewRepresentable {
-    @ObservedObject var appSettings: AppSettings
+    @EnvironmentObject var vm: ViewModel
 
     class Coordinator: NSObject, NSPathControlDelegate {
-        @ObservedObject var appSettings: AppSettings
+        @EnvironmentObject var vm: ViewModel
 
-        init(appSettings: ObservedObject<AppSettings>) {
-            _appSettings = appSettings
-        }
+//        init(appSettings: ObservedObject<ViewModel>) {
+//            _vm = vm
+//        }
 
         @objc func action(sender: NSPathControl) {
-            appSettings.backupURL = sender.clickedPathItem?.url
+            vm.backupURL = sender.clickedPathItem?.url
         }
     }
 
     // Make the view coordinator.
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(appSettings: _appSettings)
+        return Coordinator()
     }
 
     func makeNSView(context: Context) -> NSPathControl {
@@ -41,12 +41,13 @@ struct PathView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: NSPathControl, context: Context) {
-        nsView.url = appSettings.backupURL
+        nsView.url = vm.backupURL
     }
 }
 
 struct PathView_Previews: PreviewProvider {
     static var previews: some View {
-        PathView(appSettings: AppSettings())
+        PathView()
+            .environmentObject(ViewModel())
     }
 }

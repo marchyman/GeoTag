@@ -20,25 +20,28 @@ final class ViewModel: ObservableObject {
     // Let the user know when the app is busy
     @Published var showingProgressView = false
 
-    // Type of optional sheet to attach to the content view
-    // some sheets are associated with errors
+    // Fields used select a sheet to attach to the content view
+    // some sheets are associated with errors.  Setting sheetType will
+    // trigger display of the sheet
     var sheetStack = [SheetInfo]()
-    @Published var sheetType: SheetType?
     var sheetError: NSError?
     var sheetMessage: String?
     var saveIssues = [ImageModel.ID : String ]()
+    @Published var sheetType: SheetType?
 
-    // Confirmatin required
-    @Published var presentConfirmation = false
+    // Confirmation required
     var confirmationMessage: String?
     var confirmationAction: (@MainActor () -> Void)?
-    
-    // Images to edit
+    @Published var presentConfirmation = false
+
+    // Images to edit.
     @Published var images = [ImageModel]()
+
+    // A second save can not be triggered while a save is in progress.
+    // App termination is denied, too.
     var saveInProgress = false
 
     // get/set an image from the table of images  given its ID.
-
     subscript(id: ImageModel.ID?) -> ImageModel {
          get {
              if let id {
@@ -64,13 +67,16 @@ final class ViewModel: ObservableObject {
     @Published var mostSelected: ImageModel.ID?
 
     // State that changes when a menu item is picked.  Some menu actions
-    // optionally need a context -- the image.id of the image to act upon
-    @Published var selectedMenuAction: MenuAction = .none
+    // optionally need a context -- the image.id of a specific image to act upon
     var menuContext: ImageModel.ID?
+    @Published var selectedMenuAction: MenuAction = .none
 
-    // Tracks displayed on map and a timezone to use when matching image
-    // timestamps to track logs and saving images.
+    // Tracks displayed on map
     @Published var gpxTracks = [Gpx]()
+
+    // The timezone to use when matching image timestamps to track logs and
+    // setting the GPS time stamp when saving images.  When nil the system
+    // time zone is used.
     var timeZone: TimeZone?
 
     // GPX File Loading sheet information
@@ -85,6 +91,28 @@ final class ViewModel: ObservableObject {
     var mapLines = [MKPolyline]()
     var mapSpan: MKCoordinateSpan?
     @Published var refreshTracks = false
+
+    // The URL of the folder where image backups are save when backups
+    // are enabled.  The URL comes from a security scoped bookmark in
+    // AppStorage.
+    @Published var backupURL: URL?
+    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+
+    // The folder containing backups is scanned at startup and the user
+    // is given the option to remove backups older than 7 days.
+    var oldFiles = [URL]()
+    var folderSize = 0
+    var deletedSize = 0
+    @Published var removeOldFiles = false
+
+    // get the backupURL from AppStorage if needed.  This will also trigger
+    // a scan of the backup folder for old backups that can be removed.
+    init() {
+        if !doNotBackup {
+            backupURL = getBackupURL()
+        }
+    }
 }
 
 // Add a sheet to display

@@ -8,29 +8,11 @@
 import Foundation
 import SwiftUI
 
-class AppSettings: ObservableObject {
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
-
+struct AppSettings {
     enum CoordFormat: Int {
         case deg
         case degMin
         case degMinSec
-    }
-
-    @Published var backupURL: URL?
-
-    // info needed to remove old backup files
-
-    var oldFiles = [URL]()
-    var folderSize = 0
-    var deletedSize = 0
-    @Published var removeOldFiles = false
-
-    // decode the image backup folder URL from the security scoped
-    // bookmark in AppStorage, assuming one exists.
-
-    init() {
-        backupURL = getURL()
     }
 }
 

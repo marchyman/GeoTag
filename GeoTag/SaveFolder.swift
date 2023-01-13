@@ -7,12 +7,11 @@
 
 import SwiftUI
 
-
-extension AppSettings {
+extension ViewModel {
     /// Convert a security scoped bookmark to its URL
     ///  - Returns the URL if the bookmark could be converted, else nil
 
-    func getURL() -> URL? {
+    func getBackupURL() -> URL? {
         var staleBookmark = false
         let url = try? URL(resolvingBookmarkData: saveBookmark,
                            options: [.withoutUI, .withSecurityScope],
@@ -21,7 +20,7 @@ extension AppSettings {
             if staleBookmark {
                 saveBookmark = getBookmark(from: url)
             }
-//            checkSaveFolder(url)
+            checkSaveFolder(url)
         }
         return url
     }
