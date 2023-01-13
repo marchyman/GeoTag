@@ -9,13 +9,14 @@ import Foundation
 
 extension ImageModel {
 
+    // make a backup of self into the folder identifed by the given URL
+    func makeBackupFile(backupFolder: URL) async throws {
+        // ;;;
+        // backup the file
+    }
+
     func saveChanges(timeZone: TimeZone?) async throws {
-        try makeBackupFile()
         try await Exiftool.helper.update(from: self, timeZone: timeZone)
     }
 
-    func makeBackupFile() throws {
-        // check if backups are desired
-        // backup the file
-    }
 }

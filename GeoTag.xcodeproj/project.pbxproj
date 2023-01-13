@@ -76,6 +76,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		490114B5297117FD00193BD3 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelHelpers.swift; sourceTree = "<group>"; };
 		4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelThumbnail.swift; sourceTree = "<group>"; };
 		490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutCopyAction.swift; sourceTree = "<group>"; };
@@ -292,6 +293,7 @@
 			isa = PBXGroup;
 			children = (
 				49BA29A42962296600B26F03 /* ToDo */,
+				490114B5297117FD00193BD3 /* LICENSE */,
 				49A1326E294BFB9300F1B393 /* ExifTool */,
 				49B039562944429E003B7C53 /* GeoTag */,
 				49B039552944429E003B7C53 /* Products */,

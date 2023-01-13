@@ -15,7 +15,6 @@ extension ImageModel {
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file and a zero
     /// sized empty image is created.
-
     mutating func makeThumbnail() {
         // if a thumbail has already been created we're done
         guard thumbnail == nil else { return }

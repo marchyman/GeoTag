@@ -12,9 +12,9 @@ import Foundation
 // instance is fully initialized.  They need not be member functions as
 // they don't access ImageModel data.
 
-// Link the given fileURL to the app sandbox, create a unique name if necessary
 
 extension ImageModel {
+    // Link the given fileURL to the app sandbox, create a unique name if necessary
     static func createSandboxUrl(fileURL: URL) throws -> URL {
         var sandboxURL: URL
 
@@ -50,7 +50,6 @@ extension ImageModel {
     // Link an XMP file matching the image file, if one was found, into the sandbox.
     // Add a file presenter to allow us to write to the XMP file even if only the
     // image file was opened.
-
     static func createSandboxXmpURL(fileURL: URL,
                                     xmpURL: URL,
                                     xmpFile: XmpFile) throws -> URL? {

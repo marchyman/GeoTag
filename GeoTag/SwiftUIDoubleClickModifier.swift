@@ -2,6 +2,7 @@
 //  SwiftUIDoubleClickModifier.swift
 //  GeoTag
 //
+
 //  Code taken from this gist:
 //  https://gist.github.com/91dad79ebdba409556dce663d28e8297.git
 //  by Joel Ekström

@@ -13,31 +13,26 @@ import MapKit
 struct ImageModel: Identifiable {
 
     // Identifying data.
-
     let fileURL: URL
     var id: URL {
         fileURL
     }
 
     // is this an image file or something else?
-
     var isValid = false
 
     // data shown to and adjusted by the user.
-
     var dateTimeCreated: String?
     var location: Coords?
     var elevation: Double?
 
     // when image data is modified the original data is kept to restore
     // should the user decide to change their mind
-
     var originalDateTimeCreated: String?
     var originalLocation: Coords?
     var originalElevation: Double?
 
     // true if image location, elevation, or timestamp have changed
-
     var changed: Bool {
         isValid && (dateTimeCreated != originalDateTimeCreated ||
                     location != originalLocation ||
@@ -45,20 +40,17 @@ struct ImageModel: Identifiable {
     }
 
     // Sandbox references to this image and any related sidecar file
-
     let sandboxURL: URL
     let sandboxXmpURL: URL?
     let xmpURL: URL
     let xmpFile: XmpFile
 
     // The thumbnail image displayed when and image is selected for editing
-    // Thumbnail will not be created until it is needed.  Once created
+    // Thumbnails are not be created until it is needed.  Once created
     // it will be saved here.
-
     var thumbnail: NSImage?
 
     // initialization of image data given its URL.
-
     init(imageURL: URL, forPreview: Bool = false) throws {
         fileURL = imageURL
         if forPreview {
@@ -96,7 +88,6 @@ struct ImageModel: Identifiable {
 
     // reset the timestamp and location to their initial values.  Initial
     // values are updated whenever an image is saved.
-
     mutating func revert() {
         dateTimeCreated = originalDateTimeCreated
         location = originalLocation
@@ -108,7 +99,6 @@ struct ImageModel: Identifiable {
     ///
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file
-
     private
     mutating func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
@@ -167,7 +157,6 @@ struct ImageModel: Identifiable {
 
     // an invalid location read from metadata (corrupted file) will crash
     // the program. Return a valid Coords or nil
-
     func validCoords(latitude: Double, longitude: Double) -> Coords? {
         var coords: Coords?
 
@@ -183,7 +172,6 @@ struct ImageModel: Identifiable {
     ///
     /// Extract desired metadata from an XMP file using ExifTool.  Apple
     /// ImageIO functions do not work with XMP sidecar files.
-
     private
     mutating func loadXmpMetadata(_ xmp: URL) {
         var errorCode: NSError?
@@ -250,6 +238,8 @@ extension ImageModel: Equatable, Hashable {
         hasher.combine(id)
     }
 }
+
+// URLs in this program can be compared
 
 extension URL: Comparable {
     public static func < (lhs: URL, rhs: URL) -> Bool {

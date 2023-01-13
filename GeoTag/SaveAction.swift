@@ -47,14 +47,19 @@ extension ViewModel {
         // process the images in the background.
 
         Task {
+            let makeBackup = !doNotBackup
+            let url = backupURL!
             await withTaskGroup(of: SaveStatus.self) { group in
                 for image in imagesToSave {
                     // only process images that have changed
                     if image.changed {
-                        group.addTask {
+                        group.addTask { [self] in
                             var errorDescription: String? = nil
                             do {
-                                try await image.saveChanges(timeZone: self.timeZone)
+                                if makeBackup {
+                                    try await image.makeBackupFile(backupFolder: url)
+                                }
+                                try await image.saveChanges(timeZone: timeZone)
                             } catch {
                                 errorDescription = error.localizedDescription
                             }

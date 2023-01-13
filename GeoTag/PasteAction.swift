@@ -34,7 +34,6 @@ extension ViewModel {
         }
 
         if !imagesToUpdate.isEmpty {
-            // UNDO grouping
             let pb = NSPasteboard.general
             if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
                let locn = ImageModel.decodeStringRep(value: pasteVal) {
