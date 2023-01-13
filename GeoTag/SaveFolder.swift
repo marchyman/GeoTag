@@ -94,6 +94,9 @@ extension ViewModel {
 
     nonisolated func remove(filesToRemove: [URL]) {
         Task {
+            let folderURL = await backupURL
+            let _ = folderURL?.startAccessingSecurityScopedResource()
+            defer { folderURL?.stopAccessingSecurityScopedResource() }
             let fileManager = FileManager.default
             for url in filesToRemove {
                 try? fileManager.removeItem(at: url)
