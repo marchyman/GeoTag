@@ -22,6 +22,11 @@ struct PathView: NSViewRepresentable {
         @objc func action(sender: NSPathControl) {
             backupURL = sender.clickedPathItem?.url
         }
+
+        @objc func pathControl(_ pathControl: NSPathControl,
+                               willDisplay openPanel: NSOpenPanel) {
+            openPanel.canCreateDirectories = true
+        }
     }
 
     // Make the view coordinator.

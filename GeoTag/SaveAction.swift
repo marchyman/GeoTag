@@ -27,6 +27,14 @@ extension ViewModel {
             let error: String?
         }
 
+        // before starting check that image files backups are disabled
+        // or the image backup folder exists.
+
+        guard doNotBackup || backupURL != nil else {
+            // ???
+            return
+        }
+
         // copy images.  The info in the copies will be saved in background
         // tasks.
 
