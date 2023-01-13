@@ -35,6 +35,12 @@ struct SettingsView: View {
                         PathView()
                             .frame(width: 280)
                             .padding(.bottom)
+                            .onChange(of: vm.backupURL) { url in
+                                if let url {
+                                    vm.saveBookmark = vm.getBookmark(from: url)
+                                    vm.checkSaveFolder(url)
+                                }
+                            }
                     }
                 }
 

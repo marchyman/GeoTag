@@ -91,13 +91,13 @@ extension ViewModel {
         }
     }
 
-    func deleteOldFiles() {
+
+    nonisolated func remove(filesToRemove: [URL]) {
         Task {
             let fileManager = FileManager.default
-            for url in oldFiles {
+            for url in filesToRemove {
                 try? fileManager.removeItem(at: url)
             }
-            oldFiles = []
         }
     }
 }

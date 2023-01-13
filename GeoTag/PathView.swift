@@ -13,21 +13,21 @@ struct PathView: NSViewRepresentable {
     @EnvironmentObject var vm: ViewModel
 
     class Coordinator: NSObject, NSPathControlDelegate {
-        @EnvironmentObject var vm: ViewModel
+        @Binding var backupURL: URL?
 
-//        init(appSettings: ObservedObject<ViewModel>) {
-//            _vm = vm
-//        }
+        init(backupURL: Binding<URL?>) {
+            _backupURL = backupURL
+        }
 
         @objc func action(sender: NSPathControl) {
-            vm.backupURL = sender.clickedPathItem?.url
+            backupURL = sender.clickedPathItem?.url
         }
     }
 
     // Make the view coordinator.
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator()
+        return Coordinator(backupURL: $vm.backupURL)
     }
 
     func makeNSView(context: Context) -> NSPathControl {
