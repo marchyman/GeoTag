@@ -48,7 +48,7 @@ extension ViewModel {
 
         Task {
             let makeBackup = !doNotBackup
-            let url = backupURL!
+            let url = backupURL
             await withTaskGroup(of: SaveStatus.self) { group in
                 for image in imagesToSave {
                     // only process images that have changed
@@ -57,7 +57,7 @@ extension ViewModel {
                             var errorDescription: String? = nil
                             do {
                                 if makeBackup {
-                                    try await image.makeBackupFile(backupFolder: url)
+                                    try await image.makeBackupFile(backupFolder: url!)
                                 }
                                 try await image.saveChanges(timeZone: timeZone)
                             } catch {
