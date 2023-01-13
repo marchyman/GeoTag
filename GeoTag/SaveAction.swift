@@ -31,7 +31,7 @@ extension ViewModel {
         // or the image backup folder exists.
 
         guard doNotBackup || backupURL != nil else {
-            // ???
+            addSheet(type: .noBackupFolderSheet)
             return
         }
 

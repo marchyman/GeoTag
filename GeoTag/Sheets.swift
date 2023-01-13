@@ -19,6 +19,7 @@ enum SheetType: Identifiable {
 
     case gpxFileNameSheet
     case duplicateImageSheet
+    case noBackupFolderSheet
     case savingUpdatesSheet
     case saveErrorSheet
     case unexpectedErrorSheet
@@ -37,13 +38,15 @@ struct ContentViewSheet: View {
                 Button("Dismiss") {
                     dismiss()
                 }
-                .keyboardShortcut(.return)
+                .keyboardShortcut(.defaultAction)
             }
             switch type {
             case .gpxFileNameSheet:
                 GpxLoadView()
             case .duplicateImageSheet:
                 DuplicateImageView()
+            case .noBackupFolderSheet:
+                NoBackupFolderView()
             case .savingUpdatesSheet:
                 SavingUpdatesView()
             case .saveErrorSheet:
@@ -107,6 +110,21 @@ struct DuplicateImageView: View {
 
 }
 
+struct NoBackupFolderView: View {
+    var body: some View {
+        VStack() {
+            Text("Image backup folder can not be found")
+                .font(.title)
+                .padding()
+            Text("Image backups are enabled but no backup folder is specified or the specified folder can no longer be found.  Please open the program settings window (⌘ ,) and select a folder for image backups.")
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 40)
+        }
+        .frame(maxWidth: 400, minHeight: 200)
+    }
+
+}
 struct SavingUpdatesView: View {
     var body: some View {
         VStack() {
