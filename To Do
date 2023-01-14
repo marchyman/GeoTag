@@ -1,3 +1,10 @@
+change date/time
+change location
+Create sidecar option???
+Right pane divider location on start -- partially fixed
+When Metal validation enabled program crashes when divider is moved
+Form alignment -- might have worked around this
+
 Feature Requests:
 
 * Add and option to show the location of all selected images.
@@ -6,14 +13,3 @@ Feature Requests:
   if necessary.
 
 * Handle location display of video files.  Exiftool does not allow updates.
-
-* Would it be worth putting in the preferences or somewhere the ability
-  to put in a tag to indicate that the photo has GPS data in it.   On a
-  save if GPS data is there it also saves the Tag.  Just an idea.
-
-* raw/jpg file changes thoughts
-  - instead of hiding jpgs, show them in gray
-  - create sidecar file if changes made so both files get update
-  - make hiding/graying the jpeg files optional.
-
-* Add altitude update if retrieved from a track log.

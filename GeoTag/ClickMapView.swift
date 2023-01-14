@@ -50,8 +50,12 @@ class ClickMapView: MKMapView {
         let coords = timer.userInfo as! CLLocationCoordinate2D
         clickTimer?.invalidate()
         clickTimer = nil
-        if let id = viewModel.mostSelected {
-            viewModel.update(id: id, location: coords)
+        if !viewModel.selection.isEmpty {
+            viewModel.undoManager.beginUndoGrouping()
+            for id in viewModel.selection {
+                viewModel.update(id: id, location: coords)
+            }
+            viewModel.undoManager.endUndoGrouping()
             viewModel.undoManager.setActionName("set location")
         }
     }
