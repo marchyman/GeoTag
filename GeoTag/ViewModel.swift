@@ -99,6 +99,7 @@ final class ViewModel: ObservableObject {
     @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.addTagKey) var addTag = false
+    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
     // The folder containing backups is scanned at startup and the user
     // is given the option to remove backups older than 7 days.

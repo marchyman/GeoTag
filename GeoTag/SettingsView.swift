@@ -22,36 +22,31 @@ struct SettingsView: View {
                 .font(.largeTitle)
                 .padding()
             Form {
-                LabeledContent("Disable Image Backups:") {
-                    Toggle("Disable image backups", isOn: vm.$doNotBackup.animation())
-                        .labelsHidden()
-                }
-                .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
-                if vm.doNotBackup {
-                    Text("Enabling image backups is strongly recommended")
-                        .font(.footnote)
-                        .padding(.bottom)
-                } else {
-                    LabeledContent("Backup folder:") {
-                        PathView()
-                            .frame(width: 280)
-                            .padding(.bottom)
-                            .onChange(of: vm.backupURL) { url in
-                                if let url {
-                                    vm.saveBookmark = vm.getBookmark(from: url)
-                                    vm.checkSaveFolder(url)
-                                }
-                            }
+                Group {
+                    LabeledContent("Disable Image Backups:") {
+                        Toggle("Disable image backups", isOn: vm.$doNotBackup.animation())
+                            .labelsHidden()
                     }
-                    .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
+                    .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
+                    if vm.doNotBackup {
+                        Text("Enabling image backups is strongly recommended")
+                            .font(.footnote)
+                            .padding(.bottom)
+                    } else {
+                        LabeledContent("Backup folder:") {
+                            PathView()
+                                .frame(width: 280)
+                                .padding(.bottom)
+                                .onChange(of: vm.backupURL) { url in
+                                    if let url {
+                                        vm.saveBookmark = vm.getBookmark(from: url)
+                                        vm.checkSaveFolder(url)
+                                    }
+                                }
+                        }
+                        .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
+                    }
                 }
-
-                LabeledContent("Tag updated files:") {
-                    Toggle("Tag updated files", isOn: vm.$addTag)
-                        .labelsHidden()
-                }
-                .padding([.bottom, .horizontal] )
-                .help("If this option is enabled the finder tag \"GeoTag\" will be added to updated images.")
 
                 Picker("Choose a coordinate format:", selection: $coordFormat) {
                     Text("dd.dddddd")
@@ -71,6 +66,22 @@ struct SettingsView: View {
                 }
                 .padding([.bottom, .horizontal])
                 .help("Checking this box will set file modification time to be the same as the image creation date/time whenever GeoTag updates image metadata with location changes.  If the box is not checked file modification times will be controlled by the system.")
+
+                Group {
+                    LabeledContent("Tag updated files:") {
+                        Toggle("Tag updated files", isOn: vm.$addTag)
+                            .labelsHidden()
+                    }
+                    .padding(.horizontal)
+                    .help("If this option is enabled a finder tag will be added to updated images.")
+
+                    if vm.addTag {
+                        TextField("With Tag:", text: vm.$tag)
+                            .frame(maxWidth: 250)
+                            .padding([.bottom, .horizontal])
+                            .help("This tag will be added to files when Tag updated files is checked.")
+                    }
+                }
 
                 LabeledContent("Update GPS Date/Time:") {
                     Toggle("Update GPS Date/Time", isOn: $updateGPSTimestamp)
