@@ -67,27 +67,6 @@ struct SettingsView: View {
                 .padding([.bottom, .horizontal])
                 .help("Checking this box will set file modification time to be the same as the image creation date/time whenever GeoTag updates image metadata with location changes.  If the box is not checked file modification times will be controlled by the system.")
 
-                Group {
-                    LabeledContent("Tag updated files:") {
-                        Toggle("Tag updated files", isOn: vm.$addTag)
-                            .labelsHidden()
-                    }
-                    .padding(.horizontal)
-                    .help("If this option is enabled a finder tag will be added to updated images.")
-
-                    if vm.addTag {
-                        TextField("With Tag:", text: vm.$tag)
-                            .frame(maxWidth: 250)
-                            .padding([.bottom, .horizontal])
-                            .onSubmit {
-                                if vm.tag.isEmpty {
-                                    vm.tag = "GeoTag"
-                                }
-                            }
-                            .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")
-                    }
-                }
-
                 LabeledContent("Update GPS Date/Time:") {
                     Toggle("Update GPS Date/Time", isOn: $updateGPSTimestamp)
                         .labelsHidden()
@@ -104,9 +83,30 @@ struct SettingsView: View {
 
                 TextField("GPS Track width:", value: $trackWidth, format: .number)
                     .onSubmit { vm.refreshTracks = true }
-                    .padding(.horizontal)
+                    .padding([.horizontal, .bottom])
                     .frame(maxWidth: 190)
                     .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
+
+                Group {
+                    LabeledContent("Tag updated files:") {
+                        Toggle("Tag updated files", isOn: vm.$addTag)
+                            .labelsHidden()
+                    }
+                    .padding(.horizontal)
+                    .help("If this option is enabled a finder tag will be added to updated images.")
+
+                    if vm.addTag {
+                        TextField("With tag:", text: vm.$tag)
+                            .frame(maxWidth: 250)
+                            .padding(.horizontal)
+                            .onSubmit {
+                                if vm.tag.isEmpty {
+                                    vm.tag = "GeoTag"
+                                }
+                            }
+                            .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")
+                    }
+                }
 
                 Spacer()
                 HStack {
@@ -119,7 +119,6 @@ struct SettingsView: View {
                 .padding()
             }
         }
-        .padding()
     }
 }
 
