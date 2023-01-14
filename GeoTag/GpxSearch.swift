@@ -21,8 +21,7 @@ extension Gpx {
         // will be used as the image location.  All tracks must be searched
         // as tracks are not sorted
 
-        tracks.forEach {
-            track in
+        for track in tracks {
             for segment in track.segments {
                 let possiblePoints = segment.points.prefix {
                     $0.timeFromEpoch <= imageTime

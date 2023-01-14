@@ -40,9 +40,9 @@ extension ViewModel {
         var maxlat = CLLocationDegrees(-90)
         var maxlon = CLLocationDegrees(-180)
         var newOverlay = false
-        gpx.tracks.forEach {
-            $0.segments.forEach {
-                var trackCoords = $0.points.map {
+        for track in gpx.tracks {
+            for segment in track.segments {
+                var trackCoords = segment.points.map {
                     CLLocationCoordinate2D(latitude: $0.lat,
                                            longitude: $0.lon)
                 }
@@ -62,7 +62,7 @@ extension ViewModel {
                         }
                     }
                     let mapLine = MKPolyline(coordinates: &trackCoords,
-                                             count: $0.points.count)
+                                             count: segment.points.count)
                     mapLines.append(mapLine)
                     newOverlay = true
                 }

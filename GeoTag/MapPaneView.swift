@@ -65,7 +65,7 @@ struct MapPaneView: View {
                         } else {
                             // update all selected items
                             vm.undoManager.beginUndoGrouping()
-                            vm.selection.forEach{ id in
+                            for id in vm.selection {
                                 vm.update(id: id, location: location.coordinate)
                             }
                             vm.undoManager.endUndoGrouping()

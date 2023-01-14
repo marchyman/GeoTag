@@ -42,7 +42,7 @@ extension ViewModel {
         Task {
             showingProgressView = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
-                await imagesToUpdate.asyncForEach { id in
+                for id in imagesToUpdate {
                     if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
                         group.addTask { [self] in
                             // do not use forEach/asyncForEach as once a match is
@@ -68,16 +68,6 @@ extension ViewModel {
                 }
             }
             showingProgressView = false
-        }
-    }
-}
-
-// A version of forEach that allows async closures
-
-extension Sequence {
-    func asyncForEach(_ operation: (Element) async throws -> Void) async rethrows {
-        for element in self {
-            try await operation(element)
         }
     }
 }
