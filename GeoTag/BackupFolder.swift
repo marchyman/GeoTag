@@ -1,5 +1,5 @@
 //
-//  SaveFolder.swift
+//  BackupFolder.swift
 //  GeoTag
 //
 //  Created by Marco S Hyman on 2/8/20.
@@ -20,7 +20,7 @@ extension ViewModel {
             if staleBookmark {
                 saveBookmark = getBookmark(from: url)
             }
-            checkSaveFolder(url)
+            checkBackupFolder(url)
         }
         return url
     }
@@ -45,7 +45,7 @@ extension ViewModel {
     ///
     /// - Parameter _: The URL of the folder containing backups
 
-    func checkSaveFolder(_ url: URL?) {
+    func checkBackupFolder(_ url: URL?) {
         guard let url else { return }
         let propertyKeys: Set = [URLResourceKey
                                     .totalFileSizeKey,

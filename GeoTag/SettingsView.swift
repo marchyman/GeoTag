@@ -40,7 +40,7 @@ struct SettingsView: View {
                                 .onChange(of: vm.backupURL) { url in
                                     if let url {
                                         vm.saveBookmark = vm.getBookmark(from: url)
-                                        vm.checkSaveFolder(url)
+                                        vm.checkBackupFolder(url)
                                     }
                                 }
                         }

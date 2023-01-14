@@ -8,18 +8,14 @@
 import Foundation
 import SwiftUI
 
-struct AppSettings {
+// enum instead of struct as it is not intended to be instantiated.
+enum AppSettings {
     enum CoordFormat: Int {
         case deg
         case degMin
         case degMinSec
     }
-}
 
-
-// AppStorage keys for various settings
-
-extension AppSettings {
     static let doNotBackupKey = "DoNotBackupKey"
     static let saveBookmarkKey = "SaveBookmarkKey"
     static let addTagKey = "AddTagKey"
