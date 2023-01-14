@@ -16,6 +16,7 @@ enum AppSettings {
         case degMinSec
     }
 
+    static let disablePairedJpegs = "DisablePairedJpegs"
     static let doNotBackupKey = "DoNotBackupKey"
     static let saveBookmarkKey = "SaveBookmarkKey"
     static let addTagKey = "AddTagKey"

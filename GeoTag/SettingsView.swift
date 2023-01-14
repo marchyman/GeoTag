@@ -22,6 +22,7 @@ struct SettingsView: View {
                 .font(.largeTitle)
                 .padding()
             Form {
+                // Image backup configuration
                 Group {
                     LabeledContent("Disable Image Backups:") {
                         Toggle("Disable image backups", isOn: vm.$doNotBackup.animation())
@@ -48,6 +49,7 @@ struct SettingsView: View {
                     }
                 }
 
+                // Coordinate display configuration
                 Picker("Choose a coordinate format:", selection: $coordFormat) {
                     Text("dd.dddddd")
                         .tag(AppSettings.CoordFormat.deg)
@@ -60,34 +62,45 @@ struct SettingsView: View {
                 .padding([.bottom, .horizontal] )
                 .help("Select a format for latitude and longitude display")
 
-                LabeledContent("Set File Modification Times:") {
-                    Toggle("Set File Modification Time", isOn: $updateFileModTime)
-                        .labelsHidden()
-                }
-                .padding([.bottom, .horizontal])
-                .help("Checking this box will set file modification time to be the same as the image creation date/time whenever GeoTag updates image metadata with location changes.  If the box is not checked file modification times will be controlled by the system.")
+                // Track log display configuration
+                Group {
+                    ColorPicker("GPS Track Color:", selection: $trackColor)
+                        .onChange(of: trackColor.rawValue) { color in
+                            vm.refreshTracks = true
+                        }
+                        .padding(.horizontal)
+                        .help("Select the color used to display GPS tracks on the map.")
 
-                LabeledContent("Update GPS Date/Time:") {
-                    Toggle("Update GPS Date/Time", isOn: $updateGPSTimestamp)
+                    TextField("GPS Track width:", value: $trackWidth, format: .number)
+                        .onSubmit { vm.refreshTracks = true }
+                        .padding([.horizontal, .bottom])
+                        .frame(maxWidth: 190)
+                        .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
+                }
+
+                LabeledContent("Disable paired jpegs:") {
+                    Toggle("Disable paired jpegs", isOn: vm.$disablePairedJpegs)
                         .labelsHidden()
                 }
                 .padding([.bottom, .horizontal] )
-                .help("GeoTag can set/update the GPS time and date stamps when updating locations.  These timestamps are the same as the image create date and time but relative to GMP/UTC, not the local time.  When setting this option it is important that the TimeZone (edit menu) is correct for the images being saved.  Please see the GeoTag help pages for more information on setting the time zone.")
+                .help("When this box is checked jpeg files that are part of a raw/jpeg pair can not not be updated.  The jpeg image name is displayed in the table using a gray color.")
 
-                ColorPicker("GPS Track Color:", selection: $trackColor)
-                    .onChange(of: trackColor.rawValue) { color in
-                        vm.refreshTracks = true
-                    }
-                    .padding(.horizontal)
-                    .help("Select the color used to display GPS tracks on the map.")
-
-                TextField("GPS Track width:", value: $trackWidth, format: .number)
-                    .onSubmit { vm.refreshTracks = true }
-                    .padding([.horizontal, .bottom])
-                    .frame(maxWidth: 190)
-                    .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
-
+                // Image save option configuratio
                 Group {
+                    LabeledContent("Set File Modification Times:") {
+                        Toggle("Set File Modification Time", isOn: $updateFileModTime)
+                            .labelsHidden()
+                    }
+                    .padding([.bottom, .horizontal])
+                    .help("Checking this box will set file modification time to be the same as the image creation date/time whenever GeoTag updates image metadata with location changes.  If the box is not checked file modification times will be controlled by the system.")
+
+                    LabeledContent("Update GPS Date/Time:") {
+                        Toggle("Update GPS Date/Time", isOn: $updateGPSTimestamp)
+                            .labelsHidden()
+                    }
+                    .padding([.bottom, .horizontal] )
+                    .help("GeoTag can set/update the GPS time and date stamps when updating locations.  These timestamps are the same as the image create date and time but relative to GMP/UTC, not the local time.  When setting this option it is important that the TimeZone (edit menu) is correct for the images being saved.  Please see the GeoTag help pages for more information on setting the time zone.")
+
                     LabeledContent("Tag updated files:") {
                         Toggle("Tag updated files", isOn: vm.$addTag)
                             .labelsHidden()

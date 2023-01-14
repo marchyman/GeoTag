@@ -80,6 +80,9 @@ extension ViewModel {
                 sheetError = sheetInfo.sheetError
                 sheetType = sheetInfo.sheetType
             }
+            if disablePairedJpegs {
+                disableJpegs()
+            }
             showingProgressView = false
         }
     }
@@ -107,6 +110,26 @@ extension ViewModel {
             }
         }
         return foundURLs
+    }
+
+    // if a jpg/jpeg image is part of a raw/jpeg pair disable the jpeg by
+    // turning off its isValid flag.
+    func disableJpegs() {
+        let imageURLs = images.map{ $0.fileURL }
+
+        for url in imageURLs {
+            let pathExtension = url.pathExtension.lowercased()
+            guard pathExtension == "jpg" || pathExtension == "jpeg" else { continue }
+            let pathWithoutExtension = url.deletingPathExtension().path
+            for urlToCheck in imageURLs {
+                let checkPathExtension = urlToCheck.pathExtension.lowercased()
+                if checkPathExtension != "jpg" && checkPathExtension != "jpeg" {
+                    if pathWithoutExtension == urlToCheck.deletingPathExtension().path {
+                        self[url].isValid = false
+                    }
+                }
+            }
+        }
     }
 }
 
