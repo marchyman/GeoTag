@@ -49,6 +49,7 @@ extension ViewModel {
         Task {
             let makeBackup = !doNotBackup
             let url = backupURL
+            let tagFiles = addTag
             await withTaskGroup(of: SaveStatus.self) { group in
                 for image in imagesToSave {
                     // only process images that have changed
@@ -60,6 +61,9 @@ extension ViewModel {
                                     try await image.makeBackupFile(backupFolder: url!)
                                 }
                                 try await image.saveChanges(timeZone: timeZone)
+                                if tagFiles {
+                                    try await image.setTag(name: "GeoTag")
+                                }
                             } catch {
                                 errorDescription = error.localizedDescription
                             }

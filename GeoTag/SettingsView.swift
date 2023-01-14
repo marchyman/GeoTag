@@ -26,6 +26,7 @@ struct SettingsView: View {
                     Toggle("Disable image backups", isOn: vm.$doNotBackup.animation())
                         .labelsHidden()
                 }
+                .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
                 if vm.doNotBackup {
                     Text("Enabling image backups is strongly recommended")
                         .font(.footnote)
@@ -42,7 +43,15 @@ struct SettingsView: View {
                                 }
                             }
                     }
+                    .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
                 }
+
+                LabeledContent("Tag updated files:") {
+                    Toggle("Tag updated files", isOn: vm.$addTag)
+                        .labelsHidden()
+                }
+                .padding([.bottom, .horizontal] )
+                .help("If this option is enabled the finder tag \"GeoTag\" will be added to updated images.")
 
                 Picker("Choose a coordinate format:", selection: $coordFormat) {
                     Text("dd.dddddd")
@@ -60,7 +69,7 @@ struct SettingsView: View {
                     Toggle("Set File Modification Time", isOn: $updateFileModTime)
                         .labelsHidden()
                 }
-                .padding([.bottom, .horizontal] )
+                .padding([.bottom, .horizontal])
                 .help("Checking this box will set file modification time to be the same as the image creation date/time whenever GeoTag updates image metadata with location changes.  If the box is not checked file modification times will be controlled by the system.")
 
                 LabeledContent("Update GPS Date/Time:") {

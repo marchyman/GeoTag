@@ -22,6 +22,7 @@ struct AppSettings {
 extension AppSettings {
     static let doNotBackupKey = "DoNotBackupKey"
     static let saveBookmarkKey = "SaveBookmarkKey"
+    static let addTagKey = "AddTagKey"
     static let coordFormatKey = "CoordFormatKey"
     static let mapTypeIndexKey = "MapTypeIndexKey"
     static let mapLatitudeKey = "MapLatitudeKey"
