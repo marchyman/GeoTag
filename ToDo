@@ -1,9 +1,6 @@
-Check for backup location
+Add custom tag
 change date/time
 change location
-Backup file option and location
 Create sidecar option???
 Right pane divider location on start -- partially fixed
 When Metal validation enabled program crashes when divider is moved
-backup images before saving
-turn on compiler warnings for deprecated functions some time in the future
