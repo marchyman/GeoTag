@@ -9,8 +9,6 @@ import SwiftUI
 
 /// Window look and feel values
 let windowBorderColor = Color.gray
-let windowMinWidth = 800.0
-let windowMinHeight = 800.0
 
 struct ContentView: View {
     @EnvironmentObject var vm: ViewModel
@@ -26,7 +24,7 @@ struct ContentView: View {
             }
             ImageMapView()
         }
-        .frame(minWidth: windowMinWidth, minHeight: windowMinHeight)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
 

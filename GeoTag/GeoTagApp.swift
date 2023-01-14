@@ -11,10 +11,13 @@ import SwiftUI
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @StateObject var vm = ViewModel()
+    let windowWidth = 1200.0
+    let windowHeight = 900.0
 
     var body: some Scene {
         WindowGroup("GeoTag Version Five") {
             ContentView()
+                .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .background(WindowAccessor(window: $vm.window))
                 .environmentObject(vm)
                 .onAppear {

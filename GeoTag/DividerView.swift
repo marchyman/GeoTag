@@ -11,7 +11,7 @@ import SwiftUI
 // do not cause view updates in ImageMapView.
 
 public class DividerControl: ObservableObject {
-    @AppStorage(AppSettings.dividerPositionKey) var dividerPosition: Double = 0.50
+    @AppStorage(AppSettings.dividerPositionKey) var dividerPosition: Double = 0.60
 }
 
 // A draggable divider that moves vertically within a view.
