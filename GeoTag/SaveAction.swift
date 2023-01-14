@@ -47,9 +47,13 @@ extension ViewModel {
         // process the images in the background.
 
         Task {
+            // get the field that won't change from the view model before
+            // spinning off new tasks.
             let makeBackup = !doNotBackup
             let url = backupURL
             let tagFiles = addTag
+            let tagName = tag.isEmpty ? "GeoTag" : tag
+
             await withTaskGroup(of: SaveStatus.self) { group in
                 for image in imagesToSave {
                     // only process images that have changed
@@ -62,7 +66,7 @@ extension ViewModel {
                                 }
                                 try await image.saveChanges(timeZone: timeZone)
                                 if tagFiles {
-                                    try await image.setTag(name: "GeoTag")
+                                    try await image.setTag(name: tagName)
                                 }
                             } catch {
                                 errorDescription = error.localizedDescription
@@ -76,7 +80,8 @@ extension ViewModel {
                     }
                 }
 
-                // Update image original values after update when no errors
+                // Update image original values after update for images
+                // with no errors.
 
                 for await status in group {
                     if status.error == nil {

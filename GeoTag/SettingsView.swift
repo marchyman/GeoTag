@@ -79,7 +79,12 @@ struct SettingsView: View {
                         TextField("With Tag:", text: vm.$tag)
                             .frame(maxWidth: 250)
                             .padding([.bottom, .horizontal])
-                            .help("This tag will be added to files when Tag updated files is checked.")
+                            .onSubmit {
+                                if vm.tag.isEmpty {
+                                    vm.tag = "GeoTag"
+                                }
+                            }
+                            .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")
                     }
                 }
 
