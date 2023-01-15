@@ -67,12 +67,16 @@ extension ViewModel {
                     }
                 }
             }
+
+            // copy track info from helper to ViewModel
             for gpxTrack in await helper.gpxTracks {
                 updateTracks(gpx: gpxTrack)
                 gpxTracks.append(gpxTrack)
             }
             gpxGoodFileNames = await helper.gpxGoodFileNames
             gpxBadFileNames = await helper.gpxBadFileNames
+
+            // copy sheet info from helper to ViewModel
             if await !helper.sheetStack.isEmpty {
                 sheetStack.append(contentsOf: await helper.sheetStack)
                 let sheetInfo = sheetStack.removeFirst()
@@ -80,6 +84,8 @@ extension ViewModel {
                 sheetError = sheetInfo.sheetError
                 sheetType = sheetInfo.sheetType
             }
+
+            // disable paired jpegs if desired
             if disablePairedJpegs {
                 disableJpegs()
             }

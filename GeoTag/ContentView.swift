@@ -28,6 +28,14 @@ struct ContentView: View {
         .border(windowBorderColor)
         .padding()
 
+        // startup
+        .onAppear {
+            // check for a backupURL
+            if !vm.doNotBackup && vm.saveBookmark == Data() {
+                vm.addSheet(type: .noBackupFolderSheet)
+            }
+        }
+
         // sheets
         .sheet(item: $vm.sheetType, onDismiss: sheetDismissed) { sheetType in
             ContentViewSheet(type: sheetType)
