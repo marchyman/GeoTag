@@ -31,6 +31,21 @@ extension ViewModel {
         window?.isDocumentEdited = documentedEdited
     }
 
+    // Update an image with a new timestamp.  Image is identifid by its ID
+    // timestamp is in the string format used by Exiftool
+
+    func update(id: ImageModel.ID, timestamp: String?,
+                documentEdited: Bool = true) {
+        let currentDateTimeCreated = self[id].dateTimeCreated
+        let currentDocumentEdited = window?.isDocumentEdited ?? true
+        undoManager.registerUndo(withTarget: self) { target in
+            target.update(id: id, timestamp: currentDateTimeCreated,
+                          documentEdited: currentDocumentEdited)
+        }
+        self[id].dateTimeCreated = timestamp
+        window?.isDocumentEdited = documentEdited
+    }
+
     // Add track overlays to the map
     func updateTracks(gpx: Gpx) {
         guard gpx.tracks.count > 0 else { return}

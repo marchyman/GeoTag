@@ -251,6 +251,19 @@ extension URL: Comparable {
 
 extension ImageModel {
     static let dateFormat = "yyyy:MM:dd HH:mm:ss"
+
+    func timestamp(for timeZone: TimeZone?) -> Date? {
+        let dateFormatter = DateFormatter()
+
+        if let dateTime = dateTimeCreated {
+            dateFormatter.dateFormat = ImageModel.dateFormat
+            dateFormatter.timeZone = timeZone
+            if let date = dateFormatter.date(from: dateTime) {
+                return date
+            }
+        }
+        return nil
+    }
 }
 
 // CFString to (NS)*String casts for Image Property constants
