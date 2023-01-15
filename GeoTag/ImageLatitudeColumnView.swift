@@ -16,6 +16,7 @@ struct ImageLatitudeColumnView: View {
     var body: some View {
         Text(latitudeToString())
             .foregroundColor(textColor())
+            .frame(minWidth: coordMinWidth)
             .onDoubleClick {
                 vm.menuContext = id
                 openWindow(id: GeoTagApp.modifyLocation)

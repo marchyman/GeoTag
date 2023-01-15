@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+let coordMinWidth = 120.0
+
 struct ImageTableView: View {
     @EnvironmentObject var vm: ViewModel
     @Environment(\.openWindow) var openWindow
@@ -27,11 +29,11 @@ struct ImageTableView: View {
             TableColumn("Latitude", value: \.latitude) { image in
                 ImageLatitudeColumnView(id: image.id)
             }
-            .width(min: 120)
+            .width(min: coordMinWidth)
             TableColumn("Longitude", value: \.longitude) { image in
                 ImageLongitudeColumnView(id: image.id)
             }
-            .width(min: 120)
+            .width(min: coordMinWidth)
         } rows: {
             ForEach(vm.images) { image in
                 TableRow(image)

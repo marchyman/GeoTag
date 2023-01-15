@@ -16,6 +16,7 @@ struct ImageLongitudeColumnView: View {
     var body: some View {
         Text(longitudeToString())
             .foregroundColor(textColor())
+            .frame(minWidth: coordMinWidth)
             .onDoubleClick {
                 vm.menuContext = id
                 openWindow(id: GeoTagApp.modifyLocation)
