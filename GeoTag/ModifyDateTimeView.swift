@@ -16,9 +16,9 @@ struct ModifyDateTimeView: View {
                 .font(.largeTitle)
                 .padding(.top)
             if let context = vm.menuContext {
-                DateTimePickerView(id: context)
+                DateTimePickerView(id: context, allSelected: false)
             } else if let selected = vm.mostSelected {
-                DateTimePickerView(id: selected)
+                DateTimePickerView(id: selected, allSelected: true)
             }
         }
     }
@@ -27,6 +27,7 @@ struct ModifyDateTimeView: View {
 struct DateTimePickerView: View {
     @EnvironmentObject var vm: ViewModel
     var id: ImageModel.ID
+    var allSelected: Bool
     @State private var oldDate = Date()
     @State private var newDate = Date()
 
@@ -34,7 +35,7 @@ struct DateTimePickerView: View {
         VStack {
             Form {
                 LabeledContent("Image Date/Time:") {
-                    DatePicker("Updated Date/Time", selection: $newDate,
+                    DatePicker("Image Date/Time", selection: $oldDate,
                                displayedComponents: .init(rawValue: 1234521450295224572))
                     .labelsHidden()
                     .frame(width: 200)
@@ -50,7 +51,7 @@ struct DateTimePickerView: View {
                     .frame(width: 200)
                                     }
                 .padding([.horizontal, .bottom])
-                .help("Set this to the new date/time. If one image is selected it will be set to this value.  If multiple images are selected the difference between the original date time and the updated value will be applied to each image.")
+                .help("Set this to the new date/time. If one image is selected it will be set to this value.  If multiple images are selected the difference between the original date/time and the updated value will be applied to each image.")
             }
 
             Spacer()
@@ -97,9 +98,11 @@ struct DateTimePickerView: View {
         dateFormatter.dateFormat = ImageModel.dateFormat
         dateFormatter.timeZone = vm.timeZone
 
+        var imagesToUpdate: Set<ImageModel.ID> = allSelected ? vm.selection : [id]
+
         // apply adjustment to each selected image in an undo group
         vm.undoManager.beginUndoGrouping()
-        for id in vm.selection {
+        for id in imagesToUpdate {
             if vm[id].isValid {
                 var updatedDate: Date
                 if let originalDate = vm[id].timestamp(for: vm.timeZone) {
