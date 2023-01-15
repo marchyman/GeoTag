@@ -98,7 +98,7 @@ struct DateTimePickerView: View {
         dateFormatter.dateFormat = ImageModel.dateFormat
         dateFormatter.timeZone = vm.timeZone
 
-        var imagesToUpdate: Set<ImageModel.ID> = allSelected ? vm.selection : [id]
+        let imagesToUpdate: Set<ImageModel.ID> = allSelected ? vm.selection : [id]
 
         // apply adjustment to each selected image in an undo group
         vm.undoManager.beginUndoGrouping()
