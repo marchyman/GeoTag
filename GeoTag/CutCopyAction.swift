@@ -17,17 +17,13 @@ extension ViewModel {
         return true
     }
 
-    func cutAction(context: ImageModel.ID?) {
-        let id = context != nil ? context : mostSelected
-        if let id {
-            copyAction(context: id)
-            deleteAction(context: id)
-        }
+    func cutAction() {
+        copyAction()
+        deleteAction()
     }
 
-    func copyAction(context: ImageModel.ID?) {
-        let id = context != nil ? context : mostSelected
-        if let id {
+    func copyAction() {
+        if let id = mostSelected {
             let pb = NSPasteboard.general
             pb.declareTypes([NSPasteboard.PasteboardType.string], owner: self)
             pb.setString(self[id].stringRepresentation,

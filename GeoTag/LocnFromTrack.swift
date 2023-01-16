@@ -10,24 +10,14 @@ import Foundation
 extension ViewModel {
     func locnFromTrackDisabled(context: ImageModel.ID? = nil) -> Bool {
         if gpxTracks.count > 0 {
-            if context != nil || mostSelected != nil {
-                return false
+            if let id = context != nil ? context : mostSelected {
+                return !self[id].isValid
             }
         }
         return true
     }
 
-    func locnFromTrackAction(context: ImageModel.ID?) {
-        var imagesToUpdate = Set<ImageModel.ID>()
-
-        // make the set of images to update.  It may be the single
-        // image from a context menu or the entire set of selected images.
-        if let id = context {
-            imagesToUpdate.insert(id)
-        } else {
-            imagesToUpdate = selection
-        }
-
+    func locnFromTrackAction() {
         // image timestamps must be converted to seconds from the epoch
         // to match track logs.  Prepare a dateformatter to handle the
         // conversion.
@@ -42,7 +32,7 @@ extension ViewModel {
         Task {
             showingProgressView = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
-                for id in imagesToUpdate {
+                for id in selection {
                     if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
                         group.addTask { [self] in
                             // do not use forEach/asyncForEach as once a match is

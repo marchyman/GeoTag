@@ -21,15 +21,9 @@ extension ViewModel {
     }
 
     // show the location on an image in a finder window.
-    func showInFinderAction(context: ImageModel.ID?) {
-        let fileURL: URL
-        if let id = context {
-            fileURL = self[id].fileURL
-        } else if let id = mostSelected {
-            fileURL = self[id].fileURL
-        } else {
-            return
+    func showInFinderAction() {
+        if let id = mostSelected {
+            NSWorkspace.shared.activateFileViewerSelecting([self[id].fileURL])
         }
-        NSWorkspace.shared.activateFileViewerSelecting([fileURL])
     }
 }

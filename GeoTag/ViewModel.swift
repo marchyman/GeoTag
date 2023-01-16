@@ -67,9 +67,7 @@ final class ViewModel: ObservableObject {
     @Published var selection = Set<ImageModel.ID>()
     @Published var mostSelected: ImageModel.ID?
 
-    // State that changes when a menu item is picked.  Some menu actions
-    // optionally need a context -- the image.id of a specific image to act upon
-    var menuContext: ImageModel.ID?
+    // State that changes when a menu item is picked.
     @Published var selectedMenuAction: MenuAction = .none
 
     // Tracks displayed on map

@@ -31,13 +31,22 @@ struct ContextMenuView: View {
             Button("Locn From Track") { setContextMenuAction(.locnFromTrack) }
                 .disabled(vm.locnFromTrackDisabled(context: context))
             Button("Modify Date/Time…") { setContextMenuAction(.modifyDateTime) }
-                .disabled(context == nil && vm.mostSelected == nil)
+                .disabled(modifyDisabled())
             Button("Modify Location…") { setContextMenuAction(.modifyLocation) }
-                .disabled(context == nil && vm.mostSelected == nil)
+                .disabled(modifyDisabled())
         }
         Divider()
         Button("Clear Image List") { setContextMenuAction(.clearList) }
             .disabled(vm.clearDisabled)
+    }
+
+    // must be a valid image
+
+    func modifyDisabled() -> Bool {
+        if let id = context != nil ? context : vm.mostSelected {
+            return !vm[id].isValid
+        }
+        return true
     }
 
     func setContextMenuAction(_ action: ViewModel.MenuAction) {

@@ -22,28 +22,17 @@ extension ViewModel {
         return true
     }
 
-    func pasteAction(context: ImageModel.ID?) {
-        var imagesToUpdate = Set<ImageModel.ID>()
-
-        // make the set of images to update.  It may be the single
-        // image from a context menu or the entire set of selected images.
-        if let id = context {
-            imagesToUpdate.insert(id)
-        } else {
-            imagesToUpdate = selection
-        }
-
-        if !imagesToUpdate.isEmpty {
-            let pb = NSPasteboard.general
-            if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
-               let locn = ImageModel.decodeStringRep(value: pasteVal) {
-                undoManager.beginUndoGrouping()
-                for id in imagesToUpdate {
-                    update(id: id, location: locn.0, elevation: locn.1)
-                }
-                undoManager.endUndoGrouping()
-                undoManager.setActionName("paste location")
+    // paste into all selected images
+    func pasteAction() {
+        let pb = NSPasteboard.general
+        if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
+           let locn = ImageModel.decodeStringRep(value: pasteVal) {
+            undoManager.beginUndoGrouping()
+            for id in selection {
+                update(id: id, location: locn.0, elevation: locn.1)
             }
+            undoManager.endUndoGrouping()
+            undoManager.setActionName("paste location")
         }
     }
 }

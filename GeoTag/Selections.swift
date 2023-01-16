@@ -32,4 +32,17 @@ extension ViewModel {
 
         mostSelected = selection.first
     }
+
+    // If the context item is in the current selection make it the
+    // mostSelected item, otherwise replace the current selection
+    // with the item.
+    func select(context: ImageModel.ID) {
+        if self[context].isValid {
+            if selection.contains(context) {
+                mostSelected = context
+            } else {
+                selection = [context]
+            }
+        }
+    }
 }

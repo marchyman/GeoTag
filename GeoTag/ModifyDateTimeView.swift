@@ -15,10 +15,8 @@ struct ModifyDateTimeView: View {
             Text("Modify Date/Time")
                 .font(.largeTitle)
                 .padding(.top)
-            if let context = vm.menuContext {
-                DateTimePickerView(id: context, allSelected: false)
-            } else if let selected = vm.mostSelected {
-                DateTimePickerView(id: selected, allSelected: true)
+            if vm.mostSelected != nil {
+                DateTimePickerView(id: $vm.mostSelected)
             }
         }
     }
@@ -26,8 +24,7 @@ struct ModifyDateTimeView: View {
 
 struct DateTimePickerView: View {
     @EnvironmentObject var vm: ViewModel
-    var id: ImageModel.ID
-    var allSelected: Bool
+    @Binding var id: ImageModel.ID!
     @State private var oldDate = Date()
     @State private var newDate = Date()
 
@@ -73,7 +70,7 @@ struct DateTimePickerView: View {
             }
             .padding()
         }
-        .onAppear {
+        .onChange(of: id) { _ in
             oldDate = date()
             newDate = oldDate
         }
@@ -98,11 +95,9 @@ struct DateTimePickerView: View {
         dateFormatter.dateFormat = ImageModel.dateFormat
         dateFormatter.timeZone = vm.timeZone
 
-        let imagesToUpdate: Set<ImageModel.ID> = allSelected ? vm.selection : [id]
-
         // apply adjustment to each selected image in an undo group
         vm.undoManager.beginUndoGrouping()
-        for id in imagesToUpdate {
+        for id in vm.selection {
             if vm[id].isValid {
                 var updatedDate: Date
                 if let originalDate = vm[id].timestamp(for: vm.timeZone) {

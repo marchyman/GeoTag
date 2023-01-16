@@ -40,7 +40,9 @@ extension ViewModel {
     // set the menuAction and context.
 
     func setMenuAction(for action: MenuAction, context: ImageModel.ID? = nil) {
-        menuContext = context
+        if let context {
+            select(context: context)
+        }
         selectedMenuAction = action
     }
 
@@ -64,19 +66,19 @@ extension ViewModel {
         case .redo:
             redoAction()
         case .cut:
-            cutAction(context: menuContext)
+            cutAction()
         case .copy:
-            copyAction(context: menuContext)
+            copyAction()
         case .paste:
-            pasteAction(context: menuContext)
+            pasteAction()
         case .delete:
-            deleteAction(context: menuContext)
+            deleteAction()
         case .selectAll:
             selection = Set(images.map { $0.id })
         case .showInFinder:
-            showInFinderAction(context: menuContext)
+            showInFinderAction()
         case .locnFromTrack:
-            locnFromTrackAction(context: menuContext)
+            locnFromTrackAction()
         case .adjustTimeZone:
             openWindow(id: GeoTagApp.adjustTimeZone)
         case .modifyDateTime:
