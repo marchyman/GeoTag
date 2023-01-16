@@ -10,8 +10,9 @@ import Foundation
 extension ViewModel {
 
     func selectAllDisabled() -> Bool {
-        let keyWindow = window?.isKeyWindow ?? false
-        return !keyWindow || images.isEmpty
+//        let keyWindow = window?.isKeyWindow ?? false
+//        return !keyWindow ||
+        images.isEmpty
     }
 
     func selectAllAction() {

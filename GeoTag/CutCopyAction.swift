@@ -11,7 +11,7 @@ extension ViewModel {
     // return true if cut or copy actions should be disabled
     // if context is nil use selectedImage
     func cutCopyDisabled(context: ImageModel.ID? = nil) -> Bool {
-        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
+//        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
         if let id = context != nil ? context : mostSelected {
             return self[id].location == nil
         }

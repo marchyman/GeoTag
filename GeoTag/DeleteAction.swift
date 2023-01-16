@@ -15,7 +15,7 @@ extension ViewModel {
     // should the delete action be disabled for a specific item or for
     // all selected items
     func deleteDisabled(context: ImageModel.ID? = nil) -> Bool {
-        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
+//        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
         if let id = context {
             return self[id].location == nil
         }

@@ -11,7 +11,7 @@ extension ViewModel {
     // return true if the undo menu option should be disabled.
 
     var undoDisabled: Bool {
-        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
+//        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
         return !undoManager.canUndo
     }
 
