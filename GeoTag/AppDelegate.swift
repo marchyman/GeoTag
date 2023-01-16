@@ -19,15 +19,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // no tabbing in GeoTag
         NSWindow.allowsAutomaticWindowTabbing = false
-
-        //  no need for the view menu
-        if let mainMenu = NSApp.mainMenu {
-            DispatchQueue.main.async {
-                if let view = mainMenu.items.first(where: { $0.title == "View"}) {
-                    mainMenu.removeItem(view);
-                }
-            }
-        }
     }
 
     // Called when window that was hidden is now visible
