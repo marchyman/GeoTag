@@ -15,7 +15,7 @@ struct GeoTagApp: App {
     let windowHeight = 900.0
 
     var body: some Scene {
-        WindowGroup("GeoTag Version Five") {
+        Window("GeoTag Version Five", id: "main") {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .background(WindowAccessor(window: $vm.window))
@@ -37,21 +37,27 @@ struct GeoTagApp: App {
                 .frame(width: 500.0, height: 570.0)
                 .environmentObject(vm)
         }
+        .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
+        .commandsRemoved()
 
         Window(GeoTagApp.modifyDateTime, id: GeoTagApp.modifyDateTime) {
             ModifyDateTimeView()
                 .frame(width: 450.0, height: 250.0, alignment: .top)
                 .environmentObject(vm)
        }
+        .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
+        .commandsRemoved()
 
         Window(GeoTagApp.modifyLocation, id: GeoTagApp.modifyLocation) {
             ModifyLocationView()
                 .frame(width: 450.0, height: 250.0, alignment: .top)
                 .environmentObject(vm)
         }
+        .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
+        .commandsRemoved()
 
         Settings {
             SettingsView()
