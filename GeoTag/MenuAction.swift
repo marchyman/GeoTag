@@ -74,7 +74,7 @@ extension ViewModel {
         case .delete:
             deleteAction()
         case .selectAll:
-            selection = Set(images.map { $0.id })
+            selectAllAction()
         case .showInFinder:
             showInFinderAction()
         case .locnFromTrack:

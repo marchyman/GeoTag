@@ -11,13 +11,15 @@ extension ViewModel {
     // return true if the undo menu option should be disabled.
 
     var undoDisabled: Bool {
-        !undoManager.canUndo
+        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
+        return !undoManager.canUndo
     }
 
     // return true if the red menu option should be disabled.
 
     var redoDisabled: Bool {
-        !undoManager.canRedo
+        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
+        return !undoManager.canRedo
     }
 
     func undoAction() {

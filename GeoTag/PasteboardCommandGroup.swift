@@ -26,7 +26,7 @@ extension GeoTagApp {
                     .disabled(vm.deleteDisabled())
                 Button("Select All") { setPastboardItemAction(.selectAll) }
                     .keyboardShortcut("a")
-                    .disabled(vm.images.isEmpty)
+                    .disabled(vm.selectAllDisabled())
             }
             Divider()
             Group {

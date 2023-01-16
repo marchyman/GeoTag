@@ -13,6 +13,7 @@ import AppKit
 extension ViewModel {
     // return true if paste actions should be disabled
     func pasteDisabled(context: ImageModel.ID? = nil) -> Bool {
+        guard let keyWindow = window?.isKeyWindow, keyWindow else { return true }
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
            let _ = ImageModel.decodeStringRep(value: pasteVal),
