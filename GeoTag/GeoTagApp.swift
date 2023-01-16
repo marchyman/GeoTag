@@ -41,7 +41,7 @@ struct GeoTagApp: App {
 
         Window(GeoTagApp.modifyDateTime, id: GeoTagApp.modifyDateTime) {
             ModifyDateTimeView()
-                .frame(width: 450.0, height: 230.0, alignment: .top)
+                .frame(width: 450.0, height: 250.0, alignment: .top)
                 .environmentObject(vm)
        }
         .windowResizability(.contentSize)

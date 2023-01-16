@@ -14,7 +14,7 @@ struct ModifyDateTimeView: View {
         VStack {
             Text("Modify Date/Time")
                 .font(.largeTitle)
-                .padding(.top)
+                .padding()
             if vm.mostSelected != nil {
                 DateTimePickerView(id: $vm.mostSelected)
             }
@@ -31,6 +31,10 @@ struct DateTimePickerView: View {
     var body: some View {
         VStack {
             Form {
+                Text("Image: \(vm[vm.mostSelected!].name)")
+                    .bold()
+                    .padding(.bottom, 10)
+
                 LabeledContent("Image Date/Time:") {
                     DatePicker("Image Date/Time", selection: $oldDate,
                                displayedComponents: .init(rawValue: 1234521450295224572))
