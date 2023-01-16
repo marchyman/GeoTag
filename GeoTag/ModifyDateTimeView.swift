@@ -31,7 +31,7 @@ struct DateTimePickerView: View {
     var body: some View {
         VStack {
             Form {
-                Text("Image: \(vm[vm.mostSelected!].name)")
+                Text("Image: \(vm[id].name)")
                     .bold()
                     .padding(.bottom, 10)
 

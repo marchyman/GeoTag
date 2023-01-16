@@ -48,7 +48,7 @@ struct GeoTagApp: App {
 
         Window(GeoTagApp.modifyLocation, id: GeoTagApp.modifyLocation) {
             ModifyLocationView()
-                .frame(width: 450.0, height: 230.0, alignment: .top)
+                .frame(width: 450.0, height: 250.0, alignment: .top)
                 .environmentObject(vm)
         }
         .windowResizability(.contentSize)
