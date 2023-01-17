@@ -7,25 +7,9 @@
 
 import SwiftUI
 
-struct ModifyLocationView: View {
+struct ChangeLocationView: View {
     @EnvironmentObject var vm: ViewModel
-
-    var body: some View {
-        VStack {
-            Text("Modify Location")
-                .font(.largeTitle)
-                .padding()
-
-            if vm.mostSelected != nil {
-                AdjustLocationView(id: $vm.mostSelected)
-            }
-        }
-    }
-}
-
-struct AdjustLocationView: View {
-    @EnvironmentObject var vm: ViewModel
-    @Binding var id: ImageModel.ID!
+    let id: ImageModel.ID
 
     @State private var latitude = 0.0
     @State private var longitude = 0.0
@@ -33,6 +17,10 @@ struct AdjustLocationView: View {
 
     var body: some View {
         VStack {
+            Text("Change Location")
+                .font(.largeTitle)
+                .padding()
+
             Form {
                 Text("Image: \(vm[id].name)")
                     .bold()
@@ -60,11 +48,6 @@ struct AdjustLocationView: View {
             HStack(alignment: .bottom) {
                 Spacer()
 
-                Button("Cancel") {
-                    NSApplication.shared.keyWindow?.close()
-                }
-                .keyboardShortcut(.cancelAction)
-
                 Button("Change") {
                     // ignore coords that weren't changed
                     if !(vm[id].location == nil && latitude == 0 && longitude == 0) {
@@ -72,7 +55,7 @@ struct AdjustLocationView: View {
                            (0...180).contains(longitude.magnitude) {
                             let coords = Coords(latitude: latitude,
                                                 longitude: longitude)
-                            updateSelectedImages(location: coords)
+                            vm.update(id: id, location: coords)
                         } else {
                             alertPresented = true
                         }
@@ -86,11 +69,7 @@ struct AdjustLocationView: View {
             latitude = vm[id].location?.latitude ?? 0.0
             longitude = vm[id].location?.longitude ?? 0.0
         }
-       .onChange(of: id) {_ in
-           latitude = vm[id].location?.latitude ?? 0.0
-           longitude = vm[id].location?.longitude ?? 0.0
-        }
-       .alert("Coordinate Format Error",
+       .alert("Coordinate Error",
               isPresented: $alertPresented) {
         } message: {
             Text("""
@@ -105,25 +84,17 @@ struct AdjustLocationView: View {
                  ss = seconds
                  R = N, S, E, or W reference.
 
-                 The R value is optional.  N (lat) or E (lon) are assumed.  Entry of a negative number of degrees will use a S or W reference.
+                 Latitude must be between 0 and 90°. Longitude must be between 0 and 180°.
+                 °, ', and " marks are ignored. The R value is optional.  N (lat) or E (lon)
+                 are assumed.  Entry of a negative number of degrees will use a S or W reference.
                  """)
         }
     }
-
-    func updateSelectedImages(location: Coords) {
-        vm.undoManager.beginUndoGrouping()
-        for id in vm.selection {
-            vm.update(id: id, location: location)
-        }
-        vm.undoManager.endUndoGrouping()
-        vm.undoManager.setActionName("modify location")
-
-    }
 }
 
-struct _ModifyLocationView_Previews: PreviewProvider {
-    static var previews: some View {
-        ModifyLocationView()
-            .environmentObject(ViewModel())
-    }
-}
+//struct ChangeLocationView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ChangeLocationView()
+//            .environmentObject(ViewModel())
+//    }
+//}

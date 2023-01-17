@@ -37,8 +37,6 @@ extension GeoTagApp {
                 Button("Specify Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
                 Button("Modify Date/Time…") { setPastboardItemAction(.modifyDateTime) }
                     .disabled(vm.mostSelected == nil)
-                Button("Modify Location…") { setPastboardItemAction(.modifyLocation) }
-                    .disabled(vm.mostSelected == nil)
             }
         }
     }

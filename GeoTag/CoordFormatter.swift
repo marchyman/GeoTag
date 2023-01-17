@@ -16,6 +16,9 @@ struct LatitudeStyle: ParseableFormatStyle {
     func format(_ value: Double) -> String {
         @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
+        if value == 0 {
+            return ""
+        }
         return coordToString(for: value, format: coordFormat, ref: latRef)
 
     }
@@ -23,7 +26,7 @@ struct LatitudeStyle: ParseableFormatStyle {
 
 struct LatitudeStrategy: ParseStrategy {
     func parse(_ value: String) throws -> Double {
-        // if the latitude isn't valid return an invalid value
+        // if the latitude isn't valid return an out-of-range value
         return value.validateCoord(range: 0...90, reference: latRef) ?? 91
     }
 }
@@ -43,6 +46,9 @@ struct LongitudeStyle: ParseableFormatStyle {
     func format(_ value: Double) -> String {
         @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
+        if value == 0 {
+            return ""
+        }
         return coordToString(for: value, format: coordFormat, ref: lonRef)
 
     }
@@ -50,7 +56,7 @@ struct LongitudeStyle: ParseableFormatStyle {
 
 struct LongitudeStrategy: ParseStrategy {
     func parse(_ value: String) throws -> Double {
-        // if the longitude isnt valid return an invalid value
+        // if the longitude isnt valid return an oyut-of-range value
         return value.validateCoord(range: 0...180, reference: lonRef) ?? 181
     }
 }
@@ -61,15 +67,18 @@ extension FormatStyle where Self == LongitudeStyle {
     }
 }
 
-func coordToString(for coord: Double,
+func coordToString(for coord: Double?,
                    format: AppSettings.CoordFormat,
                    ref: [String]) -> String {
-    switch format {
-    case .deg:
-        return String(format: "% 2.6f", coord)
-    case .degMin:
-        return coord.dm(ref)
-    case .degMinSec:
-        return coord.dms(ref)
+    if let coord {
+        switch format {
+        case .deg:
+            return String(format: "% 2.6f", coord)
+        case .degMin:
+            return coord.dm(ref)
+        case .degMinSec:
+            return coord.dms(ref)
+        }
     }
+    return ""
 }

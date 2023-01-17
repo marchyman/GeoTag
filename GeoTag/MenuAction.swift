@@ -34,7 +34,6 @@ extension ViewModel {
         case locnFromTrack
         case adjustTimeZone
         case modifyDateTime
-        case modifyLocation
     }
 
     // set the menuAction and context.
@@ -83,8 +82,6 @@ extension ViewModel {
             openWindow(id: GeoTagApp.adjustTimeZone)
         case .modifyDateTime:
             openWindow(id: GeoTagApp.modifyDateTime)
-        case .modifyLocation:
-            openWindow(id: GeoTagApp.modifyLocation)
         }
     }
 }

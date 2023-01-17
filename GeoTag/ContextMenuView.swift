@@ -32,8 +32,6 @@ struct ContextMenuView: View {
                 .disabled(vm.locnFromTrackDisabled(context: context))
             Button("Modify Date/Time…") { setContextMenuAction(.modifyDateTime) }
                 .disabled(modifyDisabled())
-            Button("Modify Location…") { setContextMenuAction(.modifyLocation) }
-                .disabled(modifyDisabled())
         }
         Divider()
         Button("Clear Image List") { setContextMenuAction(.clearList) }

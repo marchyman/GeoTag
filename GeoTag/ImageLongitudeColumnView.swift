@@ -12,25 +12,22 @@ struct ImageLongitudeColumnView: View {
     @EnvironmentObject var vm: ViewModel
     @Environment(\.openWindow) var openWindow
     let id: ImageModel.ID
+    @State private var showPopover = false
 
     var body: some View {
-        Text(longitudeToString())
+        Text(coordToString(for: vm[id].location?.longitude,
+                           format: coordFormat,
+                           ref: lonRef))
             .foregroundColor(textColor())
             .frame(minWidth: coordMinWidth)
-            .onDoubleClick {
-                vm.select(context: id)
-                openWindow(id: GeoTagApp.modifyLocation)
+            .onDoubleClick() {
+                showPopover.toggle()
+            }
+            .popover(isPresented: self.$showPopover) {
+                ChangeLocationView(id: id)
+                    .frame(width: 450, height: 250)
             }
             .help(vm.elevationAsString(id: id))
-    }
-
-    func longitudeToString() -> String {
-        if let location = vm[id].location {
-            return coordToString(for: location.longitude,
-                                 format: coordFormat,
-                                 ref: lonRef)
-        }
-        return ""
     }
 
     func textColor() -> Color {
