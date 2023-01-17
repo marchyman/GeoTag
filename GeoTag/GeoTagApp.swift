@@ -18,7 +18,7 @@ struct GeoTagApp: App {
         Window("GeoTag Version Five", id: "main") {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
-                .background(WindowAccessor(window: $vm.window))
+                .background(WindowAccessor(window: $vm.mainWindow))
                 .environmentObject(vm)
                 .onAppear {
                     appDelegate.viewModel = vm

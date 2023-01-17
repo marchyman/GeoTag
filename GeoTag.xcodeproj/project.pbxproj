@@ -21,11 +21,9 @@
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
 		4944DE7A296CCB8B0095A5CC /* ImageModelSaveChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */; };
 		494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */; };
-		494FED0E29568A8F005FFC23 /* SwiftUIRightClickModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0D29568A8F005FFC23 /* SwiftUIRightClickModifier.swift */; };
 		494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0F2956BC97005FFC23 /* ClickMapView.swift */; };
 		4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */; };
 		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
-		4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4955351C29526D4E004AF5F2 /* SizeReader.swift */; };
 		495F2F63295EB1A5002A8A88 /* Selections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F2F62295EB1A5002A8A88 /* Selections.swift */; };
 		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
 		4969ACA32963DFE700BBC219 /* ModifyDateTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA22963DFE700BBC219 /* ModifyDateTimeView.swift */; };
@@ -94,11 +92,9 @@
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelSaveChanges.swift; sourceTree = "<group>"; };
 		494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardCommandGroup.swift; sourceTree = "<group>"; };
-		494FED0D29568A8F005FFC23 /* SwiftUIRightClickModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIRightClickModifier.swift; sourceTree = "<group>"; };
 		494FED0F2956BC97005FFC23 /* ClickMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickMapView.swift; sourceTree = "<group>"; };
 		4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuView.swift; sourceTree = "<group>"; };
 		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
-		4955351C29526D4E004AF5F2 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
 		495F2F62295EB1A5002A8A88 /* Selections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selections.swift; sourceTree = "<group>"; };
 		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
 		4969ACA22963DFE700BBC219 /* ModifyDateTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyDateTimeView.swift; sourceTree = "<group>"; };
@@ -237,8 +233,6 @@
 			isa = PBXGroup;
 			children = (
 				498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */,
-				494FED0D29568A8F005FFC23 /* SwiftUIRightClickModifier.swift */,
-				4955351C29526D4E004AF5F2 /* SizeReader.swift */,
 			);
 			name = "Utility files";
 			sourceTree = "<group>";
@@ -469,7 +463,6 @@
 				49BA299F2962250200B26F03 /* WindowAccessor.swift in Sources */,
 				49BA29A82962370200B26F03 /* SaveAction.swift in Sources */,
 				494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */,
-				494FED0E29568A8F005FFC23 /* SwiftUIRightClickModifier.swift in Sources */,
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
 				498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */,
 				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
@@ -524,7 +517,6 @@
 				49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
 				49A99FBC296F6D5900392EEA /* PathView.swift in Sources */,
-				4955351D29526D4E004AF5F2 /* SizeReader.swift in Sources */,
 				49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -19,7 +19,7 @@ extension ViewModel {
                 elevation: Double? = nil, documentedEdited: Bool = true) {
         let currentLocation = self[id].location
         let currentElevation = self[id].elevation
-        let currentDocumentEdited = window?.isDocumentEdited ?? true
+        let currentDocumentEdited = mainWindow?.isDocumentEdited ?? true
         undoManager.registerUndo(withTarget: self) { target in
             target.update(id: id, location: currentLocation,
                           elevation: currentElevation,
@@ -28,7 +28,7 @@ extension ViewModel {
 
         self[id].location = location
         self[id].elevation = elevation
-        window?.isDocumentEdited = documentedEdited
+        mainWindow?.isDocumentEdited = documentedEdited
     }
 
     // Update an image with a new timestamp.  Image is identifid by its ID
@@ -37,13 +37,13 @@ extension ViewModel {
     func update(id: ImageModel.ID, timestamp: String?,
                 documentEdited: Bool = true) {
         let currentDateTimeCreated = self[id].dateTimeCreated
-        let currentDocumentEdited = window?.isDocumentEdited ?? true
+        let currentDocumentEdited = mainWindow?.isDocumentEdited ?? true
         undoManager.registerUndo(withTarget: self) { target in
             target.update(id: id, timestamp: currentDateTimeCreated,
                           documentEdited: currentDocumentEdited)
         }
         self[id].dateTimeCreated = timestamp
-        window?.isDocumentEdited = documentEdited
+        mainWindow?.isDocumentEdited = documentEdited
     }
 
     // Add track overlays to the map

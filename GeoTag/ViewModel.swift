@@ -14,7 +14,7 @@ import MapKit
 @MainActor
 final class ViewModel: ObservableObject {
     // The Apps main window.
-    var window: NSWindow?
+    var mainWindow: NSWindow?
     var undoManager = UndoManager()
 
     // Let the user know when the app is busy

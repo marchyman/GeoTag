@@ -10,7 +10,7 @@ import Foundation
 extension ViewModel {
     // return true if the save menu item should be disabled
     func saveDisabled() -> Bool {
-        return saveInProgress || !(window?.isDocumentEdited ?? false)
+        return saveInProgress || !(mainWindow?.isDocumentEdited ?? false)
     }
 
     // Update image files with changed timestamp/location info
@@ -42,7 +42,7 @@ extension ViewModel {
         saveIssues = [:]
         let imagesToSave = images
         undoManager.removeAllActions()
-        window?.isDocumentEdited = false
+        mainWindow?.isDocumentEdited = false
 
         // process the images in the background.
 

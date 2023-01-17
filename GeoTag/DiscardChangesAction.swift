@@ -10,7 +10,7 @@ import Foundation
 extension ViewModel {
     // return true if the save menu item should be disabled
     func discardChangesDisabled() -> Bool {
-        return !(window?.isDocumentEdited ?? false)
+        return !(mainWindow?.isDocumentEdited ?? false)
     }
 
     func discardChangesAction() {
@@ -21,7 +21,7 @@ extension ViewModel {
             index = images.index(after: index)
         }
         undoManager.removeAllActions()
-        window?.isDocumentEdited = false
+        mainWindow?.isDocumentEdited = false
     }
 }
 

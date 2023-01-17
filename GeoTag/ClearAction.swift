@@ -12,7 +12,7 @@ import Foundation
 extension ViewModel {
     // return true if the Clear Image List meny item should be disabled
     var clearDisabled: Bool {
-        images.isEmpty || (window?.isDocumentEdited ?? false)
+        images.isEmpty || (mainWindow?.isDocumentEdited ?? false)
     }
 
     func clearImageListAction() {
