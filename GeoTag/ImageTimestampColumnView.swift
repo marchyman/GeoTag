@@ -9,16 +9,18 @@ import SwiftUI
 
 struct ImageTimestampColumnView: View {
     @EnvironmentObject var vm: ViewModel
-    @Environment(\.openWindow) var openWindow
-
     let id: ImageModel.ID
+    @State private var showPopover = false
 
     var body: some View {
         Text(vm[id].timeStamp)
             .foregroundColor(textColor())
-            .onDoubleClick {
-                vm.select(context: id)
-                openWindow(id: GeoTagApp.modifyDateTime)
+            .frame(minWidth: timestampMinWidth)
+            .onDoubleClick() {
+                showPopover = vm[id].isValid
+            }
+            .popover(isPresented: self.$showPopover) {
+                ChangeDateTimeView(id: id)
             }
     }
 

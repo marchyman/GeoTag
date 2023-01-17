@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ChangeLocationView: View {
     @EnvironmentObject var vm: ViewModel
+    @Environment(\.dismiss) private var dismiss
+
     let id: ImageModel.ID
 
     @State private var latitude = 0.0
@@ -60,6 +62,7 @@ struct ChangeLocationView: View {
                             alertPresented = true
                         }
                     }
+                    dismiss()
                 }
                 .keyboardShortcut(.defaultAction)
             }

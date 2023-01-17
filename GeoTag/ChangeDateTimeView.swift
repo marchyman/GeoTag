@@ -7,46 +7,23 @@
 
 import SwiftUI
 
-struct ModifyDateTimeView: View {
+struct ChangeDateTimeView: View {
     @EnvironmentObject var vm: ViewModel
+    @Environment(\.dismiss) private var dismiss
 
-    var body: some View {
-        VStack {
-            Text("Modify Date/Time")
-                .font(.largeTitle)
-                .padding()
-            if vm.mostSelected != nil {
-                DateTimePickerView(id: $vm.mostSelected)
-            }
-        }
-    }
-}
+    let id: ImageModel.ID!
 
-struct DateTimePickerView: View {
-    @EnvironmentObject var vm: ViewModel
-    @Binding var id: ImageModel.ID!
     @State private var oldDate = Date()
     @State private var newDate = Date()
 
     var body: some View {
         VStack {
+            Text("Change Date/Time")
+                .font(.largeTitle)
+                .padding()
             Form {
-                Text("Image: \(vm[id].name)")
-                    .bold()
-                    .padding(.bottom, 10)
-
-                LabeledContent("Image Date/Time:") {
-                    DatePicker("Image Date/Time", selection: $oldDate,
-                               displayedComponents: .init(rawValue: 1234521450295224572))
-                    .labelsHidden()
-                    .frame(width: 200)
-                    .disabled(true)
-                }
-                .padding([.horizontal, .bottom])
-                .help("This is the date/time of the image file unless one was not present in which case the current date/time is shown.")
-
-                LabeledContent("Updated Date/Time:") {
-                    DatePicker("Updated Date/Time", selection: $newDate,
+                LabeledContent("New Date/Time:") {
+                    DatePicker("New Date/Time", selection: $newDate,
                                displayedComponents: .init(rawValue: 1234521450295224572))
                     .labelsHidden()
                     .frame(width: 200)
@@ -59,22 +36,18 @@ struct DateTimePickerView: View {
 
             HStack(alignment: .bottom) {
                 Spacer()
-                Button("Cancel") {
-                    NSApplication.shared.keyWindow?.close()
-                }
-                .keyboardShortcut(.cancelAction)
 
                 Button("Change") {
                     if oldDate != newDate {
                         updateTimestamps()
                     }
-                    NSApplication.shared.keyWindow?.close()
+                    dismiss()
                 }
                 .keyboardShortcut(.defaultAction)
             }
             .padding()
         }
-        .onChange(of: id) { _ in
+        .onAppear {
             oldDate = date()
             newDate = oldDate
         }
@@ -119,9 +92,9 @@ struct DateTimePickerView: View {
 
 }
 
-struct ModifyDateTimeView_Previews: PreviewProvider {
-    static var previews: some View {
-        ModifyDateTimeView()
-            .environmentObject(ViewModel())
-    }
-}
+//struct ModifyDateTimeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ModifyDateTimeView()
+//            .environmentObject(ViewModel())
+//    }
+//}

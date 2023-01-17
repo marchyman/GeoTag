@@ -26,7 +26,7 @@
 		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
 		495F2F63295EB1A5002A8A88 /* Selections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F2F62295EB1A5002A8A88 /* Selections.swift */; };
 		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
-		4969ACA32963DFE700BBC219 /* ModifyDateTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA22963DFE700BBC219 /* ModifyDateTimeView.swift */; };
+		4969ACA32963DFE700BBC219 /* ChangeDateTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */; };
 		4969ACA62963E05000BBC219 /* ChangeLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA52963E05000BBC219 /* ChangeLocationView.swift */; };
 		4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
@@ -98,7 +98,7 @@
 		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
 		495F2F62295EB1A5002A8A88 /* Selections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selections.swift; sourceTree = "<group>"; };
 		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
-		4969ACA22963DFE700BBC219 /* ModifyDateTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyDateTimeView.swift; sourceTree = "<group>"; };
+		4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeDateTimeView.swift; sourceTree = "<group>"; };
 		4969ACA52963E05000BBC219 /* ChangeLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLocationView.swift; sourceTree = "<group>"; };
 		4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLToImageHelper.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -201,14 +201,6 @@
 			name = "Adjust Time Zone Group";
 			sourceTree = "<group>";
 		};
-		4969AC9F2963CC3E00BBC219 /* Modify DateTime Group */ = {
-			isa = PBXGroup;
-			children = (
-				4969ACA22963DFE700BBC219 /* ModifyDateTimeView.swift */,
-			);
-			name = "Modify DateTime Group";
-			sourceTree = "<group>";
-		};
 		498A7354294EA67A00C62B14 /* Image Table Group */ = {
 			isa = PBXGroup;
 			children = (
@@ -216,6 +208,7 @@
 				4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */,
 				49A13270294C040F00F1B393 /* ImageNameColumnView.swift */,
 				498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */,
+				4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */,
 				498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */,
 				498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */,
 				4969ACA52963E05000BBC219 /* ChangeLocationView.swift */,
@@ -312,7 +305,6 @@
 			children = (
 				498A735A294EC5F800C62B14 /* App Group */,
 				4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */,
-				4969AC9F2963CC3E00BBC219 /* Modify DateTime Group */,
 				490A17A22960B32700ACA9FD /* View Model Group */,
 				498A735C294EC7BC00C62B14 /* Image Model Group */,
 				498A735B294EC78700C62B14 /* Settings Group */,
@@ -483,7 +475,7 @@
 				4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */,
 				49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */,
 				4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */,
-				4969ACA32963DFE700BBC219 /* ModifyDateTimeView.swift in Sources */,
+				4969ACA32963DFE700BBC219 /* ChangeDateTimeView.swift in Sources */,
 				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
 				49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */,
 				490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */,

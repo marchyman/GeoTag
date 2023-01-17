@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+let timestampMinWidth = 130.0
 let coordMinWidth = 120.0
 
 struct ImageTableView: View {
@@ -25,7 +26,7 @@ struct ImageTableView: View {
             TableColumn("Timestamp", value: \.timeStamp) { image in
                 ImageTimestampColumnView(id: image.id)
             }
-            .width(min: 130)
+            .width(min: timestampMinWidth)
             TableColumn("Latitude", value: \.latitude) { image in
                 ImageLatitudeColumnView(id: image.id)
             }

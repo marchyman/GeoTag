@@ -20,7 +20,7 @@ struct ImageLatitudeColumnView: View {
             .foregroundColor(textColor())
             .frame(minWidth: coordMinWidth)
             .onDoubleClick() {
-                showPopover.toggle()
+                showPopover = vm[id].isValid
             }
             .popover(isPresented: self.$showPopover) {
                 ChangeLocationView(id: id)

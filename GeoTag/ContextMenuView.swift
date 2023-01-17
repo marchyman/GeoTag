@@ -30,21 +30,10 @@ struct ContextMenuView: View {
                 .disabled(vm.showInFinderDisabled(context: context))
             Button("Locn From Track") { setContextMenuAction(.locnFromTrack) }
                 .disabled(vm.locnFromTrackDisabled(context: context))
-            Button("Modify Date/Time…") { setContextMenuAction(.modifyDateTime) }
-                .disabled(modifyDisabled())
         }
         Divider()
         Button("Clear Image List") { setContextMenuAction(.clearList) }
             .disabled(vm.clearDisabled)
-    }
-
-    // must be a valid image
-
-    func modifyDisabled() -> Bool {
-        if let id = context != nil ? context : vm.mostSelected {
-            return !vm[id].isValid
-        }
-        return true
     }
 
     func setContextMenuAction(_ action: ViewModel.MenuAction) {

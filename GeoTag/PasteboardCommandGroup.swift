@@ -35,8 +35,6 @@ extension GeoTagApp {
                 Button("Locn From Track") { setPastboardItemAction(.locnFromTrack) }
                     .disabled(vm.locnFromTrackDisabled())
                 Button("Specify Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
-                Button("Modify Date/Time…") { setPastboardItemAction(.modifyDateTime) }
-                    .disabled(vm.mostSelected == nil)
             }
         }
     }
