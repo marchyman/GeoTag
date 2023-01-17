@@ -10,7 +10,6 @@ import AppKit
 extension ViewModel {
 
     func selectAllDisabled() -> Bool {
-        guard let keyWindow = mainWindow?.isKeyWindow, keyWindow else { return true }
         return images.isEmpty
     }
 
