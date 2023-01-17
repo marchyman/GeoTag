@@ -14,7 +14,7 @@ struct ImageTimestampColumnView: View {
 
     var body: some View {
         Text(vm[id].timeStamp)
-            .foregroundColor(textColor())
+            .foregroundColor(vm[id].timestampTextColor)
             .frame(minWidth: timestampMinWidth)
             .onDoubleClick() {
                 showPopover = vm[id].isValid
@@ -22,16 +22,6 @@ struct ImageTimestampColumnView: View {
             .popover(isPresented: self.$showPopover) {
                 ChangeDateTimeView(id: id)
             }
-    }
-
-    func textColor() -> Color {
-        if vm[id].isValid {
-            if vm[id].dateTimeCreated == vm[id].originalDateTimeCreated {
-                return .primary
-            }
-            return .changed
-        }
-        return .secondary
     }
 }
 

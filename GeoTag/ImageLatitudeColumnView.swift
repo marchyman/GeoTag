@@ -17,7 +17,7 @@ struct ImageLatitudeColumnView: View {
         Text(coordToString(for: vm[id].location?.latitude,
                            format: coordFormat,
                            ref: latRef))
-            .foregroundColor(textColor())
+        .foregroundColor(vm[id].locationTextColor)
             .frame(minWidth: coordMinWidth)
             .onDoubleClick() {
                 showPopover = vm[id].isValid
@@ -27,16 +27,6 @@ struct ImageLatitudeColumnView: View {
                     .frame(width: 450, height: 250)
             }
             .help(vm.elevationAsString(id: id))
-    }
-
-    func textColor() -> Color {
-        if vm[id].isValid {
-            if vm[id].location == vm[id].originalLocation {
-                return .primary
-            }
-            return .changed
-        }
-        return .secondary
     }
 }
 

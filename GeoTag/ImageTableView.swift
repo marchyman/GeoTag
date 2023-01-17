@@ -80,6 +80,28 @@ extension ImageModel {
     var longitude: Double {
         location?.longitude ?? 0.0
     }
+
+    // return the color used by location items that change
+    var timestampTextColor: Color {
+        if isValid {
+            if dateTimeCreated == originalDateTimeCreated {
+                return .primary
+            }
+            return .changed
+        }
+        return .secondary
+    }
+
+    var locationTextColor: Color {
+        if isValid {
+            if location == originalLocation {
+                return .primary
+            }
+            return .changed
+        }
+        return .secondary
+    }
+
 }
 
 extension ViewModel {
