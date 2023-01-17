@@ -10,7 +10,6 @@ import SwiftUI
 struct ImageLatitudeColumnView: View {
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
     @EnvironmentObject var vm: ViewModel
-    @Environment(\.openWindow) var openWindow
     let id: ImageModel.ID
     @State private var showPopover = false
 
