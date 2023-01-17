@@ -26,14 +26,9 @@ struct ImageLatitudeColumnView: View {
 
     func latitudeToString() -> String {
         if let location = vm[id].location {
-            switch coordFormat {
-            case .deg:
-                return String(format: "% 2.6f", location.latitude)
-            case .degMin:
-                return location.dm.latitude
-            case .degMinSec:
-                return location.dms.latitude
-            }
+            return coordToString(for: location.latitude,
+                                 format: coordFormat,
+                                 ref: latRef)
         }
         return ""
     }

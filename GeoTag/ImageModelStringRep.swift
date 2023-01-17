@@ -31,10 +31,10 @@ extension ImageModel {
         if components.count == 2 || components.count == 3 {
             var coords: Coords
 
-            if let latitude = components[0].validateLocation(range: 0...90,
-                                                             reference: ["N", "S"]),
-               let longitude = components[1].validateLocation(range: 0...180,
-                                                              reference: ["E", "W"]) {
+            if let latitude = components[0].validateCoord(range: 0...90,
+                                                          reference: latRef),
+               let longitude = components[1].validateCoord(range: 0...180,
+                                                           reference: lonRef) {
                 coords = Coords(latitude: latitude, longitude: longitude)
                 if components.count == 3 {
                     let eleVal = components[2].trimmingCharacters(in: .whitespaces)

@@ -1,0 +1,75 @@
+//
+//  CoordFormatter.swift
+//  GeoTag
+//
+//  Created by Marco S Hyman on 1/16/23.
+//
+
+import SwiftUI
+
+// Latitude format
+
+struct LatitudeStyle: ParseableFormatStyle {
+
+    var parseStrategy: LatitudeStrategy = .init()
+
+    func format(_ value: Double) -> String {
+        @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+
+        return coordToString(for: value, format: coordFormat, ref: latRef)
+
+    }
+}
+
+struct LatitudeStrategy: ParseStrategy {
+    func parse(_ value: String) throws -> Double {
+        // if the latitude isn't valid return an invalid value
+        return value.validateCoord(range: 0...90, reference: latRef) ?? 91
+    }
+}
+
+extension FormatStyle where Self == LatitudeStyle {
+    static func latitude() -> LatitudeStyle {
+        return LatitudeStyle()
+    }
+}
+
+// Longitude format
+
+struct LongitudeStyle: ParseableFormatStyle {
+
+    var parseStrategy: LongitudeStrategy = .init()
+
+    func format(_ value: Double) -> String {
+        @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+
+        return coordToString(for: value, format: coordFormat, ref: lonRef)
+
+    }
+}
+
+struct LongitudeStrategy: ParseStrategy {
+    func parse(_ value: String) throws -> Double {
+        // if the longitude isnt valid return an invalid value
+        return value.validateCoord(range: 0...180, reference: lonRef) ?? 181
+    }
+}
+
+extension FormatStyle where Self == LongitudeStyle {
+    static func longitude() -> LongitudeStyle {
+        return LongitudeStyle()
+    }
+}
+
+func coordToString(for coord: Double,
+                   format: AppSettings.CoordFormat,
+                   ref: [String]) -> String {
+    switch format {
+    case .deg:
+        return String(format: "% 2.6f", coord)
+    case .degMin:
+        return coord.dm(ref)
+    case .degMinSec:
+        return coord.dms(ref)
+    }
+}

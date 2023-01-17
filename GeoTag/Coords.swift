@@ -12,6 +12,9 @@ import MapKit
 /// A shorter name for a type I'll often use
 typealias Coords = CLLocationCoordinate2D
 
+let latRef = ["N", "S"]
+let lonRef = ["E", "W"]
+
 /// extend string to validate and return a latitude./longitude as a double
 
 extension String {
@@ -32,7 +35,7 @@ extension String {
     /// are used.  Degree (°), Minute ('), and Second (") marks are optional
     /// and ignored if found at the end of a value.
 
-    func validateLocation(
+    func validateCoord(
         range: ClosedRange<UInt>,
         reference: [String]
     ) -> Double? {
@@ -92,10 +95,9 @@ extension String {
     }
 }
 
-/// extend floating point to return convert the fractional part as
-/// minutes or seconds. The absolute value of the result is returned
+/// extend Double to handle coordinates
 
-extension FloatingPoint {
+extension Double {
     var minutes:  Self {
         return abs((self*3600).truncatingRemainder(dividingBy: 3600) / 60)
     }
@@ -105,36 +107,20 @@ extension FloatingPoint {
                     .truncatingRemainder(dividingBy: 3600)
                     .truncatingRemainder(dividingBy: 60))
     }
-}
 
-/// extend CLLocationCoordinate2D to return latitude and longitude in either
-/// degrees and minutes or degrees, minutes, and seconds.
-
-extension CLLocationCoordinate2D {
-	// degrees and minutes
-    var dm: (latitude: String, longitude: String) {
-        return (String(format:"%d° %.6f' %@",
-                       Int(abs(latitude)),
-                       latitude.minutes,
-                       latitude >= 0 ? "N" : "S"),
-                String(format:"%d° %.6f' %@",
-                       Int(abs(longitude)),
-                       longitude.minutes,
-                       longitude >= 0 ? "E" : "W"))
+    func dm(_ ref: [String]) -> String {
+        String(format: "%d° %.6f' %@",
+               Int(abs(self)),
+               self.minutes,
+               self >= 0 ? ref[0] : ref[1])
     }
 
-	// degrees, minutes, and seconds
-    var dms: (latitude: String, longitude: String) {
-        return (String(format:"%d° %d' %.2f\" %@",
-                       Int(abs(latitude)),
-                       Int(latitude.minutes),
-                       latitude.seconds,
-                       latitude >= 0 ? "N" : "S"),
-                String(format:"%d° %d' %.2f\" %@",
-                       Int(abs(longitude)),
-                       Int(longitude.minutes),
-                       longitude.seconds,
-                       longitude >= 0 ? "E" : "W"))
+    func dms(_ ref: [String]) -> String {
+        String(format: "%d° %d' %.2f\" %@",
+               Int(abs(self)),
+               Int(self.minutes),
+               self.seconds,
+               self >= 0 ? ref[0] : ref[1])
     }
 }
 

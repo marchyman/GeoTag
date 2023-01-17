@@ -24,12 +24,11 @@ struct ModifyLocationView: View {
 }
 
 struct AdjustLocationView: View {
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
     @EnvironmentObject var vm: ViewModel
     @Binding var id: ImageModel.ID!
 
-    @State private var latitude = ""
-    @State private var longitude = ""
+    @State private var latitude = 0.0
+    @State private var longitude = 0.0
     @State private var alertPresented = false
 
     var body: some View {
@@ -40,35 +39,17 @@ struct AdjustLocationView: View {
                     .padding(.bottom, 10)
 
                 LabeledContent("Latitude:") {
-                    TextField("Latitude:", text: $latitude)
+                    TextField("Latitude:", value: $latitude, format: .latitude())
                         .labelsHidden()
                         .frame(maxWidth: 250)
-                        .onSubmit {
-                            if let lat =
-                                latitude.validateLocation(range: 0...90,
-                                                          reference: ["N", "S"]) {
-                                latitude =
-                                    latitudeToString(for: Coords(latitude: lat,
-                                                                 longitude: 0.0))
-                            }
-                        }
                 }
                 .padding([.horizontal, .bottom])
                 .help("Enter the latitude of the selected image.")
 
                 LabeledContent("Longitude:") {
-                    TextField("Longitude:", text: $longitude)
+                    TextField("Longitude:", value: $longitude, format: .longitude())
                         .labelsHidden()
                         .frame(maxWidth: 250)
-                        .onSubmit {
-                            if let lon =
-                                longitude.validateLocation(range: 0...180,
-                                                           reference: ["E", "W"]) {
-                                longitude =
-                                    longitudeToString(for: Coords(latitude: 0,
-                                                                  longitude: lon))
-                            }
-                        }
                 }
                 .padding([.horizontal, .bottom])
                 .help("Enter the longitude of the selected image")
@@ -85,17 +66,16 @@ struct AdjustLocationView: View {
                 .keyboardShortcut(.cancelAction)
 
                 Button("Change") {
-                    if let lat =
-                        latitude.validateLocation(range: 0...90,
-                                                  reference: ["N", "S"]),
-                       let lon =
-                        longitude.validateLocation(range: 0...180,
-                                                   reference: ["E", "W"]) {
-                        updateSelectedImages(location: Coords(latitude: lat,
-                                                              longitude: lon))
-                        NSApplication.shared.keyWindow?.close()
-                    } else {
-                        alertPresented = true
+                    // ignore coords that weren't changed
+                    if !(vm[id].location == nil && latitude == 0 && longitude == 0) {
+                        if (0...90).contains(latitude.magnitude) &&
+                           (0...180).contains(longitude.magnitude) {
+                            let coords = Coords(latitude: latitude,
+                                                longitude: longitude)
+                            updateSelectedImages(location: coords)
+                        } else {
+                            alertPresented = true
+                        }
                     }
                 }
                 .keyboardShortcut(.defaultAction)
@@ -103,12 +83,12 @@ struct AdjustLocationView: View {
             .padding()
         }
         .onAppear {
-            latitude = latitudeToString(for: vm[id].location)
-            longitude = longitudeToString(for: vm[id].location)
+            latitude = vm[id].location?.latitude ?? 0.0
+            longitude = vm[id].location?.longitude ?? 0.0
         }
        .onChange(of: id) {_ in
-            latitude = latitudeToString(for: vm[id].location)
-            longitude = longitudeToString(for: vm[id].location)
+           latitude = vm[id].location?.latitude ?? 0.0
+           longitude = vm[id].location?.longitude ?? 0.0
         }
        .alert("Coordinate Format Error",
               isPresented: $alertPresented) {
@@ -128,34 +108,6 @@ struct AdjustLocationView: View {
                  The R value is optional.  N (lat) or E (lon) are assumed.  Entry of a negative number of degrees will use a S or W reference.
                  """)
         }
-    }
-
-    func latitudeToString(for location: Coords?) -> String {
-        if let location {
-            switch coordFormat {
-            case .deg:
-                return String(format: "% 2.6f", location.latitude)
-            case .degMin:
-                return location.dm.latitude
-            case .degMinSec:
-                return location.dms.latitude
-            }
-        }
-        return ""
-    }
-
-    func longitudeToString(for location: Coords?) -> String {
-        if let location  {
-            switch coordFormat {
-            case .deg:
-                return String(format: "% 2.6f", location.longitude)
-            case .degMin:
-                return location.dm.longitude
-            case .degMinSec:
-                return location.dms.longitude
-            }
-        }
-        return ""
     }
 
     func updateSelectedImages(location: Coords) {
