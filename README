@@ -13,10 +13,10 @@ See <http://exiftool.org> for information about ExifTool.
 **ExifTool is built in to GeoTag.**
 
 GeoTag Version 5 is a re-write of the program taking advantage of features in
-the current version of macOS. Those not using macOS Ventura can still use GeoTag
-versio 4.15.
+the current version of macOS. Those not using macOS Ventura can use GeoTag
+version 4.15.
 
-## WIP (will be GeoTag 5)
+## 4.99 [Beta, will be GeoTag 5 upon full release]
 
 ### Updates
 
@@ -34,6 +34,11 @@ versio 4.15.
 
 * (internal) User Interface code re-written to use SwiftUI
 
+### Known bugs
+
+* Selecting images in Finder and using "Open With" GeoTag launches the program
+  but does not open the images.
+
 ### See the file named *History* for earlier changes and bug fixes
 
 ---
@@ -48,6 +53,7 @@ for other image editing applications.
 ### Operating Instructions:
 
 *See <https://www.snafu.org/GeoTag/GeoTag5Help/> for more information.*
+[Note: help page content is still being written.]
 
 Run Program.  Use the Open command from the menu or ⌘O to select files to
 modify. You can also drag files from the finder into the table on the left side
