@@ -25,11 +25,13 @@ struct ImageView: View {
         }
         .padding()
         .onChange(of: vm.mostSelected) { id in
-            if let id {
-                vm[id].makeThumbnail()
-                thumbnail = vm[id].thumbnail
-            } else {
-                thumbnail = nil
+            Task {
+                if let id {
+                    vm[id].makeThumbnail()
+                    thumbnail = vm[id].thumbnail
+                } else {
+                    thumbnail = nil
+                }
             }
         }
     }
