@@ -16,13 +16,6 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can still use GeoTag
 versio 4.15.
 
-GeoTag is available from several sources
-* [App Store Link](https://itunes.apple.com/us/app/geotag/id1465180184?mt=12)
-* [GeoTag home page](https://www.snafu.org/GeoTag/)
-* [Homebrew](http://brew.sh) cask.  Homebrew users can use the command
-  `brew cask install geotag` to install.
-* [GitHub](https://github.com/marchyman/GeoTag)
-
 ## WIP (will be GeoTag 5)
 
 ### Updates
@@ -40,13 +33,6 @@ GeoTag is available from several sources
 * (internal) Exiftool version 12.49
 
 * (internal) User Interface code re-written to use SwiftUI
-
-### Known Bugs
-
-* Setting the date of an image outside of the range of 1970-2034 may result in
-  an incorrect GPS Date Stamp.  This is a limitation of how GeoTag, ExifTool,
-  and macOS libraries handle date and time.  One hopes that the year 2034 limit
-  will eventually be removed ;)
 
 ### See the file named *History* for earlier changes and bug fixes
 
