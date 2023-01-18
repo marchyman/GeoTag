@@ -3,677 +3,532 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4901B8C22754692B0073BFDD /* ChangeZoneWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901B8C12754692B0073BFDD /* ChangeZoneWindow.swift */; };
-		4901B8C4275469A80073BFDD /* ChangeZoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901B8C3275469A80073BFDD /* ChangeZoneViewController.swift */; };
-		4901B8C627546A910073BFDD /* ChangeZone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4901B8C527546A910073BFDD /* ChangeZone.storyboard */; };
-		490DE1C62297A650000AEAB5 /* GeoTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EECC19495FB100293C73 /* GeoTagTests.swift */; };
-		4924E31923EF329200021B32 /* SaveFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4924E31823EF329200021B32 /* SaveFolder.swift */; };
-		492AFD23211A906200F74AC1 /* TableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492AFD22211A906200F74AC1 /* TableTests.swift */; };
-		493988B4229A40210067E081 /* TestPictures in Resources */ = {isa = PBXBuildFile; fileRef = 493988B3229A40210067E081 /* TestPictures */; };
-		493988B5229A40520067E081 /* TestPictures in Resources */ = {isa = PBXBuildFile; fileRef = 493988B3229A40210067E081 /* TestPictures */; };
-		494E9500210E9F740076B58F /* ChangeTime.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 494E94FF210E9F740076B58F /* ChangeTime.storyboard */; };
-		494E9502210EA1B40076B58F /* ChangeTimeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */; };
-		494E9504210EBE3B0076B58F /* ChangeTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */; };
-		4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */; };
-		497EE5D3195CAE6300306283 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497EE5D2195CAE6300306283 /* ImageData.swift */; };
-		4982FFA0229F399A00C1D312 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4982FF9F229F399A00C1D312 /* Preferences.storyboard */; };
-		4982FFA2229F554300C1D312 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4982FFA1229F554300C1D312 /* PreferencesWindow.swift */; };
-		4982FFA4229F582800C1D312 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4982FFA3229F582800C1D312 /* PreferencesView.swift */; };
-		498BC9EA210524160070A528 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498BC9E9210524160070A528 /* Gpx.swift */; };
-		4994C4D32118EABE00DF9F28 /* GeoTagUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4994C4D22118EABE00DF9F28 /* GeoTagUITests.swift */; };
-		4994C4DB21193D5500DF9F28 /* MenuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4994C4DA21193D5500DF9F28 /* MenuTests.swift */; };
-		4997D4A42275222E00C2FE80 /* Coord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4997D4A32275222E00C2FE80 /* Coord.swift */; };
-		499C56C81D399336004B47AD /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499C56C71D399336004B47AD /* Exiftool.swift */; };
-		49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B0EEBB19495FB100293C73 /* AppDelegate.swift */; };
-		49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0EEBD19495FB100293C73 /* Images.xcassets */; };
-		49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 49B0EEBF19495FB100293C73 /* MainMenu.xib */; };
-		49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49BC3D0B195A62F2009BEC94 /* Localizable.strings */; };
-		49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */; };
-		49CE08821AFBF9370057E310 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CE08811AFBF9370057E310 /* Preferences.swift */; };
-		49D6BD9022864E65001A69E0 /* ChangeLocation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49D6BD8F22864E65001A69E0 /* ChangeLocation.storyboard */; };
-		49D6BD9222864EBC001A69E0 /* ChangeLocationWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D6BD9122864EBC001A69E0 /* ChangeLocationWindow.swift */; };
-		49D6BD9422865064001A69E0 /* ChangeLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D6BD9322865064001A69E0 /* ChangeLocationViewController.swift */; };
-		49DDA5111D82538E00DEFAAF /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49DDA5101D82538E00DEFAAF /* ExifTool */; };
-		49E0340D1B0BBBB700CC9768 /* Interpolate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E0340C1B0BBBB700CC9768 /* Interpolate.swift */; };
-		49E154CE2262625900902787 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E154CD2262625900902787 /* XmpFile.swift */; };
-		49EDAE882298873200AE0C45 /* TestTrack.GPX in Resources */ = {isa = PBXBuildFile; fileRef = 492AFCEC211A5DF900F74AC1 /* TestTrack.GPX */; };
-		49EDAE8922989E7600AE0C45 /* TestTrack.GPX in Resources */ = {isa = PBXBuildFile; fileRef = 492AFCEC211A5DF900F74AC1 /* TestTrack.GPX */; };
-		49EDAE8D2298BAF200AE0C45 /* ImageDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EDAE8C2298BAF200AE0C45 /* ImageDataTests.swift */; };
-		49F928721D1CB14D00D49F08 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49F928711D1CB14D00D49F08 /* MapKit.framework */; };
-		49F928741D1CB34E00D49F08 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F928731D1CB34E00D49F08 /* MapView.swift */; };
-		49F928761D1CF94B00D49F08 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F928751D1CF94B00D49F08 /* MapViewController.swift */; };
+		49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */; };
+		4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */; };
+		490A17A42960BA1D00ACA9FD /* CutCopyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */; };
+		490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A72960DE9B00ACA9FD /* PasteAction.swift */; };
+		490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A929611DD900ACA9FD /* TextColors.swift */; };
+		490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */; };
+		4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */; };
+		4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */; };
+		4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */; };
+		492175792949743E00A5EA83 /* OpenAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492175782949743E00A5EA83 /* OpenAction.swift */; };
+		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
+		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
+		4944DE7A296CCB8B0095A5CC /* ImageModelSaveChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */; };
+		494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */; };
+		494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0F2956BC97005FFC23 /* ClickMapView.swift */; };
+		4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */; };
+		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
+		495F2F63295EB1A5002A8A88 /* Selections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F2F62295EB1A5002A8A88 /* Selections.swift */; };
+		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
+		4969ACA32963DFE700BBC219 /* ChangeDateTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */; };
+		4969ACA62963E05000BBC219 /* ChangeLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA52963E05000BBC219 /* ChangeLocationView.swift */; };
+		4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */; };
+		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
+		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
+		498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */; };
+		498A7352294EA5A600C62B14 /* ImageLatitudeColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */; };
+		498A7356294EADC300C62B14 /* ImageLongitudeColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */; };
+		498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */; };
+		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
+		498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpFile.swift */; };
+		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
+		49918F8629736652000D6590 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 492E3F5D29481A7D0044C1F3 /* Credits.rtf */; };
+		49A1326F294BFB9300F1B393 /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49A1326E294BFB9300F1B393 /* ExifTool */; };
+		49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A13270294C040F00F1B393 /* ImageNameColumnView.swift */; };
+		49A729B02953E72200DF1AAF /* DividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729AF2953E72200DF1AAF /* DividerView.swift */; };
+		49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729B12953E7AA00DF1AAF /* ImageMapView.swift */; };
+		49A99FBC296F6D5900392EEA /* PathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A99FBB296F6D5900392EEA /* PathView.swift */; };
+		49A99FBE296F8B4B00392EEA /* BackupFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A99FBD296F8B4B00392EEA /* BackupFolder.swift */; };
+		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
+		49B0395A2944429E003B7C53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039592944429E003B7C53 /* ContentView.swift */; };
+		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
+		49B0395F2944429F003B7C53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395E2944429F003B7C53 /* Preview Assets.xcassets */; };
+		49B0396929444855003B7C53 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B0396829444855003B7C53 /* MapKit.framework */; };
+		49B4D34B2957D05D00A4BCFD /* DeleteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B4D34A2957D05D00A4BCFD /* DeleteAction.swift */; };
+		49B4D34D2957E21500A4BCFD /* ClearAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B4D34C2957E21500A4BCFD /* ClearAction.swift */; };
+		49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDDC29493CC200574D18 /* ImageTableView.swift */; };
+		49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDDE29493D5600574D18 /* ImageModel.swift */; };
+		49B9EDE129493F4000574D18 /* Coords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDE029493F4000574D18 /* Coords.swift */; };
+		49B9EDE32949442700574D18 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDE22949442700574D18 /* ViewModel.swift */; };
+		49BA299D296223F700B26F03 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA299C296223F700B26F03 /* AppDelegate.swift */; };
+		49BA299F2962250200B26F03 /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA299E2962250200B26F03 /* WindowAccessor.swift */; };
+		49BA29A12962272B00B26F03 /* MenuAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A02962272B00B26F03 /* MenuAction.swift */; };
+		49BA29A32962285300B26F03 /* Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A22962285300B26F03 /* Updates.swift */; };
+		49BA29A629622B5200B26F03 /* SaveItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A529622B5200B26F03 /* SaveItemCommandGroup.swift */; };
+		49BA29A82962370200B26F03 /* SaveAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A72962370200B26F03 /* SaveAction.swift */; };
+		49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A9296237C500B26F03 /* DiscardChangesAction.swift */; };
+		49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */; };
+		49BA29AE29624E5400B26F03 /* ShowInFinderAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */; };
+		49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */; };
+		49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29B12962676E00B26F03 /* GpxSearch.swift */; };
+		49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD6C922966589E00905B43 /* TimeZoneHelper.swift */; };
+		49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFB2951009500804B74 /* MapPaneView.swift */; };
+		49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFD295100A600804B74 /* MapStyleView.swift */; };
+		49E29F002951011300804B74 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFF2951011300804B74 /* MapView.swift */; };
+		49E29F03295101D600804B74 /* MapSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29F02295101D600804B74 /* MapSearchView.swift */; };
+		49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */; };
+		49F5FAA4297653450070FC55 /* CoordFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FAA3297653450070FC55 /* CoordFormatter.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		490DE1C12297A27F000AEAB5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 49B0EEAC19495FB100293C73 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 49B0EEB319495FB100293C73;
-			remoteInfo = GeoTag;
-		};
-		4994C4D52118EABE00DF9F28 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 49B0EEAC19495FB100293C73 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 49B0EEB319495FB100293C73;
-			remoteInfo = GeoTag;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		4901B8C12754692B0073BFDD /* ChangeZoneWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeZoneWindow.swift; sourceTree = "<group>"; };
-		4901B8C3275469A80073BFDD /* ChangeZoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeZoneViewController.swift; sourceTree = "<group>"; };
-		4901B8C527546A910073BFDD /* ChangeZone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ChangeZone.storyboard; sourceTree = "<group>"; };
-		490410E42297689B00B34F81 /* old-preferences.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "old-preferences.jpg"; sourceTree = "<group>"; };
-		490410E52297689B00B34F81 /* track.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = track.jpg; sourceTree = "<group>"; };
-		490410E62297689B00B34F81 /* geotag.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = geotag.jpg; sourceTree = "<group>"; };
-		490DE1BC2297A27F000AEAB5 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		490F7EAA1B339A6C00DB36B5 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
-		4911983A1959434500F304CB /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GeoTag.entitlements; sourceTree = "<group>"; };
-		4924E31823EF329200021B32 /* SaveFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveFolder.swift; sourceTree = "<group>"; };
-		492AFCEC211A5DF900F74AC1 /* TestTrack.GPX */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestTrack.GPX; sourceTree = "<group>"; };
-		492AFD22211A906200F74AC1 /* TableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableTests.swift; sourceTree = "<group>"; };
-		493988B3229A40210067E081 /* TestPictures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestPictures; sourceTree = "<group>"; };
-		494E94FF210E9F740076B58F /* ChangeTime.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ChangeTime.storyboard; sourceTree = "<group>"; };
-		494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeTimeWindow.swift; sourceTree = "<group>"; };
-		494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeTimeViewController.swift; sourceTree = "<group>"; };
-		4965C67B197DDC87005FC03F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		496E11A025896C7200547BE8 /* preferences.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = preferences.png; sourceTree = "<group>"; };
-		4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnexpectedError.swift; sourceTree = "<group>"; };
-		497EE5D2195CAE6300306283 /* ImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ImageData.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		4982FF9F229F399A00C1D312 /* Preferences.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Preferences.storyboard; sourceTree = "<group>"; };
-		4982FFA1229F554300C1D312 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindow.swift; sourceTree = "<group>"; };
-		4982FFA3229F582800C1D312 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
-		498BC9E9210524160070A528 /* Gpx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
-		4990F0AE19818AA4001CA437 /* icon.pxm */ = {isa = PBXFileReference; lastKnownFileType = file; path = icon.pxm; sourceTree = "<group>"; };
-		4994C4D02118EABE00DF9F28 /* GeoTagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4994C4D22118EABE00DF9F28 /* GeoTagUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUITests.swift; sourceTree = "<group>"; };
-		4994C4D42118EABE00DF9F28 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4994C4DA21193D5500DF9F28 /* MenuTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTests.swift; sourceTree = "<group>"; };
-		4997D4A32275222E00C2FE80 /* Coord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coord.swift; sourceTree = "<group>"; };
-		499C56C71D399336004B47AD /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
-		49A89BC41B0BED7900578EA6 /* Interpolation */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Interpolation; sourceTree = "<group>"; };
-		49B0EEB419495FB100293C73 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		49B0EEB819495FB100293C73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		49B0EEBB19495FB100293C73 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		49B0EEBD19495FB100293C73 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		49B0EEC019495FB100293C73 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		49B0EECB19495FB100293C73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		49B0EECC19495FB100293C73 /* GeoTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagTests.swift; sourceTree = "<group>"; };
-		49BC3D0A195A62F2009BEC94 /* Base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
-		49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
-		49C943AA197B170900F70F3F /* To Do */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "To Do"; sourceTree = "<group>"; };
-		49CE08811AFBF9370057E310 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Preferences.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		49D6BD8F22864E65001A69E0 /* ChangeLocation.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ChangeLocation.storyboard; sourceTree = "<group>"; };
-		49D6BD9122864EBC001A69E0 /* ChangeLocationWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLocationWindow.swift; sourceTree = "<group>"; };
-		49D6BD9322865064001A69E0 /* ChangeLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLocationViewController.swift; sourceTree = "<group>"; };
-		49DDA5101D82538E00DEFAAF /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ExifTool; path = ../ExifTool; sourceTree = "<group>"; };
-		49E0340C1B0BBBB700CC9768 /* Interpolate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interpolate.swift; sourceTree = "<group>"; };
-		49E154CD2262625900902787 /* XmpFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
-		49EDAE8C2298BAF200AE0C45 /* ImageDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataTests.swift; sourceTree = "<group>"; };
-		49F928711D1CB14D00D49F08 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		49F928731D1CB34E00D49F08 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
-		49F928751D1CF94B00D49F08 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		490114B5297117FD00193BD3 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelHelpers.swift; sourceTree = "<group>"; };
+		4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelThumbnail.swift; sourceTree = "<group>"; };
+		490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutCopyAction.swift; sourceTree = "<group>"; };
+		490A17A72960DE9B00ACA9FD /* PasteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteAction.swift; sourceTree = "<group>"; };
+		490A17A929611DD900ACA9FD /* TextColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextColors.swift; sourceTree = "<group>"; };
+		490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCommandGroup.swift; sourceTree = "<group>"; };
+		4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelStringRep.swift; sourceTree = "<group>"; };
+		4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoCommandGroup.swift; sourceTree = "<group>"; };
+		4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoAction.swift; sourceTree = "<group>"; };
+		492175782949743E00A5EA83 /* OpenAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAction.swift; sourceTree = "<group>"; };
+		4921757A2949863A00A5EA83 /* Gpx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
+		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelSaveChanges.swift; sourceTree = "<group>"; };
+		494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardCommandGroup.swift; sourceTree = "<group>"; };
+		494FED0F2956BC97005FFC23 /* ClickMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickMapView.swift; sourceTree = "<group>"; };
+		4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuView.swift; sourceTree = "<group>"; };
+		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
+		495F2F62295EB1A5002A8A88 /* Selections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selections.swift; sourceTree = "<group>"; };
+		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
+		4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeDateTimeView.swift; sourceTree = "<group>"; };
+		4969ACA52963E05000BBC219 /* ChangeLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLocationView.swift; sourceTree = "<group>"; };
+		4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLToImageHelper.swift; sourceTree = "<group>"; };
+		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
+		498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTimestampColumnView.swift; sourceTree = "<group>"; };
+		498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLatitudeColumnView.swift; sourceTree = "<group>"; };
+		498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLongitudeColumnView.swift; sourceTree = "<group>"; };
+		498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIDoubleClickModifier.swift; sourceTree = "<group>"; };
+		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
+		498AE5B0294AB78A0063B1C1 /* XmpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
+		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
+		49918F84297352AB000D6590 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		49918F8529735AE0000D6590 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
+		49A1326E294BFB9300F1B393 /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ExifTool; sourceTree = "<group>"; };
+		49A13270294C040F00F1B393 /* ImageNameColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNameColumnView.swift; sourceTree = "<group>"; };
+		49A729AF2953E72200DF1AAF /* DividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DividerView.swift; sourceTree = "<group>"; };
+		49A729B12953E7AA00DF1AAF /* ImageMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMapView.swift; sourceTree = "<group>"; };
+		49A99FBB296F6D5900392EEA /* PathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathView.swift; sourceTree = "<group>"; };
+		49A99FBD296F8B4B00392EEA /* BackupFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackupFolder.swift; sourceTree = "<group>"; };
+		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		49B039572944429E003B7C53 /* GeoTagApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagApp.swift; sourceTree = "<group>"; };
+		49B039592944429E003B7C53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		49B0395B2944429F003B7C53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		49B0395E2944429F003B7C53 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		49B039602944429F003B7C53 /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GeoTag.entitlements; sourceTree = "<group>"; };
+		49B0396829444855003B7C53 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		49B0396A29444BD8003B7C53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		49B4D34A2957D05D00A4BCFD /* DeleteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAction.swift; sourceTree = "<group>"; };
+		49B4D34C2957E21500A4BCFD /* ClearAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearAction.swift; sourceTree = "<group>"; };
+		49B9EDDC29493CC200574D18 /* ImageTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableView.swift; sourceTree = "<group>"; };
+		49B9EDDE29493D5600574D18 /* ImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModel.swift; sourceTree = "<group>"; };
+		49B9EDE029493F4000574D18 /* Coords.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coords.swift; sourceTree = "<group>"; };
+		49B9EDE22949442700574D18 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		49BA299C296223F700B26F03 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		49BA299E2962250200B26F03 /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
+		49BA29A02962272B00B26F03 /* MenuAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuAction.swift; sourceTree = "<group>"; };
+		49BA29A22962285300B26F03 /* Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updates.swift; sourceTree = "<group>"; };
+		49BA29A42962296600B26F03 /* To Do */ = {isa = PBXFileReference; lastKnownFileType = text; path = "To Do"; sourceTree = "<group>"; };
+		49BA29A529622B5200B26F03 /* SaveItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveItemCommandGroup.swift; sourceTree = "<group>"; };
+		49BA29A72962370200B26F03 /* SaveAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveAction.swift; sourceTree = "<group>"; };
+		49BA29A9296237C500B26F03 /* DiscardChangesAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardChangesAction.swift; sourceTree = "<group>"; };
+		49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardTracksAction.swift; sourceTree = "<group>"; };
+		49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowInFinderAction.swift; sourceTree = "<group>"; };
+		49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocnFromTrack.swift; sourceTree = "<group>"; };
+		49BA29B12962676E00B26F03 /* GpxSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpxSearch.swift; sourceTree = "<group>"; };
+		49BD6C922966589E00905B43 /* TimeZoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelper.swift; sourceTree = "<group>"; };
+		49E29EFB2951009500804B74 /* MapPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPaneView.swift; sourceTree = "<group>"; };
+		49E29EFD295100A600804B74 /* MapStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleView.swift; sourceTree = "<group>"; };
+		49E29EFF2951011300804B74 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		49E29F02295101D600804B74 /* MapSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchView.swift; sourceTree = "<group>"; };
+		49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAllAction.swift; sourceTree = "<group>"; };
+		49F5FAA3297653450070FC55 /* CoordFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordFormatter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		490DE1B92297A27F000AEAB5 /* Frameworks */ = {
+		49B039512944429E003B7C53 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4994C4CD2118EABE00DF9F28 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		49B0EEB119495FB100293C73 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49F928721D1CB14D00D49F08 /* MapKit.framework in Frameworks */,
+				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		490410DD229767FB00B34F81 /* App Store Screenshots */ = {
+		490A17A22960B32700ACA9FD /* View Model Group */ = {
 			isa = PBXGroup;
 			children = (
-				496E11A025896C7200547BE8 /* preferences.png */,
-				490410E62297689B00B34F81 /* geotag.jpg */,
-				490410E42297689B00B34F81 /* old-preferences.jpg */,
-				490410E52297689B00B34F81 /* track.jpg */,
+				49B9EDE22949442700574D18 /* ViewModel.swift */,
+				495F2F62295EB1A5002A8A88 /* Selections.swift */,
+				49BA29A22962285300B26F03 /* Updates.swift */,
+				49BA29A02962272B00B26F03 /* MenuAction.swift */,
+				492175782949743E00A5EA83 /* OpenAction.swift */,
+				49BA29A72962370200B26F03 /* SaveAction.swift */,
+				49A99FBD296F8B4B00392EEA /* BackupFolder.swift */,
+				49BA29A9296237C500B26F03 /* DiscardChangesAction.swift */,
+				49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */,
+				4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */,
+				490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */,
+				490A17A72960DE9B00ACA9FD /* PasteAction.swift */,
+				49B4D34A2957D05D00A4BCFD /* DeleteAction.swift */,
+				49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */,
+				49B4D34C2957E21500A4BCFD /* ClearAction.swift */,
+				49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */,
+				49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */,
+				4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */,
+				4921757A2949863A00A5EA83 /* Gpx.swift */,
+				49BA29B12962676E00B26F03 /* GpxSearch.swift */,
 			);
-			path = "App Store Screenshots";
+			name = "View Model Group";
 			sourceTree = "<group>";
 		};
-		492AFCB7211A5DF900F74AC1 /* TestData */ = {
+		4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */ = {
 			isa = PBXGroup;
 			children = (
-				493988B3229A40210067E081 /* TestPictures */,
-				492AFCEC211A5DF900F74AC1 /* TestTrack.GPX */,
+				4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */,
+				49BD6C922966589E00905B43 /* TimeZoneHelper.swift */,
 			);
-			path = TestData;
+			name = "Adjust Time Zone Group";
 			sourceTree = "<group>";
 		};
-		4994C4D12118EABE00DF9F28 /* GeoTagUITests */ = {
+		498A7354294EA67A00C62B14 /* Image Table Group */ = {
 			isa = PBXGroup;
 			children = (
-				4994C4D22118EABE00DF9F28 /* GeoTagUITests.swift */,
-				4994C4DA21193D5500DF9F28 /* MenuTests.swift */,
-				492AFD22211A906200F74AC1 /* TableTests.swift */,
-				4994C4D42118EABE00DF9F28 /* Info.plist */,
+				49B9EDDC29493CC200574D18 /* ImageTableView.swift */,
+				4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */,
+				49A13270294C040F00F1B393 /* ImageNameColumnView.swift */,
+				498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */,
+				4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */,
+				498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */,
+				498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */,
+				4969ACA52963E05000BBC219 /* ChangeLocationView.swift */,
+				49F5FAA3297653450070FC55 /* CoordFormatter.swift */,
+				490A17A929611DD900ACA9FD /* TextColors.swift */,
 			);
-			path = GeoTagUITests;
+			name = "Image Table Group";
 			sourceTree = "<group>";
 		};
-		49B0EEAB19495FB100293C73 = {
+		498A7357294EC36C00C62B14 /* Utility files */ = {
 			isa = PBXGroup;
 			children = (
-				490F7EAA1B339A6C00DB36B5 /* History */,
-				49C943AA197B170900F70F3F /* To Do */,
-				49A89BC41B0BED7900578EA6 /* Interpolation */,
-				4965C67B197DDC87005FC03F /* README */,
-				49B0EEB619495FB100293C73 /* GeoTag */,
-				49F928711D1CB14D00D49F08 /* MapKit.framework */,
-				490410DD229767FB00B34F81 /* App Store Screenshots */,
-				49B0EEC919495FB100293C73 /* GeoTagTests */,
-				4994C4D12118EABE00DF9F28 /* GeoTagUITests */,
-				492AFCB7211A5DF900F74AC1 /* TestData */,
-				49B0EEB519495FB100293C73 /* Products */,
+				498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */,
+			);
+			name = "Utility files";
+			sourceTree = "<group>";
+		};
+		498A735A294EC5F800C62B14 /* App Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B0396A29444BD8003B7C53 /* Info.plist */,
+				49B039572944429E003B7C53 /* GeoTagApp.swift */,
+				49BA299C296223F700B26F03 /* AppDelegate.swift */,
+				49BA299E2962250200B26F03 /* WindowAccessor.swift */,
+				4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */,
+				49BA29A529622B5200B26F03 /* SaveItemCommandGroup.swift */,
+				4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */,
+				494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */,
+				490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */,
+			);
+			name = "App Group";
+			sourceTree = "<group>";
+		};
+		498A735B294EC78700C62B14 /* Settings Group */ = {
+			isa = PBXGroup;
+			children = (
+				498A734D294E949B00C62B14 /* AppSetting.swift */,
+				498A734B294E916700C62B14 /* SettingsView.swift */,
+				49A99FBB296F6D5900392EEA /* PathView.swift */,
+			);
+			name = "Settings Group";
+			sourceTree = "<group>";
+		};
+		498A735C294EC7BC00C62B14 /* Image Model Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
+				4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */,
+				4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */,
+				49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */,
+				4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */,
+				49B9EDE029493F4000574D18 /* Coords.swift */,
+				498AE5B0294AB78A0063B1C1 /* XmpFile.swift */,
+				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
+			);
+			name = "Image Model Group";
+			sourceTree = "<group>";
+		};
+		498A735D294EC7D800C62B14 /* Content View Group */ = {
+			isa = PBXGroup;
+			children = (
+				49B039592944429E003B7C53 /* ContentView.swift */,
+				49A729B12953E7AA00DF1AAF /* ImageMapView.swift */,
+				49A729AF2953E72200DF1AAF /* DividerView.swift */,
+				498AE5AE294A6E430063B1C1 /* Sheets.swift */,
+			);
+			name = "Content View Group";
+			sourceTree = "<group>";
+		};
+		49B0394B2944429E003B7C53 = {
+			isa = PBXGroup;
+			children = (
+				49BA29A42962296600B26F03 /* To Do */,
+				49918F84297352AB000D6590 /* README */,
+				49918F8529735AE0000D6590 /* History */,
+				490114B5297117FD00193BD3 /* LICENSE */,
+				49A1326E294BFB9300F1B393 /* ExifTool */,
+				49B039562944429E003B7C53 /* GeoTag */,
+				49B039552944429E003B7C53 /* Products */,
+				49B0396729444855003B7C53 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
-		49B0EEB519495FB100293C73 /* Products */ = {
+		49B039552944429E003B7C53 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				49B0EEB419495FB100293C73 /* GeoTag.app */,
-				4994C4D02118EABE00DF9F28 /* GeoTagUITests.xctest */,
-				490DE1BC2297A27F000AEAB5 /* GeoTagTests.xctest */,
+				49B039542944429E003B7C53 /* GeoTag.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		49B0EEB619495FB100293C73 /* GeoTag */ = {
+		49B039562944429E003B7C53 /* GeoTag */ = {
 			isa = PBXGroup;
 			children = (
-				49B0EEBB19495FB100293C73 /* AppDelegate.swift */,
-				499C56C71D399336004B47AD /* Exiftool.swift */,
-				497EE5D2195CAE6300306283 /* ImageData.swift */,
-				4997D4A32275222E00C2FE80 /* Coord.swift */,
-				49BC3D0E195A9FC2009BEC94 /* TableViewController.swift */,
-				49F928751D1CF94B00D49F08 /* MapViewController.swift */,
-				49F928731D1CB34E00D49F08 /* MapView.swift */,
-				498BC9E9210524160070A528 /* Gpx.swift */,
-				4978C8741AFDAD3400E2F7C6 /* UnexpectedError.swift */,
-				49E0340C1B0BBBB700CC9768 /* Interpolate.swift */,
-				494E94FF210E9F740076B58F /* ChangeTime.storyboard */,
-				494E9501210EA1B40076B58F /* ChangeTimeWindow.swift */,
-				494E9503210EBE3B0076B58F /* ChangeTimeViewController.swift */,
-				4901B8C527546A910073BFDD /* ChangeZone.storyboard */,
-				4901B8C12754692B0073BFDD /* ChangeZoneWindow.swift */,
-				4901B8C3275469A80073BFDD /* ChangeZoneViewController.swift */,
-				49D6BD8F22864E65001A69E0 /* ChangeLocation.storyboard */,
-				49D6BD9122864EBC001A69E0 /* ChangeLocationWindow.swift */,
-				49D6BD9322865064001A69E0 /* ChangeLocationViewController.swift */,
-				4982FF9F229F399A00C1D312 /* Preferences.storyboard */,
-				4982FFA1229F554300C1D312 /* PreferencesWindow.swift */,
-				4982FFA3229F582800C1D312 /* PreferencesView.swift */,
-				49CE08811AFBF9370057E310 /* Preferences.swift */,
-				4924E31823EF329200021B32 /* SaveFolder.swift */,
-				49E154CD2262625900902787 /* XmpFile.swift */,
-				49B0EEBF19495FB100293C73 /* MainMenu.xib */,
-				4990F0AE19818AA4001CA437 /* icon.pxm */,
-				49B0EEB719495FB100293C73 /* Supporting Files */,
+				498A735A294EC5F800C62B14 /* App Group */,
+				4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */,
+				490A17A22960B32700ACA9FD /* View Model Group */,
+				498A735C294EC7BC00C62B14 /* Image Model Group */,
+				498A735B294EC78700C62B14 /* Settings Group */,
+				498A735D294EC7D800C62B14 /* Content View Group */,
+				498A7354294EA67A00C62B14 /* Image Table Group */,
+				492E3F5F2948361D0044C1F3 /* ImageView.swift */,
+				49E29F012951012400804B74 /* Map View Group */,
+				498A7357294EC36C00C62B14 /* Utility files */,
+				492E3F5D29481A7D0044C1F3 /* Credits.rtf */,
+				49B0395B2944429F003B7C53 /* Assets.xcassets */,
+				49B039602944429F003B7C53 /* GeoTag.entitlements */,
+				49B0395D2944429F003B7C53 /* Preview Content */,
 			);
 			path = GeoTag;
 			sourceTree = "<group>";
 		};
-		49B0EEB719495FB100293C73 /* Supporting Files */ = {
+		49B0395D2944429F003B7C53 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				49DDA5101D82538E00DEFAAF /* ExifTool */,
-				4911983A1959434500F304CB /* GeoTag.entitlements */,
-				49B0EEBD19495FB100293C73 /* Images.xcassets */,
-				49B0EEB819495FB100293C73 /* Info.plist */,
-				49BC3D0B195A62F2009BEC94 /* Localizable.strings */,
+				49B0395E2944429F003B7C53 /* Preview Assets.xcassets */,
 			);
-			name = "Supporting Files";
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		49B0EEC919495FB100293C73 /* GeoTagTests */ = {
+		49B0396729444855003B7C53 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				49B0EECC19495FB100293C73 /* GeoTagTests.swift */,
-				49EDAE8C2298BAF200AE0C45 /* ImageDataTests.swift */,
-				49B0EECA19495FB100293C73 /* Supporting Files */,
+				49B0396829444855003B7C53 /* MapKit.framework */,
 			);
-			path = GeoTagTests;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		49B0EECA19495FB100293C73 /* Supporting Files */ = {
+		49E29F012951012400804B74 /* Map View Group */ = {
 			isa = PBXGroup;
 			children = (
-				49B0EECB19495FB100293C73 /* Info.plist */,
+				49E29EFB2951009500804B74 /* MapPaneView.swift */,
+				49E29EFD295100A600804B74 /* MapStyleView.swift */,
+				49E29EFF2951011300804B74 /* MapView.swift */,
+				494FED0F2956BC97005FFC23 /* ClickMapView.swift */,
+				49E29F02295101D600804B74 /* MapSearchView.swift */,
 			);
-			name = "Supporting Files";
+			name = "Map View Group";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		490DE1BB2297A27F000AEAB5 /* GeoTagTests */ = {
+		49B039532944429E003B7C53 /* GeoTag */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 490DE1C52297A27F000AEAB5 /* Build configuration list for PBXNativeTarget "GeoTagTests" */;
+			buildConfigurationList = 49B039632944429F003B7C53 /* Build configuration list for PBXNativeTarget "GeoTag" */;
 			buildPhases = (
-				490DE1B82297A27F000AEAB5 /* Sources */,
-				490DE1B92297A27F000AEAB5 /* Frameworks */,
-				490DE1BA2297A27F000AEAB5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				490DE1C22297A27F000AEAB5 /* PBXTargetDependency */,
-			);
-			name = GeoTagTests;
-			productName = GeoTagTests;
-			productReference = 490DE1BC2297A27F000AEAB5 /* GeoTagTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		4994C4CF2118EABE00DF9F28 /* GeoTagUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4994C4D72118EABE00DF9F28 /* Build configuration list for PBXNativeTarget "GeoTagUITests" */;
-			buildPhases = (
-				4994C4CC2118EABE00DF9F28 /* Sources */,
-				4994C4CD2118EABE00DF9F28 /* Frameworks */,
-				4994C4CE2118EABE00DF9F28 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4994C4D62118EABE00DF9F28 /* PBXTargetDependency */,
-			);
-			name = GeoTagUITests;
-			productName = GeoTagUITests;
-			productReference = 4994C4D02118EABE00DF9F28 /* GeoTagUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
-		49B0EEB319495FB100293C73 /* GeoTag */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 49B0EED019495FB100293C73 /* Build configuration list for PBXNativeTarget "GeoTag" */;
-			buildPhases = (
-				49B0EEB019495FB100293C73 /* Sources */,
-				49B0EEB119495FB100293C73 /* Frameworks */,
-				49B0EEB219495FB100293C73 /* Resources */,
-				49302D3C1981E59E0051A201 /* ShellScript */,
+				49B039502944429E003B7C53 /* Sources */,
+				49B039512944429E003B7C53 /* Frameworks */,
+				49B039522944429E003B7C53 /* Resources */,
+				49B03966294444C9003B7C53 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = GeoTag;
-			productName = play;
-			productReference = 49B0EEB419495FB100293C73 /* GeoTag.app */;
+			productName = GeoTag;
+			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		49B0EEAC19495FB100293C73 /* Project object */ = {
+		49B0394C2944429E003B7C53 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1020;
-				LastUpgradeCheck = 1200;
-				ORGANIZATIONNAME = "Marco S Hyman";
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1410;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
-					490DE1BB2297A27F000AEAB5 = {
-						CreatedOnToolsVersion = 10.2.1;
-						DevelopmentTeam = A3UXBEBE8Z;
-						ProvisioningStyle = Automatic;
-						TestTargetID = 49B0EEB319495FB100293C73;
-					};
-					4994C4CF2118EABE00DF9F28 = {
-						CreatedOnToolsVersion = 10.0;
-						DevelopmentTeam = A3UXBEBE8Z;
-						LastSwiftMigration = 1020;
-						ProvisioningStyle = Automatic;
-						TestTargetID = 49B0EEB319495FB100293C73;
-					};
-					49B0EEB319495FB100293C73 = {
-						CreatedOnToolsVersion = 6.0;
-						LastSwiftMigration = 1020;
-						SystemCapabilities = {
-							com.apple.HardenedRuntime = {
-								enabled = 1;
-							};
-							com.apple.Maps.Mac = {
-								enabled = 1;
-							};
-							com.apple.Sandbox = {
-								enabled = 1;
-							};
-						};
+					49B039532944429E003B7C53 = {
+						CreatedOnToolsVersion = 14.1;
 					};
 				};
 			};
-			buildConfigurationList = 49B0EEAF19495FB100293C73 /* Build configuration list for PBXProject "GeoTag" */;
-			compatibilityVersion = "Xcode 11.0";
+			buildConfigurationList = 49B0394F2944429E003B7C53 /* Build configuration list for PBXProject "GeoTag" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 49B0EEAB19495FB100293C73;
-			productRefGroup = 49B0EEB519495FB100293C73 /* Products */;
+			mainGroup = 49B0394B2944429E003B7C53;
+			productRefGroup = 49B039552944429E003B7C53 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				49B0EEB319495FB100293C73 /* GeoTag */,
-				490DE1BB2297A27F000AEAB5 /* GeoTagTests */,
-				4994C4CF2118EABE00DF9F28 /* GeoTagUITests */,
+				49B039532944429E003B7C53 /* GeoTag */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		490DE1BA2297A27F000AEAB5 /* Resources */ = {
+		49B039522944429E003B7C53 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49EDAE882298873200AE0C45 /* TestTrack.GPX in Resources */,
-				493988B4229A40210067E081 /* TestPictures in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4994C4CE2118EABE00DF9F28 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49EDAE8922989E7600AE0C45 /* TestTrack.GPX in Resources */,
-				493988B5229A40520067E081 /* TestPictures in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		49B0EEB219495FB100293C73 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49B0EEBE19495FB100293C73 /* Images.xcassets in Resources */,
-				494E9500210E9F740076B58F /* ChangeTime.storyboard in Resources */,
-				4901B8C627546A910073BFDD /* ChangeZone.storyboard in Resources */,
-				49BC3D09195A62F2009BEC94 /* Localizable.strings in Resources */,
-				49DDA5111D82538E00DEFAAF /* ExifTool in Resources */,
-				49D6BD9022864E65001A69E0 /* ChangeLocation.storyboard in Resources */,
-				49B0EEC119495FB100293C73 /* MainMenu.xib in Resources */,
-				4982FFA0229F399A00C1D312 /* Preferences.storyboard in Resources */,
+				49918F8629736652000D6590 /* Credits.rtf in Resources */,
+				49A1326F294BFB9300F1B393 /* ExifTool in Resources */,
+				49B0395F2944429F003B7C53 /* Preview Assets.xcassets in Resources */,
+				49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		49302D3C1981E59E0051A201 /* ShellScript */ = {
+		49B03966294444C9003B7C53 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}",
 			);
+			outputFileListPaths = (
+			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
+			shellPath = /bin/sh;
 			shellScript = "#!/bin/bash\n\n# This script automatically sets the version and short version string of\n# an Xcode project from the Git repository containing the project.\n#\n# To use this script in Xcode, add the script's path to a \"Run Script\" build\n# phase for your application target.\n\nset -o errexit\nset -o nounset\n\n# First, check for git in $PATH\nhash git 2>/dev/null || { echo >&2 \"Git required, not in path.  Aborting build number update script.\"; exit 0; }\n\n# Run Script build phases that operate on product files of the target that defines them should use the value of this\n# build setting [TARGET_BUILD_DIR].\nINFO_PLIST=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n\n# Build version (closest-tag-or-branch \"-\" commits-since-tag \"-\" short-hash dirty-flag)\n# Bundle version starts with the total number of commits\nBUILD_VERSION=$(git describe --tags --always --dirty=+)\nBUNDLE_VERSION=$(git rev-list --count HEAD)\n\n# Use the latest tag for short version (expected tag format \"vn[.n[.n]]\")\n# or if there are no tags, we make up version 0.0.<commit count>\nLATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG=\"HEAD\"\nif [ $LATEST_TAG = \"HEAD\" ]; then\n    SHORT_VERSION=\"0.0.$BUNDLE_VERSION\"\nelse\n    COMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..HEAD)\n    SHORT_VERSION=${LATEST_TAG##v}\n    if [ ${COMMIT_COUNT_SINCE_TAG} -ne \"0\" ]; then\n        SHORT_VERSION=\"${SHORT_VERSION}.${COMMIT_COUNT_SINCE_TAG}\"\n    fi\nfi\n\n# Append a \".1\" to the bundle version if the working dir is dirty\nif [ -n \"$(git status --porcelain)\" ]; then\n    BUNDLE_VERSION=\"${BUNDLE_VERSION}.1\"\nfi\n\n# For debugging:\necho \"BUILD VERSION: $BUILD_VERSION\"\necho \"LATEST_TAG: $LATEST_TAG\"\necho \"SHORT VERSION: $SHORT_VERSION\"\necho \"BUNDLE_VERSION: $BUNDLE_VERSION\"\n\n/usr/libexec/PlistBuddy -c \"Add :CFBundleBuildVersion string $BUILD_VERSION\" \"$INFO_PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :CFBundleBuildVersion $BUILD_VERSION\" \"$INFO_PLIST\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $SHORT_VERSION\" \"$INFO_PLIST\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUNDLE_VERSION\" \"$INFO_PLIST\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		490DE1B82297A27F000AEAB5 /* Sources */ = {
+		49B039502944429E003B7C53 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				490DE1C62297A650000AEAB5 /* GeoTagTests.swift in Sources */,
-				49EDAE8D2298BAF200AE0C45 /* ImageDataTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4994C4CC2118EABE00DF9F28 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4994C4DB21193D5500DF9F28 /* MenuTests.swift in Sources */,
-				492AFD23211A906200F74AC1 /* TableTests.swift in Sources */,
-				4994C4D32118EABE00DF9F28 /* GeoTagUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		49B0EEB019495FB100293C73 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49E0340D1B0BBBB700CC9768 /* Interpolate.swift in Sources */,
-				4924E31923EF329200021B32 /* SaveFolder.swift in Sources */,
-				49BC3D0F195A9FC2009BEC94 /* TableViewController.swift in Sources */,
-				49CE08821AFBF9370057E310 /* Preferences.swift in Sources */,
-				494E9504210EBE3B0076B58F /* ChangeTimeViewController.swift in Sources */,
-				49D6BD9222864EBC001A69E0 /* ChangeLocationWindow.swift in Sources */,
-				49E154CE2262625900902787 /* XmpFile.swift in Sources */,
-				49F928761D1CF94B00D49F08 /* MapViewController.swift in Sources */,
-				49D6BD9422865064001A69E0 /* ChangeLocationViewController.swift in Sources */,
-				499C56C81D399336004B47AD /* Exiftool.swift in Sources */,
-				4997D4A42275222E00C2FE80 /* Coord.swift in Sources */,
-				49B0EEBC19495FB100293C73 /* AppDelegate.swift in Sources */,
-				4982FFA2229F554300C1D312 /* PreferencesWindow.swift in Sources */,
-				494E9502210EA1B40076B58F /* ChangeTimeWindow.swift in Sources */,
-				4982FFA4229F582800C1D312 /* PreferencesView.swift in Sources */,
-				4901B8C22754692B0073BFDD /* ChangeZoneWindow.swift in Sources */,
-				498BC9EA210524160070A528 /* Gpx.swift in Sources */,
-				4978C8751AFDAD3400E2F7C6 /* UnexpectedError.swift in Sources */,
-				49F928741D1CB34E00D49F08 /* MapView.swift in Sources */,
-				497EE5D3195CAE6300306283 /* ImageData.swift in Sources */,
-				4901B8C4275469A80073BFDD /* ChangeZoneViewController.swift in Sources */,
+				498A734C294E916700C62B14 /* SettingsView.swift in Sources */,
+				498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */,
+				490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */,
+				49BA299F2962250200B26F03 /* WindowAccessor.swift in Sources */,
+				49BA29A82962370200B26F03 /* SaveAction.swift in Sources */,
+				494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */,
+				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
+				498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */,
+				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
+				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
+				498A7352294EA5A600C62B14 /* ImageLatitudeColumnView.swift in Sources */,
+				490A17A42960BA1D00ACA9FD /* CutCopyAction.swift in Sources */,
+				49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */,
+				49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */,
+				49BA29A32962285300B26F03 /* Updates.swift in Sources */,
+				4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */,
+				498A7356294EADC300C62B14 /* ImageLongitudeColumnView.swift in Sources */,
+				49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */,
+				49B4D34B2957D05D00A4BCFD /* DeleteAction.swift in Sources */,
+				49E29F002951011300804B74 /* MapView.swift in Sources */,
+				49BA29AE29624E5400B26F03 /* ShowInFinderAction.swift in Sources */,
+				4944DE7A296CCB8B0095A5CC /* ImageModelSaveChanges.swift in Sources */,
+				49BA299D296223F700B26F03 /* AppDelegate.swift in Sources */,
+				49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */,
+				49B4D34D2957E21500A4BCFD /* ClearAction.swift in Sources */,
+				494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */,
+				49B9EDE32949442700574D18 /* ViewModel.swift in Sources */,
+				49BA29A629622B5200B26F03 /* SaveItemCommandGroup.swift in Sources */,
+				4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */,
+				49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */,
+				4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */,
+				4969ACA32963DFE700BBC219 /* ChangeDateTimeView.swift in Sources */,
+				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
+				49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */,
+				490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */,
+				49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */,
+				49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */,
+				49A729B02953E72200DF1AAF /* DividerView.swift in Sources */,
+				49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */,
+				4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */,
+				49E29F03295101D600804B74 /* MapSearchView.swift in Sources */,
+				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
+				498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */,
+				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
+				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
+				49BA29A12962272B00B26F03 /* MenuAction.swift in Sources */,
+				49A99FBE296F8B4B00392EEA /* BackupFolder.swift in Sources */,
+				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
+				4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */,
+				4969ACA62963E05000BBC219 /* ChangeLocationView.swift in Sources */,
+				495F2F63295EB1A5002A8A88 /* Selections.swift in Sources */,
+				490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */,
+				49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */,
+				4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */,
+				49F5FAA4297653450070FC55 /* CoordFormatter.swift in Sources */,
+				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
+				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
+				4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */,
+				49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */,
+				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
+				49A99FBC296F6D5900392EEA /* PathView.swift in Sources */,
+				49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		490DE1C22297A27F000AEAB5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 49B0EEB319495FB100293C73 /* GeoTag */;
-			targetProxy = 490DE1C12297A27F000AEAB5 /* PBXContainerItemProxy */;
-		};
-		4994C4D62118EABE00DF9F28 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 49B0EEB319495FB100293C73 /* GeoTag */;
-			targetProxy = 4994C4D52118EABE00DF9F28 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		49B0EEBF19495FB100293C73 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				49B0EEC019495FB100293C73 /* Base */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-		49BC3D0B195A62F2009BEC94 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				49BC3D0A195A62F2009BEC94 /* Base */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
-		490DE1C32297A27F000AEAB5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = A3UXBEBE8Z;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				INFOPLIST_FILE = GeoTagTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTagTests.GeoTagTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GeoTag.app/Contents/MacOS/GeoTag";
-			};
-			name = Debug;
-		};
-		490DE1C42297A27F000AEAB5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = A3UXBEBE8Z;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = GeoTagTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTagTests.GeoTagTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GeoTag.app/Contents/MacOS/GeoTag";
-			};
-			name = Release;
-		};
-		4994C4D82118EABE00DF9F28 /* Debug */ = {
+		49B039612944429F003B7C53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = A3UXBEBE8Z;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				INFOPLIST_FILE = GeoTagUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTagUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = GeoTag;
-			};
-			name = Debug;
-		};
-		4994C4D92118EABE00DF9F28 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = A3UXBEBE8Z;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = GeoTagUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTagUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = GeoTag;
-			};
-			name = Release;
-		};
-		49B0EECE19495FB100293C73 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -686,12 +541,16 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -699,33 +558,39 @@
 					"$(inherited)",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				METAL_ENABLE_DEBUG_INFO = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
-		49B0EECF19495FB100293C73 /* Release */ = {
+		49B039622944429F003B7C53 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -738,83 +603,96 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				METAL_ENABLE_DEBUG_INFO = NO;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
-		49B0EED119495FB100293C73 /* Debug */ = {
+		49B039642944429F003B7C53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"GeoTag/Preview Content\"";
 				DEVELOPMENT_TEAM = A3UXBEBE8Z;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/GeoTag/Info.plist";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GeoTag/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022,2023 Marco S Hyman";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.snafu.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = GeoTag;
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = DEBUG;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTag;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		49B0EED219495FB100293C73 /* Release */ = {
+		49B039652944429F003B7C53 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = GeoTag/GeoTag.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"GeoTag/Preview Content\"";
 				DEVELOPMENT_TEAM = A3UXBEBE8Z;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/GeoTag/Info.plist";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GeoTag/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022,2023 Marco S Hyman";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.snafu.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = GeoTag;
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTag;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -822,43 +700,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		490DE1C52297A27F000AEAB5 /* Build configuration list for PBXNativeTarget "GeoTagTests" */ = {
+		49B0394F2944429E003B7C53 /* Build configuration list for PBXProject "GeoTag" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				490DE1C32297A27F000AEAB5 /* Debug */,
-				490DE1C42297A27F000AEAB5 /* Release */,
+				49B039612944429F003B7C53 /* Debug */,
+				49B039622944429F003B7C53 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4994C4D72118EABE00DF9F28 /* Build configuration list for PBXNativeTarget "GeoTagUITests" */ = {
+		49B039632944429F003B7C53 /* Build configuration list for PBXNativeTarget "GeoTag" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4994C4D82118EABE00DF9F28 /* Debug */,
-				4994C4D92118EABE00DF9F28 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		49B0EEAF19495FB100293C73 /* Build configuration list for PBXProject "GeoTag" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				49B0EECE19495FB100293C73 /* Debug */,
-				49B0EECF19495FB100293C73 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		49B0EED019495FB100293C73 /* Build configuration list for PBXNativeTarget "GeoTag" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				49B0EED119495FB100293C73 /* Debug */,
-				49B0EED219495FB100293C73 /* Release */,
+				49B039642944429F003B7C53 /* Debug */,
+				49B039652944429F003B7C53 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 49B0EEAC19495FB100293C73 /* Project object */;
+	rootObject = 49B0394C2944429E003B7C53 /* Project object */;
 }

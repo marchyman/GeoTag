@@ -1,78 +1,183 @@
 //
 //  MapView.swift
-//  GeoTag
 //
-//  Created by Marco S Hyman on 7/19/14.
-//  Copyright 2014-2018 Marco S Hyman
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy of
-// this software and associated documentation files (the "Software"), to deal in the
-// Software without restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-// Software, and to permit persons to whom the Software is furnished to do so,
-// subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-// AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//  Created by Marco S Hyman on 6/24/19.
 //
 
-import Foundation
+import SwiftUI
 import MapKit
 
-/// Subclass MKMapView to hook into mouse up events to extract the
-/// location of single click events.  I couldn't do this in an extension
-/// without breaking three finger drags on a touch pad (and probably the same
-/// function on a mouse).
-class MapView: MKMapView {
-    var clickDelegate: MapViewDelegate?
-    var clickTimer: Timer?
-    var dragInProgress = false
 
-    // start a timer to mark the location on the first click.  Cancel the
-    // timer on double clicks.
-    override
-    func mouseUp(with theEvent: NSEvent) {
-        super.mouseUp(with: theEvent)
-        if theEvent.clickCount == 1 && !dragInProgress {
-            // start a timer for this location.  The location will be marked
-            // when the timer fires unless this is a double click
-            let point = convert(theEvent.locationInWindow, from: nil)
-            let coords = convert(point, toCoordinateFrom: self)
-            clickTimer = Timer.scheduledTimer(timeInterval: NSEvent.doubleClickInterval,
-                                              target: self,
-                                              selector: #selector(self.clicked),
-                                              userInfo: coords, repeats: false)
+// MKMapView exposed to SwiftUI
+//
+// swiftui MapView does not yet do everthing needed by GeoTag.
+// Stick with this version for now.
+
+struct MapView: NSViewRepresentable {
+    let mapType: MKMapType
+    let center: CLLocationCoordinate2D
+    let altitude: Double
+    @Binding var reCenter: Bool
+
+    @EnvironmentObject var vm: ViewModel
+    @State private var mapPin = MKPointAnnotation()
+
+    func makeCoordinator() -> MapView.Coordinator {
+        Coordinator(vm: vm)
+    }
+
+    func makeNSView(context: Context) -> ClickMapView {
+        let view = ClickMapView(frame: .zero)
+        view.viewModel = vm
+        view.delegate = context.coordinator
+        view.camera = MKMapCamera(lookingAtCenter: center,
+                                 fromEyeCoordinate: center,
+                                 eyeAltitude: altitude)
+        view.showsCompass = true
+        return view
+    }
+
+    func updateNSView(_ view: ClickMapView, context: Context) {
+        view.mapType = mapType
+
+        // handle mostSelected changes
+        if vm.mostSelected == nil {
+            view.removeAnnotation(mapPin)
+            mapPin.coordinate = Coords()
         } else {
-            dragInProgress = false
-            clickTimer?.invalidate()
-            clickTimer = nil
+            if let location = vm[vm.mostSelected!].location {
+                if location != mapPin.coordinate {
+                    // location changed
+                    view.removeAnnotation(mapPin)
+                    mapPin.coordinate = location
+                    view.addAnnotation(mapPin)
+                    // make sure pin is in view
+                    if !view.visibleMapRect.contains(MKMapPoint(mapPin.coordinate)) {
+                        // I don't know of a better way?
+                        DispatchQueue.main.async {
+                            view.setCenter(mapPin.coordinate, animated: false)
+                        }
+                    }
+                }
+            } else {
+                view.removeAnnotation(mapPin)
+                mapPin.coordinate = Coords()
+            }
+        }
+
+        // handle track changes
+        if vm.refreshTracks {
+            let overlays = view.overlays
+            if !overlays.isEmpty {
+                view.removeOverlays(overlays)
+            }
+            view.addOverlays(vm.mapLines)
+            if let span = vm.mapSpan {
+                // I still don't know of a better way?
+                DispatchQueue.main.async {
+                    view.setRegion(MKCoordinateRegion(center: vm.mapCenter,
+                                                      span: span),
+                                   animated: false)
+                    vm.refreshTracks = false
+                }
+            }
+        }
+
+        // re-center the map
+        if reCenter {
+            DispatchQueue.main.async {
+                view.setCenter(vm.mapCenter, animated: false)
+                reCenter = false
+            }
         }
     }
+}
 
-    override
-    func mouseDragged(with theEvent: NSEvent) {
-        dragInProgress = true
-    }
+extension MapView {
 
-    // Mark the saved location when the click timer expires
-    @objc
-    func clicked(timer: Timer) {
-        let coords = timer.userInfo as! CLLocationCoordinate2D
-        clickTimer?.invalidate()
-        clickTimer = nil
-        clickDelegate?.mouseClicked(mapView: self, location: coords)
+    // Coordinator class conforming to MKMapViewDelegate
+
+    class Coordinator: NSObject, MKMapViewDelegate {
+        @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+        @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
+        let vm: ViewModel
+
+        init(vm: ViewModel) {
+            self.vm = vm
+        }
+
+        // track mapView center coordinate
+
+        @MainActor
+        func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+            vm.mapCenter = mapView.camera.centerCoordinate
+            vm.mapAltitude = mapView.camera.altitude
+        }
+
+        // return a pinAnnotationView for a red pin
+
+        func mapView(_ mapView: MKMapView,
+                     viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            let identifier = "pinAnnotation"
+            var annotationView =
+                mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
+            if annotationView != nil {
+                annotationView!.annotation = annotation
+            } else {
+                annotationView = MKPinAnnotationView(annotation: annotation,
+                                                        reuseIdentifier: identifier)
+                if let av = annotationView {
+                    av.isEnabled = true
+                    av.pinTintColor = .red
+                    av.canShowCallout = false
+                    av.isDraggable = true
+                } else {
+                    fatalError("Can't create MKPinAnnotationView")
+                }
+            }
+            return annotationView
+        }
+
+        // update the location of a dragged pin
+
+        @MainActor
+        func mapView(_ mapView: MKMapView,
+                     annotationView view: MKAnnotationView,
+                     didChange newState: MKAnnotationView.DragState,
+                     fromOldState oldState: MKAnnotationView.DragState) {
+            if let id = vm.mostSelected,
+               (newState == .ending) {
+                vm.update(id: id, location: view.annotation!.coordinate)
+                vm.undoManager.setActionName("set location (drag)")
+            }
+        }
+
+        // draw lines on the map
+        
+        @MainActor
+        func mapView(_ mapview: MKMapView,
+                     rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            let polyline = overlay as! MKPolyline
+            if vm.mapLines.contains(polyline) {
+                let renderer = MKPolylineRenderer(polyline: polyline)
+                renderer.strokeColor = NSColor(trackColor)
+                renderer.lineWidth = CGFloat(trackWidth)
+                return renderer
+            }
+            return MKOverlayRenderer(overlay: overlay)
+        }
     }
 }
 
-/// The delegate receiving the mouse clicks must follow this protocol
-protocol MapViewDelegate: NSObjectProtocol {
-    func mouseClicked(mapView: MapView!,
-                      location: CLLocationCoordinate2D)
+#if DEBUG
+struct MapView_Previews : PreviewProvider {
+    static var previews: some View {
+        MapView(mapType: .standard,
+               center: CLLocationCoordinate2D(latitude: 37.7244,
+                                            longitude: -122.4381),
+               altitude: 50000.0,
+                reCenter: .constant(false))
+            .environmentObject(ViewModel())
+    }
 }
+#endif

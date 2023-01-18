@@ -3,25 +3,6 @@
 //  GeoTag
 //
 //  Created by Marco S Hyman on 7/22/18.
-//  Copyright © 2018,2019 Marco S Hyman. All rights reserved.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy of
-// this software and associated documentation files (the "Software"), to deal in the
-// Software without restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-// Software, and to permit persons to whom the Software is furnished to do so,
-// subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-// AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 //
 
 import Foundation
@@ -29,13 +10,12 @@ import Foundation
 /// GPX file processing
 
 class Gpx: NSObject {
-    /// TimeZone
-    ///
-    /// Holds the optional timezone to use with image timestamp when matching image to tracklog.
-    static var timeZone: TimeZone?
-
-    /// All GPX objects
-    static var gpxTracks = [Gpx]()
+    // GPX Parsing errors
+    enum GpxParseError: Error {
+        case gpxOpenError
+        case gpxNoPoints
+        case gpxParsingError
+    }
 
     // parser states
     enum ParseState {
@@ -44,6 +24,7 @@ class Gpx: NSObject {
         case trkSeg     // <trkseg> seen
         case trkPt      // <trkpt> seen
         case time       // <time> inside of a <trkpt>
+        case ele        // <ele> inside of a <trkpt>
         case error      // bad GPX file
     }
 
@@ -64,15 +45,9 @@ class Gpx: NSObject {
     struct Point : Equatable {
         let lat: Double
         let lon: Double
+        var ele: Double?
         var time: String
-        var timeFromEpoch: TimeInterval {
-            let trimmedTime = time.replacingOccurrences(of: "\\.\\d+", with: "",
-                                                        options: .regularExpression)
-            if let convertedTime = pointTimeFormat.date(from: trimmedTime) {
-                return convertedTime.timeIntervalSince1970
-            }
-            return 0
-        }
+        var timeFromEpoch: TimeInterval
     }
 
     var parser: XMLParser
@@ -118,10 +93,9 @@ class Gpx: NSObject {
     }
 
     /// init from contents of a URL
-    init?(contentsOf url: URL) {
+    init(contentsOf url: URL) throws {
         guard let parser = XMLParser(contentsOf: url) else {
-            unexpected(error: nil, "Gpx init failed")
-            return nil
+            throw GpxParseError.gpxOpenError
         }
         self.parser = parser
         super.init()
@@ -131,7 +105,7 @@ class Gpx: NSObject {
     /// parse the XML in the URL associated with this object
     /// - Returns: true if the file was parsed without error
 
-    func parse() -> Bool {
+    func parse() throws {
         if parser.parse() && parseState != .error {
             var segments = 0
             var points = 0
@@ -141,55 +115,14 @@ class Gpx: NSObject {
                     points += segment.points.count
                 }
             }
-            return points > 0
-        }
-        return false
-    }
-
-    /// Search for the last point in the track log with a timestamp <= the
-    /// timestamp of a given image.
-    ///
-    /// - Parameter image: the image to update
-    /// - Parameter found: A closure envoked if a point is found
-    ///
-
-    func search(image: ImageData,
-                found: (Coord) -> ()) {
-        let imageTime = image.intervalFromEpoch(with: Self.timeZone)
-        var lastPoint: Point?
-
-        // search every track for the last point with a timestamp <= the
-        // image timestamp.   The location of the found point (if any)
-        // will be used as the image location.  All tracks must be searched
-        // as tracks are not sorted
-
-        tracks.forEach {
-            track in
-            for segment in track.segments {
-                let possiblePoints = segment.points.prefix {
-                    $0.timeFromEpoch <= imageTime
-                }
-                if let segmentLast = possiblePoints.last {
-                    if lastPoint == nil {
-                        lastPoint = segmentLast
-                    } else if segmentLast.timeFromEpoch > lastPoint!.timeFromEpoch {
-                        lastPoint = segmentLast
-                    }
-
-                    // if this wasn't the last point in a segment we've
-                    // found the last point in the current track.  Don't
-                    // bother checking any remaining segments.
-
-                    if possiblePoints.count != segment.points.count {
-                        break
-                    }
-                }
+            if points == 0 {
+                throw GpxParseError.gpxNoPoints
             }
-        }
-        if let last = lastPoint {
-            found(Coord(latitude: last.lat, longitude: last.lon))
+        } else {
+            throw GpxParseError.gpxParsingError
         }
     }
+
 }
 
 extension Gpx: XMLParserDelegate {
@@ -219,8 +152,6 @@ extension Gpx: XMLParserDelegate {
                     lastSegment = Segment()
                     parseState = .trkSeg
                 } else {
-                    unexpected(error: nil,
-                               "Internal error! GPX file will be ignored")
                     parseState = .error
                 }
             case "trkpt":
@@ -241,14 +172,13 @@ extension Gpx: XMLParserDelegate {
                        let lat = Double(latString),
                        let lonString = attributeDict["lon"],
                        let lon = Double(lonString) {
-                        lastPoint = Point(lat: lat, lon: lon, time: "")
+                        lastPoint = Point(lat: lat, lon: lon, ele: nil, time: "", timeFromEpoch: 0)
                         parseState = .trkPt
                     } else {
                         parseState = .error
                     }
                 } else {
-                    unexpected(error: nil,
-                               "Internal error! GPX file will be ignored")
+                    parseState = .error
                 }
             default:
                 // ignore everything else
@@ -259,13 +189,15 @@ extension Gpx: XMLParserDelegate {
             case "trk", "trkseg", "trkpt":
                 // nested tracks, track segments, and track points not allowed
                 parseState = .error
+            case "ele":
+                parseState = .ele
             case "time":
                 parseState = .time
             default:
                 // ignore everything else
                 break
             }
-        case .time, .error:
+        case .ele, .time, .error:
             break
         }
     }
@@ -277,12 +209,42 @@ extension Gpx: XMLParserDelegate {
                 namespaceURI: String?,
                 qualifiedName qName: String?) {
         switch elementName {
+        case "ele":
+            if parseState == .ele {
+                parseState = .trkPt
+            }
         case "time":
             if parseState == .time {
                 parseState = .trkPt
             }
         case "trkpt":
             if parseState == .trkPt {
+                // find the latest point and update its timeFromEpoch
+                let trackIx = tracks.count - 1
+                if !tracks.isEmpty && !tracks[trackIx].segments.isEmpty {
+                    let segmentIx = tracks[trackIx].segments.count - 1
+                    if !tracks[trackIx].segments[segmentIx].points.isEmpty {
+                        let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
+                        let trimmedTime = tracks[trackIx]
+                            .segments[segmentIx]
+                            .points[pointIx]
+                            .time
+                            .replacingOccurrences(of: "\\.\\d+",
+                                                  with: "",
+                                                  options: .regularExpression)
+                        if let convertedTime = Gpx.pointTimeFormat.date(from: trimmedTime) {
+                            tracks[trackIx]
+                                .segments[segmentIx]
+                                .points[pointIx]
+                                .timeFromEpoch = convertedTime.timeIntervalSince1970
+                        } else {
+                            tracks[trackIx]
+                                .segments[segmentIx]
+                                .points[pointIx]
+                                .timeFromEpoch = 0
+                        }
+                    }
+                }
                 parseState = .trkSeg
             } else {
                 parseState = .error
@@ -305,22 +267,29 @@ extension Gpx: XMLParserDelegate {
     }
 
     /// process the string of characters for the current element.  This
-    /// program only cares about characters for the time element
+    /// program only cares about characters for the time element and the ele element
 
     func parser(_ parser: XMLParser,
                 foundCharacters string: String) {
-        if parseState == .time {
+        switch parseState {
+        case .ele, .time:
             // find the latest point
             let trackIx = tracks.count - 1
             if !tracks.isEmpty && !tracks[trackIx].segments.isEmpty {
                 let segmentIx = tracks[trackIx].segments.count - 1
                 if !tracks[trackIx].segments[segmentIx].points.isEmpty {
                     let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
-                    tracks[trackIx].segments[segmentIx].points[pointIx].time += string
+                    if parseState == .ele {
+                        tracks[trackIx].segments[segmentIx].points[pointIx].ele = Double(string)
+                    } else {
+                        tracks[trackIx].segments[segmentIx].points[pointIx].time += string
+                    }
                     return
                 }
+                parseState = .error
             }
-            parseState = .error
+        default:
+            break
         }
     }
 }
