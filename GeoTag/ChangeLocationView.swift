@@ -13,8 +13,9 @@ struct ChangeLocationView: View {
 
     let id: ImageModel.ID
 
-    @State private var latitude = 0.0
-    @State private var longitude = 0.0
+    @State private var latitude: Double?
+    @State private var longitude: Double?
+
     @State private var alertPresented = false
 
     var body: some View {
@@ -52,25 +53,31 @@ struct ChangeLocationView: View {
 
                 Button("Change") {
                     // ignore coords that weren't changed
-                    if !(vm[id].location == nil && latitude == 0 && longitude == 0) {
-                        if (0...90).contains(latitude.magnitude) &&
-                           (0...180).contains(longitude.magnitude) {
-                            let coords = Coords(latitude: latitude,
-                                                longitude: longitude)
-                            vm.update(id: id, location: coords)
+                    if let lat = latitude, let lon = longitude {
+                        if (0...90).contains(lat.magnitude) &&
+                           (0...180).contains(lon.magnitude) {
+                            let location = Coords(latitude: lat, longitude: lon)
+                            if location != vm[id].location {
+                                vm.update(id: id, location: location)
+                                dismiss()
+                            }
                         } else {
-                            alertPresented = true
+                            alertPresented.toggle()
                         }
+                    } else if latitude == nil && longitude == nil {
+                        vm.update(id: id, location: nil)
+                        dismiss()
+                    } else {
+                        alertPresented.toggle()
                     }
-                    dismiss()
                 }
                 .keyboardShortcut(.defaultAction)
             }
             .padding()
         }
         .onAppear {
-            latitude = vm[id].location?.latitude ?? 0.0
-            longitude = vm[id].location?.longitude ?? 0.0
+            latitude = vm[id].location?.latitude
+            longitude = vm[id].location?.longitude
         }
        .alert("Coordinate Error",
               isPresented: $alertPresented) {

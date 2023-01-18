@@ -17,7 +17,7 @@ struct ImageLatitudeColumnView: View {
         Text(coordToString(for: vm[id].location?.latitude,
                            format: coordFormat,
                            ref: latRef))
-        .foregroundColor(vm[id].locationTextColor)
+            .foregroundColor(vm[id].locationTextColor)
             .frame(minWidth: coordMinWidth)
             .onDoubleClick() {
                 showPopover = vm[id].isValid

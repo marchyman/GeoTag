@@ -9,15 +9,20 @@
 import Foundation
 import MapKit
 
-/// A shorter name for a type I'll often use
+// A shorter name for a type I'll often use
 typealias Coords = CLLocationCoordinate2D
 
+// valid references for latitudes and longitudes
 let latRef = ["N", "S"]
 let lonRef = ["E", "W"]
 
-/// extend string to validate and return a latitude./longitude as a double
-
+// Types of errors
+// extend string to validate and return a latitude./longitude as a double
 extension String {
+    enum CoordFormatError: Error {
+        case formatError(String)
+    }
+
     /// Convert a string assumed to contain a coordinate to a double
     /// value representing the coordinate.
     ///
@@ -35,11 +40,7 @@ extension String {
     /// are used.  Degree (°), Minute ('), and Second (") marks are optional
     /// and ignored if found at the end of a value.
 
-    func validateCoord(
-        range: ClosedRange<UInt>,
-        reference: [String]
-    ) -> Double? {
-        var coordinate: Double? = nil
+    func validateCoord(range: ClosedRange<UInt>, reference: [String]) throws -> Double {
         var invert = false
         let maxParts = 3            // maximum numeric parts to a coordinate
         let delims = [ "°", "'", "\""]
@@ -61,7 +62,9 @@ extension String {
 
         // There sould be from 1...maxParts substrings to process
 
-        guard (1...maxParts).contains(subStrings.count) else { return nil }
+        guard (1...maxParts).contains(subStrings.count) else {
+            throw CoordFormatError.formatError("Too many substrings")
+        }
 
         var dms = [0.0, 0.0, 0.0]   // degrees, minutes, seconds
         var index = 0
@@ -76,20 +79,20 @@ extension String {
                 // verify the number of degrees/min/sec is in the allowed range
                 if index == 0 {
                     if !range.contains(Int(val).magnitude) {
-                        return nil
+                        throw CoordFormatError.formatError("Value out of range")
                     }
                 } else if !(0..<60).contains(Int(val)) {
-                    return nil
+                    throw CoordFormatError.formatError("Value out of range")
                 }
                 dms[index] = val
             } else {
-                return nil
+                throw CoordFormatError.formatError("Value out of range")
             }
             index += 1
         }
-        coordinate = dms[0] + (dms[1]/60) + (dms[2]/60/60)
+        var coordinate = dms[0] + (dms[1]/60) + (dms[2]/60/60)
         if invert {
-            coordinate = -coordinate!
+            coordinate = -coordinate
         }
         return coordinate
     }

@@ -13,21 +13,17 @@ struct LatitudeStyle: ParseableFormatStyle {
 
     var parseStrategy: LatitudeStrategy = .init()
 
-    func format(_ value: Double) -> String {
+    func format(_ value: Double?) -> String {
         @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
-        if value == 0 {
-            return ""
-        }
         return coordToString(for: value, format: coordFormat, ref: latRef)
-
     }
 }
 
 struct LatitudeStrategy: ParseStrategy {
-    func parse(_ value: String) throws -> Double {
+    func parse(_ value: String) throws -> Double? {
         // if the latitude isn't valid return an out-of-range value
-        return value.validateCoord(range: 0...90, reference: latRef) ?? 91
+        return try value.validateCoord(range: 0...90, reference: latRef)
     }
 }
 
@@ -43,21 +39,17 @@ struct LongitudeStyle: ParseableFormatStyle {
 
     var parseStrategy: LongitudeStrategy = .init()
 
-    func format(_ value: Double) -> String {
+    func format(_ value: Double?) -> String {
         @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
-        if value == 0 {
-            return ""
-        }
         return coordToString(for: value, format: coordFormat, ref: lonRef)
-
     }
 }
 
 struct LongitudeStrategy: ParseStrategy {
-    func parse(_ value: String) throws -> Double {
+    func parse(_ value: String) throws -> Double? {
         // if the longitude isnt valid return an oyut-of-range value
-        return value.validateCoord(range: 0...180, reference: lonRef) ?? 181
+        return try value.validateCoord(range: 0...180, reference: lonRef)
     }
 }
 
