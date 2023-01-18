@@ -54,6 +54,7 @@ actor URLToImageHelper {
     /// - Parameters:
     ///   - url: URL of file to parse
     /// - Returns: true if file is a gpx file, otherwise false
+
     func parseGpxFile(_ url: URL) {
         do {
             let gpx = try Gpx(contentsOf: url)

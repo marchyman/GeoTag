@@ -14,7 +14,9 @@ import Foundation
 
 
 extension ImageModel {
+
     // Link the given fileURL to the app sandbox, create a unique name if necessary
+
     static func createSandboxUrl(fileURL: URL) throws -> URL {
         var sandboxURL: URL
 
@@ -26,7 +28,6 @@ extension ImageModel {
         sandboxURL = docDir.appendingPathComponent(fileURL.lastPathComponent)
 
         // if sandboxURL already exists modify the name until it doesn't
-
         var fileNumber = 1
         while fileManager.fileExists(atPath: (sandboxURL.path)) {
             var newName = fileURL.lastPathComponent
@@ -40,7 +41,6 @@ extension ImageModel {
         // exists but does not point to a valid file.  Handle that
         // situation to avoid a crash by deleting any stale link
         // that may be present before trying to create a new link.
-
         try? fileManager.removeItem(at: sandboxURL)
         try fileManager.createSymbolicLink(at: sandboxURL,
                                            withDestinationURL: fileURL)
@@ -50,12 +50,12 @@ extension ImageModel {
     // Link an XMP file matching the image file, if one was found, into the sandbox.
     // Add a file presenter to allow us to write to the XMP file even if only the
     // image file was opened.
+
     static func createSandboxXmpURL(fileURL: URL,
                                     xmpURL: URL,
                                     xmpFile: XmpFile) throws -> URL? {
         var sandboxXmpURL: URL?
 
-        // should check preferences here, too
         if fileURL.pathExtension.lowercased() != xmpExtension {
             let fileManager = FileManager.default
             if fileManager.fileExists(atPath: xmpURL.path) {

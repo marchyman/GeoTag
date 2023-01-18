@@ -14,8 +14,7 @@ struct Exiftool {
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
 
-
-    /// singleton instance of this class
+    // singleton instance of this class
     static let helper = Exiftool()
     let dateFormatter = DateFormatter()
 
@@ -28,6 +27,7 @@ struct Exiftool {
     var url: URL
 
     // Build the url needed to access to the embedded version of ExifTool
+
     init() {
         if let exiftoolUrl = Bundle.main.url(forResource: "ExifTool",
                                              withExtension: nil) {
@@ -126,6 +126,7 @@ struct Exiftool {
 
     // convert the dateTimeCreated string to a string with time zone to
     // update GPS timestamp fields.  Return an empty string
+
     func gpsTimestamp(for image: ImageModel,
                       in timeZone: TimeZone?) -> String {
         if let dateTime = image.dateTimeCreated {
@@ -140,8 +141,8 @@ struct Exiftool {
     }
 
 
-    /// File Type codes for the file types that exiftool can write
-
+    // File Type codes for the file types that exiftool can write
+    //
     // notes: png files are read/writable by exiftool, but macOS can not
     // read the resulting metadata.  Remove it from the table.
     // Last updated to match ExifTool version 12.30
@@ -158,6 +159,7 @@ struct Exiftool {
     /// Check if exiftool supports writing to a type of file
     /// - Parameter for: a URL of a file to check
     /// - Returns: true if exiftool can write to the file type of the URL
+
     func fileTypeIsWritable(for file: URL) -> Bool {
         let exiftool = Process()
         let pipe = Pipe()
@@ -187,6 +189,7 @@ struct Exiftool {
     ///
     /// Apple's ImageIO functions can not extract metadata from XMP sidecar
     /// files.  ExifTool is used for that purpose.
+
     func metadataFrom(xmp: URL) -> (dto: String,
                                     valid: Bool,
                                     location: Coords,

@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-/// sheet size
+// sheet size
 let sheetWidth = 600.0
 let sheetMinHeight = 400.0
 
-/// types of sheets that may be attached to the content view
+// types of sheets that may be attached to the content view
+
 enum SheetType: Identifiable {
     var id: Self {
         return self
@@ -25,7 +26,8 @@ enum SheetType: Identifiable {
     case unexpectedErrorSheet
 }
 
-/// select a view depending upon the current app state sheet type
+// select a view depending upon the current app state sheet type
+
 struct ContentViewSheet: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -60,8 +62,9 @@ struct ContentViewSheet: View {
     }
 }
 
-/// show lists of GPX files that were loaded or failed to load
-/// Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
+// show lists of GPX files that were loaded or failed to load
+// Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
+
 struct GpxLoadView: View {
     @EnvironmentObject var vm: ViewModel
 

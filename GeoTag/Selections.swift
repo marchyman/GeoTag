@@ -9,9 +9,11 @@ import Foundation
 
 extension ViewModel {
 
-    // Process the set of selected images.  Pick one as the "most" selected.
+    // Process the set of selected images.  Pick one as the "most" selected if
+    // the current most selected image is not in the set.
 
     func selectionChanged(newSelection: Set<ImageModel.ID>) {
+
         // filter out any ids in the selection that don't reference valid images
         let filteredImagesIds = images.filter { $0.isValid }.map { $0.id }
         selection = newSelection.filter { filteredImagesIds.contains($0) }
@@ -29,13 +31,13 @@ extension ViewModel {
         }
 
         // set the most selected image
-
         mostSelected = selection.first
     }
 
     // If the context item is in the current selection make it the
     // mostSelected item, otherwise replace the current selection
     // with the item.
+
     func select(context: ImageModel.ID) {
         if self[context].isValid {
             if selection.contains(context) {

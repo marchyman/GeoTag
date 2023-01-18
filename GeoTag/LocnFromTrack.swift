@@ -8,6 +8,7 @@
 import Foundation
 
 extension ViewModel {
+
     func locnFromTrackDisabled(context: ImageModel.ID? = nil) -> Bool {
         if gpxTracks.count > 0 {
             if let id = context != nil ? context : mostSelected {
@@ -35,7 +36,7 @@ extension ViewModel {
                 for id in selection {
                     if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
                         group.addTask { [self] in
-                            // do not use forEach/asyncForEach as once a match is
+                            // do not use forEach as once a match is
                             // found there is no need to search other tracks for
                             // the current image.
                             for track in await gpxTracks {
@@ -45,6 +46,7 @@ extension ViewModel {
                             }
                             return nil
                         }
+                        
                         undoManager.beginUndoGrouping()
                         for await locn in group {
                             if let locn {

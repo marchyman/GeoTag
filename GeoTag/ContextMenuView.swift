@@ -17,21 +17,29 @@ struct ContextMenuView: View {
         Group {
             Button("Cut") { setContextMenuAction(.cut) }
                 .disabled(vm.cutCopyDisabled(context: context))
+
             Button("Copy") { setContextMenuAction(.copy) }
                 .disabled(vm.cutCopyDisabled(context: context))
+
             Button("Paste") { setContextMenuAction(.paste) }
                 .disabled(vm.pasteDisabled(context: context))
+
             Button("Delete") { setContextMenuAction(.delete) }
                 .disabled(vm.deleteDisabled(context: context))
         }
+        
         Divider()
+
         Group {
             Button("Show In Finder") { setContextMenuAction(.showInFinder) }
                 .disabled(vm.showInFinderDisabled(context: context))
+
             Button("Locn From Track") { setContextMenuAction(.locnFromTrack) }
                 .disabled(vm.locnFromTrackDisabled(context: context))
         }
+
         Divider()
+
         Button("Clear Image List") { setContextMenuAction(.clearList) }
             .disabled(vm.clearDisabled)
     }

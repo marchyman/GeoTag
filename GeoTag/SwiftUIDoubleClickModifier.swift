@@ -22,6 +22,7 @@ extension View {
     /// ```
     /// - Parameters:
     ///   - handler: Block invoked when a double click is detected
+
     func onDoubleClick(handler: @escaping () -> Void) -> some View {
         modifier(DoubleClickHandler(handler: handler))
     }

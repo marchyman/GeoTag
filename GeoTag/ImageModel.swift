@@ -99,6 +99,7 @@ struct ImageModel: Identifiable {
     ///
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file
+
     private
     mutating func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
@@ -157,6 +158,7 @@ struct ImageModel: Identifiable {
 
     // an invalid location read from metadata (corrupted file) will crash
     // the program. Return a valid Coords or nil
+
     func validCoords(latitude: Double, longitude: Double) -> Coords? {
         var coords: Coords?
 
@@ -172,6 +174,7 @@ struct ImageModel: Identifiable {
     ///
     /// Extract desired metadata from an XMP file using ExifTool.  Apple
     /// ImageIO functions do not work with XMP sidecar files.
+
     private
     mutating func loadXmpMetadata(_ xmp: URL) {
         var errorCode: NSError?
@@ -198,7 +201,9 @@ struct ImageModel: Identifiable {
 // Add init functions for preview models and a just-in-case no-image model
 
 extension ImageModel {
+
     // create a model for SwiftUI preview
+
     init(imageURL: URL,
          validImage: Bool,
          dateTimeCreated: String,
@@ -218,6 +223,7 @@ extension ImageModel {
 
     // create an instance of an ImageModel when one is needed but there
     // is otherwise no instance to return.
+
     init() {
         do {
             try self.init(imageURL: URL(filePath: ""), forPreview: true)

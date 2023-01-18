@@ -8,13 +8,14 @@
 import Foundation
 
 extension ViewModel {
+
     // return true if the undo menu option should be disabled.
 
     var undoDisabled: Bool {
         return !undoManager.canUndo
     }
 
-    // return true if the red menu option should be disabled.
+    // return true if the redo menu option should be disabled.
 
     var redoDisabled: Bool {
         return !undoManager.canRedo

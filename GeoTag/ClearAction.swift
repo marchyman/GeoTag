@@ -10,7 +10,9 @@ import Foundation
 // Program "Clear List" action removes all images from the table
 
 extension ViewModel {
+
     // return true if the Clear Image List meny item should be disabled
+    
     var clearDisabled: Bool {
         images.isEmpty || (mainWindow?.isDocumentEdited ?? false)
     }

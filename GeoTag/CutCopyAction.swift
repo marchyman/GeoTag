@@ -8,14 +8,18 @@
 import AppKit
 
 extension ViewModel {
+
     // return true if cut or copy actions should be disabled
     // if context is nil use selectedImage
+
     func cutCopyDisabled(context: ImageModel.ID? = nil) -> Bool {
         if let id = context != nil ? context : mostSelected {
             return self[id].location == nil
         }
         return true
     }
+
+    // A cut is a copy followed by a delete
 
     func cutAction() {
         copyAction()

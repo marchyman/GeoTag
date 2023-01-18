@@ -14,6 +14,7 @@ extension ImageModel {
     }
 
     // make a backup of self into the folder identifed by the given URL
+
     func makeBackupFile(backupFolder: URL) async throws {
         let url = sandboxXmpURL == nil ? fileURL : xmpURL
         let name = url.lastPathComponent
@@ -44,11 +45,13 @@ extension ImageModel {
     }
 
     // use exiftool to save metadata changes to the image file
+
     func saveChanges(timeZone: TimeZone?) async throws {
         try await Exiftool.helper.update(from: self, timeZone: timeZone)
     }
 
     // add a Finder tag to the image file
+
     func setTag(name: String) async throws {
         var tagValues: [String]
         let tags = try fileURL.resourceValues(forKeys: [.tagNamesKey])

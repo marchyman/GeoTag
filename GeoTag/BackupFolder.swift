@@ -27,6 +27,7 @@ extension ViewModel {
 
     /// Convert a file URL into a security scoped bookmark
     /// - Returns the data representing the security scoped bookmark
+
     func getBookmark(from url: URL) -> Data {
         var bookmark = Data()
         do {
@@ -65,14 +66,12 @@ extension ViewModel {
                                       to: Date()) else { return }
 
         // starting state
-
         oldFiles = []
         folderSize = 0
         deletedSize = 0
 
         // loop through the files accumulating storage requirements and a count
         // of older files
-
         while let fileUrl = urlEnumerator.nextObject() as? URL {
             guard
                 let resources =
@@ -87,7 +86,6 @@ extension ViewModel {
         }
 
         // Alert if there are any old files
-
         DispatchQueue.main.async {
             self.removeOldFiles = !self.oldFiles.isEmpty
         }

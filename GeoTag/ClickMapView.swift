@@ -7,11 +7,11 @@
 import Foundation
 import MapKit
 
-/// Subclass MKMapView to hook into mouse up events to extract the
-/// location of single click events.  I couldn't do this in an extension
-/// without breaking three finger drags on a touch pad (and probably the same
-/// function on a mouse).
-/// 
+// Subclass MKMapView to hook into mouse up events to extract the
+// location of single click events.  I couldn't do this in an extension
+// without breaking three finger drags on a touch pad (and probably the same
+// function on a mouse).
+
 class ClickMapView: MKMapView {
     var viewModel: ViewModel!
     var clickTimer: Timer?
@@ -19,6 +19,7 @@ class ClickMapView: MKMapView {
 
     // start a timer to mark the location on the first click.  Cancel the
     // timer on double clicks.
+
     override
     func mouseUp(with theEvent: NSEvent) {
         super.mouseUp(with: theEvent)
@@ -44,7 +45,8 @@ class ClickMapView: MKMapView {
         dragInProgress = true
     }
 
-    /// Mark the saved location when the click timer expires
+    // Mark the saved location when the click timer expires
+
     @objc
     func clicked(timer: Timer) {
         let coords = timer.userInfo as! CLLocationCoordinate2D

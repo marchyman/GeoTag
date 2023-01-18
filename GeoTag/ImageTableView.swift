@@ -23,14 +23,17 @@ struct ImageTableView: View {
                 ImageNameColumnView(id: image.id)
             }
             .width(min: 100)
+
             TableColumn("Timestamp", value: \.timeStamp) { image in
                 ImageTimestampColumnView(id: image.id)
             }
             .width(min: timestampMinWidth)
+
             TableColumn("Latitude", value: \.latitude) { image in
                 ImageLatitudeColumnView(id: image.id)
             }
             .width(min: coordMinWidth)
+
             TableColumn("Longitude", value: \.longitude) { image in
                 ImageLongitudeColumnView(id: image.id)
             }
@@ -71,17 +74,19 @@ extension ImageModel {
     var name: String {
         fileURL.lastPathComponent
     }
+
     var timeStamp: String {
         dateTimeCreated ?? ""
     }
+
     var latitude: Double {
         location?.latitude ?? 0.0
     }
+
     var longitude: Double {
         location?.longitude ?? 0.0
     }
 
-    // return the color used by location items that change
     var timestampTextColor: Color {
         if isValid {
             if dateTimeCreated == originalDateTimeCreated {

@@ -13,6 +13,7 @@ import AppKit
 extension ViewModel {
     
     // return true if Show In Finder menu items should be disabled.
+
     func showInFinderDisabled(context: ImageModel.ID? = nil) -> Bool {
         if context != nil || mostSelected != nil {
             return false
@@ -21,6 +22,7 @@ extension ViewModel {
     }
 
     // show the location on an image in a finder window.
+    
     func showInFinderAction() {
         if let id = mostSelected {
             NSWorkspace.shared.activateFileViewerSelecting([self[id].fileURL])

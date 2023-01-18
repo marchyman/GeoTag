@@ -11,7 +11,9 @@ import AppKit
 // selected images
 
 extension ViewModel {
+
     // return true if paste actions should be disabled
+
     func pasteDisabled(context: ImageModel.ID? = nil) -> Bool {
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
@@ -23,6 +25,7 @@ extension ViewModel {
     }
 
     // paste into all selected images
+    
     func pasteAction() {
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),

@@ -79,6 +79,7 @@ struct ContentView: View {
     }
 
     // when a sheet is dismissed check if there are more sheets to display
+
     func sheetDismissed() {
         if vm.sheetStack.isEmpty {
             vm.sheetMessage = nil

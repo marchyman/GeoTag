@@ -17,6 +17,7 @@ struct AdjustTimezoneView: View {
             Text("Specify Camera Time Zone")
                 .font(.largeTitle)
                 .padding(.top)
+            
             Text("""
                  When matching images to a GPS track log GeoTag assumes
                  the time zone of image timestamps to be the same as the

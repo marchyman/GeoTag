@@ -14,7 +14,7 @@ import AppKit
 extension ViewModel {
 
     /// Display the File -> Open... panel for image and gpx files.  Folders may also be selected.
-    ///
+
     func showOpenPanel() {
 
         // allow image and gpx types
@@ -37,7 +37,7 @@ extension ViewModel {
     /// process URLs opened or dragged to the app.  In the case of a drag a URL may
     /// be of any type.  The path of non-image files will be listed in the app's table but will
     /// not be flagged as a valid image.
-    ///
+
     func prepareForEdit(inputURLs: [URL]) {
         showingProgressView = true
 
@@ -94,7 +94,7 @@ extension ViewModel {
     }
 
     /// Check if a given file URL refers to a folder
-    ///
+
     private func isFolder(url: URL) -> Bool {
         let resources = try? url.resourceValues(forKeys: [.isDirectoryKey])
         return resources?.isDirectory ?? false
@@ -102,6 +102,7 @@ extension ViewModel {
 
     /// iterate over a folder looking for files.
     /// Returns an array of contained the urls
+
     private func urlsIn(folder url: URL) -> [URL] {
         var foundURLs = [URL]()
         let fileManager = FileManager.default
@@ -120,6 +121,7 @@ extension ViewModel {
 
     // if a jpg/jpeg image is part of a raw/jpeg pair disable the jpeg by
     // turning off its isValid flag.
+
     func disableJpegs() {
         let imageURLs = images.map{ $0.fileURL }
 

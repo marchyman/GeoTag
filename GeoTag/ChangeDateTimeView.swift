@@ -55,6 +55,7 @@ struct ChangeDateTimeView: View {
 
     // return a data from an image DateTimeCreated.  If the field is nil
     // return the current date.
+
     func date() -> Date {
         if let date = vm[id].timestamp(for: vm.timeZone) {
             return date
@@ -63,6 +64,7 @@ struct ChangeDateTimeView: View {
     }
 
     // update the dateTimeCreated value for all selected images
+
     func updateTimestamps() {
         // calclulate the adjustment to make to selected images
         let adjustment = newDate.timeIntervalSince1970 - oldDate.timeIntervalSince1970

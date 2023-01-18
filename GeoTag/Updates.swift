@@ -47,6 +47,7 @@ extension ViewModel {
     }
 
     // Add track overlays to the map
+
     func updateTracks(gpx: Gpx) {
         guard gpx.tracks.count > 0 else { return}
         // storage for min/max latitude found in the track

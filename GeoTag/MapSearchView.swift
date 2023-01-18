@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-/// Map search view contains a search field. make NSSearchField available in a SwiftUI wrapper
+// Map search view contains a search field. make NSSearchField available
+// in a SwiftUI wrapper
 
 struct MapSearchView: NSViewRepresentable {
     @Binding var text: String

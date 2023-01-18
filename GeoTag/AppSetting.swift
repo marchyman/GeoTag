@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 // enum instead of struct as it is not intended to be instantiated.
+
 enum AppSettings {
     enum CoordFormat: Int {
         case deg

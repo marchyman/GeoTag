@@ -8,11 +8,13 @@
 import Foundation
 
 extension Gpx {
+
     /// Search for the last point in the track log with a timestamp <= the
     /// timestamp of a given image.
     ///
     /// - Parameter imageTime: the  time from epoch of an image whose coords are desired
     /// - Parameter found: A closure envoked for the nearest point in the tracklog found
+
     func search(imageTime: TimeInterval) async -> (Coords, Double?)? {
         var lastPoint: Point?
 

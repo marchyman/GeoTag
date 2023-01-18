@@ -10,7 +10,6 @@ import SwiftUI
 extension ViewModel {
 
     // Actions triggered from a menu item
-
     enum MenuAction: Identifiable {
         var id: Self {
             return self

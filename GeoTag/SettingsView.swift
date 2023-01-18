@@ -29,6 +29,7 @@ struct SettingsView: View {
                             .labelsHidden()
                     }
                     .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
+
                     if vm.doNotBackup {
                         Text("Enabling image backups is strongly recommended")
                             .font(.footnote)

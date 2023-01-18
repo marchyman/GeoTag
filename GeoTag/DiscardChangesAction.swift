@@ -8,13 +8,17 @@
 import Foundation
 
 extension ViewModel {
-    // return true if the save menu item should be disabled
+
+    // return true if the discard menu item should be disabled
+
     func discardChangesDisabled() -> Bool {
         return !(mainWindow?.isDocumentEdited ?? false)
     }
 
+    // walk through the array of images calling the revert() function
+    // to put the images back in their starting state.
+
     func discardChangesAction() {
-        // walk through the array of images calling the revert() function
         var index = images.startIndex
         while index < images.endIndex {
             images[index].revert()

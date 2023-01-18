@@ -16,9 +16,12 @@ typealias Coords = CLLocationCoordinate2D
 let latRef = ["N", "S"]
 let lonRef = ["E", "W"]
 
-// Types of errors
 // extend string to validate and return a latitude./longitude as a double
+
 extension String {
+
+    // Types of error
+
     enum CoordFormatError: Error {
         case formatError(String)
     }
@@ -61,7 +64,6 @@ extension String {
         }
 
         // There sould be from 1...maxParts substrings to process
-
         guard (1...maxParts).contains(subStrings.count) else {
             throw CoordFormatError.formatError("Too many substrings")
         }

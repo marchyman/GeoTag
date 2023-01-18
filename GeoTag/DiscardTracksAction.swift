@@ -8,13 +8,16 @@
 import Foundation
 
 extension ViewModel {
-    // return true if the save menu item should be disabled
+
+    // return true if the discard tracks menu item should be disabled
+
     func discardTracksDisabled() -> Bool {
         return gpxTracks.isEmpty
     }
 
     // clear out all track related data and trigger a refresh which will
     // remove any existing tracks from the map.
+    
     func discardTracksAction() {
         gpxTracks = []
         mapLines = []

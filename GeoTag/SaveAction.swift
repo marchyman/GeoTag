@@ -8,7 +8,9 @@
 import Foundation
 
 extension ViewModel {
+
     // return true if the save menu item should be disabled
+
     func saveDisabled() -> Bool {
         return saveInProgress || !(mainWindow?.isDocumentEdited ?? false)
     }
@@ -18,7 +20,6 @@ extension ViewModel {
     func saveAction() {
 
         // returned status of the save operation
-
         struct SaveStatus {
             let id: ImageModel.ID
             let dateTimeCreated: String?
@@ -29,7 +30,6 @@ extension ViewModel {
 
         // before starting check that image files backups are disabled
         // or the image backup folder exists.
-
         guard doNotBackup || backupURL != nil else {
             addSheet(type: .noBackupFolderSheet)
             return
@@ -37,7 +37,6 @@ extension ViewModel {
 
         // copy images.  The info in the copies will be saved in background
         // tasks.
-
         saveInProgress = true
         saveIssues = [:]
         let imagesToSave = images
@@ -45,7 +44,6 @@ extension ViewModel {
         mainWindow?.isDocumentEdited = false
 
         // process the images in the background.
-
         Task {
             // get the field that won't change from the view model before
             // spinning off new tasks.
@@ -82,7 +80,6 @@ extension ViewModel {
 
                 // Update image original values after update for images
                 // with no errors.
-
                 for await status in group {
                     if status.error == nil {
                         self[status.id].originalDateTimeCreated = status.dateTimeCreated
@@ -93,6 +90,7 @@ extension ViewModel {
                     }
                 }
             }
+
             if !saveIssues.isEmpty {
                 addSheet(type: .saveErrorSheet)
             }

@@ -12,7 +12,7 @@ import MapKit
 //
 // swiftui MapView does not yet do everthing needed by GeoTag.
 // Stick with this version for now.
-//
+
 struct MapView: NSViewRepresentable {
     let mapType: MKMapType
     let center: CLLocationCoordinate2D
@@ -41,7 +41,6 @@ struct MapView: NSViewRepresentable {
         view.mapType = mapType
 
         // handle mostSelected changes
-
         if vm.mostSelected == nil {
             view.removeAnnotation(mapPin)
             mapPin.coordinate = Coords()
@@ -67,7 +66,6 @@ struct MapView: NSViewRepresentable {
         }
 
         // handle track changes
-
         if vm.refreshTracks {
             let overlays = view.overlays
             if !overlays.isEmpty {
@@ -86,7 +84,6 @@ struct MapView: NSViewRepresentable {
         }
 
         // re-center the map
-
         if reCenter {
             DispatchQueue.main.async {
                 view.setCenter(vm.mapCenter, animated: false)
@@ -98,8 +95,8 @@ struct MapView: NSViewRepresentable {
 
 extension MapView {
 
-    /// Coordinator class conforming to MKMapViewDelegate
-    ///
+    // Coordinator class conforming to MKMapViewDelegate
+
     class Coordinator: NSObject, MKMapViewDelegate {
         @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
         @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
@@ -109,16 +106,16 @@ extension MapView {
             self.vm = vm
         }
 
-        /// track mapView center coordinate
-        ///
+        // track mapView center coordinate
+
         @MainActor
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
             vm.mapCenter = mapView.camera.centerCoordinate
             vm.mapAltitude = mapView.camera.altitude
         }
 
-        /// return a pinAnnotationView for a red pin
-        ///
+        // return a pinAnnotationView for a red pin
+
         func mapView(_ mapView: MKMapView,
                      viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             let identifier = "pinAnnotation"
@@ -141,8 +138,8 @@ extension MapView {
             return annotationView
         }
 
-        /// update the location of a dragged pin
-        ///
+        // update the location of a dragged pin
+
         @MainActor
         func mapView(_ mapView: MKMapView,
                      annotationView view: MKAnnotationView,
@@ -155,6 +152,8 @@ extension MapView {
             }
         }
 
+        // draw lines on the map
+        
         @MainActor
         func mapView(_ mapview: MKMapView,
                      rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

@@ -15,6 +15,7 @@ extension ImageModel {
     /// If image propertied can not be accessed or if needed properties
     /// do not exist the file is assumed to be a non-image file and a zero
     /// sized empty image is created.
+
     mutating func makeThumbnail() {
         // if a thumbail has already been created we're done
         guard thumbnail == nil else { return }
@@ -24,6 +25,7 @@ extension ImageModel {
             thumbnail = image
             return
         }
+        
         // Create a "preview" of the image. If the image is larger than
         // 512x512 constrain the preview to that size.  512x512 is an
         // arbitrary limit.   Preview generation is used to work around a

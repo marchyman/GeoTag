@@ -109,6 +109,7 @@ final class ViewModel: ObservableObject {
 
     // get the backupURL from AppStorage if needed.  This will also trigger
     // a scan of the backup folder for old backups that can be removed.
+    
     init() {
         if !doNotBackup {
             backupURL = getBackupURL()
