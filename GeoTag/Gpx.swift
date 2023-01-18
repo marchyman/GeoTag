@@ -47,14 +47,7 @@ class Gpx: NSObject {
         let lon: Double
         var ele: Double?
         var time: String
-        var timeFromEpoch: TimeInterval {
-            let trimmedTime = time.replacingOccurrences(of: "\\.\\d+", with: "",
-                                                        options: .regularExpression)
-            if let convertedTime = pointTimeFormat.date(from: trimmedTime) {
-                return convertedTime.timeIntervalSince1970
-            }
-            return 0
-        }
+        var timeFromEpoch: TimeInterval
     }
 
     var parser: XMLParser
@@ -179,7 +172,7 @@ extension Gpx: XMLParserDelegate {
                        let lat = Double(latString),
                        let lonString = attributeDict["lon"],
                        let lon = Double(lonString) {
-                        lastPoint = Point(lat: lat, lon: lon, ele: nil, time: "")
+                        lastPoint = Point(lat: lat, lon: lon, ele: nil, time: "", timeFromEpoch: 0)
                         parseState = .trkPt
                     } else {
                         parseState = .error
@@ -226,6 +219,32 @@ extension Gpx: XMLParserDelegate {
             }
         case "trkpt":
             if parseState == .trkPt {
+                // find the latest point and update its timeFromEpoch
+                let trackIx = tracks.count - 1
+                if !tracks.isEmpty && !tracks[trackIx].segments.isEmpty {
+                    let segmentIx = tracks[trackIx].segments.count - 1
+                    if !tracks[trackIx].segments[segmentIx].points.isEmpty {
+                        let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
+                        let trimmedTime = tracks[trackIx]
+                            .segments[segmentIx]
+                            .points[pointIx]
+                            .time
+                            .replacingOccurrences(of: "\\.\\d+",
+                                                  with: "",
+                                                  options: .regularExpression)
+                        if let convertedTime = Gpx.pointTimeFormat.date(from: trimmedTime) {
+                            tracks[trackIx]
+                                .segments[segmentIx]
+                                .points[pointIx]
+                                .timeFromEpoch = convertedTime.timeIntervalSince1970
+                        } else {
+                            tracks[trackIx]
+                                .segments[segmentIx]
+                                .points[pointIx]
+                                .timeFromEpoch = 0
+                        }
+                    }
+                }
                 parseState = .trkSeg
             } else {
                 parseState = .error
