@@ -27,8 +27,6 @@ extension ViewModel {
         dateFormatter.dateFormat = ImageModel.dateFormat
         dateFormatter.timeZone = timeZone
 
-        // Handle UNDO grouping here
-
         // use a separate task in a group to update each image
         Task {
             showingProgressView = true

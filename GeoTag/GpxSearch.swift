@@ -46,7 +46,15 @@ extension Gpx {
             }
         }
         if let last = lastPoint {
-            return (Coords(latitude: last.lat, longitude: last.lon), last.ele)
+            // we have a point. But does it make sense, meaning is the point
+            // for some location reported many days from the image timestamp?
+            // if the point timestamp isn't within +/- 21600 seconds of the
+            // image timestamp (6 hours) do not treat it as a match.
+            // 21600 is an arbitrary value picked out of thin air.
+            if (last.timeFromEpoch - imageTime).magnitude < 21600 {
+                return (Coords(latitude: last.lat, longitude: last.lon),
+                        last.ele)
+            }
         }
         return nil
     }
