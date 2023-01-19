@@ -16,7 +16,7 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can use GeoTag
 version 4.15.
 
-## 4.99 [Beta, will be GeoTag 5 upon full release]
+## 4.99.1 [2nd Beta, will be GeoTag 5 upon full release]
 
 ### Updates
 
@@ -33,11 +33,6 @@ version 4.15.
 * (internal) Exiftool version 12.49
 
 * (internal) User Interface code re-written to use SwiftUI
-
-### Known bugs
-
-* Selecting images in Finder and using "Open With" GeoTag launches the program
-  but does not open the images.
 
 ### See the file named *History* for earlier changes and bug fixes
 
