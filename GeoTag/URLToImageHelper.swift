@@ -13,6 +13,7 @@ actor URLToImageHelper {
     var gpxBadFileNames = [String]()
     var processedURLs = Set<URL>()
     var duplicateImages = false
+    var gpxFiles = false
 
     var sheetStack = [ViewModel.SheetInfo]()
 
@@ -61,18 +62,16 @@ actor URLToImageHelper {
             try gpx.parse()
             gpxTracks.append(gpx)
             gpxGoodFileNames.append(url.path)
-        } catch Gpx.GpxParseError.gpxParsingError {
-            gpxBadFileNames.append(url.path)
-            sheetStack.append(ViewModel.SheetInfo(sheetType: .unexpectedErrorSheet,
-                                                  sheetError: nil,
-                                                  sheetMessage: "\(url.path) is not a valid GPX file"))
         } catch {
             gpxBadFileNames.append(url.path)
         }
-        sheetStack.append(ViewModel.SheetInfo(sheetType: .gpxFileNameSheet,
-                                              sheetError: nil,
-                                              sheetMessage: nil))
-
+        // only need one sheet when a GPX file is added.
+        if !gpxFiles {
+            gpxFiles.toggle()
+            sheetStack.append(ViewModel.SheetInfo(sheetType: .gpxFileNameSheet,
+                                                  sheetError: nil,
+                                                  sheetMessage: nil))
+        }
     }
 
 }

@@ -3,7 +3,6 @@ Right pane divider location on start -- partially fixed
 When Metal validation enabled program crashes when divider is moved
 Bugs:
 * Open With doesn't work
-* Loading good and bad track log resulted in two of the same sheets
 * add option to hide grayed out images?
 
 Fixed:
@@ -11,7 +10,7 @@ Fixed:
 * map search bar alignment (trailing)
 * Add command-L as shortcut for locn from track
 * do not apply track log points when time +/- 6 hours of image time
-
+* Loading good and bad track log resulted multiple sheets
 
 Feature Requests:
 
