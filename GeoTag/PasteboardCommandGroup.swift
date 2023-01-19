@@ -41,6 +41,7 @@ extension GeoTagApp {
                     .disabled(vm.showInFinderDisabled())
 
                 Button("Locn From Track") { setPastboardItemAction(.locnFromTrack) }
+                    .keyboardShortcut("l")
                     .disabled(vm.locnFromTrackDisabled())
                 
                 Button("Specify Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
