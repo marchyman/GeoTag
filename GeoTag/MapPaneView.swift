@@ -31,9 +31,12 @@ struct MapPaneView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(5)
                 GeometryReader {geometry in
-                    MapSearchView(text: $searchString)
-                        .frame(width: geometry.size.width * 0.80)
-                        .onChange(of: searchString) { searchMap(for: $0) }
+                    HStack {
+                        Spacer()
+                        MapSearchView(text: $searchString)
+                            .frame(width: geometry.size.width * 0.80)
+                            .onChange(of: searchString) { searchMap(for: $0) }
+                    }
                 }
                 .padding()
             }
