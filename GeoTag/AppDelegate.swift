@@ -21,6 +21,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         NSWindow.allowsAutomaticWindowTabbing = false
     }
 
+    // Process open with...
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        print(">> \(urls)")
+        DispatchQueue.main.async() {
+            self.viewModel?.prepareForEdit(inputURLs: urls)
+        }
+    }
+
     // Called when window that was hidden is now visible
 
     func applicationShouldHandleReopen(_ sender: NSApplication,

@@ -4,7 +4,6 @@ Right pane divider location on start -- partially fixed
 When Metal validation enabled program crashes when divider is moved
 Bugs:
 
-* Open With doesn't work
 
 Fixed:
 
@@ -15,6 +14,7 @@ Fixed:
 * Crash -- missing environment object when scrolling table
 * remove "Publishing changes from within view updates is not allowed" warnings
   due to SwiftUI sometimes having problems binding to Published variables.
+* Open With now works
 
 Feature Requests:
 
