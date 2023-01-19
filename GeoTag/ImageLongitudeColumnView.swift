@@ -9,9 +9,10 @@ import SwiftUI
 
 struct ImageLongitudeColumnView: View {
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
-    @EnvironmentObject var vm: ViewModel
-    let id: ImageModel.ID
     @State private var showPopover = false
+
+    let vm: ViewModel
+    let id: ImageModel.ID
 
     var body: some View {
         Text(coordToString(for: vm[id].location?.longitude,
@@ -23,7 +24,7 @@ struct ImageLongitudeColumnView: View {
                 showPopover = vm[id].isValid
             }
             .popover(isPresented: self.$showPopover) {
-                ChangeLocationView(id: id)
+                ChangeLocationView(vm: vm, id: id)
                     .frame(width: 450, height: 250)
             }
             .help(vm.elevationAsString(id: id))
@@ -39,7 +40,7 @@ struct ImageLongitudeColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        ImageLongitudeColumnView(id: image.id)
-            .environmentObject(ViewModel(images: [image]))
+        let vm = ViewModel(images: [image])
+        ImageLongitudeColumnView(vm: vm, id: image.id)
     }
 }

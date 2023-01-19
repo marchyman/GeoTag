@@ -36,7 +36,6 @@ final class ViewModel: ObservableObject {
 
     // Images to edit.
     @Published var images = [ImageModel]()
-    @AppStorage(AppSettings.disablePairedJpegs) var disablePairedJpegs = false
 
     // A second save can not be triggered while a save is in progress.
     // App termination is denied, too.
@@ -95,10 +94,6 @@ final class ViewModel: ObservableObject {
     // are enabled.  The URL comes from a security scoped bookmark in
     // AppStorage.
     @Published var backupURL: URL?
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.addTagKey) var addTag = false
-    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
     // The folder containing backups is scanned at startup and the user
     // is given the option to remove backups older than 7 days.
@@ -111,6 +106,8 @@ final class ViewModel: ObservableObject {
     // a scan of the backup folder for old backups that can be removed.
     
     init() {
+        @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+
         if !doNotBackup {
             backupURL = getBackupURL()
         }

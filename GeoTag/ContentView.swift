@@ -11,7 +11,13 @@ import SwiftUI
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+
     @EnvironmentObject var vm: ViewModel
+    @State private var sheetType: SheetType?
+    @State private var presentConfirmation = false
+    @State private var removeOldFiles = false
 
     var body: some View {
         HSplitView {
@@ -31,18 +37,19 @@ struct ContentView: View {
         // startup
         .onAppear {
             // check for a backupURL
-            if !vm.doNotBackup && vm.saveBookmark == Data() {
+            if !doNotBackup && saveBookmark == Data() {
                 vm.addSheet(type: .noBackupFolderSheet)
             }
         }
 
         // sheets
-        .sheet(item: $vm.sheetType, onDismiss: sheetDismissed) { sheetType in
+        .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheetType in
             ContentViewSheet(type: sheetType)
         }
+        .link($vm.sheetType, with: $sheetType)
 
         // confirmations
-        .confirmationDialog("Are you sure?", isPresented: $vm.presentConfirmation) {
+        .confirmationDialog("Are you sure?", isPresented: $presentConfirmation) {
             Button("I'm sure", role: .destructive) {
                 if vm.confirmationAction != nil {
                     vm.confirmationAction!()
@@ -54,10 +61,11 @@ struct ContentView: View {
             let message = vm.confirmationMessage != nil ? vm.confirmationMessage! : ""
             Text(message)
         }
+        .link($vm.presentConfirmation, with: $presentConfirmation)
 
         // Alert: Remove Old Backup files
         .alert("Delete old backup files?",
-               isPresented: $vm.removeOldFiles) {
+               isPresented: $removeOldFiles) {
             Button("Delete", role: .destructive) {
                 vm.remove(filesToRemove: vm.oldFiles)
             }
@@ -76,6 +84,7 @@ struct ContentView: View {
                  Would you like to remove those \(vm.oldFiles.count) backup files?
                  """)
         }
+        .link($vm.removeOldFiles, with: $removeOldFiles)
     }
 
     // when a sheet is dismissed check if there are more sheets to display
@@ -93,6 +102,24 @@ struct ContentView: View {
     }
 
 
+}
+
+// SwiftUI sometimes has issues when a published variabe in an ObservedObject
+// or EnvironmentObject is bound in a view.  Perhaps this is a SwiftUI bug.
+// This extension on View links a Published variables to a local state variable
+// to work around the problem.
+
+extension View {
+    func link<T: Equatable>(_ published: Binding<T>,
+                            with binding: Binding<T>) -> some View {
+        self
+            .onChange(of: published.wrappedValue) { published in
+                binding.wrappedValue = published
+            }
+            .onChange(of: binding.wrappedValue) { binding in
+                published.wrappedValue = binding
+            }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {

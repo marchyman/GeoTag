@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct ChangeDateTimeView: View {
-    @EnvironmentObject var vm: ViewModel
     @Environment(\.dismiss) private var dismiss
 
+    let vm: ViewModel
     let id: ImageModel.ID!
 
     @State private var oldDate = Date()
@@ -56,6 +56,7 @@ struct ChangeDateTimeView: View {
     // return a data from an image DateTimeCreated.  If the field is nil
     // return the current date.
 
+    @MainActor
     func date() -> Date {
         if let date = vm[id].timestamp(for: vm.timeZone) {
             return date
@@ -65,6 +66,7 @@ struct ChangeDateTimeView: View {
 
     // update the dateTimeCreated value for all selected images
 
+    @MainActor
     func updateTimestamps() {
         // calclulate the adjustment to make to selected images
         let adjustment = newDate.timeIntervalSince1970 - oldDate.timeIntervalSince1970
@@ -94,9 +96,16 @@ struct ChangeDateTimeView: View {
 
 }
 
-//struct ModifyDateTimeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ModifyDateTimeView()
-//            .environmentObject(ViewModel())
-//    }
-//}
+struct ModifyDateTimeView_Previews: PreviewProvider {
+    static var image =
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
+                   validImage: true,
+                   dateTimeCreated: "2022:12:12 11:22:33",
+                   latitude: 33.123,
+                   longitude: 123.456)
+
+    static var previews: some View {
+        let vm = ViewModel(images: [image])
+        ChangeDateTimeView(vm: vm, id: image.id)
+    }
+}

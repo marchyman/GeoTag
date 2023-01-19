@@ -1,9 +1,10 @@
 Create sidecar option???
+add option to hide grayed out images???
 Right pane divider location on start -- partially fixed
 When Metal validation enabled program crashes when divider is moved
 Bugs:
+
 * Open With doesn't work
-* add option to hide grayed out images?
 
 Fixed:
 
@@ -11,6 +12,9 @@ Fixed:
 * Add command-L as shortcut for locn from track
 * do not apply track log points when time +/- 6 hours of image time
 * Loading good and bad track log resulted multiple sheets
+* Crash -- missing environment object when scrolling table
+* remove "Publishing changes from within view updates is not allowed" warnings
+  due to SwiftUI sometimes having problems binding to Published variables.
 
 Feature Requests:
 

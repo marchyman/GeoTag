@@ -10,11 +10,16 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var vm: ViewModel
 
+    @AppStorage(AppSettings.disablePairedJpegs) var disablePairedJpegs = false
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
     @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+    @AppStorage(AppSettings.addTagKey) var addTag = false
+    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
     var body: some View {
         VStack {
@@ -25,12 +30,12 @@ struct SettingsView: View {
                 // Image backup configuration
                 Group {
                     LabeledContent("Disable Image Backups:") {
-                        Toggle("Disable image backups", isOn: vm.$doNotBackup.animation())
+                        Toggle("Disable image backups", isOn: $doNotBackup.animation())
                             .labelsHidden()
                     }
                     .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
 
-                    if vm.doNotBackup {
+                    if doNotBackup {
                         Text("Enabling image backups is strongly recommended")
                             .font(.footnote)
                             .padding(.bottom)
@@ -41,7 +46,7 @@ struct SettingsView: View {
                                 .padding(.bottom)
                                 .onChange(of: vm.backupURL) { url in
                                     if let url {
-                                        vm.saveBookmark = vm.getBookmark(from: url)
+                                        saveBookmark = vm.getBookmark(from: url)
                                         vm.checkBackupFolder(url)
                                     }
                                 }
@@ -80,7 +85,7 @@ struct SettingsView: View {
                 }
 
                 LabeledContent("Disable paired jpegs:") {
-                    Toggle("Disable paired jpegs", isOn: vm.$disablePairedJpegs)
+                    Toggle("Disable paired jpegs", isOn: $disablePairedJpegs)
                         .labelsHidden()
                 }
                 .padding([.bottom, .horizontal] )
@@ -103,19 +108,19 @@ struct SettingsView: View {
                     .help("GeoTag can set/update the GPS time and date stamps when updating locations.  These timestamps are the same as the image create date and time but relative to GMP/UTC, not the local time.  When setting this option it is important that the TimeZone (edit menu) is correct for the images being saved.  Please see the GeoTag help pages for more information on setting the time zone.")
 
                     LabeledContent("Tag updated files:") {
-                        Toggle("Tag updated files", isOn: vm.$addTag)
+                        Toggle("Tag updated files", isOn: $addTag)
                             .labelsHidden()
                     }
                     .padding(.horizontal)
                     .help("If this option is enabled a finder tag will be added to updated images.")
 
-                    if vm.addTag {
-                        TextField("With tag:", text: vm.$tag)
+                    if addTag {
+                        TextField("With tag:", text: $tag)
                             .frame(maxWidth: 250)
                             .padding(.horizontal)
                             .onSubmit {
-                                if vm.tag.isEmpty {
-                                    vm.tag = "GeoTag"
+                                if tag.isEmpty {
+                                    tag = "GeoTag"
                                 }
                             }
                             .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")

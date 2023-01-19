@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageNameColumnView: View {
-    @EnvironmentObject var vm: ViewModel
+    let vm: ViewModel
     let id: ImageModel.ID
 
     var body: some View {
@@ -18,6 +18,7 @@ struct ImageNameColumnView: View {
             .help("Full path: \(vm[id].fileURL.path)")
     }
 
+    @MainActor
     func textColor() -> Color {
         if vm[id].isValid {
             if id == vm.mostSelected {
@@ -28,6 +29,7 @@ struct ImageNameColumnView: View {
         return .secondary
     }
 
+    @MainActor
     func textWeight() -> Font.Weight {
         id == vm.mostSelected ? .semibold : .regular
     }
@@ -42,7 +44,7 @@ struct ImageNameColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        ImageNameColumnView(id: image.id)
-            .environmentObject(ViewModel(images: [image]))
+        let vm = ViewModel(images: [image])
+        ImageNameColumnView(vm: vm, id: image.id)
     }
 }

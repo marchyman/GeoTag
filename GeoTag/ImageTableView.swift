@@ -10,32 +10,38 @@ import SwiftUI
 let timestampMinWidth = 130.0
 let coordMinWidth = 120.0
 
+// Note on EnvironmentObject:  When testing scrolling the Table in this view
+// would crash when trying to render one of the columns.   The crash was
+// due to the @EnvironmentObject being empty!  To get around this do not
+// rely on the Environment.  Explicitly pass the ViewModel to the column views.
+
 struct ImageTableView: View {
     @EnvironmentObject var vm: ViewModel
     @Environment(\.openWindow) var openWindow
 
+    @State private var selection = Set<ImageModel.ID>()
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
     var body: some View {
-        Table(selection: $vm.selection,
+        Table(selection: $selection,
               sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
-                ImageNameColumnView(id: image.id)
+                ImageNameColumnView(vm: vm, id: image.id)
             }
             .width(min: 100)
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                ImageTimestampColumnView(id: image.id)
+                ImageTimestampColumnView(vm: vm, id: image.id)
             }
             .width(min: timestampMinWidth)
 
             TableColumn("Latitude", value: \.latitude) { image in
-                ImageLatitudeColumnView(id: image.id)
+                ImageLatitudeColumnView(vm: vm, id: image.id)
             }
             .width(min: coordMinWidth)
 
             TableColumn("Longitude", value: \.longitude) { image in
-                ImageLongitudeColumnView(id: image.id)
+                ImageLongitudeColumnView(vm: vm, id: image.id)
             }
             .width(min: coordMinWidth)
         } rows: {
@@ -52,7 +58,7 @@ struct ImageTableView: View {
         .onChange(of: sortOrder) { newOrder in
             vm.images.sort(using: newOrder)
         }
-        .onChange(of: vm.selection) { selection in
+        .onChange(of: selection) { selection in
             vm.selectionChanged(newSelection: selection)
         }
         .onChange(of: vm.selectedMenuAction) { action in
@@ -64,6 +70,7 @@ struct ImageTableView: View {
             vm.prepareForEdit(inputURLs: items)
             return true
         }
+        .link($vm.selection, with: $selection)
     }
 }
 

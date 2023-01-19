@@ -6,7 +6,7 @@
 //
 
 import UniformTypeIdentifiers
-import AppKit
+import SwiftUI
 
 // Extension to our Application State that handles file open and dropping
 // URLs onto the app's table of images to edit.
@@ -39,6 +39,8 @@ extension ViewModel {
     /// not be flagged as a valid image.
 
     func prepareForEdit(inputURLs: [URL]) {
+        @AppStorage(AppSettings.disablePairedJpegs) var disablePairedJpegs = false
+
         showingProgressView = true
 
         // dragged urls are duplicated for some reason. Make an array

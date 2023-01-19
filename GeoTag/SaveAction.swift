@@ -5,7 +5,7 @@
 //  Created by Marco S Hyman on 1/1/23.
 //
 
-import Foundation
+import SwiftUI
 
 extension ViewModel {
 
@@ -18,6 +18,9 @@ extension ViewModel {
     // Update image files with changed timestamp/location info
 
     func saveAction() {
+        @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+        @AppStorage(AppSettings.addTagKey) var addTag = false
+        @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
         // returned status of the save operation
         struct SaveStatus {

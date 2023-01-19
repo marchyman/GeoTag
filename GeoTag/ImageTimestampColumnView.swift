@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageTimestampColumnView: View {
-    @EnvironmentObject var vm: ViewModel
+    let vm: ViewModel
     let id: ImageModel.ID
     @State private var showPopover = false
 
@@ -20,7 +20,7 @@ struct ImageTimestampColumnView: View {
                 showPopover = vm[id].isValid
             }
             .popover(isPresented: self.$showPopover) {
-                ChangeDateTimeView(id: id)
+                ChangeDateTimeView(vm: vm, id: id)
             }
     }
 }
@@ -34,7 +34,7 @@ struct ImageTimestampColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        ImageTimestampColumnView(id: image.id)
-            .environmentObject(ViewModel(images: [image]))
+        let vm = ViewModel(images: [image])
+        ImageTimestampColumnView(vm: vm, id: image.id)
     }
 }
