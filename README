@@ -41,14 +41,13 @@ version 4.15.
 ### General Note
 
 Photos (OSX 10.10.3 and later) will let you modify existing location metadata
-but not add location data to an image. If necessary use GeoTag to add location
-metadata **before** importing the images into Photos. This may aslo hold true
-for other image editing applications.
+but not add location data to an image. Use GeoTag to add location metadata
+**before** importing the images into Photos. This may also hold true for other
+image editing applications.
 
 ### Operating Instructions:
 
 *See <https://www.snafu.org/GeoTag/GeoTag5Help/> for more information.*
-[Note: help page content is still being written.]
 
 Run Program.  Use the Open command from the menu or ⌘O to select files to
 modify. You can also drag files from the finder into the table on the left side
