@@ -43,8 +43,8 @@ struct ContentView: View {
         }
 
         // sheets
-        .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheetType in
-            ContentViewSheet(type: sheetType)
+        .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in
+            sheet
         }
         .link($vm.sheetType, with: $sheetType)
 
