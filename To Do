@@ -1,26 +1,10 @@
-Create sidecar option???
-add option to hide grayed out images???
-Right pane divider location on start -- partially fixed
-When Metal validation enabled program crashes when divider is moved
-Bugs:
 
-
-Fixed:
-
-* map search bar alignment (trailing)
-* Add command-L as shortcut for locn from track
-* do not apply track log points when time +/- 6 hours of image time
-* Loading good and bad track log resulted multiple sheets
-* Crash -- missing environment object when scrolling table
-* remove "Publishing changes from within view updates is not allowed" warnings
-  due to SwiftUI sometimes having problems binding to Published variables.
-* Open With now works
+Future?
+* Create sidecar option???
+* add option to hide grayed out images???
 
 Feature Requests:
-
 * Add and option to show the location of all selected images.
-
 * check for overlap before assigning locations from a track log and warn the user
   if necessary.
-
 * Handle location display of video files.  Exiftool does not allow updates.

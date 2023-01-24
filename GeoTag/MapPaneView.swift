@@ -9,7 +9,7 @@ import SwiftUI
 import MapKit
 
 struct MapPaneView: View {
-    @AppStorage(AppSettings.mapTypeIndexKey) private var mapTypeIndex = 0
+    @AppStorage(AppSettings.mapConfigurationKey) private var mapConfiguration = 0
     @AppStorage(AppSettings.mapLatitudeKey) private var mapLatitude = 37.7244
     @AppStorage(AppSettings.mapLongitudeKey) private var mapLongitude = -122.4381
     @AppStorage(AppSettings.mapAltitudeKey) private var mapAltitude = 50000.0
@@ -23,8 +23,7 @@ struct MapPaneView: View {
             MapStyleView()
                 .padding(.top)
             ZStack(alignment: .topTrailing) {
-                MapView(mapType: mapTypes[mapTypeIndex],
-                        center: Coords(latitude: mapLatitude,
+                MapView(center: Coords(latitude: mapLatitude,
                                        longitude: mapLongitude),
                         altitude: mapAltitude,
                         reCenter: $reCenter)

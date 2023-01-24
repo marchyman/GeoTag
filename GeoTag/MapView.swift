@@ -14,7 +14,8 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    let mapType: MKMapType
+    @AppStorage(AppSettings.mapConfigurationKey) var mapConfiguration = 0
+
     let center: CLLocationCoordinate2D
     let altitude: Double
     @Binding var reCenter: Bool
@@ -34,11 +35,13 @@ struct MapView: NSViewRepresentable {
                                  fromEyeCoordinate: center,
                                  eyeAltitude: altitude)
         view.showsCompass = true
+        view.register(PinAnnotationView.self,
+                      forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         return view
     }
 
     func updateNSView(_ view: ClickMapView, context: Context) {
-        view.mapType = mapType
+        setMapConfiguration(view)
 
         // handle mostSelected changes
         if vm.mostSelected == nil {
@@ -91,6 +94,19 @@ struct MapView: NSViewRepresentable {
             }
         }
     }
+
+    func setMapConfiguration(_ view: ClickMapView) {
+        switch mapConfiguration {
+        case 0:
+            view.preferredConfiguration = MKStandardMapConfiguration()
+        case 1:
+            view.preferredConfiguration = MKHybridMapConfiguration()
+        case 2:
+            view.preferredConfiguration = MKImageryMapConfiguration()
+        default:
+            break
+        }
+    }
 }
 
 extension MapView {
@@ -114,30 +130,6 @@ extension MapView {
             vm.mapAltitude = mapView.camera.altitude
         }
 
-        // return a pinAnnotationView for a red pin
-
-        func mapView(_ mapView: MKMapView,
-                     viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            let identifier = "pinAnnotation"
-            var annotationView =
-                mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
-            if annotationView != nil {
-                annotationView!.annotation = annotation
-            } else {
-                annotationView = MKPinAnnotationView(annotation: annotation,
-                                                        reuseIdentifier: identifier)
-                if let av = annotationView {
-                    av.isEnabled = true
-                    av.pinTintColor = .red
-                    av.canShowCallout = false
-                    av.isDraggable = true
-                } else {
-                    fatalError("Can't create MKPinAnnotationView")
-                }
-            }
-            return annotationView
-        }
-
         // update the location of a dragged pin
 
         @MainActor
@@ -145,10 +137,18 @@ extension MapView {
                      annotationView view: MKAnnotationView,
                      didChange newState: MKAnnotationView.DragState,
                      fromOldState oldState: MKAnnotationView.DragState) {
-            if let id = vm.mostSelected,
-               (newState == .ending) {
-                vm.update(id: id, location: view.annotation!.coordinate)
-                vm.undoManager.setActionName("set location (drag)")
+            if let id = vm.mostSelected {
+                switch newState {
+                case .starting:
+                    view.image = NSImage(named: "DragPin")
+                    break
+                case .ending:
+                    view.image = NSImage(named: "Pin")
+                    vm.update(id: id, location: view.annotation!.coordinate)
+                    vm.undoManager.setActionName("set location (drag)")
+                default:
+                    break
+                }
             }
         }
 
@@ -172,10 +172,9 @@ extension MapView {
 #if DEBUG
 struct MapView_Previews : PreviewProvider {
     static var previews: some View {
-        MapView(mapType: .standard,
-               center: CLLocationCoordinate2D(latitude: 37.7244,
-                                            longitude: -122.4381),
-               altitude: 50000.0,
+        MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
+                                               longitude: -122.4381),
+                altitude: 50000.0,
                 reCenter: .constant(false))
             .environmentObject(ViewModel())
     }

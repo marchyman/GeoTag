@@ -8,26 +8,8 @@
 import SwiftUI
 import MapKit
 
-let mapTypes = [MKMapType.standard, MKMapType.satellite, MKMapType.hybrid]
-
-/// Extension to map an MKMapType to a String
-extension MKMapType {
-    var name: String {
-        switch self {
-        case .standard:
-            return "Map"
-        case .hybrid:
-            return "Hybrid"
-        case .satellite:
-            return "Satellite"
-        default:
-            return "Other"
-        }
-    }
-}
-
 struct MapStyleView: View {
-    @AppStorage(AppSettings.mapTypeIndexKey) private var mapTypeIndex = 0
+    @AppStorage(AppSettings.mapConfigurationKey) private var mapTypeIndex = 0
     @AppStorage(AppSettings.mapLatitudeKey) private var mapLatitude = 37.7244
     @AppStorage(AppSettings.mapLongitudeKey) private var mapLongitude = -122.4381
     @AppStorage(AppSettings.mapAltitudeKey) private var mapAltitude = 50000.0
@@ -38,14 +20,13 @@ struct MapStyleView: View {
     var body: some View {
         HStack {
             Picker("Map Type", selection: $mapTypeIndex) {
-                ForEach(0 ..< mapTypes.count, id: \.self) { index in
-                    Text(mapTypes[index].name).tag(index)
-                }
+                Text("Standard").tag(0)
+                Text("Hybrid").tag(1)
+                Text("Satellite").tag(2)
             }
             .labelsHidden()
             .pickerStyle(.segmented)
-            .background(RoundedRectangle(cornerRadius: 5)
-                .fill(Color(white: 0.7)))
+            .background(RoundedRectangle(cornerRadius: 5).fill(Color(white: 0.7)))
             .padding(.leading)
             .frame(maxWidth: 250)
 

@@ -28,6 +28,7 @@
 		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
 		4969ACA32963DFE700BBC219 /* ChangeDateTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */; };
 		4969ACA62963E05000BBC219 /* ChangeLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA52963E05000BBC219 /* ChangeLocationView.swift */; };
+		4977988A297F6F7F0081A776 /* PinAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49779889297F6F7F0081A776 /* PinAnnotationView.swift */; };
 		4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
@@ -100,6 +101,7 @@
 		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
 		4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeDateTimeView.swift; sourceTree = "<group>"; };
 		4969ACA52963E05000BBC219 /* ChangeLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLocationView.swift; sourceTree = "<group>"; };
+		49779889297F6F7F0081A776 /* PinAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinAnnotationView.swift; sourceTree = "<group>"; };
 		4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLToImageHelper.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
@@ -343,6 +345,7 @@
 				49E29EFB2951009500804B74 /* MapPaneView.swift */,
 				49E29EFD295100A600804B74 /* MapStyleView.swift */,
 				49E29EFF2951011300804B74 /* MapView.swift */,
+				49779889297F6F7F0081A776 /* PinAnnotationView.swift */,
 				494FED0F2956BC97005FFC23 /* ClickMapView.swift */,
 				49E29F02295101D600804B74 /* MapSearchView.swift */,
 			);
@@ -486,6 +489,7 @@
 				4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */,
 				49E29F03295101D600804B74 /* MapSearchView.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
+				4977988A297F6F7F0081A776 /* PinAnnotationView.swift in Sources */,
 				498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,

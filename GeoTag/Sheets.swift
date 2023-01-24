@@ -13,52 +13,33 @@ let sheetMinHeight = 400.0
 
 // types of sheets that may be attached to the content view
 
-enum SheetType: Identifiable {
-    var id: Self {
-        return self
-    }
-
+enum SheetType: Identifiable, View {
     case gpxFileNameSheet
     case duplicateImageSheet
     case noBackupFolderSheet
     case savingUpdatesSheet
     case saveErrorSheet
     case unexpectedErrorSheet
-}
 
-// select a view depending upon the current app state sheet type
-
-struct ContentViewSheet: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var type: SheetType
+    var id: Self {
+        return self
+    }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Spacer()
-                Button("Dismiss") {
-                    dismiss()
-                }
-                .keyboardShortcut(.defaultAction)
-            }
-            switch type {
-            case .gpxFileNameSheet:
-                GpxLoadView()
-            case .duplicateImageSheet:
-                DuplicateImageView()
-            case .noBackupFolderSheet:
-                NoBackupFolderView()
-            case .savingUpdatesSheet:
-                SavingUpdatesView()
-            case .saveErrorSheet:
-                SaveErrorView()
-            case .unexpectedErrorSheet:
-                UnexpectedErrorView()
-            }
+        switch self {
+        case .gpxFileNameSheet:
+            GpxLoadView().withDismiss()
+        case .duplicateImageSheet:
+            DuplicateImageView().withDismiss()
+        case .noBackupFolderSheet:
+            NoBackupFolderView().withDismiss()
+        case .savingUpdatesSheet:
+            SavingUpdatesView().withDismiss()
+        case .saveErrorSheet:
+            SaveErrorView().withDismiss()
+        case .unexpectedErrorSheet:
+            UnexpectedErrorView().withDismiss()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding()
     }
 }
 
@@ -194,4 +175,31 @@ struct UnexpectedErrorView: View {
         .frame(maxWidth: 400, minHeight: 100, maxHeight: .infinity)
     }
 
+}
+
+// Add a dismiss button to the top of the given content.
+
+struct DismissModifier: ViewModifier {
+    @Environment(\.dismiss) var dismiss
+
+    func body(content: Content) -> some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Spacer()
+                Button("Dismiss") {
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+            content
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .padding()
+    }
+}
+
+extension View {
+    func withDismiss() -> some View {
+        self.modifier(DismissModifier())
+    }
 }
