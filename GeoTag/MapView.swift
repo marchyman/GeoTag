@@ -137,10 +137,18 @@ extension MapView {
                      annotationView view: MKAnnotationView,
                      didChange newState: MKAnnotationView.DragState,
                      fromOldState oldState: MKAnnotationView.DragState) {
-            if let id = vm.mostSelected,
-               (newState == .ending) {
-                vm.update(id: id, location: view.annotation!.coordinate)
-                vm.undoManager.setActionName("set location (drag)")
+            if let id = vm.mostSelected {
+                switch newState {
+                case .starting:
+                    view.image = NSImage(named: "DragPin")
+                    break
+                case .ending:
+                    view.image = NSImage(named: "Pin")
+                    vm.update(id: id, location: view.annotation!.coordinate)
+                    vm.undoManager.setActionName("set location (drag)")
+                default:
+                    break
+                }
             }
         }
 
