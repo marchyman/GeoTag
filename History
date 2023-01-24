@@ -1,3 +1,24 @@
+## 4.99.x (Version 5 Beta Releases)
+
+### Fixes/changes since initial Beta
+
+* map search bar alignment (trailing)
+* Add command-L as shortcut for locn from track
+* do not apply track log points when time +/- 6 hours of image time
+* Fixed multiple sheets when loading good and bad track logs
+* Fixed crash -- missing environment object when scrolling table
+* Open With now works
+* Use custom pin that changes during drag operations. Replaces deprecated code.
+* internal changes
+  - remove "Publishing changes from within view updates is not allowed" warnings
+    due to SwiftUI sometimes having problems binding to Published variables.
+  - Depricated code to change map types removed.  Now using map configuaration
+
+Known Bugs
+
+* Right pane divider location on start -- partially fixed
+* When Metal validation enabled program crashes when divider is moved
+
 ## 4.15
 
 ### Updates
