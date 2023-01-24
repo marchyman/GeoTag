@@ -35,6 +35,8 @@ struct MapView: NSViewRepresentable {
                                  fromEyeCoordinate: center,
                                  eyeAltitude: altitude)
         view.showsCompass = true
+        view.register(PinAnnotationView.self,
+                      forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         return view
     }
 
@@ -126,30 +128,6 @@ extension MapView {
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
             vm.mapCenter = mapView.camera.centerCoordinate
             vm.mapAltitude = mapView.camera.altitude
-        }
-
-        // return a pinAnnotationView for a red pin
-
-        func mapView(_ mapView: MKMapView,
-                     viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            let identifier = "pinAnnotation"
-            var annotationView =
-                mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
-            if annotationView != nil {
-                annotationView!.annotation = annotation
-            } else {
-                annotationView = MKPinAnnotationView(annotation: annotation,
-                                                     reuseIdentifier: identifier)
-                if let av = annotationView {
-                    av.isEnabled = true
-                    av.pinTintColor = .red
-                    av.canShowCallout = false
-                    av.isDraggable = true
-                } else {
-                    fatalError("Can't create MKPinAnnotationView")
-                }
-            }
-            return annotationView
         }
 
         // update the location of a dragged pin
