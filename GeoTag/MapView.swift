@@ -139,7 +139,7 @@ extension MapView {
                 annotationView!.annotation = annotation
             } else {
                 annotationView = MKPinAnnotationView(annotation: annotation,
-                                                        reuseIdentifier: identifier)
+                                                     reuseIdentifier: identifier)
                 if let av = annotationView {
                     av.isEnabled = true
                     av.pinTintColor = .red
