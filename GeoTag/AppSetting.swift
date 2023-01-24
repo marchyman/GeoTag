@@ -23,7 +23,7 @@ enum AppSettings {
     static let addTagKey = "AddTagKey"
     static let tagKey = "TagKey"
     static let coordFormatKey = "CoordFormatKey"
-    static let mapTypeIndexKey = "MapTypeIndexKey"
+    static let mapConfigurationKey = "MapConfigurationKey"
     static let mapLatitudeKey = "MapLatitudeKey"
     static let mapLongitudeKey = "MapLongitudeKey"
     static let mapAltitudeKey = "MapAltitudeKey"

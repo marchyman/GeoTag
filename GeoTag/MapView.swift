@@ -14,7 +14,8 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    let mapType: MKMapType
+    @AppStorage(AppSettings.mapConfigurationKey) var mapConfiguration = 0
+
     let center: CLLocationCoordinate2D
     let altitude: Double
     @Binding var reCenter: Bool
@@ -38,7 +39,7 @@ struct MapView: NSViewRepresentable {
     }
 
     func updateNSView(_ view: ClickMapView, context: Context) {
-        view.mapType = mapType
+        setMapConfiguration(view)
 
         // handle mostSelected changes
         if vm.mostSelected == nil {
@@ -89,6 +90,19 @@ struct MapView: NSViewRepresentable {
                 view.setCenter(vm.mapCenter, animated: false)
                 reCenter = false
             }
+        }
+    }
+
+    func setMapConfiguration(_ view: ClickMapView) {
+        switch mapConfiguration {
+        case 0:
+            view.preferredConfiguration = MKStandardMapConfiguration()
+        case 1:
+            view.preferredConfiguration = MKHybridMapConfiguration()
+        case 2:
+            view.preferredConfiguration = MKImageryMapConfiguration()
+        default:
+            break
         }
     }
 }
@@ -172,10 +186,9 @@ extension MapView {
 #if DEBUG
 struct MapView_Previews : PreviewProvider {
     static var previews: some View {
-        MapView(mapType: .standard,
-               center: CLLocationCoordinate2D(latitude: 37.7244,
-                                            longitude: -122.4381),
-               altitude: 50000.0,
+        MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
+                                               longitude: -122.4381),
+                altitude: 50000.0,
                 reCenter: .constant(false))
             .environmentObject(ViewModel())
     }
