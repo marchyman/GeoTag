@@ -14,12 +14,14 @@ extension GeoTagApp {
 
     var toolbarCommandGroup: some Commands {
         CommandGroup(replacing: .toolbar) {
-            Button {
-                vm.hideInvalidImages.toggle()
-            } label: {
-                Text("\(showOrHide()) Disabled Files")
-            }
+            Section {
+                Button {
+                    vm.hideInvalidImages.toggle()
+                } label: {
+                    Text("\(showOrHide()) Disabled Files")
+                }
                 .keyboardShortcut("d")
+            }
 
         }
     }
