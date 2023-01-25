@@ -39,7 +39,7 @@ extension ViewModel {
     /// not be flagged as a valid image.
 
     func prepareForEdit(inputURLs: [URL]) {
-        @AppStorage(AppSettings.disablePairedJpegs) var disablePairedJpegs = false
+        @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
 
         showingProgressView = true
 
