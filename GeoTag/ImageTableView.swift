@@ -16,7 +16,6 @@ let coordMinWidth = 120.0
 // rely on the Environment.  Explicitly pass the ViewModel to the column views.
 
 struct ImageTableView: View {
-    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
     @EnvironmentObject var vm: ViewModel
     @Environment(\.openWindow) var openWindow
 
@@ -47,7 +46,7 @@ struct ImageTableView: View {
             .width(min: coordMinWidth)
         } rows: {
             ForEach(vm.images) { image in
-                if image.isValid || !hideInvalidImages {
+                if image.isValid || !vm.hideInvalidImages {
                     TableRow(image)
                         .contextMenu {
                             ContextMenuView(context: image.id)

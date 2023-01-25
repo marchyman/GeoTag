@@ -14,12 +14,17 @@ extension GeoTagApp {
 
     var toolbarCommandGroup: some Commands {
         CommandGroup(replacing: .toolbar) {
-            Button("Hide disabled Images") {
-                @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
-
-                hideInvalidImages.toggle()
+            Button {
+                vm.hideInvalidImages.toggle()
+            } label: {
+                Text("\(showOrHide()) Disabled Files")
             }
                 .keyboardShortcut("d")
+
         }
+    }
+
+    private func showOrHide() -> String {
+        return vm.hideInvalidImages ? "Show" : "Hide"
     }
 }
