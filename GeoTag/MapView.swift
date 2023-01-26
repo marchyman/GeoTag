@@ -44,28 +44,24 @@ struct MapView: NSViewRepresentable {
         setMapConfiguration(view)
 
         // handle mostSelected changes
-        if vm.mostSelected == nil {
-            view.removeAnnotation(mapPin)
-            mapPin.coordinate = Coords()
-        } else {
-            if let location = vm[vm.mostSelected!].location {
-                if location != mapPin.coordinate {
-                    // location changed
-                    view.removeAnnotation(mapPin)
-                    mapPin.coordinate = location
-                    view.addAnnotation(mapPin)
-                    // make sure pin is in view
-                    if !view.visibleMapRect.contains(MKMapPoint(mapPin.coordinate)) {
-                        // I don't know of a better way?
-                        DispatchQueue.main.async {
-                            view.setCenter(mapPin.coordinate, animated: false)
-                        }
+        if let id = vm.mostSelected,
+           let location = vm[id].location {
+            if location != mapPin.coordinate {
+                // location changed
+                view.removeAnnotation(mapPin)
+                mapPin.coordinate = location
+                view.addAnnotation(mapPin)
+                // make sure pin is in view
+                if !view.visibleMapRect.contains(MKMapPoint(mapPin.coordinate)) {
+                    // I don't know of a better way?
+                    DispatchQueue.main.async {
+                        view.setCenter(mapPin.coordinate, animated: false)
                     }
                 }
-            } else {
-                view.removeAnnotation(mapPin)
-                mapPin.coordinate = Coords()
             }
+        } else {
+            view.removeAnnotation(mapPin)
+            mapPin.coordinate = Coords()
         }
 
         // handle track changes
