@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageNameColumnView: View {
-    let vm: ViewModel
+    @ObservedObject var vm: ViewModel
     let id: ImageModel.ID
 
     var body: some View {
