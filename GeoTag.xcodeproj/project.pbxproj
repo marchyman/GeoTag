@@ -190,8 +190,6 @@
 				49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */,
 				49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */,
 				4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */,
-				4921757A2949863A00A5EA83 /* Gpx.swift */,
-				49BA29B12962676E00B26F03 /* GpxSearch.swift */,
 			);
 			name = "View Model Group";
 			sourceTree = "<group>";
@@ -203,6 +201,15 @@
 				49BD6C922966589E00905B43 /* TimeZoneHelper.swift */,
 			);
 			name = "Adjust Time Zone Group";
+			sourceTree = "<group>";
+		};
+		49777FEF29830D6900ECD5BF /* GPX  Group */ = {
+			isa = PBXGroup;
+			children = (
+				4921757A2949863A00A5EA83 /* Gpx.swift */,
+				49BA29B12962676E00B26F03 /* GpxSearch.swift */,
+			);
+			name = "GPX  Group";
 			sourceTree = "<group>";
 		};
 		498A7354294EA67A00C62B14 /* Image Table Group */ = {
@@ -311,6 +318,7 @@
 				498A735A294EC5F800C62B14 /* App Group */,
 				4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */,
 				490A17A22960B32700ACA9FD /* View Model Group */,
+				49777FEF29830D6900ECD5BF /* GPX  Group */,
 				498A735C294EC7BC00C62B14 /* Image Model Group */,
 				498A735B294EC78700C62B14 /* Settings Group */,
 				498A735D294EC7D800C62B14 /* Content View Group */,
