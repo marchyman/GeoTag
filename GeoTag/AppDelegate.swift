@@ -24,7 +24,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     // Process open with...
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        print(">> \(urls)")
         DispatchQueue.main.async() {
             self.viewModel?.prepareForEdit(inputURLs: urls)
         }
