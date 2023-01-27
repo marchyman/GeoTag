@@ -2,6 +2,8 @@
 
 ### Fixes/changes since initial Beta
 
+* Show/Hide pins for all selected images, not just the most selected image
+* Show/Hide grayed out images
 * map search bar alignment (trailing)
 * Add command-L as shortcut for locn from track
 * do not apply track log points when time +/- 6 hours of image time
@@ -9,6 +11,7 @@
 * Fixed crash -- missing environment object when scrolling table
 * Open With now works
 * Use custom pin that changes during drag operations. Replaces deprecated code.
+* fixed table view bugs, a side effects of fixing the table crash
 * internal changes
   - remove "Publishing changes from within view updates is not allowed" warnings
     due to SwiftUI sometimes having problems binding to Published variables.
