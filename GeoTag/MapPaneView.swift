@@ -15,6 +15,8 @@ struct MapPaneView: View {
     @AppStorage(AppSettings.mapAltitudeKey) private var mapAltitude = 50000.0
 
     @EnvironmentObject var vm: ViewModel
+    @State private var mainPin: MKPointAnnotation?
+    @State private var otherPins = [MKPointAnnotation]()
     @State private var searchString = ""
     @State private var reCenter = false
 
@@ -26,7 +28,9 @@ struct MapPaneView: View {
                 MapView(center: Coords(latitude: mapLatitude,
                                        longitude: mapLongitude),
                         altitude: mapAltitude,
-                        reCenter: $reCenter)
+                        reCenter: $reCenter,
+                        mainPin: $mainPin,
+                        otherPins: $otherPins)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(5)
                 GeometryReader {geometry in
@@ -40,6 +44,37 @@ struct MapPaneView: View {
                 .padding()
             }
         }
+        .onChange(of: vm.mostSelected) { mainPinChange(id: $0) }
+        .onChange(of: vm.selection) { otherPinsChange(selection: $0) }
+    }
+
+
+    func mainPinChange(id: ImageModel.ID?) {
+        if let id,
+           let location = vm[id].location {
+            if location != mainPin?.coordinate {
+                if mainPin == nil {
+                    mainPin = MKPointAnnotation()
+                }
+                mainPin?.coordinate = location
+            }
+        } else {
+            mainPin = nil
+        }
+    }
+
+    // create pins for other selected items that have a location
+
+    func otherPinsChange(selection: Set<ImageModel.ID>) {
+        var pins = [MKPointAnnotation]()
+        for id in selection.filter({ $0 != vm.mostSelected
+                                     && vm[$0].location != nil }) {
+            let pin = MKPointAnnotation()
+            pin.title = "other"
+            pin.coordinate = vm[id].location!
+            pins.append(pin)
+        }
+        otherPins = pins
     }
 
     // The work of searching the map is done here as this view is parent

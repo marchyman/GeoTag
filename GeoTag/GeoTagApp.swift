@@ -29,6 +29,7 @@ struct GeoTagApp: App {
             saveItemCommandGroup
             undoRedoCommandGroup
             pasteBoardCommandGroup
+            toolbarCommandGroup
             helpCommandGroup
         }
 

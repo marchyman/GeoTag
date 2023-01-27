@@ -11,7 +11,7 @@ struct ImageLatitudeColumnView: View {
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
     @State private var showPopover = false
 
-    let vm: ViewModel
+    @ObservedObject var vm: ViewModel
     let id: ImageModel.ID
 
     var body: some View {

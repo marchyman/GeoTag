@@ -10,16 +10,16 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var vm: ViewModel
 
-    @AppStorage(AppSettings.disablePairedJpegs) var disablePairedJpegs = false
+    @AppStorage(AppSettings.addTagKey) var addTag = false
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
-    @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
-    @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
-    @AppStorage(AppSettings.addTagKey) var addTag = false
     @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
+    @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+    @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
     var body: some View {
         VStack {

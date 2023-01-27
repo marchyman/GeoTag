@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageTimestampColumnView: View {
-    let vm: ViewModel
+    @ObservedObject var vm: ViewModel
     let id: ImageModel.ID
     @State private var showPopover = false
 

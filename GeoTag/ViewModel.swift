@@ -36,6 +36,7 @@ final class ViewModel: ObservableObject {
 
     // Images to edit.
     @Published var images = [ImageModel]()
+    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
 
     // A second save can not be triggered while a save is in progress.
     // App termination is denied, too.
@@ -65,6 +66,7 @@ final class ViewModel: ObservableObject {
     // Selected Image(s) by ID and the most selected image
     @Published var selection = Set<ImageModel.ID>()
     @Published var mostSelected: ImageModel.ID?
+    @Published var onlyMostSelected = true
 
     // State that changes when a menu item is picked.
     @Published var selectedMenuAction: MenuAction = .none

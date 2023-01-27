@@ -16,7 +16,7 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can use GeoTag
 version 4.15.
 
-## 4.99.2 [3rd Beta, will be GeoTag 5 upon full release]
+## 4.99.3 [4th Beta, will be GeoTag 5 upon full release]
 
 ### Version 5 Updates 
 
@@ -27,6 +27,10 @@ version 4.15.
 * User option to enable/disable the jpeg part of a raw/jpeg pair
 
 * User option to add a finder tag to updated images.
+
+* User option to show/hide ignored files
+
+* User option to show/hide pins for all selected images
 
 * The function to interpolate image location was removed.
 
