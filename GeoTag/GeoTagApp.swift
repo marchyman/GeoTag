@@ -19,10 +19,11 @@ struct GeoTagApp: App {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .background(WindowAccessor(window: $vm.mainWindow))
-                .environmentObject(vm)
                 .onAppear {
                     appDelegate.viewModel = vm
                 }
+                .environmentObject(vm)
+                .environmentObject(MapViewModel.shared)
         }
         .commands {
             newItemCommandGroup

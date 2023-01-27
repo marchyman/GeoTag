@@ -9,12 +9,9 @@ import SwiftUI
 import MapKit
 
 struct MapPaneView: View {
-    @AppStorage(AppSettings.mapConfigurationKey) private var mapConfiguration = 0
-    @AppStorage(AppSettings.mapLatitudeKey) private var mapLatitude = 37.7244
-    @AppStorage(AppSettings.mapLongitudeKey) private var mapLongitude = -122.4381
-    @AppStorage(AppSettings.mapAltitudeKey) private var mapAltitude = 50000.0
-
     @EnvironmentObject var vm: ViewModel
+    @ObservedObject var mapViewModel = MapViewModel.shared
+
     @State private var mainPin: MKPointAnnotation?
     @State private var otherPins = [MKPointAnnotation]()
     @State private var searchString = ""
@@ -25,9 +22,9 @@ struct MapPaneView: View {
             MapStyleView()
                 .padding(.top)
             ZStack(alignment: .topTrailing) {
-                MapView(center: Coords(latitude: mapLatitude,
-                                       longitude: mapLongitude),
-                        altitude: mapAltitude,
+                MapView(center: Coords(latitude: mapViewModel.initialMapLatitude,
+                                       longitude: mapViewModel.initialMapLongitude),
+                        altitude: mapViewModel.initialMapAltitude,
                         reCenter: $reCenter,
                         mainPin: $mainPin,
                         otherPins: $otherPins)
@@ -88,7 +85,7 @@ struct MapPaneView: View {
             request.naturalLanguageQuery = searchString
             let span = MKCoordinateSpan(latitudeDelta: 90.0,
                                         longitudeDelta: 180.0)
-            request.region = MKCoordinateRegion(center: vm.mapCenter,
+            request.region = MKCoordinateRegion(center: mapViewModel.currentMapCenter,
                                                 span: span)
             let searcher = MKLocalSearch(request: request)
             Task {
@@ -97,7 +94,7 @@ struct MapPaneView: View {
                        let location = response?.mapItems[0].placemark.location {
                         if vm.selection.isEmpty {
                             // nothing selected, re center the map
-                            vm.mapCenter = location.coordinate
+                            mapViewModel.currentMapCenter = location.coordinate
                             reCenter = true
                         } else {
                             // update all selected items

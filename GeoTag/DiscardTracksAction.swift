@@ -20,9 +20,9 @@ extension ViewModel {
     
     func discardTracksAction() {
         gpxTracks = []
-        mapLines = []
-        mapSpan = nil
-        refreshTracks = true
+        MapViewModel.shared.mapLines = []
+        MapViewModel.shared.mapSpan = nil
+        MapViewModel.shared.refreshTracks = true
     }
 }
 

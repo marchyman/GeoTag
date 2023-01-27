@@ -9,17 +9,12 @@ import SwiftUI
 import MapKit
 
 struct MapStyleView: View {
-    @AppStorage(AppSettings.mapConfigurationKey) private var mapTypeIndex = 0
-    @AppStorage(AppSettings.mapLatitudeKey) private var mapLatitude = 37.7244
-    @AppStorage(AppSettings.mapLongitudeKey) private var mapLongitude = -122.4381
-    @AppStorage(AppSettings.mapAltitudeKey) private var mapAltitude = 50000.0
-
-    @EnvironmentObject var vm: ViewModel
+    @ObservedObject var mapViewModel = MapViewModel.shared
     @State private var showPopover = false
 
     var body: some View {
         HStack {
-            Picker("Map Type", selection: $mapTypeIndex) {
+            Picker("Map Type", selection: $mapViewModel.mapConfiguration) {
                 Text("Standard").tag(0)
                 Text("Hybrid").tag(1)
                 Text("Satellite").tag(2)
@@ -33,9 +28,9 @@ struct MapStyleView: View {
             Spacer()
 
             Button("Save map location") {
-                mapLatitude = vm.mapCenter.latitude
-                mapLongitude = vm.mapCenter.longitude
-                mapAltitude = vm.mapAltitude
+                mapViewModel.initialMapLatitude = mapViewModel.currentMapCenter.latitude
+                mapViewModel.initialMapLongitude = mapViewModel.currentMapCenter.longitude
+                mapViewModel.initialMapAltitude = mapViewModel.currentMapAltitude
                 showPopover.toggle()
             }
             .padding(.trailing)

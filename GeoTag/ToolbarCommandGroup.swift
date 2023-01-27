@@ -23,7 +23,7 @@ extension GeoTagApp {
                 .keyboardShortcut("d")
 
                 Button {
-                    vm.onlyMostSelected.toggle()
+                    MapViewModel.shared.onlyMostSelected.toggle()
                 } label: {
                     Text(pinOption)
                 }
@@ -37,7 +37,7 @@ extension GeoTagApp {
     }
 
     var pinOption: String {
-        vm.onlyMostSelected
+        MapViewModel.shared.onlyMostSelected
         ? "Show pins for all selected images"
         : "Show pin only for most selected image"
     }

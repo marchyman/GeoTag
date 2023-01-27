@@ -79,17 +79,17 @@ extension ViewModel {
                     }
                     let mapLine = MKPolyline(coordinates: &trackCoords,
                                              count: segment.points.count)
-                    mapLines.append(mapLine)
+                    MapViewModel.shared.mapLines.append(mapLine)
                     newOverlay = true
                 }
             }
         }
         if newOverlay {
-            mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
-                                       longitudeDelta:  maxlon - minlon)
-            mapCenter = Coords(latitude: (minlat + maxlat)/2,
-                               longitude: (minlon + maxlon)/2)
-            refreshTracks = true
+            MapViewModel.shared.mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
+                                                           longitudeDelta:  maxlon - minlon)
+            MapViewModel.shared.currentMapCenter = Coords(latitude: (minlat + maxlat)/2,
+                                                          longitude: (minlon + maxlon)/2)
+            MapViewModel.shared.refreshTracks = true
         }
     }
 

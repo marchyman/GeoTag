@@ -14,7 +14,7 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    @AppStorage(AppSettings.mapConfigurationKey) var mapConfiguration = 0
+    @ObservedObject var mapViewModel = MapViewModel.shared
 
     let center: CLLocationCoordinate2D
     let altitude: Double
@@ -42,7 +42,7 @@ struct MapView: NSViewRepresentable {
     func updateNSView(_ view: ClickMapView, context: Context) {
         setMapConfiguration(view)
         mainPinChanges(for: view)
-        if !vm.onlyMostSelected {
+        if !mapViewModel.onlyMostSelected {
             otherPinChanges(for: view)
         }
         trackChanges(for: view)
@@ -50,7 +50,7 @@ struct MapView: NSViewRepresentable {
         // re-center the map
         if reCenter {
             DispatchQueue.main.async {
-                view.setCenter(vm.mapCenter, animated: false)
+                view.setCenter(mapViewModel.currentMapCenter, animated: false)
                 reCenter = false
             }
         }
@@ -59,7 +59,7 @@ struct MapView: NSViewRepresentable {
     // Change the look of the map
 
     func setMapConfiguration(_ view: ClickMapView) {
-        switch mapConfiguration {
+        switch mapViewModel.mapConfiguration {
         case 0:
             view.preferredConfiguration = MKStandardMapConfiguration()
         case 1:
@@ -126,19 +126,19 @@ struct MapView: NSViewRepresentable {
     // draw tracks on the map when needed
 
     func trackChanges(for view: ClickMapView) {
-        if vm.refreshTracks {
+        if mapViewModel.refreshTracks {
             let overlays = view.overlays
             if !overlays.isEmpty {
                 view.removeOverlays(overlays)
             }
-            view.addOverlays(vm.mapLines)
-            if let span = vm.mapSpan {
+            view.addOverlays(mapViewModel.mapLines)
+            if let span = mapViewModel.mapSpan {
                 // I still don't know of a better way?
                 DispatchQueue.main.async {
-                    view.setRegion(MKCoordinateRegion(center: vm.mapCenter,
+                    view.setRegion(MKCoordinateRegion(center: mapViewModel.currentMapCenter,
                                                       span: span),
                                    animated: false)
-                    vm.refreshTracks = false
+                    mapViewModel.refreshTracks = false
                 }
             }
         }
@@ -150,8 +150,8 @@ extension MapView {
     // Coordinator class conforming to MKMapViewDelegate
 
     class Coordinator: NSObject, MKMapViewDelegate {
-        @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
-        @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
+        let mapViewModel = MapViewModel.shared
+
         let vm: ViewModel
 
         init(vm: ViewModel) {
@@ -182,8 +182,8 @@ extension MapView {
 
         @MainActor
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-            vm.mapCenter = mapView.camera.centerCoordinate
-            vm.mapAltitude = mapView.camera.altitude
+            mapViewModel.currentMapCenter = mapView.camera.centerCoordinate
+            mapViewModel.currentMapAltitude = mapView.camera.altitude
         }
 
         // update the location of a dragged pin
@@ -200,6 +200,7 @@ extension MapView {
                     break
                 case .ending:
                     view.image = NSImage(named: "Pin")
+                    print("mapView update")
                     vm.update(id: id, location: view.annotation!.coordinate)
                     vm.undoManager.setActionName("set location (drag)")
                 default:
@@ -214,10 +215,10 @@ extension MapView {
         func mapView(_ mapview: MKMapView,
                      rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             let polyline = overlay as! MKPolyline
-            if vm.mapLines.contains(polyline) {
+            if mapViewModel.mapLines.contains(polyline) {
                 let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = NSColor(trackColor)
-                renderer.lineWidth = CGFloat(trackWidth)
+                renderer.strokeColor = NSColor(mapViewModel.trackColor)
+                renderer.lineWidth = CGFloat(mapViewModel.trackWidth)
                 return renderer
             }
             return MKOverlayRenderer(overlay: overlay)

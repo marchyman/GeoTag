@@ -66,7 +66,6 @@ final class ViewModel: ObservableObject {
     // Selected Image(s) by ID and the most selected image
     @Published var selection = Set<ImageModel.ID>()
     @Published var mostSelected: ImageModel.ID?
-    @Published var onlyMostSelected = true
 
     // State that changes when a menu item is picked.
     @Published var selectedMenuAction: MenuAction = .none
@@ -83,14 +82,6 @@ final class ViewModel: ObservableObject {
     var gpxGoodFileNames = [String]()
     var gpxBadFileNames = [String]()
 
-    // Keep track of the coords for the center of the map
-    var mapCenter = Coords()
-    var mapAltitude = 50000.0
-
-    // Map Tracks and the containing span of the last track added
-    var mapLines = [MKPolyline]()
-    var mapSpan: MKCoordinateSpan?
-    @Published var refreshTracks = false
 
     // The URL of the folder where image backups are save when backups
     // are enabled.  The URL comes from a security scoped bookmark in
