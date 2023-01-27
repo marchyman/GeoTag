@@ -95,7 +95,7 @@ final class ViewModel: ObservableObject {
     // The URL of the folder where image backups are save when backups
     // are enabled.  The URL comes from a security scoped bookmark in
     // AppStorage.
-    @Published var backupURL: URL?
+    var backupURL: URL?
 
     // The folder containing backups is scanned at startup and the user
     // is given the option to remove backups older than 7 days.

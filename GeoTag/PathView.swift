@@ -10,7 +10,7 @@ import SwiftUI
 // Make NSPathControl available with SwiftUI
 
 struct PathView: NSViewRepresentable {
-    @EnvironmentObject var vm: ViewModel
+    @Binding var url: URL?
 
     class Coordinator: NSObject, NSPathControlDelegate {
         @Binding var backupURL: URL?
@@ -32,7 +32,7 @@ struct PathView: NSViewRepresentable {
     // Make the view coordinator.
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(backupURL: $vm.backupURL)
+        return Coordinator(backupURL: $url)
     }
 
     func makeNSView(context: Context) -> NSPathControl {
@@ -46,13 +46,13 @@ struct PathView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: NSPathControl, context: Context) {
-        nsView.url = vm.backupURL
+        nsView.url = url
     }
 }
 
 struct PathView_Previews: PreviewProvider {
+    @State static var url: URL?
     static var previews: some View {
-        PathView()
-            .environmentObject(ViewModel())
+        PathView(url: $url)
     }
 }

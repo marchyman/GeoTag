@@ -21,6 +21,12 @@ struct SettingsView: View {
     @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
+    @State private var backupURL: URL?
+
+    init(backupURL: URL?) {
+        _backupURL = State(initialValue: backupURL)
+    }
+
     var body: some View {
         VStack {
             Text("GeoTag Saved Settings")
@@ -41,10 +47,11 @@ struct SettingsView: View {
                             .padding(.bottom)
                     } else {
                         LabeledContent("Backup folder:") {
-                            PathView()
+                            PathView(url: $backupURL)
                                 .frame(width: 280)
                                 .padding(.bottom)
-                                .onChange(of: vm.backupURL) { url in
+                                .onChange(of: backupURL) { url in
+                                    vm.backupURL = url
                                     if let url {
                                         saveBookmark = vm.getBookmark(from: url)
                                         vm.checkBackupFolder(url)
@@ -143,7 +150,7 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView()
+        SettingsView(backupURL: nil)
             .environmentObject(ViewModel())
     }
 }

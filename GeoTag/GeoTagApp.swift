@@ -43,7 +43,7 @@ struct GeoTagApp: App {
         .commandsRemoved()
 
         Settings {
-            SettingsView()
+            SettingsView(backupURL: vm.backupURL)
                 .frame(width: 600.0, height: 550.0, alignment: .top)
                 .environmentObject(vm)
         }
