@@ -72,7 +72,7 @@ final class ViewModel: ObservableObject {
     @Published var selectedMenuAction: MenuAction = .none
 
     // Tracks displayed on map
-    @Published var gpxTracks = [Gpx]()
+    var gpxTracks = [Gpx]()
 
     // The timezone to use when matching image timestamps to track logs and
     // setting the GPS time stamp when saving images.  When nil the system
