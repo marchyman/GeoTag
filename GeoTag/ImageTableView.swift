@@ -19,11 +19,10 @@ struct ImageTableView: View {
     @EnvironmentObject var vm: ViewModel
     @Environment(\.openWindow) var openWindow
 
-    @State private var selection = Set<ImageModel.ID>()
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
     var body: some View {
-        Table(selection: $selection,
+        Table(selection: $vm.selection,
               sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
                 ImageNameColumnView(vm: vm, id: image.id)
@@ -60,7 +59,7 @@ struct ImageTableView: View {
         .onChange(of: sortOrder) { newOrder in
             vm.images.sort(using: newOrder)
         }
-        .onChange(of: selection) { selection in
+        .onChange(of: vm.selection) { selection in
             vm.selectionChanged(newSelection: selection)
         }
         .onChange(of: vm.selectedMenuAction) { action in
@@ -72,7 +71,6 @@ struct ImageTableView: View {
             vm.prepareForEdit(inputURLs: items)
             return true
         }
-        .link($vm.selection, with: $selection)
     }
 }
 
