@@ -21,6 +21,12 @@ extension GeoTagApp {
                     Text("\(showOrHide()) Disabled Files")
                 }
                 .keyboardShortcut("d")
+
+                Button {
+                    vm.onlyMostSelected.toggle()
+                } label: {
+                    Text(pinOption)
+                }
             }
 
         }
@@ -28,5 +34,11 @@ extension GeoTagApp {
 
     private func showOrHide() -> String {
         return vm.hideInvalidImages ? "Show" : "Hide"
+    }
+
+    var pinOption: String {
+        vm.onlyMostSelected
+        ? "Show pins for all selected images"
+        : "Show pin only for most selected image"
     }
 }

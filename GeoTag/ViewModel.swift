@@ -66,6 +66,7 @@ final class ViewModel: ObservableObject {
     // Selected Image(s) by ID and the most selected image
     @Published var selection = Set<ImageModel.ID>()
     @Published var mostSelected: ImageModel.ID?
+    @Published var onlyMostSelected = true
 
     // State that changes when a menu item is picked.
     @Published var selectedMenuAction: MenuAction = .none
