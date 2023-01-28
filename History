@@ -2,6 +2,7 @@
 
 ### Fixes/changes since initial Beta
 
+* Fix pin colors when showing pins for all selected items.
 * Fix pins not showing when clicking on map
 * Show/Hide pins for all selected images, not just the most selected image
 * Show/Hide grayed out images
