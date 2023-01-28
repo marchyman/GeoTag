@@ -42,6 +42,13 @@ struct ContentView: View {
             }
         }
 
+        // drop destination
+        .dropDestination(for: URL.self) {items, location in
+            vm.prepareForEdit(inputURLs: items)
+            return true
+        }
+
+
         // sheets
         .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in
             sheet

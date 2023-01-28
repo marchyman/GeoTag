@@ -23,7 +23,6 @@ struct GeoTagApp: App {
                     appDelegate.viewModel = vm
                 }
                 .environmentObject(vm)
-                .environmentObject(MapViewModel.shared)
         }
         .commands {
             newItemCommandGroup

@@ -67,10 +67,6 @@ struct ImageTableView: View {
                 vm.menuAction(action, openWindow: openWindow)
             }
         }
-        .dropDestination(for: URL.self) {items, location in
-            vm.prepareForEdit(inputURLs: items)
-            return true
-        }
     }
 }
 
