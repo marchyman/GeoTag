@@ -43,12 +43,16 @@ struct MapPaneView: View {
     }
 
 
+    // create an annotation for the main pin.  It's title is set to the
+    // name of the pin image that will represent the pin on the map.
+
     func mainPinChange(id: ImageModel.ID?) {
         if let id,
            let location = vm[id].location {
             if location != mapViewModel.mainPin?.coordinate {
                 if mapViewModel.mainPin == nil {
                     mapViewModel.mainPin = MKPointAnnotation()
+                    mapViewModel.mainPin?.title = "Pin"
                 }
                 mapViewModel.mainPin?.coordinate = location
             }
@@ -57,14 +61,15 @@ struct MapPaneView: View {
         }
     }
 
-    // create pins for other selected items that have a location
+    // create pins for other selected items that have a location.  Their
+    // title also names the image that represents the pin on the map.
 
     func otherPinsChange(selection: Set<ImageModel.ID>) {
         var pins = [MKPointAnnotation]()
         for id in selection.filter({ $0 != vm.mostSelected
                                      && vm[$0].location != nil }) {
             let pin = MKPointAnnotation()
-            pin.title = "other"
+            pin.title = "OtherPin"
             pin.coordinate = vm[id].location!
             pins.append(pin)
         }

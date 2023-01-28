@@ -17,7 +17,6 @@ let coordMinWidth = 120.0
 
 struct ImageTableView: View {
     @EnvironmentObject var vm: AppViewModel
-    @Environment(\.openWindow) var openWindow
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
@@ -61,11 +60,6 @@ struct ImageTableView: View {
         }
         .onChange(of: vm.selection) { selection in
             vm.selectionChanged(newSelection: selection)
-        }
-        .onChange(of: vm.selectedMenuAction) { action in
-            if action != .none {
-                vm.menuAction(action, openWindow: openWindow)
-            }
         }
     }
 }

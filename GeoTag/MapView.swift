@@ -38,9 +38,7 @@ struct MapView: NSViewRepresentable {
     func updateNSView(_ view: ClickMapView, context: Context) {
         setMapConfiguration(view)
         mainPinChanges(for: view)
-        if !mapViewModel.onlyMostSelected {
-            otherPinChanges(for: view)
-        }
+        otherPinChanges(for: view)
         trackChanges(for: view)
 
         // re-center the map
@@ -70,12 +68,9 @@ struct MapView: NSViewRepresentable {
     // map pin changes for the most selected item
 
     func mainPinChanges(for view: ClickMapView) {
-        // remove all annotations if there is no pin to place
+        // Nothing to do if there is no main pin. This is OK as any exising
+        // pin view will be removed when processing other pin changes.
         if mapViewModel.mainPin == nil {
-            let annotations = view.annotations
-            if !annotations.isEmpty {
-                view.removeAnnotations(annotations)
-            }
             return
         }
 
@@ -97,7 +92,7 @@ struct MapView: NSViewRepresentable {
     func otherPinChanges(for view: ClickMapView) {
         let oldAnnotations: [MKAnnotation]
 
-        if mapViewModel.otherPins.isEmpty {
+        if mapViewModel.onlyMostSelected || mapViewModel.otherPins.isEmpty {
             // remove all annotation save any that match the main pin
             oldAnnotations = view.annotations.filter {
                 $0.coordinate != mapViewModel.mainPin?.coordinate
@@ -148,33 +143,32 @@ struct MapView: NSViewRepresentable {
     }
 }
 
+// coordinator/delegate
+
 extension MapView {
 
     // Coordinator class conforming to MKMapViewDelegate
 
     class Coordinator: NSObject, MKMapViewDelegate {
-        let mapViewModel = MapViewModel.shared
+        @ObservedObject var mapViewModel = MapViewModel.shared
         @ObservedObject var vm: AppViewModel
 
         init(vm: AppViewModel) {
             self.vm = vm
         }
 
-        // view for annnotation.  I tried registering the pin view in
-        // makeNSVeiw but it didn't pass in the annotation so I couldn't
-        // tell which image type to assign.
+        // view for annnotation.
 
         func mapView(_ mapView: MKMapView,
                      viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if (annotation is MKUserLocation) {
                 return nil
             }
-            let identifier = annotation.title == nil ? "main" : "other"
-            var view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-
+            let id = annotation.title?.flatMap { $0 } ?? "unknown"
+            var view = mapView.dequeueReusableAnnotationView(withIdentifier: id)
             if view == nil {
                 view = PinAnnotationView(annotation: annotation,
-                                         reuseIdentifier: identifier)
+                                         reuseIdentifier: id)
             }
             return view
         }

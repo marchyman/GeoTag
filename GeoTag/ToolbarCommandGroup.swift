@@ -11,7 +11,6 @@ import SwiftUI
 // toolbar, but it's in the View menu which is where I want it.
 
 extension GeoTagApp {
-
     var toolbarCommandGroup: some Commands {
         CommandGroup(replacing: .toolbar) {
             Section {
@@ -22,11 +21,7 @@ extension GeoTagApp {
                 }
                 .keyboardShortcut("d")
 
-                Button {
-                    MapViewModel.shared.onlyMostSelected.toggle()
-                } label: {
-                    Text(pinOption)
-                }
+                PinOptionView()
             }
 
         }
@@ -35,10 +30,17 @@ extension GeoTagApp {
     private func showOrHide() -> String {
         return vm.hideInvalidImages ? "Show" : "Hide"
     }
+}
 
-    var pinOption: String {
-        MapViewModel.shared.onlyMostSelected
-        ? "Show pins for all selected images"
-        : "Show pin only for most selected image"
+struct PinOptionView: View {
+    @ObservedObject var mapViewModel = MapViewModel.shared
+
+    var body: some View {
+        Picker("Pin view options…", selection: $mapViewModel.onlyMostSelected) {
+            Text("Show pins for all selected items").tag(false)
+            Text("Show pin for most selected item").tag(true)
+        }
+        .pickerStyle(.menu)
+
     }
 }

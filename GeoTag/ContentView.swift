@@ -13,6 +13,7 @@ let windowBorderColor = Color.gray
 struct ContentView: View {
     @EnvironmentObject var vm: AppViewModel
     @ObservedObject var contentViewModel = ContentViewModel.shared
+    @Environment(\.openWindow) var openWindow
 
     @State private var sheetType: SheetType?
     @State private var presentConfirmation = false
@@ -36,9 +37,15 @@ struct ContentView: View {
         // startup
         .onAppear {
             // check for a backupURL
-            if !vm.doNotBackup
-                && vm.saveBookmark == Data() {
+            if !vm.doNotBackup && vm.saveBookmark == Data() {
                 contentViewModel.addSheet(type: .noBackupFolderSheet)
+            }
+        }
+
+        // menu triggered actions.
+        .onChange(of: vm.selectedMenuAction) { action in
+            if action != .none {
+                vm.menuAction(action, openWindow: openWindow)
             }
         }
 
@@ -47,7 +54,6 @@ struct ContentView: View {
             vm.prepareForEdit(inputURLs: items)
             return true
         }
-
 
         // sheets
         .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in

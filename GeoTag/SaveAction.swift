@@ -32,7 +32,7 @@ extension AppViewModel {
         // before starting check that image files backups are disabled
         // or the image backup folder exists.
         guard doNotBackup || backupURL != nil else {
-            ContentViewModel.shared.addSheet(type: .noBackupFolderSheet)
+            cvm.addSheet(type: .noBackupFolderSheet)
             return
         }
 
