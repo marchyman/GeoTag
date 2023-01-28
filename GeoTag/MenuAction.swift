@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension ViewModel {
+extension AppViewModel {
 
     // Actions triggered from a menu item
     enum MenuAction: Identifiable {
@@ -40,13 +40,12 @@ extension ViewModel {
         if let context {
             select(context: context)
         }
-        selectedMenuAction = action
+        ContentViewModel.shared.selectedMenuAction = action
     }
 
     // Do the requested action
 
     func menuAction(_ action: MenuAction, openWindow: OpenWindowAction) {
-        self.selectedMenuAction = .none
         switch action {
         case .none:
             return

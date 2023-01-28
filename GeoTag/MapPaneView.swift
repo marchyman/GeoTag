@@ -9,72 +9,71 @@ import SwiftUI
 import MapKit
 
 struct MapPaneView: View {
-    @AppStorage(AppSettings.mapConfigurationKey) private var mapConfiguration = 0
-    @AppStorage(AppSettings.mapLatitudeKey) private var mapLatitude = 37.7244
-    @AppStorage(AppSettings.mapLongitudeKey) private var mapLongitude = -122.4381
-    @AppStorage(AppSettings.mapAltitudeKey) private var mapAltitude = 50000.0
-
-    @EnvironmentObject var vm: ViewModel
-    @State private var mainPin: MKPointAnnotation?
-    @State private var otherPins = [MKPointAnnotation]()
-    @State private var searchString = ""
-    @State private var reCenter = false
+    @EnvironmentObject var vm: AppViewModel
+    @ObservedObject var mapViewModel = MapViewModel.shared
 
     var body: some View {
         VStack {
             MapStyleView()
                 .padding(.top)
             ZStack(alignment: .topTrailing) {
-                MapView(center: Coords(latitude: mapLatitude,
-                                       longitude: mapLongitude),
-                        altitude: mapAltitude,
-                        reCenter: $reCenter,
-                        mainPin: $mainPin,
-                        otherPins: $otherPins)
+                MapView(center: Coords(latitude: mapViewModel.initialMapLatitude,
+                                       longitude: mapViewModel.initialMapLongitude),
+                        altitude: mapViewModel.initialMapAltitude)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(5)
                 GeometryReader {geometry in
                     HStack {
                         Spacer()
-                        MapSearchView(text: $searchString)
+                        MapSearchView(text: $mapViewModel.searchString)
                             .frame(width: geometry.size.width * 0.80)
-                            .onChange(of: searchString) { searchMap(for: $0) }
+                            .onChange(of: mapViewModel.searchString) {
+                                searchMap(for: $0)
+                            }
                     }
                 }
                 .padding()
             }
         }
         .onChange(of: vm.mostSelected) { mainPinChange(id: $0) }
+        .onChange(of: mapViewModel.locationUpdated) { _ in
+            mainPinChange(id: vm.mostSelected)
+        }
         .onChange(of: vm.selection) { otherPinsChange(selection: $0) }
     }
 
 
+    // create an annotation for the main pin.  It's title is set to the
+    // name of the pin image that will represent the pin on the map.
+
     func mainPinChange(id: ImageModel.ID?) {
         if let id,
            let location = vm[id].location {
-            if location != mainPin?.coordinate {
-                if mainPin == nil {
-                    mainPin = MKPointAnnotation()
+            if location != mapViewModel.mainPin?.coordinate {
+                if mapViewModel.mainPin == nil {
+                    mapViewModel.mainPin = MKPointAnnotation()
+                    mapViewModel.mainPin?.title = "Pin"
                 }
-                mainPin?.coordinate = location
+                mapViewModel.mainPin?.coordinate = location
             }
         } else {
-            mainPin = nil
+            mapViewModel.mainPin = nil
         }
     }
 
-    // create pins for other selected items that have a location
+    // create pins for other selected items that have a location.  Their
+    // title also names the image that represents the pin on the map.
 
     func otherPinsChange(selection: Set<ImageModel.ID>) {
         var pins = [MKPointAnnotation]()
         for id in selection.filter({ $0 != vm.mostSelected
                                      && vm[$0].location != nil }) {
             let pin = MKPointAnnotation()
-            pin.title = "other"
+            pin.title = "OtherPin"
             pin.coordinate = vm[id].location!
             pins.append(pin)
         }
-        otherPins = pins
+        mapViewModel.otherPins = pins
     }
 
     // The work of searching the map is done here as this view is parent
@@ -88,7 +87,7 @@ struct MapPaneView: View {
             request.naturalLanguageQuery = searchString
             let span = MKCoordinateSpan(latitudeDelta: 90.0,
                                         longitudeDelta: 180.0)
-            request.region = MKCoordinateRegion(center: vm.mapCenter,
+            request.region = MKCoordinateRegion(center: mapViewModel.currentMapCenter,
                                                 span: span)
             let searcher = MKLocalSearch(request: request)
             Task {
@@ -97,8 +96,8 @@ struct MapPaneView: View {
                        let location = response?.mapItems[0].placemark.location {
                         if vm.selection.isEmpty {
                             // nothing selected, re center the map
-                            vm.mapCenter = location.coordinate
-                            reCenter = true
+                            mapViewModel.currentMapCenter = location.coordinate
+                            mapViewModel.reCenter = true
                         } else {
                             // update all selected items
                             vm.undoManager.beginUndoGrouping()

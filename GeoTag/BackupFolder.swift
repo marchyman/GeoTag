@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension ViewModel {
+extension AppViewModel {
     /// Convert a security scoped bookmark to its URL
     ///  - Returns the URL if the bookmark could be converted, else nil
 
@@ -35,9 +35,9 @@ extension ViewModel {
         do {
             try bookmark = url.bookmarkData(options: .withSecurityScope)
         } catch let error as NSError {
-            addSheet(type: .unexpectedErrorSheet,
-                     error: error,
-                     message: "Error creating security scoped bookmark for backup location \(url.path)")
+            ContentViewModel.shared.addSheet(type: .unexpectedErrorSheet,
+                                             error: error,
+                                             message: "Error creating security scoped bookmark for backup location \(url.path)")
         }
         return bookmark
     }
@@ -51,6 +51,8 @@ extension ViewModel {
     /// - Parameter _: The URL of the folder containing backups
 
     func checkBackupFolder(_ url: URL?) {
+        let cvm = ContentViewModel.shared
+
         guard let url else { return }
         let propertyKeys: Set = [URLResourceKey
                                     .totalFileSizeKey,
@@ -64,13 +66,13 @@ extension ViewModel {
                                        options: [.skipsHiddenFiles],
                                        errorHandler: nil) else { return }
         guard let sevenDaysAgo =
-                Calendar.current.date(byAdding: .day, value: -7,
+                Calendar.current.date(byAdding: .minute, value: -1,
                                       to: Date()) else { return }
 
         // starting state
-        oldFiles = []
-        folderSize = 0
-        deletedSize = 0
+        cvm.oldFiles = []
+        cvm.folderSize = 0
+        cvm.deletedSize = 0
 
         // loop through the files accumulating storage requirements and a count
         // of older files
@@ -80,16 +82,16 @@ extension ViewModel {
                     try? fileUrl.resourceValues(forKeys: propertyKeys),
                 let fileSize = resources.totalFileSize,
                 let fileDate = resources.addedToDirectoryDate else { break }
-            folderSize += fileSize
+            cvm.folderSize += fileSize
             if fileDate < sevenDaysAgo {
-                oldFiles.append(fileUrl)
-                deletedSize += fileSize
+                cvm.oldFiles.append(fileUrl)
+                cvm.deletedSize += fileSize
             }
         }
 
         // Alert if there are any old files
         DispatchQueue.main.async {
-            self.removeOldFiles = !self.oldFiles.isEmpty
+            cvm.removeOldFiles = !cvm.oldFiles.isEmpty
         }
     }
 

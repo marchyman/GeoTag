@@ -16,7 +16,12 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can use GeoTag
 version 4.15.
 
-## 4.99.3 [4th Beta, will be GeoTag 5 upon full release]
+## WIP -- GeoTag version 5
+
+**The last three Beta versions (4.99.1{1,2,3}) were complete screw ups.**
+
+Do not use. I may have broke more than I fixed.  Next Beta will come when it
+is ready.  Sorry for wasting your time.
 
 ### Version 5 Updates 
 

@@ -10,7 +10,7 @@ import MapKit
 
 // functions that handle location changes for both the map and images
 
-extension ViewModel {
+extension AppViewModel {
 
     // Update an image with a location. Image is identified by its ID.
     // Elevation is optional and is only provided when matching track logs
@@ -29,6 +29,7 @@ extension ViewModel {
         self[id].location = location
         self[id].elevation = elevation
         mainWindow?.isDocumentEdited = documentedEdited
+        MapViewModel.shared.locationUpdated.toggle()
     }
 
     // Update an image with a new timestamp.  Image is identifid by its ID
@@ -79,17 +80,17 @@ extension ViewModel {
                     }
                     let mapLine = MKPolyline(coordinates: &trackCoords,
                                              count: segment.points.count)
-                    mapLines.append(mapLine)
+                    MapViewModel.shared.mapLines.append(mapLine)
                     newOverlay = true
                 }
             }
         }
         if newOverlay {
-            mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
-                                       longitudeDelta:  maxlon - minlon)
-            mapCenter = Coords(latitude: (minlat + maxlat)/2,
-                               longitude: (minlon + maxlon)/2)
-            refreshTracks = true
+            MapViewModel.shared.mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
+                                                           longitudeDelta:  maxlon - minlon)
+            MapViewModel.shared.currentMapCenter = Coords(latitude: (minlat + maxlat)/2,
+                                                          longitude: (minlon + maxlon)/2)
+            MapViewModel.shared.refreshTracks = true
         }
     }
 

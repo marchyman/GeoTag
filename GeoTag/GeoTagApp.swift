@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    @StateObject var vm = ViewModel()
+    @StateObject var vm = AppViewModel()
     let windowWidth = 1200.0
     let windowHeight = 900.0
 
@@ -19,10 +19,10 @@ struct GeoTagApp: App {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .background(WindowAccessor(window: $vm.mainWindow))
-                .environmentObject(vm)
                 .onAppear {
                     appDelegate.viewModel = vm
                 }
+                .environmentObject(vm)
         }
         .commands {
             newItemCommandGroup
@@ -43,7 +43,7 @@ struct GeoTagApp: App {
         .commandsRemoved()
 
         Settings {
-            SettingsView()
+            SettingsView(backupURL: vm.backupURL)
                 .frame(width: 600.0, height: 550.0, alignment: .top)
                 .environmentObject(vm)
         }

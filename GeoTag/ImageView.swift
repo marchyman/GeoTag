@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageView: View {
-    @EnvironmentObject var vm: ViewModel
+    @EnvironmentObject var vm: AppViewModel
     @State private var thumbnail: NSImage?
 
     var body: some View {
@@ -40,6 +40,6 @@ struct ImageView: View {
 struct ImageView_Previews: PreviewProvider {
     static var previews: some View {
         ImageView()
-            .environmentObject(ViewModel())
+            .environmentObject(AppViewModel())
     }
 }

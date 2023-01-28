@@ -7,7 +7,7 @@
 
 import AppKit
 
-extension ViewModel {
+extension AppViewModel {
 
     // return true if cut or copy actions should be disabled
     // if context is nil use selectedImage

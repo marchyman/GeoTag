@@ -10,7 +10,7 @@ import SwiftUI
 // Duplicates many of the menu commands
 
 struct ContextMenuView: View {
-    @EnvironmentObject var vm: ViewModel
+    @EnvironmentObject var vm: AppViewModel
     let context: ImageModel.ID?
 
     var body: some View {
@@ -44,7 +44,7 @@ struct ContextMenuView: View {
             .disabled(vm.clearDisabled)
     }
 
-    func setContextMenuAction(_ action: ViewModel.MenuAction) {
+    func setContextMenuAction(_ action: AppViewModel.MenuAction) {
         vm.setMenuAction(for: action, context: context)
     }
 }

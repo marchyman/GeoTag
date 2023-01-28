@@ -17,9 +17,9 @@ extension GeoTagApp {
                 .disabled(vm.saveDisabled())
 
             Button("Discard changes") {
-                vm.confirmationMessage = "Discarding all changes is not undoable.  Are you sure this is what you want to do?"
-                vm.confirmationAction = vm.discardChangesAction
-                vm.presentConfirmation = true
+                ContentViewModel.shared.confirmationMessage = "Discarding all changes is not undoable.  Are you sure this is what you want to do?"
+                ContentViewModel.shared.confirmationAction = vm.discardChangesAction
+                ContentViewModel.shared.presentConfirmation = true
             }
             .disabled(vm.discardChangesDisabled())
 
@@ -34,7 +34,7 @@ extension GeoTagApp {
         }
     }
 
-    func setSaveItemAction(_ action: ViewModel.MenuAction) {
+    func setSaveItemAction(_ action: AppViewModel.MenuAction) {
         vm.setMenuAction(for: action)
     }
 }

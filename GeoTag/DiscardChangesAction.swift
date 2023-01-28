@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension ViewModel {
+extension AppViewModel {
 
     // return true if the discard menu item should be disabled
 

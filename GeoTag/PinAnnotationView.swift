@@ -19,12 +19,12 @@ final class PinAnnotationView: MKAnnotationView {
 
         isEnabled = true
         canShowCallout = false
-        if annotation?.title == "other" {
-            isDraggable = false
-            image = NSImage(named: "OtherPin")
-        } else {
+        if reuseIdentifier == "Pin" {
             isDraggable = true
             image = NSImage(named: "Pin")
+        } else {
+            isDraggable = false
+            image = NSImage(named: "OtherPin")
         }
     }
 

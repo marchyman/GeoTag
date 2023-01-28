@@ -16,8 +16,7 @@ let coordMinWidth = 120.0
 // rely on the Environment.  Explicitly pass the ViewModel to the column views.
 
 struct ImageTableView: View {
-    @EnvironmentObject var vm: ViewModel
-    @Environment(\.openWindow) var openWindow
+    @EnvironmentObject var vm: AppViewModel
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
@@ -61,15 +60,6 @@ struct ImageTableView: View {
         }
         .onChange(of: vm.selection) { selection in
             vm.selectionChanged(newSelection: selection)
-        }
-        .onChange(of: vm.selectedMenuAction) { action in
-            if action != .none {
-                vm.menuAction(action, openWindow: openWindow)
-            }
-        }
-        .dropDestination(for: URL.self) {items, location in
-            vm.prepareForEdit(inputURLs: items)
-            return true
         }
     }
 }
@@ -116,7 +106,7 @@ extension ImageModel {
 
 }
 
-extension ViewModel {
+extension AppViewModel {
     func elevationAsString(id: ImageModel.ID) -> String {
         var value = "Elevation: "
         if let elevation = self[id].elevation {
@@ -150,6 +140,6 @@ struct ImageTableView_Previews: PreviewProvider {
     ]
     static var previews: some View {
         ImageTableView()
-            .environmentObject(ViewModel(images: images))
+            .environmentObject(AppViewModel(images: images))
     }
 }

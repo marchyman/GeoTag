@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageNameColumnView: View {
-    @ObservedObject var vm: ViewModel
+    @ObservedObject var vm: AppViewModel
     let id: ImageModel.ID
 
     var body: some View {
@@ -44,7 +44,7 @@ struct ImageNameColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        let vm = ViewModel(images: [image])
+        let vm = AppViewModel(images: [image])
         ImageNameColumnView(vm: vm, id: image.id)
     }
 }

@@ -14,15 +14,11 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    @AppStorage(AppSettings.mapConfigurationKey) var mapConfiguration = 0
+    @EnvironmentObject var vm: AppViewModel
+    @ObservedObject var mapViewModel = MapViewModel.shared
 
     let center: CLLocationCoordinate2D
     let altitude: Double
-    @Binding var reCenter: Bool
-    @Binding var mainPin: MKPointAnnotation?
-    @Binding var otherPins: [MKPointAnnotation]
-
-    @EnvironmentObject var vm: ViewModel
 
     func makeCoordinator() -> MapView.Coordinator {
         Coordinator(vm: vm)
@@ -42,16 +38,14 @@ struct MapView: NSViewRepresentable {
     func updateNSView(_ view: ClickMapView, context: Context) {
         setMapConfiguration(view)
         mainPinChanges(for: view)
-        if !vm.onlyMostSelected {
-            otherPinChanges(for: view)
-        }
+        otherPinChanges(for: view)
         trackChanges(for: view)
 
         // re-center the map
-        if reCenter {
+        if mapViewModel.reCenter {
             DispatchQueue.main.async {
-                view.setCenter(vm.mapCenter, animated: false)
-                reCenter = false
+                view.setCenter(mapViewModel.currentMapCenter, animated: false)
+                mapViewModel.reCenter = false
             }
         }
     }
@@ -59,7 +53,7 @@ struct MapView: NSViewRepresentable {
     // Change the look of the map
 
     func setMapConfiguration(_ view: ClickMapView) {
-        switch mapConfiguration {
+        switch mapViewModel.mapConfiguration {
         case 0:
             view.preferredConfiguration = MKStandardMapConfiguration()
         case 1:
@@ -74,24 +68,21 @@ struct MapView: NSViewRepresentable {
     // map pin changes for the most selected item
 
     func mainPinChanges(for view: ClickMapView) {
-        // remove all annotations if there is no pin to place
-        if mainPin == nil {
-            let annotations = view.annotations
-            if !annotations.isEmpty {
-                view.removeAnnotations(annotations)
-            }
+        // Nothing to do if there is no main pin. This is OK as any exising
+        // pin view will be removed when processing other pin changes.
+        if mapViewModel.mainPin == nil {
             return
         }
 
         // Add a new annotation for mainPin.  Testing shows that this replaces
         // any existing annotation for the pin.
-        view.addAnnotation(mainPin!)
+        view.addAnnotation(mapViewModel.mainPin!)
 
         // make sure pin is in view
-        if !view.visibleMapRect.contains(MKMapPoint(mainPin!.coordinate)) {
+        if !view.visibleMapRect.contains(MKMapPoint(mapViewModel.mainPin!.coordinate)) {
             // I don't know of a better way?
             DispatchQueue.main.async {
-                view.setCenter(mainPin!.coordinate, animated: false)
+                view.setCenter(mapViewModel.mainPin!.coordinate, animated: false)
             }
         }
     }
@@ -101,19 +92,26 @@ struct MapView: NSViewRepresentable {
     func otherPinChanges(for view: ClickMapView) {
         let oldAnnotations: [MKAnnotation]
 
-        if otherPins.isEmpty {
+        if mapViewModel.onlyMostSelected || mapViewModel.otherPins.isEmpty {
             // remove all annotation save any that match the main pin
             oldAnnotations = view.annotations.filter {
-                $0.coordinate != mainPin?.coordinate
+                $0.coordinate != mapViewModel.mainPin?.coordinate
             }
         } else {
             // ignore other pins on top of the main pin
-            view.addAnnotations(otherPins.filter {
-                $0.coordinate != mainPin?.coordinate
+            view.addAnnotations(mapViewModel.otherPins.filter {
+                $0.coordinate != mapViewModel.mainPin?.coordinate
             })
+
             // now remove any annotations for items no longer selected
-            var known = Set(otherPins)
-            known.insert(mainPin!)
+            var known = Set(mapViewModel.otherPins)
+
+            // if the most selected item has a location add its pin
+            // to the set of known pins
+            if mapViewModel.mainPin != nil {
+                known.insert(mapViewModel.mainPin!)
+            }
+
             oldAnnotations = view.annotations.filter {
                 known.insert($0 as! MKPointAnnotation).inserted
             }
@@ -126,53 +124,51 @@ struct MapView: NSViewRepresentable {
     // draw tracks on the map when needed
 
     func trackChanges(for view: ClickMapView) {
-        if vm.refreshTracks {
+        if mapViewModel.refreshTracks {
             let overlays = view.overlays
             if !overlays.isEmpty {
                 view.removeOverlays(overlays)
             }
-            view.addOverlays(vm.mapLines)
-            if let span = vm.mapSpan {
+            view.addOverlays(mapViewModel.mapLines)
+            if let span = mapViewModel.mapSpan {
                 // I still don't know of a better way?
                 DispatchQueue.main.async {
-                    view.setRegion(MKCoordinateRegion(center: vm.mapCenter,
+                    view.setRegion(MKCoordinateRegion(center: mapViewModel.currentMapCenter,
                                                       span: span),
                                    animated: false)
-                    vm.refreshTracks = false
+                    mapViewModel.refreshTracks = false
                 }
             }
         }
     }
 }
 
+// coordinator/delegate
+
 extension MapView {
 
     // Coordinator class conforming to MKMapViewDelegate
 
     class Coordinator: NSObject, MKMapViewDelegate {
-        @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
-        @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
-        let vm: ViewModel
+        @ObservedObject var mapViewModel = MapViewModel.shared
+        @ObservedObject var vm: AppViewModel
 
-        init(vm: ViewModel) {
+        init(vm: AppViewModel) {
             self.vm = vm
         }
 
-        // view for annnotation.  I tried registering the pin view in
-        // makeNSVeiw but it didn't pass in the annotation so I couldn't
-        // tell which image type to assign.
+        // view for annnotation.
 
         func mapView(_ mapView: MKMapView,
                      viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if (annotation is MKUserLocation) {
                 return nil
             }
-            let identifier = annotation.title == nil ? "main" : "other"
-            var view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-
+            let id = annotation.title?.flatMap { $0 } ?? "unknown"
+            var view = mapView.dequeueReusableAnnotationView(withIdentifier: id)
             if view == nil {
                 view = PinAnnotationView(annotation: annotation,
-                                         reuseIdentifier: identifier)
+                                         reuseIdentifier: id)
             }
             return view
         }
@@ -182,8 +178,8 @@ extension MapView {
 
         @MainActor
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-            vm.mapCenter = mapView.camera.centerCoordinate
-            vm.mapAltitude = mapView.camera.altitude
+            mapViewModel.currentMapCenter = mapView.camera.centerCoordinate
+            mapViewModel.currentMapAltitude = mapView.camera.altitude
         }
 
         // update the location of a dragged pin
@@ -214,10 +210,10 @@ extension MapView {
         func mapView(_ mapview: MKMapView,
                      rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             let polyline = overlay as! MKPolyline
-            if vm.mapLines.contains(polyline) {
+            if mapViewModel.mapLines.contains(polyline) {
                 let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = NSColor(trackColor)
-                renderer.lineWidth = CGFloat(trackWidth)
+                renderer.strokeColor = NSColor(mapViewModel.trackColor)
+                renderer.lineWidth = CGFloat(mapViewModel.trackWidth)
                 return renderer
             }
             return MKOverlayRenderer(overlay: overlay)
@@ -227,17 +223,11 @@ extension MapView {
 
 #if DEBUG
 struct MapView_Previews : PreviewProvider {
-    @State static var mainPin: MKPointAnnotation?
-    @State static var otherPins = [MKPointAnnotation]()
-
     static var previews: some View {
         MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
                                                longitude: -122.4381),
-                altitude: 50000.0,
-                reCenter: .constant(false),
-                mainPin: $mainPin,
-                otherPins: $otherPins)
-            .environmentObject(ViewModel())
+                altitude: 50000.0)
+            .environmentObject(AppViewModel())
     }
 }
 #endif

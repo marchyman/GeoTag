@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var vm: ViewModel
+    @EnvironmentObject var vm: AppViewModel
+    @ObservedObject var mapViewModel = MapViewModel.shared
 
     @AppStorage(AppSettings.addTagKey) var addTag = false
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
@@ -18,8 +19,12 @@ struct SettingsView: View {
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
     @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
     @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
-    @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
-    @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
+
+    @State private var backupURL: URL?
+
+    init(backupURL: URL?) {
+        _backupURL = State(initialValue: backupURL)
+    }
 
     var body: some View {
         VStack {
@@ -41,10 +46,11 @@ struct SettingsView: View {
                             .padding(.bottom)
                     } else {
                         LabeledContent("Backup folder:") {
-                            PathView()
+                            PathView(url: $backupURL)
                                 .frame(width: 280)
                                 .padding(.bottom)
-                                .onChange(of: vm.backupURL) { url in
+                                .onChange(of: backupURL) { url in
+                                    vm.backupURL = url
                                     if let url {
                                         saveBookmark = vm.getBookmark(from: url)
                                         vm.checkBackupFolder(url)
@@ -70,15 +76,17 @@ struct SettingsView: View {
 
                 // Track log display configuration
                 Group {
-                    ColorPicker("GPS Track Color:", selection: $trackColor)
-                        .onChange(of: trackColor.rawValue) { color in
-                            vm.refreshTracks = true
+                    ColorPicker("GPS Track Color:",
+                                selection: $mapViewModel.trackColor)
+                        .onChange(of: mapViewModel.trackColor.rawValue) { color in
+                            mapViewModel.refreshTracks = true
                         }
                         .padding(.horizontal)
                         .help("Select the color used to display GPS tracks on the map.")
 
-                    TextField("GPS Track width:", value: $trackWidth, format: .number)
-                        .onSubmit { vm.refreshTracks = true }
+                    TextField("GPS Track width:",
+                              value: $mapViewModel.trackWidth, format: .number)
+                        .onSubmit { mapViewModel.refreshTracks = true }
                         .padding([.horizontal, .bottom])
                         .frame(maxWidth: 190)
                         .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
@@ -143,7 +151,7 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView()
-            .environmentObject(ViewModel())
+        SettingsView(backupURL: nil)
+            .environmentObject(AppViewModel())
     }
 }

@@ -10,7 +10,7 @@ import AppKit
 // "Paste" into all selected images or a specific image in context
 // selected images
 
-extension ViewModel {
+extension AppViewModel {
 
     // return true if paste actions should be disabled
 

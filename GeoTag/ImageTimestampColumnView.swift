@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageTimestampColumnView: View {
-    @ObservedObject var vm: ViewModel
+    @ObservedObject var vm: AppViewModel
     let id: ImageModel.ID
     @State private var showPopover = false
 
@@ -34,7 +34,7 @@ struct ImageTimestampColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        let vm = ViewModel(images: [image])
+        let vm = AppViewModel(images: [image])
         ImageTimestampColumnView(vm: vm, id: image.id)
     }
 }
