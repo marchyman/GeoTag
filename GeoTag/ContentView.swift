@@ -43,8 +43,9 @@ struct ContentView: View {
         }
 
         // menu triggered actions.
-        .onChange(of: vm.selectedMenuAction) { action in
+        .onChange(of: contentViewModel.selectedMenuAction) { action in
             if action != .none {
+                contentViewModel.selectedMenuAction = .none
                 vm.menuAction(action, openWindow: openWindow)
             }
         }

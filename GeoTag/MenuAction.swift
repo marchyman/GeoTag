@@ -40,13 +40,12 @@ extension AppViewModel {
         if let context {
             select(context: context)
         }
-        selectedMenuAction = action
+        ContentViewModel.shared.selectedMenuAction = action
     }
 
     // Do the requested action
 
     func menuAction(_ action: MenuAction, openWindow: OpenWindowAction) {
-        self.selectedMenuAction = .none
         switch action {
         case .none:
             return

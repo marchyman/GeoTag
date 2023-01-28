@@ -14,6 +14,7 @@ final class ContentViewModel: ObservableObject {
     @Published var sheetType: SheetType?
     @Published var presentConfirmation = false
     @Published var removeOldFiles = false
+    @Published var selectedMenuAction: AppViewModel.MenuAction = .none
 
     public static let shared = ContentViewModel()
 

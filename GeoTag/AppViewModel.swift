@@ -16,7 +16,6 @@ final class AppViewModel: ObservableObject {
     @Published var images = [ImageModel]()
     @Published var selection = Set<ImageModel.ID>()
     @Published var mostSelected: ImageModel.ID?
-    @Published var selectedMenuAction: MenuAction = .none
 
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
