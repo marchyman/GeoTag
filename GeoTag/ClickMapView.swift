@@ -13,7 +13,7 @@ import MapKit
 // function on a mouse).
 
 class ClickMapView: MKMapView {
-    var viewModel: ViewModel!
+    var viewModel: AppViewModel!
     var clickTimer: Timer?
     var dragInProgress = false
 

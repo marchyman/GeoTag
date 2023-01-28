@@ -16,7 +16,7 @@ let coordMinWidth = 120.0
 // rely on the Environment.  Explicitly pass the ViewModel to the column views.
 
 struct ImageTableView: View {
-    @EnvironmentObject var vm: ViewModel
+    @EnvironmentObject var vm: AppViewModel
     @Environment(\.openWindow) var openWindow
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
@@ -116,7 +116,7 @@ extension ImageModel {
 
 }
 
-extension ViewModel {
+extension AppViewModel {
     func elevationAsString(id: ImageModel.ID) -> String {
         var value = "Elevation: "
         if let elevation = self[id].elevation {
@@ -150,6 +150,6 @@ struct ImageTableView_Previews: PreviewProvider {
     ]
     static var previews: some View {
         ImageTableView()
-            .environmentObject(ViewModel(images: images))
+            .environmentObject(AppViewModel(images: images))
     }
 }

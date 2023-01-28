@@ -7,7 +7,7 @@
 
 import AppKit
 
-extension ViewModel {
+extension AppViewModel {
 
     func selectAllDisabled() -> Bool {
         return images.isEmpty

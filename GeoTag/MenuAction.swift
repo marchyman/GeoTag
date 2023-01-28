@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension ViewModel {
+extension AppViewModel {
 
     // Actions triggered from a menu item
     enum MenuAction: Identifiable {

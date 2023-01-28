@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension ViewModel {
+extension AppViewModel {
 
     // Process the set of selected images.  Pick one as the "most" selected if
     // the current most selected image is not in the set.

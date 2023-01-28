@@ -11,7 +11,7 @@ import SwiftUI
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
-    @EnvironmentObject var vm: ViewModel
+    @EnvironmentObject var vm: AppViewModel
     @ObservedObject var contentViewModel = ContentViewModel.shared
 
     @State private var sheetType: SheetType?
@@ -124,6 +124,6 @@ extension View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(ViewModel())
+            .environmentObject(AppViewModel())
     }
 }

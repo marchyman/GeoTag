@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AdjustTimezoneView: View {
-    @EnvironmentObject var vm: ViewModel
+    @EnvironmentObject var vm: AppViewModel
     @State private var currentZone: TimeZoneName = .zero
     @State private var selectedZone: TimeZoneName = .zero
 
@@ -94,6 +94,6 @@ struct AdjustTimezoneView: View {
 struct AdjustTimezoneView_Previews: PreviewProvider {
     static var previews: some View {
         AdjustTimezoneView()
-            .environmentObject(ViewModel())
+            .environmentObject(AppViewModel())
     }
 }

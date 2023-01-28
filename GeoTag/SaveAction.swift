@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension ViewModel {
+extension AppViewModel {
 
     // return true if the save menu item should be disabled
 

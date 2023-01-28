@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension ViewModel {
+extension AppViewModel {
     /// Convert a security scoped bookmark to its URL
     ///  - Returns the URL if the bookmark could be converted, else nil
 

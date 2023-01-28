@@ -10,7 +10,7 @@ import SwiftUI
 struct ChangeDateTimeView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject var vm: ViewModel
+    @ObservedObject var vm: AppViewModel
     let id: ImageModel.ID!
 
     @State private var oldDate = Date()
@@ -105,7 +105,7 @@ struct ModifyDateTimeView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        let vm = ViewModel(images: [image])
+        let vm = AppViewModel(images: [image])
         ChangeDateTimeView(vm: vm, id: image.id)
     }
 }

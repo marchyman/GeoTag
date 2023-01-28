@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var vm: ViewModel
+    @EnvironmentObject var vm: AppViewModel
     @ObservedObject var mapViewModel = MapViewModel.shared
 
     @AppStorage(AppSettings.addTagKey) var addTag = false
@@ -152,6 +152,6 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView(backupURL: nil)
-            .environmentObject(ViewModel())
+            .environmentObject(AppViewModel())
     }
 }

@@ -11,7 +11,7 @@ import SwiftUI
 // Extension to our Application State that handles file open and dropping
 // URLs onto the app's table of images to edit.
 
-extension ViewModel {
+extension AppViewModel {
 
     /// Display the File -> Open... panel for image and gpx files.  Folders may also be selected.
 

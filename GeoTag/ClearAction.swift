@@ -9,7 +9,7 @@ import Foundation
 
 // Program "Clear List" action removes all images from the table
 
-extension ViewModel {
+extension AppViewModel {
 
     // return true if the Clear Image List meny item should be disabled
     

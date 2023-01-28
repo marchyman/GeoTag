@@ -14,7 +14,7 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    @EnvironmentObject var vm: ViewModel
+    @EnvironmentObject var vm: AppViewModel
     @ObservedObject var mapViewModel = MapViewModel.shared
 
     let center: CLLocationCoordinate2D
@@ -107,9 +107,16 @@ struct MapView: NSViewRepresentable {
             view.addAnnotations(mapViewModel.otherPins.filter {
                 $0.coordinate != mapViewModel.mainPin?.coordinate
             })
+
             // now remove any annotations for items no longer selected
             var known = Set(mapViewModel.otherPins)
-            known.insert(mapViewModel.mainPin!)
+
+            // if the most selected item has a location add its pin
+            // to the set of known pins
+            if mapViewModel.mainPin != nil {
+                known.insert(mapViewModel.mainPin!)
+            }
+
             oldAnnotations = view.annotations.filter {
                 known.insert($0 as! MKPointAnnotation).inserted
             }
@@ -147,9 +154,9 @@ extension MapView {
 
     class Coordinator: NSObject, MKMapViewDelegate {
         let mapViewModel = MapViewModel.shared
-        @ObservedObject var vm: ViewModel
+        @ObservedObject var vm: AppViewModel
 
-        init(vm: ViewModel) {
+        init(vm: AppViewModel) {
             self.vm = vm
         }
 
@@ -226,7 +233,7 @@ struct MapView_Previews : PreviewProvider {
         MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
                                                longitude: -122.4381),
                 altitude: 50000.0)
-            .environmentObject(ViewModel())
+            .environmentObject(AppViewModel())
     }
 }
 #endif

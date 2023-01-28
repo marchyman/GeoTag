@@ -11,7 +11,7 @@ import AppKit
 ///
 /// App Delegate needed to get some desired behaviors such as terminate app when window closed
 final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
-    var viewModel: ViewModel?
+    var viewModel: AppViewModel?
 
     // things that can not (yet?) be done in SwiftUI (or can be done but
     // I don't know how so do it this way).

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension ViewModel {
+extension AppViewModel {
 
     func locnFromTrackDisabled(context: ImageModel.ID? = nil) -> Bool {
         if gpxTracks.count > 0 {

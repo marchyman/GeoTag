@@ -12,7 +12,7 @@ import MapKit
 // created as a StateObject by GeoTagApp and passed in the environment.
 
 @MainActor
-final class ViewModel: ObservableObject {
+final class AppViewModel: ObservableObject {
     @Published var images = [ImageModel]()
     @Published var selection = Set<ImageModel.ID>()
     @Published var mostSelected: ImageModel.ID?
@@ -89,7 +89,7 @@ final class ViewModel: ObservableObject {
 // convenience init for use with swiftui previews.  Provide a list
 // of test images suitable for swiftui previews.
 
-extension ViewModel {
+extension AppViewModel {
     convenience init(images: [ImageModel]) {
         self.init()
         self.images = images

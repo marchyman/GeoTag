@@ -34,7 +34,7 @@ extension GeoTagApp {
         }
     }
 
-    func setSaveItemAction(_ action: ViewModel.MenuAction) {
+    func setSaveItemAction(_ action: AppViewModel.MenuAction) {
         vm.setMenuAction(for: action)
     }
 }
