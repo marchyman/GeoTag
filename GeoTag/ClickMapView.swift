@@ -55,7 +55,6 @@ class ClickMapView: MKMapView {
         if !viewModel.selection.isEmpty {
             viewModel.undoManager.beginUndoGrouping()
             for id in viewModel.selection {
-                print("Click update")
                 viewModel.update(id: id, location: coords)
             }
             viewModel.undoManager.endUndoGrouping()

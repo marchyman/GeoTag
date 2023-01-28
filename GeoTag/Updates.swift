@@ -29,6 +29,7 @@ extension ViewModel {
         self[id].location = location
         self[id].elevation = elevation
         mainWindow?.isDocumentEdited = documentedEdited
+        MapViewModel.shared.locationUpdated.toggle()
     }
 
     // Update an image with a new timestamp.  Image is identifid by its ID

@@ -12,11 +12,6 @@ struct MapPaneView: View {
     @EnvironmentObject var vm: ViewModel
     @ObservedObject var mapViewModel = MapViewModel.shared
 
-    @State private var mainPin: MKPointAnnotation?
-    @State private var otherPins = [MKPointAnnotation]()
-    @State private var searchString = ""
-    @State private var reCenter = false
-
     var body: some View {
         VStack {
             MapStyleView()
@@ -24,24 +19,26 @@ struct MapPaneView: View {
             ZStack(alignment: .topTrailing) {
                 MapView(center: Coords(latitude: mapViewModel.initialMapLatitude,
                                        longitude: mapViewModel.initialMapLongitude),
-                        altitude: mapViewModel.initialMapAltitude,
-                        reCenter: $reCenter,
-                        mainPin: $mainPin,
-                        otherPins: $otherPins)
+                        altitude: mapViewModel.initialMapAltitude)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(5)
                 GeometryReader {geometry in
                     HStack {
                         Spacer()
-                        MapSearchView(text: $searchString)
+                        MapSearchView(text: $mapViewModel.searchString)
                             .frame(width: geometry.size.width * 0.80)
-                            .onChange(of: searchString) { searchMap(for: $0) }
+                            .onChange(of: mapViewModel.searchString) {
+                                searchMap(for: $0)
+                            }
                     }
                 }
                 .padding()
             }
         }
         .onChange(of: vm.mostSelected) { mainPinChange(id: $0) }
+        .onChange(of: mapViewModel.locationUpdated) { _ in
+            mainPinChange(id: vm.mostSelected)
+        }
         .onChange(of: vm.selection) { otherPinsChange(selection: $0) }
     }
 
@@ -49,14 +46,14 @@ struct MapPaneView: View {
     func mainPinChange(id: ImageModel.ID?) {
         if let id,
            let location = vm[id].location {
-            if location != mainPin?.coordinate {
-                if mainPin == nil {
-                    mainPin = MKPointAnnotation()
+            if location != mapViewModel.mainPin?.coordinate {
+                if mapViewModel.mainPin == nil {
+                    mapViewModel.mainPin = MKPointAnnotation()
                 }
-                mainPin?.coordinate = location
+                mapViewModel.mainPin?.coordinate = location
             }
         } else {
-            mainPin = nil
+            mapViewModel.mainPin = nil
         }
     }
 
@@ -71,7 +68,7 @@ struct MapPaneView: View {
             pin.coordinate = vm[id].location!
             pins.append(pin)
         }
-        otherPins = pins
+        mapViewModel.otherPins = pins
     }
 
     // The work of searching the map is done here as this view is parent
@@ -95,7 +92,7 @@ struct MapPaneView: View {
                         if vm.selection.isEmpty {
                             // nothing selected, re center the map
                             mapViewModel.currentMapCenter = location.coordinate
-                            reCenter = true
+                            mapViewModel.reCenter = true
                         } else {
                             // update all selected items
                             vm.undoManager.beginUndoGrouping()

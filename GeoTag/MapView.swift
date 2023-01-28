@@ -14,15 +14,11 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
+    @EnvironmentObject var vm: ViewModel
     @ObservedObject var mapViewModel = MapViewModel.shared
 
     let center: CLLocationCoordinate2D
     let altitude: Double
-    @Binding var reCenter: Bool
-    @Binding var mainPin: MKPointAnnotation?
-    @Binding var otherPins: [MKPointAnnotation]
-
-    @EnvironmentObject var vm: ViewModel
 
     func makeCoordinator() -> MapView.Coordinator {
         Coordinator(vm: vm)
@@ -48,10 +44,10 @@ struct MapView: NSViewRepresentable {
         trackChanges(for: view)
 
         // re-center the map
-        if reCenter {
+        if mapViewModel.reCenter {
             DispatchQueue.main.async {
                 view.setCenter(mapViewModel.currentMapCenter, animated: false)
-                reCenter = false
+                mapViewModel.reCenter = false
             }
         }
     }
@@ -75,7 +71,7 @@ struct MapView: NSViewRepresentable {
 
     func mainPinChanges(for view: ClickMapView) {
         // remove all annotations if there is no pin to place
-        if mainPin == nil {
+        if mapViewModel.mainPin == nil {
             let annotations = view.annotations
             if !annotations.isEmpty {
                 view.removeAnnotations(annotations)
@@ -85,13 +81,13 @@ struct MapView: NSViewRepresentable {
 
         // Add a new annotation for mainPin.  Testing shows that this replaces
         // any existing annotation for the pin.
-        view.addAnnotation(mainPin!)
+        view.addAnnotation(mapViewModel.mainPin!)
 
         // make sure pin is in view
-        if !view.visibleMapRect.contains(MKMapPoint(mainPin!.coordinate)) {
+        if !view.visibleMapRect.contains(MKMapPoint(mapViewModel.mainPin!.coordinate)) {
             // I don't know of a better way?
             DispatchQueue.main.async {
-                view.setCenter(mainPin!.coordinate, animated: false)
+                view.setCenter(mapViewModel.mainPin!.coordinate, animated: false)
             }
         }
     }
@@ -101,19 +97,19 @@ struct MapView: NSViewRepresentable {
     func otherPinChanges(for view: ClickMapView) {
         let oldAnnotations: [MKAnnotation]
 
-        if otherPins.isEmpty {
+        if mapViewModel.otherPins.isEmpty {
             // remove all annotation save any that match the main pin
             oldAnnotations = view.annotations.filter {
-                $0.coordinate != mainPin?.coordinate
+                $0.coordinate != mapViewModel.mainPin?.coordinate
             }
         } else {
             // ignore other pins on top of the main pin
-            view.addAnnotations(otherPins.filter {
-                $0.coordinate != mainPin?.coordinate
+            view.addAnnotations(mapViewModel.otherPins.filter {
+                $0.coordinate != mapViewModel.mainPin?.coordinate
             })
             // now remove any annotations for items no longer selected
-            var known = Set(otherPins)
-            known.insert(mainPin!)
+            var known = Set(mapViewModel.otherPins)
+            known.insert(mapViewModel.mainPin!)
             oldAnnotations = view.annotations.filter {
                 known.insert($0 as! MKPointAnnotation).inserted
             }
@@ -151,8 +147,7 @@ extension MapView {
 
     class Coordinator: NSObject, MKMapViewDelegate {
         let mapViewModel = MapViewModel.shared
-
-        let vm: ViewModel
+        @ObservedObject var vm: ViewModel
 
         init(vm: ViewModel) {
             self.vm = vm
@@ -200,7 +195,6 @@ extension MapView {
                     break
                 case .ending:
                     view.image = NSImage(named: "Pin")
-                    print("mapView update")
                     vm.update(id: id, location: view.annotation!.coordinate)
                     vm.undoManager.setActionName("set location (drag)")
                 default:
@@ -228,16 +222,10 @@ extension MapView {
 
 #if DEBUG
 struct MapView_Previews : PreviewProvider {
-    @State static var mainPin: MKPointAnnotation?
-    @State static var otherPins = [MKPointAnnotation]()
-
     static var previews: some View {
         MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
                                                longitude: -122.4381),
-                altitude: 50000.0,
-                reCenter: .constant(false),
-                mainPin: $mainPin,
-                otherPins: $otherPins)
+                altitude: 50000.0)
             .environmentObject(ViewModel())
     }
 }
