@@ -28,7 +28,7 @@ extension AppViewModel {
     
     func pasteAction(context: ImageModel.ID? = nil) {
         if let context {
-            selection = [context]
+            select(context: context)
         }
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),

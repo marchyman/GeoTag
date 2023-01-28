@@ -25,7 +25,7 @@ extension AppViewModel {
     
     func showInFinderAction(context: ImageModel.ID? = nil) {
         if let context {
-            selection = [context]
+            select(context: context)
         }
         if let id = mostSelected {
             NSWorkspace.shared.activateFileViewerSelecting([self[id].fileURL])

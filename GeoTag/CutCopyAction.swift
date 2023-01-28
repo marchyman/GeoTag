@@ -28,7 +28,7 @@ extension AppViewModel {
 
     func copyAction(context: ImageModel.ID? = nil) {
         if let context {
-            selection = [context]
+            select(context: context)
         }
         if let id = mostSelected {
             let pb = NSPasteboard.general

@@ -12,25 +12,25 @@ import SwiftUI
 extension GeoTagApp {
     var saveItemCommandGroup: some Commands {
         CommandGroup(after: .saveItem) {
-            Button("Save…") { vm.saveAction() }
+            Button("Save…") { avm.saveAction() }
                 .keyboardShortcut("s")
-                .disabled(vm.saveDisabled())
+                .disabled(avm.saveDisabled())
 
             Button("Discard changes") {
                 ContentViewModel.shared.confirmationMessage = "Discarding all changes is not undoable.  Are you sure this is what you want to do?"
-                ContentViewModel.shared.confirmationAction = vm.discardChangesAction
+                ContentViewModel.shared.confirmationAction = avm.discardChangesAction
                 ContentViewModel.shared.presentConfirmation = true
             }
-            .disabled(vm.discardChangesDisabled())
+            .disabled(avm.discardChangesDisabled())
 
-            Button("Discard tracks") { vm.discardTracksAction() }
-                .disabled(vm.discardTracksDisabled())
+            Button("Discard tracks") { avm.discardTracksAction() }
+                .disabled(avm.discardTracksDisabled())
 
             Divider()
             
-            Button("Clear Image List") { vm.clearImageListAction() }
+            Button("Clear Image List") { avm.clearImageListAction() }
                 .keyboardShortcut("k")
-                .disabled(vm.clearDisabled)
+                .disabled(avm.clearDisabled)
         }
     }
 }

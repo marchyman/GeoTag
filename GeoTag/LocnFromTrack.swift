@@ -20,7 +20,7 @@ extension AppViewModel {
 
     func locnFromTrackAction(context: ImageModel.ID? = nil) {
         if let context {
-            selection = [context]
+            select(context: context)
         }
         // image timestamps must be converted to seconds from the epoch
         // to match track logs.  Prepare a dateformatter to handle the

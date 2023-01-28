@@ -26,7 +26,7 @@ extension AppViewModel {
     
     func deleteAction(context: ImageModel.ID? = nil) {
         if let context {
-            selection = [context]
+            select(context: context)
         }
         if !selection.isEmpty {
             undoManager.beginUndoGrouping()
