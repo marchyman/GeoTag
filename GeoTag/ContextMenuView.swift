@@ -10,38 +10,38 @@ import SwiftUI
 // Duplicates many of the menu commands
 
 struct ContextMenuView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
     let context: ImageModel.ID?
 
     var body: some View {
         Group {
-            Button("Cut") { vm.cutAction(context: context) }
-                .disabled(vm.cutCopyDisabled(context: context))
+            Button("Cut") { avm.cutAction(context: context) }
+                .disabled(avm.cutCopyDisabled(context: context))
 
-            Button("Copy") { vm.copyAction(context: context) }
-                .disabled(vm.cutCopyDisabled(context: context))
+            Button("Copy") { avm.copyAction(context: context) }
+                .disabled(avm.cutCopyDisabled(context: context))
 
-            Button("Paste") { vm.pasteAction(context: context) }
-                .disabled(vm.pasteDisabled(context: context))
+            Button("Paste") { avm.pasteAction(context: context) }
+                .disabled(avm.pasteDisabled(context: context))
 
-            Button("Delete") { vm.deleteAction(context: context) }
-                .disabled(vm.deleteDisabled(context: context))
+            Button("Delete") { avm.deleteAction(context: context) }
+                .disabled(avm.deleteDisabled(context: context))
         }
         
         Divider()
 
         Group {
-            Button("Show In Finder") { vm.showInFinderAction(context: context) }
-                .disabled(vm.showInFinderDisabled(context: context))
+            Button("Show In Finder") { avm.showInFinderAction(context: context) }
+                .disabled(avm.showInFinderDisabled(context: context))
 
-            Button("Locn From Track") { vm.locnFromTrackAction(context: context ) }
-                .disabled(vm.locnFromTrackDisabled(context: context))
+            Button("Locn From Track") { avm.locnFromTrackAction(context: context ) }
+                .disabled(avm.locnFromTrackDisabled(context: context))
         }
 
         Divider()
 
-        Button("Clear Image List") { vm.clearImageListAction() }
-            .disabled(vm.clearDisabled)
+        Button("Clear Image List") { avm.clearImageListAction() }
+            .disabled(avm.clearDisabled)
     }
 }
 

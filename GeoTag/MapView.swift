@@ -15,7 +15,7 @@ import MapKit
 
 struct MapView: NSViewRepresentable {
     @EnvironmentObject var vm: AppViewModel
-    @ObservedObject var mapViewModel = MapViewModel.shared
+    @ObservedObject var mvm = MapViewModel.shared
 
     let center: CLLocationCoordinate2D
     let altitude: Double
@@ -42,10 +42,10 @@ struct MapView: NSViewRepresentable {
         trackChanges(for: view)
 
         // re-center the map
-        if mapViewModel.reCenter {
+        if mvm.reCenter {
             DispatchQueue.main.async {
-                view.setCenter(mapViewModel.currentMapCenter, animated: false)
-                mapViewModel.reCenter = false
+                view.setCenter(mvm.currentMapCenter, animated: false)
+                mvm.reCenter = false
             }
         }
     }
@@ -53,7 +53,7 @@ struct MapView: NSViewRepresentable {
     // Change the look of the map
 
     func setMapConfiguration(_ view: ClickMapView) {
-        switch mapViewModel.mapConfiguration {
+        switch mvm.mapConfiguration {
         case 0:
             view.preferredConfiguration = MKStandardMapConfiguration()
         case 1:
@@ -70,19 +70,20 @@ struct MapView: NSViewRepresentable {
     func mainPinChanges(for view: ClickMapView) {
         // Nothing to do if there is no main pin. This is OK as any exising
         // pin view will be removed when processing other pin changes.
-        if mapViewModel.mainPin == nil {
+        if mvm.mainPin == nil {
             return
         }
 
         // Add a new annotation for mainPin.  Testing shows that this replaces
         // any existing annotation for the pin.
-        view.addAnnotation(mapViewModel.mainPin!)
+        view.addAnnotation(mvm.mainPin!)
+        print("Pin at \(mvm.mainPin!.coordinate)")
 
         // make sure pin is in view
-        if !view.visibleMapRect.contains(MKMapPoint(mapViewModel.mainPin!.coordinate)) {
+        if !view.visibleMapRect.contains(MKMapPoint(mvm.mainPin!.coordinate)) {
             // I don't know of a better way?
             DispatchQueue.main.async {
-                view.setCenter(mapViewModel.mainPin!.coordinate, animated: false)
+                view.setCenter(mvm.mainPin!.coordinate, animated: false)
             }
         }
     }
@@ -92,24 +93,24 @@ struct MapView: NSViewRepresentable {
     func otherPinChanges(for view: ClickMapView) {
         let oldAnnotations: [MKAnnotation]
 
-        if mapViewModel.onlyMostSelected || mapViewModel.otherPins.isEmpty {
+        if mvm.onlyMostSelected || mvm.otherPins.isEmpty {
             // remove all annotation save any that match the main pin
             oldAnnotations = view.annotations.filter {
-                $0.coordinate != mapViewModel.mainPin?.coordinate
+                $0.coordinate != mvm.mainPin?.coordinate
             }
         } else {
             // ignore other pins on top of the main pin
-            view.addAnnotations(mapViewModel.otherPins.filter {
-                $0.coordinate != mapViewModel.mainPin?.coordinate
+            view.addAnnotations(mvm.otherPins.filter {
+                $0.coordinate != mvm.mainPin?.coordinate
             })
 
             // now remove any annotations for items no longer selected
-            var known = Set(mapViewModel.otherPins)
+            var known = Set(mvm.otherPins)
 
             // if the most selected item has a location add its pin
             // to the set of known pins
-            if mapViewModel.mainPin != nil {
-                known.insert(mapViewModel.mainPin!)
+            if mvm.mainPin != nil {
+                known.insert(mvm.mainPin!)
             }
 
             oldAnnotations = view.annotations.filter {
@@ -124,19 +125,19 @@ struct MapView: NSViewRepresentable {
     // draw tracks on the map when needed
 
     func trackChanges(for view: ClickMapView) {
-        if mapViewModel.refreshTracks {
+        if mvm.refreshTracks {
             let overlays = view.overlays
             if !overlays.isEmpty {
                 view.removeOverlays(overlays)
             }
-            view.addOverlays(mapViewModel.mapLines)
-            if let span = mapViewModel.mapSpan {
+            view.addOverlays(mvm.mapLines)
+            if let span = mvm.mapSpan {
                 // I still don't know of a better way?
                 DispatchQueue.main.async {
-                    view.setRegion(MKCoordinateRegion(center: mapViewModel.currentMapCenter,
+                    view.setRegion(MKCoordinateRegion(center: mvm.currentMapCenter,
                                                       span: span),
                                    animated: false)
-                    mapViewModel.refreshTracks = false
+                    mvm.refreshTracks = false
                 }
             }
         }
@@ -150,7 +151,7 @@ extension MapView {
     // Coordinator class conforming to MKMapViewDelegate
 
     class Coordinator: NSObject, MKMapViewDelegate {
-        @ObservedObject var mapViewModel = MapViewModel.shared
+        @ObservedObject var mvm = MapViewModel.shared
         @ObservedObject var vm: AppViewModel
 
         init(vm: AppViewModel) {
@@ -178,8 +179,8 @@ extension MapView {
 
         @MainActor
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-            mapViewModel.currentMapCenter = mapView.camera.centerCoordinate
-            mapViewModel.currentMapAltitude = mapView.camera.altitude
+            mvm.currentMapCenter = mapView.camera.centerCoordinate
+            mvm.currentMapAltitude = mapView.camera.altitude
         }
 
         // update the location of a dragged pin
@@ -210,10 +211,10 @@ extension MapView {
         func mapView(_ mapview: MKMapView,
                      rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             let polyline = overlay as! MKPolyline
-            if mapViewModel.mapLines.contains(polyline) {
+            if mvm.mapLines.contains(polyline) {
                 let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = NSColor(mapViewModel.trackColor)
-                renderer.lineWidth = CGFloat(mapViewModel.trackWidth)
+                renderer.strokeColor = NSColor(mvm.trackColor)
+                renderer.lineWidth = CGFloat(mvm.trackWidth)
                 return renderer
             }
             return MKOverlayRenderer(overlay: overlay)

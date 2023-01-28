@@ -23,11 +23,6 @@ final class AppViewModel: ObservableObject {
     @AppStorage(AppSettings.addTagKey) var addTag = false
     @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
-
-    // A second save can not be triggered while a save is in progress.
-    // App termination is denied, too.
-    var saveInProgress = false
-
     // get/set an image from the table of images  given its ID.
     subscript(id: ImageModel.ID?) -> ImageModel {
          get {
@@ -48,6 +43,10 @@ final class AppViewModel: ObservableObject {
              }
          }
      }
+
+    // A second save can not be triggered while a save is in progress.
+    // App termination is denied, too.
+    var saveInProgress = false
 
     // The Apps main window.
     var mainWindow: NSWindow?

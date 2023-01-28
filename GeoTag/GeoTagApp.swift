@@ -11,6 +11,7 @@ import SwiftUI
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @StateObject var avm = AppViewModel()
+
     let windowWidth = 1200.0
     let windowHeight = 900.0
 

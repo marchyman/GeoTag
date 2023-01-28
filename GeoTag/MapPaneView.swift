@@ -55,6 +55,7 @@ struct MapPaneView: View {
                     mapViewModel.mainPin?.title = "Pin"
                 }
                 mapViewModel.mainPin?.coordinate = location
+                print("Pin change to \(location)")
             }
         } else {
             mapViewModel.mainPin = nil
