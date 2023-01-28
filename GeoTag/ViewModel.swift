@@ -13,30 +13,17 @@ import MapKit
 
 @MainActor
 final class ViewModel: ObservableObject {
-    // The Apps main window.
-    var mainWindow: NSWindow?
-    var undoManager = UndoManager()
-
-    // Let the user know when the app is busy
-    @Published var showingProgressView = false
-
-    // Fields used select a sheet to attach to the content view
-    // some sheets are associated with errors.  Setting sheetType will
-    // trigger display of the sheet
-    var sheetStack = [SheetInfo]()
-    var sheetError: NSError?
-    var sheetMessage: String?
-    var saveIssues = [ImageModel.ID : String ]()
-    @Published var sheetType: SheetType?
-
-    // Confirmation required
-    var confirmationMessage: String?
-    var confirmationAction: (@MainActor () -> Void)?
-    @Published var presentConfirmation = false
-
-    // Images to edit.
     @Published var images = [ImageModel]()
+    @Published var selection = Set<ImageModel.ID>()
+    @Published var mostSelected: ImageModel.ID?
+    @Published var selectedMenuAction: MenuAction = .none
+
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+    @AppStorage(AppSettings.addTagKey) var addTag = false
+    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
+
 
     // A second save can not be triggered while a save is in progress.
     // App termination is denied, too.
@@ -63,12 +50,11 @@ final class ViewModel: ObservableObject {
          }
      }
 
-    // Selected Image(s) by ID and the most selected image
-    @Published var selection = Set<ImageModel.ID>()
-    @Published var mostSelected: ImageModel.ID?
+    // The Apps main window.
+    var mainWindow: NSWindow?
+    var undoManager = UndoManager()
 
     // State that changes when a menu item is picked.
-    @Published var selectedMenuAction: MenuAction = .none
 
     // Tracks displayed on map
     var gpxTracks = [Gpx]()
@@ -88,13 +74,6 @@ final class ViewModel: ObservableObject {
     // AppStorage.
     var backupURL: URL?
 
-    // The folder containing backups is scanned at startup and the user
-    // is given the option to remove backups older than 7 days.
-    var oldFiles = [URL]()
-    var folderSize = 0
-    var deletedSize = 0
-    @Published var removeOldFiles = false
-
     // get the backupURL from AppStorage if needed.  This will also trigger
     // a scan of the backup folder for old backups that can be removed.
     
@@ -103,29 +82,6 @@ final class ViewModel: ObservableObject {
 
         if !doNotBackup {
             backupURL = getBackupURL()
-        }
-    }
-}
-
-// Add a sheet to display
-
-extension ViewModel {
-    struct SheetInfo {
-        let sheetType: SheetType
-        let sheetError: NSError?
-        let sheetMessage: String?
-    }
-
-    func addSheet(type: SheetType, error: NSError? = nil, message: String? = nil) {
-        if sheetType == nil {
-            sheetType = type
-            sheetError = error
-            sheetMessage = message
-        } else {
-            // create a SheetInfo and add it to the stack of pending sheets
-            sheetStack.append(SheetInfo(sheetType: type,
-                                        sheetError: error,
-                                        sheetMessage: message))
         }
     }
 }

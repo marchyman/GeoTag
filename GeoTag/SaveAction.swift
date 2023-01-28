@@ -18,9 +18,7 @@ extension ViewModel {
     // Update image files with changed timestamp/location info
 
     func saveAction() {
-        @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-        @AppStorage(AppSettings.addTagKey) var addTag = false
-        @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
+        let cvm = ContentViewModel.shared
 
         // returned status of the save operation
         struct SaveStatus {
@@ -34,14 +32,14 @@ extension ViewModel {
         // before starting check that image files backups are disabled
         // or the image backup folder exists.
         guard doNotBackup || backupURL != nil else {
-            addSheet(type: .noBackupFolderSheet)
+            ContentViewModel.shared.addSheet(type: .noBackupFolderSheet)
             return
         }
 
         // copy images.  The info in the copies will be saved in background
         // tasks.
         saveInProgress = true
-        saveIssues = [:]
+        cvm.saveIssues = [:]
         let imagesToSave = images
         undoManager.removeAllActions()
         mainWindow?.isDocumentEdited = false
@@ -89,13 +87,13 @@ extension ViewModel {
                         self[status.id].originalLocation = status.location
                         self[status.id].originalElevation = status.elevation
                     } else {
-                        saveIssues.updateValue(status.error!, forKey: status.id)
+                        cvm.saveIssues.updateValue(status.error!, forKey: status.id)
                     }
                 }
             }
 
-            if !saveIssues.isEmpty {
-                addSheet(type: .saveErrorSheet)
+            if !cvm.saveIssues.isEmpty {
+                cvm.addSheet(type: .saveErrorSheet)
             }
             saveInProgress = false
         }

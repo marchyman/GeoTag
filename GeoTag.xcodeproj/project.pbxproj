@@ -71,6 +71,7 @@
 		49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29B12962676E00B26F03 /* GpxSearch.swift */; };
 		49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD6C922966589E00905B43 /* TimeZoneHelper.swift */; };
 		49C45BA72984851000CC7F0E /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C45BA62984851000CC7F0E /* MapViewModel.swift */; };
+		49C45BA92984AB5F00CC7F0E /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C45BA82984AB5F00CC7F0E /* ContentViewModel.swift */; };
 		49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFB2951009500804B74 /* MapPaneView.swift */; };
 		49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFD295100A600804B74 /* MapStyleView.swift */; };
 		49E29F002951011300804B74 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFF2951011300804B74 /* MapView.swift */; };
@@ -151,6 +152,7 @@
 		49BA29B12962676E00B26F03 /* GpxSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpxSearch.swift; sourceTree = "<group>"; };
 		49BD6C922966589E00905B43 /* TimeZoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelper.swift; sourceTree = "<group>"; };
 		49C45BA62984851000CC7F0E /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		49C45BA82984AB5F00CC7F0E /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		49E29EFB2951009500804B74 /* MapPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPaneView.swift; sourceTree = "<group>"; };
 		49E29EFD295100A600804B74 /* MapStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleView.swift; sourceTree = "<group>"; };
 		49E29EFF2951011300804B74 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -284,6 +286,7 @@
 		498A735D294EC7D800C62B14 /* Content View Group */ = {
 			isa = PBXGroup;
 			children = (
+				49C45BA82984AB5F00CC7F0E /* ContentViewModel.swift */,
 				49B039592944429E003B7C53 /* ContentView.swift */,
 				49A729B12953E7AA00DF1AAF /* ImageMapView.swift */,
 				49A729AF2953E72200DF1AAF /* DividerView.swift */,
@@ -523,6 +526,7 @@
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
 				4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */,
 				49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */,
+				49C45BA92984AB5F00CC7F0E /* ContentViewModel.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
 				49A99FBC296F6D5900392EEA /* PathView.swift in Sources */,
 				49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */,

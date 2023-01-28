@@ -49,14 +49,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if let viewModel {
             if viewModel.saveInProgress {
-                viewModel.addSheet(type: .savingUpdatesSheet)
+                ContentViewModel.shared.addSheet(type: .savingUpdatesSheet)
                 return .terminateCancel
             }
 
             if let edited = viewModel.mainWindow?.isDocumentEdited, edited {
-                viewModel.confirmationMessage = "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
-                viewModel.confirmationAction = terminateIgnoringEdits
-                viewModel.presentConfirmation = true
+                ContentViewModel.shared.confirmationMessage = "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
+                ContentViewModel.shared.confirmationAction = terminateIgnoringEdits
+                ContentViewModel.shared.presentConfirmation = true
                 return .terminateCancel
             }
         }

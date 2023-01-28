@@ -2,6 +2,7 @@
 
 ### Fixes/changes since initial Beta
 
+* Fix pins not showing when clicking on map
 * Show/Hide pins for all selected images, not just the most selected image
 * Show/Hide grayed out images
 * map search bar alignment (trailing)

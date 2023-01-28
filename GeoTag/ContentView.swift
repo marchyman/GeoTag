@@ -11,10 +11,9 @@ import SwiftUI
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
-
     @EnvironmentObject var vm: ViewModel
+    @ObservedObject var contentViewModel = ContentViewModel.shared
+
     @State private var sheetType: SheetType?
     @State private var presentConfirmation = false
     @State private var removeOldFiles = false
@@ -24,8 +23,8 @@ struct ContentView: View {
             ZStack {
                 ImageTableView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                if vm.showingProgressView {
-                    ProgressView("Processing image files...")
+                if contentViewModel.showingProgressView {
+                    ProgressView("Processing files...")
                 }
             }
             ImageMapView()
@@ -37,8 +36,9 @@ struct ContentView: View {
         // startup
         .onAppear {
             // check for a backupURL
-            if !doNotBackup && saveBookmark == Data() {
-                vm.addSheet(type: .noBackupFolderSheet)
+            if !vm.doNotBackup
+                && vm.saveBookmark == Data() {
+                contentViewModel.addSheet(type: .noBackupFolderSheet)
             }
         }
 
@@ -46,28 +46,27 @@ struct ContentView: View {
         .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in
             sheet
         }
-        .link($vm.sheetType, with: $sheetType)
+        .link($contentViewModel.sheetType, with: $sheetType)
 
         // confirmations
         .confirmationDialog("Are you sure?", isPresented: $presentConfirmation) {
             Button("I'm sure", role: .destructive) {
-                if vm.confirmationAction != nil {
-                    vm.confirmationAction!()
+                if contentViewModel.confirmationAction != nil {
+                    contentViewModel.confirmationAction!()
                 }
             }
             Button("Cancel", role: .cancel) { }
                 .keyboardShortcut(.defaultAction)
         } message: {
-            let message = vm.confirmationMessage != nil ? vm.confirmationMessage! : ""
+            let message = contentViewModel.confirmationMessage != nil ? contentViewModel.confirmationMessage! : ""
             Text(message)
         }
-        .link($vm.presentConfirmation, with: $presentConfirmation)
+        .link($contentViewModel.presentConfirmation, with: $presentConfirmation)
 
         // Alert: Remove Old Backup files
-        .alert("Delete old backup files?",
-               isPresented: $removeOldFiles) {
+        .alert("Delete old backup files?", isPresented: $removeOldFiles) {
             Button("Delete", role: .destructive) {
-                vm.remove(filesToRemove: vm.oldFiles)
+                vm.remove(filesToRemove: contentViewModel.oldFiles)
             }
             Button("Cancel", role: .cancel) { }
                 .keyboardShortcut(.defaultAction)
@@ -77,27 +76,27 @@ struct ContentView: View {
 
                      \(vm.backupURL != nil ? vm.backupURL!.path : "unknown")
 
-                 is using \(vm.folderSize / 1_000_000) MB to store backup files.
+                 is using \(contentViewModel.folderSize / 1_000_000) MB to store backup files.
 
-                 \(vm.oldFiles.count) files using \(vm.deletedSize / 1_000_000) MB of storage were placed in the folder more than 7 days ago.
+                 \(contentViewModel.oldFiles.count) files using \(contentViewModel.deletedSize / 1_000_000) MB of storage were placed in the folder more than 7 days ago.
 
-                 Would you like to remove those \(vm.oldFiles.count) backup files?
+                 Would you like to remove those \(contentViewModel.oldFiles.count) backup files?
                  """)
         }
-        .link($vm.removeOldFiles, with: $removeOldFiles)
+        .link($contentViewModel.removeOldFiles, with: $removeOldFiles)
     }
 
     // when a sheet is dismissed check if there are more sheets to display
 
     func sheetDismissed() {
-        if vm.sheetStack.isEmpty {
-            vm.sheetMessage = nil
-            vm.sheetError = nil
+        if contentViewModel.sheetStack.isEmpty {
+            contentViewModel.sheetMessage = nil
+            contentViewModel.sheetError = nil
         } else {
-            let sheetInfo = vm.sheetStack.removeFirst()
-            vm.sheetMessage = sheetInfo.sheetMessage
-            vm.sheetError = sheetInfo.sheetError
-            vm.sheetType = sheetInfo.sheetType
+            let sheetInfo = contentViewModel.sheetStack.removeFirst()
+            contentViewModel.sheetMessage = sheetInfo.sheetMessage
+            contentViewModel.sheetError = sheetInfo.sheetError
+            contentViewModel.sheetType = sheetInfo.sheetType
         }
     }
 

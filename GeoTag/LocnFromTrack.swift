@@ -29,7 +29,7 @@ extension ViewModel {
 
         // use a separate task in a group to update each image
         Task {
-            showingProgressView = true
+            ContentViewModel.shared.showingProgressView = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
                 for id in selection {
                     if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
@@ -57,7 +57,7 @@ extension ViewModel {
                     }
                 }
             }
-            showingProgressView = false
+            ContentViewModel.shared.showingProgressView = false
         }
     }
 }

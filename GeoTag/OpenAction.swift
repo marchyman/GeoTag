@@ -41,7 +41,7 @@ extension ViewModel {
     func prepareForEdit(inputURLs: [URL]) {
         @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
 
-        showingProgressView = true
+        ContentViewModel.shared.showingProgressView = true
 
         // dragged urls are duplicated for some reason. Make an array
         // of unique URLs including those in any containing folder
@@ -80,18 +80,19 @@ extension ViewModel {
 
             // copy sheet info from helper to ViewModel
             if await !helper.sheetStack.isEmpty {
-                sheetStack.append(contentsOf: await helper.sheetStack)
-                let sheetInfo = sheetStack.removeFirst()
-                sheetMessage = sheetInfo.sheetMessage
-                sheetError = sheetInfo.sheetError
-                sheetType = sheetInfo.sheetType
+                let cvm = ContentViewModel.shared
+                cvm.sheetStack.append(contentsOf: await helper.sheetStack)
+                let sheetInfo = cvm.sheetStack.removeFirst()
+                cvm.sheetMessage = sheetInfo.sheetMessage
+                cvm.sheetError = sheetInfo.sheetError
+                cvm.sheetType = sheetInfo.sheetType
             }
 
             // disable paired jpegs if desired
             if disablePairedJpegs {
                 disableJpegs()
             }
-            showingProgressView = false
+            ContentViewModel.shared.showingProgressView = false
         }
     }
 

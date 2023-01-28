@@ -125,7 +125,7 @@ struct SavingUpdatesView: View {
 }
 
 struct SaveErrorView: View {
-    @EnvironmentObject var vm: ViewModel
+    @ObservedObject var contentViewModel = ContentViewModel.shared
 
     var body: some View {
         VStack() {
@@ -137,7 +137,7 @@ struct SaveErrorView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
             List {
-                ForEach(vm.saveIssues.sorted(by: >), id: \.key) { key, value in
+                ForEach(contentViewModel.saveIssues.sorted(by: >), id: \.key) { key, value in
                     VStack(alignment: .leading) {
                         Text(key.lastPathComponent)
                             .bold()
@@ -152,20 +152,21 @@ struct SaveErrorView: View {
     }
 
 }
+
 struct UnexpectedErrorView: View {
-    @EnvironmentObject var vm: ViewModel
+    @ObservedObject var contentViewModel = ContentViewModel.shared
 
     var body: some View {
         VStack() {
             Text("Unexpected Error")
                 .font(.title)
                 .padding()
-            if let message = vm.sheetMessage {
+            if let message = contentViewModel.sheetMessage {
                 Text(message)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding()
             }
-            if let error = vm.sheetError {
+            if let error = contentViewModel.sheetError {
                 Text(error.localizedDescription)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding()
