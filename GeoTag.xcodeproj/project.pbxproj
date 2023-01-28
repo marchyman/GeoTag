@@ -60,7 +60,6 @@
 		49B9EDE32949442700574D18 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDE22949442700574D18 /* AppViewModel.swift */; };
 		49BA299D296223F700B26F03 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA299C296223F700B26F03 /* AppDelegate.swift */; };
 		49BA299F2962250200B26F03 /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA299E2962250200B26F03 /* WindowAccessor.swift */; };
-		49BA29A12962272B00B26F03 /* MenuAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A02962272B00B26F03 /* MenuAction.swift */; };
 		49BA29A32962285300B26F03 /* Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A22962285300B26F03 /* Updates.swift */; };
 		49BA29A629622B5200B26F03 /* SaveItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A529622B5200B26F03 /* SaveItemCommandGroup.swift */; };
 		49BA29A82962370200B26F03 /* SaveAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29A72962370200B26F03 /* SaveAction.swift */; };
@@ -140,7 +139,6 @@
 		49B9EDE22949442700574D18 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		49BA299C296223F700B26F03 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		49BA299E2962250200B26F03 /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
-		49BA29A02962272B00B26F03 /* MenuAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuAction.swift; sourceTree = "<group>"; };
 		49BA29A22962285300B26F03 /* Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updates.swift; sourceTree = "<group>"; };
 		49BA29A42962296600B26F03 /* To Do */ = {isa = PBXFileReference; lastKnownFileType = text; path = "To Do"; sourceTree = "<group>"; };
 		49BA29A529622B5200B26F03 /* SaveItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveItemCommandGroup.swift; sourceTree = "<group>"; };
@@ -366,7 +364,6 @@
 		49FFC5C02984F11C00501D08 /* Menu Actions Group */ = {
 			isa = PBXGroup;
 			children = (
-				49BA29A02962272B00B26F03 /* MenuAction.swift */,
 				492175782949743E00A5EA83 /* OpenAction.swift */,
 				49BA29A72962370200B26F03 /* SaveAction.swift */,
 				49A99FBD296F8B4B00392EEA /* BackupFolder.swift */,
@@ -527,7 +524,6 @@
 				498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
-				49BA29A12962272B00B26F03 /* MenuAction.swift in Sources */,
 				49A99FBE296F8B4B00392EEA /* BackupFolder.swift in Sources */,
 				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
 				4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */,

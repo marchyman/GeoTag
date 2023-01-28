@@ -13,23 +13,23 @@ extension GeoTagApp {
     var pasteBoardCommandGroup: some Commands {
         CommandGroup(replacing: .pasteboard) {
             Group {
-                Button("Cut") { setPastboardItemAction(.cut) }
+                Button("Cut") { vm.cutAction() }
                     .keyboardShortcut("x")
                     .disabled(vm.cutCopyDisabled())
 
-                Button("Copy") { setPastboardItemAction(.copy) }
+                Button("Copy") { vm.copyAction() }
                     .keyboardShortcut("c")
                     .disabled(vm.cutCopyDisabled())
 
-                Button("Paste") { setPastboardItemAction(.paste) }
+                Button("Paste") { vm.pasteAction() }
                     .keyboardShortcut("v")
                     .disabled(vm.pasteDisabled())
 
-                Button("Delete") { setPastboardItemAction(.delete) }
+                Button("Delete") { vm.deleteAction() }
                     .keyboardShortcut(.delete, modifiers: [])
                     .disabled(vm.deleteDisabled())
 
-                Button("Select All") { setPastboardItemAction(.selectAll) }
+                Button("Select All") { vm.selectAllAction() }
                     .keyboardShortcut("a")
                     .disabled(vm.selectAllDisabled())
             }
@@ -37,19 +37,17 @@ extension GeoTagApp {
             Divider()
 
             Group {
-                Button("Show In Finder") { setPastboardItemAction(.showInFinder) }
+                Button("Show In Finder") { vm.showInFinderAction() }
                     .disabled(vm.showInFinderDisabled())
 
-                Button("Locn From Track") { setPastboardItemAction(.locnFromTrack) }
+                Button("Locn From Track") { vm.locnFromTrackAction() }
                     .keyboardShortcut("l")
                     .disabled(vm.locnFromTrackDisabled())
                 
-                Button("Specify Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
+                Button("Specify Time Zone…") {
+                    ContentViewModel.shared.changeTimeZoneWindow.toggle()
+                }
             }
         }
-    }
-
-    func setPastboardItemAction(_ action: AppViewModel.MenuAction) {
-        vm.setMenuAction(for: action)
     }
 }

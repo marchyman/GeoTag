@@ -15,37 +15,33 @@ struct ContextMenuView: View {
 
     var body: some View {
         Group {
-            Button("Cut") { setContextMenuAction(.cut) }
+            Button("Cut") { vm.cutAction(context: context) }
                 .disabled(vm.cutCopyDisabled(context: context))
 
-            Button("Copy") { setContextMenuAction(.copy) }
+            Button("Copy") { vm.copyAction(context: context) }
                 .disabled(vm.cutCopyDisabled(context: context))
 
-            Button("Paste") { setContextMenuAction(.paste) }
+            Button("Paste") { vm.pasteAction(context: context) }
                 .disabled(vm.pasteDisabled(context: context))
 
-            Button("Delete") { setContextMenuAction(.delete) }
+            Button("Delete") { vm.deleteAction(context: context) }
                 .disabled(vm.deleteDisabled(context: context))
         }
         
         Divider()
 
         Group {
-            Button("Show In Finder") { setContextMenuAction(.showInFinder) }
+            Button("Show In Finder") { vm.showInFinderAction(context: context) }
                 .disabled(vm.showInFinderDisabled(context: context))
 
-            Button("Locn From Track") { setContextMenuAction(.locnFromTrack) }
+            Button("Locn From Track") { vm.locnFromTrackAction(context: context ) }
                 .disabled(vm.locnFromTrackDisabled(context: context))
         }
 
         Divider()
 
-        Button("Clear Image List") { setContextMenuAction(.clearList) }
+        Button("Clear Image List") { vm.clearImageListAction() }
             .disabled(vm.clearDisabled)
-    }
-
-    func setContextMenuAction(_ action: AppViewModel.MenuAction) {
-        vm.setMenuAction(for: action, context: context)
     }
 }
 

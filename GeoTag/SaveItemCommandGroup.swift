@@ -12,7 +12,7 @@ import SwiftUI
 extension GeoTagApp {
     var saveItemCommandGroup: some Commands {
         CommandGroup(after: .saveItem) {
-            Button("Save…") { setSaveItemAction(.save) }
+            Button("Save…") { vm.saveAction() }
                 .keyboardShortcut("s")
                 .disabled(vm.saveDisabled())
 
@@ -23,18 +23,14 @@ extension GeoTagApp {
             }
             .disabled(vm.discardChangesDisabled())
 
-            Button("Discard tracks") { setSaveItemAction(.discardTracks) }
+            Button("Discard tracks") { vm.discardTracksAction() }
                 .disabled(vm.discardTracksDisabled())
 
             Divider()
             
-            Button("Clear Image List") { setSaveItemAction(.clearList) }
+            Button("Clear Image List") { vm.clearImageListAction() }
                 .keyboardShortcut("k")
                 .disabled(vm.clearDisabled)
         }
-    }
-
-    func setSaveItemAction(_ action: AppViewModel.MenuAction) {
-        vm.setMenuAction(for: action)
     }
 }

@@ -26,7 +26,10 @@ extension AppViewModel {
 
     // paste into all selected images
     
-    func pasteAction() {
+    func pasteAction(context: ImageModel.ID? = nil) {
+        if let context {
+            selection = [context]
+        }
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
            let locn = ImageModel.decodeStringRep(value: pasteVal) {
