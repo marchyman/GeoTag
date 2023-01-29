@@ -12,11 +12,12 @@ struct SettingsView: View {
     @ObservedObject var mvm = MapViewModel.shared
     @ObservedObject var itvm = ImageTableViewModel.shared
 
+    // Only used in prepareForEdits
     @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
+
+    // Used in Exiftool
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
-    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
     @State private var backupURL: URL?
 
@@ -49,10 +50,6 @@ struct SettingsView: View {
                                 .padding(.bottom)
                                 .onChange(of: backupURL) { url in
                                     avm.backupURL = url
-                                    if let url {
-                                        saveBookmark = avm.getBookmark(from: url)
-                                        avm.checkBackupFolder(url)
-                                    }
                                 }
                         }
                         .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
@@ -122,12 +119,12 @@ struct SettingsView: View {
                     .help("If this option is enabled a finder tag will be added to updated images.")
 
                     if avm.addTag {
-                        TextField("With tag:", text: $tag)
+                        TextField("With tag:", text: $avm.tag)
                             .frame(maxWidth: 250)
                             .padding(.horizontal)
                             .onSubmit {
-                                if tag.isEmpty {
-                                    tag = "GeoTag"
+                                if avm.tag.isEmpty {
+                                    avm.tag = "GeoTag"
                                 }
                             }
                             .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")

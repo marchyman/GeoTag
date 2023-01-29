@@ -69,8 +69,17 @@ final class AppViewModel: ObservableObject {
 
     // The URL of the folder where image backups are save when backups
     // are enabled.  The URL comes from a security scoped bookmark in
-    // AppStorage.
-    var backupURL: URL?
+    // AppStorage.  When changed to a non-nil value the bookmark is updated
+    // and the new folder is checked to see if there are old backups that
+    // can be removed.
+    var backupURL: URL? {
+        didSet {
+            if let url = backupURL {
+                saveBookmark = getBookmark(from: url)
+                checkBackupFolder(url)
+            }
+        }
+    }
 
     // get the backupURL from AppStorage if needed.  This will also trigger
     // a scan of the backup folder for old backups that can be removed.
