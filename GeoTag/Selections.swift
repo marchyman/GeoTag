@@ -10,28 +10,34 @@ import Foundation
 extension AppViewModel {
 
     // Process the set of selected images.  Pick one as the "most" selected if
-    // the current most selected image is not in the set.
+    // the current most selected image is not in the set.  Filter out any
+    // items that are not valid images.
 
-    func selectionChanged(newSelection: Set<ImageModel.ID>) {
+    func selectionChanged() {
 
         // filter out any ids in the selection that don't reference valid images
-        let filteredImagesIds = images.filter { $0.isValid }.map { $0.id }
-        selection = newSelection.filter { filteredImagesIds.contains($0) }
+        let filteredImageIds = images.filter { $0.isValid }.map { $0.id }
+        let proposedSelection = selection.filter { filteredImageIds.contains($0) }
 
-        // Handle the case where nothing is selected
-        guard !selection.isEmpty else {
+        // Handle the case where nothing is selected.  Otherwise pick an
+        // id as being the "most selected".
+        if proposedSelection.isEmpty {
             mostSelected = nil
-            return
+        } else {
+            // If the image that was the "most" selected is in the proposed
+            // selection set don't pick another
+            if !proposedSelection.contains(where: { $0 == mostSelected }) {
+                mostSelected = selection.first
+            }
         }
 
-        // If the image that was the "most" selected is in the current
-        // selection set there is nothing more to do.
-        if selection.contains(where: { $0 == mostSelected }) {
-            return
+        // if the proposed selection does not match the selection update
+        // the selection on the main queue.
+        if proposedSelection != selection {
+            DispatchQueue.main.async {
+                self.selection = proposedSelection
+            }
         }
-
-        // set the most selected image
-        mostSelected = selection.first
     }
 
     // If the context item is in the current selection make it the

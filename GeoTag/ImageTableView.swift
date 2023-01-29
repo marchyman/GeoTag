@@ -56,8 +56,8 @@ struct ImageTableView: View {
         .onChange(of: sortOrder) { newOrder in
             avm.images.sort(using: newOrder)
         }
-        .onChange(of: avm.selection) { selection in
-            avm.selectionChanged(newSelection: selection)
+        .onChange(of: avm.selection) { _ in
+            avm.selectionChanged()
         }
     }
 }
