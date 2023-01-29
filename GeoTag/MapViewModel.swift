@@ -13,11 +13,8 @@ import MapKit
 final class MapViewModel: ObservableObject {
     @Published var refreshTracks = false
     @Published var onlyMostSelected = true
-    @Published var mainPin: MKPointAnnotation?
-    @Published var otherPins = [MKPointAnnotation]()
     @Published var searchString = ""
     @Published var reCenter = false
-    @Published var locationUpdated = false
 
     @AppStorage(AppSettings.mapConfigurationKey)  var mapConfiguration = 0
     @AppStorage(AppSettings.mapLatitudeKey)  var initialMapLatitude = 37.7244
@@ -27,6 +24,10 @@ final class MapViewModel: ObservableObject {
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
     public static let shared = MapViewModel()
+
+    // Map pins
+    var mainPin: MKPointAnnotation?
+    var otherPins = [MKPointAnnotation]()
 
     // Keep track of the coords for the center of the map
     var currentMapCenter = Coords()

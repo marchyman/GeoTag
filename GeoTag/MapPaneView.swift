@@ -35,46 +35,6 @@ struct MapPaneView: View {
                 .padding()
             }
         }
-        .onChange(of: vm.mostSelected) { mainPinChange(id: $0) }
-        .onChange(of: mapViewModel.locationUpdated) { _ in
-            mainPinChange(id: vm.mostSelected)
-        }
-        .onChange(of: vm.selection) { otherPinsChange(selection: $0) }
-    }
-
-
-    // create an annotation for the main pin.  It's title is set to the
-    // name of the pin image that will represent the pin on the map.
-
-    func mainPinChange(id: ImageModel.ID?) {
-        if let id,
-           let location = vm[id].location {
-            if location != mapViewModel.mainPin?.coordinate {
-                if mapViewModel.mainPin == nil {
-                    mapViewModel.mainPin = MKPointAnnotation()
-                    mapViewModel.mainPin?.title = "Pin"
-                }
-                mapViewModel.mainPin?.coordinate = location
-                print("Pin change to \(location)")
-            }
-        } else {
-            mapViewModel.mainPin = nil
-        }
-    }
-
-    // create pins for other selected items that have a location.  Their
-    // title also names the image that represents the pin on the map.
-
-    func otherPinsChange(selection: Set<ImageModel.ID>) {
-        var pins = [MKPointAnnotation]()
-        for id in selection.filter({ $0 != vm.mostSelected
-                                     && vm[$0].location != nil }) {
-            let pin = MKPointAnnotation()
-            pin.title = "OtherPin"
-            pin.coordinate = vm[id].location!
-            pins.append(pin)
-        }
-        mapViewModel.otherPins = pins
     }
 
     // The work of searching the map is done here as this view is parent

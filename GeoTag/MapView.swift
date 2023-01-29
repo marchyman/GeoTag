@@ -14,31 +14,31 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    @EnvironmentObject var vm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
     @ObservedObject var mvm = MapViewModel.shared
 
     let center: CLLocationCoordinate2D
     let altitude: Double
 
     func makeCoordinator() -> MapView.Coordinator {
-        Coordinator(vm: vm)
+        Coordinator(vm: avm)
     }
 
     func makeNSView(context: Context) -> ClickMapView {
         let view = ClickMapView(frame: .zero)
-        view.viewModel = vm
+        view.viewModel = avm
         view.delegate = context.coordinator
         view.camera = MKMapCamera(lookingAtCenter: center,
-                                 fromEyeCoordinate: center,
-                                 eyeAltitude: altitude)
+                                  fromEyeCoordinate: center,
+                                  eyeAltitude: altitude)
         view.showsCompass = true
         return view
     }
 
     func updateNSView(_ view: ClickMapView, context: Context) {
         setMapConfiguration(view)
-        mainPinChanges(for: view)
-        otherPinChanges(for: view)
+        mainPin(for: avm.mostSelected, on: view)
+        otherPins(for: avm.selection, on: view)
         trackChanges(for: view)
 
         // re-center the map
@@ -67,30 +67,55 @@ struct MapView: NSViewRepresentable {
 
     // map pin changes for the most selected item
 
-    func mainPinChanges(for view: ClickMapView) {
-        // Nothing to do if there is no main pin. This is OK as any exising
-        // pin view will be removed when processing other pin changes.
-        if mvm.mainPin == nil {
-            return
-        }
+    func mainPin(for id: ImageModel.ID?, on view: ClickMapView) {
+        if let id,
+           let location = avm[id].location {
+            if location != mvm.mainPin?.coordinate {
+                if mvm.mainPin == nil {
+                    mvm.mainPin = MKPointAnnotation()
+                    mvm.mainPin?.title = "Pin"
+                }
+                mvm.mainPin?.coordinate = location
 
-        // Add a new annotation for mainPin.  Testing shows that this replaces
-        // any existing annotation for the pin.
-        view.addAnnotation(mvm.mainPin!)
-        print("Pin at \(mvm.mainPin!.coordinate)")
+                // Add an annotation for mainPin since the location has changed.
+                // Testing shows that this replaces any existing annotation for
+                // the pin.
+                view.addAnnotation(mvm.mainPin!)
 
-        // make sure pin is in view
-        if !view.visibleMapRect.contains(MKMapPoint(mvm.mainPin!.coordinate)) {
-            // I don't know of a better way?
-            DispatchQueue.main.async {
-                view.setCenter(mvm.mainPin!.coordinate, animated: false)
+                // make sure pin is in view
+                if !view.visibleMapRect.contains(MKMapPoint(mvm.mainPin!.coordinate)) {
+                    // I don't know of a better way?
+                    DispatchQueue.main.async {
+                        view.setCenter(mvm.mainPin!.coordinate, animated: false)
+                    }
+                }
             }
+        } else {
+            mvm.mainPin = nil
         }
     }
 
-    // other pin changes
 
-    func otherPinChanges(for view: ClickMapView) {
+    // create pins for other selected items that have a location.  Their
+    // title also names the image that represents the pin on the map.
+
+    func otherPins(for selection: Set<ImageModel.ID>, on view: ClickMapView) {
+        var pins = [MKPointAnnotation]()
+        for id in selection.filter({ $0 != avm.mostSelected
+                                     && avm[$0].location != nil }) {
+            let pin = MKPointAnnotation()
+            pin.title = "OtherPin"
+            pin.coordinate = avm[id].location!
+            pins.append(pin)
+        }
+        mvm.otherPins = pins
+        otherPinViews(for: view)
+    }
+
+    // annotation views for other pins if enabled.  Any annotations for
+    // locations that are not currently selected are removed.
+
+    func otherPinViews(for view: ClickMapView) {
         let oldAnnotations: [MKAnnotation]
 
         if mvm.onlyMostSelected || mvm.otherPins.isEmpty {
