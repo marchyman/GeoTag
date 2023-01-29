@@ -2,6 +2,8 @@
 
 ### Fixes/changes since initial Beta
 
+* Sort the table of images using the current sort order when adding new images.
+* Re-build app icon using the new pin shape and color.
 * Fix pin colors when showing pins for all selected items.
 * Fix pins not showing when clicking on map
 * Show/Hide pins for all selected images, not just the most selected image
