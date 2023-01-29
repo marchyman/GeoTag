@@ -8,17 +8,16 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var vm: AppViewModel
-    @ObservedObject var mapViewModel = MapViewModel.shared
+    @EnvironmentObject var avm: AppViewModel
+    @ObservedObject var mvm = MapViewModel.shared
+    @ObservedObject var itvm = ImageTableViewModel.shared
 
-    @AppStorage(AppSettings.addTagKey) var addTag = false
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    // Only used in prepareForEdits
     @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+
+    // Used in Exiftool
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
-    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
     @State private var backupURL: URL?
 
@@ -35,12 +34,12 @@ struct SettingsView: View {
                 // Image backup configuration
                 Group {
                     LabeledContent("Disable Image Backups:") {
-                        Toggle("Disable image backups", isOn: $doNotBackup.animation())
+                        Toggle("Disable image backups", isOn: $avm.doNotBackup)
                             .labelsHidden()
                     }
                     .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
 
-                    if doNotBackup {
+                    if avm.doNotBackup {
                         Text("Enabling image backups is strongly recommended")
                             .font(.footnote)
                             .padding(.bottom)
@@ -50,11 +49,7 @@ struct SettingsView: View {
                                 .frame(width: 280)
                                 .padding(.bottom)
                                 .onChange(of: backupURL) { url in
-                                    vm.backupURL = url
-                                    if let url {
-                                        saveBookmark = vm.getBookmark(from: url)
-                                        vm.checkBackupFolder(url)
-                                    }
+                                    avm.backupURL = url
                                 }
                         }
                         .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
@@ -62,7 +57,8 @@ struct SettingsView: View {
                 }
 
                 // Coordinate display configuration
-                Picker("Choose a coordinate format:", selection: $coordFormat) {
+                Picker("Choose a coordinate format:",
+                       selection: $itvm.coordFormat) {
                     Text("dd.dddddd")
                         .tag(AppSettings.CoordFormat.deg)
                     Text("dd mm.mmmmmm'")
@@ -77,16 +73,16 @@ struct SettingsView: View {
                 // Track log display configuration
                 Group {
                     ColorPicker("GPS Track Color:",
-                                selection: $mapViewModel.trackColor)
-                        .onChange(of: mapViewModel.trackColor.rawValue) { color in
-                            mapViewModel.refreshTracks = true
+                                selection: $mvm.trackColor)
+                        .onChange(of: mvm.trackColor.rawValue) { color in
+                            mvm.refreshTracks = true
                         }
                         .padding(.horizontal)
                         .help("Select the color used to display GPS tracks on the map.")
 
                     TextField("GPS Track width:",
-                              value: $mapViewModel.trackWidth, format: .number)
-                        .onSubmit { mapViewModel.refreshTracks = true }
+                              value: $mvm.trackWidth, format: .number)
+                        .onSubmit { mvm.refreshTracks = true }
                         .padding([.horizontal, .bottom])
                         .frame(maxWidth: 190)
                         .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
@@ -116,19 +112,19 @@ struct SettingsView: View {
                     .help("GeoTag can set/update the GPS time and date stamps when updating locations.  These timestamps are the same as the image create date and time but relative to GMP/UTC, not the local time.  When setting this option it is important that the TimeZone (edit menu) is correct for the images being saved.  Please see the GeoTag help pages for more information on setting the time zone.")
 
                     LabeledContent("Tag updated files:") {
-                        Toggle("Tag updated files", isOn: $addTag)
+                        Toggle("Tag updated files", isOn: $avm.addTag)
                             .labelsHidden()
                     }
                     .padding(.horizontal)
                     .help("If this option is enabled a finder tag will be added to updated images.")
 
-                    if addTag {
-                        TextField("With tag:", text: $tag)
+                    if avm.addTag {
+                        TextField("With tag:", text: $avm.tag)
                             .frame(maxWidth: 250)
                             .padding(.horizontal)
                             .onSubmit {
-                                if tag.isEmpty {
-                                    tag = "GeoTag"
+                                if avm.tag.isEmpty {
+                                    avm.tag = "GeoTag"
                                 }
                             }
                             .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")

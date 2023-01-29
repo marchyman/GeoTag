@@ -10,7 +10,7 @@ import SwiftUI
 struct ChangeLocationView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject var vm: AppViewModel
+    @ObservedObject var avm: AppViewModel
     let id: ImageModel.ID
 
     @State private var latitude: Double?
@@ -25,7 +25,7 @@ struct ChangeLocationView: View {
                 .padding()
 
             Form {
-                Text("Image: \(vm[id].name)")
+                Text("Image: \(avm[id].name)")
                     .bold()
                     .padding(.bottom, 10)
 
@@ -57,15 +57,15 @@ struct ChangeLocationView: View {
                         if (0...90).contains(lat.magnitude) &&
                            (0...180).contains(lon.magnitude) {
                             let location = Coords(latitude: lat, longitude: lon)
-                            if location != vm[id].location {
-                                vm.update(id: id, location: location)
-                                dismiss()
+                            if location != avm[id].location {
+                                avm.update(id: id, location: location)
                             }
+                            dismiss()
                         } else {
                             alertPresented.toggle()
                         }
                     } else if latitude == nil && longitude == nil {
-                        vm.update(id: id, location: nil)
+                        avm.update(id: id, location: nil)
                         dismiss()
                     } else {
                         alertPresented.toggle()
@@ -76,8 +76,8 @@ struct ChangeLocationView: View {
             .padding()
         }
         .onAppear {
-            latitude = vm[id].location?.latitude
-            longitude = vm[id].location?.longitude
+            latitude = avm[id].location?.latitude
+            longitude = avm[id].location?.longitude
         }
        .alert("Coordinate Error",
               isPresented: $alertPresented) {

@@ -13,43 +13,41 @@ extension GeoTagApp {
     var pasteBoardCommandGroup: some Commands {
         CommandGroup(replacing: .pasteboard) {
             Group {
-                Button("Cut") { setPastboardItemAction(.cut) }
+                Button("Cut") { avm.cutAction() }
                     .keyboardShortcut("x")
-                    .disabled(vm.cutCopyDisabled())
+                    .disabled(avm.cutCopyDisabled())
 
-                Button("Copy") { setPastboardItemAction(.copy) }
+                Button("Copy") { avm.copyAction() }
                     .keyboardShortcut("c")
-                    .disabled(vm.cutCopyDisabled())
+                    .disabled(avm.cutCopyDisabled())
 
-                Button("Paste") { setPastboardItemAction(.paste) }
+                Button("Paste") { avm.pasteAction() }
                     .keyboardShortcut("v")
-                    .disabled(vm.pasteDisabled())
+                    .disabled(avm.pasteDisabled())
 
-                Button("Delete") { setPastboardItemAction(.delete) }
+                Button("Delete") { avm.deleteAction() }
                     .keyboardShortcut(.delete, modifiers: [])
-                    .disabled(vm.deleteDisabled())
+                    .disabled(avm.deleteDisabled())
 
-                Button("Select All") { setPastboardItemAction(.selectAll) }
+                Button("Select All") { avm.selectAllAction() }
                     .keyboardShortcut("a")
-                    .disabled(vm.selectAllDisabled())
+                    .disabled(avm.selectAllDisabled())
             }
 
             Divider()
 
             Group {
-                Button("Show In Finder") { setPastboardItemAction(.showInFinder) }
-                    .disabled(vm.showInFinderDisabled())
+                Button("Show In Finder") { avm.showInFinderAction() }
+                    .disabled(avm.showInFinderDisabled())
 
-                Button("Locn From Track") { setPastboardItemAction(.locnFromTrack) }
+                Button("Locn From Track") { avm.locnFromTrackAction() }
                     .keyboardShortcut("l")
-                    .disabled(vm.locnFromTrackDisabled())
+                    .disabled(avm.locnFromTrackDisabled())
                 
-                Button("Specify Time Zone…") { setPastboardItemAction(.adjustTimeZone) }
+                Button("Specify Time Zone…") {
+                    ContentViewModel.shared.changeTimeZoneWindow.toggle()
+                }
             }
         }
-    }
-
-    func setPastboardItemAction(_ action: AppViewModel.MenuAction) {
-        vm.setMenuAction(for: action)
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AdjustTimezoneView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
     @State private var currentZone: TimeZoneName = .zero
     @State private var selectedZone: TimeZoneName = .zero
 
@@ -76,7 +76,7 @@ struct AdjustTimezoneView: View {
 
                 Button("Change") {
                     if currentZone != selectedZone {
-                        vm.timeZone = selectedZone.timeZone
+                        avm.timeZone = selectedZone.timeZone
                     }
                     NSApplication.shared.keyWindow?.close()
                 }
@@ -85,7 +85,7 @@ struct AdjustTimezoneView: View {
             .padding()
         }
         .onAppear {
-            currentZone = TimeZoneName.timeZoneCase(zone: vm.timeZone)
+            currentZone = TimeZoneName.timeZoneCase(zone: avm.timeZone)
             selectedZone = currentZone
         }
     }

@@ -10,7 +10,7 @@ import SwiftUI
 struct ChangeDateTimeView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject var vm: AppViewModel
+    @ObservedObject var avm: AppViewModel
     let id: ImageModel.ID!
 
     @State private var oldDate = Date()
@@ -58,7 +58,7 @@ struct ChangeDateTimeView: View {
 
     @MainActor
     func date() -> Date {
-        if let date = vm[id].timestamp(for: vm.timeZone) {
+        if let date = avm[id].timestamp(for: avm.timeZone) {
             return date
         }
         return Date()
@@ -74,24 +74,24 @@ struct ChangeDateTimeView: View {
         // prepare for date to string conversions.
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = ImageModel.dateFormat
-        dateFormatter.timeZone = vm.timeZone
+        dateFormatter.timeZone = avm.timeZone
 
         // apply adjustment to each selected image in an undo group
-        vm.undoManager.beginUndoGrouping()
-        for id in vm.selection {
-            if vm[id].isValid {
+        avm.undoManager.beginUndoGrouping()
+        for id in avm.selection {
+            if avm[id].isValid {
                 var updatedDate: Date
-                if let originalDate = vm[id].timestamp(for: vm.timeZone) {
+                if let originalDate = avm[id].timestamp(for: avm.timeZone) {
                     updatedDate = Date(timeInterval: adjustment,
                                            since: originalDate)
                 } else {
                     updatedDate = newDate
                 }
-                vm.update(id: id, timestamp: dateFormatter.string(from: updatedDate))
+                avm.update(id: id, timestamp: dateFormatter.string(from: updatedDate))
             }
         }
-        vm.undoManager.endUndoGrouping()
-        vm.undoManager.setActionName("modify date/time")
+        avm.undoManager.endUndoGrouping()
+        avm.undoManager.setActionName("modify date/time")
     }
 
 }
@@ -105,7 +105,7 @@ struct ModifyDateTimeView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        let vm = AppViewModel(images: [image])
-        ChangeDateTimeView(vm: vm, id: image.id)
+        let avm = AppViewModel(images: [image])
+        ChangeDateTimeView(avm: avm, id: image.id)
     }
 }

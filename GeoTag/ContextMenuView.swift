@@ -10,42 +10,38 @@ import SwiftUI
 // Duplicates many of the menu commands
 
 struct ContextMenuView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
     let context: ImageModel.ID?
 
     var body: some View {
         Group {
-            Button("Cut") { setContextMenuAction(.cut) }
-                .disabled(vm.cutCopyDisabled(context: context))
+            Button("Cut") { avm.cutAction(context: context) }
+                .disabled(avm.cutCopyDisabled(context: context))
 
-            Button("Copy") { setContextMenuAction(.copy) }
-                .disabled(vm.cutCopyDisabled(context: context))
+            Button("Copy") { avm.copyAction(context: context) }
+                .disabled(avm.cutCopyDisabled(context: context))
 
-            Button("Paste") { setContextMenuAction(.paste) }
-                .disabled(vm.pasteDisabled(context: context))
+            Button("Paste") { avm.pasteAction(context: context) }
+                .disabled(avm.pasteDisabled(context: context))
 
-            Button("Delete") { setContextMenuAction(.delete) }
-                .disabled(vm.deleteDisabled(context: context))
+            Button("Delete") { avm.deleteAction(context: context) }
+                .disabled(avm.deleteDisabled(context: context))
         }
         
         Divider()
 
         Group {
-            Button("Show In Finder") { setContextMenuAction(.showInFinder) }
-                .disabled(vm.showInFinderDisabled(context: context))
+            Button("Show In Finder") { avm.showInFinderAction(context: context) }
+                .disabled(avm.showInFinderDisabled(context: context))
 
-            Button("Locn From Track") { setContextMenuAction(.locnFromTrack) }
-                .disabled(vm.locnFromTrackDisabled(context: context))
+            Button("Locn From Track") { avm.locnFromTrackAction(context: context ) }
+                .disabled(avm.locnFromTrackDisabled(context: context))
         }
 
         Divider()
 
-        Button("Clear Image List") { setContextMenuAction(.clearList) }
-            .disabled(vm.clearDisabled)
-    }
-
-    func setContextMenuAction(_ action: AppViewModel.MenuAction) {
-        vm.setMenuAction(for: action, context: context)
+        Button("Clear Image List") { avm.clearImageListAction() }
+            .disabled(avm.clearDisabled)
     }
 }
 

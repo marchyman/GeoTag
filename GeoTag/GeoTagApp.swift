@@ -10,7 +10,8 @@ import SwiftUI
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    @StateObject var vm = AppViewModel()
+    @StateObject var avm = AppViewModel()
+
     let windowWidth = 1200.0
     let windowHeight = 900.0
 
@@ -18,11 +19,11 @@ struct GeoTagApp: App {
         Window("GeoTag Version Five", id: "main") {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
-                .background(WindowAccessor(window: $vm.mainWindow))
+                .background(WindowAccessor(window: $avm.mainWindow))
                 .onAppear {
-                    appDelegate.viewModel = vm
+                    appDelegate.avm = avm
                 }
-                .environmentObject(vm)
+                .environmentObject(avm)
         }
         .commands {
             newItemCommandGroup
@@ -36,24 +37,24 @@ struct GeoTagApp: App {
         Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
             AdjustTimezoneView()
                 .frame(width: 500.0, height: 570.0)
-                .environmentObject(vm)
+                .environmentObject(avm)
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         .commandsRemoved()
 
         Settings {
-            SettingsView(backupURL: vm.backupURL)
+            SettingsView(backupURL: avm.backupURL)
                 .frame(width: 600.0, height: 550.0, alignment: .top)
-                .environmentObject(vm)
+                .environmentObject(avm)
         }
         .windowResizability(.contentSize)
 
     }
 }
 
+// Window ids
+
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
-    static var modifyDateTime = "Modify Image Date/Time"
-    static var modifyLocation = "Modify Image Location"
 }

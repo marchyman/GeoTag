@@ -24,7 +24,10 @@ extension AppViewModel {
 
     // delete location info from all selected images
     
-    func deleteAction() {
+    func deleteAction(context: ImageModel.ID? = nil) {
+        if let context {
+            select(context: context)
+        }
         if !selection.isEmpty {
             undoManager.beginUndoGrouping()
             for id in selection {

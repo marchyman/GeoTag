@@ -11,7 +11,7 @@ import AppKit
 ///
 /// App Delegate needed to get some desired behaviors such as terminate app when window closed
 final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
-    var viewModel: AppViewModel?
+    var avm: AppViewModel?
 
     // things that can not (yet?) be done in SwiftUI (or can be done but
     // I don't know how so do it this way).
@@ -25,7 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
     func application(_ application: NSApplication, open urls: [URL]) {
         DispatchQueue.main.async() {
-            self.viewModel?.prepareForEdit(inputURLs: urls)
+            self.avm?.prepareForEdit(inputURLs: urls)
         }
     }
 
@@ -47,13 +47,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     // the app to quit.
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        if let viewModel {
-            if viewModel.saveInProgress {
+        if let avm {
+            if avm.saveInProgress {
                 ContentViewModel.shared.addSheet(type: .savingUpdatesSheet)
                 return .terminateCancel
             }
 
-            if let edited = viewModel.mainWindow?.isDocumentEdited, edited {
+            if let edited = avm.mainWindow?.isDocumentEdited, edited {
                 ContentViewModel.shared.confirmationMessage = "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
                 ContentViewModel.shared.confirmationAction = terminateIgnoringEdits
                 ContentViewModel.shared.presentConfirmation = true
@@ -68,7 +68,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
     @MainActor
     func terminateIgnoringEdits() {
-        viewModel?.mainWindow?.isDocumentEdited = false
+        avm?.mainWindow?.isDocumentEdited = false
         NSApp.terminate(NSApp)
     }
 

@@ -42,18 +42,14 @@ struct ContentView: View {
             }
         }
 
-        // menu triggered actions.
-        .onChange(of: contentViewModel.selectedMenuAction) { action in
-            if action != .none {
-                contentViewModel.selectedMenuAction = .none
-                vm.menuAction(action, openWindow: openWindow)
-            }
-        }
-
         // drop destination
         .dropDestination(for: URL.self) {items, location in
             vm.prepareForEdit(inputURLs: items)
             return true
+        }
+
+        .onChange(of: contentViewModel.changeTimeZoneWindow) { _ in
+            openWindow(id: GeoTagApp.adjustTimeZone)
         }
 
         // sheets

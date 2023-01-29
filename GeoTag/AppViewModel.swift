@@ -23,11 +23,6 @@ final class AppViewModel: ObservableObject {
     @AppStorage(AppSettings.addTagKey) var addTag = false
     @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
-
-    // A second save can not be triggered while a save is in progress.
-    // App termination is denied, too.
-    var saveInProgress = false
-
     // get/set an image from the table of images  given its ID.
     subscript(id: ImageModel.ID?) -> ImageModel {
          get {
@@ -48,6 +43,10 @@ final class AppViewModel: ObservableObject {
              }
          }
      }
+
+    // A second save can not be triggered while a save is in progress.
+    // App termination is denied, too.
+    var saveInProgress = false
 
     // The Apps main window.
     var mainWindow: NSWindow?
@@ -70,15 +69,22 @@ final class AppViewModel: ObservableObject {
 
     // The URL of the folder where image backups are save when backups
     // are enabled.  The URL comes from a security scoped bookmark in
-    // AppStorage.
-    var backupURL: URL?
+    // AppStorage.  When changed to a non-nil value the bookmark is updated
+    // and the new folder is checked to see if there are old backups that
+    // can be removed.
+    var backupURL: URL? {
+        didSet {
+            if let url = backupURL {
+                saveBookmark = getBookmark(from: url)
+                checkBackupFolder(url)
+            }
+        }
+    }
 
     // get the backupURL from AppStorage if needed.  This will also trigger
     // a scan of the backup folder for old backups that can be removed.
     
     init() {
-        @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-
         if !doNotBackup {
             backupURL = getBackupURL()
         }

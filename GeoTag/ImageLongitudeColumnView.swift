@@ -8,26 +8,26 @@
 import SwiftUI
 
 struct ImageLongitudeColumnView: View {
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @ObservedObject var itvm = ImageTableViewModel.shared
     @State private var showPopover = false
 
-    @ObservedObject var vm: AppViewModel
+    @ObservedObject var avm: AppViewModel
     let id: ImageModel.ID
 
     var body: some View {
-        Text(coordToString(for: vm[id].location?.longitude,
-                           format: coordFormat,
+        Text(coordToString(for: avm[id].location?.longitude,
+                           format: itvm.coordFormat,
                            ref: lonRef))
-            .foregroundColor(vm[id].locationTextColor)
-            .frame(minWidth: coordMinWidth)
+            .foregroundColor(avm[id].locationTextColor)
+            .frame(minWidth: itvm.coordMinWidth)
             .onDoubleClick() {
-                showPopover = vm[id].isValid
+                showPopover = avm[id].isValid
             }
             .popover(isPresented: self.$showPopover) {
-                ChangeLocationView(vm: vm, id: id)
+                ChangeLocationView(avm: avm, id: id)
                     .frame(width: 450, height: 250)
             }
-            .help(vm.elevationAsString(id: id))
+            .help(avm.elevationAsString(id: id))
     }
 }
 
@@ -40,7 +40,7 @@ struct ImageLongitudeColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        let vm = AppViewModel(images: [image])
-        ImageLongitudeColumnView(vm: vm, id: image.id)
+        let avm = AppViewModel(images: [image])
+        ImageLongitudeColumnView(avm: avm, id: image.id)
     }
 }
