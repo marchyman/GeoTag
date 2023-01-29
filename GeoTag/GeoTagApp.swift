@@ -21,7 +21,7 @@ struct GeoTagApp: App {
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .background(WindowAccessor(window: $avm.mainWindow))
                 .onAppear {
-                    appDelegate.viewModel = avm
+                    appDelegate.avm = avm
                 }
                 .environmentObject(avm)
         }
@@ -53,8 +53,8 @@ struct GeoTagApp: App {
     }
 }
 
+// Window ids
+
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
-    static var modifyDateTime = "Modify Image Date/Time"
-    static var modifyLocation = "Modify Image Location"
 }
