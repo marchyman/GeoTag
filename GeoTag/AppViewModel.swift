@@ -76,8 +76,6 @@ final class AppViewModel: ObservableObject {
     // a scan of the backup folder for old backups that can be removed.
     
     init() {
-        @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-
         if !doNotBackup {
             backupURL = getBackupURL()
         }

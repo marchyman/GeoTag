@@ -13,7 +13,6 @@ struct SettingsView: View {
     @ObservedObject var itvm = ImageTableViewModel.shared
 
     @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
     @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
@@ -34,12 +33,12 @@ struct SettingsView: View {
                 // Image backup configuration
                 Group {
                     LabeledContent("Disable Image Backups:") {
-                        Toggle("Disable image backups", isOn: $doNotBackup.animation())
+                        Toggle("Disable image backups", isOn: $avm.doNotBackup)
                             .labelsHidden()
                     }
                     .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
 
-                    if doNotBackup {
+                    if avm.doNotBackup {
                         Text("Enabling image backups is strongly recommended")
                             .font(.footnote)
                             .padding(.bottom)
