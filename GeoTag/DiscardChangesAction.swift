@@ -19,10 +19,8 @@ extension AppViewModel {
     // to put the images back in their starting state.
 
     func discardChangesAction() {
-        var index = images.startIndex
-        while index < images.endIndex {
+        for index in images.startIndex ..< images.endIndex {
             images[index].revert()
-            index = images.index(after: index)
         }
         undoManager.removeAllActions()
         mainWindow?.isDocumentEdited = false
