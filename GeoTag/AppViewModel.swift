@@ -44,6 +44,9 @@ final class AppViewModel: ObservableObject {
          }
      }
 
+    // A copy of the current sort order
+    var sortOrder = [KeyPathComparator(\ImageModel.name)]
+
     // A second save can not be triggered while a save is in progress.
     // App termination is denied, too.
     var saveInProgress = false

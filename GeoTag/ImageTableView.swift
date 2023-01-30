@@ -54,6 +54,7 @@ struct ImageTableView: View {
             ContextMenuView(context: nil)
         }
         .onChange(of: sortOrder) { newOrder in
+            avm.sortOrder = newOrder
             avm.images.sort(using: newOrder)
         }
         .onChange(of: avm.selection) { _ in

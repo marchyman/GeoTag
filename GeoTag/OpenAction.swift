@@ -69,6 +69,7 @@ extension AppViewModel {
                     }
                 }
             }
+            images.sort(using: sortOrder)
 
             // copy track info from helper to ViewModel
             for gpxTrack in await helper.gpxTracks {
