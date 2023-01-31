@@ -53,7 +53,6 @@ struct AdjustTimezoneView: View {
                                selection: $selectedZone) {
                             ForEach (TimeZoneName.allCases) { zone in
                                 Text(zone.rawValue)
-
                             }
                         }
                         .labelsHidden()
@@ -76,6 +75,7 @@ struct AdjustTimezoneView: View {
 
                 Button("Change") {
                     if currentZone != selectedZone {
+                        currentZone = selectedZone
                         avm.timeZone = selectedZone.timeZone
                     }
                     NSApplication.shared.keyWindow?.close()

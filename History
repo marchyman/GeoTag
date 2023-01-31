@@ -2,6 +2,11 @@
 
 ### Fixes/changes since initial Beta
 
+* Show the correct "current time zone" in the Select zone window.
+* Set the file modification timestamp the the date/time the image was
+  taken when requested.  GeoTag was only preserving the file time
+  which may have been other than the original time when Set File Modification
+  Times was enabled.
 * Sort the table of images using the current sort order when adding new images.
 * Re-build app icon using the new pin shape and color.
 * Fix pin colors when showing pins for all selected items.
