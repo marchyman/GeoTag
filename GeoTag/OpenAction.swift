@@ -71,10 +71,14 @@ extension AppViewModel {
             }
             images.sort(using: sortOrder)
 
-            // copy track info from helper to ViewModel
+            // show any tracks
             for gpxTrack in await helper.gpxTracks {
                 updateTracks(gpx: gpxTrack)
-                gpxTracks.append(gpxTrack)
+                // if the appViewModel update isn't done on the main queue the
+                // Discard tracks menu item doesn't see the approriate state.
+                DispatchQueue.main.async {
+                    self.gpxTracks.append(gpxTrack)
+                }
             }
             gpxGoodFileNames = await helper.gpxGoodFileNames
             gpxBadFileNames = await helper.gpxBadFileNames
