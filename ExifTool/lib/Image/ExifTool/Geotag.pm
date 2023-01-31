@@ -29,7 +29,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:Public);
 use Image::ExifTool::GPS;
 
-$VERSION = '1.68';
+$VERSION = '1.70';
 
 sub JITTER() { return 2 }       # maximum time jitter
 
@@ -75,7 +75,8 @@ my %xmlTag = (
 );
 
 # fix information keys which must be interpolated around a circle
-my %cyclical = (lon => 1, track => 1, dir => 1, roll => 1);
+my %cyclical = (lon => 1, track => 1, dir => 1, pitch => 1, roll => 1);
+my %cyc180 = (lon => 1, pitch => 1, roll => 1); # wraps from 180 to -180
 
 # fix information keys for each of our general categories
 my %fixInfoKeys = (
@@ -87,6 +88,9 @@ my %fixInfoKeys = (
 );
 
 my %isOrient = ( dir => 1, pitch => 1, roll => 1 ); # test for orientation key
+
+# tags which may exist separately in some formats (eg. CSV)
+my %sepTags = ( dir => 1, pitch => 1, roll => 1, track => 1, speed => 1 );
 
 # conversion factors for GPSSpeed
 my %speedConv = (
@@ -206,7 +210,7 @@ sub LoadTrackLog($$;$)
     my $fix = { };
     my $csvDelim = $et->Options('CSVDelim');
     $csvDelim = ',' unless defined $csvDelim;
-    my (@saveFix, $timeSpan);
+    my (@saveFix, @saveTime, $timeSpan);
     for (;;) {
         $raf->ReadLine($_) or last;
         # determine file format
@@ -276,6 +280,8 @@ sub LoadTrackLog($$;$)
                         $param = 'pitch';
                     } elsif (/^(Angle)?Roll/i) {
                         $param = 'roll';
+                    } elsif (/^Img ?Dir/i) {
+                        $param = 'dir';
                     }
                     if ($param) {
                         $et->VPrint(2, "CSV column '${_}' is $param\n");
@@ -351,8 +357,13 @@ sub LoadTrackLog($$;$)
                                 }
                                 # read KML "Point" coordinates
                                 @$fix{'lon','lat','alt'} = split ',', $1;
+                                $$has{alt} = 1 if $$fix{alt};
                             } else {
-                                $$fix{$tag} = $1;
+                                if ($tok eq 'when' and $$fix{'time'}) {
+                                    push @saveTime, $1; # flightaware KML stores times in array
+                                } else {
+                                    $$fix{$tag} = $1;
+                                }
                                 if ($isOrient{$tag}) {
                                     $$has{orient} = 1;
                                 } elsif ($tag eq 'alt') {
@@ -369,7 +380,11 @@ sub LoadTrackLog($$;$)
                         $td = 1;
                     }
                     # validate and store GPS fix
-                    next unless defined $$fix{lat} and defined $$fix{lon} and $$fix{'time'};
+                    next unless defined $$fix{lat} and defined $$fix{lon};
+                    unless (defined $$fix{'time'}) {
+                        next unless @saveTime;
+                        $$fix{'time'} = shift @saveTime; # get next time in flightaware KML list
+                    }
                     unless ($$fix{lat} =~ /^[+-]?\d+\.?\d*/ and $$fix{lon} =~ /^[+-]?\d+\.?\d*/) {
                         $e0 or $et->VPrint(0, "Coordinate format error in $from\n"), $e0 = 1;
                         next;
@@ -496,6 +511,7 @@ DoneFix:    $isDate = 1;
                     $secs = $val;
                 } else {
                     $$fix{$param} = $val;
+                    $$has{$param} = 1 if $sepTags{$param};
                 }
             }
             # make coordinate negative according to reference direction if necessary
@@ -558,7 +574,7 @@ DoneFix:    $isDate = 1;
         } elsif ($nmea eq 'RMC') {
             #  $GPRMC,092204.999,A,4250.5589,S,14718.5084,E,0.00,89.68,211200,,*25
             #  $GPRMC,093657.007,,3652.835020,N,01053.104094,E,1.642,,290913,,,A*0F
-            #  $GPRMC,hhmmss.sss,A/V,ddmm.mmmm,N/S,ddmmm.mmmm,E/W,spd(knots),dir(deg),DDMMYY,,*cs
+            #  $GPRMC,hhmmss.sss,A/V,ddmm.mmmm,N/S,dddmm.mmmm,E/W,spd(knots),dir(deg),DDMMYY,,*cs
             /^\$[A-Z]{2}RMC,(\d{2})(\d{2})(\d+(\.\d*)?),A?,(\d*?)(\d{1,2}\.\d+),([NS]),(\d*?)(\d{1,2}\.\d+),([EW]),(\d*\.?\d*),(\d*\.?\d*),(\d{2})(\d{2})(\d+)/ or next;
             next if $13 > 31 or $14 > 12 or $15 > 99;   # validate day/month/year
             $fix{lat} = (($5 || 0) + $6/60) * ($7 eq 'N' ? 1 : -1);
@@ -1101,6 +1117,7 @@ Category:       foreach $category (qw{pos track alt orient atemp}) {
                             next unless defined $v0 and defined $v1;
                             $f = $f0b;
                         } else {
+                            next if $sepTags{$key}; # (don't scan outwards for some formats, eg. CSV)
                             # scan outwards looking for fixes with the required information
                             # (NOTE: SHOULD EVENTUALLY DO THIS FOR EXTRAPOLATION TOO!)
                             my ($t0b, $t1b);
@@ -1127,8 +1144,8 @@ Category:       foreach $category (qw{pos track alt orient atemp}) {
                             # 360 degrees to the smaller angle before interpolating
                             $v0 < $v1 ? $v0 += 360 : $v1 += 360;
                             $$fix{$key} = $v1 * $f + $v0 * (1 - $f);
-                            # longitude and roll ranges are -180 to 180, others are 0 to 360
-                            my $max = ($key eq 'lon' or $key eq 'roll') ? 180 : 360;
+                            # some ranges are -180 to 180, others are 0 to 360
+                            my $max = $cyc180{$key} ? 180 : 360;
                             $$fix{$key} -= 360 if $$fix{$key} >= $max;
                         } else {
                             # simple linear interpolation
@@ -1444,7 +1461,7 @@ user-defined tag GPSRoll, must be active.
 
 =head1 AUTHOR
 
-Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

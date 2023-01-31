@@ -538,7 +538,7 @@ my %sImageRegion = ( # new in 1.5
     NAMESPACE   => 'Iptc4xmpExt',
     TABLE_DESC => 'XMP IPTC Extension',
     NOTES => q{
-        This table contains tags defined by the IPTC Extension schema version 1.6
+        This table contains tags defined by the IPTC Extension schema version 1.7
         and IPTC Video Metadata version 1.3. The actual namespace prefix is
         "Iptc4xmpExt", but ExifTool shortens this for the family 1 group name. (See
         L<http://www.iptc.org/standards/photo-metadata/iptc-standard/> and
@@ -683,6 +683,7 @@ my %sImageRegion = ( # new in 1.5
             ProductName => { Writable => 'lang-alt' },
             ProductGTIN => { },
             ProductDescription => { Writable => 'lang-alt' },
+            ProductId => { }, # added in version 2022.1
         },
         List => 'Bag',
     },
@@ -1525,6 +1526,7 @@ my %sSubVersion = (
     ImageHistory           => { Avoid => 1, Notes => 'different format from EXIF:ImageHistory' },
     LensCorrectionSettings => { },
     ImageUniqueID          => { Avoid => 1 },
+    picasawebGPhotoId      => { }, #forum14108
 );
 
 # SWF namespace tags (ref PH)
@@ -1854,6 +1856,11 @@ my %sSubVersion = (
     MicroVideoVersion   => { Writable => 'integer' },
     MicroVideoOffset    => { Writable => 'integer' },
     MicroVideoPresentationTimestampUs => { Writable => 'integer' },
+    shot_log_data => { #forum14108
+        Name => 'ShotLogData',
+        ValueConv => 'Image::ExifTool::XMP::DecodeBase64($val)',
+        ValueConvInv => 'Image::ExifTool::XMP::EncodeBase64($val)',
+    },
 );
 
 # Google creations namespace (ref PH)
@@ -1863,6 +1870,7 @@ my %sSubVersion = (
     NAMESPACE => 'GCreations',
     NOTES => 'Google creations tags.',
     CameraBurstID  => { },
+    Type => { Avoid => 1 },
 );
 
 # Google depth-map Device namespace (ref 13)
@@ -2066,6 +2074,25 @@ my %sSubVersion = (
     },
 );
 
+# hdr metadata namespace used by ACR 15.1
+%Image::ExifTool::XMP::hdr = (
+    %xmpTableDefaults,
+    GROUPS => { 1 => 'XMP-hdr', 2 => 'Image' },
+    NAMESPACE   => 'hdr_metadata',
+    TABLE_DESC => 'XMP HDR Metadata',
+    NOTES => q{
+        HDR metadata namespace tags written by ACR 15.1.  The actual namespace
+        prefix is "hdr_metadata", which is the prefix recorded in the file, but
+        ExifTool shortens this for the family 1 group name.
+    },
+    ccv_primaries_xy        => { Name => 'CCVPrimariesXY' }, # (comma-separated string of 6 reals)
+    ccv_white_xy            => { Name => 'CCVWhiteXY' }, # (comma-separated string of 2 reals)
+    ccv_min_luminance_nits  => { Name => 'CCVMinLuminanceNits', Writable => 'real' },
+    ccv_max_luminance_nits  => { Name => 'CCVMaxLuminanceNits', Writable => 'real' },
+    ccv_avg_luminance_nits  => { Name => 'CCVAvgLuminanceNits', Writable => 'real' },
+    scene_referred          => { Name => 'SceneReferred', Writable => 'boolean' },
+);
+
 # SVG namespace properties (ref 9)
 %Image::ExifTool::XMP::SVG = (
     GROUPS => { 0 => 'SVG', 1 => 'SVG', 2 => 'Image' },
@@ -2133,7 +2160,7 @@ This file contains definitions for less common XMP namespaces.
 
 =head1 AUTHOR
 
-Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

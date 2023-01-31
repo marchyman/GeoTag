@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.79';
+$VERSION = '2.83';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -62,6 +62,7 @@ sub Process_mebx($$$);
 sub Process_3gf($$$);
 sub Process_gps0($$$);
 sub Process_gsen($$$);
+sub ProcessKenwood($$$);
 sub ProcessRIFFTrailer($$$);
 sub ProcessTTAD($$$);
 sub ProcessNMEA($$$);
@@ -522,6 +523,12 @@ my %eeBox2 = (
                 return substr($val, 12, $len);
             },
         },
+        {
+            Name => 'SkipInfo', # (found in 70mai Pro Plus+ MP4 videos)
+            # (look for something that looks like a QuickTime atom header)
+            Condition => '$$valPt =~ /^\0[\0-\x04]..[a-zA-Z ]{4}/s',
+            SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::SkipInfo' },
+        },
         { Name => 'Skip', Unknown => 1, Binary => 1 },
     ],
     wide => { Unknown => 1, Binary => 1 },
@@ -646,10 +653,17 @@ my %eeBox2 = (
         Name => 'HTCInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::HTCInfo' },
     },
-    udta => {
-        Name => 'UserData',
+    udta => [{
+        Name => 'KenwoodData',
+        Condition => '$$valPt =~ /^VIDEOUUUUUUUUUUUUUUUUUUUUUU/',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::QuickTime::Stream',
+            ProcessProc => \&ProcessKenwood,
+        },
+    },{
+        Name => 'FLIRData',
         SubDirectory => { TagTable => 'Image::ExifTool::FLIR::UserData' },
-    },
+    }],
     thum => { #PH
         Name => 'ThumbnailImage',
         Groups => { 2 => 'Preview' },
@@ -757,6 +771,26 @@ my %eeBox2 = (
         SubDirectory => { TagTable => 'Image::ExifTool::Samsung::Trailer' },
     },
     # 'samn'? - seen in Vantrue N2S sample video
+    mpvd => {
+        Name => 'MotionPhotoVideo',
+        Notes => 'MP4-format video saved in Samsung motion-photo HEIC images.',
+        Binary => 1,
+        # note that this may be written and/or deleted, but can't currently be added back again
+        Writable => 1,
+    },
+);
+
+# stuff seen in 'skip' atom (70mai Pro Plus+ MP4 videos)
+%Image::ExifTool::QuickTime::SkipInfo = (
+    PROCESS_PROC => \&ProcessMOV,
+    GROUPS => { 2 => 'Video' },
+    'ver ' => 'Version',
+    # tima - int32u: seen 0x3c
+    thma => {
+        Name => 'ThumbnailImage',
+        Groups => { 2 => 'Preview' },
+        Binary => 1,
+    },
 );
 
 # MPEG-4 'ftyp' atom
@@ -1333,12 +1367,14 @@ my %eeBox2 = (
         },
         { #https://github.com/google/spatial-media/blob/master/docs/spherical-video-rfc.md
             Name => 'SphericalVideoXML',
+            # (this tag is readable/writable as a block through the Extra SphericalVideoXML tags)
             Condition => '$$valPt=~/^\xff\xcc\x82\x63\xf8\x55\x4a\x93\x88\x14\x58\x7a\x02\x52\x1f\xdd/',
             WriteGroup => 'GSpherical', # write only GSpherical XMP tags here
             HandlerType => 'vide',      # only write in video tracks
             SubDirectory => {
                 TagTable => 'Image::ExifTool::XMP::Main',
                 Start => 16,
+                ProcessProc => 'Image::ExifTool::XMP::ProcessGSpherical',
                 WriteProc => 'Image::ExifTool::XMP::WriteGSpherical',
             },
         },
@@ -6015,6 +6051,7 @@ my %eeBox2 = (
     plID => { #10 (or TV season)
         Name => 'PlayListID',
         Format => 'int8u',  # actually int64u, but split it up
+        Count => 8,
         Writable => 'int32s', #27
     },
     purd => 'PurchaseDate', #7
@@ -8691,7 +8728,7 @@ sub HandleItemInfo($)
                 $et->VPrint(0, "$$et{INDENT}Item $id) '${type}' ($len bytes)\n");
             }
             # get ExifTool name for this item
-            my $name = { Exif => 'EXIF', 'application/rdf+xml' => 'XMP' }->{$type} || '';
+            my $name = { Exif => 'EXIF', 'application/rdf+xml' => 'XMP', jpeg => 'PreviewImage' }->{$type} || '';
             my ($warn, $extent);
             $warn = "Can't currently decode encoded $type metadata" if $$item{ContentEncoding};
             $warn = "Can't currently decode protected $type metadata" if $$item{ProtectionIndex};
@@ -8768,6 +8805,21 @@ sub HandleItemInfo($)
                 }
                 $subTable = GetTagTable('Image::ExifTool::Exif::Main');
                 $proc = \&Image::ExifTool::ProcessTIFF;
+            } elsif ($name eq 'PreviewImage') {
+                # take a quick stab at determining the size of the image
+                # (based on JPEG previews found in Fuji X-H2S HIF images)
+                my $type = 'PreviewImage';
+                if ($buff =~ /^.{556}\xff\xc0\0\x11.(.{4})/s) {
+                    my ($h, $w) = unpack('n2', $1);
+                    # (not sure if $h is ever the long dimension, but test it just in case)
+                    if ($w == 160 or $h == 160) {
+                        $type = 'ThumbnailImage';
+                    } elsif ($w == 1920 or $h == 1920) {
+                        $type = 'OtherImage'; # (large preview)
+                    } # (PreviewImage is 640x480)
+                }
+                $et->FoundTag($type => $buff);
+                next;
             } else {
                 $start = 0;
                 $subTable = GetTagTable('Image::ExifTool::XMP::Main');
@@ -9184,9 +9236,9 @@ sub ProcessMOV($$;$)
     } else {
         # check on file type if called with a RAF
         $$tagTablePtr{$tag} or return 0;
+        my $fileType;
         if ($tag eq 'ftyp' and $size >= 12) {
             # read ftyp atom to see what type of file this is
-            my $fileType;
             if ($raf->Read($buff, $size-8) == $size-8) {
                 $raf->Seek(-($size-8), 1);
                 my $type = substr($buff, 0, 4);
@@ -9208,12 +9260,14 @@ sub ProcessMOV($$;$)
             # temporarily set ExtractEmbedded option for CRX files
             $saveOptions{ExtractEmbedded} = $et->Options(ExtractEmbedded => 1) if $fileType eq 'CRX';
         } else {
-            $et->SetFileType();       # MOV
+            $et->SetFileType();     # MOV
         }
         SetByteOrder('MM');
-        $$et{PRIORITY_DIR} = 'XMP';   # have XMP take priority
+        # have XMP take priority except for HEIC
+        $$et{PRIORITY_DIR} = 'XMP' unless $fileType and $fileType eq 'HEIC';
     }
-    $$raf{NoBuffer} = 1 if $et->Options('FastScan'); # disable buffering in FastScan mode
+    my $fast = $$et{OPTIONS}{FastScan} || 0;
+    $$raf{NoBuffer} = 1 if $fast;   # disable buffering in FastScan mode
 
     my $ee = $$et{OPTIONS}{ExtractEmbedded};
     if ($ee) {
@@ -9241,8 +9295,10 @@ sub ProcessMOV($$;$)
                     $et->VPrint(0,"$$et{INDENT}Tag '${t}' extends to end of file");
                     if ($$tagTablePtr{"$tag-size"}) {
                         my $pos = $raf->Tell();
-                        $raf->Seek(0, 2);
-                        $et->HandleTag($tagTablePtr, "$tag-size", $raf->Tell() - $pos);
+                        unless ($fast) {
+                            $raf->Seek(0, 2);
+                            $et->HandleTag($tagTablePtr, "$tag-size", $raf->Tell() - $pos);
+                        }
                         $et->HandleTag($tagTablePtr, "$tag-offset", $pos) if $$tagTablePtr{"$tag-offset"};
                     }
                 }
@@ -9345,6 +9401,8 @@ sub ProcessMOV($$;$)
             $et->HandleTag($tagTablePtr, "$tag-size", $size);
             $et->HandleTag($tagTablePtr, "$tag-offset", $raf->Tell()) if $$tagTablePtr{"$tag-offset"};
         }
+        # stop processing at mdat/idat if -fast2 is used
+        last if $fast > 1 and ($tag eq 'mdat' or $tag eq 'idat');
         # load values only if associated with a tag (or verbose) and not too big
         if ($size > 0x2000000) {    # start to get worried above 32 MB
             # check for RIFF trailer (written by Auto-Vox dashcam)
@@ -9800,7 +9858,7 @@ information from QuickTime and MP4 video, M4A audio, and HEIC image files.
 
 =head1 AUTHOR
 
-Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

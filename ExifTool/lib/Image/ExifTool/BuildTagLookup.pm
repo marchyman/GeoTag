@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.49';
+$VERSION = '3.50';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -238,7 +238,7 @@ types of meta information.  To determine a tag name, either consult this
 documentation or run C<exiftool -s> on a file containing the information in
 question.
 
-I<(This documentation is the result of years of research, testing and
+I<(This documentation is the result of decades of research, testing and
 reverse engineering, and is the most complete metadata tag list available
 anywhere on the internet.  It is provided not only for ExifTool users, but
 more importantly as a public service to help augment the collective
@@ -671,7 +671,7 @@ L<Image::ExifTool::BuildTagLookup|Image::ExifTool::BuildTagLookup>.
 
 ~head1 AUTHOR
 
-Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -1291,16 +1291,19 @@ TagID:  foreach $tagID (@keys) {
                         $printConv = shift @printConvList;
                         $index = shift @indexList;
                     }
-                } elsif ($printConv and $printConv =~ /DecodeBits\(\$val,\s*(\{.*\})\s*\)/s) {
+                # look inside scalar PrintConv for a bit/byte conversion
+                # (see Photoshop:PrintFlags for use of "$byte" decoding)
+                } elsif ($printConv and $printConv =~ /DecodeBits\(\$(val|byte),\s*(\\\%[\w:]+|\{.*\})\s*\)/s) {
+                    my $type = $1 eq 'byte' ? 'Byte' : 'Bit';
                     $$self{Model} = '';   # needed for Nikon ShootingMode
-                    my $bits = eval $1;
+                    my $bits = eval $2;
                     delete $$self{Model};
                     if ($@) {
                         warn $@;
                     } else {
                         my @pk = sort { NumbersFirst($a,$b) } keys %$bits;
                         foreach (@pk) {
-                            push @values, "Bit $_ = " . $$bits{$_};
+                            push @values, "$type $_ = " . $$bits{$_};
                         }
                     }
                 }
@@ -1504,7 +1507,7 @@ TagID:  foreach $tagID (@keys) {
                     }
                 }
                 foreach $tagID (sort keys %$hash) {
-                    warn sprintf("Warning: Missing %s for %s %s, tag %d (0x%.4x)\n",
+                    warn sprintf("Warning: Missing %s for %s %s, tag %s (0x%.4x)\n",
                                  $var, $short, $$hash{$tagID}, $tagID, $tagID);
                 }
             }
@@ -2770,7 +2773,7 @@ Returned list of writable pseudo tags.
 
 =head1 AUTHOR
 
-Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

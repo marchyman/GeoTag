@@ -3,6 +3,9 @@ File:         Image/ExifTool/README
 
 Description:  ExifTool support modules documentation
 
+Note:         This documentation is a reference to be used by developers when
+              adding new tags to ExifTool.
+
 The ExifTool support modules are loaded by ExifTool to allow processing of
 various meta information formats.
 
@@ -641,7 +644,8 @@ numerical, and generated automatically otherwise.
                   expression, a code reference or a list reference.  In this
                   expression, $self, $val and $tag may be used as with
                   ValueConv, but if ValueConv was defined then $val is the
-                  ValueConv value instead of the Raw value.  The returned value
+                  ValueConv value instead of the Raw value.  Composite tags
+                  may also use the @val, @prt and @raw lists. The returned value
                   should always be defined.  Note that the print conversion is
                   only done if the PrintConv option is enabled (which it is by
                   default), and if the result of the ValueConv is not a scalar
@@ -966,6 +970,10 @@ numerical, and generated automatically otherwise.
 
   OtherLang     : [reserved] Used internally by QuickTime module to store a list
                   of tag ID's for alternate-language tags based on this one.
+
+  ParentTagInfo : [reserved] Used internally to store a reference to the tag
+                  information hash of the parent structure for flattened
+                  structure tags.
 
   RootTagInfo   : [reserved] Used internally to store a reference to the tag
                   information hash of the top-level structure for flattened

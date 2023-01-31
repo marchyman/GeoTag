@@ -86,6 +86,8 @@ sub ProcessICO($$$)
     # verify this is a valid ICO/CUR file
     return 0 unless $raf->Read($buff, 6) == 6;
     return 0 unless $buff =~ /^\0\0([\x01\x02])\0[^0]\0/s;
+    # (note: have seen cursor files in the wild with an 0x01 here,
+    # but SetFileType will use the .cur extension to identify these)
     $et->SetFileType($1 eq "\x01" ? 'ICO' : 'CUR');
     SetByteOrder('II');
     my $tagTbl = GetTagTable('Image::ExifTool::ICO::Main');
@@ -119,7 +121,7 @@ information from Windows ICO (icon) and CUR (cursor) files.
 
 =head1 AUTHOR
 
-Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

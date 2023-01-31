@@ -8,7 +8,7 @@
 # Revisions:    Nov. 12/2003 - P. Harvey Created
 #               (See html/history.html for revision history)
 #
-# Legal:        Copyright (c) 2003-2022, Phil Harvey (philharvey66 at gmail.com)
+# Legal:        Copyright (c) 2003-2023, Phil Harvey (philharvey66 at gmail.com)
 #               This library is free software; you can redistribute it and/or
 #               modify it under the same terms as Perl itself.
 #------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
             %static_vars);
 
-$VERSION = '12.49';
+$VERSION = '12.55';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -116,6 +116,7 @@ sub SetPreferredByteOrder($;$);
 sub CopyBlock($$$);
 sub CopyFileAttrs($$$);
 sub TimeNow(;$$);
+sub InverseDateTime($$;$$);
 sub NewGUID();
 sub MakeTiffHeader($$$$;$$);
 
@@ -145,16 +146,16 @@ sub ReadValue($$$;$$$);
     Samsung::Trailer Sony::SRF2 Sony::SR2SubIFD Sony::PMP ITC ID3 ID3::Lyrics3
     FLAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible MPC MPEG::Audio
     MPEG::Video MPEG::Xing M2TS QuickTime QuickTime::ImageFile QuickTime::Stream
-    QuickTime::Tags360Fly Matroska MOI MXF DV Flash Flash::FLV Real::Media
-    Real::Audio Real::Metafile Red RIFF AIFF ASF WTV DICOM FITS MIE JSON HTML
-    XMP::SVG Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion EXE::PEString
-    EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard Text
-    VCard::VCalendar RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR RTF OOXML iWork ISO
+    QuickTime::Tags360Fly Matroska Matroska::StdTag MOI MXF DV Flash Flash::FLV
+    Real::Media Real::Audio Real::Metafile Red RIFF AIFF ASF WTV DICOM FITS MIE
+    JSON HTML XMP::SVG Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion
+    EXE::PEString EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard
+    Text VCard::VCalendar RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR RTF OOXML iWork ISO
     FLIR::AFF FLIR::FPF MacOS MacOS::MDItem FlashPix::DocTable
 );
 
 # alphabetical list of current Lang modules
-@langs = qw(cs de en en_ca en_gb es fi fr it ja ko nl pl ru sv tr zh_cn zh_tw);
+@langs = qw(cs de en en_ca en_gb es fi fr it ja ko nl pl ru sk sv tr zh_cn zh_tw);
 
 $defaultLang = 'en';    # default language
 
@@ -174,6 +175,7 @@ $defaultLang = 'en';    # default language
     nl => 'Dutch (Nederlands)',
     pl => 'Polish (Polski)',
     ru => 'Russian (Русский)',
+    sk => 'Slovak (Slovenčina)',
     sv => 'Swedish (Svenska)',
    'tr'=> 'Turkish (Türkçe)',
     zh_cn => 'Simplified Chinese (简体中文)',
@@ -603,6 +605,7 @@ my %fileDescription = (
     CRM  => 'video/x-canon-crm',
     CRW  => 'image/x-canon-crw',
     CSV  => 'text/csv',
+    CUR  => 'image/x-cursor', #PH (NC)
     CZI  => 'image/x-zeiss-czi', #PH (NC)
     DCP  => 'application/octet-stream', #PH (NC)
     DCR  => 'image/x-kodak-dcr',
@@ -651,7 +654,7 @@ my %fileDescription = (
     HDR  => 'image/vnd.radiance',
     HTML => 'text/html',
     ICC  => 'application/vnd.iccprofile',
-    ICO  => 'application/octet-stream', #PH (NC)
+    ICO  => 'image/x-icon', #PH (NC)
     ICS  => 'text/calendar',
     IDML => 'application/vnd.adobe.indesign-idml-package',
     IIQ  => 'image/x-raw',
@@ -1806,6 +1809,16 @@ my %systemTagsNotes = (
         Protected => 1,
     },
     PageCount => { Notes => 'the number of pages in a multi-page TIFF document' },
+    SphericalVideoXML => {
+        Groups => { 0 => 'QuickTime', 1 => 'GSpherical', 2 => 'Video' },
+        # (group 1 is 'GSpherical' to trigger creation of this tag when writing,
+        # but when reading the family 1 group is the track number)
+        Flags => [ 'Writable', 'Binary', 'Protected' ],
+        Notes => q{
+            the SphericalVideoXML block from MP4/MOV videos.  This tag is generated only
+            if specifically requested
+        },
+    },
 );
 
 # tags defined by UserParam option (added at runtime)
@@ -2028,6 +2041,7 @@ sub new
     $$self{DEL_GROUP} = { };    # lookup for groups to delete when writing
     $$self{SAVE_COUNT} = 0;     # count calls to SaveNewValues()
     $$self{FILE_SEQUENCE} = 0;  # sequence number for files when reading
+    $$self{INDENT2} = '';       # indentation of verbose messages from SetNewValue
 
     # initialize our new groups for writing
     $self->SetNewGroups(@defaultWriteGroups);
@@ -3908,7 +3922,7 @@ sub CanCreate($)
 #==============================================================================
 # Functions below this are not part of the public API
 
-# Initialize member variables for reading or writing a new file
+# Initialize member variables before reading or writing a new file
 # Inputs: 0) ExifTool object reference
 sub Init($)
 {
@@ -4173,10 +4187,15 @@ sub Open($*$;$)
             # handle Windows Unicode file name
             local $SIG{'__WARN__'} = \&SetWarning;
             my ($access, $create);
-            if ($mode eq '>') {
+            if ($mode eq '>' or $mode eq '>>') {
                 eval {
                     $access  = Win32API::File::GENERIC_WRITE();
-                    $create  = Win32API::File::CREATE_ALWAYS();
+                    if ($mode eq '>>') {
+                        $access |= Win32API::File::FILE_APPEND_DATA();
+                        $create  = Win32API::File::OPEN_ALWAYS();
+                    } else {
+                        $create  = Win32API::File::CREATE_ALWAYS();
+                    }
                 }
             } else {
                 eval {
@@ -4432,11 +4451,15 @@ sub ParseArguments($;@)
 sub IsSameID($$)
 {
     my ($id, $grp) = @_;
-    return 1 if $grp eq $id;    # decimal ID's or raw ID's
-    if ($id =~ /^\d+$/) {       # numerical numerical ID's may be in hex
-        return 1 if $grp =~ s/^0x0*// and $grp eq sprintf('%x', $id);
-    } else {                    # other ID's may conform to ExifTool group name conventions
-        return 1 if $id =~ s/([^-_A-Za-z0-9])/sprintf('%.2x',ord $1)/ge and $grp eq $id;
+    for (;;) {
+        return 1 if $grp eq $id;    # decimal ID's or raw ID's
+        if ($id =~ /^\d+$/) {       # numerical numerical ID's may be in hex
+            return 1 if $grp =~ s/^0x0*// and $grp eq sprintf('%x', $id);
+        } else {                    # other ID's may conform to ExifTool group name conventions
+            my $tmp = $id;
+            return 1 if $tmp =~ s/([^-_A-Za-z0-9])/sprintf('%.2x',ord $1)/ge and $grp eq $tmp;
+        }
+        last unless $id =~ s/-.*//; # remove language code if it exists
     }
     return 0;
 }
@@ -8263,15 +8286,17 @@ sub FoundTag($$$;@)
 {
     local $_;
     my ($self, $tagInfo, $value, @grps) = @_;
-    my ($tag, $noListDel);
+    my ($tag, $noListDel, $tbl);
     my $options = $$self{OPTIONS};
 
     if (ref $tagInfo eq 'HASH') {
         $tag = $$tagInfo{Name} or warn("No tag name\n"), return undef;
+        $tbl = $$tagInfo{Table};
     } else {
         $tag = $tagInfo;
         # look for tag in Extra
-        $tagInfo = $self->GetTagInfo(GetTagTable('Image::ExifTool::Extra'), $tag);
+        $tbl = GetTagTable('Image::ExifTool::Extra');
+        $tagInfo = $self->GetTagInfo($tbl, $tag);
         # make temporary hash if tag doesn't exist in Extra
         # (not advised to do this since the tag won't show in list)
         $tagInfo or $tagInfo = { Name => $tag, Groups => \%allGroupsExifTool };
@@ -8280,7 +8305,7 @@ sub FoundTag($$$;@)
     # get tag priority
     my $priority = $$tagInfo{Priority};
     unless (defined $priority) {
-        $priority = $$tagInfo{Table}{PRIORITY};
+        $priority = $$tbl{PRIORITY};
         $priority = 0 if not defined $priority and $$tagInfo{Avoid};
     }
     $grps[0] or $grps[0] = $$self{SET_GROUP0};
