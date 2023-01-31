@@ -64,7 +64,7 @@ extension AppViewModel {
                                        options: [.skipsHiddenFiles],
                                        errorHandler: nil) else { return }
         guard let sevenDaysAgo =
-                Calendar.current.date(byAdding: .minute, value: -1,
+                Calendar.current.date(byAdding: .day, value: -7,
                                       to: Date()) else { return }
 
         // starting state

@@ -70,24 +70,26 @@ struct MapView: NSViewRepresentable {
     func mainPin(for id: ImageModel.ID?, on view: ClickMapView) {
         if let id,
            let location = avm[id].location {
-            if location != mvm.mainPin?.coordinate {
-                if mvm.mainPin == nil {
-                    mvm.mainPin = MKPointAnnotation()
-                    mvm.mainPin?.title = "Pin"
-                }
-                mvm.mainPin?.coordinate = location
+            // always update pin as the view, Pin vs OtherPin, may have changed
+            // example: deselecting the image associated with mainPin may
+            // cause a pin currently displayed as an OtherPin to be selected
+            // as the main pin.
+            if mvm.mainPin == nil {
+                mvm.mainPin = MKPointAnnotation()
+                mvm.mainPin?.title = "Pin"
+            }
+            mvm.mainPin?.coordinate = location
 
-                // Add an annotation for mainPin since the location has changed.
-                // Testing shows that this replaces any existing annotation for
-                // the pin.
-                view.addAnnotation(mvm.mainPin!)
+            // Add an annotation for mainPin since the location has changed.
+            // Testing shows that this replaces any existing annotation for
+            // the pin.
+            view.addAnnotation(mvm.mainPin!)
 
-                // make sure pin is in view
-                if !view.visibleMapRect.contains(MKMapPoint(mvm.mainPin!.coordinate)) {
-                    // I don't know of a better way?
-                    DispatchQueue.main.async {
-                        view.setCenter(mvm.mainPin!.coordinate, animated: false)
-                    }
+            // make sure pin is in view
+            if !view.visibleMapRect.contains(MKMapPoint(mvm.mainPin!.coordinate)) {
+                // I don't know of a better way?
+                DispatchQueue.main.async {
+                    view.setCenter(mvm.mainPin!.coordinate, animated: false)
                 }
             }
         } else {

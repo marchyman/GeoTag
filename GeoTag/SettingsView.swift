@@ -116,7 +116,7 @@ struct SettingsView: View {
                             .labelsHidden()
                     }
                     .padding(.horizontal)
-                    .help("If this option is enabled a finder tag will be added to updated images.")
+                    .help("If this option is enabled a finder tag will be added to updated images. The tag is alway added to the main image file even when a GPX sidecar file exists.")
 
                     if avm.addTag {
                         TextField("With tag:", text: $avm.tag)

@@ -91,7 +91,7 @@ struct Exiftool {
                               lonArg, lonRefArg,
                               eleArg, eleRefArg]
         if updateFileModTime {
-            exiftool.arguments! += ["-P"]
+            exiftool.arguments! += ["-FileModifyDate<DateTimeOriginal"]
         }
 
         if updateGPSTimestamp {
