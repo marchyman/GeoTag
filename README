@@ -16,13 +16,11 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can use GeoTag
 version 4.15.
 
-## GeoTag version 5 Release Candidate 1 (5.0-RC1)
+## GeoTag version 5 (5.0)
 
-Grab it here: <https://www.snafu.org/GeoTag/GeoTag-5.0-RC1.dmg>
+Grab it here: <https://www.snafu.org/GeoTag/GeoTag-5.0.dmg>
 
 ### Version 5 Updates
-
-* better performance using structured concurency where possible
 
 * Set elevation/altitude when assigning locations from track logs.
 
@@ -35,6 +33,8 @@ Grab it here: <https://www.snafu.org/GeoTag/GeoTag-5.0-RC1.dmg>
 * User option to show/hide pins for all selected images
 
 * The function to interpolate image location was removed.
+
+* (internal) better performance using structured concurency where possible
 
 * (internal) Exiftool version 12.55
 
