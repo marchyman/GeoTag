@@ -8,8 +8,14 @@
 import Foundation
 
 /// GPX file processing
+///
+/// An instance of a Gpx is created whenever a gpx file is opened.  The file is parsed and the
+/// instance fully populated with Track information by the URLToImageHelper Actor running in a Task.
+/// Once the instance is fully populated it is never changed.  This occurs before the task ends.
+/// For this reason it is safe to pass fully filed out instances between Actors and the class is marked
+/// as @unchecked Sendable.
 
-class Gpx: NSObject {
+final class Gpx: NSObject, @unchecked Sendable {
     // GPX Parsing errors
     enum GpxParseError: Error {
         case gpxOpenError

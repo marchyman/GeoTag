@@ -253,6 +253,12 @@ extension URL: Comparable {
     }
 }
 
+// ImageModel is sendable.  For the purposes of ImageModel NSImage can
+// be treated as sendable.
+
+extension ImageModel: Sendable {}
+extension NSImage: @unchecked Sendable {}
+
 // Date formatter used to put timestamps in the form used by exiftool
 
 extension ImageModel {

@@ -14,8 +14,8 @@ let xmpExtension = "xmp"
 /// Class used to access xmp sidecar files as related files to the image
 /// file being updated in a sandboxed environment.
 
-class XmpFile: NSObject {
-    var url: URL        // url of image file
+final class XmpFile: NSObject {
+    let url: URL        // url of image file
 
     init(url: URL) {
         self.url = url
@@ -42,3 +42,5 @@ extension XmpFile: NSFilePresenter {
         return OperationQueue.main
     }
 }
+
+extension XmpFile: Sendable {}
