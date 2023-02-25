@@ -42,7 +42,6 @@ struct Exiftool {
     ///     of the original file plus the assigned location.
 
     func update(from image: ImageModel, timeZone: TimeZone?) async throws {
-
         // ExifTool argument names
         var latArg = "-GPSLatitude="
         var lonArg = "-GPSLongitude="
@@ -188,10 +187,8 @@ struct Exiftool {
     /// Apple's ImageIO functions can not extract metadata from XMP sidecar
     /// files.  ExifTool is used for that purpose.
 
-    func metadataFrom(xmp: URL) -> (dto: String,
-                                    valid: Bool,
-                                    location: Coords,
-                                    elevation: Double?) {
+    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool, location: Coords, elevation: Double?) {
+        // swiftlint:disable:previous large_tuple
         let exiftool = Process()
         let pipe = Pipe()
         exiftool.standardOutput = pipe

@@ -81,6 +81,7 @@ struct ContentView: View {
             Button("Cancel", role: .cancel) { }
                 .keyboardShortcut(.defaultAction)
         } message: {
+            // swiftlint:disable line_length
             Text("""
                  Your current backup/save folder
 
@@ -92,6 +93,7 @@ struct ContentView: View {
 
                  Would you like to remove those \(contentViewModel.oldFiles.count) backup files?
                  """)
+            // swiftlint:enable line_length
         }
         .link($contentViewModel.removeOldFiles, with: $removeOldFiles)
     }

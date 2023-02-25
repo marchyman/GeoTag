@@ -13,8 +13,8 @@ import MapKit
 
 @MainActor
 final class AppViewModel: ObservableObject {
-    @Published var images = [ImageModel]()
-    @Published var selection = Set<ImageModel.ID>()
+    @Published var images: [ImageModel] = []
+    @Published var selection: Set<ImageModel.ID> = []
     @Published var mostSelected: ImageModel.ID?
 
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
@@ -58,7 +58,7 @@ final class AppViewModel: ObservableObject {
     // State that changes when a menu item is picked.
 
     // Tracks displayed on map
-    var gpxTracks = [Gpx]()
+    var gpxTracks: [Gpx] = []
 
     // The timezone to use when matching image timestamps to track logs and
     // setting the GPS time stamp when saving images.  When nil the system
@@ -66,8 +66,8 @@ final class AppViewModel: ObservableObject {
     var timeZone: TimeZone?
 
     // GPX File Loading sheet information
-    var gpxGoodFileNames = [String]()
-    var gpxBadFileNames = [String]()
+    var gpxGoodFileNames: [String] = []
+    var gpxBadFileNames: [String] = []
 
     // The URL of the folder where image backups are save when backups
     // are enabled.  The URL comes from a security scoped bookmark in

@@ -68,7 +68,9 @@ struct GpxLoadView: View {
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
                     .padding()
-                Text("Either no tracks could be found or the GPX file was corrupted such that it could not be properly processed. Any track log information in the file has been ignored.")
+                Text("Either no tracks could be found or the GPX file was corrupted " +
+                     "such that it could not be properly processed. Any track log " +
+                     "information in the file has been ignored.")
                     .lineLimit(nil)
                     .padding([.leading, .bottom, .trailing])
             }
@@ -84,7 +86,8 @@ struct DuplicateImageView: View {
             Text("One or more files not opened")
                 .font(.title)
                 .padding()
-            Text("One or more files were not opened. Unopened files were duplicates of files previously opened for editing.")
+            Text("One or more files were not opened. Unopened files were " +
+                 "duplicates of files previously opened for editing.")
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
@@ -100,7 +103,10 @@ struct NoBackupFolderView: View {
             Text("Image backup folder can not be found")
                 .font(.title)
                 .padding()
-            Text("Image backups are enabled but no backup folder is specified or the specified folder can no longer be found.  Please open the program settings window (⌘ ,) and select a folder for image backups.")
+            Text("Image backups are enabled but no backup folder is " +
+                 "specified or the specified folder can no longer be found. " +
+                 "Please open the program settings window (⌘ ,) and select " +
+                 "a folder for image backups.")
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
@@ -115,7 +121,8 @@ struct SavingUpdatesView: View {
             Text("Save in progress")
                 .font(.title)
                 .padding()
-            Text("Image updates are still being processed.  Please wait for the updates to complete before quiting GeoTag.")
+            Text("Image updates are still being processed.  Please wait " +
+                 "for the updates to complete before quiting GeoTag.")
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)

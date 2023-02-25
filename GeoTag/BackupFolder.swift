@@ -33,9 +33,10 @@ extension AppViewModel {
         do {
             try bookmark = url.bookmarkData(options: .withSecurityScope)
         } catch let error as NSError {
-            ContentViewModel.shared.addSheet(type: .unexpectedErrorSheet,
-                                             error: error,
-                                             message: "Error creating security scoped bookmark for backup location \(url.path)")
+            ContentViewModel.shared
+                .addSheet(type: .unexpectedErrorSheet,
+                          error: error,
+                          message: "Error creating security scoped bookmark for backup location \(url.path)")
         }
         return bookmark
     }

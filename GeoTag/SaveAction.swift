@@ -54,28 +54,25 @@ extension AppViewModel {
             let tagName = tag.isEmpty ? "GeoTag" : tag
 
             await withTaskGroup(of: SaveStatus.self) { group in
-                for image in imagesToSave {
-                    // only process images that have changed
-                    if image.changed {
-                        group.addTask { [self] in
-                            var errorDescription: String?
-                            do {
-                                if makeBackup {
-                                    try await image.makeBackupFile(backupFolder: url!)
-                                }
-                                try await image.saveChanges(timeZone: timeZone)
-                                if tagFiles {
-                                    try await image.setTag(name: tagName)
-                                }
-                            } catch {
-                                errorDescription = error.localizedDescription
+                for image in imagesToSave where image.changed {
+                    group.addTask { [self] in
+                        var errorDescription: String?
+                        do {
+                            if makeBackup {
+                                try await image.makeBackupFile(backupFolder: url!)
                             }
-                            return SaveStatus(id: image.id,
-                                              dateTimeCreated: image.dateTimeCreated,
-                                              location: image.location,
-                                              elevation: image.elevation,
-                                              error: errorDescription)
+                            try await image.saveChanges(timeZone: timeZone)
+                            if tagFiles {
+                                try await image.setTag(name: tagName)
+                            }
+                        } catch {
+                            errorDescription = error.localizedDescription
                         }
+                        return SaveStatus(id: image.id,
+                                          dateTimeCreated: image.dateTimeCreated,
+                                          location: image.location,
+                                          elevation: image.elevation,
+                                          error: errorDescription)
                     }
                 }
 

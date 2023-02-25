@@ -30,10 +30,8 @@ extension AppViewModel {
         }
         if !selection.isEmpty {
             undoManager.beginUndoGrouping()
-            for id in selection {
-                if self[id].location != nil {
-                    update(id: id, location: nil)
-                }
+            for id in selection where self[id].location != nil {
+                update(id: id, location: nil)
             }
             undoManager.endUndoGrouping()
             undoManager.setActionName("delete locations")

@@ -17,7 +17,7 @@ extension AppViewModel {
     func pasteDisabled(context: ImageModel.ID? = nil) -> Bool {
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
-           let _ = ImageModel.decodeStringRep(value: pasteVal),
+           ImageModel.decodeStringRep(value: pasteVal) != nil,
            (context != nil || mostSelected != nil) {
             return false
         }

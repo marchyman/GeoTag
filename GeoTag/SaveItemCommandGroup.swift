@@ -17,7 +17,8 @@ extension GeoTagApp {
                 .disabled(avm.saveDisabled())
 
             Button("Discard changes") {
-                ContentViewModel.shared.confirmationMessage = "Discarding all changes is not undoable.  Are you sure this is what you want to do?"
+                ContentViewModel.shared.confirmationMessage =
+                    "Discarding all changes is not undoable.  Are you sure this is what you want to do?"
                 ContentViewModel.shared.confirmationAction = avm.discardChangesAction
                 ContentViewModel.shared.presentConfirmation = true
             }

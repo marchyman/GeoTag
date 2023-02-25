@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// swiftlint:disable line_length
+
 struct SettingsView: View {
     @EnvironmentObject var avm: AppViewModel
     @ObservedObject var mvm = MapViewModel.shared

@@ -139,6 +139,7 @@ struct MapView: NSViewRepresentable {
             }
 
             oldAnnotations = view.annotations.filter {
+                // swiftlint:disable force_cast
                 known.insert($0 as! MKPointAnnotation).inserted
             }
         }
@@ -177,10 +178,10 @@ extension MapView {
 
     class Coordinator: NSObject, MKMapViewDelegate {
         @ObservedObject var mvm = MapViewModel.shared
-        @ObservedObject var vm: AppViewModel
+        @ObservedObject var avm: AppViewModel
 
         init(vm: AppViewModel) {
-            self.vm = vm
+            self.avm = vm
         }
 
         // view for annnotation.
@@ -214,15 +215,14 @@ extension MapView {
                      annotationView view: MKAnnotationView,
                      didChange newState: MKAnnotationView.DragState,
                      fromOldState oldState: MKAnnotationView.DragState) {
-            if let id = vm.mostSelected {
+            if let id = avm.mostSelected {
                 switch newState {
                 case .starting:
                     view.image = NSImage(named: "DragPin")
-                    break
                 case .ending:
                     view.image = NSImage(named: "Pin")
-                    vm.update(id: id, location: view.annotation!.coordinate)
-                    vm.undoManager.setActionName("set location (drag)")
+                    avm.update(id: id, location: view.annotation!.coordinate)
+                    avm.undoManager.setActionName("set location (drag)")
                 default:
                     break
                 }

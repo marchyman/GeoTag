@@ -8,10 +8,10 @@
 import Foundation
 
 actor URLToImageHelper {
-    var gpxTracks = [Gpx]()
-    var gpxGoodFileNames = [String]()
-    var gpxBadFileNames = [String]()
-    var processedURLs = Set<URL>()
+    var gpxTracks: [Gpx] = []
+    var gpxGoodFileNames: [String] = []
+    var gpxBadFileNames: [String] = []
+    var processedURLs: Set<URL> = []
     var duplicateImages = false
     var gpxFiles = false
 

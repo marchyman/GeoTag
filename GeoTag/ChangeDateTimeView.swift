@@ -29,7 +29,11 @@ struct ChangeDateTimeView: View {
                     .frame(width: 200)
                                     }
                 .padding([.horizontal, .bottom])
-                .help("Set this to the new date/time. If one image is selected it will be set to this value.  If multiple images are selected the difference between the original date/time and the updated value will be applied to each image.")
+                .help("Set this to the new date/time. " +
+                      "If one image is selected it will be set to this value. " +
+                      "If multiple images are selected the difference between " +
+                      "the original date/time and the updated value will be " +
+                      "applied to each image.")
             }
 
             Spacer()
@@ -78,17 +82,15 @@ struct ChangeDateTimeView: View {
 
         // apply adjustment to each selected image in an undo group
         avm.undoManager.beginUndoGrouping()
-        for id in avm.selection {
-            if avm[id].isValid {
-                var updatedDate: Date
-                if let originalDate = avm[id].timestamp(for: avm.timeZone) {
-                    updatedDate = Date(timeInterval: adjustment,
-                                           since: originalDate)
-                } else {
-                    updatedDate = newDate
-                }
-                avm.update(id: id, timestamp: dateFormatter.string(from: updatedDate))
+        for id in avm.selection where avm[id].isValid {
+            var updatedDate: Date
+            if let originalDate = avm[id].timestamp(for: avm.timeZone) {
+                updatedDate = Date(timeInterval: adjustment,
+                                   since: originalDate)
+            } else {
+                updatedDate = newDate
             }
+            avm.update(id: id, timestamp: dateFormatter.string(from: updatedDate))
         }
         avm.undoManager.endUndoGrouping()
         avm.undoManager.setActionName("modify date/time")
