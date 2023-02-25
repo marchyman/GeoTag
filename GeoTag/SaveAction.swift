@@ -58,7 +58,7 @@ extension AppViewModel {
                     // only process images that have changed
                     if image.changed {
                         group.addTask { [self] in
-                            var errorDescription: String? = nil
+                            var errorDescription: String?
                             do {
                                 if makeBackup {
                                     try await image.makeBackupFile(backupFolder: url!)
@@ -99,4 +99,3 @@ extension AppViewModel {
         }
     }
 }
-

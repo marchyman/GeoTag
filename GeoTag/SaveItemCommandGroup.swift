@@ -27,7 +27,7 @@ extension GeoTagApp {
                 .disabled(avm.discardTracksDisabled())
 
             Divider()
-            
+
             Button("Clear Image List") { avm.clearImageListAction() }
                 .keyboardShortcut("k")
                 .disabled(avm.clearDisabled)

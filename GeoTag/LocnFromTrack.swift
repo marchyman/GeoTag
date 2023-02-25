@@ -47,7 +47,7 @@ extension AppViewModel {
                             }
                             return nil
                         }
-                        
+
                         undoManager.beginUndoGrouping()
                         for await locn in group {
                             if let locn {

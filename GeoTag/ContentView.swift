@@ -43,7 +43,7 @@ struct ContentView: View {
         }
 
         // drop destination
-        .dropDestination(for: URL.self) {items, location in
+        .dropDestination(for: URL.self) {items, _ in
             vm.prepareForEdit(inputURLs: items)
             return true
         }
@@ -109,7 +109,6 @@ struct ContentView: View {
             contentViewModel.sheetType = sheetInfo.sheetType
         }
     }
-
 
 }
 

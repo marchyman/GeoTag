@@ -55,7 +55,6 @@ struct SaveLocationPopoverView: View {
     }
 }
 
-
 struct MapStyleView_Previews: PreviewProvider {
     static var previews: some View {
         MapStyleView()

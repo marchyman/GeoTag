@@ -48,7 +48,7 @@ final class Gpx: NSObject, @unchecked Sendable {
     static let pointTimeFormat = ISO8601DateFormatter()
 
     /// Track points contain (at least) a latitude, longitude, and timestamp
-    struct Point : Equatable {
+    struct Point: Equatable {
         let lat: Double
         let lon: Double
         var ele: Double?
@@ -140,7 +140,7 @@ extension Gpx: XMLParserDelegate {
                 didStartElement elementName: String,
                 namespaceURI: String?,
                 qualifiedName qName: String?,
-                attributes attributeDict: [String : String] = [:]) {
+                attributes attributeDict: [String: String] = [:]) {
         switch parseState {
         case .none:
             // ignore everything until the trk element
@@ -263,7 +263,7 @@ extension Gpx: XMLParserDelegate {
             }
         case "trk":
             if parseState == .trk {
-                parseState = .none;
+                parseState = .none
             } else {
                 parseState = .error
             }

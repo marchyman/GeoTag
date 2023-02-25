@@ -131,7 +131,7 @@ extension AppViewModel {
     // turning off its isValid flag.
 
     func disableJpegs() {
-        let imageURLs = images.map{ $0.fileURL }
+        let imageURLs = images.map { $0.fileURL }
 
         for url in imageURLs {
             let pathExtension = url.pathExtension.lowercased()

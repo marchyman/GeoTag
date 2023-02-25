@@ -63,7 +63,6 @@ struct ImageTableView: View {
     }
 }
 
-
 /// Computed properties to convert elements of an imageModel into values for use with
 /// this view, espeically with regard to sorting.
 extension ImageModel {
@@ -134,8 +133,7 @@ struct ImageTableView_Previews: PreviewProvider {
                    validImage: true,
                    dateTimeCreated: "2022:12:13 14:15:16",
                    latitude: 35.505,
-                   longitude: -123.456),
-
+                   longitude: -123.456)
     ]
     static var previews: some View {
         ImageTableView()

@@ -20,7 +20,7 @@ struct ImageLongitudeColumnView: View {
                            ref: lonRef))
             .foregroundColor(avm[id].locationTextColor)
             .frame(minWidth: itvm.coordMinWidth)
-            .onDoubleClick() {
+            .onDoubleClick {
                 showPopover = avm[id].isValid
             }
             .popover(isPresented: self.$showPopover) {

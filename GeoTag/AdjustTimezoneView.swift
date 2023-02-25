@@ -17,7 +17,7 @@ struct AdjustTimezoneView: View {
             Text("Specify Camera Time Zone")
                 .font(.largeTitle)
                 .padding(.top)
-            
+
             Text("""
                  When matching images to a GPS track log GeoTag assumes
                  the time zone of image timestamps to be the same as the
@@ -40,7 +40,7 @@ struct AdjustTimezoneView: View {
 
             Form {
                 LabeledContent("Current Camera Time Zone:") {
-                    VStack (alignment: .leading){
+                    VStack(alignment: .leading) {
                         Text(currentZone.rawValue)
                         Text(currentZone.timeZone.identifier)
                     }
@@ -51,7 +51,7 @@ struct AdjustTimezoneView: View {
                     VStack( alignment: .leading) {
                         Picker("Desired Camera Time Zone",
                                selection: $selectedZone) {
-                            ForEach (TimeZoneName.allCases) { zone in
+                            ForEach(TimeZoneName.allCases) { zone in
                                 Text(zone.rawValue)
                             }
                         }

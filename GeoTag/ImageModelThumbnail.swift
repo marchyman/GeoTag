@@ -20,21 +20,21 @@ extension ImageModel {
         // if a thumbail has already been created we're done
         guard thumbnail == nil else { return }
 
-        var image = NSImage(size: NSMakeRect(0, 0, 0, 0).size)
+        var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
             thumbnail = image
             return
         }
-        
+
         // Create a "preview" of the image. If the image is larger than
         // 512x512 constrain the preview to that size.  512x512 is an
         // arbitrary limit.   Preview generation is used to work around a
         // performance hit when using large raw images
         let maxDimension = 512
         var imgOpts: [String: AnyObject] = [
-            ImageModel.createThumbnailWithTransform : kCFBooleanTrue,
-            ImageModel.createThumbnailFromImageIfAbsent : kCFBooleanTrue,
-            ImageModel.thumbnailMaxPixelSize : maxDimension as AnyObject
+            ImageModel.createThumbnailWithTransform: kCFBooleanTrue,
+            ImageModel.createThumbnailFromImageIfAbsent: kCFBooleanTrue,
+            ImageModel.thumbnailMaxPixelSize: maxDimension as AnyObject
         ]
         var checkSize = true
         repeat {
@@ -49,7 +49,7 @@ extension ImageModel {
                     imgOpts[ImageModel.createThumbnailFromImageAlways] = kCFBooleanTrue
                     continue
                 }
-                let imgRect = NSMakeRect(0.0, 0.0, imgWidth, imgHeight)
+                let imgRect = NSRect(x: 0.0, y: 0.0, width: imgWidth, height: imgHeight)
                 image = NSImage(size: imgRect.size)
                 image.lockFocus()
                 if let currentContext = NSGraphicsContext.current {

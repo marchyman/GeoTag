@@ -22,7 +22,6 @@ struct Exiftool {
         case runFailed(code: Int)
     }
 
-
     // URL of the embedded version of ExifTool
     var url: URL
 
@@ -140,7 +139,6 @@ struct Exiftool {
         return ""
     }
 
-
     // File Type codes for the file types that exiftool can write
     //
     // notes: png files are read/writable by exiftool, but macOS can not
@@ -154,7 +152,7 @@ struct Exiftool {
         "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
         "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", // "PNG",
         "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
-        "RWL", "SR2", "SRW","THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
+        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
 
     /// Check if exiftool supports writing to a type of file
     /// - Parameter for: a URL of a file to check
@@ -182,7 +180,7 @@ struct Exiftool {
         }
         return false
     }
-    
+
     /// return selected metadate from a file
     /// - Parameter xmp: URL of XMP file
     /// - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)

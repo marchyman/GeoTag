@@ -23,7 +23,7 @@ extension AppViewModel {
     }
 
     // delete location info from all selected images
-    
+
     func deleteAction(context: ImageModel.ID? = nil) {
         if let context {
             select(context: context)

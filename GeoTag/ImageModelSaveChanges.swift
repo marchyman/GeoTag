@@ -22,7 +22,7 @@ extension ImageModel {
         var fileNumber = 1
         var saveFileURL = backupFolder.appendingPathComponent(name, isDirectory: false)
         let fileManager = FileManager.default
-        let _ = backupFolder.startAccessingSecurityScopedResource()
+        _ = backupFolder.startAccessingSecurityScopedResource()
         defer { backupFolder.stopAccessingSecurityScopedResource() }
 
         // add a suffix to the name until no file is found at the save location

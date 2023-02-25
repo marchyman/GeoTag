@@ -74,7 +74,7 @@ struct SettingsView: View {
                 Group {
                     ColorPicker("GPS Track Color:",
                                 selection: $mvm.trackColor)
-                        .onChange(of: mvm.trackColor.rawValue) { color in
+                        .onChange(of: mvm.trackColor.rawValue) { _ in
                             mvm.refreshTracks = true
                         }
                         .padding(.horizontal)

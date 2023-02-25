@@ -86,7 +86,7 @@ extension AppViewModel {
         }
         if newOverlay {
             MapViewModel.shared.mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
-                                                           longitudeDelta:  maxlon - minlon)
+                                                           longitudeDelta: maxlon - minlon)
             MapViewModel.shared.currentMapCenter = Coords(latitude: (minlat + maxlat)/2,
                                                           longitude: (minlon + maxlon)/2)
             MapViewModel.shared.refreshTracks = true

@@ -102,9 +102,9 @@ struct ChangeLocationView: View {
     }
 }
 
-//struct ChangeLocationView_Previews: PreviewProvider {
+// struct ChangeLocationView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ChangeLocationView()
 //            .environmentObject(ViewModel())
 //    }
-//}
+// }

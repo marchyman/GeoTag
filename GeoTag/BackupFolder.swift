@@ -56,7 +56,7 @@ extension AppViewModel {
                                     .totalFileSizeKey,
                                     .addedToDirectoryDateKey]
         let fileManager = FileManager.default
-        let _ = url.startAccessingSecurityScopedResource()
+        _ = url.startAccessingSecurityScopedResource()
         defer { url.stopAccessingSecurityScopedResource() }
         guard let urlEnumerator =
                 fileManager.enumerator(at: url,
@@ -93,11 +93,10 @@ extension AppViewModel {
         }
     }
 
-
     nonisolated func remove(filesToRemove: [URL]) {
         Task {
             let folderURL = await backupURL
-            let _ = folderURL?.startAccessingSecurityScopedResource()
+            _ = folderURL?.startAccessingSecurityScopedResource()
             defer { folderURL?.stopAccessingSecurityScopedResource() }
             let fileManager = FileManager.default
             for url in filesToRemove {

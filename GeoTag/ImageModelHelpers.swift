@@ -12,7 +12,6 @@ import Foundation
 // instance is fully initialized.  They need not be member functions as
 // they don't access ImageModel data.
 
-
 extension ImageModel {
 
     // Link the given fileURL to the app sandbox, create a unique name if necessary

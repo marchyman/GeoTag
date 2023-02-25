@@ -18,7 +18,7 @@ struct ImageTimestampColumnView: View {
         Text(avm[id].timeStamp)
             .foregroundColor(avm[id].timestampTextColor)
             .frame(minWidth: itvm.timestampMinWidth)
-            .onDoubleClick() {
+            .onDoubleClick {
                 showPopover = avm[id].isValid
             }
             .popover(isPresented: self.$showPopover) {

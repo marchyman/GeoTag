@@ -25,7 +25,7 @@ extension AppViewModel {
     }
 
     // paste into all selected images
-    
+
     func pasteAction(context: ImageModel.ID? = nil) {
         if let context {
             select(context: context)

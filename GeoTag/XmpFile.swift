@@ -30,11 +30,11 @@ extension XmpFile: NSFilePresenter {
         xmp.appendPathExtension(xmpExtension)
         return xmp
     }
-    
+
     var primaryPresentedItemURL: URL? {
         return url
     }
-    
+
     var presentedItemOperationQueue: OperationQueue {
         if let queue = OperationQueue.current {
             return queue

@@ -51,19 +51,19 @@ struct GpxLoadView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if (vm.gpxGoodFileNames.count > 0) {
+            if vm.gpxGoodFileNames.count > 0 {
                 Text("GPX Files Loaded")
                     .font(.title)
-                List (vm.gpxGoodFileNames, id: \.self) { Text($0) }
+                List(vm.gpxGoodFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("The above GPX file(s) have been processed and will show as tracks on the map.")
                     .lineLimit(nil)
                     .padding()
             }
-            if (vm.gpxBadFileNames.count > 0) {
+            if vm.gpxBadFileNames.count > 0 {
                 Text("GPX Files NOT Loaded")
                     .font(.title)
-                List (vm.gpxBadFileNames, id: \.self) { Text($0) }
+                List(vm.gpxBadFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
@@ -80,7 +80,7 @@ struct GpxLoadView: View {
 
 struct DuplicateImageView: View {
     var body: some View {
-        VStack() {
+        VStack {
             Text("One or more files not opened")
                 .font(.title)
                 .padding()
@@ -96,7 +96,7 @@ struct DuplicateImageView: View {
 
 struct NoBackupFolderView: View {
     var body: some View {
-        VStack() {
+        VStack {
             Text("Image backup folder can not be found")
                 .font(.title)
                 .padding()
@@ -111,7 +111,7 @@ struct NoBackupFolderView: View {
 }
 struct SavingUpdatesView: View {
     var body: some View {
-        VStack() {
+        VStack {
             Text("Save in progress")
                 .font(.title)
                 .padding()
@@ -128,7 +128,7 @@ struct SaveErrorView: View {
     @ObservedObject var contentViewModel = ContentViewModel.shared
 
     var body: some View {
-        VStack() {
+        VStack {
             Text("One or more files could not be saved")
                 .font(.title)
                 .padding()
@@ -157,7 +157,7 @@ struct UnexpectedErrorView: View {
     @ObservedObject var contentViewModel = ContentViewModel.shared
 
     var body: some View {
-        VStack() {
+        VStack {
             Text("Unexpected Error")
                 .font(.title)
                 .padding()

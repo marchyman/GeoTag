@@ -24,7 +24,7 @@ final class ContentViewModel: ObservableObject {
     var sheetStack = [SheetInfo]()
     var sheetError: NSError?
     var sheetMessage: String?
-    var saveIssues = [ImageModel.ID : String ]()
+    var saveIssues = [ImageModel.ID: String]()
 
     // Confirmation required optional data
     var confirmationMessage: String?
@@ -37,8 +37,6 @@ final class ContentViewModel: ObservableObject {
     var oldFiles = [URL]()
     var folderSize = 0
     var deletedSize = 0
-
-
 }
 
 // Add a sheet to display

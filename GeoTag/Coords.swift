@@ -5,7 +5,6 @@
 //  Created by Marco S Hyman on 4/27/19.
 //
 
-
 import Foundation
 import MapKit
 
@@ -103,11 +102,11 @@ extension String {
 /// extend Double to handle coordinates
 
 extension Double {
-    var minutes:  Self {
+    var minutes: Self {
         return abs((self*3600).truncatingRemainder(dividingBy: 3600) / 60)
     }
 
-    var seconds:  Self {
+    var seconds: Self {
         return abs((self*3600)
                     .truncatingRemainder(dividingBy: 3600)
                     .truncatingRemainder(dividingBy: 60))
