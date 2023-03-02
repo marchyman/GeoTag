@@ -14,6 +14,9 @@ struct SettingsView: View {
     @ObservedObject var mvm = MapViewModel.shared
     @ObservedObject var itvm = ImageTableViewModel.shared
 
+    // used when creating an ImageModel
+    @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
+
     // Only used in prepareForEdits
     @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
 
@@ -22,6 +25,7 @@ struct SettingsView: View {
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
 
     @State private var backupURL: URL?
+    @State private var showPopover = false
 
     init(backupURL: URL?) {
         _backupURL = State(initialValue: backupURL)
@@ -57,6 +61,14 @@ struct SettingsView: View {
                         .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
                     }
                 }
+
+                // Create Sidecar (XMP) files
+                LabeledContent("Create Sidecar (XMP) files:") {
+                    Toggle("Create Sidecar (XMP) files", isOn: $createSidecarFile)
+                        .labelsHidden()
+                }
+                .padding([.bottom, .horizontal])
+                .help("Checking this box will result in creation of a sidecar (XMP) file for updated image files if one does not exist.  Updates are then written to the sidecar file.")
 
                 // Coordinate display configuration
                 Picker("Choose a coordinate format:",

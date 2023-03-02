@@ -45,7 +45,7 @@ struct GeoTagApp: App {
 
         Settings {
             SettingsView(backupURL: avm.backupURL)
-                .frame(width: 600.0, height: 550.0, alignment: .top)
+                .frame(width: 600.0, height: 590.0, alignment: .top)
                 .environmentObject(avm)
         }
         .windowResizability(.contentSize)
