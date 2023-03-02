@@ -53,9 +53,12 @@ struct ImageModel: Identifiable {
     // initialization of image data given its URL.
     init(imageURL: URL, forPreview: Bool = false) throws {
         fileURL = imageURL
-        if forPreview {
-            // these fields are unused when creating instances for preview
-            // any bogus value will work
+
+        // shortcut initialization when creating an image for preview
+        // or if the file type is not writable by Exiftool
+        guard !forPreview && Exiftool.helper.fileTypeIsWritable(for: fileURL) else {
+            // give fields that the compile will complain about
+            // don't care values
             sandboxURL = imageURL
             xmpURL = imageURL
             xmpFile = XmpFile(url: imageURL)
@@ -69,20 +72,19 @@ struct ImageModel: Identifiable {
                                                            xmpURL: xmpURL,
                                                            xmpFile: xmpFile)
 
-        // verify this file type us writable with Exiftool and load image
-        // metadata if we can.  If not mark it as not a valid image file.
+        // Load image metadata if we can.  If not mark it as not a valid image
+        // even though Exitool wouldn't have problems writing the file.
+        do {
+            isValid = try loadImageMetadata()
+        } catch let error {
+            throw error
+        }
 
-        if Exiftool.helper.fileTypeIsWritable(for: fileURL) {
-            do {
-                isValid = try loadImageMetadata()
-            } catch let error {
-                isValid = false
-                throw error
-            }
-            if isValid, let sandboxXmpURL,
-               FileManager.default.fileExists(atPath: xmpURL.path) {
-                loadXmpMetadata(sandboxXmpURL)
-            }
+        // If a sidecar file exists read metadata from it as sidecar files
+        // take precidence.
+        if isValid, let sandboxXmpURL,
+           FileManager.default.fileExists(atPath: xmpURL.path) {
+            loadXmpMetadata(sandboxXmpURL)
         }
     }
 
