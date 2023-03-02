@@ -17,10 +17,10 @@ final class AppViewModel: ObservableObject {
     @Published var selection: Set<ImageModel.ID> = []
     @Published var mostSelected: ImageModel.ID?
 
-    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
     @AppStorage(AppSettings.addTagKey) var addTag = false
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
     @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
     // get/set an image from the table of images  given its ID.
