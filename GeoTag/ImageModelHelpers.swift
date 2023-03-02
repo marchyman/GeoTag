@@ -55,15 +55,18 @@ extension ImageModel {
                                     xmpFile: XmpFile) throws -> URL? {
         var sandboxXmpURL: URL?
 
-        if fileURL.pathExtension.lowercased() != xmpExtension {
-            let fileManager = FileManager.default
-            if fileManager.fileExists(atPath: xmpURL.path) {
-                sandboxXmpURL = xmpFile.presentedItemURL
-                try? fileManager.removeItem(at: sandboxXmpURL!)
-                try fileManager.createSymbolicLink(at: sandboxXmpURL!,
-                                                   withDestinationURL: xmpURL)
-                NSFileCoordinator.addFilePresenter(xmpFile)
-            }
+        // don't look for a sidecar file for a sidecar file
+        guard fileURL.pathExtension.lowercased() != xmpExtension else {
+            return nil
+        }
+
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: xmpURL.path) {
+            sandboxXmpURL = xmpFile.presentedItemURL
+            try? fileManager.removeItem(at: sandboxXmpURL!)
+            try fileManager.createSymbolicLink(at: sandboxXmpURL!,
+                                               withDestinationURL: xmpURL)
+            NSFileCoordinator.addFilePresenter(xmpFile)
         }
         return sandboxXmpURL
     }
