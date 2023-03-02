@@ -46,7 +46,7 @@ extension Color: RawRepresentable {
         }
 
         do {
-            let color = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? NSColor ?? .systemBlue
+            let color = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data) ?? .systemBlue
             self = Color(color)
         } catch {
             self = .blue
@@ -56,7 +56,7 @@ extension Color: RawRepresentable {
     public var rawValue: String {
         do {
             let data = try NSKeyedArchiver.archivedData(withRootObject: NSColor(self),
-                                                        requiringSecureCoding: false) as Data
+                                                        requiringSecureCoding: false)
             return data.base64EncodedString()
         } catch {
             return ""
