@@ -19,6 +19,7 @@ enum AppSettings {
 
     static let addTagKey = "AddTagKey"
     static let coordFormatKey = "CoordFormatKey"
+    static let createSidecarFileKey = "CreateSidecarFileKey"
     static let disablePairedJpegsKey = "DisablePairedJpegsKey"
     static let dividerPositionKey = "DividerPositionKey"
     static let doNotBackupKey = "DoNotBackupKey"
