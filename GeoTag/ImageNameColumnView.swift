@@ -12,7 +12,7 @@ struct ImageNameColumnView: View {
     let id: ImageModel.ID
 
     var body: some View {
-        Text(avm[id].name + ((avm[id].sandboxXmpURL == nil) ? "" : "*"))
+        Text(avm[id].name + ((avm[id].sidecarExists) ? "*" : ""))
             .fontWeight(textWeight())
             .foregroundColor(textColor())
             .help("Full path: \(avm[id].fileURL.path)")

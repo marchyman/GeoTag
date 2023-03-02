@@ -74,7 +74,7 @@ struct Exiftool {
 
         // path to image (or XMP) file to update.
         var path = image.sandboxURL.path
-        if let xmp = image.sandboxXmpURL {
+        if let xmp = image.sandboxXmpURL, image.sidecarExists {
             path = xmp.path
         }
 
@@ -93,17 +93,18 @@ struct Exiftool {
         }
 
         if updateGPSTimestamp {
-            // calculate the gps timestamp and update args
+            // calculate the gps timestamp
             let gpsTimestamp = gpsTimestamp(for: image, in: timeZone)
-            gpsDArg += "\(gpsTimestamp)"
-            gpsTArg += "\(gpsTimestamp)"
-            gpsDTArg += "\(gpsTimestamp)"
 
             // args vary depending upon saving to an image file or a GPX file
-            if image.sandboxXmpURL == nil {
-                exiftool.arguments! += [gpsDArg, gpsTArg]
-            } else {
+            if image.sidecarExists {
+                gpsDTArg += gpsTimestamp
                 exiftool.arguments?.append(gpsDTArg)
+            } else {
+                let dtArgs = gpsTimestamp.split(separator: " ")
+                gpsDArg += dtArgs[0]
+                gpsTArg += dtArgs[1]
+                exiftool.arguments? += [gpsDArg, gpsTArg]
             }
         }
 
@@ -114,7 +115,7 @@ struct Exiftool {
             exiftool.arguments! += [dtoArg, cdArg]
         }
         exiftool.arguments! += ["-GPSStatus=", path]
-        // dump(exiftool.arguments!)
+//        dump(exiftool.arguments!)
         exiftool.launch()
         exiftool.waitUntilExit()
         if exiftool.terminationStatus != 0 {
@@ -123,7 +124,8 @@ struct Exiftool {
     }
 
     // convert the dateTimeCreated string to a string with time zone to
-    // update GPS timestamp fields.  Return an empty string
+    // update GPS timestamp fields.  Return an empty string if there is
+    // no timestamp or formatting failed.
 
     func gpsTimestamp(for image: ImageModel,
                       in timeZone: TimeZone?) -> String {
@@ -131,8 +133,9 @@ struct Exiftool {
             dateFormatter.dateFormat = ImageModel.dateFormat
             dateFormatter.timeZone = timeZone
             if let date = dateFormatter.date(from: dateTime) {
-                dateFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss xxx"
-                return dateFormatter.string(from: date)
+                dateFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+                dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+                return dateFormatter.string(from: date) + "Z"
             }
         }
         return ""
@@ -178,6 +181,23 @@ struct Exiftool {
             }
         }
         return false
+    }
+
+    /// create a sidecar file from an image file
+
+    func makeSidecar(from image: ImageModel) {
+        if let sidecarPath = image.sandboxXmpURL?.path {
+            let exiftool = Process()
+            let pipe = Pipe()
+            exiftool.standardOutput = pipe
+            exiftool.standardError = FileHandle.nullDevice
+            exiftool.launchPath = url.path
+            exiftool.arguments = [ "-tagsfromfile",
+                                   image.sandboxURL.path,
+                                   sidecarPath ]
+            exiftool.launch()
+            exiftool.waitUntilExit()
+        }
     }
 
     /// return selected metadate from a file

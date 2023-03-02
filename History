@@ -1,3 +1,17 @@
+## 5.0
+
+### Updates
+
+* Set elevation/altitude when assigning locations from track logs.
+* User option to enable/disable the jpeg part of a raw/jpeg pair
+* User option to add a finder tag to updated images.
+* User option to show/hide ignored files
+* User option to show/hide pins for all selected images
+* The function to interpolate image location was removed.
+* (internal) better performance using structured concurency where possible
+* (internal) Exiftool version 12.55
+* (internal) User Interface code re-written to use SwiftUI
+
 ## 4.99.x (Version 5 Beta Releases)
 
 ### Fixes/changes since initial Beta

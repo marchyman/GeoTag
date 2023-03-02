@@ -16,29 +16,17 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can use GeoTag
 version 4.15.
 
-## GeoTag version 5 (5.0)
+## Version 5.1
 
-Grab it here: <https://www.snafu.org/GeoTag/GeoTag-5.0.dmg>
+### Updates
 
-### Version 5 Updates
+* Add option to create sidecar (XMP) files when updating image location.
 
-* Set elevation/altitude when assigning locations from track logs.
+### Bug Fixes
 
-* User option to enable/disable the jpeg part of a raw/jpeg pair
-
-* User option to add a finder tag to updated images.
-
-* User option to show/hide ignored files
-
-* User option to show/hide pins for all selected images
-
-* The function to interpolate image location was removed.
-
-* (internal) better performance using structured concurency where possible
-
-* (internal) Exiftool version 12.55
-
-* (internal) User Interface code re-written to use SwiftUI
+* GPS Timestamp written to sidecar files included timezone instead of
+  being a UTC/GMPt relative timestamp.
+* Crash that could occur when opening the Setting window fixed
 
 ### See the file named *History* for earlier changes and bug fixes
 

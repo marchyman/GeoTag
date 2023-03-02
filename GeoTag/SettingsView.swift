@@ -14,7 +14,7 @@ struct SettingsView: View {
     @ObservedObject var mvm = MapViewModel.shared
     @ObservedObject var itvm = ImageTableViewModel.shared
 
-    // used when creating an ImageModel
+    // used when saving ImageModel changes
     @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
 
     // Only used in prepareForEdits

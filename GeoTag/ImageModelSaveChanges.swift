@@ -5,7 +5,7 @@
 //  Created by Marco S Hyman on 1/9/23.
 //
 
-import Foundation
+import SwiftUI
 
 extension ImageModel {
 
@@ -16,7 +16,7 @@ extension ImageModel {
     // make a backup of self into the folder identifed by the given URL
 
     func makeBackupFile(backupFolder: URL) async throws {
-        let url = sandboxXmpURL == nil ? fileURL : xmpURL
+        let url = sidecarExists ? xmpURL : fileURL
         let name = url.lastPathComponent
 
         var fileNumber = 1
@@ -47,6 +47,12 @@ extension ImageModel {
     // use exiftool to save metadata changes to the image file
 
     func saveChanges(timeZone: TimeZone?) async throws {
+        @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
+
+        if createSidecarFile && !sidecarExists {
+            // create a sidecar file for this image.
+            Exiftool.helper.makeSidecar(from: self)
+        }
         try await Exiftool.helper.update(from: self, timeZone: timeZone)
     }
 

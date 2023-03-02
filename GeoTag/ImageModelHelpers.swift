@@ -46,9 +46,10 @@ extension ImageModel {
         return sandboxURL
     }
 
-    // Link an XMP file matching the image file, if one was found, into the sandbox.
-    // Add a file presenter to allow us to write to the XMP file even if only the
-    // image file was opened.
+    // Create a link for a sidecar file matching the image file.  The link
+    // is created even if there is no sidecar file as one may be created,
+    // later.  Add a file presenter to allow us to write to the XMP file even
+    // when only the image file was opened.
 
     static func createSandboxXmpURL(fileURL: URL,
                                     xmpURL: URL,
@@ -61,13 +62,12 @@ extension ImageModel {
         }
 
         let fileManager = FileManager.default
-        if fileManager.fileExists(atPath: xmpURL.path) {
-            sandboxXmpURL = xmpFile.presentedItemURL
-            try? fileManager.removeItem(at: sandboxXmpURL!)
-            try fileManager.createSymbolicLink(at: sandboxXmpURL!,
-                                               withDestinationURL: xmpURL)
-            NSFileCoordinator.addFilePresenter(xmpFile)
-        }
+        sandboxXmpURL = xmpFile.presentedItemURL
+        try? fileManager.removeItem(at: sandboxXmpURL!)
+        try fileManager.createSymbolicLink(at: sandboxXmpURL!,
+                                           withDestinationURL: xmpURL)
+        NSFileCoordinator.addFilePresenter(xmpFile)
+
         return sandboxXmpURL
     }
 }

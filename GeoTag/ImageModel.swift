@@ -44,6 +44,9 @@ struct ImageModel: Identifiable {
     let sandboxXmpURL: URL?
     let xmpURL: URL
     let xmpFile: XmpFile
+    var sidecarExists: Bool {
+        FileManager.default.fileExists(atPath: xmpURL.path)
+    }
 
     // The thumbnail image displayed when and image is selected for editing
     // Thumbnails are not be created until it is needed.  Once created
@@ -57,7 +60,7 @@ struct ImageModel: Identifiable {
         // shortcut initialization when creating an image for preview
         // or if the file type is not writable by Exiftool
         guard !forPreview && Exiftool.helper.fileTypeIsWritable(for: fileURL) else {
-            // give fields that the compile will complain about
+            // give fields that the compiler will complain about
             // don't care values
             sandboxURL = imageURL
             xmpURL = imageURL
@@ -82,8 +85,7 @@ struct ImageModel: Identifiable {
 
         // If a sidecar file exists read metadata from it as sidecar files
         // take precidence.
-        if isValid, let sandboxXmpURL,
-           FileManager.default.fileExists(atPath: xmpURL.path) {
+        if isValid, let sandboxXmpURL, sidecarExists {
             loadXmpMetadata(sandboxXmpURL)
         }
     }
