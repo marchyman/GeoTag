@@ -37,6 +37,7 @@ struct PathView: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSPathControl {
         let pathControl = NSPathControl()
+        pathControl.url = url
         pathControl.pathStyle = .popUp
         pathControl.delegate = context.coordinator
         pathControl.placeholderString = "Please select folder for image backups"
@@ -45,9 +46,7 @@ struct PathView: NSViewRepresentable {
         return pathControl
     }
 
-    func updateNSView(_ nsView: NSPathControl, context: Context) {
-        nsView.url = url
-    }
+    func updateNSView(_ nsView: NSPathControl, context: Context) { }
 }
 
 struct PathView_Previews: PreviewProvider {

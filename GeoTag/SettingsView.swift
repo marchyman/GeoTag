@@ -25,7 +25,6 @@ struct SettingsView: View {
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
 
     @State private var backupURL: URL?
-    @State private var showPopover = false
 
     init(backupURL: URL?) {
         _backupURL = State(initialValue: backupURL)
