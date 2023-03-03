@@ -130,7 +130,7 @@ extension AppViewModel {
     // if a jpg/jpeg image is part of a raw/jpeg pair disable the jpeg by
     // turning off its isValid flag.
 
-    func disableJpegs() {
+    private func disableJpegs() {
         let imageURLs = images.map { $0.fileURL }
 
         for url in imageURLs {
