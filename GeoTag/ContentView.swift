@@ -11,7 +11,7 @@ import SwiftUI
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
     @ObservedObject var contentViewModel = ContentViewModel.shared
     @Environment(\.openWindow) var openWindow
 
@@ -37,14 +37,14 @@ struct ContentView: View {
         // startup
         .onAppear {
             // check for a backupURL
-            if !vm.doNotBackup && vm.saveBookmark == Data() {
+            if !avm.doNotBackup && avm.saveBookmark == Data() {
                 contentViewModel.addSheet(type: .noBackupFolderSheet)
             }
         }
 
         // drop destination
         .dropDestination(for: URL.self) {items, _ in
-            vm.prepareForEdit(inputURLs: items)
+            avm.prepareForEdit(inputURLs: items)
             return true
         }
 
@@ -76,7 +76,7 @@ struct ContentView: View {
         // Alert: Remove Old Backup files
         .alert("Delete old backup files?", isPresented: $removeOldFiles) {
             Button("Delete", role: .destructive) {
-                vm.remove(filesToRemove: contentViewModel.oldFiles)
+                avm.remove(filesToRemove: contentViewModel.oldFiles)
             }
             Button("Cancel", role: .cancel) { }
                 .keyboardShortcut(.defaultAction)
@@ -85,7 +85,7 @@ struct ContentView: View {
             Text("""
                  Your current backup/save folder
 
-                     \(vm.backupURL != nil ? vm.backupURL!.path : "unknown")
+                     \(avm.backupURL != nil ? avm.backupURL!.path : "unknown")
 
                  is using \(contentViewModel.folderSize / 1_000_000) MB to store backup files.
 
