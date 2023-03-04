@@ -16,7 +16,14 @@ extension ImageModel {
     // make a backup of self into the folder identifed by the given URL
 
     func makeBackupFile(backupFolder: URL) async throws {
-        let url = sidecarExists ? xmpURL : fileURL
+        let url: URL
+
+        if sidecarExists {
+            url = xmpURL
+            NSFileCoordinator.addFilePresenter(xmpFile)
+        } else {
+            url = fileURL
+        }
         let name = url.lastPathComponent
 
         var fileNumber = 1
@@ -36,6 +43,9 @@ extension ImageModel {
 
         // Copy the image file to the backup folder
         try fileManager.copyItem(at: url, to: saveFileURL)
+        if sidecarExists {
+            NSFileCoordinator.removeFilePresenter(xmpFile)
+        }
 
         // belts and suspenders: verify the copy happened.  There once was
         // a macOS bug where the copy failed but no error was reported.
@@ -49,11 +59,13 @@ extension ImageModel {
     func saveChanges(timeZone: TimeZone?) async throws {
         @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
 
+        NSFileCoordinator.addFilePresenter(xmpFile)
         if createSidecarFile && !sidecarExists {
             // create a sidecar file for this image.
             Exiftool.helper.makeSidecar(from: self)
         }
         try await Exiftool.helper.update(from: self, timeZone: timeZone)
+        NSFileCoordinator.removeFilePresenter(xmpFile)
     }
 
     // add a Finder tag to the image file
