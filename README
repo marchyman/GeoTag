@@ -24,8 +24,9 @@ version 4.15.
 
 ### Bug Fixes
 
+* Do not clear window changed indicator on save errors
 * GPS Timestamp written to sidecar files included timezone instead of
-  being a UTC/GMPt relative timestamp.
+  being a UTC/GMT relative timestamp.
 * Crash that could occur when opening the Setting window fixed
 
 ### See the file named *History* for earlier changes and bug fixes
