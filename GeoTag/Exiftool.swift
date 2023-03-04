@@ -79,9 +79,10 @@ struct Exiftool {
         }
 
         let exiftool = Process()
+        let pipe = Pipe()
         exiftool.standardOutput = FileHandle.nullDevice
-        exiftool.standardError = FileHandle.nullDevice
-        exiftool.launchPath = url.path
+        exiftool.standardError = pipe
+        exiftool.executableURL = url
         exiftool.arguments = ["-q",
                               "-m",
                               "-overwrite_original_in_place",
@@ -116,8 +117,9 @@ struct Exiftool {
         }
         exiftool.arguments! += ["-GPSStatus=", path]
 //        dump(exiftool.arguments!)
-        exiftool.launch()
+        try exiftool.run()
         exiftool.waitUntilExit()
+        printFrom(pipe: pipe)
         if exiftool.terminationStatus != 0 {
             throw ExiftoolError.runFailed(code: Int(exiftool.terminationStatus))
         }
@@ -163,22 +165,28 @@ struct Exiftool {
     func fileTypeIsWritable(for file: URL) -> Bool {
         let exiftool = Process()
         let pipe = Pipe()
+        let err = Pipe()
         exiftool.standardOutput = pipe
-        exiftool.standardError = FileHandle.nullDevice
-        exiftool.launchPath = url.path
+        exiftool.standardError = err
+        exiftool.executableURL = url
         exiftool.arguments = [ "-m", "-q", "-S", "-fast3", "-FileType", file.path]
-        exiftool.launch()
-        exiftool.waitUntilExit()
-        if exiftool.terminationStatus == 0 {
-            let data = pipe.fileHandleForReading.availableData
-            if data.count > 0,
-               let str = String(data: data, encoding: String.Encoding.utf8) {
-                let trimmed = str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-                let strParts = trimmed.components(separatedBy: CharacterSet.whitespaces)
-                if let fileType = strParts.last {
-                    return writableTypes.contains(fileType)
+        do {
+            try exiftool.run()
+            exiftool.waitUntilExit()
+            printFrom(pipe: err)
+            if exiftool.terminationStatus == 0 {
+                let data = pipe.fileHandleForReading.availableData
+                if data.count > 0,
+                   let str = String(data: data, encoding: String.Encoding.utf8) {
+                    let trimmed = str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                    let strParts = trimmed.components(separatedBy: CharacterSet.whitespaces)
+                    if let fileType = strParts.last {
+                        return writableTypes.contains(fileType)
+                    }
                 }
             }
+        } catch {
+            print("fileTypeIsWritable exiftool run error")
         }
         return false
     }
@@ -188,15 +196,20 @@ struct Exiftool {
     func makeSidecar(from image: ImageModel) {
         if let sidecarPath = image.sandboxXmpURL?.path {
             let exiftool = Process()
-            let pipe = Pipe()
-            exiftool.standardOutput = pipe
-            exiftool.standardError = FileHandle.nullDevice
-            exiftool.launchPath = url.path
+            let err = Pipe()
+            exiftool.standardOutput = FileHandle.nullDevice
+            exiftool.standardError = err
+            exiftool.executableURL = url
             exiftool.arguments = [ "-tagsfromfile",
                                    image.sandboxURL.path,
                                    sidecarPath ]
-            exiftool.launch()
+            do {
+                try exiftool.run()
+            } catch {
+                print("makeSidecar exiftool run error")
+            }
             exiftool.waitUntilExit()
+            printFrom(pipe: err)
         }
     }
 
@@ -211,14 +224,20 @@ struct Exiftool {
         // swiftlint:disable:previous large_tuple
         let exiftool = Process()
         let pipe = Pipe()
+        let err = Pipe()
         exiftool.standardOutput = pipe
-        exiftool.standardError = FileHandle.nullDevice
-        exiftool.launchPath = url.path
+        exiftool.standardError = err
+        exiftool.executableURL = url
         exiftool.arguments = [ "-args", "-c", "%.15f", "-createdate",
                                "-gpsstatus", "-gpslatitude", "-gpslongitude",
                                "-gpsaltitude", xmp.path ]
-        exiftool.launch()
+        do {
+            try exiftool.run()
+        } catch {
+            print("metadataFrom exiftool run error")
+        }
         exiftool.waitUntilExit()
+        printFrom(pipe: err)
 
         var createDate = ""
         var location = Coords()
@@ -285,4 +304,11 @@ struct Exiftool {
         return (createDate, validGPS, location, elevation)
     }
 
+    private func printFrom(pipe: Pipe) {
+        let data = pipe.fileHandleForReading.availableData
+        if data.count > 0,
+           let string = String(data: data, encoding: String.Encoding.utf8) {
+            print("Exiftool: \(string)")
+        }
+    }
 }
