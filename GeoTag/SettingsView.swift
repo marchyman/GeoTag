@@ -46,8 +46,8 @@ struct SettingsView: View {
                         LabeledContent("Backup folder:") {
                             PathView(url: $avm.backupURL)
                                 .frame(width: 280)
-                                .padding(.bottom)
                         }
+                        .padding(.bottom)
                         .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
                     }
                 }
