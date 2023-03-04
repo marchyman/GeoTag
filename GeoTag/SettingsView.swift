@@ -24,12 +24,6 @@ struct SettingsView: View {
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
 
-    @State private var backupURL: URL?
-
-    init(backupURL: URL?) {
-        _backupURL = State(initialValue: backupURL)
-    }
-
     var body: some View {
         VStack {
             Text("GeoTag Saved Settings")
@@ -50,12 +44,9 @@ struct SettingsView: View {
                             .padding(.bottom)
                     } else {
                         LabeledContent("Backup folder:") {
-                            PathView(url: $backupURL)
+                            PathView(url: $avm.backupURL)
                                 .frame(width: 280)
                                 .padding(.bottom)
-                                .onChange(of: backupURL) { url in
-                                    avm.backupURL = url
-                                }
                         }
                         .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
                     }
@@ -160,7 +151,7 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(backupURL: nil)
+        SettingsView()
             .environmentObject(AppViewModel())
     }
 }

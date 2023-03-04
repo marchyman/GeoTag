@@ -44,7 +44,7 @@ struct GeoTagApp: App {
         .commandsRemoved()
 
         Settings {
-            SettingsView(backupURL: avm.backupURL)
+            SettingsView()
                 .frame(width: 600.0, height: 590.0, alignment: .top)
                 .environmentObject(avm)
         }
