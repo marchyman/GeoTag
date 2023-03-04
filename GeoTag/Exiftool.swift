@@ -40,6 +40,7 @@ struct Exiftool {
     /// in the file containing the passed image
     /// - Parameter image: the image to update.  image contains the URL
     ///     of the original file plus the assigned location.
+    /// - Parameter timeZone: time zone used to calculate the GPS timestamp
 
     func update(from image: ImageModel, timeZone: TimeZone?) async throws {
         // ExifTool argument names
