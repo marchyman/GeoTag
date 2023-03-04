@@ -181,22 +181,18 @@ struct ImageModel: Identifiable {
 
     private
     mutating func loadXmpMetadata(_ xmp: URL) {
-        var errorCode: NSError?
-        let coordinator = NSFileCoordinator(filePresenter: xmpFile)
-        coordinator.coordinate(readingItemAt: xmp,
-                               options: NSFileCoordinator.ReadingOptions.resolvesSymbolicLink,
-                               error: &errorCode) { url in
-            let results = Exiftool.helper.metadataFrom(xmp: url)
-            if results.dto != "" {
-                dateTimeCreated = results.dto
-                originalDateTimeCreated = results.dto
-            }
-            if results.valid {
-                location = results.location
-                originalLocation = location
-                elevation = results.elevation
-                originalElevation = elevation
-            }
+        NSFileCoordinator.addFilePresenter(xmpFile)
+        let results = Exiftool.helper.metadataFrom(xmp: xmp)
+        NSFileCoordinator.removeFilePresenter(xmpFile)
+        if results.dto != "" {
+            dateTimeCreated = results.dto
+            originalDateTimeCreated = results.dto
+        }
+        if results.valid {
+            location = results.location
+            originalLocation = location
+            elevation = results.elevation
+            originalElevation = elevation
         }
     }
 

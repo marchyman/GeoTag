@@ -54,19 +54,16 @@ extension ImageModel {
     static func createSandboxXmpURL(fileURL: URL,
                                     xmpURL: URL,
                                     xmpFile: XmpFile) throws -> URL? {
-        var sandboxXmpURL: URL?
-
         // don't look for a sidecar file for a sidecar file
         guard fileURL.pathExtension.lowercased() != xmpExtension else {
             return nil
         }
 
+        let sandboxXmpURL = xmpFile.presentedItemURL
         let fileManager = FileManager.default
-        sandboxXmpURL = xmpFile.presentedItemURL
         try? fileManager.removeItem(at: sandboxXmpURL!)
         try fileManager.createSymbolicLink(at: sandboxXmpURL!,
                                            withDestinationURL: xmpURL)
-        NSFileCoordinator.addFilePresenter(xmpFile)
 
         return sandboxXmpURL
     }
