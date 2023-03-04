@@ -90,6 +90,7 @@ extension AppViewModel {
             }
 
             if !cvm.saveIssues.isEmpty {
+                mainWindow?.isDocumentEdited = true
                 cvm.addSheet(type: .saveErrorSheet)
             }
             saveInProgress = false
