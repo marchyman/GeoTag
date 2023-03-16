@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */; };
 		4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */; };
 		490A17A42960BA1D00ACA9FD /* CutCopyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */; };
 		490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A72960DE9B00ACA9FD /* PasteAction.swift */; };
@@ -38,7 +37,7 @@
 		498A7356294EADC300C62B14 /* ImageLongitudeColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */; };
 		498A7359294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
-		498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpFile.swift */; };
+		498AE5B1294AB78A0063B1C1 /* XmpPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */; };
 		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
 		49918F8629736652000D6590 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 492E3F5D29481A7D0044C1F3 /* Credits.rtf */; };
 		49A1326F294BFB9300F1B393 /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49A1326E294BFB9300F1B393 /* ExifTool */; };
@@ -82,7 +81,6 @@
 
 /* Begin PBXFileReference section */
 		490114B5297117FD00193BD3 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelHelpers.swift; sourceTree = "<group>"; };
 		4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelThumbnail.swift; sourceTree = "<group>"; };
 		490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutCopyAction.swift; sourceTree = "<group>"; };
 		490A17A72960DE9B00ACA9FD /* PasteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteAction.swift; sourceTree = "<group>"; };
@@ -114,7 +112,7 @@
 		498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLongitudeColumnView.swift; sourceTree = "<group>"; };
 		498A7358294EC3B700C62B14 /* SwiftUIDoubleClickModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIDoubleClickModifier.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
-		498AE5B0294AB78A0063B1C1 /* XmpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpFile.swift; sourceTree = "<group>"; };
+		498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpPresenter.swift; sourceTree = "<group>"; };
 		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
 		49918F84297352AB000D6590 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		49918F8529735AE0000D6590 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
@@ -256,9 +254,8 @@
 				4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */,
 				4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */,
 				4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */,
-				49015958294FCDDF00B9C3E5 /* ImageModelHelpers.swift */,
 				49B9EDE029493F4000574D18 /* Coords.swift */,
-				498AE5B0294AB78A0063B1C1 /* XmpFile.swift */,
+				498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */,
 				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
 			);
 			name = "Image Model Group";
@@ -509,7 +506,7 @@
 				49BA29A82962370200B26F03 /* SaveAction.swift in Sources */,
 				494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */,
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
-				498AE5B1294AB78A0063B1C1 /* XmpFile.swift in Sources */,
+				498AE5B1294AB78A0063B1C1 /* XmpPresenter.swift in Sources */,
 				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
 				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
 				498A7352294EA5A600C62B14 /* ImageLatitudeColumnView.swift in Sources */,
@@ -566,7 +563,6 @@
 				49C45BA92984AB5F00CC7F0E /* ContentViewModel.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
 				49A99FBC296F6D5900392EEA /* PathView.swift in Sources */,
-				49015959294FCDDF00B9C3E5 /* ImageModelHelpers.swift in Sources */,
 				49AAF89E2985DA33004894D7 /* ImageTableViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

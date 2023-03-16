@@ -74,9 +74,9 @@ struct Exiftool {
         }
 
         // path to image (or XMP) file to update.
-        var path = image.sandboxURL.path
-        if let xmp = image.sandboxXmpURL, image.sidecarExists {
-            path = xmp.path
+        var path = image.fileURL.path
+        if image.sidecarExists {
+            path = image.sidecarURL.path
         }
 
         let exiftool = Process()
@@ -195,23 +195,21 @@ struct Exiftool {
     /// create a sidecar file from an image file
 
     func makeSidecar(from image: ImageModel) {
-        if let sidecarPath = image.sandboxXmpURL?.path {
-            let exiftool = Process()
-            let err = Pipe()
-            exiftool.standardOutput = FileHandle.nullDevice
-            exiftool.standardError = err
-            exiftool.executableURL = url
-            exiftool.arguments = [ "-tagsfromfile",
-                                   image.sandboxURL.path,
-                                   sidecarPath ]
-            do {
-                try exiftool.run()
-            } catch {
-                print("makeSidecar exiftool run error")
-            }
-            exiftool.waitUntilExit()
-            printFrom(pipe: err)
+        let exiftool = Process()
+        let err = Pipe()
+        exiftool.standardOutput = FileHandle.nullDevice
+        exiftool.standardError = err
+        exiftool.executableURL = url
+        exiftool.arguments = [ "-tagsfromfile",
+                               image.fileURL.path,
+                               image.sidecarURL.path ]
+        do {
+            try exiftool.run()
+        } catch {
+            print("makeSidecar exiftool run error")
         }
+        exiftool.waitUntilExit()
+        printFrom(pipe: err)
     }
 
     /// return selected metadate from a file

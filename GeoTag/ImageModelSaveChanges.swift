@@ -19,8 +19,8 @@ extension ImageModel {
         let url: URL
 
         if sidecarExists {
-            url = xmpURL
-            NSFileCoordinator.addFilePresenter(xmpFile)
+            url = sidecarURL
+            NSFileCoordinator.addFilePresenter(xmpPresenter)
         } else {
             url = fileURL
         }
@@ -44,7 +44,7 @@ extension ImageModel {
         // Copy the image file to the backup folder
         try fileManager.copyItem(at: url, to: saveFileURL)
         if sidecarExists {
-            NSFileCoordinator.removeFilePresenter(xmpFile)
+            NSFileCoordinator.removeFilePresenter(xmpPresenter)
         }
 
         // belts and suspenders: verify the copy happened.  There once was
@@ -59,13 +59,13 @@ extension ImageModel {
     func saveChanges(timeZone: TimeZone?) async throws {
         @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
 
-        NSFileCoordinator.addFilePresenter(xmpFile)
+        NSFileCoordinator.addFilePresenter(xmpPresenter)
         if createSidecarFile && !sidecarExists {
             // create a sidecar file for this image.
             Exiftool.helper.makeSidecar(from: self)
         }
         try await Exiftool.helper.update(from: self, timeZone: timeZone)
-        NSFileCoordinator.removeFilePresenter(xmpFile)
+        NSFileCoordinator.removeFilePresenter(xmpPresenter)
     }
 
     // add a Finder tag to the image file

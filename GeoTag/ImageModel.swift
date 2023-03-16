@@ -18,6 +18,11 @@ struct ImageModel: Identifiable {
         fileURL
     }
 
+    // URL of related sidecar file (if one exists) and an NSFilePresenter
+    // to access the sidecar/XMP file
+    let sidecarURL: URL
+    let xmpPresenter: XmpPresenter
+
     // is this an image file or something else?
     var isValid = false
 
@@ -39,13 +44,9 @@ struct ImageModel: Identifiable {
                     elevation != originalElevation)
     }
 
-    // Sandbox references to this image and any related sidecar file
-    let sandboxURL: URL
-    let sandboxXmpURL: URL?
-    let xmpURL: URL
-    let xmpFile: XmpFile
+    // true if a sidexare file exists for this image
     var sidecarExists: Bool {
-        FileManager.default.fileExists(atPath: xmpURL.path)
+        FileManager.default.fileExists(atPath: sidecarURL.path)
     }
 
     // The thumbnail image displayed when and image is selected for editing
@@ -56,24 +57,14 @@ struct ImageModel: Identifiable {
     // initialization of image data given its URL.
     init(imageURL: URL, forPreview: Bool = false) throws {
         fileURL = imageURL
+        sidecarURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
+        xmpPresenter = XmpPresenter(imageURL: fileURL, sidecarURL: sidecarURL)
 
         // shortcut initialization when creating an image for preview
         // or if the file type is not writable by Exiftool
         guard !forPreview && Exiftool.helper.fileTypeIsWritable(for: fileURL) else {
-            // give fields that the compiler will complain about
-            // don't care values
-            sandboxURL = imageURL
-            xmpURL = imageURL
-            xmpFile = XmpFile(url: imageURL)
-            sandboxXmpURL = nil
             return
         }
-        try sandboxURL = ImageModel.createSandboxUrl(fileURL: fileURL)
-        xmpURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
-        xmpFile = XmpFile(url: sandboxURL)
-        try sandboxXmpURL = ImageModel.createSandboxXmpURL(fileURL: fileURL,
-                                                           xmpURL: xmpURL,
-                                                           xmpFile: xmpFile)
 
         // Load image metadata if we can.  If not mark it as not a valid image
         // even though Exitool wouldn't have problems writing the file.
@@ -85,8 +76,8 @@ struct ImageModel: Identifiable {
 
         // If a sidecar file exists read metadata from it as sidecar files
         // take precidence.
-        if isValid, let sandboxXmpURL, sidecarExists {
-            loadXmpMetadata(sandboxXmpURL)
+        if isValid && sidecarExists {
+            loadXmpMetadata()
         }
     }
 
@@ -173,17 +164,17 @@ struct ImageModel: Identifiable {
         return coords
     }
 
-    /// obtain metadata from XMP file
-    /// - Parameter xmp: URL of XMP file for an image
+    /// obtain metadata from a sidecar file.
     ///
-    /// Extract desired metadata from an XMP file using ExifTool.  Apple
-    /// ImageIO functions do not work with XMP sidecar files.
+    /// Extract desired metadata from an XMP file using ExifTool.  Apple ImageIO functions
+    /// do not work with XMP sidecar files.  The sidecar file is assumed to exist when this
+    /// function is called/
 
     private
-    mutating func loadXmpMetadata(_ xmp: URL) {
-        NSFileCoordinator.addFilePresenter(xmpFile)
-        let results = Exiftool.helper.metadataFrom(xmp: xmp)
-        NSFileCoordinator.removeFilePresenter(xmpFile)
+    mutating func loadXmpMetadata() {
+        NSFileCoordinator.addFilePresenter(xmpPresenter)
+        let results = Exiftool.helper.metadataFrom(xmp: sidecarURL)
+        NSFileCoordinator.removeFilePresenter(xmpPresenter)
         if results.dto != "" {
             dateTimeCreated = results.dto
             originalDateTimeCreated = results.dto
