@@ -8,7 +8,9 @@
 import SwiftUI
 
 // The image model with additional URLs that reference the files relative
-// to the application sandbox.
+// to the application sandbox.  Exiftool must do its work inside the sandbox
+// as it creates temporary files. macOS does not allow creation of files
+// in folders unless folder access is explicitly allowed by the user.
 
 struct Sandbox {
     let image: ImageModel
@@ -127,10 +129,11 @@ struct Sandbox {
         @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
 
         NSFileCoordinator.addFilePresenter(xmpPresenter)
-//        if createSidecarFile && !sidecarExists {
-//            // create a sidecar file for this image.
-//            Exiftool.helper.makeSidecar(from: self)
-//        }
+        defer { NSFileCoordinator.removeFilePresenter(xmpPresenter) }
+        if createSidecarFile && !image.sidecarExists {
+            // create a sidecar file for this image.
+            Exiftool.helper.makeSidecar(from: self)
+        }
         try await Exiftool.helper.update(from: self, timeZone: timeZone)
         NSFileCoordinator.removeFilePresenter(xmpPresenter)
     }

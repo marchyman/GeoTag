@@ -77,7 +77,7 @@ struct Exiftool {
 
         // path to image (or XMP) file to update.
         var path = sandbox.imageURL.path
-        if FileManager.default.isWritableFile(atPath: sandbox.sidecarURL.path) {
+        if sandbox.image.sidecarExists {
             path = sandbox.sidecarURL.path
             usingSidecar = true
         }
@@ -197,15 +197,14 @@ struct Exiftool {
 
     /// create a sidecar file from an image file
 
-    func makeSidecar(from image: ImageModel) {
+    func makeSidecar(from sandbox: Sandbox) {
         let exiftool = Process()
         let err = Pipe()
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = err
         exiftool.executableURL = url
-        exiftool.arguments = [ "-tagsfromfile",
-                               image.fileURL.path,
-                               image.sidecarURL.path ]
+        exiftool.arguments = [ sandbox.image.fileURL.path,
+                               "-o", "xmp" ]
         do {
             try exiftool.run()
         } catch {
