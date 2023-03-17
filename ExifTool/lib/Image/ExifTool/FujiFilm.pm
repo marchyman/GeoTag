@@ -31,7 +31,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.86';
+$VERSION = '1.87';
 
 sub ProcessFujiDir($$$);
 sub ProcessFaceRec($$$);
@@ -808,6 +808,7 @@ my %faceCategories = (
             0x00 => 'Normal',
             0x10 => 'F-log',
             0x20 => 'HLG',
+            0x30 => 'F-log2', #forum14384
         },
     },
     0x3804 => { #forum10037
@@ -1371,6 +1372,7 @@ my %faceCategories = (
     0xf007 => {
         Name => 'StripOffsets',
         IsOffset => 1,
+        IsImageData => 1,
         OffsetPair => 0xf008,  # point to associated byte counts
     },
     0xf008 => {

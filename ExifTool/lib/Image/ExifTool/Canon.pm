@@ -88,18 +88,13 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '4.64';
+$VERSION = '4.66';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
 # --> have relaxed this for new lenses because Canon has been
 #     consistent about keeping "USM" in the model name
 %canonLensTypes = ( #4
-     Notes => q{
-        Decimal values have been added to differentiate lenses which would otherwise
-        have the same LensType, and are used by the Composite LensID tag when
-        attempting to identify the specific lens model.
-     },
     -1 => 'n/a',
      1 => 'Canon EF 50mm f/1.8',
      2 => 'Canon EF 28mm f/2.8 or Sigma Lens',
@@ -621,8 +616,10 @@ $VERSION = '4.64';
    '61182.41' => 'Canon RF 1200mm F8L IS USM + RF1.4x', #42
    '61182.42' => 'Canon RF 1200mm F8L IS USM + RF2x', #42
    '61182.43' => 'Canon RF 135mm F1.8 L IS USM', #42
+   '61182.44' => 'Canon RF 24-50mm F4.5-6.3 IS STM', #42
+   '61182.45' => 'Canon RF-S 55-210mm F5-7.1 IS STM', #42
     # we need the RFLensType values for the following...
-   '61182.44' => 'Canon RF 5.2mm F2.8L Dual Fisheye 3D VR', #PH (NC)
+   '61182.46' => 'Canon RF 5.2mm F2.8L Dual Fisheye 3D VR', #PH (NC)
     65535 => 'n/a',
 );
 
@@ -983,7 +980,9 @@ $VERSION = '4.64';
     0x80000465 => 'EOS R10', #42
     0x80000467 => 'PowerShot ZOOM',
     0x80000468 => 'EOS M50 Mark II / Kiss M2', #IB
+    0x80000480 => 'EOS R50', #42
     0x80000481 => 'EOS R6 Mark II', #42
+    0x80000487 => 'EOS R8', #42
     0x80000520 => 'EOS D2000C', #IB
     0x80000560 => 'EOS D6000C', #PH (guess)
 );
@@ -2398,6 +2397,7 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
         DataMember => 'LensType',
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     23 => {
         Name => 'MaxFocalLength',
@@ -3056,6 +3056,7 @@ my %ciMaxFocal = (
         RawConv => '$val ? $val : undef', # don't use if value is zero
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x0e => {
         Name => 'MinFocalLength',
@@ -3171,6 +3172,7 @@ my %ciMaxFocal = (
         RawConv => '$val ? $val : undef', # don't use if value is zero
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x11 => { %ciMinFocal }, #9
     0x13 => { %ciMaxFocal }, #9
@@ -3248,6 +3250,7 @@ my %ciMaxFocal = (
         RawConv => '$val ? $val : undef', # don't use if value is zero
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x11 => { %ciMinFocal },
     0x13 => { %ciMaxFocal },
@@ -3343,6 +3346,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x113 => { %ciMinFocal },
     0x115 => { %ciMaxFocal },
@@ -3498,6 +3502,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x151 => { %ciMinFocal },
     0x153 => { %ciMaxFocal,
@@ -3606,6 +3611,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x1a9 => { %ciMinFocal },
     0x1ab => { %ciMaxFocal,
@@ -3657,6 +3663,7 @@ my %ciMaxFocal = (
         RawConv => '$val ? $val : undef', # don't use if value is zero
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x17 => { %ciCameraTemperature }, #PH
     0x1b => { %ciMacroMagnification }, #PH
@@ -3717,6 +3724,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0xa4 => { #PH
         Name => 'FirmwareRevision',
@@ -3932,6 +3940,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0xe8 => { %ciMinFocal },
     0xea => { %ciMaxFocal,
@@ -4056,6 +4065,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x155 => { %ciMinFocal },
     0x157 => { %ciMaxFocal,
@@ -4165,6 +4175,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x163 => { %ciMinFocal }, # (5DmkIII + 0x0e)
     0x165 => { %ciMaxFocal }, # (5DmkIII + 0x0e)
@@ -4312,6 +4323,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x114 => { %ciMinFocal },
     0x116 => { %ciMaxFocal },
@@ -4401,6 +4413,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0xd8 => { %ciMinFocal }, #15
     0xda => { %ciMaxFocal }, #15
@@ -4536,6 +4549,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0xec => { %ciMinFocal },
     0xee => { %ciMaxFocal,
@@ -4625,6 +4639,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0xea => { %ciMinFocal },
     0xec => { %ciMaxFocal },
@@ -4706,6 +4721,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x168 => { %ciMinFocal },
     0x16a => { %ciMaxFocal },
@@ -4773,6 +4789,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x18b => { %ciMinFocal },
     0x18d => { %ciMaxFocal },
@@ -4856,6 +4873,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x107 => { #PH
         Name => 'FirmwareVersion',
@@ -4971,6 +4989,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0xf8 => { %ciMinFocal },
     0xfa => { %ciMaxFocal },
@@ -5066,6 +5085,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x101 => { %ciMinFocal }, # (500D + 9)
     0x103 => { %ciMaxFocal }, # (500D + 9)
@@ -5161,6 +5181,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0xec => { %ciMinFocal }, # (60D + 2)
     0xee => { %ciMaxFocal }, # (60D + 2)
@@ -5243,6 +5264,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x129 => { %ciMinFocal },
     0x12b => { %ciMaxFocal },
@@ -5355,6 +5377,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0x186 => { %ciMinFocal },
     0x188 => { %ciMaxFocal },
@@ -5429,6 +5452,7 @@ my %ciMaxFocal = (
         SeparateTable => 1,
         ValueConvInv => 'int($val)', # (must truncate decimal part)
         PrintConv => \%canonLensTypes,
+        PrintInt => 1,
     },
     0xe4 => { %ciMinFocal }, #PH
     0xe6 => { %ciMaxFocal }, #PH
@@ -6840,6 +6864,8 @@ my %ciMaxFocal = (
             300 => 'Canon RF 1200mm F8L IS USM + RF2x', #42
             302 => 'Canon RF 15-30mm F4.5-6.3 IS STM', #42
             303 => 'Canon RF 135mm F1.8 L IS USM', #42
+            304 => 'Canon RF 24-50mm F4.5-6.3 IS STM', #42
+            305 => 'Canon RF-S 55-210mm F5-7.1 IS STM', #42
             # Note: add new RF lenses to %canonLensTypes with ID 61182
         },
     },
