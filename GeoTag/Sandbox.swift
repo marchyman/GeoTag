@@ -47,20 +47,20 @@ struct Sandbox {
         case backupError(String)
     }
 
-    // Copy a sidecar file into the backup folder.
+    // Modify name for backup file. Add a suffix to the name until no file
+    // is found at the save location
 
-    func makeSidecarBackup(_ backupFolder: URL) throws {
-        let name = image.sidecarURL.lastPathComponent
+    private func backupName(for name: String, in backupFolder: URL) -> URL {
         let fileManager = FileManager.default
-
-        // make sure the output name is unique
-
         var fileNumber = 1
         var saveFileURL = backupFolder.appendingPathComponent(name, isDirectory: false)
+
+        // enable access to backupFolder
         _ = backupFolder.startAccessingSecurityScopedResource()
         defer { backupFolder.stopAccessingSecurityScopedResource() }
 
-        // add a suffix to the name until no file is found at the save location
+        // loop until there is no file at the backup location with the
+        // calculated URL
         while fileManager.fileExists(atPath: (saveFileURL.path)) {
             var newName = name
             let nameDot = newName.lastIndex(of: ".") ?? newName.endIndex
@@ -68,11 +68,26 @@ struct Sandbox {
             fileNumber += 1
             saveFileURL = backupFolder.appendingPathComponent(newName, isDirectory: false)
         }
+        return saveFileURL
+    }
 
-        // read the data from the sidecar file and write it to the backup file
+    // Copy a sidecar file into the backup folder. The copy is done this
+    // way as otherise a copy of of related item (sidecar file) to a
+    // security scoped folder using FileManager's copyItem(at:to:) throws
+    // an error.
+
+    func makeSidecarBackup(_ backupFolder: URL) throws {
+        let fileName = image.sidecarURL.lastPathComponent
+        let saveFileURL = backupName(for: fileName, in: backupFolder)
+
+        _ = backupFolder.startAccessingSecurityScopedResource()
+        defer { backupFolder.stopAccessingSecurityScopedResource() }
+
+        NSFileCoordinator.addFilePresenter(image.xmpPresenter)
+        defer { NSFileCoordinator.removeFilePresenter(image.xmpPresenter) }
 
         guard let data = image.xmpPresenter.readData() else {
-            throw BackupError.backupError("Sidecar file \(name) copy failed!")
+            throw BackupError.backupError("Sidecar \(fileName) copy failed!")
         }
         try data.write(to: saveFileURL)
     }
@@ -82,41 +97,27 @@ struct Sandbox {
     // the link in the sandbox.
 
     func makeBackupFile(backupFolder: URL) async throws {
-//        NSFileCoordinator.addFilePresenter(image.xmpPresenter)
-//        defer {
-//            NSFileCoordinator.removeFilePresenter(image.xmpPresenter)
-//        }
+        // sidecar files get special handling
 
         if image.sidecarExists {
             try makeSidecarBackup(backupFolder)
             return
         }
 
-        let fileManager = FileManager.default
-        let url = image.fileURL
-        let name = url.lastPathComponent
+        let fileName = image.fileURL.lastPathComponent
+        let saveFileURL = backupName(for: fileName, in: backupFolder)
 
-        var fileNumber = 1
-        var saveFileURL = backupFolder.appendingPathComponent(name, isDirectory: false)
         _ = backupFolder.startAccessingSecurityScopedResource()
         defer { backupFolder.stopAccessingSecurityScopedResource() }
 
-        // add a suffix to the name until no file is found at the save location
-        while fileManager.fileExists(atPath: (saveFileURL.path)) {
-            var newName = name
-            let nameDot = newName.lastIndex(of: ".") ?? newName.endIndex
-            newName.insert(contentsOf: "-\(fileNumber)", at: nameDot)
-            fileNumber += 1
-            saveFileURL = backupFolder.appendingPathComponent(newName, isDirectory: false)
-        }
-
         // Copy the image file to the backup folder
-        try fileManager.copyItem(at: url, to: saveFileURL)
+        let fileManager = FileManager.default
+        try fileManager.copyItem(at: image.fileURL, to: saveFileURL)
 
         // belts and suspenders: verify the copy happened.  There once was
         // a macOS bug where the copy failed but no error was reported.
         if !fileManager.fileExists(atPath: saveFileURL.path) {
-            throw BackupError.backupError("Image \(name) copy failed!")
+            throw BackupError.backupError("Image \(fileName) copy failed!")
         }
     }
 
