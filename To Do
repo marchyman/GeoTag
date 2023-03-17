@@ -1,16 +1,13 @@
 Bug?
 
 * crash in PathView using Xcode 14.3 beta and beta 2.  Crash comes and
-  goes even with no code changes.  May be an Xcode bug as the program has
-  yet to crash when running standalone.
+  goes even with no code changes.  Seems to be an Xcode thread sanitizer bug.
+  Reported to Apple.
 
-* filename-1.ext in sandbox not showing location when location in is xmp file
-  that should be pointed to by filename-1.xmp in sandbox.  The links in
-  the sandbox are correct.
-  - created xmp file has quarantine attribute?
-  - removing quarantine still sometimes works, sometimes doesn't.'
-
-* If you select an image that has a location and them pan the map to some other locations, changing the map style causes the map to re-center around the pin if the pin is off screen. If the pin is on screen the map viewport doesn’t change.
+* If you select an image that has a location and them pan the map to some
+  other locations, changing the map style causes the map to re-center around
+  the pin if the pin is off screen. If the pin is on screen the map viewport
+  doesn’t change.
 
 Misc:
 * Clean up lat/lon display, perhaps use NumberFormater?

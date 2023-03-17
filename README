@@ -21,13 +21,15 @@ version 4.15.
 ### Updates
 
 * Add option to create sidecar (XMP) files when updating image location.
+* ExifTool version 12.58
 
 ### Bug Fixes
 
 * Do not clear window changed indicator on save errors
-* GPS Timestamp written to sidecar files included timezone instead of
-  being a UTC/GMT relative timestamp.
+* GPS Timestamp written to sidecar files sometimes included a timezone
+  instead of being a UTC/GMT relative timestamp.
 * Crash that could occur when opening the Setting window fixed
+* Sidecar file backups would sometimes fail.
 
 ### See the file named *History* for earlier changes and bug fixes
 
