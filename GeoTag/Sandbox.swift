@@ -125,9 +125,7 @@ struct Sandbox {
 
     // use exiftool to save metadata changes to the image file
 
-    func saveChanges(timeZone: TimeZone?) async throws {
-        @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
-
+    func saveChanges(timeZone: TimeZone?, createSidecarFile: Bool) async throws {
         NSFileCoordinator.addFilePresenter(xmpPresenter)
         defer { NSFileCoordinator.removeFilePresenter(xmpPresenter) }
         if createSidecarFile && !image.sidecarExists {

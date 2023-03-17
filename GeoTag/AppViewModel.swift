@@ -18,6 +18,7 @@ final class AppViewModel: ObservableObject {
     @Published var mostSelected: ImageModel.ID?
 
     @AppStorage(AppSettings.addTagKey) var addTag = false
+    @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
     @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()

@@ -203,8 +203,9 @@ struct Exiftool {
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = err
         exiftool.executableURL = url
-        exiftool.arguments = [ sandbox.image.fileURL.path,
-                               "-o", "xmp" ]
+        exiftool.arguments = [ "-tagsfromfile",
+                               sandbox.imageURL.path,
+                               sandbox.sidecarURL.path ]
         do {
             try exiftool.run()
         } catch {

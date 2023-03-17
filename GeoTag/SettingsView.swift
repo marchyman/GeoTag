@@ -14,9 +14,6 @@ struct SettingsView: View {
     @ObservedObject var mvm = MapViewModel.shared
     @ObservedObject var itvm = ImageTableViewModel.shared
 
-    // used when saving ImageModel changes
-    @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
-
     // Only used in prepareForEdits
     @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
 
@@ -54,7 +51,7 @@ struct SettingsView: View {
 
                 // Create Sidecar (XMP) files
                 LabeledContent("Create Sidecar (XMP) files:") {
-                    Toggle("Create Sidecar (XMP) files", isOn: $createSidecarFile)
+                    Toggle("Create Sidecar (XMP) files", isOn: $avm.createSidecarFile)
                         .labelsHidden()
                 }
                 .padding([.bottom, .horizontal])

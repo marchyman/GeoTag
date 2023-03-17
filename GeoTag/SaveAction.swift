@@ -64,7 +64,8 @@ extension AppViewModel {
                             if makeBackup {
                                 try await sandbox.makeBackupFile(backupFolder: url!)
                             }
-                            try await sandbox.saveChanges(timeZone: timeZone)
+                            try await sandbox.saveChanges(timeZone: timeZone,
+                                                          createSidecarFile: createSidecarFile)
                             if tagFiles {
                                 try await sandbox.setTag(name: tagName)
                             }
