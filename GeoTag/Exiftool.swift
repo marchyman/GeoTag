@@ -42,7 +42,7 @@ struct Exiftool {
     ///     of the original file plus the assigned location.
     /// - Parameter timeZone: time zone used to calculate the GPS timestamp
 
-    func update(from image: ImageModel, timeZone: TimeZone?) async throws {
+    func update(from sandbox: Sandbox, timeZone: TimeZone?) async throws {
         // ExifTool argument names
         var latArg = "-GPSLatitude="
         var lonArg = "-GPSLongitude="
@@ -56,13 +56,15 @@ struct Exiftool {
         var gpsTArg = "-GPSTimeStamp="      // for non XMP files
         var gpsDTArg = "-GPSDateTime="      // for XMP files
 
+        var usingSidecar = false
+
         // Build ExifTool latitude, longitude, and elevation argument values
-        if let location = image.location {
+        if let location = sandbox.image.location {
             latArg += "\(location.latitude)"
             latRefArg += "\(location.latitude)"
             lonArg += "\(location.longitude)"
             lonRefArg += "\(location.longitude)"
-            if let ele = image.elevation {
+            if let ele = sandbox.image.elevation {
                 if ele >= 0 {
                     eleArg += "\(ele)"
                     eleRefArg += "0"
@@ -74,9 +76,10 @@ struct Exiftool {
         }
 
         // path to image (or XMP) file to update.
-        var path = image.fileURL.path
-        if image.sidecarExists {
-            path = image.sidecarURL.path
+        var path = sandbox.imageURL.path
+        if FileManager.default.isWritableFile(atPath: sandbox.sidecarURL.path) {
+            path = sandbox.sidecarURL.path
+            usingSidecar = true
         }
 
         let exiftool = Process()
@@ -96,10 +99,10 @@ struct Exiftool {
 
         if updateGPSTimestamp {
             // calculate the gps timestamp
-            let gpsTimestamp = gpsTimestamp(for: image, in: timeZone)
+            let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone)
 
             // args vary depending upon saving to an image file or a GPX file
-            if image.sidecarExists {
+            if usingSidecar {
                 gpsDTArg += gpsTimestamp
                 exiftool.arguments?.append(gpsDTArg)
             } else {
@@ -111,9 +114,9 @@ struct Exiftool {
         }
 
         // add args to update date/time if changed
-        if image.dateTimeCreated != image.originalDateTimeCreated {
-            let dtoArg = "-DateTimeOriginal=" + (image.dateTimeCreated ?? "")
-            let cdArg = "-CreateDate=" + (image.dateTimeCreated ?? "")
+        if sandbox.image.dateTimeCreated != sandbox.image.originalDateTimeCreated {
+            let dtoArg = "-DateTimeOriginal=" + (sandbox.image.dateTimeCreated ?? "")
+            let cdArg = "-CreateDate=" + (sandbox.image.dateTimeCreated ?? "")
             exiftool.arguments! += [dtoArg, cdArg]
         }
         exiftool.arguments! += ["-GPSStatus=", path]

@@ -57,14 +57,18 @@ extension AppViewModel {
                 for image in imagesToSave where image.changed {
                     group.addTask { [self] in
                         var errorDescription: String?
+                        // saving must occur in the app sandbox.
+                        let sandbox: Sandbox
                         do {
+                            sandbox = try Sandbox(image)
                             if makeBackup {
-                                try await image.makeBackupFile(backupFolder: url!)
+                                try await sandbox.makeBackupFile(backupFolder: url!)
                             }
-                            try await image.saveChanges(timeZone: timeZone)
+                            try await sandbox.saveChanges(timeZone: timeZone)
                             if tagFiles {
-                                try await image.setTag(name: tagName)
+                                try await sandbox.setTag(name: tagName)
                             }
+
                         } catch {
                             errorDescription = error.localizedDescription
                         }

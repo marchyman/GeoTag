@@ -12,13 +12,13 @@
 		490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A72960DE9B00ACA9FD /* PasteAction.swift */; };
 		490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A929611DD900ACA9FD /* TextColors.swift */; };
 		490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */; };
+		490A642029C397CD00A1310C /* Sandbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A641F29C397CD00A1310C /* Sandbox.swift */; };
 		4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */; };
 		4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */; };
 		4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */; };
 		492175792949743E00A5EA83 /* OpenAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492175782949743E00A5EA83 /* OpenAction.swift */; };
 		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
-		4944DE7A296CCB8B0095A5CC /* ImageModelSaveChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */; };
 		494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */; };
 		494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0F2956BC97005FFC23 /* ClickMapView.swift */; };
 		4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */; };
@@ -86,6 +86,7 @@
 		490A17A72960DE9B00ACA9FD /* PasteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteAction.swift; sourceTree = "<group>"; };
 		490A17A929611DD900ACA9FD /* TextColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextColors.swift; sourceTree = "<group>"; };
 		490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCommandGroup.swift; sourceTree = "<group>"; };
+		490A641F29C397CD00A1310C /* Sandbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sandbox.swift; sourceTree = "<group>"; };
 		4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelStringRep.swift; sourceTree = "<group>"; };
 		4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoCommandGroup.swift; sourceTree = "<group>"; };
 		4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoAction.swift; sourceTree = "<group>"; };
@@ -93,7 +94,6 @@
 		4921757A2949863A00A5EA83 /* Gpx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
-		4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelSaveChanges.swift; sourceTree = "<group>"; };
 		494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardCommandGroup.swift; sourceTree = "<group>"; };
 		494FED0F2956BC97005FFC23 /* ClickMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickMapView.swift; sourceTree = "<group>"; };
 		4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuView.swift; sourceTree = "<group>"; };
@@ -253,10 +253,10 @@
 				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
 				4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */,
 				4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */,
-				4944DE79296CCB8B0095A5CC /* ImageModelSaveChanges.swift */,
 				49B9EDE029493F4000574D18 /* Coords.swift */,
 				498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */,
 				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
+				490A641F29C397CD00A1310C /* Sandbox.swift */,
 			);
 			name = "Image Model Group";
 			sourceTree = "<group>";
@@ -521,9 +521,9 @@
 				49630F0E2980BC00009FB418 /* ToolbarCommandGroup.swift in Sources */,
 				49E29F002951011300804B74 /* MapView.swift in Sources */,
 				49BA29AE29624E5400B26F03 /* ShowInFinderAction.swift in Sources */,
-				4944DE7A296CCB8B0095A5CC /* ImageModelSaveChanges.swift in Sources */,
 				49BA299D296223F700B26F03 /* AppDelegate.swift in Sources */,
 				49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */,
+				490A642029C397CD00A1310C /* Sandbox.swift in Sources */,
 				49B4D34D2957E21500A4BCFD /* ClearAction.swift in Sources */,
 				494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */,
 				49B9EDE32949442700574D18 /* AppViewModel.swift in Sources */,
