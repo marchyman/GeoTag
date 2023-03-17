@@ -20,7 +20,7 @@ version 4.15.
 
 ### Updates
 
-* Add option to create sidecar (XMP) files when updating image location.
+* Add option to always create sidecar (XMP) files when updating images.
 * ExifTool version 12.58
 
 ### Bug Fixes
@@ -30,6 +30,7 @@ version 4.15.
   instead of being a UTC/GMT relative timestamp.
 * Crash that could occur when opening the Setting window fixed
 * Sidecar file backups would sometimes fail.
+* image thumbnail could fail to show until the selection changed
 
 ### See the file named *History* for earlier changes and bug fixes
 

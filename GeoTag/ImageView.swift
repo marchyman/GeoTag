@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
     @State private var thumbnail: NSImage?
 
     var body: some View {
@@ -24,15 +24,8 @@ struct ImageView: View {
             }
         }
         .padding()
-        .onChange(of: vm.mostSelected) { id in
-            Task {
-                if let id {
-                    vm[id].makeThumbnail()
-                    thumbnail = vm[id].thumbnail
-                } else {
-                    thumbnail = nil
-                }
-            }
+        .onChange(of: avm.mostSelected) { id in
+            thumbnail = id == nil ? nil : avm[id].thumbnail
         }
     }
 }

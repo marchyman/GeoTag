@@ -16,14 +16,10 @@ extension ImageModel {
     /// do not exist the file is assumed to be a non-image file and a zero
     /// sized empty image is created.
 
-    mutating func makeThumbnail() {
-        // if a thumbail has already been created we're done
-        guard thumbnail == nil else { return }
-
+    mutating func makeThumbnail() -> NSImage {
         var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
-            thumbnail = image
-            return
+            return image
         }
 
         // Create a "preview" of the image. If the image is larger than
@@ -60,7 +56,7 @@ extension ImageModel {
             }
             checkSize = false
         } while checkSize
-        thumbnail = image
+        return image
     }
 }
 

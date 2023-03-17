@@ -50,9 +50,7 @@ struct ImageModel: Identifiable {
     }
 
     // The thumbnail image displayed when and image is selected for editing
-    // Thumbnails are not be created until it is needed.  Once created
-    // it will be saved here.
-    var thumbnail: NSImage?
+    lazy var thumbnail = makeThumbnail()
 
     // initialization of image data given its URL.
     init(imageURL: URL, forPreview: Bool = false) throws {
