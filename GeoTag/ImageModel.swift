@@ -58,7 +58,7 @@ struct ImageModel: Identifiable {
     init(imageURL: URL, forPreview: Bool = false) throws {
         fileURL = imageURL
         sidecarURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
-        xmpPresenter = XmpPresenter(imageURL: fileURL, sidecarURL: sidecarURL)
+        xmpPresenter = XmpPresenter(for: fileURL)
 
         // shortcut initialization when creating an image for preview
         // or if the file type is not writable by Exiftool

@@ -85,9 +85,9 @@
 			<key>CFBundleTypeName</key>
 			<string>Sidecar files</string>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>None</string>
 			<key>LSHandlerRank</key>
-			<string>Alternate</string>
+			<string>None</string>
 			<key>NSIsRelatedItemType</key>
 			<true/>
 		</dict>

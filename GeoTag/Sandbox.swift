@@ -40,11 +40,41 @@ struct Sandbox {
                                            withDestinationURL: image.sidecarURL)
 
         // create an NSFilePresenter for the symbolic links
-        xmpPresenter = XmpPresenter(imageURL: imageURL, sidecarURL: sidecarURL)
+        xmpPresenter = XmpPresenter(for: imageURL)
     }
 
     enum BackupError: Error {
         case backupError(String)
+    }
+
+    // Copy a sidecar file into the backup folder.
+
+    func makeSidecarBackup(_ backupFolder: URL) throws {
+        let name = image.sidecarURL.lastPathComponent
+        let fileManager = FileManager.default
+
+        // make sure the output name is unique
+
+        var fileNumber = 1
+        var saveFileURL = backupFolder.appendingPathComponent(name, isDirectory: false)
+        _ = backupFolder.startAccessingSecurityScopedResource()
+        defer { backupFolder.stopAccessingSecurityScopedResource() }
+
+        // add a suffix to the name until no file is found at the save location
+        while fileManager.fileExists(atPath: (saveFileURL.path)) {
+            var newName = name
+            let nameDot = newName.lastIndex(of: ".") ?? newName.endIndex
+            newName.insert(contentsOf: "-\(fileNumber)", at: nameDot)
+            fileNumber += 1
+            saveFileURL = backupFolder.appendingPathComponent(newName, isDirectory: false)
+        }
+
+        // read the data from the sidecar file and write it to the backup file
+
+        guard let data = image.xmpPresenter.readData() else {
+            throw BackupError.backupError("Sidecar file \(name) copy failed!")
+        }
+        try data.write(to: saveFileURL)
     }
 
     // copy an image file into the backup folder.  Because copyItems doesn't
@@ -52,17 +82,18 @@ struct Sandbox {
     // the link in the sandbox.
 
     func makeBackupFile(backupFolder: URL) async throws {
-        let url: URL
-        let fileManager = FileManager.default
-        var xmpPresented = false
+//        NSFileCoordinator.addFilePresenter(image.xmpPresenter)
+//        defer {
+//            NSFileCoordinator.removeFilePresenter(image.xmpPresenter)
+//        }
 
-        if fileManager.isWritableFile(atPath: image.sidecarURL.path) {
-            url = image.sidecarURL
-            NSFileCoordinator.addFilePresenter(image.xmpPresenter)
-            xmpPresented = true
-        } else {
-            url = image.fileURL
+        if image.sidecarExists {
+            try makeSidecarBackup(backupFolder)
+            return
         }
+
+        let fileManager = FileManager.default
+        let url = image.fileURL
         let name = url.lastPathComponent
 
         var fileNumber = 1
@@ -81,9 +112,6 @@ struct Sandbox {
 
         // Copy the image file to the backup folder
         try fileManager.copyItem(at: url, to: saveFileURL)
-        if xmpPresented {
-            NSFileCoordinator.removeFilePresenter(image.xmpPresenter)
-        }
 
         // belts and suspenders: verify the copy happened.  There once was
         // a macOS bug where the copy failed but no error was reported.
