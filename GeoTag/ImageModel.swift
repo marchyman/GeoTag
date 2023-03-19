@@ -23,6 +23,10 @@ struct ImageModel: Identifiable {
     let sidecarURL: URL
     let xmpPresenter: XmpPresenter
 
+    // Optional ID of a paired file.  Used when both raw and jpeg versions
+    // of a raw/jpeg pair are opened.
+    var pairedID: URL?
+
     // is this an image file or something else?
     var isValid = false
 

@@ -28,6 +28,10 @@ extension AppViewModel {
 
         self[id].location = location
         self[id].elevation = elevation
+        if let pairedID = self[id].pairedID, self[pairedID].isValid {
+            self[pairedID].location = location
+            self[pairedID].elevation = elevation
+        }
         mainWindow?.isDocumentEdited = documentedEdited
     }
 

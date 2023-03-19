@@ -21,6 +21,9 @@ version 4.15.
 ### Updates
 
 * Add option to always create sidecar (XMP) files when updating images.
+* Update both images of a raw/jpeg pair when the location of one of the
+  paired images changes. This only applies if both images of the pair were
+  opened and enabled or if updates are written to a sidecar file.
 * ExifTool version 12.58
 
 ### Bug Fixes
