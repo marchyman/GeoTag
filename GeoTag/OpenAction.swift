@@ -92,11 +92,7 @@ extension AppViewModel {
                 cvm.sheetError = sheetInfo.sheetError
                 cvm.sheetType = sheetInfo.sheetType
             }
-
-            // disable paired jpegs if desired
-            if disablePairedJpegs {
-                disableJpegs()
-            }
+            linkPairedImages()
             ContentViewModel.shared.showingProgressView = false
         }
     }
@@ -127,23 +123,35 @@ extension AppViewModel {
         return foundURLs
     }
 
-    // if a jpg/jpeg image is part of a raw/jpeg pair disable the jpeg by
-    // turning off its isValid flag.
+    // either link raw/jpeg images to each other by storing the URL of the
+    // other half of the pair in the image or disable the jpeg version if
+    // that option is selected
 
-    private func disableJpegs() {
+    private func linkPairedImages() {
+        @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
+
         let imageURLs = images.map { $0.fileURL }
 
         for url in imageURLs {
+            // only look at jpeg files
             let pathExtension = url.pathExtension.lowercased()
             guard pathExtension == "jpg" || pathExtension == "jpeg" else { continue }
-            let pathWithoutExtension = url.deletingPathExtension().path
-            for urlToCheck in imageURLs {
-                let checkPathExtension = urlToCheck.pathExtension.lowercased()
-                if checkPathExtension != "jpg" && checkPathExtension != "jpeg" {
-                    if pathWithoutExtension == urlToCheck.deletingPathExtension().path {
-                        self[url].isValid = false
-                    }
+
+            // extract the base URL for comparison
+            let baseURL = url.deletingPathExtension()
+
+            // look for non-xmp files that match baseURL
+            for pairedURL in imageURLs where pairedURL != url
+                && pairedURL.pathExtension.lowercased() != xmpExtension
+                && pairedURL.deletingPathExtension() == baseURL {
+                // url and otherURL are part of an image pair.
+                self[url].pairedURL = pairedURL
+                self[pairedURL].pairedURL = url
+                // disable the jpeg version if requested
+                if disablePairedJpegs {
+                    self[url].isValid = false
                 }
+                break
             }
         }
     }
