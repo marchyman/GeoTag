@@ -145,8 +145,8 @@ extension AppViewModel {
                 && pairedURL.pathExtension.lowercased() != xmpExtension
                 && pairedURL.deletingPathExtension() == baseURL {
                 // url and otherURL are part of an image pair.
-                self[url].pairedURL = pairedURL
-                self[pairedURL].pairedURL = url
+                self[url].pairedID = pairedURL
+                self[pairedURL].pairedID = url
                 // disable the jpeg version if requested
                 if disablePairedJpegs {
                     self[url].isValid = false
