@@ -24,6 +24,8 @@ version 4.15.
 * Update both images of a raw/jpeg pair when the location of one of the
   paired images changes. This only applies if both images of the pair were
   opened and enabled or if updates are written to a sidecar file.
+* Add "Report a bug..." to the help menu.  Selecting this will the GeoTag
+  github issues page in your browser.
 * ExifTool version 12.58
 
 ### Bug Fixes
