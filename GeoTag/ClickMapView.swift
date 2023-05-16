@@ -51,6 +51,7 @@ class ClickMapView: MKMapView {
     func clicked(timer: Timer) {
         // swiftlint:disable force_cast
         let coords = timer.userInfo as! CLLocationCoordinate2D
+        // swiftlint:enable force_cast
         clickTimer?.invalidate()
         clickTimer = nil
         if !viewModel.selection.isEmpty {

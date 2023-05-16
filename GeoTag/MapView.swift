@@ -141,6 +141,7 @@ struct MapView: NSViewRepresentable {
             oldAnnotations = view.annotations.filter {
                 // swiftlint:disable force_cast
                 known.insert($0 as! MKPointAnnotation).inserted
+                // swiftlint:enable force_cast
             }
         }
         if !oldAnnotations.isEmpty {
@@ -234,7 +235,9 @@ extension MapView {
         @MainActor
         func mapView(_ mapview: MKMapView,
                      rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            // swiftlint:disable force_cast
             let polyline = overlay as! MKPolyline
+            // swiftlint:enable force_cast
             if mvm.mapLines.contains(polyline) {
                 let renderer = MKPolylineRenderer(polyline: polyline)
                 renderer.strokeColor = NSColor(mvm.trackColor)

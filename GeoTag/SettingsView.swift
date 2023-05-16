@@ -146,6 +146,8 @@ struct SettingsView: View {
     }
 }
 
+// swiftlint:enable line_length
+
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
