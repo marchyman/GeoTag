@@ -29,7 +29,6 @@
 		4969ACA32963DFE700BBC219 /* ChangeDateTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */; };
 		4969ACA62963E05000BBC219 /* ChangeLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA52963E05000BBC219 /* ChangeLocationView.swift */; };
 		4977988A297F6F7F0081A776 /* PinAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49779889297F6F7F0081A776 /* PinAnnotationView.swift */; };
-		4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
 		498A7350294EA4EE00C62B14 /* ImageTimestampColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */; };
@@ -104,7 +103,6 @@
 		4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeDateTimeView.swift; sourceTree = "<group>"; };
 		4969ACA52963E05000BBC219 /* ChangeLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeLocationView.swift; sourceTree = "<group>"; };
 		49779889297F6F7F0081A776 /* PinAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinAnnotationView.swift; sourceTree = "<group>"; };
-		4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLToImageHelper.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
 		498A734F294EA4EE00C62B14 /* ImageTimestampColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTimestampColumnView.swift; sourceTree = "<group>"; };
@@ -379,7 +377,6 @@
 				49B4D34C2957E21500A4BCFD /* ClearAction.swift */,
 				49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */,
 				49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */,
-				4988BB0C295FC5A800BADAC1 /* URLToImageHelper.swift */,
 			);
 			name = "Menu Actions Group";
 			sourceTree = "<group>";
@@ -528,7 +525,6 @@
 				494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */,
 				49B9EDE32949442700574D18 /* AppViewModel.swift in Sources */,
 				49BA29A629622B5200B26F03 /* SaveItemCommandGroup.swift in Sources */,
-				4988BB0D295FC5A800BADAC1 /* URLToImageHelper.swift in Sources */,
 				49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */,
 				4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */,
 				4969ACA32963DFE700BBC219 /* ChangeDateTimeView.swift in Sources */,

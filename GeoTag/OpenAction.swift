@@ -39,60 +39,71 @@ extension AppViewModel {
     /// not be flagged as a valid image.
 
     func prepareForEdit(inputURLs: [URL]) {
+        var gpxFound = false
         @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
 
         ContentViewModel.shared.showingProgressView = true
 
         // dragged urls are duplicated for some reason. Make an array
-        // of unique URLs including those in any containing folder
+        // of unique URLs including those in any containing folder.
 
-        let imageURLs = inputURLs.uniqued().flatMap { url in
-            isFolder(url: url) ? urlsIn(folder: url) : [url]
+        let imageURLs = inputURLs.uniqued()
+            .flatMap { url in
+                isFolder(url: url) ? urlsIn(folder: url) : [url]
+            }
+
+        // check for duplicates of images already open for procesing
+
+        let processedURLs = Set(images.map {$0.fileURL })
+        let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
+        if !duplicateURLs.isEmpty {
+            ContentViewModel.shared.addSheet(type: .duplicateImageSheet)
         }
 
         // check the given URLs.  They may point to GPX files or image files.
         // Images are added to the table as soon as they are processed.
         // Track are not added until all urls are processed.
 
-        Task {
-            let helper = URLToImageHelper(knownImages: images)
-            await withTaskGroup(of: ImageModel?.self) { group in
-                for url in imageURLs {
-                    group.addTask {
-                        let image = await helper.urlToImage(url: url)
-                        return image
-                    }
-                }
-                for await image in group {
-                    if let image {
-                        images.append(image)
-                    }
-                }
+        let updateGroup = DispatchGroup()
+        for url in imageURLs where !duplicateURLs.contains(url) {
+            let gpxFile = url.pathExtension.lowercased() == "gpx"
+            if gpxFile {
+                gpxFound = true
             }
-            images.sort(using: sortOrder)
-
-            // show any tracks
-            for gpxTrack in await helper.gpxTracks {
-                updateTracks(gpx: gpxTrack)
-                // if the appViewModel update isn't done on the main queue the
-                // Discard tracks menu item doesn't see the approriate state.
+            updateGroup.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                if gpxFile {
+                    self.parseGpxFile(url)
+                } else {
+                    do {
+                        let image = try ImageModel(imageURL: url)
+                        DispatchQueue.main.async {
+                            self.images.append(image)
+                        }
+                    } catch let error as NSError {
+                        DispatchQueue.main.async {
+                            ContentViewModel.shared.addSheet(type: .unexpectedErrorSheet,
+                                                             error: error,
+                                                             message: "Failed to open file \(url.path)")
+                        }
+                    }
+                }
                 DispatchQueue.main.async {
-                    self.gpxTracks.append(gpxTrack)
+                    updateGroup.leave()
                 }
             }
-            gpxGoodFileNames = await helper.gpxGoodFileNames
-            gpxBadFileNames = await helper.gpxBadFileNames
+        }
 
-            // copy sheet info from helper to ViewModel
-            if await !helper.sheetStack.isEmpty {
-                let cvm = ContentViewModel.shared
-                cvm.sheetStack.append(contentsOf: await helper.sheetStack)
-                let sheetInfo = cvm.sheetStack.removeFirst()
-                cvm.sheetMessage = sheetInfo.sheetMessage
-                cvm.sheetError = sheetInfo.sheetError
-                cvm.sheetType = sheetInfo.sheetType
+        // once every image has been processed link paired images, sort the
+        // images into the desired sequence, schedule a sheet if gpx files
+        // were processed and turn off the progress indicator
+
+        updateGroup.notify(queue: DispatchQueue.main) {
+            self.linkPairedImages()
+            self.images.sort(using: self.sortOrder)
+            if gpxFound {
+                ContentViewModel.shared.addSheet(type: .gpxFileNameSheet)
             }
-            linkPairedImages()
             ContentViewModel.shared.showingProgressView = false
         }
     }
@@ -121,6 +132,23 @@ extension AppViewModel {
             }
         }
         return foundURLs
+    }
+
+    // process GPX files (called in an async thread).
+
+    func parseGpxFile(_ url: URL) {
+        do {
+            let gpx = try Gpx(contentsOf: url)
+            try gpx.parse()
+            DispatchQueue.main.async {
+                self.gpxTracks.append(gpx)
+                self.gpxGoodFileNames.append(url.path)
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.gpxBadFileNames.append(url.path)
+            }
+        }
     }
 
     // either link raw/jpeg images to each other by storing the URL of the
