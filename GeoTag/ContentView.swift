@@ -44,7 +44,9 @@ struct ContentView: View {
 
         // drop destination
         .dropDestination(for: URL.self) {items, _ in
-            avm.prepareForEdit(inputURLs: items)
+            Task {
+                await avm.prepareForEdit(inputURLs: items)
+            }
             return true
         }
 

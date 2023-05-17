@@ -28,9 +28,11 @@ extension AppViewModel {
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
 
-        // process any URLs selected to open on a detached task
+        // process any URLs selected to open in the background
         if panel.runModal() == NSApplication.ModalResponse.OK {
-            prepareForEdit(inputURLs: panel.urls)
+            Task {
+                await prepareForEdit(inputURLs: panel.urls)
+            }
         }
     }
 
@@ -38,21 +40,22 @@ extension AppViewModel {
     /// be of any type.  The path of non-image files will be listed in the app's table but will
     /// not be flagged as a valid image.
 
-    func prepareForEdit(inputURLs: [URL]) {
-        var gpxFound = false
-        @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
+    func prepareForEdit(inputURLs: [URL]) async {
+
+        // show the progress view
 
         ContentViewModel.shared.showingProgressView = true
 
-        // dragged urls are duplicated for some reason. Make an array
-        // of unique URLs including those in any containing folder.
+        // expand folder URLs and remove any duplicates.
 
-        let imageURLs = inputURLs.uniqued()
+        let imageURLs = inputURLs
             .flatMap { url in
                 isFolder(url: url) ? urlsIn(folder: url) : [url]
             }
+            .uniqued()
 
-        // check for duplicates of images already open for procesing
+        // check for duplicates of URLs alreadyt open for processing
+        // if any are found notify the user
 
         let processedURLs = Set(images.map {$0.fileURL })
         let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
@@ -60,52 +63,41 @@ extension AppViewModel {
             ContentViewModel.shared.addSheet(type: .duplicateImageSheet)
         }
 
-        // check the given URLs.  They may point to GPX files or image files.
-        // Images are added to the table as soon as they are processed.
-        // Track are not added until all urls are processed.
+        // process all urls in a task group, one task per url
 
-        let updateGroup = DispatchGroup()
-        for url in imageURLs where !duplicateURLs.contains(url) {
-            let gpxFile = url.pathExtension.lowercased() == "gpx"
-            if gpxFile {
-                gpxFound = true
-            }
-            updateGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
-                if gpxFile {
-                    self.parseGpxFile(url)
-                } else {
-                    do {
-                        let image = try ImageModel(imageURL: url)
+        await withTaskGroup(of: ImageModel?.self) { group in
+            var openedImages: [ImageModel] = []
+
+            for url in imageURLs {
+                group.addTask {
+                    if url.pathExtension.lowercased() == "gpx" {
+                        await self.parseGpxFile(url)
                         DispatchQueue.main.async {
-                            self.images.append(image)
+                            ContentViewModel.shared.addSheetOnce(type: .gpxFileNameSheet)
                         }
+                        return nil
+                    }
+
+                    do {
+                        return try ImageModel(imageURL: url)
                     } catch let error as NSError {
                         DispatchQueue.main.async {
                             ContentViewModel.shared.addSheet(type: .unexpectedErrorSheet,
                                                              error: error,
                                                              message: "Failed to open file \(url.path)")
                         }
+                        return nil
                     }
                 }
-                DispatchQueue.main.async {
-                    updateGroup.leave()
-                }
             }
-        }
-
-        // once every image has been processed link paired images, sort the
-        // images into the desired sequence, schedule a sheet if gpx files
-        // were processed and turn off the progress indicator
-
-        updateGroup.notify(queue: DispatchQueue.main) {
-            self.linkPairedImages()
-            self.images.sort(using: self.sortOrder)
-            if gpxFound {
-                ContentViewModel.shared.addSheet(type: .gpxFileNameSheet)
+            for await image in group.compactMap({ $0 }) {
+                openedImages.append(image)
             }
-            ContentViewModel.shared.showingProgressView = false
+            images.append(contentsOf: openedImages)
         }
+        linkPairedImages()
+        images.sort(using: sortOrder)
+        ContentViewModel.shared.showingProgressView = false
     }
 
     /// Check if a given file URL refers to a folder
@@ -134,7 +126,7 @@ extension AppViewModel {
         return foundURLs
     }
 
-    // process GPX files (called in an async thread).
+    // process GPX files
 
     func parseGpxFile(_ url: URL) {
         do {
