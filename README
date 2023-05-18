@@ -30,6 +30,7 @@ version 4.15.
 
 ### Bug Fixes
 
+* Drastic performance improvement when opening large number of images
 * Do not clear window changed indicator on save errors
 * GPS Timestamp written to sidecar files sometimes included a timezone
   instead of being a UTC/GMT relative timestamp.
