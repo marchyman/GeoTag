@@ -54,7 +54,7 @@ extension AppViewModel {
             }
             .uniqued()
 
-        // check for duplicates of URLs alreadyt open for processing
+        // check for duplicates of URLs already open for processing
         // if any are found notify the user
 
         let processedURLs = Set(images.map {$0.fileURL })
@@ -63,21 +63,15 @@ extension AppViewModel {
             ContentViewModel.shared.addSheet(type: .duplicateImageSheet)
         }
 
-        // process all urls in a task group, one task per url
+        // process all urls in a task group, one task per url.  Skip
+        // gpx urls for now
 
         await withTaskGroup(of: ImageModel?.self) { group in
             var openedImages: [ImageModel] = []
 
             for url in imageURLs {
+                guard url.pathExtension.lowercased() != "gpx" else { continue }
                 group.addTask {
-                    if url.pathExtension.lowercased() == "gpx" {
-                        await self.parseGpxFile(url)
-                        DispatchQueue.main.async {
-                            ContentViewModel.shared.addSheetOnce(type: .gpxFileNameSheet)
-                        }
-                        return nil
-                    }
-
                     do {
                         return try ImageModel(imageURL: url)
                     } catch let error as NSError {
@@ -97,6 +91,47 @@ extension AppViewModel {
         }
         linkPairedImages()
         images.sort(using: sortOrder)
+
+        // now process any gpx tracks
+
+        let gpxURLs = imageURLs.filter { $0.pathExtension.lowercased() == "gpx" }
+        if !gpxURLs.isEmpty {
+            var tracks: [(String, Gpx?)] = []
+
+            await withTaskGroup(of: (String, Gpx?).self ) { group in
+                for url in gpxURLs {
+                    group.addTask {
+                        do {
+                            let gpx = try Gpx(contentsOf: url)
+                            try gpx.parse()
+                            return (url.path, gpx)
+                        } catch {
+                            return (url.path, nil)
+                        }
+                    }
+                }
+                for await (path, gpx) in group {
+                    tracks.append((path, gpx))
+                }
+            }
+
+            // if the appViewModel update isn't done on the main queue the
+            // Discard tracks menu item doesn't see the approriate state.
+
+            DispatchQueue.main.async {
+                for (path, track) in tracks {
+                    if let track {
+                        self.updateTracks(gpx: track)
+                        self.gpxGoodFileNames.append(path)
+                        self.gpxTracks.append(track)
+                    } else {
+                        self.gpxBadFileNames.append(path)
+                    }
+                }
+                ContentViewModel.shared.addSheet(type: .gpxFileNameSheet)
+            }
+        }
+
         ContentViewModel.shared.showingProgressView = false
     }
 
@@ -124,23 +159,6 @@ extension AppViewModel {
             }
         }
         return foundURLs
-    }
-
-    // process GPX files
-
-    func parseGpxFile(_ url: URL) {
-        do {
-            let gpx = try Gpx(contentsOf: url)
-            try gpx.parse()
-            DispatchQueue.main.async {
-                self.gpxTracks.append(gpx)
-                self.gpxGoodFileNames.append(url.path)
-            }
-        } catch {
-            DispatchQueue.main.async {
-                self.gpxBadFileNames.append(url.path)
-            }
-        }
     }
 
     // either link raw/jpeg images to each other by storing the URL of the
