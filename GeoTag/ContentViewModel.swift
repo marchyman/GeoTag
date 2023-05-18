@@ -60,4 +60,19 @@ extension ContentViewModel {
                                         sheetMessage: message))
         }
     }
+
+    // return true if a sheet of the given type is enqueued
+
+    func hasSheet(type: SheetType) -> Bool {
+        if sheetType == type {
+            return true
+        }
+        return sheetStack.contains { $0.sheetType == type }
+    }
+
+    func addSheetOnce(type: SheetType, error: NSError? = nil, message: String? = nil) {
+        if !hasSheet(type: type) {
+            addSheet(type: type, error: error, message: message)
+        }
+    }
 }
