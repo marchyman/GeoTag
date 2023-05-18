@@ -26,24 +26,24 @@ final class AppViewModel: ObservableObject {
 
     // get/set an image from the table of images  given its ID.
     subscript(id: ImageModel.ID?) -> ImageModel {
-         get {
-             if let id {
-                 if let image = images.first(where: { $0.id == id }) {
-                     return image
-                 }
-             }
-             // A view may hold on to an ID that is no longer in the table
-             // If it tries to access the image associated with that id
-             // return a fake image
-             return ImageModel()
-         }
+        get {
+            if let id {
+                if let image = images.first(where: { $0.id == id }) {
+                    return image
+                }
+            }
+            // A view may hold on to an ID that is no longer in the table
+            // If it tries to access the image associated with that id
+            // return a fake image
+            return ImageModel()
+        }
 
-         set(newValue) {
-             if let index = images.firstIndex(where: { $0.id == newValue.id }) {
-                 images[index] = newValue
-             }
-         }
-     }
+        set(newValue) {
+            if let index = images.firstIndex(where: { $0.id == newValue.id }) {
+                images[index] = newValue
+            }
+        }
+    }
 
     // A copy of the current sort order
     var sortOrder = [KeyPathComparator(\ImageModel.name)]
