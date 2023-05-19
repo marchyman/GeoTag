@@ -9,8 +9,7 @@ import SwiftUI
 
 struct ChangeLocationView: View {
     @Environment(\.dismiss) private var dismiss
-
-    @ObservedObject var avm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
     let id: ImageModel.ID
 
     @State private var latitude: Double?
