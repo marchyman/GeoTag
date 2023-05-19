@@ -24,8 +24,15 @@ struct ImageView: View {
             }
         }
         .padding()
-        .onChange(of: avm.mostSelected) { id in
-            thumbnail = id == nil ? nil : avm[id].thumbnail
+        .task(id: avm.mostSelected) {
+            if let id = avm.mostSelected {
+                if avm[id].thumbnail == nil {
+                    avm[id].thumbnail = await avm[id].makeThumbnail()
+                }
+                thumbnail = avm[id].thumbnail
+                return
+            }
+            thumbnail = nil
         }
     }
 }

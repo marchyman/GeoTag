@@ -16,7 +16,7 @@ extension ImageModel {
     /// do not exist the file is assumed to be a non-image file and a zero
     /// sized empty image is created.
 
-    func makeThumbnail() -> NSImage {
+    func makeThumbnail() async -> NSImage {
         var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
             return image

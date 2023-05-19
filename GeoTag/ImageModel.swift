@@ -54,7 +54,7 @@ final class ImageModel: Identifiable {
     }
 
     // The thumbnail image displayed when and image is selected for editing
-    lazy var thumbnail = makeThumbnail()
+    var thumbnail: NSImage?
 
     // initialization of image data given its URL.
     init(imageURL: URL, forPreview: Bool = false) throws {

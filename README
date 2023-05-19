@@ -38,6 +38,14 @@ version 4.15.
 * Sidecar file backups would sometimes fail.
 * image thumbnail could fail to show until the selection changed
 
+### Known bugs
+
+* performance is still an issue.  When opening 1200 images, for example,
+  it takes 15-20 seconds on a 3.6 GHz 8-Core Intel Core i9.  When selecting
+  an image from the table it takes 2-3 seconds before the selected image is
+  rendered.  The performance issue is related to number of images.  The
+  selection delay is barely noticeable when 120 images are open.
+
 ### See the file named *History* for earlier changes and bug fixes
 
 ---
