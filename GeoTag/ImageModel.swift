@@ -10,7 +10,7 @@ import MapKit
 
 // Data about an image that may have its geo-location metadata changed.
 
-struct ImageModel: Identifiable {
+final class ImageModel: Identifiable {
 
     // Identifying data.
     let fileURL: URL
@@ -85,7 +85,7 @@ struct ImageModel: Identifiable {
 
     // reset the timestamp and location to their initial values.  Initial
     // values are updated whenever an image is saved.
-    mutating func revert() {
+    func revert() {
         dateTimeCreated = originalDateTimeCreated
         location = originalLocation
         elevation = originalElevation
@@ -98,7 +98,7 @@ struct ImageModel: Identifiable {
     /// do not exist the file is assumed to be a non-image file
 
     private
-    mutating func loadImageMetadata() throws -> Bool {
+    func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
             enum ImageError: Error {
                 case cgSourceError
@@ -173,7 +173,7 @@ struct ImageModel: Identifiable {
     /// function is called/
 
     private
-    mutating func loadXmpMetadata() {
+    func loadXmpMetadata() {
         NSFileCoordinator.addFilePresenter(xmpPresenter)
         let results = Exiftool.helper.metadataFrom(xmp: sidecarURL)
         NSFileCoordinator.removeFilePresenter(xmpPresenter)
@@ -197,11 +197,11 @@ extension ImageModel {
 
     // create a model for SwiftUI preview
 
-    init(imageURL: URL,
-         validImage: Bool,
-         dateTimeCreated: String,
-         latitude: Double?,
-         longitude: Double?) {
+    convenience init(imageURL: URL,
+                     validImage: Bool,
+                     dateTimeCreated: String,
+                     latitude: Double?,
+                     longitude: Double?) {
         do {
             try self.init(imageURL: imageURL, forPreview: true)
         } catch {
@@ -217,7 +217,7 @@ extension ImageModel {
     // create an instance of an ImageModel when one is needed but there
     // is otherwise no instance to return.
 
-    init() {
+    convenience init() {
         do {
             try self.init(imageURL: URL(filePath: ""), forPreview: true)
         } catch {
@@ -247,9 +247,10 @@ extension URL: Comparable {
 }
 
 // ImageModel is sendable.  For the purposes of ImageModel NSImage can
-// be treated as sendable.
+// be treated as sendable. ImageModel is marked as unchecked to get rid
+// of the pairedID warning.
 
-extension ImageModel: Sendable {}
+extension ImageModel: @unchecked Sendable {}
 extension NSImage: @unchecked Sendable {}
 
 // Date formatter used to put timestamps in the form used by exiftool
