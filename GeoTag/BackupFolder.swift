@@ -33,9 +33,10 @@ extension AppViewModel {
         do {
             try bookmark = url.bookmarkData(options: .withSecurityScope)
         } catch let error as NSError {
-            ContentViewModel.shared.addSheet(type: .unexpectedErrorSheet,
-                                             error: error,
-                                             message: "Error creating security scoped bookmark for backup location \(url.path)")
+            ContentViewModel.shared
+                .addSheet(type: .unexpectedErrorSheet,
+                          error: error,
+                          message: "Error creating security scoped bookmark for backup location \(url.path)")
         }
         return bookmark
     }
@@ -56,7 +57,7 @@ extension AppViewModel {
                                     .totalFileSizeKey,
                                     .addedToDirectoryDateKey]
         let fileManager = FileManager.default
-        let _ = url.startAccessingSecurityScopedResource()
+        _ = url.startAccessingSecurityScopedResource()
         defer { url.stopAccessingSecurityScopedResource() }
         guard let urlEnumerator =
                 fileManager.enumerator(at: url,
@@ -93,11 +94,10 @@ extension AppViewModel {
         }
     }
 
-
     nonisolated func remove(filesToRemove: [URL]) {
         Task {
             let folderURL = await backupURL
-            let _ = folderURL?.startAccessingSecurityScopedResource()
+            _ = folderURL?.startAccessingSecurityScopedResource()
             defer { folderURL?.stopAccessingSecurityScopedResource() }
             let fileManager = FileManager.default
             for url in filesToRemove {

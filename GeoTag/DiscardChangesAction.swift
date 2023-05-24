@@ -26,4 +26,3 @@ extension AppViewModel {
         mainWindow?.isDocumentEdited = false
     }
 }
-

@@ -15,7 +15,7 @@ extension GeoTagApp {
             Button(avm.undoManager.undoMenuItemTitle) { avm.undoAction() }
                 .keyboardShortcut("z")
                 .disabled(avm.undoDisabled)
-            
+
             Button(avm.undoManager.redoMenuItemTitle) { avm.redoAction() }
                 .keyboardShortcut("z", modifiers: [.shift, .command])
                 .disabled(avm.redoDisabled)

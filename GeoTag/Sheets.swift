@@ -51,24 +51,26 @@ struct GpxLoadView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if (vm.gpxGoodFileNames.count > 0) {
+            if vm.gpxGoodFileNames.count > 0 {
                 Text("GPX Files Loaded")
                     .font(.title)
-                List (vm.gpxGoodFileNames, id: \.self) { Text($0) }
+                List(vm.gpxGoodFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("The above GPX file(s) have been processed and will show as tracks on the map.")
                     .lineLimit(nil)
                     .padding()
             }
-            if (vm.gpxBadFileNames.count > 0) {
+            if vm.gpxBadFileNames.count > 0 {
                 Text("GPX Files NOT Loaded")
                     .font(.title)
-                List (vm.gpxBadFileNames, id: \.self) { Text($0) }
+                List(vm.gpxBadFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
                     .padding()
-                Text("Either no tracks could be found or the GPX file was corrupted such that it could not be properly processed. Any track log information in the file has been ignored.")
+                Text("Either no tracks could be found or the GPX file was corrupted " +
+                     "such that it could not be properly processed. Any track log " +
+                     "information in the file has been ignored.")
                     .lineLimit(nil)
                     .padding([.leading, .bottom, .trailing])
             }
@@ -80,11 +82,12 @@ struct GpxLoadView: View {
 
 struct DuplicateImageView: View {
     var body: some View {
-        VStack() {
+        VStack {
             Text("One or more files not opened")
                 .font(.title)
                 .padding()
-            Text("One or more files were not opened. Unopened files were duplicates of files previously opened for editing.")
+            Text("One or more files were not opened. Unopened files were " +
+                 "duplicates of files previously opened for editing.")
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
@@ -96,11 +99,14 @@ struct DuplicateImageView: View {
 
 struct NoBackupFolderView: View {
     var body: some View {
-        VStack() {
+        VStack {
             Text("Image backup folder can not be found")
                 .font(.title)
                 .padding()
-            Text("Image backups are enabled but no backup folder is specified or the specified folder can no longer be found.  Please open the program settings window (⌘ ,) and select a folder for image backups.")
+            Text("Image backups are enabled but no backup folder is " +
+                 "specified or the specified folder can no longer be found. " +
+                 "Please open the program settings window (⌘ ,) and select " +
+                 "a folder for image backups.")
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
@@ -111,11 +117,12 @@ struct NoBackupFolderView: View {
 }
 struct SavingUpdatesView: View {
     var body: some View {
-        VStack() {
+        VStack {
             Text("Save in progress")
                 .font(.title)
                 .padding()
-            Text("Image updates are still being processed.  Please wait for the updates to complete before quiting GeoTag.")
+            Text("Image updates are still being processed.  Please wait " +
+                 "for the updates to complete before quiting GeoTag.")
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
@@ -128,7 +135,7 @@ struct SaveErrorView: View {
     @ObservedObject var contentViewModel = ContentViewModel.shared
 
     var body: some View {
-        VStack() {
+        VStack {
             Text("One or more files could not be saved")
                 .font(.title)
                 .padding()
@@ -157,7 +164,7 @@ struct UnexpectedErrorView: View {
     @ObservedObject var contentViewModel = ContentViewModel.shared
 
     var body: some View {
-        VStack() {
+        VStack {
             Text("Unexpected Error")
                 .font(.title)
                 .padding()

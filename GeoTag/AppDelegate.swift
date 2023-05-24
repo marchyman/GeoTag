@@ -24,8 +24,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     // Process open with...
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        DispatchQueue.main.async() {
-            self.avm?.prepareForEdit(inputURLs: urls)
+        Task {
+            await self.avm?.prepareForEdit(inputURLs: urls)
         }
     }
 
@@ -54,7 +54,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             }
 
             if let edited = avm.mainWindow?.isDocumentEdited, edited {
-                ContentViewModel.shared.confirmationMessage = "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
+                ContentViewModel.shared.confirmationMessage =
+                    "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
                 ContentViewModel.shared.confirmationAction = terminateIgnoringEdits
                 ContentViewModel.shared.presentConfirmation = true
                 return .terminateCancel
@@ -89,4 +90,3 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         }
     }
 }
-

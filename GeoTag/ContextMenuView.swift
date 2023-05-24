@@ -27,7 +27,7 @@ struct ContextMenuView: View {
             Button("Delete") { avm.deleteAction(context: context) }
                 .disabled(avm.deleteDisabled(context: context))
         }
-        
+
         Divider()
 
         Group {

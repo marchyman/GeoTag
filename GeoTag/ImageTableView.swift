@@ -22,22 +22,28 @@ struct ImageTableView: View {
         Table(selection: $avm.selection,
               sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
-                ImageNameColumnView(avm: avm, id: image.id)
+                ImageNameColumnView(image: image,
+                                    selected: avm.mostSelected == image.id)
             }
             .width(min: 100)
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                ImageTimestampColumnView(avm: avm, id: image.id)
+                ImageTimestampColumnView(image: image,
+                                         timestampMinWidth: itvm.timestampMinWidth)
             }
             .width(min: itvm.timestampMinWidth)
 
             TableColumn("Latitude", value: \.latitude) { image in
-                ImageLatitudeColumnView(avm: avm, id: image.id)
+                ImageLatitudeColumnView(image: image,
+                                        coordFormat: itvm.coordFormat,
+                                        minWidth: itvm.coordMinWidth)
             }
             .width(min: itvm.coordMinWidth)
 
             TableColumn("Longitude", value: \.longitude) { image in
-                ImageLongitudeColumnView(avm: avm, id: image.id)
+                ImageLongitudeColumnView(image: image,
+                                         coordFormat: itvm.coordFormat,
+                                         minWidth: itvm.coordMinWidth)
             }
             .width(min: itvm.coordMinWidth)
         } rows: {
@@ -63,9 +69,8 @@ struct ImageTableView: View {
     }
 }
 
-
 /// Computed properties to convert elements of an imageModel into values for use with
-/// this view, espeically with regard to sorting.
+/// this view, espeically with regard to sorting and display.
 extension ImageModel {
     var name: String {
         fileURL.lastPathComponent
@@ -103,12 +108,9 @@ extension ImageModel {
         return .secondary
     }
 
-}
-
-extension AppViewModel {
-    func elevationAsString(id: ImageModel.ID) -> String {
+    var elevationAsString: String {
         var value = "Elevation: "
-        if let elevation = self[id].elevation {
+        if let elevation {
             value += String(format: "% 4.2f", elevation)
             value += " meters"
         } else {
@@ -116,6 +118,7 @@ extension AppViewModel {
         }
         return value
     }
+
 }
 
 struct ImageTableView_Previews: PreviewProvider {
@@ -134,8 +137,7 @@ struct ImageTableView_Previews: PreviewProvider {
                    validImage: true,
                    dateTimeCreated: "2022:12:13 14:15:16",
                    latitude: 35.505,
-                   longitude: -123.456),
-
+                   longitude: -123.456)
     ]
     static var previews: some View {
         ImageTableView()

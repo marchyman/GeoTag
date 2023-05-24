@@ -1,3 +1,17 @@
+Bug?
+
+* crash in PathView using Xcode 14.3 beta and beta 2.  Crash comes and
+  goes even with no code changes.  Seems to be an Xcode thread sanitizer bug.
+  Reported to Apple.
+
+* If you select an image that has a location and them pan the map to some
+  other locations, changing the map style causes the map to re-center around
+  the pin if the pin is off screen. If the pin is on screen the map viewport
+  doesn’t change.
+
+Misc:
+* Clean up lat/lon display, perhaps use NumberFormater?
+
 Feature Requests:
 * check for overlap before assigning locations from a track log and warn the user
   if necessary.

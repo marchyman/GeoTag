@@ -13,36 +13,36 @@ import MapKit
 
 @MainActor
 final class AppViewModel: ObservableObject {
-    @Published var images = [ImageModel]()
-    @Published var selection = Set<ImageModel.ID>()
+    @Published var images: [ImageModel] = []
+    @Published var selection: Set<ImageModel.ID> = []
     @Published var mostSelected: ImageModel.ID?
 
-    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
     @AppStorage(AppSettings.addTagKey) var addTag = false
+    @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
     @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
     // get/set an image from the table of images  given its ID.
     subscript(id: ImageModel.ID?) -> ImageModel {
-         get {
-             if let id {
-                 if let image = images.first(where: { $0.id == id }) {
-                     return image
-                 }
-             }
-             // A view may hold on to an ID that is no longer in the table
-             // If it tries to access the image associated with that id
-             // return a fake image
-             return ImageModel()
-         }
+        get {
+            if let index = images.firstIndex(where: { $0.id == id }) {
+                return images[index]
+            }
 
-         set(newValue) {
-             if let index = images.firstIndex(where: { $0.id == newValue.id }) {
-                 images[index] = newValue
-             }
-         }
-     }
+            // A view may hold on to an ID that is no longer in the table
+            // If it tries to access the image associated with that id
+            // return a fake image
+            return ImageModel()
+        }
+
+        set(newValue) {
+            if let index = images.firstIndex(where: { $0.id == newValue.id }) {
+                images[index] = newValue
+            }
+        }
+    }
 
     // A copy of the current sort order
     var sortOrder = [KeyPathComparator(\ImageModel.name)]
@@ -58,7 +58,7 @@ final class AppViewModel: ObservableObject {
     // State that changes when a menu item is picked.
 
     // Tracks displayed on map
-    var gpxTracks = [Gpx]()
+    var gpxTracks: [Gpx] = []
 
     // The timezone to use when matching image timestamps to track logs and
     // setting the GPS time stamp when saving images.  When nil the system
@@ -66,9 +66,8 @@ final class AppViewModel: ObservableObject {
     var timeZone: TimeZone?
 
     // GPX File Loading sheet information
-    var gpxGoodFileNames = [String]()
-    var gpxBadFileNames = [String]()
-
+    var gpxGoodFileNames: [String] = []
+    var gpxBadFileNames: [String] = []
 
     // The URL of the folder where image backups are save when backups
     // are enabled.  The URL comes from a security scoped bookmark in
@@ -86,7 +85,7 @@ final class AppViewModel: ObservableObject {
 
     // get the backupURL from AppStorage if needed.  This will also trigger
     // a scan of the backup folder for old backups that can be removed.
-    
+
     init() {
         if !doNotBackup {
             backupURL = getBackupURL()

@@ -28,9 +28,11 @@ extension AppViewModel {
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
 
-        // process any URLs selected to open on a detached task
+        // process any URLs selected to open in the background
         if panel.runModal() == NSApplication.ModalResponse.OK {
-            prepareForEdit(inputURLs: panel.urls)
+            Task {
+                await prepareForEdit(inputURLs: panel.urls)
+            }
         }
     }
 
@@ -38,67 +40,99 @@ extension AppViewModel {
     /// be of any type.  The path of non-image files will be listed in the app's table but will
     /// not be flagged as a valid image.
 
-    func prepareForEdit(inputURLs: [URL]) {
-        @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
+    func prepareForEdit(inputURLs: [URL]) async {
+
+        // show the progress view
 
         ContentViewModel.shared.showingProgressView = true
 
-        // dragged urls are duplicated for some reason. Make an array
-        // of unique URLs including those in any containing folder
+        // expand folder URLs and remove any duplicates.
 
-        let imageURLs = inputURLs.uniqued().flatMap { url in
-            isFolder(url: url) ? urlsIn(folder: url) : [url]
+        let imageURLs = inputURLs
+            .flatMap { url in
+                isFolder(url: url) ? urlsIn(folder: url) : [url]
+            }
+            .uniqued()
+
+        // check for duplicates of URLs already open for processing
+        // if any are found notify the user
+
+        let processedURLs = Set(images.map {$0.fileURL })
+        let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
+        if !duplicateURLs.isEmpty {
+            ContentViewModel.shared.addSheet(type: .duplicateImageSheet)
         }
 
-        // check the given URLs.  They may point to GPX files or image files.
-        // Images are added to the table as soon as they are processed.
-        // Track are not added until all urls are processed.
+        // process all urls in a task group, one task per url.  Skip
+        // gpx urls for now
 
-        Task {
-            let helper = URLToImageHelper(knownImages: images)
-            await withTaskGroup(of: ImageModel?.self) { group in
-                for url in imageURLs {
+        await withTaskGroup(of: ImageModel?.self) { group in
+            var openedImages: [ImageModel] = []
+
+            for url in imageURLs {
+                guard url.pathExtension.lowercased() != "gpx" else { continue }
+                group.addTask {
+                    do {
+                        return try ImageModel(imageURL: url)
+                    } catch let error as NSError {
+                        DispatchQueue.main.async {
+                            ContentViewModel.shared.addSheet(type: .unexpectedErrorSheet,
+                                                             error: error,
+                                                             message: "Failed to open file \(url.path)")
+                        }
+                        return nil
+                    }
+                }
+            }
+            for await image in group.compactMap({ $0 }) {
+                openedImages.append(image)
+            }
+            images.append(contentsOf: openedImages)
+        }
+        linkPairedImages()
+        images.sort(using: sortOrder)
+
+        // now process any gpx tracks
+
+        let gpxURLs = imageURLs.filter { $0.pathExtension.lowercased() == "gpx" }
+        if !gpxURLs.isEmpty {
+            var tracks: [(String, Gpx?)] = []
+
+            await withTaskGroup(of: (String, Gpx?).self ) { group in
+                for url in gpxURLs {
                     group.addTask {
-                        let image = await helper.urlToImage(url: url)
-                        return image
+                        do {
+                            let gpx = try Gpx(contentsOf: url)
+                            try gpx.parse()
+                            return (url.path, gpx)
+                        } catch {
+                            return (url.path, nil)
+                        }
                     }
                 }
-                for await image in group {
-                    if let image {
-                        images.append(image)
+                for await (path, gpx) in group {
+                    tracks.append((path, gpx))
+                }
+            }
+
+            // if the appViewModel update isn't done on the main queue the
+            // Discard tracks menu item doesn't see the approriate state.
+
+            DispatchQueue.main.async {
+                for (path, track) in tracks {
+                    if let track {
+                        self.updateTracks(gpx: track)
+                        self.gpxGoodFileNames.append(path)
+                        self.gpxTracks.append(track)
+                    } else {
+                        self.gpxBadFileNames.append(path)
                     }
                 }
+                ContentViewModel.shared.addSheet(type: .gpxFileNameSheet)
             }
-            images.sort(using: sortOrder)
-
-            // show any tracks
-            for gpxTrack in await helper.gpxTracks {
-                updateTracks(gpx: gpxTrack)
-                // if the appViewModel update isn't done on the main queue the
-                // Discard tracks menu item doesn't see the approriate state.
-                DispatchQueue.main.async {
-                    self.gpxTracks.append(gpxTrack)
-                }
-            }
-            gpxGoodFileNames = await helper.gpxGoodFileNames
-            gpxBadFileNames = await helper.gpxBadFileNames
-
-            // copy sheet info from helper to ViewModel
-            if await !helper.sheetStack.isEmpty {
-                let cvm = ContentViewModel.shared
-                cvm.sheetStack.append(contentsOf: await helper.sheetStack)
-                let sheetInfo = cvm.sheetStack.removeFirst()
-                cvm.sheetMessage = sheetInfo.sheetMessage
-                cvm.sheetError = sheetInfo.sheetError
-                cvm.sheetType = sheetInfo.sheetType
-            }
-
-            // disable paired jpegs if desired
-            if disablePairedJpegs {
-                disableJpegs()
-            }
-            ContentViewModel.shared.showingProgressView = false
         }
+
+        ContentViewModel.shared.showingProgressView = false
     }
 
     /// Check if a given file URL refers to a folder
@@ -127,23 +161,35 @@ extension AppViewModel {
         return foundURLs
     }
 
-    // if a jpg/jpeg image is part of a raw/jpeg pair disable the jpeg by
-    // turning off its isValid flag.
+    // either link raw/jpeg images to each other by storing the URL of the
+    // other half of the pair in the image or disable the jpeg version if
+    // that option is selected
 
-    func disableJpegs() {
-        let imageURLs = images.map{ $0.fileURL }
+    private func linkPairedImages() {
+        @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
+
+        let imageURLs = images.map { $0.fileURL }
 
         for url in imageURLs {
+            // only look at jpeg files
             let pathExtension = url.pathExtension.lowercased()
             guard pathExtension == "jpg" || pathExtension == "jpeg" else { continue }
-            let pathWithoutExtension = url.deletingPathExtension().path
-            for urlToCheck in imageURLs {
-                let checkPathExtension = urlToCheck.pathExtension.lowercased()
-                if checkPathExtension != "jpg" && checkPathExtension != "jpeg" {
-                    if pathWithoutExtension == urlToCheck.deletingPathExtension().path {
-                        self[url].isValid = false
-                    }
+
+            // extract the base URL for comparison
+            let baseURL = url.deletingPathExtension()
+
+            // look for non-xmp files that match baseURL
+            for pairedURL in imageURLs where pairedURL != url
+                && pairedURL.pathExtension.lowercased() != xmpExtension
+                && pairedURL.deletingPathExtension() == baseURL {
+                // url and otherURL are part of an image pair.
+                self[url].pairedID = pairedURL
+                self[pairedURL].pairedID = url
+                // disable the jpeg version if requested
+                if disablePairedJpegs {
+                    self[url].isValid = false
                 }
+                break
             }
         }
     }

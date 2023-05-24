@@ -52,9 +52,8 @@ struct MapPaneView: View {
                                                 span: span)
             let searcher = MKLocalSearch(request: request)
             Task {
-                searcher.start {  response, error in
-                    if error == nil,
-                       let location = response?.mapItems[0].placemark.location {
+                if let response = try? await searcher.start() {
+                    if let location = response.mapItems[0].placemark.location {
                         if vm.selection.isEmpty {
                             // nothing selected, re center the map
                             mapViewModel.currentMapCenter = location.coordinate
@@ -80,3 +79,8 @@ struct MapPaneView_Previews: PreviewProvider {
         MapPaneView()
     }
 }
+
+// I don't think this is correct, but it does get rid of the warning
+// here: if let response = try? await searcher.start() { ... }
+
+extension MKLocalSearch.Response: @unchecked Sendable {}

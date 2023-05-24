@@ -43,7 +43,7 @@ extension GeoTagApp {
                 Button("Locn From Track") { avm.locnFromTrackAction() }
                     .keyboardShortcut("l")
                     .disabled(avm.locnFromTrackDisabled())
-                
+
                 Button("Specify Time Zone…") {
                     ContentViewModel.shared.changeTimeZoneWindow.toggle()
                 }

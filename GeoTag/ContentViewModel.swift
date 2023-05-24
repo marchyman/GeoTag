@@ -24,7 +24,7 @@ final class ContentViewModel: ObservableObject {
     var sheetStack = [SheetInfo]()
     var sheetError: NSError?
     var sheetMessage: String?
-    var saveIssues = [ImageModel.ID : String ]()
+    var saveIssues = [ImageModel.ID: String]()
 
     // Confirmation required optional data
     var confirmationMessage: String?
@@ -37,8 +37,6 @@ final class ContentViewModel: ObservableObject {
     var oldFiles = [URL]()
     var folderSize = 0
     var deletedSize = 0
-
-
 }
 
 // Add a sheet to display
@@ -60,6 +58,21 @@ extension ContentViewModel {
             sheetStack.append(SheetInfo(sheetType: type,
                                         sheetError: error,
                                         sheetMessage: message))
+        }
+    }
+
+    // return true if a sheet of the given type is enqueued
+
+    func hasSheet(type: SheetType) -> Bool {
+        if sheetType == type {
+            return true
+        }
+        return sheetStack.contains { $0.sheetType == type }
+    }
+
+    func addSheetOnce(type: SheetType, error: NSError? = nil, message: String? = nil) {
+        if !hasSheet(type: type) {
+            addSheet(type: type, error: error, message: message)
         }
     }
 }

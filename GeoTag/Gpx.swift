@@ -8,8 +8,14 @@
 import Foundation
 
 /// GPX file processing
+///
+/// An instance of a Gpx is created whenever a gpx file is opened.  The file is parsed and the
+/// instance fully populated with Track information by the URLToImageHelper Actor running in a Task.
+/// Once the instance is fully populated it is never changed.  This occurs before the task ends.
+/// For this reason it is safe to pass fully filed out instances between Actors and the class is marked
+/// as @unchecked Sendable.
 
-class Gpx: NSObject {
+final class Gpx: NSObject, @unchecked Sendable {
     // GPX Parsing errors
     enum GpxParseError: Error {
         case gpxOpenError
@@ -42,7 +48,7 @@ class Gpx: NSObject {
     static let pointTimeFormat = ISO8601DateFormatter()
 
     /// Track points contain (at least) a latitude, longitude, and timestamp
-    struct Point : Equatable {
+    struct Point: Equatable {
         let lat: Double
         let lon: Double
         var ele: Double?
@@ -134,7 +140,7 @@ extension Gpx: XMLParserDelegate {
                 didStartElement elementName: String,
                 namespaceURI: String?,
                 qualifiedName qName: String?,
-                attributes attributeDict: [String : String] = [:]) {
+                attributes attributeDict: [String: String] = [:]) {
         switch parseState {
         case .none:
             // ignore everything until the trk element
@@ -257,7 +263,7 @@ extension Gpx: XMLParserDelegate {
             }
         case "trk":
             if parseState == .trk {
-                parseState = .none;
+                parseState = .none
             } else {
                 parseState = .error
             }

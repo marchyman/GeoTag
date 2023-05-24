@@ -5,7 +5,6 @@
 //  Created by Marco S Hyman on 4/27/19.
 //
 
-
 import Foundation
 import MapKit
 
@@ -44,6 +43,7 @@ extension String {
     /// and ignored if found at the end of a value.
 
     func validateCoord(range: ClosedRange<UInt>, reference: [String]) throws -> Double {
+        // swiftlint:disable:previous cyclomatic_complexity
         var invert = false
         let maxParts = 3            // maximum numeric parts to a coordinate
         let delims = [ "°", "'", "\""]
@@ -52,14 +52,12 @@ extension String {
         // See if the last part of the input string matches one of the
         // given reference values.
         if let ref = subStrings.last?.uppercased() {
-            for c in reference {
-                if c.uppercased() == ref {
-                    if  ref == "S" || ref == "W" {
-                        invert = true
-                    }
-                    subStrings.removeLast()
-                    break
+            for validRef in reference where validRef.uppercased() == ref {
+                if  ref == "S" || ref == "W" {
+                    invert = true
                 }
+                subStrings.removeLast()
+                break
             }
         }
 
@@ -103,11 +101,11 @@ extension String {
 /// extend Double to handle coordinates
 
 extension Double {
-    var minutes:  Self {
+    var minutes: Self {
         return abs((self*3600).truncatingRemainder(dividingBy: 3600) / 60)
     }
 
-    var seconds:  Self {
+    var seconds: Self {
         return abs((self*3600)
                     .truncatingRemainder(dividingBy: 3600)
                     .truncatingRemainder(dividingBy: 60))
@@ -132,7 +130,7 @@ extension Double {
 /// extend CLLocationCoordinate2D to conform to Equatable
 
 extension CLLocationCoordinate2D: Equatable {
-    static public func ==(lhs: Self, rhs: Self) -> Bool {
+    static public func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 }

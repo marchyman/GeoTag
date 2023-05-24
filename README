@@ -16,29 +16,35 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can use GeoTag
 version 4.15.
 
-## GeoTag version 5 (5.0)
+## Version 5.1
 
-Grab it here: <https://www.snafu.org/GeoTag/GeoTag-5.0.dmg>
+### Updates
 
-### Version 5 Updates
+* Add option to always create sidecar (XMP) files when updating images.
+* Update both images of a raw/jpeg pair when the location of one of the
+  paired images changes. This only applies if both images of the pair were
+  opened and enabled or if updates are written to a sidecar file.
+* Add "Report a bug..." to the help menu.  Selecting this will the GeoTag
+  github issues page in your browser.
+* ExifTool version 12.58
 
-* Set elevation/altitude when assigning locations from track logs.
+### Bug Fixes
 
-* User option to enable/disable the jpeg part of a raw/jpeg pair
+* Drastic performance improvement when opening large number of images
+* Do not clear window changed indicator on save errors
+* GPS Timestamp written to sidecar files sometimes included a timezone
+  instead of being a UTC/GMT relative timestamp.
+* Crash that could occur when opening the Setting window fixed
+* Sidecar file backups would sometimes fail.
+* image thumbnail could fail to show until the selection changed
 
-* User option to add a finder tag to updated images.
+### Known bugs
 
-* User option to show/hide ignored files
-
-* User option to show/hide pins for all selected images
-
-* The function to interpolate image location was removed.
-
-* (internal) better performance using structured concurency where possible
-
-* (internal) Exiftool version 12.55
-
-* (internal) User Interface code re-written to use SwiftUI
+* performance is still an issue.  When opening 1200 images, for example,
+  it takes 15-20 seconds on a 3.6 GHz 8-Core Intel Core i9.  When selecting
+  an image from the table it takes 2-3 seconds before the selected image is
+  rendered.  The performance issue is related to number of images.  The
+  selection delay is barely noticeable when 120 images are open.
 
 ### See the file named *History* for earlier changes and bug fixes
 

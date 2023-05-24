@@ -22,7 +22,6 @@ struct Exiftool {
         case runFailed(code: Int)
     }
 
-
     // URL of the embedded version of ExifTool
     var url: URL
 
@@ -41,9 +40,9 @@ struct Exiftool {
     /// in the file containing the passed image
     /// - Parameter image: the image to update.  image contains the URL
     ///     of the original file plus the assigned location.
+    /// - Parameter timeZone: time zone used to calculate the GPS timestamp
 
-    func update(from image: ImageModel, timeZone: TimeZone?) async throws {
-
+    func update(from sandbox: Sandbox, timeZone: TimeZone?) async throws {
         // ExifTool argument names
         var latArg = "-GPSLatitude="
         var lonArg = "-GPSLongitude="
@@ -57,13 +56,15 @@ struct Exiftool {
         var gpsTArg = "-GPSTimeStamp="      // for non XMP files
         var gpsDTArg = "-GPSDateTime="      // for XMP files
 
+        var usingSidecar = false
+
         // Build ExifTool latitude, longitude, and elevation argument values
-        if let location = image.location {
+        if let location = sandbox.image.location {
             latArg += "\(location.latitude)"
             latRefArg += "\(location.latitude)"
             lonArg += "\(location.longitude)"
             lonRefArg += "\(location.longitude)"
-            if let ele = image.elevation {
+            if let ele = sandbox.image.elevation {
                 if ele >= 0 {
                     eleArg += "\(ele)"
                     eleRefArg += "0"
@@ -75,15 +76,17 @@ struct Exiftool {
         }
 
         // path to image (or XMP) file to update.
-        var path = image.sandboxURL.path
-        if let xmp = image.sandboxXmpURL {
-            path = xmp.path
+        var path = sandbox.imageURL.path
+        if sandbox.image.sidecarExists {
+            path = sandbox.sidecarURL.path
+            usingSidecar = true
         }
 
         let exiftool = Process()
+        let pipe = Pipe()
         exiftool.standardOutput = FileHandle.nullDevice
-        exiftool.standardError = FileHandle.nullDevice
-        exiftool.launchPath = url.path
+        exiftool.standardError = pipe
+        exiftool.executableURL = url
         exiftool.arguments = ["-q",
                               "-m",
                               "-overwrite_original_in_place",
@@ -95,37 +98,40 @@ struct Exiftool {
         }
 
         if updateGPSTimestamp {
-            // calculate the gps timestamp and update args
-            let gpsTimestamp = gpsTimestamp(for: image, in: timeZone)
-            gpsDArg += "\(gpsTimestamp)"
-            gpsTArg += "\(gpsTimestamp)"
-            gpsDTArg += "\(gpsTimestamp)"
+            // calculate the gps timestamp
+            let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone)
 
             // args vary depending upon saving to an image file or a GPX file
-            if image.sandboxXmpURL == nil {
-                exiftool.arguments! += [gpsDArg, gpsTArg]
-            } else {
+            if usingSidecar {
+                gpsDTArg += gpsTimestamp
                 exiftool.arguments?.append(gpsDTArg)
+            } else {
+                let dtArgs = gpsTimestamp.split(separator: " ")
+                gpsDArg += dtArgs[0]
+                gpsTArg += dtArgs[1]
+                exiftool.arguments? += [gpsDArg, gpsTArg]
             }
         }
 
         // add args to update date/time if changed
-        if image.dateTimeCreated != image.originalDateTimeCreated {
-            let dtoArg = "-DateTimeOriginal=" + (image.dateTimeCreated ?? "")
-            let cdArg = "-CreateDate=" + (image.dateTimeCreated ?? "")
+        if sandbox.image.dateTimeCreated != sandbox.image.originalDateTimeCreated {
+            let dtoArg = "-DateTimeOriginal=" + (sandbox.image.dateTimeCreated ?? "")
+            let cdArg = "-CreateDate=" + (sandbox.image.dateTimeCreated ?? "")
             exiftool.arguments! += [dtoArg, cdArg]
         }
         exiftool.arguments! += ["-GPSStatus=", path]
-        // dump(exiftool.arguments!)
-        exiftool.launch()
+//        dump(exiftool.arguments!)
+        try exiftool.run()
         exiftool.waitUntilExit()
+        printFrom(pipe: pipe)
         if exiftool.terminationStatus != 0 {
             throw ExiftoolError.runFailed(code: Int(exiftool.terminationStatus))
         }
     }
 
     // convert the dateTimeCreated string to a string with time zone to
-    // update GPS timestamp fields.  Return an empty string
+    // update GPS timestamp fields.  Return an empty string if there is
+    // no timestamp or formatting failed.
 
     func gpsTimestamp(for image: ImageModel,
                       in timeZone: TimeZone?) -> String {
@@ -133,13 +139,13 @@ struct Exiftool {
             dateFormatter.dateFormat = ImageModel.dateFormat
             dateFormatter.timeZone = timeZone
             if let date = dateFormatter.date(from: dateTime) {
-                dateFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss xxx"
-                return dateFormatter.string(from: date)
+                dateFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+                dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+                return dateFormatter.string(from: date) + "Z"
             }
         }
         return ""
     }
-
 
     // File Type codes for the file types that exiftool can write
     //
@@ -154,7 +160,7 @@ struct Exiftool {
         "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
         "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", // "PNG",
         "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
-        "RWL", "SR2", "SRW","THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
+        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
 
     /// Check if exiftool supports writing to a type of file
     /// - Parameter for: a URL of a file to check
@@ -163,26 +169,52 @@ struct Exiftool {
     func fileTypeIsWritable(for file: URL) -> Bool {
         let exiftool = Process()
         let pipe = Pipe()
+        let err = Pipe()
         exiftool.standardOutput = pipe
-        exiftool.standardError = FileHandle.nullDevice
-        exiftool.launchPath = url.path
+        exiftool.standardError = err
+        exiftool.executableURL = url
         exiftool.arguments = [ "-m", "-q", "-S", "-fast3", "-FileType", file.path]
-        exiftool.launch()
-        exiftool.waitUntilExit()
-        if exiftool.terminationStatus == 0 {
-            let data = pipe.fileHandleForReading.availableData
-            if data.count > 0,
-               let str = String(data: data, encoding: String.Encoding.utf8) {
-                let trimmed = str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-                let strParts = trimmed.components(separatedBy: CharacterSet.whitespaces)
-                if let fileType = strParts.last {
-                    return writableTypes.contains(fileType)
+        do {
+            try exiftool.run()
+            exiftool.waitUntilExit()
+            printFrom(pipe: err)
+            if exiftool.terminationStatus == 0 {
+                let data = pipe.fileHandleForReading.availableData
+                if data.count > 0,
+                   let str = String(data: data, encoding: String.Encoding.utf8) {
+                    let trimmed = str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                    let strParts = trimmed.components(separatedBy: CharacterSet.whitespaces)
+                    if let fileType = strParts.last {
+                        return writableTypes.contains(fileType)
+                    }
                 }
             }
+        } catch {
+            print("fileTypeIsWritable exiftool run error")
         }
         return false
     }
-    
+
+    /// create a sidecar file from an image file
+
+    func makeSidecar(from sandbox: Sandbox) {
+        let exiftool = Process()
+        let err = Pipe()
+        exiftool.standardOutput = FileHandle.nullDevice
+        exiftool.standardError = err
+        exiftool.executableURL = url
+        exiftool.arguments = [ "-tagsfromfile",
+                               sandbox.imageURL.path,
+                               sandbox.sidecarURL.path ]
+        do {
+            try exiftool.run()
+        } catch {
+            print("makeSidecar exiftool run error")
+        }
+        exiftool.waitUntilExit()
+        printFrom(pipe: err)
+    }
+
     /// return selected metadate from a file
     /// - Parameter xmp: URL of XMP file
     /// - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)
@@ -190,20 +222,24 @@ struct Exiftool {
     /// Apple's ImageIO functions can not extract metadata from XMP sidecar
     /// files.  ExifTool is used for that purpose.
 
-    func metadataFrom(xmp: URL) -> (dto: String,
-                                    valid: Bool,
-                                    location: Coords,
-                                    elevation: Double?) {
+    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool, location: Coords, elevation: Double?) {
+        // swiftlint:disable:previous large_tuple
         let exiftool = Process()
         let pipe = Pipe()
+        let err = Pipe()
         exiftool.standardOutput = pipe
-        exiftool.standardError = FileHandle.nullDevice
-        exiftool.launchPath = url.path
+        exiftool.standardError = err
+        exiftool.executableURL = url
         exiftool.arguments = [ "-args", "-c", "%.15f", "-createdate",
                                "-gpsstatus", "-gpslatitude", "-gpslongitude",
                                "-gpsaltitude", xmp.path ]
-        exiftool.launch()
+        do {
+            try exiftool.run()
+        } catch {
+            print("metadataFrom exiftool run error")
+        }
         exiftool.waitUntilExit()
+        printFrom(pipe: err)
 
         var createDate = ""
         var location = Coords()
@@ -270,4 +306,11 @@ struct Exiftool {
         return (createDate, validGPS, location, elevation)
     }
 
+    private func printFrom(pipe: Pipe) {
+        let data = pipe.fileHandleForReading.availableData
+        if data.count > 0,
+           let string = String(data: data, encoding: String.Encoding.utf8) {
+            print("Exiftool: \(string)")
+        }
+    }
 }

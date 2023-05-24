@@ -10,13 +10,22 @@ import MapKit
 
 // Data about an image that may have its geo-location metadata changed.
 
-struct ImageModel: Identifiable {
+final class ImageModel: Identifiable {
 
     // Identifying data.
     let fileURL: URL
     var id: URL {
         fileURL
     }
+
+    // URL of related sidecar file (if one exists) and an NSFilePresenter
+    // to access the sidecar/XMP file
+    let sidecarURL: URL
+    let xmpPresenter: XmpPresenter
+
+    // Optional ID of a paired file.  Used when both raw and jpeg versions
+    // of a raw/jpeg pair are opened.
+    var pairedID: URL?
 
     // is this an image file or something else?
     var isValid = false
@@ -39,56 +48,44 @@ struct ImageModel: Identifiable {
                     elevation != originalElevation)
     }
 
-    // Sandbox references to this image and any related sidecar file
-    let sandboxURL: URL
-    let sandboxXmpURL: URL?
-    let xmpURL: URL
-    let xmpFile: XmpFile
+    // true if a sidexare file exists for this image
+    var sidecarExists: Bool {
+        FileManager.default.fileExists(atPath: sidecarURL.path)
+    }
 
     // The thumbnail image displayed when and image is selected for editing
-    // Thumbnails are not be created until it is needed.  Once created
-    // it will be saved here.
     var thumbnail: NSImage?
 
     // initialization of image data given its URL.
     init(imageURL: URL, forPreview: Bool = false) throws {
         fileURL = imageURL
-        if forPreview {
-            // these fields are unused when creating instances for preview
-            // any bogus value will work
-            sandboxURL = imageURL
-            xmpURL = imageURL
-            xmpFile = XmpFile(url: imageURL)
-            sandboxXmpURL = nil
+        sidecarURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
+        xmpPresenter = XmpPresenter(for: fileURL)
+
+        // shortcut initialization when creating an image for preview
+        // or if the file type is not writable by Exiftool
+        guard !forPreview && Exiftool.helper.fileTypeIsWritable(for: fileURL) else {
             return
         }
-        try sandboxURL = ImageModel.createSandboxUrl(fileURL: fileURL)
-        xmpURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
-        xmpFile = XmpFile(url: sandboxURL)
-        try sandboxXmpURL = ImageModel.createSandboxXmpURL(fileURL: fileURL,
-                                                           xmpURL: xmpURL,
-                                                           xmpFile: xmpFile)
 
-        // verify this file type us writable with Exiftool and load image
-        // metadata if we can.  If not mark it as not a valid image file.
+        // Load image metadata if we can.  If not mark it as not a valid image
+        // even though Exitool wouldn't have problems writing the file.
+        do {
+            isValid = try loadImageMetadata()
+        } catch let error {
+            throw error
+        }
 
-        if Exiftool.helper.fileTypeIsWritable(for: fileURL) {
-            do {
-                isValid = try loadImageMetadata()
-            } catch let error {
-                isValid = false
-                throw error
-            }
-            if isValid, let sandboxXmpURL,
-               FileManager.default.fileExists(atPath: xmpURL.path) {
-                loadXmpMetadata(sandboxXmpURL)
-            }
+        // If a sidecar file exists read metadata from it as sidecar files
+        // take precidence.
+        if isValid && sidecarExists {
+            loadXmpMetadata()
         }
     }
 
     // reset the timestamp and location to their initial values.  Initial
     // values are updated whenever an image is saved.
-    mutating func revert() {
+    func revert() {
         dateTimeCreated = originalDateTimeCreated
         location = originalLocation
         elevation = originalElevation
@@ -101,7 +98,7 @@ struct ImageModel: Identifiable {
     /// do not exist the file is assumed to be a non-image file
 
     private
-    mutating func loadImageMetadata() throws -> Bool {
+    func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
             enum ImageError: Error {
                 case cgSourceError
@@ -169,30 +166,26 @@ struct ImageModel: Identifiable {
         return coords
     }
 
-    /// obtain metadata from XMP file
-    /// - Parameter xmp: URL of XMP file for an image
+    /// obtain metadata from a sidecar file.
     ///
-    /// Extract desired metadata from an XMP file using ExifTool.  Apple
-    /// ImageIO functions do not work with XMP sidecar files.
+    /// Extract desired metadata from an XMP file using ExifTool.  Apple ImageIO functions
+    /// do not work with XMP sidecar files.  The sidecar file is assumed to exist when this
+    /// function is called/
 
     private
-    mutating func loadXmpMetadata(_ xmp: URL) {
-        var errorCode: NSError?
-        let coordinator = NSFileCoordinator(filePresenter: xmpFile)
-        coordinator.coordinate(readingItemAt: xmp,
-                               options: NSFileCoordinator.ReadingOptions.resolvesSymbolicLink,
-                               error: &errorCode) { url in
-            let results = Exiftool.helper.metadataFrom(xmp: url)
-            if results.dto != "" {
-                dateTimeCreated = results.dto
-                originalDateTimeCreated = results.dto
-            }
-            if results.valid {
-                location = results.location
-                originalLocation = location
-                elevation = results.elevation
-                originalElevation = elevation
-            }
+    func loadXmpMetadata() {
+        NSFileCoordinator.addFilePresenter(xmpPresenter)
+        let results = Exiftool.helper.metadataFrom(xmp: sidecarURL)
+        NSFileCoordinator.removeFilePresenter(xmpPresenter)
+        if results.dto != "" {
+            dateTimeCreated = results.dto
+            originalDateTimeCreated = results.dto
+        }
+        if results.valid {
+            location = results.location
+            originalLocation = location
+            elevation = results.elevation
+            originalElevation = elevation
         }
     }
 
@@ -204,11 +197,11 @@ extension ImageModel {
 
     // create a model for SwiftUI preview
 
-    init(imageURL: URL,
-         validImage: Bool,
-         dateTimeCreated: String,
-         latitude: Double?,
-         longitude: Double?) {
+    convenience init(imageURL: URL,
+                     validImage: Bool,
+                     dateTimeCreated: String,
+                     latitude: Double?,
+                     longitude: Double?) {
         do {
             try self.init(imageURL: imageURL, forPreview: true)
         } catch {
@@ -224,7 +217,7 @@ extension ImageModel {
     // create an instance of an ImageModel when one is needed but there
     // is otherwise no instance to return.
 
-    init() {
+    convenience init() {
         do {
             try self.init(imageURL: URL(filePath: ""), forPreview: true)
         } catch {
@@ -252,6 +245,13 @@ extension URL: Comparable {
         lhs.path < rhs.path
     }
 }
+
+// ImageModel is sendable.  For the purposes of ImageModel NSImage can
+// be treated as sendable. ImageModel is marked as unchecked to get rid
+// of the pairedID warning.
+
+extension ImageModel: @unchecked Sendable {}
+extension NSImage: @unchecked Sendable {}
 
 // Date formatter used to put timestamps in the form used by exiftool
 

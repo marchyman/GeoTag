@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.83';
+$VERSION = '2.84';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -417,6 +417,18 @@ my %channelLabel = (
     0x1000e => 'Discrete_14',
     0x1000f => 'Discrete_15',
     0x1ffff => 'Discrete_65535',
+);
+
+my %qtFlags = ( #12
+    0 => 'undef',       22 => 'unsigned int',   71 => 'float[2] size',
+    1 => 'UTF-8',       23 => 'float',          72 => 'float[4] rect',
+    2 => 'UTF-16',      24 => 'double',         74 => 'int64s',
+    3 => 'ShiftJIS',    27 => 'BMP',            75 => 'int8u',
+    4 => 'UTF-8 sort',  28 => 'QT atom',        76 => 'int16u',
+    5 => 'UTF-16 sort', 65 => 'int8s',          77 => 'int32u',
+    13 => 'JPEG',       66 => 'int16s',         78 => 'int64u',
+    14 => 'PNG',        67 => 'int32s',         79 => 'double[3][3]',
+    21 => 'signed int', 70 => 'float[2] point',
 );
 
 # properties which don't get inherited from the parent
@@ -1159,7 +1171,10 @@ my %eeBox2 = (
         },
         {
             Name => 'GarminGPS',
-            Condition => '$$valPt=~/^\x9b\x63\x0f\x8d\x63\x74\x40\xec\x82\x04\xbc\x5f\xf5\x09\x17\x28/ and $$self{OPTIONS}{ExtractEmbedded}',
+            Condition => q{
+                $$valPt=~/^\x9b\x63\x0f\x8d\x63\x74\x40\xec\x82\x04\xbc\x5f\xf5\x09\x17\x28/ and
+                $$self{OPTIONS}{ExtractEmbedded}
+            },
             SubDirectory => {
                 TagTable => 'Image::ExifTool::QuickTime::Stream',
                 ProcessProc => \&ProcessGarminGPS,
@@ -1961,7 +1976,7 @@ my %eeBox2 = (
             Name => 'SanyoMOV',
             Condition => q{
                 $$valPt =~ /^SANYO DIGITAL CAMERA\0/ and
-                $self->{VALUE}->{FileType} eq "MOV"
+                $$self{FileType} eq "MOV"
             },
             SubDirectory => {
                 TagTable => 'Image::ExifTool::Sanyo::MOV',
@@ -1972,7 +1987,7 @@ my %eeBox2 = (
             Name => 'SanyoMP4',
             Condition => q{
                 $$valPt =~ /^SANYO DIGITAL CAMERA\0/ and
-                $self->{VALUE}->{FileType} eq "MP4"
+                $$self{FileType} eq "MP4"
             },
             SubDirectory => {
                 TagTable => 'Image::ExifTool::Sanyo::MP4',
@@ -7146,7 +7161,7 @@ my %eeBox2 = (
             $$self{AudioFormat} = $val;
             return undef unless $val =~ /^[\w ]{4}$/i;
             # check for protected audio format
-            $self->OverrideFileType('M4P') if $val eq 'drms' and $$self{VALUE}{FileType} eq 'M4A';
+            $self->OverrideFileType('M4P') if $val eq 'drms' and $$self{FileType} eq 'M4A';
             return $val;
         },
         # see this link for print conversions (not complete):
@@ -9656,6 +9671,7 @@ ItemID:         foreach $id (keys %$items) {
                             }
                         }
                         $langInfo or $langInfo = $tagInfo;
+                        my $str = $qtFlags{$flags} ? " ($qtFlags{$flags})" : '';
                         $et->VerboseInfo($tag, $langInfo,
                             Value   => ref $value ? $$value : $value,
                             DataPt  => \$val,
@@ -9664,7 +9680,7 @@ ItemID:         foreach $id (keys %$items) {
                             Size    => $len,
                             Format  => $format,
                             Index   => $index,
-                            Extra   => sprintf(", Type='${type}', Flags=0x%x, Lang=0x%.4x",$flags,$lang),
+                            Extra   => sprintf(", Type='${type}', Flags=0x%x%s, Lang=0x%.4x",$flags,$str,$lang),
                         ) if $verbose;
                         # use "Keys" in path instead of ItemList if this was defined by a Keys tag
                         my $isKey = $$tagInfo{Groups} && $$tagInfo{Groups}{1} && $$tagInfo{Groups}{1} eq 'Keys';
@@ -9793,7 +9809,7 @@ ItemID:         foreach $id (keys %$items) {
         ++$index if defined $index;
     }
     # tweak file type based on track content ("iso*" and "dash" ftyp only)
-    if ($topLevel and $$et{VALUE}{FileType} and $$et{VALUE}{FileType} eq 'MP4' and
+    if ($topLevel and $$et{FileType} and $$et{FileType} eq 'MP4' and
         $$et{save_ftyp} and $$et{HasHandler} and $$et{save_ftyp} =~ /^(iso|dash)/ and
         $$et{HasHandler}{soun} and not $$et{HasHandler}{vide})
     {

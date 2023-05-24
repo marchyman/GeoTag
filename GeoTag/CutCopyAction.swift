@@ -38,4 +38,3 @@ extension AppViewModel {
         }
     }
 }
-

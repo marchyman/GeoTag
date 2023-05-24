@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 12/21/22.
 //
 
+import Combine
 import SwiftUI
 
 // make this an observable object as otherwise updates to dividerPosition
@@ -42,7 +43,7 @@ struct DividerView: View {
         Divider()
             .frame(minHeight: 5)
             .onHover { isHovered in
-                if (isHovered) {
+                if isHovered {
                     NSCursor.resizeUpDown.push()
                 } else {
                     NSCursor.pop()
@@ -73,8 +74,8 @@ struct DividerView: View {
     }
 }
 
-//struct DividerView_Previews: PreviewProvider {
+// struct DividerView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        DividerView()
 //    }
-//}
+// }

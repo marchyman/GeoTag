@@ -28,6 +28,10 @@ extension AppViewModel {
 
         self[id].location = location
         self[id].elevation = elevation
+        if let pairedID = self[id].pairedID, self[pairedID].isValid {
+            self[pairedID].location = location
+            self[pairedID].elevation = elevation
+        }
         mainWindow?.isDocumentEdited = documentedEdited
     }
 
@@ -86,7 +90,7 @@ extension AppViewModel {
         }
         if newOverlay {
             MapViewModel.shared.mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
-                                                           longitudeDelta:  maxlon - minlon)
+                                                           longitudeDelta: maxlon - minlon)
             MapViewModel.shared.currentMapCenter = Coords(latitude: (minlat + maxlat)/2,
                                                           longitude: (minlon + maxlon)/2)
             MapViewModel.shared.refreshTracks = true

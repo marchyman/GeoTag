@@ -54,28 +54,30 @@ extension AppViewModel {
             let tagName = tag.isEmpty ? "GeoTag" : tag
 
             await withTaskGroup(of: SaveStatus.self) { group in
-                for image in imagesToSave {
-                    // only process images that have changed
-                    if image.changed {
-                        group.addTask { [self] in
-                            var errorDescription: String? = nil
-                            do {
-                                if makeBackup {
-                                    try await image.makeBackupFile(backupFolder: url!)
-                                }
-                                try await image.saveChanges(timeZone: timeZone)
-                                if tagFiles {
-                                    try await image.setTag(name: tagName)
-                                }
-                            } catch {
-                                errorDescription = error.localizedDescription
+                for image in imagesToSave where image.changed {
+                    group.addTask { [self] in
+                        var errorDescription: String?
+                        // saving must occur in the app sandbox.
+                        let sandbox: Sandbox
+                        do {
+                            sandbox = try Sandbox(image)
+                            if makeBackup {
+                                try await sandbox.makeBackupFile(backupFolder: url!)
                             }
-                            return SaveStatus(id: image.id,
-                                              dateTimeCreated: image.dateTimeCreated,
-                                              location: image.location,
-                                              elevation: image.elevation,
-                                              error: errorDescription)
+                            try await sandbox.saveChanges(timeZone: timeZone,
+                                                          createSidecarFile: createSidecarFile)
+                            if tagFiles {
+                                try await sandbox.setTag(name: tagName)
+                            }
+
+                        } catch {
+                            errorDescription = error.localizedDescription
                         }
+                        return SaveStatus(id: image.id,
+                                          dateTimeCreated: image.dateTimeCreated,
+                                          location: image.location,
+                                          elevation: image.elevation,
+                                          error: errorDescription)
                     }
                 }
 
@@ -93,10 +95,10 @@ extension AppViewModel {
             }
 
             if !cvm.saveIssues.isEmpty {
+                mainWindow?.isDocumentEdited = true
                 cvm.addSheet(type: .saveErrorSheet)
             }
             saveInProgress = false
         }
     }
 }
-

@@ -11,7 +11,7 @@ import SwiftUI
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
     @ObservedObject var contentViewModel = ContentViewModel.shared
     @Environment(\.openWindow) var openWindow
 
@@ -37,14 +37,16 @@ struct ContentView: View {
         // startup
         .onAppear {
             // check for a backupURL
-            if !vm.doNotBackup && vm.saveBookmark == Data() {
+            if !avm.doNotBackup && avm.saveBookmark == Data() {
                 contentViewModel.addSheet(type: .noBackupFolderSheet)
             }
         }
 
         // drop destination
-        .dropDestination(for: URL.self) {items, location in
-            vm.prepareForEdit(inputURLs: items)
+        .dropDestination(for: URL.self) {items, _ in
+            Task {
+                await avm.prepareForEdit(inputURLs: items)
+            }
             return true
         }
 
@@ -76,15 +78,16 @@ struct ContentView: View {
         // Alert: Remove Old Backup files
         .alert("Delete old backup files?", isPresented: $removeOldFiles) {
             Button("Delete", role: .destructive) {
-                vm.remove(filesToRemove: contentViewModel.oldFiles)
+                avm.remove(filesToRemove: contentViewModel.oldFiles)
             }
             Button("Cancel", role: .cancel) { }
                 .keyboardShortcut(.defaultAction)
         } message: {
+            // swiftlint:disable line_length
             Text("""
                  Your current backup/save folder
 
-                     \(vm.backupURL != nil ? vm.backupURL!.path : "unknown")
+                     \(avm.backupURL != nil ? avm.backupURL!.path : "unknown")
 
                  is using \(contentViewModel.folderSize / 1_000_000) MB to store backup files.
 
@@ -92,6 +95,7 @@ struct ContentView: View {
 
                  Would you like to remove those \(contentViewModel.oldFiles.count) backup files?
                  """)
+            // swiftlint:enable line_length
         }
         .link($contentViewModel.removeOldFiles, with: $removeOldFiles)
     }
@@ -109,7 +113,6 @@ struct ContentView: View {
             contentViewModel.sheetType = sheetInfo.sheetType
         }
     }
-
 
 }
 

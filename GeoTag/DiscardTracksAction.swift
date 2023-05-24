@@ -17,7 +17,7 @@ extension AppViewModel {
 
     // clear out all track related data and trigger a refresh which will
     // remove any existing tracks from the map.
-    
+
     func discardTracksAction() {
         gpxTracks = []
         MapViewModel.shared.mapLines = []
@@ -25,4 +25,3 @@ extension AppViewModel {
         MapViewModel.shared.refreshTracks = true
     }
 }
-

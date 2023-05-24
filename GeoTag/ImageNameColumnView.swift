@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct ImageNameColumnView: View {
-    @ObservedObject var avm: AppViewModel
-    let id: ImageModel.ID
+    let image: ImageModel
+    let selected: Bool
 
     var body: some View {
-        Text(avm[id].name + ((avm[id].sandboxXmpURL == nil) ? "" : "*"))
+        Text(image.name + (image.sidecarExists ? "*" : ""))
             .fontWeight(textWeight())
             .foregroundColor(textColor())
-            .help("Full path: \(avm[id].fileURL.path)")
+            .help("Full path: \(image.fileURL.path)")
     }
 
     @MainActor
     func textColor() -> Color {
-        if avm[id].isValid {
-            if id == avm.mostSelected {
+        if image.isValid {
+            if selected {
                 return .mostSelected
             }
             return .primary
@@ -31,7 +31,7 @@ struct ImageNameColumnView: View {
 
     @MainActor
     func textWeight() -> Font.Weight {
-        id == avm.mostSelected ? .semibold : .regular
+        selected ? .semibold : .regular
     }
 }
 
@@ -44,7 +44,6 @@ struct ImageNameColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        let avm = AppViewModel(images: [image])
-        ImageNameColumnView(avm: avm, id: image.id)
+        ImageNameColumnView(image: image, selected: false)
     }
 }

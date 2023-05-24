@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// swiftlint:disable line_length
+
 struct SettingsView: View {
     @EnvironmentObject var avm: AppViewModel
     @ObservedObject var mvm = MapViewModel.shared
@@ -18,12 +20,6 @@ struct SettingsView: View {
     // Used in Exiftool
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
-
-    @State private var backupURL: URL?
-
-    init(backupURL: URL?) {
-        _backupURL = State(initialValue: backupURL)
-    }
 
     var body: some View {
         VStack {
@@ -45,16 +41,21 @@ struct SettingsView: View {
                             .padding(.bottom)
                     } else {
                         LabeledContent("Backup folder:") {
-                            PathView(url: $backupURL)
+                            PathView(url: $avm.backupURL)
                                 .frame(width: 280)
-                                .padding(.bottom)
-                                .onChange(of: backupURL) { url in
-                                    avm.backupURL = url
-                                }
                         }
+                        .padding(.bottom)
                         .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
                     }
                 }
+
+                // Create Sidecar (XMP) files
+                LabeledContent("Create Sidecar (XMP) files:") {
+                    Toggle("Create Sidecar (XMP) files", isOn: $avm.createSidecarFile)
+                        .labelsHidden()
+                }
+                .padding([.bottom, .horizontal])
+                .help("Checking this box will result in creation of a sidecar (XMP) file for updated image files if one does not exist.  Updates are then written to the sidecar file.")
 
                 // Coordinate display configuration
                 Picker("Choose a coordinate format:",
@@ -74,7 +75,7 @@ struct SettingsView: View {
                 Group {
                     ColorPicker("GPS Track Color:",
                                 selection: $mvm.trackColor)
-                        .onChange(of: mvm.trackColor.rawValue) { color in
+                        .onChange(of: mvm.trackColor.rawValue) { _ in
                             mvm.refreshTracks = true
                         }
                         .padding(.horizontal)
@@ -145,9 +146,11 @@ struct SettingsView: View {
     }
 }
 
+// swiftlint:enable line_length
+
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(backupURL: nil)
+        SettingsView()
             .environmentObject(AppViewModel())
     }
 }

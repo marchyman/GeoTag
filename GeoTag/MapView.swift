@@ -7,7 +7,6 @@
 import SwiftUI
 import MapKit
 
-
 // MKMapView exposed to SwiftUI
 //
 // swiftui MapView does not yet do everthing needed by GeoTag.
@@ -44,8 +43,8 @@ struct MapView: NSViewRepresentable {
         // re-center the map
         if mvm.reCenter {
             DispatchQueue.main.async {
-                view.setCenter(mvm.currentMapCenter, animated: false)
                 mvm.reCenter = false
+                view.setCenter(mvm.currentMapCenter, animated: false)
             }
         }
     }
@@ -80,7 +79,7 @@ struct MapView: NSViewRepresentable {
             }
             mvm.mainPin?.coordinate = location
 
-            // Add an annotation for mainPin since the location has changed.
+            // Add an annotation for mainPin since a location exists.
             // Testing shows that this replaces any existing annotation for
             // the pin.
             view.addAnnotation(mvm.mainPin!)
@@ -96,7 +95,6 @@ struct MapView: NSViewRepresentable {
             mvm.mainPin = nil
         }
     }
-
 
     // create pins for other selected items that have a location.  Their
     // title also names the image that represents the pin on the map.
@@ -141,7 +139,9 @@ struct MapView: NSViewRepresentable {
             }
 
             oldAnnotations = view.annotations.filter {
+                // swiftlint:disable force_cast
                 known.insert($0 as! MKPointAnnotation).inserted
+                // swiftlint:enable force_cast
             }
         }
         if !oldAnnotations.isEmpty {
@@ -179,17 +179,17 @@ extension MapView {
 
     class Coordinator: NSObject, MKMapViewDelegate {
         @ObservedObject var mvm = MapViewModel.shared
-        @ObservedObject var vm: AppViewModel
+        @ObservedObject var avm: AppViewModel
 
         init(vm: AppViewModel) {
-            self.vm = vm
+            self.avm = vm
         }
 
         // view for annnotation.
 
         func mapView(_ mapView: MKMapView,
                      viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            if (annotation is MKUserLocation) {
+            if annotation is MKUserLocation {
                 return nil
             }
             let id = annotation.title?.flatMap { $0 } ?? "unknown"
@@ -200,7 +200,6 @@ extension MapView {
             }
             return view
         }
-
 
         // track mapView center coordinate
 
@@ -217,15 +216,14 @@ extension MapView {
                      annotationView view: MKAnnotationView,
                      didChange newState: MKAnnotationView.DragState,
                      fromOldState oldState: MKAnnotationView.DragState) {
-            if let id = vm.mostSelected {
+            if let id = avm.mostSelected {
                 switch newState {
                 case .starting:
                     view.image = NSImage(named: "DragPin")
-                    break
                 case .ending:
                     view.image = NSImage(named: "Pin")
-                    vm.update(id: id, location: view.annotation!.coordinate)
-                    vm.undoManager.setActionName("set location (drag)")
+                    avm.update(id: id, location: view.annotation!.coordinate)
+                    avm.undoManager.setActionName("set location (drag)")
                 default:
                     break
                 }
@@ -233,11 +231,13 @@ extension MapView {
         }
 
         // draw lines on the map
-        
+
         @MainActor
         func mapView(_ mapview: MKMapView,
                      rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            // swiftlint:disable force_cast
             let polyline = overlay as! MKPolyline
+            // swiftlint:enable force_cast
             if mvm.mapLines.contains(polyline) {
                 let renderer = MKPolylineRenderer(polyline: polyline)
                 renderer.strokeColor = NSColor(mvm.trackColor)
@@ -250,7 +250,7 @@ extension MapView {
 }
 
 #if DEBUG
-struct MapView_Previews : PreviewProvider {
+struct MapView_Previews: PreviewProvider {
     static var previews: some View {
         MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
                                                longitude: -122.4381),
