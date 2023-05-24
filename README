@@ -16,7 +16,7 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can use GeoTag
 version 4.15.
 
-## Version 5.1
+## Version 5.1 (not yet released)
 
 ### Updates
 
@@ -24,19 +24,19 @@ version 4.15.
 * Update both images of a raw/jpeg pair when the location of one of the
   paired images changes. This only applies if both images of the pair were
   opened and enabled or if updates are written to a sidecar file.
-* Add "Report a bug..." to the help menu.  Selecting this will the GeoTag
+* Add "Report a bug..." to the help menu.  Selecting this will open the GeoTag
   github issues page in your browser.
 * ExifTool version 12.58
 
 ### Bug Fixes
 
-* Drastic performance improvement when opening large number of images
-* Do not clear window changed indicator on save errors
+* Performance improvement when opening large number of images.
+* Do not clear window changed indicator when there are save errors.
 * GPS Timestamp written to sidecar files sometimes included a timezone
   instead of being a UTC/GMT relative timestamp.
-* Crash that could occur when opening the Setting window fixed
+* Crash that could occur when opening the Setting window.
 * Sidecar file backups would sometimes fail.
-* image thumbnail could fail to show until the selection changed
+* image thumbnail could fail to show until the selection changed.
 
 ### Known bugs
 
