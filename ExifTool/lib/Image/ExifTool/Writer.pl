@@ -1302,6 +1302,7 @@ sub SetNewValuesFromFile($$;@)
         MDItemTags      => $$options{MDItemTags},
         MissingTagValue => $$options{MissingTagValue},
         NoPDFList       => $$options{NoPDFList},
+        NoWarning       => $$options{NoWarning},
         Password        => $$options{Password},
         PrintConv       => $$options{PrintConv},
         QuickTimeUTC    => $$options{QuickTimeUTC},
@@ -1321,6 +1322,7 @@ sub SetNewValuesFromFile($$;@)
         XMPAutoConv     => $$options{XMPAutoConv},
     );
     $$srcExifTool{GLOBAL_TIME_OFFSET} = $$self{GLOBAL_TIME_OFFSET};
+    $$srcExifTool{ALT_EXIFTOOL} = $$self{ALT_EXIFTOOL};
     foreach $tag (@setTags) {
         next if ref $tag;
         if ($tag =~ /^-(.*)/) {
@@ -1387,7 +1389,7 @@ sub SetNewValuesFromFile($$;@)
 # transfer specified tags in the proper order
 #
     # 1) loop through input list of tags to set, and build @setList
-    my (@setList, $set, %setMatches, $t);
+    my (@setList, $set, %setMatches, $t, %altFiles);
     foreach $t (@setTags) {
         if (ref $t eq 'HASH') {
             # update current options
@@ -1424,6 +1426,7 @@ sub SetNewValuesFromFile($$;@)
                     $opt = $1 if $tag =~ s/^([-+])\s*//;
                 }
             }
+            $$opts{Replace} = 0 if $dstTag =~ s/^\+//;
             # validate tag name(s)
             unless ($$opts{EXPR} or ValidTagName($tag)) {
                 $self->Warn("Invalid tag name '${tag}'. Use '=' not '<' to assign a tag value");
@@ -1440,6 +1443,8 @@ sub SetNewValuesFromFile($$;@)
             $$opts{Type} = 'ValueConv' if $dstTag =~ s/#$//;
             # replace tag name of 'all' with '*'
             $dstTag = '*' if $dstTag eq 'all';
+        } else {
+            $$opts{Replace} = 0 if $tag =~ s/^\+//;
         }
         unless ($$opts{EXPR}) {
             $isExclude = ($tag =~ s/^-//);
@@ -1449,7 +1454,17 @@ sub SetNewValuesFromFile($$;@)
                     # save family/groups in list (ignoring 'all' and '*')
                     next unless length($_) and /^(\d+)?(.*)/;
                     my ($f, $g) = ($1, $2);
-                    $f = 7 if $g =~ s/^ID-//i;
+                    $f = 7 if (not $f or $f eq '7') and $g =~ s/^ID-//i;
+                    if ($g =~ /^file\d+$/i and (not $f or $f eq '8')) {
+                        $f = 8;
+                        my $g8 = ucfirst $g;
+                        if ($$srcExifTool{ALT_EXIFTOOL}{$g8}) {
+                            $$opts{GROUP8} = $g8;
+                            $altFiles{$g8} or $altFiles{$g8} = [ ];
+                            # save list of requested tags for this alternate ExifTool object
+                            push @{$altFiles{$g8}}, "$grp:$tag";
+                        }
+                    }
                     push @fg, [ $f, $g ] unless $g eq '*' or $g eq 'all';
                 }
             }
@@ -1486,26 +1501,44 @@ sub SetNewValuesFromFile($$;@)
         # save in reverse order so we don't set tags before an exclude
         unshift @setList, [ \@fg, $tag, $dst, $opts ];
     }
+    # 1b) copy requested tags for each alternate ExifTool object
+    my $g8;
+    foreach $g8 (sort keys %altFiles) {
+        # request specific alternate tags to load them from the alternate ExifTool object
+        my $altInfo = $srcExifTool->GetInfo($altFiles{$g8});
+        # add to tags list after dummy entry to signify start of tags for this alt file
+        if (%$altInfo) {
+            push @tags, 'Warning DUMMY', reverse sort keys %$altInfo;
+            $$info{$_} = $$altInfo{$_} foreach keys %$altInfo;
+        }
+    }
     # 2) initialize lists of matching tags for each setTag
     foreach $set (@setList) {
         $$set[2] and $setMatches{$set} = [ ];
     }
     # 3) loop through all tags in source image and save tags matching each setTag
-    my %rtnInfo;
+    my (%rtnInfo, $isAlt);
     foreach $tag (@tags) {
         # don't try to set errors or warnings
         if ($tag =~ /^(Error|Warning)( |$)/) {
-            $rtnInfo{$tag} = $$info{$tag};
+            if ($tag eq 'Warning DUMMY') {
+                $isAlt = 1; # start of the alt tags
+            } else {
+                $rtnInfo{$tag} = $$info{$tag};
+            }
             next;
         }
         # only set specified tags
         my $lcTag = lc(GetTagName($tag));
         my (@grp, %grp);
 SET:    foreach $set (@setList) {
+            my $opts = $$set[3];
+            next if $$opts{EXPR};   # (expressions handled in step 4)
+            next if $$opts{GROUP8} xor $isAlt;
             # check first for matching tag
             unless ($$set[1] eq $lcTag or $$set[1] eq '*') {
                 # handle wildcards
-                next unless $$set[3]{WILD} and $lcTag =~ /^$$set[1]$/;
+                next unless $$opts{WILD} and $lcTag =~ /^$$set[1]$/;
             }
             # then check for matching group
             if (@{$$set[0]}) {
@@ -1537,10 +1570,17 @@ SET:    foreach $set (@setList) {
         # handle expressions
         if ($$opts{EXPR}) {
             my $val = $srcExifTool->InsertTagValues(\@tags, $$set[1], 'Error');
-            if ($$srcExifTool{VALUE}{Error}) {
-                # pass on any error as a warning
-                $tag = NextFreeTagKey(\%rtnInfo, 'Warning');
-                $rtnInfo{$tag} = $$srcExifTool{VALUE}{Error};
+            my $err = $$srcExifTool{VALUE}{Error};
+            if ($err) {
+                # pass on any error as a warning unless it is suppressed
+                my $noWarn = $$srcExifTool{OPTIONS}{NoWarning};
+                unless ($noWarn and (eval { $err =~ /$noWarn/ } or
+                    # (also apply expression to warning without "[minor] " prefix)
+                    ($err =~ s/^\[minor\] //i and eval { $err =~ /$noWarn/ })))
+                {
+                    $tag = NextFreeTagKey(\%rtnInfo, 'Warning');
+                    $rtnInfo{$tag} = $$srcExifTool{VALUE}{Error};
+                }
                 delete $$srcExifTool{VALUE}{Error};
                 next unless defined $val;
             }
@@ -1835,6 +1875,27 @@ sub RestoreNewValues($)
     # 3) restore delete groups
     my %delGrp = %{$$self{SAVE_DEL_GROUP}};
     $$self{DEL_GROUP} = \%delGrp;
+}
+
+#------------------------------------------------------------------------------
+# Set alternate file for extracting information
+# Inputs: 0) ExifTool ref, 1) family 8 group name (of the form "File#" where # is any number)
+#         2) alternate file name, or undef to reset
+# Returns: 1 on success, or 0 on invalid group name
+sub SetAlternateFile($$$)
+{
+    my ($self, $g8, $file) = @_;
+    $g8 = ucfirst lc $g8;
+    return 0 unless $g8 =~ /^File\d+$/;
+    # keep the same file if already initialized (possibly has metadata extracted)
+    if (not defined $file) {
+        delete $$self{ALT_EXIFTOOL}{$g8};
+    } elsif (not ($$self{ALT_EXIFTOOL}{$g8} and $$self{ALT_EXIFTOOL}{$g8}{ALT_FILE} eq $file)) {
+        my $altExifTool = Image::ExifTool->new;
+        $$altExifTool{ALT_FILE} = $file;
+        $$self{ALT_EXIFTOOL}{$g8} = $altExifTool;
+    }
+    return 1;
 }
 
 #------------------------------------------------------------------------------
@@ -2724,6 +2785,7 @@ sub GetAllGroups($;$)
     $family == 4 and return('Copy#');
     $family == 5 and return('[too many possibilities to list]');
     $family == 6 and return(@Image::ExifTool::Exif::formatName[1..$#Image::ExifTool::Exif::formatName]);
+    $family == 8 and return('File#');
 
     LoadAllTables();    # first load all our tables
 
@@ -3163,42 +3225,46 @@ sub InsertTagValues($$$;$$$)
                     $tag = $docGrp . ':' . $tag;
                     $lcTag = lc $tag;
                 }
+                my $et = $self;
+                if ($tag =~ s/(\bfile\d+)://i) {
+                    $et = $$self{ALT_EXIFTOOL}{ucfirst lc $1} or $et=$self, $tag = 'no_alt_file';
+                }
                 if ($lcTag eq 'all') {
                     $val = 1;   # always some tag available
-                } elsif (defined $$self{OPTIONS}{UserParam}{$lcTag}) {
-                    $val = $$self{OPTIONS}{UserParam}{$lcTag};
+                } elsif (defined $$et{OPTIONS}{UserParam}{$lcTag}) {
+                    $val = $$et{OPTIONS}{UserParam}{$lcTag};
                 } elsif ($tag =~ /(.*):(.+)/) {
                     my $group;
                     ($group, $tag) = ($1, $2);
                     if (lc $tag eq 'all') {
                         # see if any tag from the specified group exists
-                        my $match = $self->GroupMatches($group, $foundTags);
+                        my $match = $et->GroupMatches($group, $foundTags);
                         $val = $match ? 1 : 0;
                     } else {
                         # find the specified tag
                         my @matches = grep /^$tag(\s|$)/i, @$foundTags;
-                        @matches = $self->GroupMatches($group, \@matches);
+                        @matches = $et->GroupMatches($group, \@matches);
                         foreach $tg (@matches) {
                             if (defined $val and $tg =~ / \((\d+)\)$/) {
                                 # take the most recently extracted tag
                                 my $tagNum = $1;
                                 next if $tag !~ / \((\d+)\)$/ or $1 > $tagNum;
                             }
-                            $val = $self->GetValue($tg, $type);
+                            $val = $et->GetValue($tg, $type);
                             $tag = $tg;
                             last unless $tag =~ / /;    # all done if we got our best match
                         }
                     }
                 } elsif ($tag eq 'self') {
-                    $val = $self; # ("$self{var}" or "$self->{var}" in string)
+                    $val = $et; # ("$self{var}" or "$file1:self{var}" in string)
                 } else {
                     # get the tag value
-                    $val = $self->GetValue($tag, $type);
+                    $val = $et->GetValue($tag, $type);
                     unless (defined $val) {
                         # check for tag name with different case
                         ($tg) = grep /^$tag$/i, @$foundTags;
                         if (defined $tg) {
-                            $val = $self->GetValue($tg, $type);
+                            $val = $et->GetValue($tg, $type);
                             $tag = $tg;
                         }
                     }
@@ -3266,15 +3332,19 @@ sub InsertTagValues($$$;$$$)
             undef $advFmtSelf;
             $didExpr = 1;   # set flag indicating an expression was evaluated
         }
-        unless (defined $val or ref $opt) {
+        unless (defined $val) {
             $val = $$self{OPTIONS}{MissingTagValue};
             unless (defined $val) {
                 my $g3 = ($docGrp and $var !~ /\b(main|doc\d+):/i) ? $docGrp . ':' : '';
                 my $msg = $didExpr ? "Advanced formatting expression returned undef for '$g3${var}'" :
                                      "Tag '$g3${var}' not defined";
-                no strict 'refs';
-                $opt and ($opt eq 'Silent' or &$opt($self, $msg, 2)) and return $$self{FMT_EXPR} = undef;
-                $val = '';
+                if (ref $opt) {
+                    $self->Warn($msg,2) or $val = '';
+                } elsif ($opt) {
+                    no strict 'refs';
+                    ($opt eq 'Silent' or &$opt($self, $msg, 2)) and return $$self{FMT_EXPR} = undef;
+                    $val = '';
+                }
             }
         }
         if (ref $opt eq 'HASH') {
@@ -5508,7 +5578,7 @@ sub WriteJPEG($$)
                     $s =~ /^JFXX\0\x10/     and $dirName = 'JFXX';
                     $s =~ /^(II|MM).{4}HEAPJPGM/s and $dirName = 'CIFF';
                 } elsif ($marker == 0xe1) {
-                    if ($s =~ /^(.{0,4})$exifAPP1hdr(.{1,4})/is) {
+                    if ($s =~ /^(.{0,4})Exif\0.(.{1,4})/is) {
                         $dirName = 'IFD0';
                         my ($junk, $bytes) = ($1, $2);
                         # support multi-segment EXIF
@@ -6074,7 +6144,7 @@ sub WriteJPEG($$)
                 }
             } elsif ($marker == 0xe1) {         # APP1 (EXIF, XMP)
                 # check for EXIF data
-                if ($$segDataPt =~ /^(.{0,4})$exifAPP1hdr/is) {
+                if ($$segDataPt =~ /^(.{0,4})Exif\0./is) {
                     my $hdrLen = length $exifAPP1hdr;
                     if (length $1) {
                         $hdrLen += length $1;
@@ -6807,6 +6877,36 @@ sub SetFileTime($$;$$$$)
         return $success;
     }
     return 1; # (nothing to do)
+}
+
+#------------------------------------------------------------------------------
+# Add data to MD5 checksum
+# Inputs: 0) ExifTool ref, 1) RAF ref, 2) data size (or undef to read to end of file),
+#         3) data name (or undef for no warnings or messages), 4) flag for no verbose message
+# Returns: number of bytes read and MD5'd
+sub ImageDataMD5($$$;$$)
+{
+    my ($self, $raf, $size, $type, $noMsg) = @_;
+    my $md5 = $$self{ImageDataMD5} or return;
+    my ($bytesRead, $n) = (0, 65536);
+    my $buff;
+    for (;;) {
+        if (defined $size) {
+            last unless $size;
+            $n = $size > 65536 ? 65536 : $size;
+            $size -= $n;
+        }
+        unless ($raf->Read($buff, $n)) {
+            $self->Warn("Error reading $type data") if $type and defined $size;
+            last;
+        }
+        $md5->add($buff);
+        $bytesRead += length $buff;
+    }
+    if ($$self{OPTIONS}{Verbose} and $bytesRead and $type and not $noMsg) {
+        $self->VPrint(0, "$$self{INDENT}(ImageDataMD5: $bytesRead bytes of $type data)\n");
+    }
+    return $bytesRead;
 }
 
 #------------------------------------------------------------------------------

@@ -50,7 +50,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.57';
+$VERSION = '3.59';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -248,7 +248,11 @@ my %boolConv = (
 
 # XMP namespaces which we don't want to contribute to generated EXIF tag names
 # (Note: namespaces with non-standard prefixes aren't currently ignored)
-my %ignoreNamespace = ( 'x'=>1, rdf=>1, xmlns=>1, xml=>1, svg=>1, et=>1, office=>1 );
+my %ignoreNamespace = ( 'x'=>1, rdf=>1, xmlns=>1, xml=>1, svg=>1, office=>1 );
+
+# ExifTool properties that don't generate tag names (et:tagid is historic)
+my %ignoreEtProp = ( 'et:desc'=>1, 'et:prt'=>1, 'et:val'=>1 , 'et:id'=>1, 'et:tagid'=>1,
+                     'et:toolkit'=>1, 'et:table'=>1, 'et:index'=>1 );
 
 # XMP properties to ignore (set dynamically via dirInfo IgnoreProp)
 my %ignoreProp;
@@ -752,6 +756,10 @@ my %sRangeMask = (
     album => {
         Name => 'album',
         SubDirectory => { TagTable => 'Image::ExifTool::XMP::Album' },
+    },
+    et => {
+        Name => 'et',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::ExifTool' },
     },
     prism => {
         Name => 'prism',
@@ -2481,6 +2489,9 @@ my %sPantryItem = (
     EnhanceSuperResolutionAlreadyApplied => { Writable => 'boolean' },
     EnhanceSuperResolutionVersion   => { }, # integer?
     EnhanceSuperResolutionScale     => { Writable => 'rational' },
+    EnhanceDenoiseAlreadyApplied    => { Writable => 'boolean' }, #forum14760
+    EnhanceDenoiseVersion           => { }, #forum14760 integer?
+    EnhanceDenoiseLumaAmount        => { }, #forum14760 integer?
 );
 
 # IPTC Core namespace properties (Iptc4xmpCore) (ref 4)
@@ -2548,6 +2559,14 @@ my %sPantryItem = (
     TABLE_DESC => 'XMP Adobe Album',
     NOTES => 'Adobe Album namespace tags.',
     Notes => { },
+);
+
+# ExifTool namespace properties (et)
+%Image::ExifTool::XMP::ExifTool = (
+    %xmpTableDefaults,
+    GROUPS => { 1 => 'XMP-et', 2 => 'Image' },
+    NAMESPACE   => 'et',
+    OriginalImageMD5 => { Notes => 'used to store ExifTool ImageDataMD5 digest' },
 );
 
 # table to add tags in other namespaces
@@ -2838,7 +2857,7 @@ sub GetXMPTagID($;$$)
         # split name into namespace and property name
         # (Note: namespace can be '' for property qualifiers)
         my ($ns, $nm) = ($prop =~ /(.*?):(.*)/) ? ($1, $2) : ('', $prop);
-        if ($ignoreNamespace{$ns} or $ignoreProp{$prop}) {
+        if ($ignoreNamespace{$ns} or $ignoreProp{$prop} or $ignoreEtProp{$prop}) {
             # special case: don't ignore rdf numbered items
             # (not technically allowed in XMP, but used in RDF/XML)
             unless ($prop =~ /^rdf:(_\d+)$/) {
@@ -3408,7 +3427,10 @@ NoLoop:
             my %grps = ( 0 => $1, 1 => $2 );
             # apply a little magic to recover original group names
             # from this exiftool-written RDF/XML file
-            if ($grps{1} =~ /^\d/) {
+            if ($grps{1} eq 'System') {
+                $grps{1} = 'XML-System';
+                $grps{0} = 'XML';
+            } elsif ($grps{1} =~ /^\d/) {
                 # URI's with only family 0 are internal tags from the source file,
                 # so change the group name to avoid confusion with tags from this file
                 $grps{1} = "XML-$grps{0}";
@@ -3539,6 +3561,7 @@ NoLoop:
             DirLen   => length $$dataPt,
             IgnoreProp => $$subdir{IgnoreProp}, # (allow XML to ignore specified properties)
             IsExtended => 1, # (hack to avoid Duplicate warning for embedded XMP)
+            NoStruct => 1,   # (don't try to build structures since this isn't true XMP)
         );
         my $oldOrder = GetByteOrder();
         SetByteOrder($$subdir{ByteOrder}) if $$subdir{ByteOrder};
@@ -3875,7 +3898,9 @@ sub ParseXMPElement($$$;$$$$)
                 }
             }
             my $shortVal = $attrs{$shortName};
-            if ($ignoreNamespace{$ns} or $ignoreProp{$prop}) {
+            # Note: $prop is the containing property in this loop (not the shorthand property)
+            # so $ignoreProp ignores all attributes of the ignored property
+            if ($ignoreNamespace{$ns} or $ignoreProp{$prop} or $ignoreEtProp{$propName}) {
                 $ignored = $propName;
                 # handle special attributes (extract as tags only once if not empty)
                 if (ref $recognizedAttrs{$propName} and $shortVal) {
@@ -4375,8 +4400,10 @@ sub ProcessXMP($$;$)
 
     # restore structures if necessary
     if ($$et{IsStruct}) {
-        require 'Image/ExifTool/XMPStruct.pl';
-        RestoreStruct($et, $keepFlat);
+        unless ($$dirInfo{NoStruct}) {
+            require 'Image/ExifTool/XMPStruct.pl';
+            RestoreStruct($et, $keepFlat);
+        }
         delete $$et{IsStruct};
     }
     # reset NO_LIST flag (must do this _after_ RestoreStruct() above)

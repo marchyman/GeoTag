@@ -26,7 +26,7 @@ version 4.15.
   opened and enabled or if updates are written to a sidecar file.
 * Add "Report a bug..." to the help menu.  Selecting this will open the GeoTag
   github issues page in your browser.
-* ExifTool version 12.58
+* ExifTool version 12.62
 
 ### Bug Fixes
 

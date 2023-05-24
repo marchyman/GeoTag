@@ -12,7 +12,7 @@ meta information extracted from or written to a file.
 =head1 TAG TABLES
 
 The tables listed below give the names of all tags recognized by ExifTool.
-They contain a total of 26381 tags, with 16854 unique tag names.
+They contain a total of 26407 tags, with 16869 unique tag names.
 
 B<Tag ID>, B<Index#> or B<Sequence> is given in the first column of each
 table.  A B<Tag ID> is the computer-readable equivalent of a tag name, and
@@ -498,6 +498,9 @@ for the official EXIF 2.32 specification.
   0x7035   ChromaticAberrationCorrParams SubIFD int16s[33]!
   0x7036   DistortionCorrection      SubIFD     int16s!
   0x7037   DistortionCorrParams      SubIFD     int16s[17]!
+  0x7038   SonyRawImageSize          SubIFD     int32u[2]!
+  0x7310   BlackLevel                SubIFD     int16u[4]!
+  0x7313   WB_RGGBLevels             SubIFD     int16s[4]!
   0x74c7   SonyCropTopLeft           SubIFD     int32u[2]!
   0x74c8   SonyCropSize              SubIFD     int32u[2]!
   0x800d   ImageID                   -          no
@@ -1287,6 +1290,7 @@ L<http://www.adobe.com/devnet/xmp/> for the official XMP specification.
   digiKam                                       XMP digiKam
   drone-dji                                     DJI XMP
   dwc                                           DarwinCore
+  et                                            XMP ExifTool
   exif                                          XMP exif
   exifEX                                        XMP exifEX
   expressionmedia                               XMP ExpressionMedia
@@ -1449,6 +1453,9 @@ These tags belong to the ExifTool XMP-aux family 1 group.
   --------                                      --------
   ApproximateFocusDistance                      rational
   DistortionCorrectionAlreadyApplied            boolean
+  EnhanceDenoiseAlreadyApplied                  boolean
+  EnhanceDenoiseLumaAmount                      string
+  EnhanceDenoiseVersion                         string
   EnhanceDetailsAlreadyApplied                  boolean
   EnhanceDetailsVersion                         string
   EnhanceSuperResolutionAlreadyApplied          boolean
@@ -4034,6 +4041,14 @@ These tags belong to the ExifTool XMP-digiKam family 1 group.
   PickLabel                                     string
   TagsList                                      string+
 
+=head3 XMP ExifTool Tags
+
+These tags belong to the ExifTool XMP-et family 1 group.
+
+  Tag Name                                      Writable
+  --------                                      --------
+  OriginalImageMD5                              string
+
 =head3 XMP exif Tags
 
 EXIF namespace for EXIF tags.  See
@@ -5307,7 +5322,8 @@ These tags belong to the ExifTool XMP-pmi family 1 group.
 =head3 XMP prism Tags
 
 Publishing Requirements for Industry Standard Metadata 3.0 namespace
-tags.  (see L<http://www.prismstandard.org/>)
+tags.  (see
+L<https://www.w3.org/Submission/2020/SUBM-prism-20200910/prism-basic.html/>)
 
 These tags belong to the ExifTool XMP-prism family 1 group.
 
@@ -17329,6 +17345,8 @@ any information found here will be extracted, even if the tag is not listed.
   0x0304   FocusStepNear                        int16u
   0x0305   FocusDistance                        rational64u
   0x0308   AFPoint                              int16u
+  0x031b   AFPointDetails                       no
+           AFPointDetails                       int16u
   0x0328   AFInfo                               Olympus AFInfo
   0x1201   ExternalFlash                        int16u[2]
   0x1203   ExternalFlashGuideNumber?            rational64s
@@ -20812,6 +20830,7 @@ WX350/WX500, ILCE-1/7/7C/7R/7S/7M2/7M3/7RM2/7RM3/7RM4/7SM2/7SM3/9/9M2/5000/
 
   Index1   Tag Name                             Writable
   ------   --------                             --------
+    994    ISOInfo                              Sony ISOInfo
    1102    ISOInfo                              Sony ISOInfo
    1176    ISOInfo                              Sony ISOInfo
    1181    ISOInfo                              Sony ISOInfo
@@ -21862,7 +21881,10 @@ These tags are found in IFD0 of Panasonic/Leica RAW, RW2 and RWL images.
   0x011c   Gamma                                int16u
   0x0120   CameraIFD                            PanasonicRaw CameraIFD
   0x0121   Multishot                            int32u
+  0x0127   JpgFromRaw2                          no
+  0x013b   Artist                               string
   0x02bc   ApplicationNotes                     XMP
+  0x8298   Copyright                            string
   0x83bb   IPTC-NAA                             IPTC
   0x8769   ExifOffset                           EXIF
   0x8825   GPSInfo                              GPS
@@ -22143,30 +22165,32 @@ Note that Microsoft is not consistent with the time zone used for some
 date/time tags, and it may be either UTC or local time depending on the
 software used to create the file.
 
-  Tag ID                          Tag Name      Writable
-  ------                          --------      --------
-  "\x01CompObj"                   CompObj       FlashPix CompObj
-  "\x05Audio Info"                AudioInfo     FlashPix AudioInfo
-  "\x05Data Object"               DataObject    FlashPix DataObject
+  Tag ID                 Tag Name               Writable
+  ------                 --------               --------
+  "\x01CompObj"          CompObj                FlashPix CompObj
+  "\x05Audio Info"       AudioInfo              FlashPix AudioInfo
+  "\x05Data Object"      DataObject             FlashPix DataObject
   "\x05DocumentSummaryInformation" DocumentInfo FlashPix DocumentInfo
-  "\x05Extension List"            Extensions    FlashPix Extensions
-  "\x05Global Info"               GlobalInfo    FlashPix GlobalInfo
-  "\x05Image Contents"            Image         FlashPix Image
-  "\x05Image Info"                ImageInfo     FlashPix ImageInfo
-  "\x05Operation"                 Operation     FlashPix Operation
-  "\x05Screen Nail"               ScreenNail    no
-  "\x05SummaryInformation"        SummaryInfo   FlashPix SummaryInfo
-  "\x05Transform"                 Transform     FlashPix Transform
-  'Audio Stream'                  AudioStream   no
-  'BasicFileInfo'                 BasicFileInfo no
-  'Contents'                      Contents      XMP
-  'Current User'                  CurrentUser   no
-  'ICC Profile 0001'              ICC_Profile   ICC_Profile
-  'IeImg'                         EmbeddedImage no
-  'Preview'                       PreviewImage  no
-  'Property'                      PreviewInfo   FlashPix PreviewInfo
-  'Subimage 0000 Header'          SubimageHdr   FlashPix SubimageHdr
-  'WordDocument'                  WordDocument  FlashPix WordDocument
+  "\x05Extension List"   Extensions             FlashPix Extensions
+  "\x05Global Info"      GlobalInfo             FlashPix GlobalInfo
+  "\x05Image Contents"   Image                  FlashPix Image
+  "\x05Image Info"       ImageInfo              FlashPix ImageInfo
+  "\x05Operation"        Operation              FlashPix Operation
+  "\x05Screen Nail"      ScreenNail             no
+  "\x05SummaryInformation" SummaryInfo          FlashPix SummaryInfo
+  "\x05Transform"        Transform              FlashPix Transform
+  'Audio Stream'         AudioStream            no
+  'BasicFileInfo'        BasicFileInfo          no
+  'Contents'             Contents               XMP
+  'Current User'         CurrentUser            no
+  'ICC Profile 0001'     ICC_Profile            ICC_Profile
+  'IeImg'                EmbeddedImage          no
+  'IeImg_class'          EmbeddedImageClass     no
+  'IeImg_rect'           EmbeddedImageRectangle no
+  'Preview'              PreviewImage           no
+  'Property'             PreviewInfo            FlashPix PreviewInfo
+  'Subimage 0000 Header' SubimageHdr            FlashPix SubimageHdr
+  'WordDocument'         WordDocument           FlashPix WordDocument
 
 =head3 FlashPix CompObj Tags
 
@@ -26001,6 +26025,18 @@ Graphics) images.  See L<http://bellard.org/bpg/> for the specification.
   0x0004   ThumbnailBPG                         no
   0x0005   AnimationControl?                    no
 
+=head2 WPG Tags
+
+Tags extracted from WordPerfect Graphics (WPG) images.
+
+  Tag Name                                      Writable
+  --------                                      --------
+  ImageHeightInches                             no
+  ImageWidthInches                              no
+  Records                                       no+
+  RecordsV2                                     no+
+  WPGVersion                                    no
+
 =head2 ICO Tags
 
 Information extracted from Windows ICO (icon) and CUR (cursor) files.
@@ -27178,10 +27214,10 @@ number of available PDF tags.  See
 L<http://www.adobe.com/devnet/pdf/pdf_reference.html> for the official PDF
 specification.
 
-ExifTool supports reading and writing PDF documents up to version 1.7
-extension level 3, including support for RC4, AES-128 and AES-256
-encryption.  A Password option is provided to allow processing of
-password-protected PDF files.
+ExifTool supports reading and writing PDF documents up to version 2.0,
+including support for RC4, AES-128 and AES-256 encryption.  A
+Password option is provided to allow processing
+of password-protected PDF files.
 
 ExifTool may be used to write native PDF and XMP metadata to PDF files. It
 uses an incremental update technique that has the advantages of being both
@@ -37701,6 +37737,19 @@ These tags are extracted from RAR archive files.
      13    ModifyDate                           no
      18    PackingMethod                        no
      25    ArchivedFileName                     no
+
+=head3 ZIP RAR5 Tags
+
+These tags are extracted from RAR v5 archive files.
+
+  Tag Name                                      Writable
+  --------                                      --------
+  ArchivedFileName                              no
+  CompressedSize                                no
+  ModifyDate                                    no
+  OperatingSystem                               no
+  RARVersion                                    no
+  UncompressedSize                              no
 
 =head2 RTF Tags
 

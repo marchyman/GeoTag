@@ -29,7 +29,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
             %static_vars);
 
-$VERSION = '12.58';
+$VERSION = '12.62';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -75,6 +75,7 @@ sub GetAllGroups($;$);
 sub GetNewGroups($);
 sub GetDeleteGroups();
 sub AddUserDefinedTags($%);
+sub SetAlternateFile($$$);
 # non-public routines below
 sub InsertTagValues($$$;$$$);
 sub IsWritable($);
@@ -113,6 +114,7 @@ sub WriteTIFF($$$);
 sub PackUTF8(@);
 sub UnpackUTF8($);
 sub SetPreferredByteOrder($;$);
+sub ImageDataMD5($$$;$$);
 sub CopyBlock($$$);
 sub CopyFileAttrs($$$);
 sub TimeNow(;$$);
@@ -140,8 +142,8 @@ sub ReadValue($$$;$$$);
 @loadAllTables = qw(
     PhotoMechanic Exif GeoTiff CanonRaw KyoceraRaw Lytro MinoltaRaw PanasonicRaw
     SigmaRaw JPEG GIMP Jpeg2000 GIF BMP BMP::OS2 BMP::Extra BPG BPG::Extensions
-    ICO PICT PNG MNG FLIF DjVu DPX OpenEXR ZISRAW MRC LIF MRC::FEI12 MIFF PCX
-    PGF PSP PhotoCD Radiance Other::PFM PDF PostScript Photoshop::Header
+    WPG ICO PICT PNG MNG FLIF DjVu DPX OpenEXR ZISRAW MRC LIF MRC::FEI12 MIFF
+    PCX PGF PSP PhotoCD Radiance Other::PFM PDF PostScript Photoshop::Header
     Photoshop::Layers Photoshop::ImageData FujiFilm::RAF FujiFilm::IFD
     Samsung::Trailer Sony::SRF2 Sony::SR2SubIFD Sony::PMP ITC ID3 ID3::Lyrics3
     FLAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible MPC MPEG::Audio
@@ -150,8 +152,9 @@ sub ReadValue($$$;$$$);
     Real::Media Real::Audio Real::Metafile Red RIFF AIFF ASF WTV DICOM FITS MIE
     JSON HTML XMP::SVG Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion
     EXE::PEString EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard
-    Text VCard::VCalendar VCard::VNote RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR RTF
-    OOXML iWork ISO FLIR::AFF FLIR::FPF MacOS MacOS::MDItem FlashPix::DocTable
+    Text VCard::VCalendar VCard::VNote RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR
+    ZIP::RAR5 RTF OOXML iWork ISO FLIR::AFF FLIR::FPF MacOS MacOS::MDItem
+    FlashPix::DocTable
 );
 
 # alphabetical list of current Lang modules
@@ -188,12 +191,12 @@ $defaultLang = 'en';    # default language
 # 3) PLIST must be in this list for the binary PLIST format, although it may
 #    cause a file to be checked twice for XML
 @fileTypes = qw(JPEG EXV CRW DR4 TIFF GIF MRW RAF X3F JP2 PNG MIE MIFF PS PDF
-                PSD XMP BMP BPG PPM RIFF AIFF ASF MOV MPEG Real SWF PSP FLV OGG
-                FLAC APE MPC MKV MXF DV PMP IND PGF ICC ITC FLIR FLIF FPF LFP
-                HTML VRD RTF FITS XCF DSS QTIF FPX PICT ZIP GZIP PLIST RAR BZ2
-                CZI TAR  EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC M2TS
-                MacOS PHP PCX DCX DWF DWG DXF WTV Torrent VCard LRI R3D AA PDB
-                PFM2 MRC LIF JXL MOI ISO ALIAS JSON MP3 DICOM PCD ICO TXT);
+                PSD XMP BMP WPG BPG PPM RIFF AIFF ASF MOV MPEG Real SWF PSP FLV
+                OGG FLAC APE MPC MKV MXF DV PMP IND PGF ICC ITC FLIR FLIF FPF
+                LFP HTML VRD RTF FITS XCF DSS QTIF FPX PICT ZIP GZIP PLIST RAR
+                BZ2 CZI TAR  EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font RSRC
+                M2TS MacOS PHP PCX DCX DWF DWG DXF WTV Torrent VCard LRI R3D AA
+                PDB PFM2 MRC LIF JXL MOI ISO ALIAS JSON MP3 DICOM PCD ICO TXT);
 
 # file types that we can write (edit)
 my @writeTypes = qw(JPEG TIFF GIF CRW MRW ORF RAF RAW PNG MIE PSD XMP PPM EPS
@@ -552,6 +555,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     XMP  => ['XMP',  'Extensible Metadata Platform'],
     WOFF => ['Font', 'Web Open Font Format'],
     WOFF2=> ['Font', 'Web Open Font Format2'],
+    WPG  => ['WPG',  'WordPerfect Graphics'],
     WTV  => ['WTV',  'Windows recorded TV show'],
     ZIP  => ['ZIP',  'ZIP archive'],
 );
@@ -787,6 +791,7 @@ my %fileDescription = (
     WMA  => 'audio/x-ms-wma',
     WMF  => 'application/x-wmf',
     WMV  => 'video/x-ms-wmv',
+    WPG  => 'image/x-wpg',
     WTV  => 'video/x-ms-wtv',
     X3F  => 'image/x-sigma-x3f',
     XCF  => 'image/x-xcf',
@@ -968,7 +973,7 @@ $testLen = 1024;    # number of bytes to read when testing for magic number
     QTIF => '.{4}(idsc|idat|iicc)',
     R3D  => '\0\0..RED(1|2)',
     RAF  => 'FUJIFILM',
-    RAR  => 'Rar!\x1a\x07\0',
+    RAR  => 'Rar!\x1a\x07\x01?\0',
     RAW  => '(.{25}ARECOYK|II|MM)',
     Real => '(\.RMF|\.ra\xfd|pnm://|rtsp://|http://)',
     RIFF => '(RIFF|LA0[234]|OFR |LPAC|wvpk|RF64)', # RIFF plus other variants
@@ -982,6 +987,7 @@ $testLen = 1024;    # number of bytes to read when testing for magic number
     VCard=> '(?i)BEGIN:(VCARD|VCALENDAR|VNOTE)\r\n',
     VRD  => 'CANON OPTIONAL DATA\0',
     WMF  => '(\xd7\xcd\xc6\x9a\0\0|\x01\0\x09\0\0\x03)',
+    WPG  => '\xff\x57\x50\x43',
     WTV  => '\xb7\xd8\x00\x20\x37\x49\xda\x11\xa6\x4e\x00\x07\xe9\x5e\xad\x8d',
     X3F  => 'FOVb',
     XCF  => 'gimp xcf ',
@@ -1823,9 +1829,13 @@ my %systemTagsNotes = (
     },
     ImageDataMD5 => {
         Notes => q{
-            MD5 of image data. Generated only if specifically requested for JPEG and
-            TIFF-based images, except Panasonic raw for now. Includes image data,
-            OtherImage and JpgFromRaw in the MD5, but not ThumbnailImage or PreviewImage
+            MD5 of image data. Generated only if specifically requested for JPEG, TIFF,
+            PNG, CRW, CR3, MRW, RAF, X3F, IIQ, JP2, JXL, HEIC and AVIF images, MOV/MP4
+            videos, and some RIFF-based files such as AVI, WAV and WEBP.  The MD5
+            includes the main image data, plus JpgFromRaw/OtherImage for some formats,
+            but does not include ThumbnailImage or PreviewImage.  Includes video and
+            audio data for MOV/MP4. The L<XMP-et:OriginalImageMD5 tag|XMP.html#ExifTool>
+            provides a place to store these values in the file.
         },
     },
 );
@@ -2052,6 +2062,7 @@ sub new
     $$self{FILE_SEQUENCE} = 0;  # sequence number for files when reading
     $$self{FILES_WRITTEN} = 0;  # count of files successfully written
     $$self{INDENT2} = '';       # indentation of verbose messages from SetNewValue
+    $$self{ALT_EXIFTOOL} = { }; # alternate exiftool objects
 
     # initialize our new groups for writing
     $self->SetNewGroups(@defaultWriteGroups);
@@ -2118,8 +2129,10 @@ sub Options($$;@)
 
     while (@_) {
         my $param = shift;
+        my $plus;
         # fix parameter case if necessary
         unless (exists $$options{$param}) {
+            $plus = $param =~ s/\+$//;
             my ($fixed) = grep /^$param$/i, keys %$options;
             if ($fixed) {
                 $param = $fixed;
@@ -2284,6 +2297,23 @@ sub Options($$;@)
                 $compact{$p} = $val; # preserve most recent setting
             }
             $$options{Compact} = $$options{XMPShorthand} = \%compact;
+        } elsif ($param eq 'NoWarning') {
+            # validate regular expression
+            undef $evalWarning;
+            if (defined $newVal) {
+                local $SIG{'__WARN__'} = \&SetWarning;
+                eval { $param =~ /$newVal/ };
+                $@ and $evalWarning = $@;
+            }
+            if ($evalWarning) {
+                warn 'NoWarning: ' . CleanWarning() . "\n";
+                next;
+            }
+            # add to existing expression if specified
+            if ($plus and defined $oldVal) {
+                $newVal = defined $newVal ? "$oldVal|$newVal" : $oldVal;
+            }
+            $$options{$param} = $newVal;
         } else {
             if ($param eq 'Escape') {
                 # set ESCAPE_PROC
@@ -2378,6 +2408,7 @@ sub ClearOptions($)
         MissingTagValue =>undef,# value for missing tags when expanded in expressions
         NoMultiExif => undef,   # raise error when writing multi-segment EXIF
         NoPDFList   => undef,   # flag to avoid splitting PDF List-type tag values
+        NoWarning   => undef,   # regular expression for warnings to suppress
         Password    => undef,   # password for password-protected PDF documents
         PrintConv   => 1,       # flag to enable print conversion
         QuickTimeHandler => 1,  # flag to add mdir Handler to newly created Meta box
@@ -2637,7 +2668,7 @@ sub ExtractInfo($;@)
         if ($isDir or (defined $stat[2] and ($stat[2] & 0170000) == 0040000)) {
             $self->FoundTag('FileType', 'DIR');
             $self->FoundTag('FileTypeExtension', '');
-            $self->BuildCompositeTags() if $$options{Composite};
+            $self->ExtractAltInfo();
             $raf->Close() if $raf;
             return 1;
         }
@@ -2655,7 +2686,7 @@ sub ExtractInfo($;@)
             } else {
                 $self->Error('Unknown file type');
             }
-            $self->BuildCompositeTags() if $fast == 4 and $$options{Composite};
+            $self->ExtractAltInfo();
             last;   # don't read the file
         }
         if (@fileTypeList) {
@@ -2821,8 +2852,7 @@ sub ExtractInfo($;@)
         }
         unless ($reEntry) {
             $$self{PATH} = [ ];     # reset PATH
-            # calculate Composite tags
-            $self->BuildCompositeTags() if $$options{Composite};
+            $self->ExtractAltInfo();
             # do our HTML dump if requested
             if ($$self{HTML_DUMP}) {
                 $raf->Seek(0, 2);   # seek to end of file
@@ -3520,6 +3550,10 @@ sub GetGroup($$;$)
                 $groups[6] = $$ex{G6};
             }
         }
+        if ($$ex{G8}) {
+            $groups[7] = '';
+            $groups[8] = $$ex{G8};
+        }
         # generate tag ID group names unless obviously not needed
         unless ($noID) {
             my $id = $$tagInfo{KeysID} || $$tagInfo{TagID};
@@ -3620,14 +3654,15 @@ sub SetNewGroups($;@)
 
 #------------------------------------------------------------------------------
 # Build Composite tags from Require'd/Desire'd tags
-# Inputs: 0) ExifTool object reference
+# Inputs: 0) ExifTool object reference, 1) flag to build only tags that require
+#         tags from alternate files (without this, these tags are ignored)
 # Note: Tag values are calculated in alphabetical order unless a tag Require's
 #       or Desire's another Composite tag, in which case the calculation is
 #       deferred until after the other tag is calculated.
 sub BuildCompositeTags($)
 {
     local $_;
-    my $self = shift;
+    my ($self, $altOnly) = @_;
 
     $$self{BuildingComposite} = 1;
 
@@ -3656,7 +3691,7 @@ COMPOSITE_TAG:
             # loop through sub-documents if necessary
             my $docNum = 0;
             for (;;) {
-                my (%tagKey, $found, $index);
+                my (%tagKey, $found, $index, $requireAlt);
                 # save Require'd and Desire'd tag values in list
                 for ($index=0; ; ++$index) {
                     my $reqTag = $$require{$index} || $$desire{$index} || $$inhibit{$index};
@@ -3705,13 +3740,23 @@ COMPOSITE_TAG:
                                 next COMPOSITE_TAG;
                             }
                         }
+                        my ($i, $key, @keys, $altFile);
+                        my $et = $self;
+                        # get tags from alternate file if a family 8 group was specified
+                        if ($reqTag =~ /\b(File\d+):/i and $$self{ALT_EXIFTOOL}{$1}) {
+                            $et = $$self{ALT_EXIFTOOL}{$1};
+                            $altFile = $1;
+                            # set flags indicating we require tags from alternate files
+                            $$self{DoAltComposite} = $requireAlt = 1;
+                        }
                         # (CAREFUL! keys may not be sequential if one was deleted)
-                        my ($i, $key, @keys);
-                        for ($key=$name, $i=$$self{DUPL_TAG}{$name} || 0; ; --$i) {
-                            push @keys, $key if defined $$rawValue{$key};
+                        for ($key=$name, $i=$$et{DUPL_TAG}{$name} || 0; ; --$i) {
+                            push @keys, $key if defined $$et{VALUE}{$key};
                             last if $i <= 0;
                             $key = "$name ($i)";
                         }
+                        # make sure the necessary information is available from the alternate file
+                        $self->CopyAltInfo($altFile, \@keys) if $altFile;
                         # find first matching tag
                         $key = $self->GroupMatches($reqGroup, \@keys);
                         $reqTag = $key || "$name (0)";
@@ -3734,6 +3779,8 @@ COMPOSITE_TAG:
                     }
                     $tagKey{$index} = $reqTag;
                 }
+                # stop now if this requires alternate tags and we aren't building them
+                last if $requireAlt xor $altOnly;
                 if ($docNum) {
                     if ($found) {
                         $$self{DOC_NUM} = $docNum;
@@ -4032,6 +4079,49 @@ sub CombineInfo($;@)
 }
 
 #------------------------------------------------------------------------------
+# Read metadata from alternate files and build composite tags
+# Inputs: 0) ExifTool ref
+# Notes: This is called after reading the main file so the tags are available
+#        for being used in the file name, but before building Composite tags
+#        so tags from the alternate files may be used in the Composite tags
+sub ExtractAltInfo($)
+{
+    my $self = shift;
+    # extract information from alternate files if necessary
+    my ($g8, $altExifTool);
+    my $opts = $$self{OPTIONS};
+    if ($$opts{Composite} and (not $$opts{FastScan} or $$opts{FastScan} < 5)) {
+        # build all composite tags except those requiring tags from alternate files
+        $self->BuildCompositeTags();
+    }
+    foreach $g8 (sort keys %{$$self{ALT_EXIFTOOL}}) {
+        $altExifTool = $$self{ALT_EXIFTOOL}{$g8};
+        next if $$altExifTool{DID_EXTRACT}; # avoid extracting twice
+        $$altExifTool{OPTIONS} = $$self{OPTIONS};
+        $$altExifTool{GLOBAL_TIME_OFFSET} = $$self{GLOBAL_TIME_OFFSET};
+        $$altExifTool{REQ_TAG_LOOKUP} = $$self{REQ_TAG_LOOKUP};
+        my $fileName = $$altExifTool{ALT_FILE};
+        # allow tags from the main file to be used in the alternate file names
+        # (eg. -file1 '$originalfilename')
+        if ($fileName =~ /\$/) {
+            my @tags = reverse sort keys %{$$self{VALUE}};
+            $fileName = $self->InsertTagValues(\@tags, $fileName, 'Warn');
+            next unless defined $fileName;
+        }
+        $altExifTool->ExtractInfo($fileName);
+        # set family 8 group name for all tags
+        foreach (keys %{$$altExifTool{VALUE}}) {
+            my $ex = $$altExifTool{TAG_EXTRA}{$_};
+            $ex or $ex = $$altExifTool{TAG_EXTRA}{$_} = { };
+            $$ex{G8} = $g8;
+        }
+        $$altExifTool{DID_EXTRACT} = 1;
+    }
+    # if necessary, build composite tags that rely on tags from alternate files
+    $self->BuildCompositeTags(1) if $$self{DoAltComposite};
+}
+
+#------------------------------------------------------------------------------
 # Get tag table name
 # Inputs: 0) ExifTool object reference, 1) tag key
 # Returns: Table name if available, otherwise ''
@@ -4153,7 +4243,11 @@ sub SplitFileName($)
     } else {
         ($name = $file) =~ tr/\\/\//;
         # remove path
-        $dir = length($1) ? $1 : '/' if $name =~ s/(.*)\///;
+        if ($name =~ s/(.*)\///) {
+            $dir = length($1) ? $1 : '/';
+        } else {
+            $dir = '.';
+        }
     }
     return ($dir, $name);
 }
@@ -4569,6 +4663,29 @@ sub RemoveTagsFromList($$$$;$)
 }
 
 #------------------------------------------------------------------------------
+# Copy tags from alternate input file
+# Inputs: 0) ExifTool ref, 1) family 8 group, 2) list ref for tag keys to copy
+# - updates tag key list to match keys newly added to $self
+sub CopyAltInfo($$$)
+{
+    my ($self, $g8, $tags) = @_;
+    my ($tag, $vtag);
+    return unless $g8 =~ /(\d+)/;
+    my $et = $$self{ALT_EXIFTOOL}{$g8} or return;
+    my $altOrder = ($1 + 1) * 100000;   # increment file order
+    foreach $tag (@$tags) {
+        ($vtag = $tag) =~ s/( |$)/ #[$g8]/;
+        unless (defined $$self{VALUE}{$vtag}) {
+            $$self{VALUE}{$vtag} = $$et{VALUE}{$tag};
+            $$self{TAG_INFO}{$vtag} = $$et{TAG_INFO}{$tag};
+            $$self{TAG_EXTRA}{$vtag} = $$et{TAG_EXTRA}{$tag} || { };
+            $$self{FILE_ORDER}{$vtag} = ($$et{FILE_ORDER}{$tag} || 0) + $altOrder;
+        }
+        $tag = $vtag;
+    }
+}
+
+#------------------------------------------------------------------------------
 # Set list of found tags from previously requested tags
 # Inputs: 0) ExifTool object reference
 # Returns: 0) Reference to list of found tag keys (in order of requested tags)
@@ -4594,11 +4711,17 @@ sub SetFoundTags($)
         my $tagHash = $$self{VALUE};
         my $reqTag;
         foreach $reqTag (@$reqTags) {
-            my (@matches, $group, $allGrp, $allTag, $byValue);
+            my (@matches, $group, $allGrp, $allTag, $byValue, $g8);
+            my $et = $self;
             if ($reqTag =~ /^(.*):(.+)/) {
                 ($group, $tag) = ($1, $2);
                 if ($group =~ /^(\*|all)$/i) {
                     $allGrp = 1;
+                } elsif ($reqTag =~ /\bfile(\d+):/i) {
+                    $g8 = "File$1";
+                    $et = $$self{ALT_EXIFTOOL}{$g8} || $self;
+                    $fileOrder = $$et{FILE_ORDER};
+                    $tagHash = $$et{VALUE};
                 } elsif ($group !~ /^[-\w:]*$/) {
                     $self->Warn("Invalid group name '${group}'");
                     $group = 'invalid';
@@ -4640,7 +4763,7 @@ sub SetFoundTags($)
             }
             if (defined $group and not $allGrp) {
                 # keep only specified group
-                @matches = $self->GroupMatches($group, \@matches);
+                @matches = $et->GroupMatches($group, \@matches);
                 next unless @matches or not $allTag;
             }
             if (@matches > 1) {
@@ -4649,9 +4772,9 @@ sub SetFoundTags($)
                 # return only the highest priority tag unless duplicates wanted
                 unless ($doDups or $allTag or $allGrp) {
                     $tag = shift @matches;
-                    my $oldPriority = $$self{PRIORITY}{$tag} || 1;
+                    my $oldPriority = $$et{PRIORITY}{$tag} || 1;
                     foreach (@matches) {
-                        my $priority = $$self{PRIORITY}{$_};
+                        my $priority = $$et{PRIORITY}{$_};
                         $priority = 1 unless defined $priority;
                         next unless $priority >= $oldPriority;
                         $tag = $_;
@@ -4664,6 +4787,13 @@ sub SetFoundTags($)
                 $matches[0] = $byValue ? "$tag #(0)" : "$tag (0)";
                 # bogus file order entry to avoid warning if sorting in file order
                 $$self{FILE_ORDER}{$matches[0]} = 9999;
+            }
+            # copy over necessary information for tags from alternate files
+            if ($g8) {
+                $self->CopyAltInfo($g8, \@matches);
+                # restore variables to original values for main file
+                $fileOrder = $$self{FILE_ORDER};
+                $tagHash = $$self{VALUE};
             }
             # save indices of tags extracted by value
             push @byValue, scalar(@$rtnTags) .. (scalar(@$rtnTags)+scalar(@matches)-1) if $byValue;
@@ -4841,12 +4971,14 @@ sub AUTOLOAD
 sub Warn($$;$)
 {
     my ($self, $str, $ignorable) = @_;
+    my $noWarn = $self->Options('NoWarning');
     if ($ignorable) {
         return 0 if $$self{OPTIONS}{IgnoreMinorErrors};
         return 0 if $ignorable eq '3' and $$self{OPTIONS}{Validate};
+        return 1 if defined $noWarn and eval { $str =~ /$noWarn/ };
         $str = $ignorable eq '2' ? "[Minor] $str" : "[minor] $str";
     }
-    $self->FoundTag('Warning', $str);
+    $self->FoundTag('Warning', $str) unless defined $noWarn and eval { $str =~ /$noWarn/ };
     return 1;
 }
 
@@ -6347,7 +6479,6 @@ sub ProcessJPEG($$)
 {
     local $_;
     my ($self, $dirInfo) = @_;
-    my ($ch, $s, $length);
     my $options = $$self{OPTIONS};
     my $verbose = $$options{Verbose};
     my $out = $$options{TextOut};
@@ -6356,12 +6487,16 @@ sub ProcessJPEG($$)
     my $req = $$self{REQ_TAG_LOOKUP};
     my $htmlDump = $$self{HTML_DUMP};
     my %dumpParms = ( Out => $out );
-    my ($success, $wantTrailer, $trailInfo, $foundSOS, %jumbfChunk);
+    my ($ch, $s, $length, $md5, $md5size);
+    my ($success, $wantTrailer, $trailInfo, $foundSOS, $gotSize, %jumbfChunk);
     my (@iccChunk, $iccChunkCount, $iccChunksTotal, @flirChunk, $flirCount, $flirTotal);
-    my ($preview, $scalado, @dqt, $subSampling, $dumpEnd, %extendedXMP, $md5);
+    my ($preview, $scalado, @dqt, $subSampling, $dumpEnd, %extendedXMP);
 
-    # get pointer to MD5 object if it exists and we are the top-level JPEG
-    $md5 = $$self{ImageDataMD5} if $$self{FILE_TYPE} eq 'JPEG' and not $$self{DOC_NUM};
+    # get pointer to MD5 object if it exists and we are the top-level JPEG or JP2
+    if ($$self{FILE_TYPE} =~ /^(JPEG|JP2)$/ and not $$self{DOC_NUM}) {
+        $md5 = $$self{ImageDataMD5};
+        $md5size = 0;
+    }
 
     # check to be sure this is a valid JPG (or J2C, or EXV) file
     return 0 unless $raf->Read($s, 2) == 2 and $s =~ /^\xff[\xd8\x4f\x01]/;
@@ -6441,8 +6576,19 @@ sub ProcessJPEG($$)
                 $nextSegPos = $raf->Tell();
                 $len -= 4;  # subtract size of length word
                 last unless $raf->Seek($len, 1);
-            } elsif ($md5 and defined $marker and ($marker == 0x00 or $marker == 0xda)) {
-                $md5->add($buff);   # (note: this includes the terminating 0xff's)
+            } elsif ($md5 and defined $marker and ($marker == 0x00 or $marker == 0xda or
+                ($marker >= 0xd0 and $marker <= 0xd7)))
+            {
+                # calculate MD5 for image data (includes leading ff d9 but not trailing ff da)
+                $md5->add("\xff" . chr($marker));
+                my $n = $skipped - (length($buff) - 1); # number of extra 0xff's
+                if (not $n) {
+                    $buff = substr($buff, 0, -1);       # remove trailing 0xff
+                } elsif ($n > 1) {
+                    $buff .= "\xff" x ($n - 1);         # add back extra 0xff's
+                }
+                $md5->add($buff);
+                $md5size += $skipped + 2;
             }
             # read second segment too if this was the first
             next unless defined $marker;
@@ -6471,7 +6617,8 @@ sub ProcessJPEG($$)
                 $self->HDump($segPos-4, $length+4, "[JPEG $markerName]", undef, 0x08);
                 $dumpEnd = $segPos + $length;
             }
-            next unless $length >= 6;
+            next if $length < 6 or $gotSize;
+            $gotSize = 1; # (ignore subsequent SOF segments in probably corrupted JPEG)
             # extract some useful information
             my ($p, $h, $w, $n) = unpack('Cn2C', $$segDataPt);
             my $sof = GetTagTable('Image::ExifTool::JPEG::SOF');
@@ -6661,6 +6808,11 @@ sub ProcessJPEG($$)
             pop @$path;
             $verbose and print $out "JPEG SOD\n";
             $success = 1;
+            if ($md5 and $$self{FILE_TYPE} eq 'JP2') {
+                my $pos = $raf->Tell();
+                $self->ImageDataMD5($raf, undef, 'SOD');
+                $raf->Seek($pos, 0);
+            }
             next if $verbose > 2 or $htmlDump;
             last;   # all done parsing file
         } elsif (defined $markerLenBytes{$marker}) {
@@ -6735,7 +6887,7 @@ sub ProcessJPEG($$)
         } elsif ($marker == 0xe1) {         # APP1 (EXIF, XMP, QVCI, PARROT)
             # (some Kodak cameras don't put a second "\0", and I have seen an
             #  example where there was a second 4-byte APP1 segment header)
-            if ($$segDataPt =~ /^(.{0,4})Exif\0/is) {
+            if ($$segDataPt =~ /^(.{0,4})Exif\0./is) {
                 undef $dumpType;    # (will be dumped here)
                 # this is EXIF data --
                 # get the data block (into a common variable)
@@ -7393,8 +7545,11 @@ sub ProcessJPEG($$)
             }
         } elsif ($marker == 0x51) {         # SIZ (J2C)
             my ($w, $h) = unpack('x2N2', $$segDataPt);
-            $self->FoundTag('ImageWidth', $w);
-            $self->FoundTag('ImageHeight', $h);
+            unless ($gotSize) {
+                $gotSize = 1;
+                $self->FoundTag('ImageWidth', $w);
+                $self->FoundTag('ImageHeight', $h);
+            }
         } elsif (($marker & 0xf0) != 0xe0) {
             $dumpType = "$markerName segment";
             $desc = "[JPEG $markerName]";   # (other known JPEG segments)
@@ -7457,6 +7612,8 @@ sub ProcessJPEG($$)
             delete $extendedXMP{$guid};
         }
     }
+    # print verbose MD5 message if necessary
+    print $out "$$self{INDENT}(ImageDataMD5: $md5size bytes of JPEG image data)\n" if $md5size and $verbose;
     # calculate JPEGDigest if requested
     if (@dqt) {
         require Image::ExifTool::JPEGDigest;
@@ -7731,6 +7888,9 @@ sub DoProcessTIFF($$;$)
         }
         if ($$self{TIFF_TYPE} eq 'TIFF') {
             $self->FoundTag(PageCount => $$self{PageCount}) if $$self{MultiPage};
+        }
+        if ($$self{ImageDataMD5} and $$self{A100DataOffset} and $raf->Seek($$self{A100DataOffset},0)) {
+            $self->ImageDataMD5($raf, undef, 'A100');
         }
         return 1;
     }

@@ -17,7 +17,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Minolta;
 
-$VERSION = '1.16';
+$VERSION = '1.18';
 
 sub ProcessMRW($$;$);
 sub WriteMRW($$;$);
@@ -489,6 +489,7 @@ sub ProcessMRW($$;$)
         $err and $et->Error("MRW format error", $$et{TIFF_TYPE} eq 'ARW');
     } else {
         $err and $et->Warn("MRW format error");
+        $et->ImageDataMD5($raf, undef, 'raw') unless $$et{A100DataOffset};
     }
     return $rtnVal;
 }

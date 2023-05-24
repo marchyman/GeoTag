@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.84';
+$VERSION = '2.85';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -447,15 +447,16 @@ my %dupDirOK = ( ipco => 1, '----' => 1 );
 my %eeStd = ( stco => 'stbl', co64 => 'stbl', stsz => 'stbl', stz2 => 'stbl',
               stsc => 'stbl', stts => 'stbl' );
 
+# atoms required for generating ImageDataMD5
+my %md5Box = ( vide => { %eeStd }, soun => { %eeStd } );
+
 # boxes and their containers for the various handler types that we want to save
 # when the ExtractEmbedded is enabled (currently only the 'gps ' container name is
 # used, but others have been checked against all available sample files and may be
 # useful in the future if the names are used for different boxes on other locations)
 my %eeBox = (
     # (note: vide is only processed if specific atoms exist in the VideoSampleDesc)
-    vide => { %eeStd,
-        JPEG => 'stsd',
-    },
+    vide => { %eeStd, JPEG => 'stsd' },
     text => { %eeStd },
     meta => { %eeStd },
     sbtl => { %eeStd },
@@ -468,6 +469,9 @@ my %eeBox = (
 my %eeBox2 = (
     vide => { avcC => 'stsd' }, # (parses H264 video stream)
 );
+
+# image types in AVIF and HEIC files
+my %isImageData = ( av01 => 1, avc1 => 1, hvc1 => 1, lhv1 => 1, hvt1 => 1 );
 
 # QuickTime atoms
 %Image::ExifTool::QuickTime::Main = (
@@ -2883,7 +2887,7 @@ my %eeBox2 = (
                 7 => 'SMPTE 240',
                 8 => 'Generic film (color filters using illuminant C)',
                 9 => 'BT.2020, BT.2100',
-                10 => 'SMPTE 428 (CIE 1921 XYZ)',
+                10 => 'SMPTE 428 (CIE 1931 XYZ)', #forum14766
                 11 => 'SMPTE RP 431-2',
                 12 => 'SMPTE EG 432-1',
                 22 => 'EBU Tech. 3213-E',
@@ -8783,6 +8787,16 @@ sub HandleItemInfo($)
                     $et->VPrint(0, "$$et{INDENT}    [snip $snip bytes]\n") if $snip;
                 }
             }
+            # do MD5 checksum of AVIF "av01" and HEIC image data
+            if ($isImageData{$type} and $$et{ImageDataMD5}) {
+                my $md5 = $$et{ImageDataMD5};
+                my $tot = 0;
+                foreach $extent (@{$$item{Extents}}) {
+                    $raf->Seek($$extent[1] + $base, 0) or $et->Warn("Seek error in $type image data"), last;
+                    $tot += $et->ImageDataMD5($raf, $$extent[2], "$type image", 1);
+                }
+                $et->VPrint(0, "$$et{INDENT}(ImageDataMD5: $tot bytes of $type data)\n") if $tot;
+            }
             next unless $name;
             # assemble the data for this item
             undef $buff;
@@ -9285,7 +9299,8 @@ sub ProcessMOV($$;$)
     $$raf{NoBuffer} = 1 if $fast;   # disable buffering in FastScan mode
 
     my $ee = $$et{OPTIONS}{ExtractEmbedded};
-    if ($ee) {
+    my $md5 = $$et{ImageDataMD5};
+    if ($ee or $md5) {
         $unkOpt = $$et{OPTIONS}{Unknown};
         require 'Image/ExifTool/QuickTimeStream.pl';
     }
@@ -9367,7 +9382,7 @@ sub ProcessMOV($$;$)
         # set flag to store additional information for ExtractEmbedded option
         my $handlerType = $$et{HandlerType};
         if ($eeBox{$handlerType} and $eeBox{$handlerType}{$tag}) {
-            if ($ee) {
+            if ($ee or $md5) {
                 # (there is another 'gps ' box with a track log that doesn't contain offsets)
                 if ($tag ne 'gps ' or $eeBox{$handlerType}{$tag} eq $dirID) {
                     $eeTag = 1;
@@ -9377,6 +9392,9 @@ sub ProcessMOV($$;$)
                 EEWarn($et);
             }
         } elsif ($ee and $ee > 1 and $eeBox2{$handlerType} and $eeBox2{$handlerType}{$tag}) {
+            $eeTag = 1;
+            $$et{OPTIONS}{Unknown} = 1;
+        } elsif ($md5 and $md5Box{$handlerType} and $md5Box{$handlerType}{$tag}) {
             $eeTag = 1;
             $$et{OPTIONS}{Unknown} = 1;
         }
@@ -9611,7 +9629,7 @@ ItemID:         foreach $id (keys %$items) {
                     }
                     if ($tag eq 'stbl') {
                         # process sample data when exiting SampleTable box if extracting embedded
-                        ProcessSamples($et) if $ee;
+                        ProcessSamples($et) if $ee or $md5;
                     } elsif ($tag eq 'minf') {
                         $$et{HandlerType} = ''; # reset handler type at end of media info box
                     }
