@@ -6,3 +6,4 @@ Build/
 DerivedData/
 xcuserdata/
 *.xcworkspace/
+*.trace/
