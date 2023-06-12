@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct ImageNameColumnView: View {
-    let image: ImageModel
+    @ObservedObject var avm: AppViewModel
+    let id: ImageModel.ID
     let selected: Bool
 
     var body: some View {
+        let image = avm[id]
         Text(image.name + (image.sidecarExists ? "*" : ""))
             .fontWeight(textWeight())
             .foregroundColor(textColor())
@@ -20,7 +22,7 @@ struct ImageNameColumnView: View {
 
     @MainActor
     func textColor() -> Color {
-        if image.isValid {
+        if avm[id].isValid {
             if selected {
                 return .mostSelected
             }
@@ -44,6 +46,7 @@ struct ImageNameColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        ImageNameColumnView(image: image, selected: false)
+        let avm = AppViewModel(images: [image])
+        ImageNameColumnView(avm: avm, id: image.id, selected: false)
     }
 }

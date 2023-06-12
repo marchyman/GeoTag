@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct ImageLongitudeColumnView: View {
-    let image: ImageModel
+    @ObservedObject var avm: AppViewModel
+    let id: ImageModel.ID
     let coordFormat: AppSettings.CoordFormat
     let minWidth: CGFloat
 
     @State private var showPopover = false
 
     var body: some View {
+        let image = avm[id]
         Text(coordToString(for: image.location?.longitude,
                            format: coordFormat,
                            ref: lonRef))
@@ -24,7 +26,7 @@ struct ImageLongitudeColumnView: View {
                 showPopover = image.isValid
             }
             .popover(isPresented: self.$showPopover) {
-                ChangeLocationView(id: image.id)
+                ChangeLocationView(id: id)
                     .frame(width: 450, height: 250)
             }
             .help(image.elevationAsString)
@@ -41,7 +43,8 @@ struct ImageLongitudeColumnView_Previews: PreviewProvider {
 
     static var previews: some View {
         let avm = AppViewModel(images: [image])
-        ImageLongitudeColumnView(image: image,
+        ImageLongitudeColumnView(avm: avm,
+                                 id: image.id,
                                  coordFormat: .deg,
                                  minWidth: 120.0)
             .environmentObject(avm)

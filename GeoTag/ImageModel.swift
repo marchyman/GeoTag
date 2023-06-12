@@ -10,7 +10,7 @@ import MapKit
 
 // Data about an image that may have its geo-location metadata changed.
 
-final class ImageModel: Identifiable {
+struct ImageModel: Identifiable {
 
     // Identifying data.
     let fileURL: URL
@@ -85,7 +85,7 @@ final class ImageModel: Identifiable {
 
     // reset the timestamp and location to their initial values.  Initial
     // values are updated whenever an image is saved.
-    func revert() {
+    mutating func revert() {
         dateTimeCreated = originalDateTimeCreated
         location = originalLocation
         elevation = originalElevation
@@ -98,7 +98,7 @@ final class ImageModel: Identifiable {
     /// do not exist the file is assumed to be a non-image file
 
     private
-    func loadImageMetadata() throws -> Bool {
+    mutating func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
             enum ImageError: Error {
                 case cgSourceError
@@ -173,7 +173,7 @@ final class ImageModel: Identifiable {
     /// function is called/
 
     private
-    func loadXmpMetadata() {
+    mutating func loadXmpMetadata() {
         NSFileCoordinator.addFilePresenter(xmpPresenter)
         let results = Exiftool.helper.metadataFrom(xmp: sidecarURL)
         NSFileCoordinator.removeFilePresenter(xmpPresenter)
@@ -197,11 +197,10 @@ extension ImageModel {
 
     // create a model for SwiftUI preview
 
-    convenience init(imageURL: URL,
-                     validImage: Bool,
-                     dateTimeCreated: String,
-                     latitude: Double?,
-                     longitude: Double?) {
+    init(imageURL: URL,
+         validImage: Bool,
+         dateTimeCreated: String, latitude: Double?,
+         longitude: Double?) {
         do {
             try self.init(imageURL: imageURL, forPreview: true)
         } catch {
@@ -217,7 +216,7 @@ extension ImageModel {
     // create an instance of an ImageModel when one is needed but there
     // is otherwise no instance to return.
 
-    convenience init() {
+    init() {
         do {
             try self.init(imageURL: URL(filePath: ""), forPreview: true)
         } catch {

@@ -22,26 +22,30 @@ struct ImageTableView: View {
         Table(selection: $avm.selection,
               sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
-                ImageNameColumnView(image: image,
+                ImageNameColumnView(avm: avm,
+                                    id: image.id,
                                     selected: avm.mostSelected == image.id)
             }
             .width(min: 100)
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                ImageTimestampColumnView(image: image,
+                ImageTimestampColumnView(avm: avm,
+                                         id: image.id,
                                          timestampMinWidth: itvm.timestampMinWidth)
             }
             .width(min: itvm.timestampMinWidth)
 
             TableColumn("Latitude", value: \.latitude) { image in
-                ImageLatitudeColumnView(image: image,
+                ImageLatitudeColumnView(avm: avm,
+                                        id: image.id,
                                         coordFormat: itvm.coordFormat,
                                         minWidth: itvm.coordMinWidth)
             }
             .width(min: itvm.coordMinWidth)
 
             TableColumn("Longitude", value: \.longitude) { image in
-                ImageLongitudeColumnView(image: image,
+                ImageLongitudeColumnView(avm: avm,
+                                         id: image.id,
                                          coordFormat: itvm.coordFormat,
                                          minWidth: itvm.coordMinWidth)
             }

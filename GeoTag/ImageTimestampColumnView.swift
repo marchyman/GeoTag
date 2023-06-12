@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct ImageTimestampColumnView: View {
-    let image: ImageModel
+    @ObservedObject var avm: AppViewModel
+    let id: ImageModel.ID
     let timestampMinWidth: CGFloat
 
     @State private var showPopover = false
 
     var body: some View {
+        let image = avm[id]
         Text(image.timeStamp)
             .foregroundColor(image.timestampTextColor)
             .frame(minWidth: timestampMinWidth)
@@ -35,6 +37,9 @@ struct ImageTimestampColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        ImageTimestampColumnView(image: image, timestampMinWidth: 130.0)
+        let avm = AppViewModel(images: [image])
+        ImageTimestampColumnView(avm: avm,
+                                 id: image.id,
+                                 timestampMinWidth: 130.0)
     }
 }
