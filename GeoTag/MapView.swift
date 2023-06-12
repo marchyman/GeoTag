@@ -75,8 +75,8 @@ struct MapView: NSViewRepresentable {
             // as the main pin.
             if mvm.mainPin == nil {
                 mvm.mainPin = MKPointAnnotation()
-                mvm.mainPin?.title = "Pin"
             }
+            mvm.mainPin?.title = "Pin"
             mvm.mainPin?.coordinate = location
 
             // Add an annotation for mainPin since a location exists.
