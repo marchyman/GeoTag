@@ -47,23 +47,23 @@ enum SheetType: Identifiable, View {
 // Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
 
 struct GpxLoadView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @EnvironmentObject var avm: AppViewModel
 
     var body: some View {
         VStack(alignment: .leading) {
-            if vm.gpxGoodFileNames.count > 0 {
+            if avm.gpxGoodFileNames.count > 0 {
                 Text("GPX Files Loaded")
                     .font(.title)
-                List(vm.gpxGoodFileNames, id: \.self) { Text($0) }
+                List(avm.gpxGoodFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("The above GPX file(s) have been processed and will show as tracks on the map.")
                     .lineLimit(nil)
                     .padding()
             }
-            if vm.gpxBadFileNames.count > 0 {
+            if avm.gpxBadFileNames.count > 0 {
                 Text("GPX Files NOT Loaded")
                     .font(.title)
-                List(vm.gpxBadFileNames, id: \.self) { Text($0) }
+                List(avm.gpxBadFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
@@ -74,6 +74,11 @@ struct GpxLoadView: View {
                     .lineLimit(nil)
                     .padding([.leading, .bottom, .trailing])
             }
+        }
+        .onDisappear {
+            // clear lists of good and bad track file names
+            avm.gpxGoodFileNames = []
+            avm.gpxBadFileNames = []
         }
         .frame(minWidth: sheetWidth, maxWidth: sheetWidth,
                minHeight: sheetMinHeight)
