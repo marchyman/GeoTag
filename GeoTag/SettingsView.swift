@@ -12,7 +12,8 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var avm: AppViewModel
     @ObservedObject var mvm = MapViewModel.shared
-    @ObservedObject var itvm = ImageTableViewModel.shared
+
+    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
     // Only used in prepareForEdits
     @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
@@ -59,7 +60,7 @@ struct SettingsView: View {
 
                 // Coordinate display configuration
                 Picker("Choose a coordinate format:",
-                       selection: $itvm.coordFormat) {
+                       selection: $coordFormat) {
                     Text("dd.dddddd")
                         .tag(AppSettings.CoordFormat.deg)
                     Text("dd mm.mmmmmm'")

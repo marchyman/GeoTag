@@ -14,9 +14,11 @@ import SwiftUI
 
 struct ImageTableView: View {
     @EnvironmentObject var avm: AppViewModel
-    @ObservedObject var itvm = ImageTableViewModel.shared
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
+
+    let timestampMinWidth = 130.0
+    let coordMinWidth = 120.0
 
     var body: some View {
         Table(selection: $avm.selection,
@@ -29,21 +31,21 @@ struct ImageTableView: View {
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
                 ImageTimestampColumnView(image: image,
-                                         timestampMinWidth: itvm.timestampMinWidth)
+                                         timestampMinWidth: timestampMinWidth)
             }
-            .width(min: itvm.timestampMinWidth)
+            .width(min: timestampMinWidth)
 
             TableColumn("Latitude", value: \.latitude) { image in
                 ImageLatitudeColumnView(image: image,
-                                        minWidth: itvm.coordMinWidth)
+                                        minWidth: coordMinWidth)
             }
-            .width(min: itvm.coordMinWidth)
+            .width(min: coordMinWidth)
 
             TableColumn("Longitude", value: \.longitude) { image in
                 ImageLongitudeColumnView(image: image,
-                                         minWidth: itvm.coordMinWidth)
+                                         minWidth: coordMinWidth)
             }
-            .width(min: itvm.coordMinWidth)
+            .width(min: coordMinWidth)
         } rows: {
             ForEach(avm.images) { image in
                 if image.isValid || !avm.hideInvalidImages {
