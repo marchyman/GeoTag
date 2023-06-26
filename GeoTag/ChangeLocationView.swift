@@ -75,8 +75,9 @@ struct ChangeLocationView: View {
             .padding()
         }
         .onAppear {
-            latitude = avm[id].location?.latitude
-            longitude = avm[id].location?.longitude
+            let location = avm[id].location
+            latitude = location?.latitude
+            longitude = location?.longitude
         }
        .alert("Coordinate Error",
               isPresented: $alertPresented) {

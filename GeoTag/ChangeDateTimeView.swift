@@ -11,7 +11,7 @@ struct ChangeDateTimeView: View {
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject var avm: AppViewModel
-    let id: ImageModel.ID!
+    let id: ImageModel.ID
 
     @State private var oldDate = Date()
     @State private var newDate = Date()
@@ -60,8 +60,7 @@ struct ChangeDateTimeView: View {
     // return a data from an image DateTimeCreated.  If the field is nil
     // return the current date.
 
-    @MainActor
-    func date() -> Date {
+    private func date() -> Date {
         if let date = avm[id].timestamp(for: avm.timeZone) {
             return date
         }
@@ -70,8 +69,7 @@ struct ChangeDateTimeView: View {
 
     // update the dateTimeCreated value for all selected images
 
-    @MainActor
-    func updateTimestamps() {
+    private func updateTimestamps() {
         // calclulate the adjustment to make to selected images
         let adjustment = newDate.timeIntervalSince1970 - oldDate.timeIntervalSince1970
 
