@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct ImageLatitudeColumnView: View {
-    @ObservedObject var avm: AppViewModel
-    let id: ImageModel.ID
-    let coordFormat: AppSettings.CoordFormat
+    let image: ImageModel
     let minWidth: CGFloat
 
+    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
     @State private var showPopover = false
 
     var body: some View {
-        let image = avm[id]
         Text(coordToString(for: image.location?.latitude,
                            format: coordFormat,
                            ref: latRef))
@@ -26,7 +24,7 @@ struct ImageLatitudeColumnView: View {
                 showPopover = image.isValid
             }
             .popover(isPresented: self.$showPopover) {
-                ChangeLocationView(id: id)
+                ChangeLocationView(id: image.id)
                     .frame(width: 450, height: 250)
             }
             .help(image.elevationAsString)
@@ -42,10 +40,7 @@ struct ImageLatitudeColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        let avm = AppViewModel(images: [image])
-        ImageLatitudeColumnView(avm: avm,
-                                id: image.id,
-                                coordFormat: .deg,
+        ImageLatitudeColumnView(image: image,
                                 minWidth: 120.0)
     }
 }

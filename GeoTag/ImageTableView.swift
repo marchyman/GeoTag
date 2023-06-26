@@ -22,31 +22,25 @@ struct ImageTableView: View {
         Table(selection: $avm.selection,
               sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
-                ImageNameColumnView(avm: avm,
-                                    id: image.id,
-                                    selected: avm.mostSelected == image.id)
+                ImageNameColumnView(image: image,
+                                    selectedImage: image.id == avm.mostSelected)
             }
             .width(min: 100)
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                ImageTimestampColumnView(avm: avm,
-                                         id: image.id,
+                ImageTimestampColumnView(image: image,
                                          timestampMinWidth: itvm.timestampMinWidth)
             }
             .width(min: itvm.timestampMinWidth)
 
             TableColumn("Latitude", value: \.latitude) { image in
-                ImageLatitudeColumnView(avm: avm,
-                                        id: image.id,
-                                        coordFormat: itvm.coordFormat,
+                ImageLatitudeColumnView(image: image,
                                         minWidth: itvm.coordMinWidth)
             }
             .width(min: itvm.coordMinWidth)
 
             TableColumn("Longitude", value: \.longitude) { image in
-                ImageLongitudeColumnView(avm: avm,
-                                         id: image.id,
-                                         coordFormat: itvm.coordFormat,
+                ImageLongitudeColumnView(image: image,
                                          minWidth: itvm.coordMinWidth)
             }
             .width(min: itvm.coordMinWidth)
@@ -127,17 +121,17 @@ extension ImageModel {
 
 struct ImageTableView_Previews: PreviewProvider {
     static var images = [
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
                    validImage: true,
                    dateTimeCreated: "2022:12:12 11:22:33",
                    latitude: 33.123,
                    longitude: 123.456),
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image2"),
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image2.bad"),
                    validImage: false,
                    dateTimeCreated: "",
                    latitude: nil,
                    longitude: nil),
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image3"),
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image3.dng"),
                    validImage: true,
                    dateTimeCreated: "2022:12:13 14:15:16",
                    latitude: 35.505,
