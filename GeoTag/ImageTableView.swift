@@ -40,14 +40,12 @@ struct ImageTableView: View {
             .width(min: timestampMinWidth)
 
             TableColumn("Latitude", value: \.latitude) { image in
-                ImageLatitudeColumnView(location: image.location,
-                                        id: image.id)
+                ImageLatitudeColumnView(id: image.id)
             }
             .width(min: coordMinWidth)
 
             TableColumn("Longitude", value: \.longitude) { image in
-                ImageLongitudeColumnView(location: image.location,
-                                         id: image.id)
+                ImageLongitudeColumnView(id: image.id)
             }
             .width(min: coordMinWidth)
         } rows: {

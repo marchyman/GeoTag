@@ -9,7 +9,6 @@ import SwiftUI
 import CoreLocation
 
 struct ImageLongitudeColumnView: View {
-    let location: CLLocationCoordinate2D?
     let id: ImageModel.ID
     @State private var coordinate: Double?
     @EnvironmentObject var avm: AppViewModel
@@ -18,20 +17,20 @@ struct ImageLongitudeColumnView: View {
         TextField("", value: $coordinate, format: .longitude())
             .labelsHidden()
             .frame(maxWidth: 250)
-//            .help(image.elevationAsString)
+            .help(avm[id].elevationAsString)
             .onSubmit {
                 validateAndUpdate()
             }
             .onAppear {
                 loadCoordinate()
             }
-            .onChange(of: location) { _ in
+            .onChange(of: avm[id].location) { _ in
                 loadCoordinate()
             }
     }
 
     private func loadCoordinate() {
-        if let location = location {
+        if let location = avm[id].location {
             coordinate = location.longitude
         } else {
             coordinate = nil
@@ -45,7 +44,7 @@ struct ImageLongitudeColumnView: View {
         if let longitude = coordinate {
             if (0...180).contains(longitude.magnitude) {
                 // longitude is in range.  Now see if it changed.
-                if let location {
+                if let location = avm[id].location {
                     newLocation = location
                 } else {
                     newLocation = CLLocationCoordinate2D()
@@ -59,14 +58,14 @@ struct ImageLongitudeColumnView: View {
             }
         } else {
             // See if an existing entry was deleted.
-            if location != nil {
+            if avm[id].location != nil {
                 avm.update(id: id, location: newLocation)
             }
         }
     }
 }
 
-//struct ImageLongitudeColumnView_Previews: PreviewProvider {
+// struct ImageLongitudeColumnView_Previews: PreviewProvider {
 //    static var image =
 //        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
 //                   validImage: true,
@@ -77,4 +76,4 @@ struct ImageLongitudeColumnView: View {
 //    static var previews: some View {
 //        ImageLongitudeColumnView(image: image)
 //    }
-//}
+// }
