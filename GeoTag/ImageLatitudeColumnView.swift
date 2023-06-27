@@ -12,13 +12,21 @@ struct ImageLatitudeColumnView: View {
     let id: ImageModel.ID
     @State private var coordinate: Double?
     @EnvironmentObject var avm: AppViewModel
+    @FocusState private var isFocused: Bool
+    @State private var discardEdits = false
 
     var body: some View {
         TextField("", value: $coordinate, format: .latitude())
+            .foregroundColor(avm[id].locationTextColor)
+            .focused($isFocused)
             .labelsHidden()
             .frame(maxWidth: 250)
             .help(avm[id].elevationAsString)
-            .onSubmit {
+            .onExitCommand {
+                discardEdits = true
+                isFocused = false
+            }
+            .onChange(of: isFocused) { _ in
                 validateAndUpdate()
             }
             .onAppear {
@@ -40,6 +48,11 @@ struct ImageLatitudeColumnView: View {
     // validate TextField input. Update if there are changes.
 
     private func validateAndUpdate() {
+        guard !discardEdits else {
+            discardEdits = false
+            loadCoordinate()
+            return
+        }
         var newLocation: CLLocationCoordinate2D?
         if let latitude = coordinate {
             if (0...90).contains(latitude.magnitude) {

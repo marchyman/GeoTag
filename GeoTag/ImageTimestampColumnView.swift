@@ -8,20 +8,21 @@
 import SwiftUI
 
 struct ImageTimestampColumnView: View {
-    let image: ImageModel
+    let id: ImageModel.ID
     let timestampMinWidth: CGFloat
+    @EnvironmentObject var avm: AppViewModel
 
     @State private var dateTimePopover = false
 
     var body: some View {
-        Text(image.timeStamp)
-            .foregroundColor(image.timestampTextColor)
+        Text(avm[id].timeStamp)
+            .foregroundColor(avm[id].timestampTextColor)
             .frame(minWidth: timestampMinWidth)
             .onDoubleClick {
-                dateTimePopover = image.isValid
+                dateTimePopover = avm[id].isValid
             }
             .popover(isPresented: self.$dateTimePopover) {
-                ChangeDateTimeView(id: image.id)
+                ChangeDateTimeView(id: id)
             }
     }
 }
@@ -35,7 +36,8 @@ struct ImageTimestampColumnView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        ImageTimestampColumnView(image: image,
+        ImageTimestampColumnView(id: image.id,
                                  timestampMinWidth: 130.0)
+            .environmentObject(AppViewModel(images: [image]))
     }
 }

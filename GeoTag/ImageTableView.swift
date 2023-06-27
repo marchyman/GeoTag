@@ -34,7 +34,7 @@ struct ImageTableView: View {
             .width(min: 100)
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                ImageTimestampColumnView(image: image,
+                ImageTimestampColumnView(id: image.id,
                                          timestampMinWidth: timestampMinWidth)
             }
             .width(min: timestampMinWidth)
