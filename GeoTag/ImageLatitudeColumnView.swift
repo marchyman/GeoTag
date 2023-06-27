@@ -6,41 +6,75 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct ImageLatitudeColumnView: View {
-    let image: ImageModel
-    let minWidth: CGFloat
-
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
-    @State private var showPopover = false
+    let location: CLLocationCoordinate2D?
+    let id: ImageModel.ID
+    @State private var coordinate: Double?
+    @EnvironmentObject var avm: AppViewModel
 
     var body: some View {
-        Text(coordToString(for: image.location?.latitude,
-                           format: coordFormat,
-                           ref: latRef))
-            .foregroundColor(image.locationTextColor)
-            .frame(minWidth: minWidth)
-            .onDoubleClick {
-                showPopover = image.isValid
+        TextField("", value: $coordinate, format: .latitude())
+            .labelsHidden()
+            .frame(maxWidth: 250)
+//            .help(image.elevationAsString)
+            .onSubmit {
+                validateAndUpdate()
             }
-            .popover(isPresented: self.$showPopover) {
-                ChangeLocationView(id: image.id)
-                    .frame(width: 450, height: 250)
+            .onAppear {
+                loadCoordinate()
             }
-            .help(image.elevationAsString)
+            .onChange(of: location) { _ in
+                loadCoordinate()
+            }
+    }
+
+    private func loadCoordinate() {
+        if let location {
+            coordinate = location.latitude
+        } else {
+            coordinate = nil
+        }
+    }
+
+    // validate TextField input. Update if there are changes.
+
+    private func validateAndUpdate() {
+        var newLocation: CLLocationCoordinate2D?
+        if let latitude = coordinate {
+            if (0...90).contains(latitude.magnitude) {
+                // latitude is in range.  Now see if it changed.
+                if let location {
+                    newLocation = location
+                } else {
+                    newLocation = CLLocationCoordinate2D()
+                }
+                if newLocation?.latitude != latitude {
+                    newLocation?.latitude = latitude
+                    avm.update(id: id, location: newLocation)
+                }
+            } else {
+                // I don't think this can happen
+            }
+        } else {
+            // See if an existing entry was deleted.
+            if location != nil {
+                avm.update(id: id, location: newLocation)
+            }
+        }
     }
 }
 
-struct ImageLatitudeColumnView_Previews: PreviewProvider {
-    static var image =
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
-                   validImage: true,
-                   dateTimeCreated: "2022:12:12 11:22:33",
-                   latitude: 33.123,
-                   longitude: 123.456)
-
-    static var previews: some View {
-        ImageLatitudeColumnView(image: image,
-                                minWidth: 120.0)
-    }
-}
+//struct ImageLatitudeColumnView_Previews: PreviewProvider {
+//    static var image =
+//        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
+//                   validImage: true,
+//                   dateTimeCreated: "2022:12:12 11:22:33",
+//                   latitude: 33.123,
+//                   longitude: 123.456)
+//
+//    static var previews: some View {
+//        ImageLatitudeColumnView(image: image)
+//    }
+//}
