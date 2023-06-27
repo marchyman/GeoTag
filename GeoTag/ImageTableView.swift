@@ -6,6 +6,10 @@
 //
 
 import SwiftUI
+import OSLog
+
+let tableLog = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                      category: "ImageTableView")
 
 // Note on EnvironmentObject:  When testing scrolling the Table in this view
 // would crash when trying to render one of the columns.   The crash was
@@ -47,6 +51,9 @@ struct ImageTableView: View {
             }
             .width(min: coordMinWidth)
         } rows: {
+            let count = avm.images.count
+            // swiftlint:disable redundant_discardable_let
+            let _ = tableLog.trace("Start building \(count) table rows")
             ForEach(avm.images) { image in
                 if image.isValid || !avm.hideInvalidImages {
                     TableRow(image)
@@ -55,6 +62,8 @@ struct ImageTableView: View {
                         }
                 }
             }
+            let _ = tableLog.trace("End build table row")
+            // swiftlint:enable redundant_discardable_let
         }
         .contextMenu {
             ContextMenuView(context: nil)
