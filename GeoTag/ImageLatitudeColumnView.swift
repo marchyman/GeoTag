@@ -78,15 +78,16 @@ struct ImageLatitudeColumnView: View {
     }
 }
 
-// struct ImageLatitudeColumnView_Previews: PreviewProvider {
-//    static var image =
-//        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
-//                   validImage: true,
-//                   dateTimeCreated: "2022:12:12 11:22:33",
-//                   latitude: 33.123,
-//                   longitude: 123.456)
-//
-//    static var previews: some View {
-//        ImageLatitudeColumnView(image: image)
-//    }
-// }
+ struct ImageLatitudeColumnView_Previews: PreviewProvider {
+    static var image =
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
+                   validImage: true,
+                   dateTimeCreated: "2022:12:12 11:22:33",
+                   latitude: 33.123,
+                   longitude: -123.456)
+
+    static var previews: some View {
+        ImageLatitudeColumnView(id: image.id)
+            .environmentObject(AppViewModel(images: [image]))
+   }
+}

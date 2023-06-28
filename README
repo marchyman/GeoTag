@@ -16,29 +16,20 @@ GeoTag Version 5 is a re-write of the program taking advantage of features in
 the current version of macOS. Those not using macOS Ventura can use GeoTag
 version 4.15.
 
-## Version 5.1
+## WIP
 
 ### Updates
 
-* Add option to always create sidecar (XMP) files when updating images.
-* Update both images of a raw/jpeg pair when the location of one of the
-  paired images changes. This only applies if both images of the pair were
-  opened and enabled or if updates are written to a sidecar file.
-* Add "Report a bug..." to the help menu.  Selecting this will open the GeoTag
-  github issues page in your browser.
-* ExifTool version 12.62
+* Latitude/Longitude keyboard updates are now done in the table instead
+  of a separate popover.
 
-### Bug Fixes
-
-* Performance improvement when opening large number of images.
-* Do not clear window changed indicator when there are save errors.
-* GPS Timestamp written to sidecar files sometimes included a timezone
-  instead of being a UTC/GMT relative timestamp.
-* Crash that could occur when opening the Setting window.
-* Sidecar file backups would sometimes fail.
-* image thumbnail could fail to show until the selection changed.
 
 ### Known bugs
+
+* Keyboard shortcuts for cut/copy/delete/paste/select all do not work
+  when editing text fields, i.e. latitude, longitude, and timestamps.
+  Main menu items also do not work.
+  Workaround: use a context menu (right click) in the field being edited.
 
 * performance is still an issue.  When opening 1200 images, for example,
   it takes 15-20 seconds on a 3.6 GHz 8-Core Intel Core i9.  When selecting
