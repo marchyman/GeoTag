@@ -13,7 +13,14 @@ extension AppViewModel {
         return images.isEmpty
     }
 
-    func selectAllAction() {
-        selection = Set(images.map { $0.id })
+    // when textfield is non-nil a textfield is being edited and selectAll
+    // is limited to the field.  Otherwise select all items in the table.
+
+    func selectAllAction(textfield: Double??) {
+        if textfield == nil {
+            selection = Set(images.map { $0.id })
+        } else {
+            NSApp.sendAction(#selector(NSText.selectAll), to: nil, from: nil)
+        }
     }
 }

@@ -11,6 +11,7 @@ import SwiftUI
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @StateObject var avm = AppViewModel()
+    @FocusedBinding(\.textfieldBinding) var textfieldBinding
 
     let windowWidth = 1200.0
     let windowHeight = 900.0
@@ -57,4 +58,18 @@ struct GeoTagApp: App {
 
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
+}
+
+// Text field focus. When the bound value is true a text field
+// has focus.  Used when processing pasteboard commands.
+
+struct FocusedTextfield: FocusedValueKey {
+    typealias Value = Binding<Double?>
+}
+
+extension FocusedValues {
+    var textfieldBinding: FocusedTextfield.Value? {
+        get { self[FocusedTextfield.self] }
+        set { self[FocusedTextfield.self] = newValue }
+    }
 }

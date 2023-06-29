@@ -19,6 +19,7 @@ struct ImageLongitudeColumnView: View {
         TextField("", value: $coordinate, format: .longitude())
             .foregroundColor(avm[id].locationTextColor)
             .focused($isFocused)
+            .focusedValue(\.textfieldBinding, $coordinate)
             .labelsHidden()
             .frame(maxWidth: 250)
             .help(avm[id].elevationAsString)

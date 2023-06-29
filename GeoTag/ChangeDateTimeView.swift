@@ -13,6 +13,7 @@ struct ChangeDateTimeView: View {
     @EnvironmentObject var avm: AppViewModel
     let id: ImageModel.ID
 
+    @FocusState private var isFocused: Bool
     @State private var oldDate = Date()
     @State private var newDate = Date()
 
@@ -25,6 +26,7 @@ struct ChangeDateTimeView: View {
                 LabeledContent("New Date/Time:") {
                     DatePicker("New Date/Time", selection: $newDate,
                                displayedComponents: .init(rawValue: 1234521450295224572))
+                    .focused($isFocused)
                     .labelsHidden()
                     .frame(width: 200)
                                     }

@@ -12,9 +12,12 @@ import AppKit
 
 extension AppViewModel {
 
-    // return true if paste actions should be disabled
+    // return true if paste actions should be disabled.  Paste action always
+    // allowed when editing a textfield (textfield != nil)
 
-    func pasteDisabled(context: ImageModel.ID? = nil) -> Bool {
+    func pasteDisabled(context: ImageModel.ID? = nil,
+                       textfield: Double?? = nil) -> Bool {
+        guard textfield == nil else { return false }
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
            ImageModel.decodeStringRep(value: pasteVal) != nil,
@@ -26,19 +29,24 @@ extension AppViewModel {
 
     // paste into all selected images
 
-    func pasteAction(context: ImageModel.ID? = nil) {
-        if let context {
-            select(context: context)
-        }
-        let pb = NSPasteboard.general
-        if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
-           let locn = ImageModel.decodeStringRep(value: pasteVal) {
-            undoManager.beginUndoGrouping()
-            for id in selection {
-                update(id: id, location: locn.0, elevation: locn.1)
+    func pasteAction(context: ImageModel.ID? = nil,
+                     textfield: Double?? = nil) {
+        if textfield == nil {
+            if let context {
+                select(context: context)
             }
-            undoManager.endUndoGrouping()
-            undoManager.setActionName("paste location")
+            let pb = NSPasteboard.general
+            if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
+               let locn = ImageModel.decodeStringRep(value: pasteVal) {
+                undoManager.beginUndoGrouping()
+                for id in selection {
+                    update(id: id, location: locn.0, elevation: locn.1)
+                }
+                undoManager.endUndoGrouping()
+                undoManager.setActionName("paste location")
+            }
+        } else {
+            NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: nil)
         }
     }
 }

@@ -13,23 +13,23 @@ extension GeoTagApp {
     var pasteBoardCommandGroup: some Commands {
         CommandGroup(replacing: .pasteboard) {
             Group {
-                Button("Cut") { avm.cutAction() }
+                Button("Cut") { avm.cutAction(textfield: textfieldBinding) }
                     .keyboardShortcut("x")
                     .disabled(avm.cutCopyDisabled())
 
-                Button("Copy") { avm.copyAction() }
+                Button("Copy") { avm.copyAction(textfield: textfieldBinding) }
                     .keyboardShortcut("c")
                     .disabled(avm.cutCopyDisabled())
 
-                Button("Paste") { avm.pasteAction() }
+                Button("Paste") { avm.pasteAction(textfield: textfieldBinding) }
                     .keyboardShortcut("v")
-                    .disabled(avm.pasteDisabled())
+                    .disabled(avm.pasteDisabled(textfield: textfieldBinding))
 
-                Button("Delete") { avm.deleteAction() }
+                Button("Delete") { avm.deleteAction(textfield: textfieldBinding) }
                     .keyboardShortcut(.delete, modifiers: [])
                     .disabled(avm.deleteDisabled())
 
-                Button("Select All") { avm.selectAllAction() }
+                Button("Select All") { avm.selectAllAction(textfield: textfieldBinding) }
                     .keyboardShortcut("a")
                     .disabled(avm.selectAllDisabled())
             }
