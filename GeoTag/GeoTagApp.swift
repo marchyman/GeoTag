@@ -25,6 +25,7 @@ struct GeoTagApp: App {
                     appDelegate.avm = avm
                 }
                 .environmentObject(avm)
+                .environment(ContentViewModel.shared)
         }
         .commands {
             newItemCommandGroup

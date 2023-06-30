@@ -27,13 +27,13 @@ struct ImageLongitudeColumnView: View {
                 discardEdits = true
                 isFocused = false
             }
-             .onChange(of: isFocused) { _ in
+             .onChange(of: isFocused) {
                 validateAndUpdate()
             }
             .onAppear {
                 loadCoordinate()
             }
-            .onChange(of: avm[id].location) { _ in
+            .onChange(of: avm[id].location) {
                 loadCoordinate()
             }
     }

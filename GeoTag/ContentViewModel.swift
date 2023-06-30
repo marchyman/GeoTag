@@ -6,29 +6,34 @@
 //
 
 import SwiftUI
+import Observation
 
-// An ObservableObject containint items only used by ContentView
+// items used to determing the state of ContentView
+// Observable currently requires all items to be initialized.
+// Tell swiftlint to be quiet about setting optionals to nil
+// swiftlint:disable redundant_optional_initialization
 
-final class ContentViewModel: ObservableObject {
-    @Published var showingProgressView = false
-    @Published var sheetType: SheetType?
-    @Published var presentConfirmation = false
-    @Published var removeOldFiles = false
-    @Published var changeTimeZoneWindow = false
-
+@Observable
+final class ContentViewModel {
     public static let shared = ContentViewModel()
+
+    var showingProgressView = false
+    var sheetType: SheetType? = nil
+    var presentConfirmation = false
+    var removeOldFiles = false
+    var changeTimeZoneWindow = false
 
     // Fields used select a sheet to attach to the content view
     // some sheets are associated with errors.  Setting sheetType will
     // trigger display of the sheet
     var sheetStack = [SheetInfo]()
-    var sheetError: NSError?
-    var sheetMessage: String?
+    var sheetError: NSError? = nil
+    var sheetMessage: String? = nil
     var saveIssues = [ImageModel.ID: String]()
 
     // Confirmation required optional data
-    var confirmationMessage: String?
-    var confirmationAction: (@MainActor () -> Void)?
+    var confirmationMessage: String? = nil
+    var confirmationAction: (@MainActor () -> Void)? = nil
 
     // The folder containing backups is scanned at startup and the user
     // is given the option to remove backups older than 7 days.  This info
@@ -76,3 +81,5 @@ extension ContentViewModel {
         }
     }
 }
+
+// swiftlint:enable redundant_optional_initialization

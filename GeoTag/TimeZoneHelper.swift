@@ -40,6 +40,7 @@ enum TimeZoneName: String, Identifiable, CaseIterable {
         if rawValue == "±0" {
             seconds = 0
         } else if let value = Int(rawValue) {
+            // value is in hours
             seconds = value * 60 * 60
         } else {
             let parts = rawValue.split(separator: ":")

@@ -11,15 +11,14 @@ import SwiftUI
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
+    @Environment(ContentViewModel.self) var contentViewModel
     @EnvironmentObject var avm: AppViewModel
-    @ObservedObject var contentViewModel = ContentViewModel.shared
     @Environment(\.openWindow) var openWindow
 
-    @State private var sheetType: SheetType?
-    @State private var presentConfirmation = false
     @State private var removeOldFiles = false
 
     var body: some View {
+        @Bindable var contentViewModel = contentViewModel
         HSplitView {
             ZStack {
                 ImageTableView()
@@ -50,18 +49,17 @@ struct ContentView: View {
             return true
         }
 
-        .onChange(of: contentViewModel.changeTimeZoneWindow) { _ in
+        .onChange(of: contentViewModel.changeTimeZoneWindow) {
             openWindow(id: GeoTagApp.adjustTimeZone)
         }
 
         // sheets
-        .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in
+        .sheet(item: $contentViewModel.sheetType, onDismiss: sheetDismissed) { sheet in
             sheet
         }
-        .link($contentViewModel.sheetType, with: $sheetType)
 
         // confirmations
-        .confirmationDialog("Are you sure?", isPresented: $presentConfirmation) {
+        .confirmationDialog("Are you sure?", isPresented: $contentViewModel.presentConfirmation) {
             Button("I'm sure", role: .destructive) {
                 if contentViewModel.confirmationAction != nil {
                     contentViewModel.confirmationAction!()
@@ -73,10 +71,9 @@ struct ContentView: View {
             let message = contentViewModel.confirmationMessage != nil ? contentViewModel.confirmationMessage! : ""
             Text(message)
         }
-        .link($contentViewModel.presentConfirmation, with: $presentConfirmation)
 
         // Alert: Remove Old Backup files
-        .alert("Delete old backup files?", isPresented: $removeOldFiles) {
+        .alert("Delete old backup files?", isPresented: $contentViewModel.removeOldFiles) {
             Button("Delete", role: .destructive) {
                 avm.remove(filesToRemove: contentViewModel.oldFiles)
             }
@@ -97,7 +94,6 @@ struct ContentView: View {
                  """)
             // swiftlint:enable line_length
         }
-        .link($contentViewModel.removeOldFiles, with: $removeOldFiles)
     }
 
     // when a sheet is dismissed check if there are more sheets to display
@@ -116,27 +112,8 @@ struct ContentView: View {
 
 }
 
-// SwiftUI sometimes has issues when a published variabe in an ObservedObject
-// or EnvironmentObject is bound in a view.  Perhaps this is a SwiftUI bug.
-// This extension on View links a Published variables to a local state variable
-// to work around the problem.
-
-extension View {
-    func link<T: Equatable>(_ published: Binding<T>,
-                            with binding: Binding<T>) -> some View {
-        self
-            .onChange(of: published.wrappedValue) { published in
-                binding.wrappedValue = published
-            }
-            .onChange(of: binding.wrappedValue) { binding in
-                published.wrappedValue = binding
-            }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .environmentObject(AppViewModel())
-    }
+#Preview {
+    ContentView()
+        .environment(ContentViewModel.shared)
+        .environmentObject(AppViewModel(forPreview: true))
 }

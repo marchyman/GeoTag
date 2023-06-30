@@ -137,7 +137,7 @@ struct SavingUpdatesView: View {
 }
 
 struct SaveErrorView: View {
-    @ObservedObject var contentViewModel = ContentViewModel.shared
+    @Environment(ContentViewModel.self) var contentViewModel
 
     var body: some View {
         VStack {
@@ -166,7 +166,7 @@ struct SaveErrorView: View {
 }
 
 struct UnexpectedErrorView: View {
-    @ObservedObject var contentViewModel = ContentViewModel.shared
+    @Environment(ContentViewModel.self) var contentViewModel
 
     var body: some View {
         VStack {

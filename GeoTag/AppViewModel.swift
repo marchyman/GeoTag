@@ -91,6 +91,13 @@ final class AppViewModel: ObservableObject {
             backupURL = getBackupURL()
         }
     }
+
+    // a version for previews that doesn't check for backups as that can not be
+    // done from the nonisolated context of a preview.
+
+    nonisolated init(forPreview: Bool) {
+        // nothing
+    }
 }
 
 // convenience init for use with swiftui previews.  Provide a list
@@ -98,7 +105,7 @@ final class AppViewModel: ObservableObject {
 
 extension AppViewModel {
     convenience init(images: [ImageModel]) {
-        self.init()
+        self.init(forPreview: true)
         self.images = images
     }
 }

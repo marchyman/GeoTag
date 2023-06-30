@@ -28,7 +28,7 @@ struct MapPaneView: View {
                         MapSearchView(text: $mapViewModel.searchString)
                             .frame(width: geometry.size.width * 0.80)
                             .onChange(of: mapViewModel.searchString) {
-                                searchMap(for: $0)
+                                searchMap(for: mapViewModel.searchString)
                             }
                     }
                 }

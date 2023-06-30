@@ -50,8 +50,8 @@ struct ImageTableView: View {
             }
             .width(min: coordMinWidth)
         } rows: {
-//            let spID = tableSP.makeSignpostID()
-//            let spState = tableSP.beginInterval("Table Rows", id: spID)
+            let spID = tableSP.makeSignpostID()
+            let spState = tableSP.beginInterval("Table Rows", id: spID)
             ForEach(avm.images) { image in
                 if image.isValid || !avm.hideInvalidImages {
                     TableRow(image)
@@ -60,16 +60,18 @@ struct ImageTableView: View {
                         }
                 }
             }
-//            tableSP.endInterval("Table Rows", spState)
+            // swiftlint:disable redundant_discardable_let
+            let _ = tableSP.endInterval("Table Rows", spState)
+            // swiftlint:enable redundant_discardable_let
         }
+        .environmentObject(avm)
         .contextMenu {
             ContextMenuView(context: nil)
         }
-        .onChange(of: sortOrder) { newOrder in
-            avm.sortOrder = newOrder
-            avm.images.sort(using: newOrder)
+        .onChange(of: sortOrder) {
+            avm.images.sort(using: sortOrder)
         }
-        .onChange(of: avm.selection) { _ in
+        .onChange(of: avm.selection) {
             avm.selectionChanged()
         }
     }
