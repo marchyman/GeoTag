@@ -10,7 +10,7 @@ import SwiftUI
 struct ChangeDateTimeView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
     let id: ImageModel.ID
 
     @FocusState private var isFocused: Bool
@@ -107,8 +107,7 @@ struct ModifyDateTimeView_Previews: PreviewProvider {
                    longitude: 123.456)
 
     static var previews: some View {
-        let avm = AppViewModel(images: [image])
         ChangeDateTimeView(id: image.id)
-            .environmentObject(avm)
+            .environment(AppViewModel(images: [image]))
     }
 }

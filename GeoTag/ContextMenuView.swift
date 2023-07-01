@@ -10,7 +10,7 @@ import SwiftUI
 // Duplicates many of the menu commands
 
 struct ContextMenuView: View {
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
     let context: ImageModel.ID?
 
     var body: some View {
@@ -45,8 +45,6 @@ struct ContextMenuView: View {
     }
 }
 
-struct ContextMenuView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContextMenuView(context: nil)
-    }
+#Preview {
+    ContextMenuView(context: nil)
 }

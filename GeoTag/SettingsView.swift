@@ -10,19 +10,21 @@ import SwiftUI
 // swiftlint:disable line_length
 
 struct SettingsView: View {
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
     @ObservedObject var mvm = MapViewModel.shared
 
+    // values stored in AppStorage
+    @AppStorage(AppSettings.addTagKey) var addTag = false
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
-
-    // Only used in prepareForEdits
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
     @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
-
-    // Used in Exiftool
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
+    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
 
     var body: some View {
+        @Bindable var avm = avm
         VStack {
             Text("GeoTag Saved Settings")
                 .font(.largeTitle)
@@ -31,12 +33,12 @@ struct SettingsView: View {
                 // Image backup configuration
                 Group {
                     LabeledContent("Disable Image Backups:") {
-                        Toggle("Disable image backups", isOn: $avm.doNotBackup)
+                        Toggle("Disable image backups", isOn: $doNotBackup)
                             .labelsHidden()
                     }
                     .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
 
-                    if avm.doNotBackup {
+                    if doNotBackup {
                         Text("Enabling image backups is strongly recommended")
                             .font(.footnote)
                             .padding(.bottom)
@@ -52,7 +54,7 @@ struct SettingsView: View {
 
                 // Create Sidecar (XMP) files
                 LabeledContent("Create Sidecar (XMP) files:") {
-                    Toggle("Create Sidecar (XMP) files", isOn: $avm.createSidecarFile)
+                    Toggle("Create Sidecar (XMP) files", isOn: $createSidecarFile)
                         .labelsHidden()
                 }
                 .padding([.bottom, .horizontal])
@@ -114,19 +116,19 @@ struct SettingsView: View {
                     .help("GeoTag can set/update the GPS time and date stamps when updating locations.  These timestamps are the same as the image create date and time but relative to GMP/UTC, not the local time.  When setting this option it is important that the TimeZone (edit menu) is correct for the images being saved.  Please see the GeoTag help pages for more information on setting the time zone.")
 
                     LabeledContent("Tag updated files:") {
-                        Toggle("Tag updated files", isOn: $avm.addTag)
+                        Toggle("Tag updated files", isOn: $addTag)
                             .labelsHidden()
                     }
                     .padding(.horizontal)
                     .help("If this option is enabled a finder tag will be added to updated images. The tag is alway added to the main image file even when a GPX sidecar file exists.")
 
-                    if avm.addTag {
-                        TextField("With tag:", text: $avm.tag)
+                    if addTag {
+                        TextField("With tag:", text: $tag)
                             .frame(maxWidth: 250)
                             .padding(.horizontal)
                             .onSubmit {
-                                if avm.tag.isEmpty {
-                                    avm.tag = "GeoTag"
+                                if tag.isEmpty {
+                                    tag = "GeoTag"
                                 }
                             }
                             .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")
@@ -149,9 +151,7 @@ struct SettingsView: View {
 
 // swiftlint:enable line_length
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
-            .environmentObject(AppViewModel())
-    }
+#Preview {
+    SettingsView()
+        .environment(AppViewModel())
 }

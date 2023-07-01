@@ -12,7 +12,9 @@ extension AppViewModel {
     ///  - Returns the URL if the bookmark could be converted, else nil
 
     func getBackupURL() -> URL? {
+        @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
         var staleBookmark = false
+
         let url = try? URL(resolvingBookmarkData: saveBookmark,
                            options: [.withoutUI, .withSecurityScope],
                            bookmarkDataIsStale: &staleBookmark)
@@ -96,7 +98,7 @@ extension AppViewModel {
 
     nonisolated func remove(filesToRemove: [URL]) {
         Task {
-            let folderURL = await backupURL
+            let folderURL = backupURL
             _ = folderURL?.startAccessingSecurityScopedResource()
             defer { folderURL?.stopAccessingSecurityScopedResource() }
             let fileManager = FileManager.default

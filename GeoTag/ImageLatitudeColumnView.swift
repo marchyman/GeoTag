@@ -11,7 +11,7 @@ import CoreLocation
 struct ImageLatitudeColumnView: View {
     let id: ImageModel.ID
     @State private var coordinate: Double?
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
     @FocusState private var isFocused: Bool
     @State private var discardEdits = false
 
@@ -89,6 +89,6 @@ struct ImageLatitudeColumnView: View {
 
     static var previews: some View {
         ImageLatitudeColumnView(id: image.id)
-            .environmentObject(AppViewModel(images: [image]))
+            .environment(AppViewModel(images: [image]))
    }
 }

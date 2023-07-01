@@ -199,7 +199,8 @@ extension ImageModel {
 
     init(imageURL: URL,
          validImage: Bool,
-         dateTimeCreated: String, latitude: Double?,
+         dateTimeCreated: String,
+         latitude: Double?,
          longitude: Double?) {
         do {
             try self.init(imageURL: imageURL, forPreview: true)

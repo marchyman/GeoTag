@@ -12,13 +12,8 @@ let tableLog = Logger(subsystem: Bundle.main.bundleIdentifier!,
                       category: "ImageTableView")
 let tableSP = OSSignposter(logger: tableLog)
 
-// Note on EnvironmentObject:  When testing scrolling the Table in this view
-// would crash when trying to render one of the columns.   The crash was
-// due to the @EnvironmentObject being empty!  To get around this do not
-// rely on the Environment.  Explicitly pass the ViewModel to the column views.
-
 struct ImageTableView: View {
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
 
     @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
@@ -26,6 +21,7 @@ struct ImageTableView: View {
     let coordMinWidth = 120.0
 
     var body: some View {
+        @Bindable var avm = avm
         Table(selection: $avm.selection,
               sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { image in
@@ -53,7 +49,9 @@ struct ImageTableView: View {
             let spID = tableSP.makeSignpostID()
             let spState = tableSP.beginInterval("Table Rows", id: spID)
             ForEach(avm.images) { image in
-                if image.isValid || !avm.hideInvalidImages {
+                @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+
+                if image.isValid || !hideInvalidImages {
                     TableRow(image)
                         .contextMenu {
                             ContextMenuView(context: image.id)
@@ -64,7 +62,6 @@ struct ImageTableView: View {
             let _ = tableSP.endInterval("Table Rows", spState)
             // swiftlint:enable redundant_discardable_let
         }
-        .environmentObject(avm)
         .contextMenu {
             ContextMenuView(context: nil)
         }
@@ -130,6 +127,7 @@ extension ImageModel {
 }
 
 struct ImageTableView_Previews: PreviewProvider {
+
     static var images = [
         ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
                    validImage: true,
@@ -147,8 +145,9 @@ struct ImageTableView_Previews: PreviewProvider {
                    latitude: 35.505,
                    longitude: -123.456)
     ]
+
     static var previews: some View {
         ImageTableView()
-            .environmentObject(AppViewModel(images: images))
+            .environment(AppViewModel(images: images))
     }
 }

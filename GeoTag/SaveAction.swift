@@ -18,6 +18,10 @@ extension AppViewModel {
     // Update image files with changed timestamp/location info
 
     func saveAction() {
+        @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+        @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+        @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+
         let cvm = ContentViewModel.shared
 
         // returned status of the save operation
@@ -46,6 +50,10 @@ extension AppViewModel {
 
         // process the images in the background.
         Task {
+            @AppStorage(AppSettings.addTagKey) var addTag = false
+            @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+            @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
+
             // get the field that won't change from the view model before
             // spinning off new tasks.
             let makeBackup = !doNotBackup
@@ -56,6 +64,7 @@ extension AppViewModel {
             await withTaskGroup(of: SaveStatus.self) { group in
                 for image in imagesToSave where image.changed {
                     group.addTask { [self] in
+                        @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
                         var errorDescription: String?
                         // saving must occur in the app sandbox.
                         let sandbox: Sandbox
@@ -95,7 +104,9 @@ extension AppViewModel {
             }
 
             if !cvm.saveIssues.isEmpty {
-                mainWindow?.isDocumentEdited = true
+                DispatchQueue.main.async {
+                    self.mainWindow?.isDocumentEdited = true
+                }
                 cvm.addSheet(type: .saveErrorSheet)
             }
             saveInProgress = false

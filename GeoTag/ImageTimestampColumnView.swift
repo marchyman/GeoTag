@@ -10,7 +10,7 @@ import SwiftUI
 struct ImageTimestampColumnView: View {
     let id: ImageModel.ID
     let timestampMinWidth: CGFloat
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
 
     @State private var dateTimePopover = false
 
@@ -38,6 +38,6 @@ struct ImageTimestampColumnView_Previews: PreviewProvider {
     static var previews: some View {
         ImageTimestampColumnView(id: image.id,
                                  timestampMinWidth: 130.0)
-            .environmentObject(AppViewModel(images: [image]))
+            .environment(AppViewModel(images: [image]))
     }
 }

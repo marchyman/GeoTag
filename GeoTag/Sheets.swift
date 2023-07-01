@@ -47,7 +47,7 @@ enum SheetType: Identifiable, View {
 // Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
 
 struct GpxLoadView: View {
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
 
     var body: some View {
         VStack(alignment: .leading) {

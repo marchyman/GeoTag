@@ -9,7 +9,7 @@ import SwiftUI
 import MapKit
 
 struct MapPaneView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @Environment(AppViewModel.self) var vm
     @ObservedObject var mapViewModel = MapViewModel.shared
 
     var body: some View {

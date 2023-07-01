@@ -9,20 +9,17 @@ import SwiftUI
 import MapKit
 
 // maintain state for GeoTag when running.  An instance if this class is
-// created as a StateObject by GeoTagApp and passed in the environment.
+// created as a Statet by GeoTagApp and passed in the environment.
 
-@MainActor
-final class AppViewModel: ObservableObject {
-    @Published var images: [ImageModel] = []
-    @Published var selection: Set<ImageModel.ID> = []
-    @Published var mostSelected: ImageModel.ID?
+// Observable currently requires all items to be initialized.
+// Tell swiftlint to be quiet about setting optionals to nil
+// swiftlint:disable redundant_optional_initialization
 
-    @AppStorage(AppSettings.addTagKey) var addTag = false
-    @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
-    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
+@Observable
+final class AppViewModel {
+    var images: [ImageModel] = []
+    var selection: Set<ImageModel.ID> = []
+    var mostSelected: ImageModel.ID? = nil
 
     // get/set an image from the table of images  given its ID.
     subscript(id: ImageModel.ID?) -> ImageModel {
@@ -52,7 +49,7 @@ final class AppViewModel: ObservableObject {
     var saveInProgress = false
 
     // The Apps main window.
-    var mainWindow: NSWindow?
+    var mainWindow: NSWindow? = nil
     var undoManager = UndoManager()
 
     // State that changes when a menu item is picked.
@@ -63,7 +60,7 @@ final class AppViewModel: ObservableObject {
     // The timezone to use when matching image timestamps to track logs and
     // setting the GPS time stamp when saving images.  When nil the system
     // time zone is used.
-    var timeZone: TimeZone?
+    var timeZone: TimeZone? = nil
 
     // GPX File Loading sheet information
     var gpxGoodFileNames: [String] = []
@@ -74,8 +71,10 @@ final class AppViewModel: ObservableObject {
     // AppStorage.  When changed to a non-nil value the bookmark is updated
     // and the new folder is checked to see if there are old backups that
     // can be removed.
-    var backupURL: URL? {
+    var backupURL: URL? = nil {
         didSet {
+            @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+
             if let url = backupURL {
                 saveBookmark = getBookmark(from: url)
                 checkBackupFolder(url)
@@ -87,6 +86,8 @@ final class AppViewModel: ObservableObject {
     // a scan of the backup folder for old backups that can be removed.
 
     init() {
+        @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+
         if !doNotBackup {
             backupURL = getBackupURL()
         }
@@ -109,3 +110,5 @@ extension AppViewModel {
         self.images = images
     }
 }
+
+// swiftlint:enable redundant_optional_initialization

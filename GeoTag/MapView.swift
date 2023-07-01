@@ -13,7 +13,7 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
     @ObservedObject var mvm = MapViewModel.shared
 
     let center: CLLocationCoordinate2D
@@ -179,7 +179,7 @@ extension MapView {
 
     class Coordinator: NSObject, MKMapViewDelegate {
         @ObservedObject var mvm = MapViewModel.shared
-        @ObservedObject var avm: AppViewModel
+        var avm: AppViewModel
 
         init(vm: AppViewModel) {
             self.avm = vm
@@ -255,7 +255,7 @@ struct MapView_Previews: PreviewProvider {
         MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
                                                longitude: -122.4381),
                 altitude: 50000.0)
-            .environmentObject(AppViewModel())
+            .environment(AppViewModel())
     }
 }
 #endif

@@ -15,7 +15,8 @@ extension GeoTagApp {
         CommandGroup(replacing: .toolbar) {
             Section {
                 Button {
-                    avm.hideInvalidImages.toggle()
+                    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+                    hideInvalidImages.toggle()
                 } label: {
                     Text("\(showOrHide()) Disabled Files")
                 }
@@ -28,7 +29,8 @@ extension GeoTagApp {
     }
 
     private func showOrHide() -> String {
-        return avm.hideInvalidImages ? "Show" : "Hide"
+        @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+        return hideInvalidImages ? "Show" : "Hide"
     }
 }
 

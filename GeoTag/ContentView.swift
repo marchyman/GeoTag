@@ -12,8 +12,11 @@ let windowBorderColor = Color.gray
 
 struct ContentView: View {
     @Environment(ContentViewModel.self) var contentViewModel
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppViewModel.self) var avm
     @Environment(\.openWindow) var openWindow
+
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
 
     @State private var removeOldFiles = false
 
@@ -36,7 +39,7 @@ struct ContentView: View {
         // startup
         .onAppear {
             // check for a backupURL
-            if !avm.doNotBackup && avm.saveBookmark == Data() {
+            if !doNotBackup && saveBookmark == Data() {
                 contentViewModel.addSheet(type: .noBackupFolderSheet)
             }
         }
@@ -115,5 +118,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environment(ContentViewModel.shared)
-        .environmentObject(AppViewModel(forPreview: true))
+        .environment(AppViewModel(forPreview: true))
 }
