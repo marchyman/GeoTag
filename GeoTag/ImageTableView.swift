@@ -50,8 +50,8 @@ struct ImageTableView: View {
             }
             .width(min: coordMinWidth)
         } rows: {
-//            let spID = tableSP.makeSignpostID()
-//            let spState = tableSP.beginInterval("Table Rows", id: spID)
+            let spID = tableSP.makeSignpostID()
+            let spState = tableSP.beginInterval("Table Rows", id: spID)
             ForEach(avm.images) { image in
                 if image.isValid || !avm.hideInvalidImages {
                     TableRow(image)
@@ -60,7 +60,9 @@ struct ImageTableView: View {
                         }
                 }
             }
-//            tableSP.endInterval("Table Rows", spState)
+            // swiftlint:disable redundant_discardable_let
+            let _ = tableSP.endInterval("Table Rows", spState)
+            // swiftlint:enable redundant_discardable_let
         }
         .contextMenu {
             ContextMenuView(context: nil)
@@ -79,7 +81,7 @@ struct ImageTableView: View {
 /// this view, espeically with regard to sorting and display.
 extension ImageModel {
     var name: String {
-        fileURL.lastPathComponent
+        fileURL.lastPathComponent + (sidecarExists ? "*" : "")
     }
 
     var timeStamp: String {

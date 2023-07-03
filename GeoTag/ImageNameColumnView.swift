@@ -12,8 +12,7 @@ struct ImageNameColumnView: View {
     let selectedImage: Bool
 
     var body: some View {
-        let name = image.name + (image.sidecarExists ? "*" : "")
-        Text(name)
+        Text(image.name)
             .fontWeight(selectedImage ? .semibold : .regular)
             .foregroundColor(selectedImage ? .mostSelected :
                                 image.isValid ? .primary : .secondary)
@@ -27,7 +26,7 @@ struct ImageNameColumnView_Previews: PreviewProvider {
                    validImage: true,
                    dateTimeCreated: "2022:12:12 11:22:33",
                    latitude: 33.123,
-                   longitude: 123.456)
+                   longitude: -123.456)
 
     static var previews: some View {
         ImageNameColumnView(image: image,
