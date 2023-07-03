@@ -40,7 +40,7 @@ extension AppViewModel {
                             // do not use forEach as once a match is
                             // found there is no need to search other tracks for
                             // the current image.
-                            for track in await gpxTracks {
+                            for track in gpxTracks {
                                 if let locn = await track.search(imageTime: convertedDate.timeIntervalSince1970) {
                                     return locn
                                 }

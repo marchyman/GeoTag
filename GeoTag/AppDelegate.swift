@@ -46,6 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     // Check if there are changes that haven't been saved before allowing
     // the app to quit.
 
+    @MainActor
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if let avm {
             if avm.saveInProgress {

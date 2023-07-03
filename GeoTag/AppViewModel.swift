@@ -7,6 +7,10 @@
 
 import SwiftUI
 import MapKit
+import OSLog
+
+let avmLog = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                    category: "AppViewModel")
 
 // maintain state for GeoTag when running.  An instance if this class is
 // created as a Statet by GeoTagApp and passed in the environment.

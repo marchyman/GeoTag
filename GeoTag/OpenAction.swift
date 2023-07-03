@@ -60,6 +60,7 @@ extension AppViewModel {
         let processedURLs = Set(images.map {$0.fileURL })
         let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
         if !duplicateURLs.isEmpty {
+            avmLog.trace("duplicate URLs detected")
             ContentViewModel.shared.addSheet(type: .duplicateImageSheet)
         }
 
@@ -118,8 +119,11 @@ extension AppViewModel {
             // if the appViewModel update isn't done on the main queue the
             // Discard tracks menu item doesn't see the approriate state.
 
+            avmLog.trace("Adding gpx tracks")
+            let updatedTracks = tracks
             DispatchQueue.main.async {
-                for (path, track) in tracks {
+                avmLog.trace("Adding gpx tracks on main thread")
+                for (path, track) in updatedTracks {
                     if let track {
                         self.updateTracks(gpx: track)
                         self.gpxGoodFileNames.append(path)
@@ -133,6 +137,7 @@ extension AppViewModel {
         }
 
         ContentViewModel.shared.showingProgressView = false
+        avmLog.trace("exiting prepareForEdit")
     }
 
     /// Check if a given file URL refers to a folder
