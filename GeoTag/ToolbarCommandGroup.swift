@@ -35,7 +35,7 @@ extension GeoTagApp {
 }
 
 struct PinOptionView: View {
-    @ObservedObject var mapViewModel = MapViewModel.shared
+    @Bindable var mapViewModel = MapViewModel.shared
 
     var body: some View {
         Picker("Pin view options…", selection: $mapViewModel.onlyMostSelected) {

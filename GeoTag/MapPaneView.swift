@@ -10,16 +10,20 @@ import MapKit
 
 struct MapPaneView: View {
     @Environment(AppViewModel.self) var vm
-    @ObservedObject var mapViewModel = MapViewModel.shared
+    @Bindable var mapViewModel = MapViewModel.shared
+
+    @AppStorage(AppSettings.mapLatitudeKey)  var initialMapLatitude = 37.7244
+    @AppStorage(AppSettings.mapLongitudeKey)  var initialMapLongitude = -122.4381
+    @AppStorage(AppSettings.mapAltitudeKey)  var initialMapAltitude = 50000.0
 
     var body: some View {
         VStack {
             MapStyleView()
                 .padding(.top)
             ZStack(alignment: .topTrailing) {
-                MapView(center: Coords(latitude: mapViewModel.initialMapLatitude,
-                                       longitude: mapViewModel.initialMapLongitude),
-                        altitude: mapViewModel.initialMapAltitude)
+                MapView(center: Coords(latitude: initialMapLatitude,
+                                       longitude: initialMapLongitude),
+                        altitude: initialMapAltitude)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(5)
                 GeometryReader {geometry in

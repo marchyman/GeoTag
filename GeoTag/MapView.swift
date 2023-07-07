@@ -14,7 +14,9 @@ import MapKit
 
 struct MapView: NSViewRepresentable {
     @Environment(AppViewModel.self) var avm
-    @ObservedObject var mvm = MapViewModel.shared
+    var mvm = MapViewModel.shared
+
+    @AppStorage(AppSettings.mapConfigurationKey)  var mapConfiguration = 0
 
     let center: CLLocationCoordinate2D
     let altitude: Double
@@ -52,7 +54,7 @@ struct MapView: NSViewRepresentable {
     // Change the look of the map
 
     func setMapConfiguration(_ view: ClickMapView) {
-        switch mvm.mapConfiguration {
+        switch mapConfiguration {
         case 0:
             view.preferredConfiguration = MKStandardMapConfiguration()
         case 1:
@@ -178,7 +180,7 @@ extension MapView {
     // Coordinator class conforming to MKMapViewDelegate
 
     class Coordinator: NSObject, MKMapViewDelegate {
-        @ObservedObject var mvm = MapViewModel.shared
+        var mvm = MapViewModel.shared
         var avm: AppViewModel
 
         init(vm: AppViewModel) {
@@ -235,13 +237,16 @@ extension MapView {
         @MainActor
         func mapView(_ mapview: MKMapView,
                      rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+            @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
+
             // swiftlint:disable force_cast
             let polyline = overlay as! MKPolyline
             // swiftlint:enable force_cast
             if mvm.mapLines.contains(polyline) {
                 let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = NSColor(mvm.trackColor)
-                renderer.lineWidth = CGFloat(mvm.trackWidth)
+                renderer.strokeColor = NSColor(trackColor)
+                renderer.lineWidth = CGFloat(trackWidth)
                 return renderer
             }
             return MKOverlayRenderer(overlay: overlay)

@@ -10,7 +10,7 @@ import AppKit
 /// GeoTag AppDelegate Class
 ///
 /// App Delegate needed to get some desired behaviors such as terminate app when window closed
-final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
+final class AppDelegate: NSObject, NSApplicationDelegate {
     var avm: AppViewModel?
 
     // things that can not (yet?) be done in SwiftUI (or can be done but

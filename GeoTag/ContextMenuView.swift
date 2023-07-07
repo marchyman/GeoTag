@@ -47,4 +47,5 @@ struct ContextMenuView: View {
 
 #Preview {
     ContextMenuView(context: nil)
+        .environment(AppViewModel())
 }

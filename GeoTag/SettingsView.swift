@@ -11,7 +11,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(AppViewModel.self) var avm
-    @ObservedObject var mvm = MapViewModel.shared
+    var mvm = MapViewModel.shared
 
     // values stored in AppStorage
     @AppStorage(AppSettings.addTagKey) var addTag = false
@@ -22,6 +22,8 @@ struct SettingsView: View {
     @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
     @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
     @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
+    @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+    @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
     var body: some View {
         @Bindable var avm = avm
@@ -77,15 +79,15 @@ struct SettingsView: View {
                 // Track log display configuration
                 Group {
                     ColorPicker("GPS Track Color:",
-                                selection: $mvm.trackColor)
-                        .onChange(of: mvm.trackColor.rawValue) {
+                                selection: $trackColor)
+                        .onChange(of: trackColor.rawValue) {
                             mvm.refreshTracks = true
                         }
                         .padding(.horizontal)
                         .help("Select the color used to display GPS tracks on the map.")
 
                     TextField("GPS Track width:",
-                              value: $mvm.trackWidth, format: .number)
+                              value: $trackWidth, format: .number)
                         .onSubmit { mvm.refreshTracks = true }
                         .padding([.horizontal, .bottom])
                         .frame(maxWidth: 190)
