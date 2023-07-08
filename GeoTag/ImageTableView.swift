@@ -21,6 +21,7 @@ struct ImageTableView: View {
     let coordMinWidth = 120.0
 
     var body: some View {
+        @Bindable var avm = avm
         Table(of: ImageModel.self,
               selection: $avm.selection,
               sortOrder: $sortOrder) {
