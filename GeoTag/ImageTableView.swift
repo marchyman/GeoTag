@@ -21,9 +21,10 @@ struct ImageTableView: View {
     let coordMinWidth = 120.0
 
     var body: some View {
-        @Bindable var avm = avm
-        Table(selection: $avm.selection,
+        Table(of: ImageModel.self,
+              selection: $avm.selection,
               sortOrder: $sortOrder) {
+
             TableColumn("Name", value: \.name) { image in
                 ImageNameColumnView(image: image,
                                     selectedImage: image.id == avm.mostSelected)
@@ -72,58 +73,6 @@ struct ImageTableView: View {
             avm.selectionChanged()
         }
     }
-}
-
-/// Computed properties to convert elements of an imageModel into values for use with
-/// this view, espeically with regard to sorting and display.
-extension ImageModel {
-    var name: String {
-        fileURL.lastPathComponent
-    }
-
-    var timeStamp: String {
-        dateTimeCreated ?? ""
-    }
-
-    var latitude: Double {
-        location?.latitude ?? 0.0
-    }
-
-    var longitude: Double {
-        location?.longitude ?? 0.0
-    }
-
-    var timestampTextColor: Color {
-        if isValid {
-            if dateTimeCreated == originalDateTimeCreated {
-                return .primary
-            }
-            return .changed
-        }
-        return .secondary
-    }
-
-    var locationTextColor: Color {
-        if isValid {
-            if location == originalLocation {
-                return .primary
-            }
-            return .changed
-        }
-        return .secondary
-    }
-
-    var elevationAsString: String {
-        var value = "Elevation: "
-        if let elevation {
-            value += String(format: "% 4.2f", elevation)
-            value += " meters"
-        } else {
-            value += "Unknown"
-        }
-        return value
-    }
-
 }
 
 struct ImageTableView_Previews: PreviewProvider {
