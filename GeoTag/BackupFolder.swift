@@ -12,15 +12,15 @@ extension AppViewModel {
     ///  - Returns the URL if the bookmark could be converted, else nil
 
     func getBackupURL() -> URL? {
-        @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+        @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
         var staleBookmark = false
 
-        let url = try? URL(resolvingBookmarkData: saveBookmark,
+        let url = try? URL(resolvingBookmarkData: savedBookmark,
                            options: [.withoutUI, .withSecurityScope],
                            bookmarkDataIsStale: &staleBookmark)
         if let url {
             if staleBookmark {
-                saveBookmark = getBookmark(from: url)
+                savedBookmark = getBookmark(from: url)
             }
             checkBackupFolder(url)
         }

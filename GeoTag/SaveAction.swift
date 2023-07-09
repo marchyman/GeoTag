@@ -20,7 +20,7 @@ extension AppViewModel {
     func saveAction() {
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
         @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
-        @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+        @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
         let cvm = ContentViewModel.shared
 
@@ -50,21 +50,21 @@ extension AppViewModel {
 
         // process the images in the background.
         Task {
-            @AppStorage(AppSettings.addTagKey) var addTag = false
+            @AppStorage(AppSettings.addTagsKey) var addTags = false
             @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-            @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
+            @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
 
             // get the field that won't change from the view model before
             // spinning off new tasks.
             let makeBackup = !doNotBackup
             let url = backupURL
-            let tagFiles = addTag
-            let tagName = tag.isEmpty ? "GeoTag" : tag
+            let tagFiles = addTags
+            let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
 
             await withTaskGroup(of: SaveStatus.self) { group in
                 for image in imagesToSave where image.changed {
                     group.addTask { [self] in
-                        @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
+                        @AppStorage(AppSettings.createSidecarFilesKey) var createSidecarFiles = false
                         var errorDescription: String?
                         // saving must occur in the app sandbox.
                         let sandbox: Sandbox
@@ -74,7 +74,7 @@ extension AppViewModel {
                                 try await sandbox.makeBackupFile(backupFolder: url!)
                             }
                             try await sandbox.saveChanges(timeZone: timeZone,
-                                                          createSidecarFile: createSidecarFile)
+                                                          createSidecarFile: createSidecarFiles)
                             if tagFiles {
                                 try await sandbox.setTag(name: tagName)
                             }

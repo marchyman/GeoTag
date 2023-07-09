@@ -12,9 +12,9 @@ struct MapPaneView: View {
     @Environment(AppViewModel.self) var vm
     @Bindable var mapViewModel = MapViewModel.shared
 
-    @AppStorage(AppSettings.mapLatitudeKey)  var initialMapLatitude = 37.7244
-    @AppStorage(AppSettings.mapLongitudeKey)  var initialMapLongitude = -122.4381
-    @AppStorage(AppSettings.mapAltitudeKey)  var initialMapAltitude = 50000.0
+    @AppStorage(AppSettings.initialMapAltitudeKey)  var initialMapAltitude = 50000.0
+    @AppStorage(AppSettings.initialMapLatitudeKey)  var initialMapLatitude = 37.7244
+    @AppStorage(AppSettings.initialMapLongitudeKey)  var initialMapLongitude = -122.4381
 
     var body: some View {
         VStack {

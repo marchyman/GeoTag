@@ -14,14 +14,14 @@ struct SettingsView: View {
     var mvm = MapViewModel.shared
 
     // values stored in AppStorage
-    @AppStorage(AppSettings.addTagKey) var addTag = false
+    @AppStorage(AppSettings.addTagsKey) var addTags = false
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.createSidecarFileKey) var createSidecarFile = false
+    @AppStorage(AppSettings.createSidecarFilesKey) var createSidecarFiles = false
     @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
-    @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
-    @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
-    @AppStorage(AppSettings.tagKey) var tag = "GeoTag"
+    @AppStorage(AppSettings.updateFileModificationTimesKey) var updateFileModificationTimes = false
+    @AppStorage(AppSettings.updateGPSTimestampsKey) var updateGPSTimestamps = false
+    @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
     @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
@@ -56,7 +56,7 @@ struct SettingsView: View {
 
                 // Create Sidecar (XMP) files
                 LabeledContent("Create Sidecar (XMP) files:") {
-                    Toggle("Create Sidecar (XMP) files", isOn: $createSidecarFile)
+                    Toggle("Create Sidecar (XMP) files", isOn: $createSidecarFiles)
                         .labelsHidden()
                 }
                 .padding([.bottom, .horizontal])
@@ -104,33 +104,35 @@ struct SettingsView: View {
                 // Image save option configuratio
                 Group {
                     LabeledContent("Set File Modification Times:") {
-                        Toggle("Set File Modification Time", isOn: $updateFileModTime)
+                        Toggle("Set File Modification Time",
+                               isOn: $updateFileModificationTimes)
                             .labelsHidden()
                     }
                     .padding([.bottom, .horizontal])
                     .help("Checking this box will set file modification time to be the same as the image creation date/time whenever GeoTag updates image metadata with location changes.  If the box is not checked file modification times will be controlled by the system.")
 
                     LabeledContent("Update GPS Date/Time:") {
-                        Toggle("Update GPS Date/Time", isOn: $updateGPSTimestamp)
+                        Toggle("Update GPS Date/Time",
+                               isOn: $updateGPSTimestamps)
                             .labelsHidden()
                     }
                     .padding([.bottom, .horizontal] )
                     .help("GeoTag can set/update the GPS time and date stamps when updating locations.  These timestamps are the same as the image create date and time but relative to GMP/UTC, not the local time.  When setting this option it is important that the TimeZone (edit menu) is correct for the images being saved.  Please see the GeoTag help pages for more information on setting the time zone.")
 
                     LabeledContent("Tag updated files:") {
-                        Toggle("Tag updated files", isOn: $addTag)
+                        Toggle("Tag updated files", isOn: $addTags)
                             .labelsHidden()
                     }
                     .padding(.horizontal)
                     .help("If this option is enabled a finder tag will be added to updated images. The tag is alway added to the main image file even when a GPX sidecar file exists.")
 
-                    if addTag {
-                        TextField("With tag:", text: $tag)
+                    if addTags {
+                        TextField("With tag:", text: $finderTag)
                             .frame(maxWidth: 250)
                             .padding(.horizontal)
                             .onSubmit {
-                                if tag.isEmpty {
-                                    tag = "GeoTag"
+                                if finderTag.isEmpty {
+                                    finderTag = "GeoTag"
                                 }
                             }
                             .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")

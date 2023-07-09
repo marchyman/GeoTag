@@ -16,7 +16,7 @@ struct ContentView: View {
     @Environment(\.openWindow) var openWindow
 
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+    @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
     @State private var removeOldFiles = false
 
@@ -39,7 +39,7 @@ struct ContentView: View {
         // startup
         .onAppear {
             // check for a backupURL
-            if !doNotBackup && saveBookmark == Data() {
+            if !doNotBackup && savedBookmark == Data() {
                 contentViewModel.addSheet(type: .noBackupFolderSheet)
             }
         }

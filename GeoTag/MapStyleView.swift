@@ -12,10 +12,10 @@ struct MapStyleView: View {
     var mapViewModel = MapViewModel.shared
     @State private var showPopover = false
 
+    @AppStorage(AppSettings.initialMapLatitudeKey)  var initialMapLatitude = 37.7244
+    @AppStorage(AppSettings.initialMapLongitudeKey)  var initialMapLongitude = -122.4381
+    @AppStorage(AppSettings.initialMapAltitudeKey)  var initialMapAltitude = 50000.0
     @AppStorage(AppSettings.mapConfigurationKey)  var mapConfiguration = 0
-    @AppStorage(AppSettings.mapLatitudeKey)  var initialMapLatitude = 37.7244
-    @AppStorage(AppSettings.mapLongitudeKey)  var initialMapLongitude = -122.4381
-    @AppStorage(AppSettings.mapAltitudeKey)  var initialMapAltitude = 50000.0
 
     var body: some View {
         HStack {

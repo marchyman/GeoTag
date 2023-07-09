@@ -77,10 +77,10 @@ final class AppViewModel {
     // can be removed.
     var backupURL: URL? = nil {
         didSet {
-            @AppStorage(AppSettings.saveBookmarkKey) var saveBookmark = Data()
+            @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
             if let url = backupURL {
-                saveBookmark = getBookmark(from: url)
+                savedBookmark = getBookmark(from: url)
                 checkBackupFolder(url)
             }
         }

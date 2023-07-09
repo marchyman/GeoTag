@@ -11,8 +11,8 @@ import MapKit
 /// manage GeoTag's use of exiftool
 
 struct Exiftool {
-    @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
-    @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
+    @AppStorage(AppSettings.updateFileModificationTimesKey) var updateFileModificationTimes = false
+    @AppStorage(AppSettings.updateGPSTimestampsKey) var updateGPSTimestamps = false
 
     // singleton instance of this class
     static let helper = Exiftool()
@@ -93,11 +93,11 @@ struct Exiftool {
                               latArg, latRefArg,
                               lonArg, lonRefArg,
                               eleArg, eleRefArg]
-        if updateFileModTime {
+        if updateFileModificationTimes {
             exiftool.arguments! += ["-FileModifyDate<DateTimeOriginal"]
         }
 
-        if updateGPSTimestamp {
+        if updateGPSTimestamps {
             // calculate the gps timestamp
             let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone)
 
