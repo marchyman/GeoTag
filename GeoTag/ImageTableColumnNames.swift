@@ -11,15 +11,7 @@ import SwiftUI
 /// ImageTableView, espeically with regard to sorting and display.
 ///
 extension ImageModel {
-    var name: String {
-        fileURL.lastPathComponent + (sidecarExists ? "*" : "")
-    }
-
-    var timeStamp: String {
-        dateTimeCreated ?? ""
-    }
-
-    var latitude: Double {
+     var latitude: Double {
         location?.latitude ?? 0.0
     }
 

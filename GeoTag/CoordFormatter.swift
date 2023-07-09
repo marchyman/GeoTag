@@ -10,7 +10,7 @@ import SwiftUI
 let latRef = ["N", "S"]
 let lonRef = ["E", "W"]
 
-// Latitude format
+// MARK: Latitude format
 
 struct LatitudeStyle: ParseableFormatStyle {
     var parseStrategy: LatitudeStrategy = .init()
@@ -32,7 +32,7 @@ extension FormatStyle where Self == LatitudeStyle {
     }
 }
 
-// Longitude format
+// MARK: Longitude format
 
 struct LongitudeStyle: ParseableFormatStyle {
     var parseStrategy: LongitudeStrategy = .init()
@@ -53,6 +53,8 @@ extension FormatStyle where Self == LongitudeStyle {
         return LongitudeStyle()
     }
 }
+
+// MARK: Convert a latitude or a longitude to a formatted string
 
 func coordToString(for coord: Double?,
                    ref: [String]) -> String {

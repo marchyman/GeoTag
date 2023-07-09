@@ -207,7 +207,6 @@
 				4969ACA22963DFE700BBC219 /* ChangeDateTimeView.swift */,
 				498A7351294EA5A600C62B14 /* ImageLatitudeColumnView.swift */,
 				498A7355294EADC300C62B14 /* ImageLongitudeColumnView.swift */,
-				49F5FAA3297653450070FC55 /* CoordFormatter.swift */,
 				490A17A929611DD900ACA9FD /* TextColors.swift */,
 			);
 			name = "Image Table Group";
@@ -249,6 +248,7 @@
 				4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */,
 				4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */,
 				49B9EDE029493F4000574D18 /* Coords.swift */,
+				49F5FAA3297653450070FC55 /* CoordFormatter.swift */,
 				498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */,
 				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
 				490A641F29C397CD00A1310C /* Sandbox.swift */,
