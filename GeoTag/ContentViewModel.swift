@@ -11,14 +11,13 @@ import Observation
 // items used to determing the state of ContentView
 // Observable currently requires all items to be initialized.
 // Tell swiftlint to be quiet about setting optionals to nil
-// swiftlint:disable redundant_optional_initialization
 
 @Observable
 final class ContentViewModel {
     public static let shared = ContentViewModel()
 
     var showingProgressView = false
-    var sheetType: SheetType? = nil
+    var sheetType: SheetType?
     var presentConfirmation = false
     var removeOldFiles = false
     var changeTimeZoneWindow = false
@@ -27,13 +26,14 @@ final class ContentViewModel {
     // some sheets are associated with errors.  Setting sheetType will
     // trigger display of the sheet
     var sheetStack = [SheetInfo]()
-    var sheetError: NSError? = nil
-    var sheetMessage: String? = nil
+    var sheetError: NSError?
+    var sheetMessage: String?
     var saveIssues = [ImageModel.ID: String]()
 
     // Confirmation required optional data
-    var confirmationMessage: String? = nil
-    var confirmationAction: (@MainActor () -> Void)? = nil
+    var confirmationMessage: String?
+    @ObservationIgnored
+    var confirmationAction: (@MainActor () -> Void)?
 
     // The folder containing backups is scanned at startup and the user
     // is given the option to remove backups older than 7 days.  This info
@@ -81,5 +81,3 @@ extension ContentViewModel {
         }
     }
 }
-
-// swiftlint:enable redundant_optional_initialization
