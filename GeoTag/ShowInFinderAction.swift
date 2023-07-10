@@ -14,7 +14,7 @@ extension AppState {
 
     // return true if Show In Finder menu items should be disabled.
 
-    func showInFinderDisabled(context: ImageModel.ID? = nil) -> Bool {
+    func showInFinderDisabled(context: ImageModel? = nil) -> Bool {
         if context != nil || tvm.mostSelected != nil {
             return false
         }
@@ -23,12 +23,12 @@ extension AppState {
 
     // show the location on an image in a finder window.
 
-    func showInFinderAction(context: ImageModel.ID? = nil) {
+    func showInFinderAction(context: ImageModel? = nil) {
         if let context {
             tvm.select(context: context)
         }
-        if let id = tvm.mostSelected?.id {
-            NSWorkspace.shared.activateFileViewerSelecting([tvm[id].fileURL])
+        if let image = tvm.mostSelected {
+            NSWorkspace.shared.activateFileViewerSelecting([image.fileURL])
         }
     }
 }

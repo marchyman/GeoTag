@@ -44,12 +44,12 @@ extension TableViewModel {
     // mostSelected item, otherwise replace the current selection
     // with the item.
 
-    func select(context: ImageModel.ID) {
-        if self[context].isValid {
-            if selection.contains(context) {
-                mostSelected = self[context]
+    func select(context: ImageModel) {
+        if context.isValid {
+            if selection.contains(context.id) {
+                mostSelected = context
             } else {
-                selection = [context]
+                selection = [context.id]
             }
         }
     }

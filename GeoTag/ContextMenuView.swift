@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ContextMenuView: View {
     @Environment(AppState.self) var state
-    let context: ImageModel.ID?
+    let context: ImageModel?
 
     var body: some View {
         Group {

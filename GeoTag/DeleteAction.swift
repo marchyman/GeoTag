@@ -15,9 +15,9 @@ extension AppState {
     // should the delete action be disabled for a specific item or for
     // all selected items
 
-    func deleteDisabled(context: ImageModel.ID? = nil) -> Bool {
-        if let id = context {
-            return tvm[id].location == nil
+    func deleteDisabled(context: ImageModel? = nil) -> Bool {
+        if let image = context {
+            return image.location == nil
         }
         return !tvm.selection.contains(where: { tvm[$0].location != nil })
     }
@@ -26,7 +26,7 @@ extension AppState {
     // limited to the field.  Otherwise delete location info from the image
     // in the given context or all selected images when the context is nil.
 
-    func deleteAction(context: ImageModel.ID? = nil,
+    func deleteAction(context: ImageModel? = nil,
                       textfield: Double?? = nil) {
         if textfield == nil {
             if let context {

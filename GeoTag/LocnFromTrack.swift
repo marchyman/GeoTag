@@ -9,10 +9,10 @@ import Foundation
 
 extension AppState {
 
-    func locnFromTrackDisabled(context: ImageModel.ID? = nil) -> Bool {
+    func locnFromTrackDisabled(context: ImageModel? = nil) -> Bool {
         if gpxTracks.count > 0 {
-            if let id = context {
-                return !tvm[id].isValid
+            if let image = context {
+                return !image.isValid
             }
             if let image = tvm.mostSelected {
                 return !image.isValid
@@ -21,7 +21,7 @@ extension AppState {
         return true
     }
 
-    func locnFromTrackAction(context: ImageModel.ID? = nil) {
+    func locnFromTrackAction(context: ImageModel? = nil) {
         if let context {
             tvm.select(context: context)
         }

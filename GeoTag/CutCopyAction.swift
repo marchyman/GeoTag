@@ -12,16 +12,16 @@ extension AppState {
     // return true if cut or copy actions should be disabled
     // if context is nil use selectedImage
 
-    func cutCopyDisabled(context: ImageModel.ID? = nil) -> Bool {
-        if let id = context {
-            return tvm[id].location == nil
+    func cutCopyDisabled(context: ImageModel? = nil) -> Bool {
+        if let image = context {
+            return image.location == nil
         }
         return tvm.mostSelected == nil
     }
 
     // A cut is a copy followed by a delete
 
-    func cutAction(context: ImageModel.ID? = nil,
+    func cutAction(context: ImageModel? = nil,
                    textfield: Double?? = nil) {
         if textfield == nil {
             copyAction(context: context, textfield: textfield)
@@ -31,7 +31,7 @@ extension AppState {
         }
     }
 
-    func copyAction(context: ImageModel.ID? = nil,
+    func copyAction(context: ImageModel? = nil,
                     textfield: Double?? = nil) {
         if textfield == nil {
             if let context {

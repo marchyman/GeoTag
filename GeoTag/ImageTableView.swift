@@ -46,7 +46,7 @@ struct ImageTableView: View {
                 if image.isValid || !hideInvalidImages {
                     TableRow(image)
                         .contextMenu {
-                            ContextMenuView(context: image.id)
+                            ContextMenuView(context: image)
                         }
                 }
             }
