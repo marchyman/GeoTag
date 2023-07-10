@@ -16,6 +16,9 @@ struct ContextMenuView: View {
     var body: some View {
         Group {
             Button("Edit...") {
+                if let context {
+                    state.tvm.select(context: context)
+                }
                 state.inspectorPresented.toggle()
             }
             .disabled(context == nil)

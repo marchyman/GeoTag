@@ -10,21 +10,24 @@ import SwiftUI
 // show an inspector to modify image metadata if not nil
 
 struct ImageInspectorView: View {
-    var image: ImageModel?
+    @Environment(AppState.self) var state
 
     var body: some View {
-        if let image {
+        if let image = state.tvm.mostSelected {
             ImageInspectorForm(image: image)
         } else {
-            ContentUnavailableView {
-                Image(systemName: "magnifyingglass.circle")
-            } description: {
-                Text("Select an image to modify")
+            VStack {
+                ContentUnavailableView {
+                    Image(systemName: "magnifyingglass.circle")
+                } description: {
+                    Text("Select an image to modify")
+                }
+                Spacer()
             }
         }
     }
 }
 
 #Preview {
-    ImageInspectorView(image: nil)
+    ImageInspectorView()
 }

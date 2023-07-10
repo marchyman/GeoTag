@@ -34,9 +34,6 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
-        .inspector(isPresented: $state.inspectorPresented) {
-            ImageInspectorView(image: state.tvm.mostSelected)
-        }
         .onAppear {
             // check for a backupURL
             if !doNotBackup && savedBookmark == Data() {
@@ -57,7 +54,18 @@ struct ContentView: View {
         }
         .areYouSure()                       // confirmations
         .removeBackupsAlert()               // Alert: Remove Old Backup files
-
+        .inspector(isPresented: $state.inspectorPresented) {
+            ImageInspectorView()
+                .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
+                .toolbar {
+                    Spacer()
+                    Button {
+                        state.inspectorPresented.toggle()
+                    } label: {
+                        Label("Toggle Inspector", systemImage: "info.circle")
+                    }
+                }
+        }
     }
 
     // when a sheet is dismissed check if there are more sheets to display
