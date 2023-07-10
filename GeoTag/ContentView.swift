@@ -34,6 +34,9 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
+        .inspector(isPresented: $state.inspectorPresented) {
+            ImageInspectorView(image: state.tvm.mostSelected)
+        }
         .onAppear {
             // check for a backupURL
             if !doNotBackup && savedBookmark == Data() {

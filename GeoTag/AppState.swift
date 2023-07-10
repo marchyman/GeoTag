@@ -13,6 +13,7 @@ final class AppState {
     // MARK: Application wide state properties
 
     var applicationBusy = false
+    var inspectorPresented = false
 
     // The Apps main window
     var mainWindow: NSWindow?

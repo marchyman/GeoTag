@@ -18,6 +18,8 @@
 		4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */; };
 		492175792949743E00A5EA83 /* OpenAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492175782949743E00A5EA83 /* OpenAction.swift */; };
 		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
+		492719DE2A5CB5BE00451573 /* ImageInspectorForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492719DD2A5CB5BE00451573 /* ImageInspectorForm.swift */; };
+		492719E02A5CC7B100451573 /* ImageInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492719DF2A5CC7B100451573 /* ImageInspectorView.swift */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
 		493E5F442A5B88B300B29DCF /* TableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493E5F432A5B88B300B29DCF /* TableViewModel.swift */; };
 		493E5F462A5BA46200B29DCF /* AreYouSure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493E5F452A5BA46200B29DCF /* AreYouSure.swift */; };
@@ -90,6 +92,8 @@
 		4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoAction.swift; sourceTree = "<group>"; };
 		492175782949743E00A5EA83 /* OpenAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAction.swift; sourceTree = "<group>"; };
 		4921757A2949863A00A5EA83 /* Gpx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
+		492719DD2A5CB5BE00451573 /* ImageInspectorForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInspectorForm.swift; sourceTree = "<group>"; };
+		492719DF2A5CC7B100451573 /* ImageInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInspectorView.swift; sourceTree = "<group>"; };
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		493E5F432A5B88B300B29DCF /* TableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewModel.swift; sourceTree = "<group>"; };
@@ -250,6 +254,8 @@
 				49A729B12953E7AA00DF1AAF /* ImageMapView.swift */,
 				49A729AF2953E72200DF1AAF /* DividerView.swift */,
 				498AE5AE294A6E430063B1C1 /* Sheets.swift */,
+				492719DF2A5CC7B100451573 /* ImageInspectorView.swift */,
+				492719DD2A5CB5BE00451573 /* ImageInspectorForm.swift */,
 			);
 			name = "Content View Group";
 			sourceTree = "<group>";
@@ -510,6 +516,7 @@
 				4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */,
 				493E5F462A5BA46200B29DCF /* AreYouSure.swift in Sources */,
 				4969ACA32963DFE700BBC219 /* ChangeDateTimeView.swift in Sources */,
+				492719DE2A5CB5BE00451573 /* ImageInspectorForm.swift in Sources */,
 				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
 				49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */,
 				49901CEB2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift in Sources */,
@@ -527,6 +534,7 @@
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
 				49A99FBE296F8B4B00392EEA /* BackupFolder.swift in Sources */,
 				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
+				492719E02A5CC7B100451573 /* ImageInspectorView.swift in Sources */,
 				4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */,
 				495F2F63295EB1A5002A8A88 /* TableViewSelections.swift in Sources */,
 				490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */,
