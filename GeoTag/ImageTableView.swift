@@ -14,31 +14,39 @@ struct ImageTableView: View {
     let timestampMinWidth = 130.0
     let coordMinWidth = 120.0
 
+    @AppStorage(AppSettings.imageTableConfigKey)
+    private var columnCustomization: TableColumnCustomization<ImageModel>
+
     var body: some View {
         Table(of: ImageModel.self,
               selection: $tvm.selection,
-              sortOrder: $tvm.sortOrder) {
+              sortOrder: $tvm.sortOrder,
+              columnCustomization: $columnCustomization) {
 
             TableColumn("Name", value: \.name) { image in
                 ImageNameColumnView(image: image,
                                     selectedImage: image === tvm.mostSelected)
             }
             .width(min: 100)
+            .customizationID("Name")
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
                 ImageTimestampColumnView(image: image)
             }
             .width(min: timestampMinWidth)
+            .customizationID("Timestamp")
 
             TableColumn("Latitude", value: \.formattedLatitude) { image in
                 ImageLatitudeColumnView(image: image)
             }
             .width(min: coordMinWidth)
+            .customizationID("Latitude")
 
             TableColumn("Longitude", value: \.formattedLongitude) { image in
                 ImageLongitudeColumnView(image: image)
             }
             .width(min: coordMinWidth)
+            .customizationID("Longitude")
         } rows: {
             ForEach(tvm.images) { image in
                 @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false

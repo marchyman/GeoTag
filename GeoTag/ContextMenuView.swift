@@ -16,6 +16,7 @@ struct ContextMenuView: View {
     var body: some View {
         Group {
             Button("Edit...") {
+                print("Edit done here")
                 // this is where I use an inspector
             }
             .disabled(context == nil)

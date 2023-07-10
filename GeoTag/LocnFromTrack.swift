@@ -34,7 +34,7 @@ extension AppState {
         dateFormatter.timeZone = timeZone
 
         // use a separate task in a group to update each image
-        Task {
+        Task { @MainActor in
             applicationBusy = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
                 for id in tvm.selection {

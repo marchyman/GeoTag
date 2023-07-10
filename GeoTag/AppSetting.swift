@@ -25,6 +25,7 @@ enum AppSettings {
     static let doNotBackupKey = "DoNotBackup"
     static let finderTagKey = "FinderTag"
     static let hideInvalidImagesKey = "HideInvalidImages"
+    static let imageTableConfigKey = "ImageTableConfig"
     static let initialMapAltitudeKey = "InitialMapAltitude"
     static let initialMapLatitudeKey = "InitialMapLatitude"
     static let initialMapLongitudeKey = "InitialMapLongitude"
