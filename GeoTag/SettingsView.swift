@@ -10,7 +10,7 @@ import SwiftUI
 // swiftlint:disable line_length
 
 struct SettingsView: View {
-    @Environment(AppViewModel.self) var avm
+    @Environment(AppState.self) var state
     var mvm = MapViewModel.shared
 
     // values stored in AppStorage
@@ -26,7 +26,7 @@ struct SettingsView: View {
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
     var body: some View {
-        @Bindable var avm = avm
+        @Bindable var state = state
         VStack {
             Text("GeoTag Saved Settings")
                 .font(.largeTitle)
@@ -46,7 +46,7 @@ struct SettingsView: View {
                             .padding(.bottom)
                     } else {
                         LabeledContent("Backup folder:") {
-                            PathView(url: $avm.backupURL)
+                            PathView(url: $state.backupURL)
                                 .frame(width: 280)
                         }
                         .padding(.bottom)
@@ -157,5 +157,5 @@ struct SettingsView: View {
 
 #Preview {
     SettingsView()
-        .environment(AppViewModel())
+        .environment(AppState())
 }

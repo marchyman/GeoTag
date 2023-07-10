@@ -7,12 +7,15 @@
 
 import Foundation
 
-extension AppViewModel {
+extension AppState {
 
     func locnFromTrackDisabled(context: ImageModel.ID? = nil) -> Bool {
         if gpxTracks.count > 0 {
-            if let id = context != nil ? context : mostSelected {
-                return !self[id].isValid
+            if let id = context {
+                return !tvm[id].isValid
+            }
+            if let image = tvm.mostSelected {
+                return !image.isValid
             }
         }
         return true
@@ -20,7 +23,7 @@ extension AppViewModel {
 
     func locnFromTrackAction(context: ImageModel.ID? = nil) {
         if let context {
-            select(context: context)
+            tvm.select(context: context)
         }
         // image timestamps must be converted to seconds from the epoch
         // to match track logs.  Prepare a dateformatter to handle the
@@ -32,10 +35,10 @@ extension AppViewModel {
 
         // use a separate task in a group to update each image
         Task {
-            ContentViewModel.shared.showingProgressView = true
+            applicationBusy = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
-                for id in selection {
-                    if let convertedDate = dateFormatter.date(from: self[id].timeStamp) {
+                for id in tvm.selection {
+                    if let convertedDate = dateFormatter.date(from: tvm[id].timeStamp) {
                         group.addTask { [self] in
                             // do not use forEach as once a match is
                             // found there is no need to search other tracks for
@@ -60,7 +63,7 @@ extension AppViewModel {
                     }
                 }
             }
-            ContentViewModel.shared.showingProgressView = false
+            applicationBusy = false
         }
     }
 }

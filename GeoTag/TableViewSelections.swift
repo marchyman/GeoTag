@@ -1,5 +1,5 @@
 //
-//  Selections.swift
+//  TableViewSelections.swift
 //  GeoTag
 //
 //  Created by Marco S Hyman on 12/29/22.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension AppViewModel {
+extension TableViewModel {
 
     // Process the set of selected images.  Pick one as the "most" selected if
     // the current most selected image is not in the set.  Filter out any
@@ -26,8 +26,8 @@ extension AppViewModel {
         } else {
             // If the image that was the "most" selected is in the proposed
             // selection set don't pick another
-            if !proposedSelection.contains(where: { $0 == mostSelected }) {
-                mostSelected = selection.first
+            if !proposedSelection.contains(where: { $0 == mostSelected?.id }) {
+                mostSelected = self[selection.first]
             }
         }
 
@@ -47,7 +47,7 @@ extension AppViewModel {
     func select(context: ImageModel.ID) {
         if self[context].isValid {
             if selection.contains(context) {
-                mostSelected = context
+                mostSelected = self[context]
             } else {
                 selection = [context]
             }

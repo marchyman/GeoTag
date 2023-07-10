@@ -10,7 +10,7 @@ import AppKit
 // "Paste" into all selected images or a specific image in context
 // selected images
 
-extension AppViewModel {
+extension AppState {
 
     // return true if paste actions should be disabled.  Paste action always
     // allowed when editing a textfield (textfield != nil)
@@ -21,7 +21,7 @@ extension AppViewModel {
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
            ImageModel.decodeStringRep(value: pasteVal) != nil,
-           (context != nil || mostSelected != nil) {
+           (context != nil || tvm.mostSelected != nil) {
             return false
         }
         return true
@@ -33,13 +33,13 @@ extension AppViewModel {
                      textfield: Double?? = nil) {
         if textfield == nil {
             if let context {
-                select(context: context)
+                tvm.select(context: context)
             }
             let pb = NSPasteboard.general
             if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
                let locn = ImageModel.decodeStringRep(value: pasteVal) {
                 undoManager.beginUndoGrouping()
-                for id in selection {
+                for id in tvm.selection {
                     update(id: id, location: locn.0, elevation: locn.1)
                 }
                 undoManager.endUndoGrouping()

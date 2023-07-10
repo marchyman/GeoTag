@@ -13,7 +13,7 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    @Environment(AppViewModel.self) var avm
+    @Environment(AppState.self) var state
     var mvm = MapViewModel.shared
 
     @AppStorage(AppSettings.mapConfigurationKey)  var mapConfiguration = 0
@@ -22,12 +22,12 @@ struct MapView: NSViewRepresentable {
     let altitude: Double
 
     func makeCoordinator() -> MapView.Coordinator {
-        Coordinator(vm: avm)
+        Coordinator(state: state)
     }
 
     func makeNSView(context: Context) -> ClickMapView {
         let view = ClickMapView(frame: .zero)
-        view.viewModel = avm
+        view.state = state
         view.delegate = context.coordinator
         view.camera = MKMapCamera(lookingAtCenter: center,
                                   fromEyeCoordinate: center,
@@ -38,8 +38,8 @@ struct MapView: NSViewRepresentable {
 
     func updateNSView(_ view: ClickMapView, context: Context) {
         setMapConfiguration(view)
-        mainPin(for: avm.mostSelected, on: view)
-        otherPins(for: avm.selection, on: view)
+        mainPin(for: state.tvm.mostSelected?.id, on: view)
+        otherPins(for: state.tvm.selection, on: view)
         trackChanges(for: view)
 
         // re-center the map
@@ -70,7 +70,7 @@ struct MapView: NSViewRepresentable {
 
     func mainPin(for id: ImageModel.ID?, on view: ClickMapView) {
         if let id,
-           let location = avm[id].location {
+           let location = state.tvm[id].location {
             // always update pin as the view, Pin vs OtherPin, may have changed
             // example: deselecting the image associated with mainPin may
             // cause a pin currently displayed as an OtherPin to be selected
@@ -103,11 +103,11 @@ struct MapView: NSViewRepresentable {
 
     func otherPins(for selection: Set<ImageModel.ID>, on view: ClickMapView) {
         var pins = [MKPointAnnotation]()
-        for id in selection.filter({ $0 != avm.mostSelected
-                                     && avm[$0].location != nil }) {
+        for id in selection.filter({ $0 != state.tvm.mostSelected?.id
+                                        && state.tvm[$0].location != nil }) {
             let pin = MKPointAnnotation()
             pin.title = "OtherPin"
-            pin.coordinate = avm[id].location!
+            pin.coordinate = state.tvm[id].location!
             pins.append(pin)
         }
         mvm.otherPins = pins
@@ -181,10 +181,10 @@ extension MapView {
 
     class Coordinator: NSObject, MKMapViewDelegate {
         var mvm = MapViewModel.shared
-        var avm: AppViewModel
+        var state: AppState
 
-        init(vm: AppViewModel) {
-            self.avm = vm
+        init(state: AppState) {
+            self.state = state
         }
 
         // view for annnotation.
@@ -218,14 +218,14 @@ extension MapView {
                      annotationView view: MKAnnotationView,
                      didChange newState: MKAnnotationView.DragState,
                      fromOldState oldState: MKAnnotationView.DragState) {
-            if let id = avm.mostSelected {
+            if let id = state.tvm.mostSelected?.id {
                 switch newState {
                 case .starting:
                     view.image = NSImage(named: "DragPin")
                 case .ending:
                     view.image = NSImage(named: "Pin")
-                    avm.update(id: id, location: view.annotation!.coordinate)
-                    avm.undoManager.setActionName("set location (drag)")
+                    state.update(id: id, location: view.annotation!.coordinate)
+                    state.undoManager.setActionName("set location (drag)")
                 default:
                     break
                 }
@@ -260,7 +260,7 @@ struct MapView_Previews: PreviewProvider {
         MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
                                                longitude: -122.4381),
                 altitude: 50000.0)
-            .environment(AppViewModel())
+            .environment(AppState())
     }
 }
 #endif

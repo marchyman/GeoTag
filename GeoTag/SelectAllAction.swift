@@ -7,10 +7,10 @@
 
 import AppKit
 
-extension AppViewModel {
+extension AppState {
 
     func selectAllDisabled() -> Bool {
-        return images.isEmpty
+        return tvm.images.isEmpty
     }
 
     // when textfield is non-nil a textfield is being edited and selectAll
@@ -18,7 +18,7 @@ extension AppViewModel {
 
     func selectAllAction(textfield: Double??) {
         if textfield == nil {
-            selection = Set(images.map { $0.id })
+            tvm.selection = Set(tvm.images.map { $0.id })
         } else {
             NSApp.sendAction(#selector(NSText.selectAll), to: nil, from: nil)
         }

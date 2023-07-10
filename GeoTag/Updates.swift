@@ -10,15 +10,16 @@ import MapKit
 
 // functions that handle location changes for both the map and images
 
-extension AppViewModel {
+extension AppState {
 
     // Update an image with a location. Image is identified by its ID.
     // Elevation is optional and is only provided when matching track logs
 
     func update(id: ImageModel.ID, location: Coords?,
                 elevation: Double? = nil, documentedEdited: Bool = true) {
-        let currentLocation = self[id].location
-        let currentElevation = self[id].elevation
+        let image = tvm[id]
+        let currentLocation = image.location
+        let currentElevation = image.elevation
         let currentDocumentEdited = mainWindow?.isDocumentEdited ?? true
         undoManager.registerUndo(withTarget: self) { target in
             target.update(id: id, location: currentLocation,
@@ -26,11 +27,11 @@ extension AppViewModel {
                           documentedEdited: currentDocumentEdited)
         }
 
-        self[id].location = location
-        self[id].elevation = elevation
-        if let pairedID = self[id].pairedID, self[pairedID].isValid {
-            self[pairedID].location = location
-            self[pairedID].elevation = elevation
+        image.location = location
+        image.elevation = elevation
+        if let pairedID = image.pairedID, tvm[pairedID].isValid {
+            tvm[pairedID].location = location
+            tvm[pairedID].elevation = elevation
         }
         mainWindow?.isDocumentEdited = documentedEdited
     }
@@ -40,13 +41,13 @@ extension AppViewModel {
 
     func update(id: ImageModel.ID, timestamp: String?,
                 documentEdited: Bool = true) {
-        let currentDateTimeCreated = self[id].dateTimeCreated
+        let currentDateTimeCreated = tvm[id].dateTimeCreated
         let currentDocumentEdited = mainWindow?.isDocumentEdited ?? true
         undoManager.registerUndo(withTarget: self) { target in
             target.update(id: id, timestamp: currentDateTimeCreated,
                           documentEdited: currentDocumentEdited)
         }
-        self[id].dateTimeCreated = timestamp
+        tvm[id].dateTimeCreated = timestamp
         mainWindow?.isDocumentEdited = documentEdited
     }
 

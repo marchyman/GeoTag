@@ -9,12 +9,12 @@ import SwiftUI
 import MapKit
 
 struct MapPaneView: View {
-    @Environment(AppViewModel.self) var vm
+    @Environment(AppState.self) var state
     @Bindable var mapViewModel = MapViewModel.shared
 
-    @AppStorage(AppSettings.initialMapAltitudeKey)  var initialMapAltitude = 50000.0
-    @AppStorage(AppSettings.initialMapLatitudeKey)  var initialMapLatitude = 37.7244
-    @AppStorage(AppSettings.initialMapLongitudeKey)  var initialMapLongitude = -122.4381
+    @AppStorage(AppSettings.initialMapAltitudeKey) var initialMapAltitude = 50000.0
+    @AppStorage(AppSettings.initialMapLatitudeKey) var initialMapLatitude = 37.7244
+    @AppStorage(AppSettings.initialMapLongitudeKey) var initialMapLongitude = -122.4381
 
     var body: some View {
         VStack {
@@ -58,18 +58,18 @@ struct MapPaneView: View {
             Task {
                 if let response = try? await searcher.start() {
                     if let location = response.mapItems[0].placemark.location {
-                        if vm.selection.isEmpty {
+                        if state.tvm.selection.isEmpty {
                             // nothing selected, re center the map
                             mapViewModel.currentMapCenter = location.coordinate
                             mapViewModel.reCenter = true
                         } else {
                             // update all selected items
-                            vm.undoManager.beginUndoGrouping()
-                            for id in vm.selection {
-                                vm.update(id: id, location: location.coordinate)
+                            state.undoManager.beginUndoGrouping()
+                            for id in state.tvm.selection {
+                                state.update(id: id, location: location.coordinate)
                             }
-                            vm.undoManager.endUndoGrouping()
-                            vm.undoManager.setActionName("set location (search)")
+                            state.undoManager.endUndoGrouping()
+                            state.undoManager.setActionName("set location (search)")
                         }
                     }
                 }

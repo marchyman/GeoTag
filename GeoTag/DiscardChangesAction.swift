@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension AppViewModel {
+extension AppState {
 
     // return true if the discard menu item should be disabled
 
@@ -19,8 +19,8 @@ extension AppViewModel {
     // to put the images back in their starting state.
 
     func discardChangesAction() {
-        for index in images.startIndex ..< images.endIndex {
-            images[index].revert()
+        for index in tvm.images.startIndex ..< tvm.images.endIndex {
+            tvm.images[index].revert()
         }
         undoManager.removeAllActions()
         mainWindow?.isDocumentEdited = false

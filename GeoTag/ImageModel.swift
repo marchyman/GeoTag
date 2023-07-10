@@ -41,7 +41,7 @@ final class ImageModel: Identifiable {
     var formattedLatitude: String {
         coordToString(for: location?.latitude, ref: latRef)
     }
-    var formattedLongituyde: String {
+    var formattedLongitude: String {
         coordToString(for: location?.longitude, ref: lonRef)
     }
 
@@ -284,7 +284,7 @@ extension URL: Comparable {
 // be treated as sendable. ImageModel is marked as unchecked to get rid
 // of the pairedID warning.
 
-// extension ImageModel: @unchecked Sendable {}
+extension ImageModel: @unchecked Sendable {}
 extension NSImage: @unchecked Sendable {}
 
 // Date formatter used to put timestamps in the form used by exiftool when

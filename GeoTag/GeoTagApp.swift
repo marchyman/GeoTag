@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    @State var avm = AppViewModel()
+    @State var state = AppState()
     @FocusedBinding(\.textfieldBinding) var textfieldBinding
 
     let windowWidth = 1200.0
@@ -20,12 +20,11 @@ struct GeoTagApp: App {
         Window("GeoTag Version Five", id: "main") {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
-                .background(WindowAccessor(window: $avm.mainWindow))
+                .background(WindowAccessor(window: $state.mainWindow))
                 .onAppear {
-                    appDelegate.avm = avm
+                    appDelegate.state = state
                 }
-                .environment(avm)
-                .environment(ContentViewModel.shared)
+                .environment(state)
         }
         .commands {
             newItemCommandGroup
@@ -37,8 +36,9 @@ struct GeoTagApp: App {
         }
 
         Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
-            AdjustTimezoneView(avm: avm)
+            AdjustTimezoneView()
                 .frame(width: 500.0, height: 570.0)
+                .environment(state)
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
@@ -47,7 +47,7 @@ struct GeoTagApp: App {
         Settings {
             SettingsView()
                 .frame(width: 600.0, height: 590.0, alignment: .top)
-                .environment(avm)
+                .environment(state)
         }
         .windowResizability(.contentSize)
 

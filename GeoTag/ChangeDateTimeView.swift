@@ -10,7 +10,7 @@ import SwiftUI
 struct ChangeDateTimeView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @Environment(AppViewModel.self) var avm
+    @Environment(AppState.self) var state
     let id: ImageModel.ID
 
     @FocusState private var isFocused: Bool
@@ -63,7 +63,7 @@ struct ChangeDateTimeView: View {
     // return the current date.
 
     private func date() -> Date {
-        if let date = avm[id].timestamp(for: avm.timeZone) {
+        if let date = state.tvm[id].timestamp(for: state.timeZone) {
             return date
         }
         return Date()
@@ -78,22 +78,22 @@ struct ChangeDateTimeView: View {
         // prepare for date to string conversions.
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = ImageModel.dateFormat
-        dateFormatter.timeZone = avm.timeZone
+        dateFormatter.timeZone = state.timeZone
 
         // apply adjustment to each selected image in an undo group
-        avm.undoManager.beginUndoGrouping()
-        for id in avm.selection where avm[id].isValid {
+        state.undoManager.beginUndoGrouping()
+        for id in state.tvm.selection where state.tvm[id].isValid {
             var updatedDate: Date
-            if let originalDate = avm[id].timestamp(for: avm.timeZone) {
+            if let originalDate = state.tvm[id].timestamp(for: state.timeZone) {
                 updatedDate = Date(timeInterval: adjustment,
                                    since: originalDate)
             } else {
                 updatedDate = newDate
             }
-            avm.update(id: id, timestamp: dateFormatter.string(from: updatedDate))
+            state.update(id: id, timestamp: dateFormatter.string(from: updatedDate))
         }
-        avm.undoManager.endUndoGrouping()
-        avm.undoManager.setActionName("modify date/time")
+        state.undoManager.endUndoGrouping()
+        state.undoManager.setActionName("modify date/time")
     }
 
 }
@@ -108,6 +108,6 @@ struct ModifyDateTimeView_Previews: PreviewProvider {
 
     static var previews: some View {
         ChangeDateTimeView(id: image.id)
-            .environment(AppViewModel(images: [image]))
+            .environment(AppState())
     }
 }

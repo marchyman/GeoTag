@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension AppViewModel {
+extension AppState {
 
     // return true if the undo menu option should be disabled.
 

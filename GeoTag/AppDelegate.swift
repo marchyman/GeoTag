@@ -11,7 +11,7 @@ import AppKit
 ///
 /// App Delegate needed to get some desired behaviors such as terminate app when window closed
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    var avm: AppViewModel?
+    var state: AppState?
 
     // things that can not (yet?) be done in SwiftUI (or can be done but
     // I don't know how so do it this way).
@@ -25,7 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func application(_ application: NSApplication, open urls: [URL]) {
         Task {
-            await self.avm?.prepareForEdit(inputURLs: urls)
+            await self.state?.prepareForEdit(inputURLs: urls)
         }
     }
 
@@ -48,17 +48,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @MainActor
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        if let avm {
-            if avm.saveInProgress {
-                ContentViewModel.shared.addSheet(type: .savingUpdatesSheet)
+        if let state {
+            if state.saveInProgress {
+                state.addSheet(type: .savingUpdatesSheet)
                 return .terminateCancel
             }
 
-            if let edited = avm.mainWindow?.isDocumentEdited, edited {
-                ContentViewModel.shared.confirmationMessage =
+            if let edited = state.mainWindow?.isDocumentEdited, edited {
+                state.confirmationMessage =
                     "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
-                ContentViewModel.shared.confirmationAction = terminateIgnoringEdits
-                ContentViewModel.shared.presentConfirmation = true
+                state.confirmationAction = terminateIgnoringEdits
+                state.presentConfirmation = true
                 return .terminateCancel
             }
         }
@@ -70,7 +70,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @MainActor
     func terminateIgnoringEdits() {
-        avm?.mainWindow?.isDocumentEdited = false
+        state?.mainWindow?.isDocumentEdited = false
         NSApp.terminate(NSApp)
     }
 

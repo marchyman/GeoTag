@@ -11,8 +11,7 @@ import SwiftUI
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
-    @Environment(ContentViewModel.self) var contentViewModel
-    @Environment(AppViewModel.self) var avm
+    @Environment(AppState.self) var state
     @Environment(\.openWindow) var openWindow
 
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
@@ -21,12 +20,12 @@ struct ContentView: View {
     @State private var removeOldFiles = false
 
     var body: some View {
-        @Bindable var contentViewModel = contentViewModel
+        @Bindable var state = state
         HSplitView {
             ZStack {
-                ImageTableView()
+                ImageTableView(tvm: state.tvm)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                if contentViewModel.showingProgressView {
+                if state.applicationBusy {
                     ProgressView("Processing files...")
                 }
             }
@@ -35,81 +34,40 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
-
-        // startup
         .onAppear {
             // check for a backupURL
             if !doNotBackup && savedBookmark == Data() {
-                contentViewModel.addSheet(type: .noBackupFolderSheet)
+                state.addSheet(type: .noBackupFolderSheet)
             }
         }
-
-        // drop destination
         .dropDestination(for: URL.self) {items, _ in
             Task {
-                await avm.prepareForEdit(inputURLs: items)
+                await state.prepareForEdit(inputURLs: items)
             }
             return true
         }
-
-        .onChange(of: contentViewModel.changeTimeZoneWindow) {
+        .onChange(of: state.changeTimeZoneWindow) {
             openWindow(id: GeoTagApp.adjustTimeZone)
         }
-
-        // sheets
-        .sheet(item: $contentViewModel.sheetType, onDismiss: sheetDismissed) { sheet in
+        .sheet(item: $state.sheetType, onDismiss: sheetDismissed) { sheet in
             sheet
         }
+        .areYouSure()                       // confirmations
+        .removeBackupsAlert()               // Alert: Remove Old Backup files
 
-        // confirmations
-        .confirmationDialog("Are you sure?", isPresented: $contentViewModel.presentConfirmation) {
-            Button("I'm sure", role: .destructive) {
-                if contentViewModel.confirmationAction != nil {
-                    contentViewModel.confirmationAction!()
-                }
-            }
-            Button("Cancel", role: .cancel) { }
-                .keyboardShortcut(.defaultAction)
-        } message: {
-            let message = contentViewModel.confirmationMessage != nil ? contentViewModel.confirmationMessage! : ""
-            Text(message)
-        }
-
-        // Alert: Remove Old Backup files
-        .alert("Delete old backup files?", isPresented: $contentViewModel.removeOldFiles) {
-            Button("Delete", role: .destructive) {
-                avm.remove(filesToRemove: contentViewModel.oldFiles)
-            }
-            Button("Cancel", role: .cancel) { }
-                .keyboardShortcut(.defaultAction)
-        } message: {
-            // swiftlint:disable line_length
-            Text("""
-                 Your current backup/save folder
-
-                     \(avm.backupURL != nil ? avm.backupURL!.path : "unknown")
-
-                 is using \(contentViewModel.folderSize / 1_000_000) MB to store backup files.
-
-                 \(contentViewModel.oldFiles.count) files using \(contentViewModel.deletedSize / 1_000_000) MB of storage were placed in the folder more than 7 days ago.
-
-                 Would you like to remove those \(contentViewModel.oldFiles.count) backup files?
-                 """)
-            // swiftlint:enable line_length
-        }
     }
 
     // when a sheet is dismissed check if there are more sheets to display
 
     func sheetDismissed() {
-        if contentViewModel.sheetStack.isEmpty {
-            contentViewModel.sheetMessage = nil
-            contentViewModel.sheetError = nil
+        if state.sheetStack.isEmpty {
+            state.sheetMessage = nil
+            state.sheetError = nil
         } else {
-            let sheetInfo = contentViewModel.sheetStack.removeFirst()
-            contentViewModel.sheetMessage = sheetInfo.sheetMessage
-            contentViewModel.sheetError = sheetInfo.sheetError
-            contentViewModel.sheetType = sheetInfo.sheetType
+            let sheetInfo = state.sheetStack.removeFirst()
+            state.sheetMessage = sheetInfo.sheetMessage
+            state.sheetError = sheetInfo.sheetError
+            state.sheetType = sheetInfo.sheetType
         }
     }
 
@@ -117,6 +75,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environment(ContentViewModel.shared)
-        .environment(AppViewModel(forPreview: true))
+        .environment(AppState())
 }

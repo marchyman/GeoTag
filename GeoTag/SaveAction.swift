@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension AppViewModel {
+extension AppState {
 
     // return true if the save menu item should be disabled
 
@@ -22,29 +22,24 @@ extension AppViewModel {
         @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
         @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
-        let cvm = ContentViewModel.shared
-
         // returned status of the save operation
         struct SaveStatus {
-            let id: ImageModel.ID
-            let dateTimeCreated: String?
-            let location: Coords?
-            let elevation: Double?
+            let image: ImageModel
             let error: String?
         }
 
         // before starting check that image files backups are disabled
         // or the image backup folder exists.
         guard doNotBackup || backupURL != nil else {
-            cvm.addSheet(type: .noBackupFolderSheet)
+            addSheet(type: .noBackupFolderSheet)
             return
         }
 
         // copy images.  The info in the copies will be saved in background
         // tasks.
         saveInProgress = true
-        cvm.saveIssues = [:]
-        let imagesToSave = images
+        saveIssues = [:]
+        let imagesToSave = tvm.images
         undoManager.removeAllActions()
         mainWindow?.isDocumentEdited = false
 
@@ -82,10 +77,7 @@ extension AppViewModel {
                         } catch {
                             errorDescription = error.localizedDescription
                         }
-                        return SaveStatus(id: image.id,
-                                          dateTimeCreated: image.dateTimeCreated,
-                                          location: image.location,
-                                          elevation: image.elevation,
+                        return SaveStatus(image: image,
                                           error: errorDescription)
                     }
                 }
@@ -94,20 +86,22 @@ extension AppViewModel {
                 // with no errors.
                 for await status in group {
                     if status.error == nil {
-                        self[status.id].originalDateTimeCreated = status.dateTimeCreated
-                        self[status.id].originalLocation = status.location
-                        self[status.id].originalElevation = status.elevation
+                        let image = status.image
+                        image.originalDateTimeCreated = image.dateTimeCreated
+                        image.originalLocation = image.location
+                        image.originalElevation = image.elevation
                     } else {
-                        cvm.saveIssues.updateValue(status.error!, forKey: status.id)
+                        saveIssues.updateValue(status.error!,
+                                               forKey: status.image.id)
                     }
                 }
             }
 
-            if !cvm.saveIssues.isEmpty {
+            if !saveIssues.isEmpty {
                 DispatchQueue.main.async {
                     self.mainWindow?.isDocumentEdited = true
                 }
-                cvm.addSheet(type: .saveErrorSheet)
+                addSheet(type: .saveErrorSheet)
             }
             saveInProgress = false
         }

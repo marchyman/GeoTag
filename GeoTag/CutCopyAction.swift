@@ -7,16 +7,16 @@
 
 import AppKit
 
-extension AppViewModel {
+extension AppState {
 
     // return true if cut or copy actions should be disabled
     // if context is nil use selectedImage
 
     func cutCopyDisabled(context: ImageModel.ID? = nil) -> Bool {
-        if let id = context != nil ? context : mostSelected {
-            return self[id].location == nil
+        if let id = context {
+            return tvm[id].location == nil
         }
-        return true
+        return tvm.mostSelected == nil
     }
 
     // A cut is a copy followed by a delete
@@ -35,12 +35,12 @@ extension AppViewModel {
                     textfield: Double?? = nil) {
         if textfield == nil {
             if let context {
-                select(context: context)
+                tvm.select(context: context)
             }
-            if let id = mostSelected {
+            if let image = tvm.mostSelected {
                 let pb = NSPasteboard.general
                 pb.declareTypes([NSPasteboard.PasteboardType.string], owner: self)
-                pb.setString(self[id].stringRepresentation,
+                pb.setString(image.stringRepresentation,
                              forType: NSPasteboard.PasteboardType.string)
             }
         } else {

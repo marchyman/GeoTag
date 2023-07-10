@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageView: View {
-    @Environment(AppViewModel.self) var avm
+    @Environment(AppState.self) var state
     @State private var thumbnail: NSImage?
 
     var body: some View {
@@ -24,12 +24,12 @@ struct ImageView: View {
             }
         }
         .padding()
-        .task(id: avm.mostSelected) {
-            if let id = avm.mostSelected {
-                if avm[id].thumbnail == nil {
-                    avm[id].thumbnail = await avm[id].makeThumbnail()
+        .task(id: state.tvm.mostSelected) {
+            if let image = state.tvm.mostSelected {
+                if image.thumbnail == nil {
+                    image.thumbnail = await image.makeThumbnail()
                 }
-                thumbnail = avm[id].thumbnail
+                thumbnail = image.thumbnail
                 return
             }
             thumbnail = nil
@@ -40,6 +40,6 @@ struct ImageView: View {
 struct ImageView_Previews: PreviewProvider {
     static var previews: some View {
         ImageView()
-            .environment(AppViewModel())
+            .environment(AppState())
     }
 }

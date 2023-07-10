@@ -8,49 +8,39 @@
 import SwiftUI
 import OSLog
 
-let tableLog = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                      category: "ImageTableView")
-let tableSP = OSSignposter(logger: tableLog)
-
 struct ImageTableView: View {
-    @Environment(AppViewModel.self) var avm
-
-    @State private var sortOrder = [KeyPathComparator(\ImageModel.name)]
+    @Bindable var tvm: TableViewModel
 
     let timestampMinWidth = 130.0
     let coordMinWidth = 120.0
 
     var body: some View {
-        @Bindable var avm = avm
         Table(of: ImageModel.self,
-              selection: $avm.selection,
-              sortOrder: $sortOrder) {
+              selection: $tvm.selection,
+              sortOrder: $tvm.sortOrder) {
 
             TableColumn("Name", value: \.name) { image in
                 ImageNameColumnView(image: image,
-                                    selectedImage: image.id == avm.mostSelected)
+                                    selectedImage: image === tvm.mostSelected)
             }
             .width(min: 100)
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                ImageTimestampColumnView(id: image.id,
-                                         timestampMinWidth: timestampMinWidth)
+                ImageTimestampColumnView(image: image)
             }
             .width(min: timestampMinWidth)
 
-            TableColumn("Latitude", value: \.latitude) { image in
-                ImageLatitudeColumnView(id: image.id)
+            TableColumn("Latitude", value: \.formattedLatitude) { image in
+                ImageLatitudeColumnView(image: image)
             }
             .width(min: coordMinWidth)
 
-            TableColumn("Longitude", value: \.longitude) { image in
-                ImageLongitudeColumnView(id: image.id)
+            TableColumn("Longitude", value: \.formattedLongitude) { image in
+                ImageLongitudeColumnView(image: image)
             }
             .width(min: coordMinWidth)
         } rows: {
-            let spID = tableSP.makeSignpostID()
-            let spState = tableSP.beginInterval("Table Rows", id: spID)
-            ForEach(avm.images) { image in
+            ForEach(tvm.images) { image in
                 @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
 
                 if image.isValid || !hideInvalidImages {
@@ -60,18 +50,15 @@ struct ImageTableView: View {
                         }
                 }
             }
-            // swiftlint:disable redundant_discardable_let
-            let _ = tableSP.endInterval("Table Rows", spState)
-            // swiftlint:enable redundant_discardable_let
         }
         .contextMenu {
             ContextMenuView(context: nil)
         }
-        .onChange(of: sortOrder) {
-            avm.images.sort(using: sortOrder)
+        .onChange(of: tvm.sortOrder) {
+            tvm.images.sort(using: tvm.sortOrder)
         }
-        .onChange(of: avm.selection) {
-            avm.selectionChanged()
+        .onChange(of: tvm.selection) {
+            tvm.selectionChanged()
         }
     }
 }
@@ -97,7 +84,6 @@ struct ImageTableView_Previews: PreviewProvider {
     ]
 
     static var previews: some View {
-        ImageTableView()
-            .environment(AppViewModel(images: images))
+        ImageTableView(tvm: TableViewModel(images: images))
     }
 }

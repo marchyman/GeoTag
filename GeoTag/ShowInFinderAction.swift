@@ -10,12 +10,12 @@ import AppKit
 // Open a finder window at an images location. Image may be specified
 // in context or by selection
 
-extension AppViewModel {
+extension AppState {
 
     // return true if Show In Finder menu items should be disabled.
 
     func showInFinderDisabled(context: ImageModel.ID? = nil) -> Bool {
-        if context != nil || mostSelected != nil {
+        if context != nil || tvm.mostSelected != nil {
             return false
         }
         return true
@@ -25,10 +25,10 @@ extension AppViewModel {
 
     func showInFinderAction(context: ImageModel.ID? = nil) {
         if let context {
-            select(context: context)
+            tvm.select(context: context)
         }
-        if let id = mostSelected {
-            NSWorkspace.shared.activateFileViewerSelecting([self[id].fileURL])
+        if let id = tvm.mostSelected?.id {
+            NSWorkspace.shared.activateFileViewerSelecting([tvm[id].fileURL])
         }
     }
 }

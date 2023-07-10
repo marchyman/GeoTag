@@ -13,39 +13,39 @@ extension GeoTagApp {
     var pasteBoardCommandGroup: some Commands {
         CommandGroup(replacing: .pasteboard) {
             Group {
-                Button("Cut") { avm.cutAction(textfield: textfieldBinding) }
+                Button("Cut") { state.cutAction(textfield: textfieldBinding) }
                     .keyboardShortcut("x")
-                    .disabled(avm.cutCopyDisabled())
+                    .disabled(state.cutCopyDisabled())
 
-                Button("Copy") { avm.copyAction(textfield: textfieldBinding) }
+                Button("Copy") { state.copyAction(textfield: textfieldBinding) }
                     .keyboardShortcut("c")
-                    .disabled(avm.cutCopyDisabled())
+                    .disabled(state.cutCopyDisabled())
 
-                Button("Paste") { avm.pasteAction(textfield: textfieldBinding) }
+                Button("Paste") { state.pasteAction(textfield: textfieldBinding) }
                     .keyboardShortcut("v")
-                    .disabled(avm.pasteDisabled(textfield: textfieldBinding))
+                    .disabled(state.pasteDisabled(textfield: textfieldBinding))
 
-                Button("Delete") { avm.deleteAction(textfield: textfieldBinding) }
+                Button("Delete") { state.deleteAction(textfield: textfieldBinding) }
                     .keyboardShortcut(.delete, modifiers: [])
-                    .disabled(avm.deleteDisabled())
+                    .disabled(state.deleteDisabled())
 
-                Button("Select All") { avm.selectAllAction(textfield: textfieldBinding) }
+                Button("Select All") { state.selectAllAction(textfield: textfieldBinding) }
                     .keyboardShortcut("a")
-                    .disabled(avm.selectAllDisabled())
+                    .disabled(state.selectAllDisabled())
             }
 
             Divider()
 
             Group {
-                Button("Show In Finder") { avm.showInFinderAction() }
-                    .disabled(avm.showInFinderDisabled())
+                Button("Show In Finder") { state.showInFinderAction() }
+                    .disabled(state.showInFinderDisabled())
 
-                Button("Locn From Track") { avm.locnFromTrackAction() }
+                Button("Locn From Track") { state.locnFromTrackAction() }
                     .keyboardShortcut("l")
-                    .disabled(avm.locnFromTrackDisabled())
+                    .disabled(state.locnFromTrackDisabled())
 
                 Button("Specify Time Zone…") {
-                    ContentViewModel.shared.changeTimeZoneWindow.toggle()
+                    state.changeTimeZoneWindow.toggle()
                 }
             }
         }

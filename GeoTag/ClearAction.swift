@@ -9,18 +9,18 @@ import Foundation
 
 // Program "Clear List" action removes all images from the table
 
-extension AppViewModel {
+extension AppState {
 
     // return true if the Clear Image List meny item should be disabled
 
     var clearDisabled: Bool {
-        images.isEmpty || (mainWindow?.isDocumentEdited ?? false)
+        tvm.images.isEmpty || (mainWindow?.isDocumentEdited ?? false)
     }
 
     func clearImageListAction() {
         if !clearDisabled {
-            selection = Set()
-            images = []
+            tvm.selection = Set()
+            tvm.images = []
         }
     }
 }

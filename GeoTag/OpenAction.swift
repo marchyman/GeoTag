@@ -11,7 +11,7 @@ import SwiftUI
 // Extension to our Application State that handles file open and dropping
 // URLs onto the app's table of images to edit.
 
-extension AppViewModel {
+extension AppState {
 
     /// Display the File -> Open... panel for image and gpx files.  Folders may also be selected.
 
@@ -44,7 +44,7 @@ extension AppViewModel {
 
         // show the progress view
 
-        ContentViewModel.shared.showingProgressView = true
+        applicationBusy = true
 
         // expand folder URLs and remove any duplicates.
 
@@ -57,11 +57,10 @@ extension AppViewModel {
         // check for duplicates of URLs already open for processing
         // if any are found notify the user
 
-        let processedURLs = Set(images.map {$0.fileURL })
+        let processedURLs = Set(tvm.images.map {$0.fileURL })
         let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
         if !duplicateURLs.isEmpty {
-            avmLog.trace("duplicate URLs detected")
-            ContentViewModel.shared.addSheet(type: .duplicateImageSheet)
+            addSheet(type: .duplicateImageSheet)
         }
 
         // process all urls in a task group, one task per url.  Skip
@@ -76,11 +75,9 @@ extension AppViewModel {
                     do {
                         return try ImageModel(imageURL: url)
                     } catch let error as NSError {
-                        DispatchQueue.main.async {
-                            ContentViewModel.shared.addSheet(type: .unexpectedErrorSheet,
-                                                             error: error,
-                                                             message: "Failed to open file \(url.path)")
-                        }
+                        self.addSheet(type: .unexpectedErrorSheet,
+                                      error: error,
+                                      message: "Failed to open file \(url.path)")
                         return nil
                     }
                 }
@@ -88,10 +85,10 @@ extension AppViewModel {
             for await image in group.compactMap({ $0 }) {
                 openedImages.append(image)
             }
-            images.append(contentsOf: openedImages)
+            tvm.images.append(contentsOf: openedImages)
         }
         linkPairedImages()
-        images.sort(using: sortOrder)
+        tvm.images.sort(using: tvm.sortOrder)
 
         // now process any gpx tracks
 
@@ -119,10 +116,8 @@ extension AppViewModel {
             // if the appViewModel update isn't done on the main queue the
             // Discard tracks menu item doesn't see the approriate state.
 
-            avmLog.trace("Adding gpx tracks")
             let updatedTracks = tracks
             DispatchQueue.main.async {
-                avmLog.trace("Adding gpx tracks on main thread")
                 for (path, track) in updatedTracks {
                     if let track {
                         self.updateTracks(gpx: track)
@@ -132,12 +127,11 @@ extension AppViewModel {
                         self.gpxBadFileNames.append(path)
                     }
                 }
-                ContentViewModel.shared.addSheet(type: .gpxFileNameSheet)
+                self.addSheet(type: .gpxFileNameSheet)
             }
         }
 
-        ContentViewModel.shared.showingProgressView = false
-        avmLog.trace("exiting prepareForEdit")
+        applicationBusy = false
     }
 
     /// Check if a given file URL refers to a folder
@@ -173,7 +167,7 @@ extension AppViewModel {
     private func linkPairedImages() {
         @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
 
-        let imageURLs = images.map { $0.fileURL }
+        let imageURLs = tvm.images.map { $0.fileURL }
 
         for url in imageURLs {
             // only look at jpeg files
@@ -188,11 +182,11 @@ extension AppViewModel {
                 && pairedURL.pathExtension.lowercased() != xmpExtension
                 && pairedURL.deletingPathExtension() == baseURL {
                 // url and otherURL are part of an image pair.
-                self[url].pairedID = pairedURL
-                self[pairedURL].pairedID = url
+                tvm[url].pairedID = pairedURL
+                tvm[pairedURL].pairedID = url
                 // disable the jpeg version if requested
                 if disablePairedJpegs {
-                    self[url].isValid = false
+                    tvm[url].isValid = false
                 }
                 break
             }
