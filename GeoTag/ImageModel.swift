@@ -39,10 +39,10 @@ final class ImageModel: Identifiable {
     // are derived from this value.
     var location: Coords?
     var formattedLatitude: String {
-        coordToString(for: location?.latitude, ref: latRef)
+        location?.formatted(.latitude) ?? ""
     }
     var formattedLongitude: String {
-        coordToString(for: location?.longitude, ref: lonRef)
+        location?.formatted(.longitude) ?? ""
     }
 
     // Image elevation and formatting for use as a tool tip.

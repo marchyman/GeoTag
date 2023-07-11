@@ -76,7 +76,6 @@
 		49E29F002951011300804B74 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFF2951011300804B74 /* MapView.swift */; };
 		49E29F03295101D600804B74 /* MapSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29F02295101D600804B74 /* MapSearchView.swift */; };
 		49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */; };
-		49F5FAA4297653450070FC55 /* CoordFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FAA3297653450070FC55 /* CoordFormatter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -157,7 +156,6 @@
 		49E29F02295101D600804B74 /* MapSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchView.swift; sourceTree = "<group>"; };
 		49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAllAction.swift; sourceTree = "<group>"; };
-		49F5FAA3297653450070FC55 /* CoordFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordFormatter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -237,7 +235,6 @@
 				4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */,
 				4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */,
 				49B9EDE029493F4000574D18 /* Coords.swift */,
-				49F5FAA3297653450070FC55 /* CoordFormatter.swift */,
 				498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */,
 				498AE5B2294AD5D00063B1C1 /* Exiftool.swift */,
 				490A641F29C397CD00A1310C /* Sandbox.swift */,
@@ -541,7 +538,6 @@
 				49A13271294C040F00F1B393 /* ImageNameColumnView.swift in Sources */,
 				4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */,
 				49C45BA72984851000CC7F0E /* MapViewModel.swift in Sources */,
-				49F5FAA4297653450070FC55 /* CoordFormatter.swift in Sources */,
 				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
 				4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */,
