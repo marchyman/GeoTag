@@ -64,6 +64,7 @@ struct ContentView: View {
                     } label: {
                         Label("Toggle Inspector", systemImage: "info.circle")
                     }
+                    .keyboardShortcut("i")
                 }
         }
     }

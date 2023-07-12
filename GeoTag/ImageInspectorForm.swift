@@ -9,12 +9,11 @@ import SwiftUI
 
 struct ImageInspectorForm: View {
     @Bindable var image: ImageModel
-    @Environment(AppState.self) var state
 
     var body: some View {
         Form {
             Section("Date and Time") {
-                Text("Date and time update goes here")
+                DateTimeSectionView(image: image)
             }
             Section("Location") {
                 Text("Latitude adjustments")

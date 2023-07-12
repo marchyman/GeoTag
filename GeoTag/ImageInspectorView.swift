@@ -20,7 +20,7 @@ struct ImageInspectorView: View {
                 ContentUnavailableView {
                     Image(systemName: "magnifyingglass.circle")
                 } description: {
-                    Text("Select an image to modify")
+                    Text("Please select an image")
                 }
                 Spacer()
             }

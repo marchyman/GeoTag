@@ -54,6 +54,7 @@
 		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
 		49B0395F2944429F003B7C53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395E2944429F003B7C53 /* Preview Assets.xcassets */; };
 		49B0396929444855003B7C53 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B0396829444855003B7C53 /* MapKit.framework */; };
+		49B448232A5F298D002939C5 /* DateTimeSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B448222A5F298D002939C5 /* DateTimeSectionView.swift */; };
 		49B4D34B2957D05D00A4BCFD /* DeleteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B4D34A2957D05D00A4BCFD /* DeleteAction.swift */; };
 		49B4D34D2957E21500A4BCFD /* ClearAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B4D34C2957E21500A4BCFD /* ClearAction.swift */; };
 		49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B9EDDC29493CC200574D18 /* ImageTableView.swift */; };
@@ -132,6 +133,7 @@
 		49B039602944429F003B7C53 /* GeoTag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GeoTag.entitlements; sourceTree = "<group>"; };
 		49B0396829444855003B7C53 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		49B0396A29444BD8003B7C53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		49B448222A5F298D002939C5 /* DateTimeSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeSectionView.swift; sourceTree = "<group>"; };
 		49B4D34A2957D05D00A4BCFD /* DeleteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAction.swift; sourceTree = "<group>"; };
 		49B4D34C2957E21500A4BCFD /* ClearAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearAction.swift; sourceTree = "<group>"; };
 		49B9EDDC29493CC200574D18 /* ImageTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableView.swift; sourceTree = "<group>"; };
@@ -253,6 +255,7 @@
 				498AE5AE294A6E430063B1C1 /* Sheets.swift */,
 				492719DF2A5CC7B100451573 /* ImageInspectorView.swift */,
 				492719DD2A5CB5BE00451573 /* ImageInspectorForm.swift */,
+				49B448222A5F298D002939C5 /* DateTimeSectionView.swift */,
 			);
 			name = "Content View Group";
 			sourceTree = "<group>";
@@ -540,6 +543,7 @@
 				49C45BA72984851000CC7F0E /* MapViewModel.swift in Sources */,
 				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
+				49B448232A5F298D002939C5 /* DateTimeSectionView.swift in Sources */,
 				4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */,
 				49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
