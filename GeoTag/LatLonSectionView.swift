@@ -1,24 +1,20 @@
 //
-//  ImageInspectorForm.swift
+//  LatLonSectionView.swift
 //  GeoTag
 //
-//  Created by Marco S Hyman on 7/10/23.
+//  Created by Marco S Hyman on 7/12/23.
 //
 
 import SwiftUI
 
-struct ImageInspectorForm: View {
+struct LatLonSectionView: View {
     @Bindable var image: ImageModel
+    @Environment(AppState.self) var state
+    @FocusState private var isFocused: Bool
 
     var body: some View {
-        Form {
-            Section("Date and Time") {
-                DateTimeSectionView(image: image)
-            }
-            Section("Location") {
-                LatLonSectionView(image: image)
-            }
-        }
+        Text("Latitude adjustments")
+        Text("Longitude adjustments")
     }
 }
 
@@ -28,6 +24,6 @@ struct ImageInspectorForm: View {
                            dateTimeCreated: "2022:12:12 11:22:33",
                            latitude: 33.123,
                            longitude: 123.456)
-    return ImageInspectorForm(image: image)
+    return LatLonSectionView(image: image)
         .environment(AppState())
 }

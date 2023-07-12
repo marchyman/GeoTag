@@ -26,24 +26,16 @@ struct DateTimeSectionView: View {
                        displayedComponents: .init(rawValue: 1234521450295224572))
             .focused($isFocused)
             .padding([.horizontal, .bottom])
-            .help("Set this to the new date/time. " +
-                  "If one image is selected it will be set to this value. " +
+            .help("If one image is selected it is set to this value. " +
                   "If multiple images are selected the difference between " +
-                  "the original date/time and the updated value will be " +
+                  "the original date/time and the updated value is " +
                   "applied to each image.")
 
-            HStack(alignment: .bottom) {
-                Spacer()
-
-                Button("Change") {
-                    if oldDate != newDate {
-                        updateTimestamps()
-                        oldDate = newDate
-                        isFocused = false
-                    }
-                }
-                .disabled(oldDate == newDate)
-                .keyboardShortcut(.defaultAction)
+        }
+        .onChange(of: newDate) {
+            if oldDate != newDate {
+                updateTimestamps()
+                oldDate = newDate
             }
         }
         .task(id: image) {
