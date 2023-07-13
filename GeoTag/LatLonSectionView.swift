@@ -83,7 +83,7 @@ struct LatLonSectionView: View {
         // function won't be called if lat/lon are nil.
         // guard used to convert to non-optional values
         guard let latitude, let longitude else { return }
-        var newLocation = Coords(latitude: latitude,
+        let newLocation = Coords(latitude: latitude,
                                  longitude: longitude)
 
         state.undoManager.beginUndoGrouping()
