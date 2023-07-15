@@ -21,6 +21,7 @@ struct ImageMapView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: geometry.size.height * dividerPosition)
                 }
+                DividerView(geometry: geometry)
             }
         }
     }
