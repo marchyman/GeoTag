@@ -31,12 +31,9 @@ extension TableViewModel {
             }
         }
 
-        // if the proposed selection does not match the selection update
-        // the selection on the main queue.
+        // update the selection if necessary
         if proposedSelection != selection {
-            DispatchQueue.main.async {
-                self.selection = proposedSelection
-            }
+            selection = proposedSelection
         }
     }
 

@@ -29,15 +29,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    // Called when window that was hidden is now visible
-
-    func applicationShouldHandleReopen(_ sender: NSApplication,
-                                       hasVisibleWindows flag: Bool) -> Bool {
-        // print("flag is \(flag)")
-        return true
-    }
-
-    // quit the app when it's window is closed.
+    // quit the app when all windows are closed
 
     func applicationShouldTerminateAfterLastWindowClosed(_ theApplication: NSApplication) -> Bool {
         return true
