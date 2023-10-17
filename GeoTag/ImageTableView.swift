@@ -16,6 +16,7 @@ struct ImageTableView: View {
 
     @AppStorage(AppSettings.imageTableConfigKey)
     private var columnCustomization: TableColumnCustomization<ImageModel>
+    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
 
     var body: some View {
         Table(of: ImageModel.self,
@@ -49,8 +50,6 @@ struct ImageTableView: View {
             .customizationID("Longitude")
         } rows: {
             ForEach(tvm.images) { image in
-                @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
-
                 if image.isValid || !hideInvalidImages {
                     TableRow(image)
                         .contextMenu {
