@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import OSLog
 
 // MARK: State variables used primarily to control the table of images
 
@@ -37,6 +38,34 @@ final class TableViewModel {
 
     // A copy of the current sort order
     var sortOrder = [KeyPathComparator(\ImageModel.name)]
+
+    // Instruments performance logging tools
+    static let logger = Logger(subsystem: "org.snafu.GeoTag",
+                                       category: "TableView")
+    private static let signposter = OSSignposter(logger: logger)
+
+    func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
+        let signpostID = Self.signposter.makeSignpostID()
+        let interval = Self.signposter.beginInterval(desc, id: signpostID)
+        return interval
+    }
+
+    func markEnd(_ desc: StaticString, interval: OSSignpostIntervalState) {
+        Self.signposter.endInterval(desc, interval)
+    }
+
+    func withInterval<T>(_ desc: StaticString,
+                         around task: () throws -> T) rethrows -> T {
+        try Self.signposter.withIntervalSignpost(desc) {
+            try task()
+        }
+    }
+    func withInterval<T>(_ image: ImageModel,
+                         around task: () throws -> T) rethrows -> T {
+        try Self.signposter.withIntervalSignpost("Render", "image \(image.name)") {
+            try task()
+        }
+    }
 
     init() { }
 

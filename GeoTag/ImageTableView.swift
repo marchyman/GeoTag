@@ -49,8 +49,9 @@ struct ImageTableView: View {
             .width(min: coordMinWidth)
             .customizationID("Longitude")
         } rows: {
+            let showAllImages = !hideInvalidImages
             ForEach(tvm.images) { image in
-                if image.isValid || !hideInvalidImages {
+                if image.isValid || showAllImages {
                     TableRow(image)
                         .contextMenu {
                             ContextMenuView(context: image)

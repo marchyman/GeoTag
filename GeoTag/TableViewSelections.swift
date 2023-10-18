@@ -14,6 +14,7 @@ extension TableViewModel {
     // items that are not valid images.
 
     func selectionChanged() {
+        let id = markStart("selectionChanged")
 
         // filter out any ids in the selection that don't reference valid images
         let filteredImageIds = images.filter { $0.isValid }.map { $0.id }
@@ -27,7 +28,9 @@ extension TableViewModel {
             // If the image that was the "most" selected is in the proposed
             // selection set don't pick another
             if !proposedSelection.contains(where: { $0 == mostSelected?.id }) {
-                mostSelected = self[selection.first]
+                let id = markStart("changeMostSelected")
+                mostSelected = self[proposedSelection.first]
+                markEnd("changeMostSelected", interval: id)
             }
         }
 
@@ -35,6 +38,7 @@ extension TableViewModel {
         if proposedSelection != selection {
             selection = proposedSelection
         }
+        markEnd("selectionChanged", interval: id)
     }
 
     // If the context item is in the current selection make it the
