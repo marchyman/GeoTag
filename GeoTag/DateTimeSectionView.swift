@@ -62,15 +62,16 @@ struct DateTimeSectionView: View {
 
         // apply adjustment to each selected image in an undo group
         state.undoManager.beginUndoGrouping()
-        for id in state.tvm.selection where state.tvm[id].isValid {
+        for image in state.tvm.selected {
             var updatedDate: Date
-            if let originalDate = state.tvm[id].timestamp(for: state.timeZone) {
+            if let originalDate = image.timestamp(for: state.timeZone) {
                 updatedDate = Date(timeInterval: adjustment,
                                    since: originalDate)
             } else {
                 updatedDate = newDate
             }
-            state.update(id: id, timestamp: dateFormatter.string(from: updatedDate))
+            state.update(image, timestamp: dateFormatter.string(from: updatedDate))
+
         }
         state.undoManager.endUndoGrouping()
         state.undoManager.setActionName("modify date/time")

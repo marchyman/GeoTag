@@ -99,7 +99,7 @@ final class ImageModel: Identifiable {
 
     // initialization of image data given its URL.
     init(imageURL: URL, forPreview: Bool = false) throws {
-        Self.logger.trace("image \(imageURL) created")
+        // Self.logger.trace("image \(imageURL) created")
         fileURL = imageURL
         sidecarURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
         xmpPresenter = XmpPresenter(for: fileURL)

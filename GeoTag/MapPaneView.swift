@@ -65,8 +65,8 @@ struct MapPaneView: View {
                         } else {
                             // update all selected items
                             state.undoManager.beginUndoGrouping()
-                            for id in state.tvm.selection {
-                                state.update(id: id, location: location.coordinate)
+                            for image in state.tvm.selected {
+                                state.update(image, location: location.coordinate)
                             }
                             state.undoManager.endUndoGrouping()
                             state.undoManager.setActionName("set location (search)")

@@ -14,6 +14,9 @@ import OSLog
 final class TableViewModel {
     var images: [ImageModel] = []
     var selection: Set<ImageModel.ID> = []
+    var selected: [ImageModel] {
+        selection.map { self[$0] }
+    }
     var mostSelected: ImageModel?
 
     // get/set an image from the table of images  given its ID.

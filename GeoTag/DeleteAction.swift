@@ -19,7 +19,7 @@ extension AppState {
         if let image = context {
             return image.location == nil
         }
-        return !tvm.selection.contains(where: { tvm[$0].location != nil })
+        return tvm.selection.isEmpty
     }
 
     // when textfield is non-nil a textfield is being edited and delete is
@@ -34,8 +34,8 @@ extension AppState {
             }
             if !tvm.selection.isEmpty {
                 undoManager.beginUndoGrouping()
-                for id in tvm.selection where tvm[id].location != nil {
-                    update(id: id, location: nil)
+                for image in tvm.selected.filter({ $0.location != nil }) {
+                    update(image, location: nil)
                 }
                 undoManager.endUndoGrouping()
                 undoManager.setActionName("delete locations")

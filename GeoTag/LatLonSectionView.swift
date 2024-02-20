@@ -87,9 +87,9 @@ struct LatLonSectionView: View {
                                  longitude: longitude)
 
         state.undoManager.beginUndoGrouping()
-        for id in state.tvm.selection where state.tvm[id].isValid {
-            if state.tvm[id].location != newLocation {
-                state.update(id: id, location: newLocation)
+        for image in state.tvm.selected.filter({ $0.isValid }) {
+            if image.location != newLocation {
+                state.update(image, location: newLocation)
             }
         }
         state.undoManager.endUndoGrouping()

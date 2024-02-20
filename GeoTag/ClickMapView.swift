@@ -56,8 +56,8 @@ class ClickMapView: MKMapView {
         clickTimer = nil
         if !state.tvm.selection.isEmpty {
             state.undoManager.beginUndoGrouping()
-            for id in state.tvm.selection {
-                state.update(id: id, location: coords)
+            for image in state.tvm.selected {
+                state.update(image, location: coords)
             }
             state.undoManager.endUndoGrouping()
             state.undoManager.setActionName("set location")

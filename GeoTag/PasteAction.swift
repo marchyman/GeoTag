@@ -39,8 +39,8 @@ extension AppState {
             if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
                let locn = ImageModel.decodeStringRep(value: pasteVal) {
                 undoManager.beginUndoGrouping()
-                for id in tvm.selection {
-                    update(id: id, location: locn.0, elevation: locn.1)
+                for image in tvm.selected {
+                    update(image, location: locn.0, elevation: locn.1)
                 }
                 undoManager.endUndoGrouping()
                 undoManager.setActionName("paste location")

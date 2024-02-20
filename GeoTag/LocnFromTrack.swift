@@ -38,7 +38,8 @@ extension AppState {
             applicationBusy = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
                 for id in tvm.selection {
-                    if let convertedDate = dateFormatter.date(from: tvm[id].timeStamp) {
+                    let image = tvm[id]
+                    if let convertedDate = dateFormatter.date(from: image.timeStamp) {
                         group.addTask { [self] in
                             // do not use forEach as once a match is
                             // found there is no need to search other tracks for
@@ -54,7 +55,7 @@ extension AppState {
                         undoManager.beginUndoGrouping()
                         for await locn in group {
                             if let locn {
-                                update(id: id, location: locn.0,
+                                update(image, location: locn.0,
                                        elevation: locn.1)
                             }
                         }

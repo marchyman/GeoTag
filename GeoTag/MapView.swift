@@ -38,8 +38,8 @@ struct MapView: NSViewRepresentable {
 
     func updateNSView(_ view: ClickMapView, context: Context) {
         setMapConfiguration(view)
-        mainPin(for: state.tvm.mostSelected?.id, on: view)
-        otherPins(for: state.tvm.selection, on: view)
+        mainPin(for: state.tvm.mostSelected, on: view)
+        otherPins(for: state.tvm.selected, on: view)
         trackChanges(for: view)
 
         // re-center the map
@@ -68,9 +68,9 @@ struct MapView: NSViewRepresentable {
 
     // map pin changes for the most selected item
 
-    func mainPin(for id: ImageModel.ID?, on view: ClickMapView) {
-        if let id,
-           let location = state.tvm[id].location {
+    func mainPin(for image: ImageModel?, on view: ClickMapView) {
+        if let image,
+           let location = image.location {
             // always update pin as the view, Pin vs OtherPin, may have changed
             // example: deselecting the image associated with mainPin may
             // cause a pin currently displayed as an OtherPin to be selected
@@ -101,13 +101,13 @@ struct MapView: NSViewRepresentable {
     // create pins for other selected items that have a location.  Their
     // title also names the image that represents the pin on the map.
 
-    func otherPins(for selection: Set<ImageModel.ID>, on view: ClickMapView) {
+    func otherPins(for images: [ImageModel], on view: ClickMapView) {
         var pins = [MKPointAnnotation]()
-        for id in selection.filter({ $0 != state.tvm.mostSelected?.id
-                                        && state.tvm[$0].location != nil }) {
+        for image in images.filter({ $0 != state.tvm.mostSelected &&
+                                     $0.location != nil }) {
             let pin = MKPointAnnotation()
             pin.title = "OtherPin"
-            pin.coordinate = state.tvm[id].location!
+            pin.coordinate = image.location!
             pins.append(pin)
         }
         mvm.otherPins = pins
@@ -218,13 +218,13 @@ extension MapView {
                      annotationView view: MKAnnotationView,
                      didChange newState: MKAnnotationView.DragState,
                      fromOldState oldState: MKAnnotationView.DragState) {
-            if let id = state.tvm.mostSelected?.id {
+            if let image = state.tvm.mostSelected {
                 switch newState {
                 case .starting:
                     view.image = NSImage(named: "DragPin")
                 case .ending:
                     view.image = NSImage(named: "Pin")
-                    state.update(id: id, location: view.annotation!.coordinate)
+                    state.update(image, location: view.annotation!.coordinate)
                     state.undoManager.setActionName("set location (drag)")
                 default:
                     break
