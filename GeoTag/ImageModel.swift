@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import MapKit
+import OSLog
 
 // Data about an image that may have its geo-location metadata changed.
 
@@ -91,10 +92,14 @@ final class ImageModel: Identifiable {
     // The thumbnail image displayed when and image is selected for editing
     var thumbnail: NSImage?
 
+    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
+                                       category: "ImageModel")
+
     // MARK: Initialization
 
     // initialization of image data given its URL.
     init(imageURL: URL, forPreview: Bool = false) throws {
+        Self.logger.trace("image \(imageURL) created")
         fileURL = imageURL
         sidecarURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
         xmpPresenter = XmpPresenter(for: fileURL)

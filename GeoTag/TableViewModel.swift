@@ -20,6 +20,7 @@ final class TableViewModel {
     subscript(id: ImageModel.ID?) -> ImageModel {
         get {
             if let index = images.firstIndex(where: { $0.id == id }) {
+                Self.logger.trace("get \(self.images[index].name)")
                 return images[index]
             }
 
@@ -31,6 +32,7 @@ final class TableViewModel {
 
         set(newValue) {
             if let index = images.firstIndex(where: { $0.id == newValue.id }) {
+                Self.logger.trace("set \(newValue.name)")
                 images[index] = newValue
             }
         }
@@ -40,7 +42,7 @@ final class TableViewModel {
     var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
     // Instruments performance logging tools
-    static let logger = Logger(subsystem: "org.snafu.GeoTag",
+    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
                                        category: "TableView")
     private static let signposter = OSSignposter(logger: logger)
 
@@ -67,7 +69,9 @@ final class TableViewModel {
         }
     }
 
-    init() { }
+    init() {
+        Self.logger.trace("TableViewModel created")
+    }
 
     // init for preview
 
