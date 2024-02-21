@@ -19,7 +19,7 @@ extension AppState {
         if let image = context {
             return image.location == nil
         }
-        return tvm.selected.isEmpty
+        return tvm.selected.allSatisfy { $0.location == nil }
     }
 
     // when textfield is non-nil a textfield is being edited and delete is

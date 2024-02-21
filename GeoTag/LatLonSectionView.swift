@@ -87,10 +87,8 @@ struct LatLonSectionView: View {
                                  longitude: longitude)
 
         state.undoManager.beginUndoGrouping()
-        for image in state.tvm.selected.filter({ $0.isValid }) {
-            if image.location != newLocation {
-                state.update(image, location: newLocation)
-            }
+        for image in state.tvm.selected where image.location != newLocation {
+            state.update(image, location: newLocation)
         }
         state.undoManager.endUndoGrouping()
         state.undoManager.setActionName("modify location")
