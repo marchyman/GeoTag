@@ -16,27 +16,26 @@ extension TableViewModel {
     func selectionChanged() {
         let id = markStart("selectionChanged")
 
-        // filter out any ids in the selection that don't reference valid images
-        let filteredImageIds = images.filter { $0.isValid }.map { $0.id }
-        let proposedSelection = selection.filter { filteredImageIds.contains($0) }
+        selected = selection.map({ self[$0] }).filter { $0.isValid }
+        let updatedSelection = selection.intersection(selected.map { $0.id })
 
         // Handle the case where nothing is selected.  Otherwise pick an
         // id as being the "most selected".
-        if proposedSelection.isEmpty {
+        if selected.isEmpty {
             mostSelected = nil
         } else {
             // If the image that was the "most" selected is in the proposed
             // selection set don't pick another
-            if !proposedSelection.contains(where: { $0 == mostSelected?.id }) {
+            if !selected.contains(where: { $0 == mostSelected }) {
                 let id = markStart("changeMostSelected")
-                mostSelected = self[proposedSelection.first]
+                mostSelected = selected.first
                 markEnd("changeMostSelected", interval: id)
             }
         }
 
         // update the selection if necessary
-        if proposedSelection != selection {
-            selection = proposedSelection
+        if updatedSelection != selection {
+            selection = updatedSelection
         }
         markEnd("selectionChanged", interval: id)
     }

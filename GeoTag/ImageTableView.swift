@@ -65,9 +65,6 @@ struct ImageTableView: View {
         .onChange(of: tvm.sortOrder) {
             tvm.images.sort(using: tvm.sortOrder)
         }
-        .onChange(of: tvm.selection) {
-            tvm.selectionChanged()
-        }
     }
 }
 
