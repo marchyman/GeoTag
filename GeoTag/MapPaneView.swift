@@ -58,7 +58,7 @@ struct MapPaneView: View {
             Task {
                 if let response = try? await searcher.start() {
                     if let location = response.mapItems[0].placemark.location {
-                        if state.tvm.selection.isEmpty {
+                        if state.tvm.selected.isEmpty {
                             // nothing selected, re center the map
                             mapViewModel.currentMapCenter = location.coordinate
                             mapViewModel.reCenter = true

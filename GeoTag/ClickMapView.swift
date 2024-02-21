@@ -54,7 +54,7 @@ class ClickMapView: MKMapView {
         // swiftlint:enable force_cast
         clickTimer?.invalidate()
         clickTimer = nil
-        if !state.tvm.selection.isEmpty {
+        if !state.tvm.selected.isEmpty {
             state.undoManager.beginUndoGrouping()
             for image in state.tvm.selected {
                 state.update(image, location: coords)

@@ -17,7 +17,6 @@ extension TableViewModel {
         let id = markStart("selectionChanged")
 
         selected = selection.map({ self[$0] }).filter { $0.isValid }
-        let updatedSelection = selection.intersection(selected.map { $0.id })
 
         // Handle the case where nothing is selected.  Otherwise pick an
         // id as being the "most selected".
@@ -33,10 +32,6 @@ extension TableViewModel {
             }
         }
 
-        // update the selection if necessary
-        if updatedSelection != selection {
-            selection = updatedSelection
-        }
         markEnd("selectionChanged", interval: id)
     }
 
@@ -46,7 +41,7 @@ extension TableViewModel {
 
     func select(context: ImageModel) {
         if context.isValid {
-            if selection.contains(context.id) {
+            if selected.contains(context) {
                 mostSelected = context
             } else {
                 selection = [context.id]

@@ -19,7 +19,7 @@ extension AppState {
         if let image = context {
             return image.location == nil
         }
-        return tvm.selection.isEmpty
+        return tvm.selected.isEmpty
     }
 
     // when textfield is non-nil a textfield is being edited and delete is
@@ -32,7 +32,7 @@ extension AppState {
             if let context {
                 tvm.select(context: context)
             }
-            if !tvm.selection.isEmpty {
+            if !tvm.selected.isEmpty {
                 undoManager.beginUndoGrouping()
                 for image in tvm.selected.filter({ $0.location != nil }) {
                     update(image, location: nil)

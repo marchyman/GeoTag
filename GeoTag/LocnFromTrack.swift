@@ -37,8 +37,7 @@ extension AppState {
         Task { @MainActor in
             applicationBusy = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
-                for id in tvm.selection {
-                    let image = tvm[id]
+                for image in tvm.selected {
                     if let convertedDate = dateFormatter.date(from: image.timeStamp) {
                         group.addTask { [self] in
                             // do not use forEach as once a match is
