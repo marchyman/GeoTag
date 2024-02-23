@@ -25,26 +25,34 @@ struct ImageTableView: View {
               columnCustomization: $columnCustomization) {
 
             TableColumn("Name", value: \.name) { image in
-                ImageNameColumnView(image: image,
-                                    selectedImage: image === tvm.mostSelected)
+                let selectedImage = image == tvm.mostSelected
+                Text(image.name)
+                    .fontWeight(selectedImage ? .semibold : .regular)
+                    .foregroundColor(selectedImage
+                                     ? .mostSelected
+                                     : image.isValid ? .primary : .secondary)
+                    .help("Full path: \(image.fileURL.path())")
             }
             .width(min: 100)
             .customizationID("Name")
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                ImageTimestampColumnView(image: image)
+                Text(image.timeStamp)
+                    .foregroundColor(image.timestampTextColor)
             }
             .width(min: timestampMinWidth)
             .customizationID("Timestamp")
 
             TableColumn("Latitude", value: \.formattedLatitude) { image in
-                ImageLatitudeColumnView(image: image)
+                Text(image.formattedLatitude)
+                    .foregroundColor(image.locationTextColor)
             }
             .width(min: coordMinWidth)
             .customizationID("Latitude")
 
             TableColumn("Longitude", value: \.formattedLongitude) { image in
-                ImageLongitudeColumnView(image: image)
+                Text(image.formattedLongitude)
+                    .foregroundColor(image.locationTextColor)
             }
             .width(min: coordMinWidth)
             .customizationID("Longitude")
