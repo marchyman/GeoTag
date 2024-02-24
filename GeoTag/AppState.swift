@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 7/9/23.
 //
 
+import OSLog
 import SwiftUI
 
 @Observable
@@ -131,4 +132,28 @@ extension AppState {
             addSheet(type: type, error: error, message: message)
         }
     }
+}
+
+extension AppState {
+    static var logger = Logger(subsystem: "org.snafu.GeoTag",
+                               category: "AppState")
+    private static let signposter = OSSignposter(logger: logger)
+
+    func withInterval<T>(_ desc: StaticString,
+                         around task: () throws -> T) rethrows -> T {
+        try Self.signposter.withIntervalSignpost(desc) {
+            try task()
+        }
+    }
+
+    func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
+        let signpostID = Self.signposter.makeSignpostID()
+        let interval = Self.signposter.beginInterval(desc, id: signpostID)
+        return interval
+    }
+
+    func markEnd(_ desc: StaticString, interval: OSSignpostIntervalState) {
+        Self.signposter.endInterval(desc, interval)
+    }
+
 }

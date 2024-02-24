@@ -26,6 +26,8 @@ struct ImageView: View {
         .padding()
         .task(id: state.tvm.mostSelected) {
             if let image = state.tvm.mostSelected {
+                let interval = state.markStart("thumbnail")
+                defer { state.markEnd("thumbnail", interval: interval) }
                 if image.thumbnail == nil {
                     image.thumbnail = await image.makeThumbnail()
                 }

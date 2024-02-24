@@ -37,6 +37,8 @@ struct MapView: NSViewRepresentable {
     }
 
     func updateNSView(_ view: ClickMapView, context: Context) {
+        let interval = state.markStart("updateMapView")
+        defer { state.markEnd("updateMapView", interval: interval) }
         setMapConfiguration(view)
         mainPin(for: state.tvm.mostSelected, on: view)
         otherPins(for: state.tvm.selected, on: view)
