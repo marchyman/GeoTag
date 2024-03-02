@@ -27,6 +27,9 @@ version 4.15.
 
 ### Known bugs
 
+* The item entry in the table is not updated for the second and subsequent
+  undo/redo operation.  The operation takes place, but the UI is not updated.
+
 * Keyboard shortcuts for cut/copy/delete/paste/select all do not work
   when editing text fields, i.e. latitude, longitude, and timestamps.
   Main menu items also do not work.
