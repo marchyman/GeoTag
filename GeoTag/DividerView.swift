@@ -8,17 +8,10 @@
 import Combine
 import SwiftUI
 
-// make this an observable object as otherwise updates to dividerPosition
-// do not cause view updates in ImageMapView.
-
-public class DividerControl: ObservableObject {
-    @AppStorage(AppSettings.dividerPositionKey) var dividerPosition: Double = 0.60
-}
-
 // A draggable divider that moves vertically within a view.
 
 struct DividerView: View {
-    @ObservedObject var control: DividerControl
+    @AppStorage(AppSettings.dividerPositionKey) var dividerPosition: Double = 0.60
     var geometry: GeometryProxy
 
     @State private var currentOffset: CGFloat = 0
@@ -36,7 +29,7 @@ struct DividerView: View {
     // calculate the offset from the middle of the dividerPosition
     var offset: CGFloat {
         let height = geometry.size.height
-        return height / 2 - (control.dividerPosition * height)
+        return height / 2 - (dividerPosition * height)
     }
 
     var body: some View {
@@ -62,7 +55,7 @@ struct DividerView: View {
     func dragChanged(_ gesture: DragGesture.Value) {
         let height = previousOffset + gesture.translation.height
         currentOffset = max(negativeCap, min(positiveCap, height))
-        control.dividerPosition =
+        dividerPosition =
             (geometry.size.height / 2 - currentOffset) / geometry.size.height
     }
 

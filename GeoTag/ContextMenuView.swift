@@ -10,43 +10,54 @@ import SwiftUI
 // Duplicates many of the menu commands
 
 struct ContextMenuView: View {
-    @EnvironmentObject var avm: AppViewModel
-    let context: ImageModel.ID?
+    @Environment(AppState.self) var state
+    let context: ImageModel?
 
     var body: some View {
         Group {
-            Button("Cut") { avm.cutAction(context: context) }
-                .disabled(avm.cutCopyDisabled(context: context))
-
-            Button("Copy") { avm.copyAction(context: context) }
-                .disabled(avm.cutCopyDisabled(context: context))
-
-            Button("Paste") { avm.pasteAction(context: context) }
-                .disabled(avm.pasteDisabled(context: context))
-
-            Button("Delete") { avm.deleteAction(context: context) }
-                .disabled(avm.deleteDisabled(context: context))
+            Button("Edit...") {
+                if let context {
+                    state.tvm.select(context: context)
+                }
+                state.inspectorPresented.toggle()
+            }
+            .disabled(context == nil)
         }
 
         Divider()
 
         Group {
-            Button("Show In Finder") { avm.showInFinderAction(context: context) }
-                .disabled(avm.showInFinderDisabled(context: context))
+            Button("Cut") { state.cutAction(context: context) }
+                .disabled(state.cutCopyDisabled(context: context))
 
-            Button("Locn From Track") { avm.locnFromTrackAction(context: context ) }
-                .disabled(avm.locnFromTrackDisabled(context: context))
+            Button("Copy") { state.copyAction(context: context) }
+                .disabled(state.cutCopyDisabled(context: context))
+
+            Button("Paste") { state.pasteAction(context: context) }
+                .disabled(state.pasteDisabled(context: context))
+
+            Button("Delete") { state.deleteAction(context: context) }
+                .disabled(state.deleteDisabled(context: context))
         }
 
         Divider()
 
-        Button("Clear Image List") { avm.clearImageListAction() }
-            .disabled(avm.clearDisabled)
+        Group {
+            Button("Show In Finder") { state.showInFinderAction(context: context) }
+                .disabled(state.showInFinderDisabled(context: context))
+
+            Button("Locn From Track") { state.locnFromTrackAction(context: context ) }
+                .disabled(state.locnFromTrackDisabled(context: context))
+        }
+
+        Divider()
+
+        Button("Clear Image List") { state.clearImageListAction() }
+            .disabled(state.clearDisabled)
     }
 }
 
-struct ContextMenuView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContextMenuView(context: nil)
-    }
+#Preview {
+    ContextMenuView(context: nil)
+        .environment(AppState())
 }

@@ -10,27 +10,30 @@ import MapKit
 
 // functions that handle location changes for both the map and images
 
-extension AppViewModel {
+extension AppState {
 
-    // Update an image with a location. Image is identified by its ID.
+    // Update an image with a location.
     // Elevation is optional and is only provided when matching track logs
 
-    func update(id: ImageModel.ID, location: Coords?,
+    func update(_ image: ImageModel, location: Coords?,
                 elevation: Double? = nil, documentedEdited: Bool = true) {
-        let currentLocation = self[id].location
-        let currentElevation = self[id].elevation
+        let currentLocation = image.location
+        let currentElevation = image.elevation
         let currentDocumentEdited = mainWindow?.isDocumentEdited ?? true
         undoManager.registerUndo(withTarget: self) { target in
-            target.update(id: id, location: currentLocation,
+            target.update(image, location: currentLocation,
                           elevation: currentElevation,
                           documentedEdited: currentDocumentEdited)
         }
 
-        self[id].location = location
-        self[id].elevation = elevation
-        if let pairedID = self[id].pairedID, self[pairedID].isValid {
-            self[pairedID].location = location
-            self[pairedID].elevation = elevation
+        image.location = location
+        image.elevation = elevation
+        if let pairedID = image.pairedID {
+            let pairedImage = tvm[pairedID]
+            if pairedImage.isValid {
+                pairedImage.location = location
+                pairedImage.elevation = elevation
+            }
         }
         mainWindow?.isDocumentEdited = documentedEdited
     }
@@ -38,15 +41,15 @@ extension AppViewModel {
     // Update an image with a new timestamp.  Image is identifid by its ID
     // timestamp is in the string format used by Exiftool
 
-    func update(id: ImageModel.ID, timestamp: String?,
+    func update(_ image: ImageModel, timestamp: String?,
                 documentEdited: Bool = true) {
-        let currentDateTimeCreated = self[id].dateTimeCreated
+        let currentDateTimeCreated = image.dateTimeCreated
         let currentDocumentEdited = mainWindow?.isDocumentEdited ?? true
         undoManager.registerUndo(withTarget: self) { target in
-            target.update(id: id, timestamp: currentDateTimeCreated,
+            target.update(image, timestamp: currentDateTimeCreated,
                           documentEdited: currentDocumentEdited)
         }
-        self[id].dateTimeCreated = timestamp
+        image.dateTimeCreated = timestamp
         mainWindow?.isDocumentEdited = documentEdited
     }
 

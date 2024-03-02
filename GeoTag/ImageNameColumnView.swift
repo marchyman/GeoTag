@@ -8,45 +8,29 @@
 import SwiftUI
 
 struct ImageNameColumnView: View {
-    @ObservedObject var avm: AppViewModel
-    let id: ImageModel.ID
-    let selected: Bool
+    let image: ImageModel
+    let selectedImage: Bool
 
     var body: some View {
-        let image = avm[id]
-        Text(image.name + (image.sidecarExists ? "*" : ""))
-            .fontWeight(textWeight())
-            .foregroundColor(textColor())
+        Text(image.name)
+            .fontWeight(selectedImage ? .semibold : .regular)
+            .foregroundColor(selectedImage ? .mostSelected :
+                                image.isValid ? .primary : .secondary)
             .help("Full path: \(image.fileURL.path)")
-    }
-
-    @MainActor
-    func textColor() -> Color {
-        if avm[id].isValid {
-            if selected {
-                return .mostSelected
-            }
-            return .primary
-        }
-        return .secondary
-    }
-
-    @MainActor
-    func textWeight() -> Font.Weight {
-        selected ? .semibold : .regular
     }
 }
 
 struct ImageNameColumnView_Previews: PreviewProvider {
     static var image =
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1"),
+        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
                    validImage: true,
                    dateTimeCreated: "2022:12:12 11:22:33",
                    latitude: 33.123,
-                   longitude: 123.456)
+                   longitude: -123.456)
 
     static var previews: some View {
-        let avm = AppViewModel(images: [image])
-        ImageNameColumnView(avm: avm, id: image.id, selected: false)
+        ImageNameColumnView(image: image,
+                            selectedImage: true)
+
     }
 }

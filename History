@@ -1,3 +1,25 @@
+## 5.1
+
+### Updates
+
+* Add option to always create sidecar (XMP) files when updating images.
+* Update both images of a raw/jpeg pair when the location of one of the
+  paired images changes. This only applies if both images of the pair were
+  opened and enabled or if updates are written to a sidecar file.
+* Add "Report a bug..." to the help menu.  Selecting this will open the GeoTag
+  github issues page in your browser.
+* ExifTool version 12.62
+
+### Bug Fixes
+
+* Performance improvement when opening large number of images.
+* Do not clear window changed indicator when there are save errors.
+* GPS Timestamp written to sidecar files sometimes included a timezone
+  instead of being a UTC/GMT relative timestamp.
+* Crash that could occur when opening the Setting window.
+* Sidecar file backups would sometimes fail.
+* image thumbnail could fail to show until the selection changed.
+
 ## 5.0
 
 ### Updates

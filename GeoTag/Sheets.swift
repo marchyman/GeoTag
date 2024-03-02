@@ -47,23 +47,23 @@ enum SheetType: Identifiable, View {
 // Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
 
 struct GpxLoadView: View {
-    @EnvironmentObject var avm: AppViewModel
+    @Environment(AppState.self) var state
 
     var body: some View {
         VStack(alignment: .leading) {
-            if avm.gpxGoodFileNames.count > 0 {
+            if state.gpxGoodFileNames.count > 0 {
                 Text("GPX Files Loaded")
                     .font(.title)
-                List(avm.gpxGoodFileNames, id: \.self) { Text($0) }
+                List(state.gpxGoodFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("The above GPX file(s) have been processed and will show as tracks on the map.")
                     .lineLimit(nil)
                     .padding()
             }
-            if avm.gpxBadFileNames.count > 0 {
+            if state.gpxBadFileNames.count > 0 {
                 Text("GPX Files NOT Loaded")
                     .font(.title)
-                List(avm.gpxBadFileNames, id: \.self) { Text($0) }
+                List(state.gpxBadFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
@@ -77,8 +77,8 @@ struct GpxLoadView: View {
         }
         .onDisappear {
             // clear lists of good and bad track file names
-            avm.gpxGoodFileNames = []
-            avm.gpxBadFileNames = []
+            state.gpxGoodFileNames = []
+            state.gpxBadFileNames = []
         }
         .frame(minWidth: sheetWidth, maxWidth: sheetWidth,
                minHeight: sheetMinHeight)
@@ -137,7 +137,7 @@ struct SavingUpdatesView: View {
 }
 
 struct SaveErrorView: View {
-    @ObservedObject var contentViewModel = ContentViewModel.shared
+    @Environment(AppState.self) var state
 
     var body: some View {
         VStack {
@@ -149,7 +149,7 @@ struct SaveErrorView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
             List {
-                ForEach(contentViewModel.saveIssues.sorted(by: >), id: \.key) { key, value in
+                ForEach(state.saveIssues.sorted(by: >), id: \.key) { key, value in
                     VStack(alignment: .leading) {
                         Text(key.lastPathComponent)
                             .bold()
@@ -166,19 +166,19 @@ struct SaveErrorView: View {
 }
 
 struct UnexpectedErrorView: View {
-    @ObservedObject var contentViewModel = ContentViewModel.shared
+    @Environment(AppState.self) var state
 
     var body: some View {
         VStack {
             Text("Unexpected Error")
                 .font(.title)
                 .padding()
-            if let message = contentViewModel.sheetMessage {
+            if let message = state.sheetMessage {
                 Text(message)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding()
             }
-            if let error = contentViewModel.sheetError {
+            if let error = state.sheetError {
                 Text(error.localizedDescription)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding()

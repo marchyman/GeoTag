@@ -15,9 +15,10 @@ extension GeoTagApp {
         CommandGroup(replacing: .toolbar) {
             Section {
                 Button {
-                    avm.hideInvalidImages.toggle()
+                    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+                    hideInvalidImages.toggle()
                 } label: {
-                    Text("\(showOrHide()) Disabled Files")
+                    ShowHidePinView()
                 }
                 .keyboardShortcut("d")
 
@@ -26,14 +27,18 @@ extension GeoTagApp {
 
         }
     }
+}
 
-    private func showOrHide() -> String {
-        return avm.hideInvalidImages ? "Show" : "Hide"
+struct ShowHidePinView: View {
+    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+
+    var body: some View {
+        Text("\(hideInvalidImages ? "Show" : "Hide") Disabled Files")
     }
 }
 
 struct PinOptionView: View {
-    @ObservedObject var mapViewModel = MapViewModel.shared
+    @Bindable var mapViewModel = MapViewModel.shared
 
     var body: some View {
         Picker("Pin view options…", selection: $mapViewModel.onlyMostSelected) {

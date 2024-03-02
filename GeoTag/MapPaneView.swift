@@ -9,17 +9,21 @@ import SwiftUI
 import MapKit
 
 struct MapPaneView: View {
-    @EnvironmentObject var vm: AppViewModel
-    @ObservedObject var mapViewModel = MapViewModel.shared
+    @Environment(AppState.self) var state
+    @Bindable var mapViewModel = MapViewModel.shared
+
+    @AppStorage(AppSettings.initialMapAltitudeKey) var initialMapAltitude = 50000.0
+    @AppStorage(AppSettings.initialMapLatitudeKey) var initialMapLatitude = 37.7244
+    @AppStorage(AppSettings.initialMapLongitudeKey) var initialMapLongitude = -122.4381
 
     var body: some View {
         VStack {
             MapStyleView()
                 .padding(.top)
             ZStack(alignment: .topTrailing) {
-                MapView(center: Coords(latitude: mapViewModel.initialMapLatitude,
-                                       longitude: mapViewModel.initialMapLongitude),
-                        altitude: mapViewModel.initialMapAltitude)
+                MapView(center: Coords(latitude: initialMapLatitude,
+                                       longitude: initialMapLongitude),
+                        altitude: initialMapAltitude)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(5)
                 GeometryReader {geometry in
@@ -28,7 +32,7 @@ struct MapPaneView: View {
                         MapSearchView(text: $mapViewModel.searchString)
                             .frame(width: geometry.size.width * 0.80)
                             .onChange(of: mapViewModel.searchString) {
-                                searchMap(for: $0)
+                                searchMap(for: mapViewModel.searchString)
                             }
                     }
                 }
@@ -54,18 +58,18 @@ struct MapPaneView: View {
             Task {
                 if let response = try? await searcher.start() {
                     if let location = response.mapItems[0].placemark.location {
-                        if vm.selection.isEmpty {
+                        if state.tvm.selected.isEmpty {
                             // nothing selected, re center the map
                             mapViewModel.currentMapCenter = location.coordinate
                             mapViewModel.reCenter = true
                         } else {
                             // update all selected items
-                            vm.undoManager.beginUndoGrouping()
-                            for id in vm.selection {
-                                vm.update(id: id, location: location.coordinate)
+                            state.undoManager.beginUndoGrouping()
+                            for image in state.tvm.selected {
+                                state.update(image, location: location.coordinate)
                             }
-                            vm.undoManager.endUndoGrouping()
-                            vm.undoManager.setActionName("set location (search)")
+                            state.undoManager.endUndoGrouping()
+                            state.undoManager.setActionName("set location (search)")
                         }
                     }
                 }

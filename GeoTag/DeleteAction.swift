@@ -5,36 +5,43 @@
 //  Created by Marco S Hyman on 12/24/22.
 //
 
-import Foundation
+import AppKit
 
 // Program "Delete" action removes location information for all
 // selected images
 
-extension AppViewModel {
+extension AppState {
 
     // should the delete action be disabled for a specific item or for
     // all selected items
 
-    func deleteDisabled(context: ImageModel.ID? = nil) -> Bool {
-        if let id = context {
-            return self[id].location == nil
+    func deleteDisabled(context: ImageModel? = nil) -> Bool {
+        if let image = context {
+            return image.location == nil
         }
-        return !selection.contains(where: { self[$0].location != nil })
+        return tvm.selected.allSatisfy { $0.location == nil }
     }
 
-    // delete location info from all selected images
+    // when textfield is non-nil a textfield is being edited and delete is
+    // limited to the field.  Otherwise delete location info from the image
+    // in the given context or all selected images when the context is nil.
 
-    func deleteAction(context: ImageModel.ID? = nil) {
-        if let context {
-            select(context: context)
-        }
-        if !selection.isEmpty {
-            undoManager.beginUndoGrouping()
-            for id in selection where self[id].location != nil {
-                update(id: id, location: nil)
+    func deleteAction(context: ImageModel? = nil,
+                      textfield: Double?? = nil) {
+        if textfield == nil {
+            if let context {
+                tvm.select(context: context)
             }
-            undoManager.endUndoGrouping()
-            undoManager.setActionName("delete locations")
+            if !tvm.selected.isEmpty {
+                undoManager.beginUndoGrouping()
+                for image in tvm.selected.filter({ $0.location != nil }) {
+                    update(image, location: nil)
+                }
+                undoManager.endUndoGrouping()
+                undoManager.setActionName("delete locations")
+            }
+        } else {
+            NSApp.sendAction(#selector(NSText.delete(_:)), to: nil, from: nil)
         }
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension AppViewModel {
+extension AppState {
 
     // return true if the discard tracks menu item should be disabled
 

@@ -11,20 +11,21 @@ import SwiftUI
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
-    @EnvironmentObject var avm: AppViewModel
-    @ObservedObject var contentViewModel = ContentViewModel.shared
+    @Environment(AppState.self) var state
     @Environment(\.openWindow) var openWindow
 
-    @State private var sheetType: SheetType?
-    @State private var presentConfirmation = false
+    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
+
     @State private var removeOldFiles = false
 
     var body: some View {
+        @Bindable var state = state
         HSplitView {
             ZStack {
-                ImageTableView()
+                ImageTableView(tvm: state.tvm)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                if contentViewModel.showingProgressView {
+                if state.applicationBusy {
                     ProgressView("Processing files...")
                 }
             }
@@ -33,110 +34,59 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
-
-        // startup
         .onAppear {
             // check for a backupURL
-            if !avm.doNotBackup && avm.saveBookmark == Data() {
-                contentViewModel.addSheet(type: .noBackupFolderSheet)
+            if !doNotBackup && savedBookmark == Data() {
+                state.addSheet(type: .noBackupFolderSheet)
             }
         }
-
-        // drop destination
         .dropDestination(for: URL.self) {items, _ in
-            Task {
-                await avm.prepareForEdit(inputURLs: items)
+            let state = state
+            Task.detached {
+                await state.prepareForEdit(inputURLs: items)
             }
             return true
         }
-
-        .onChange(of: contentViewModel.changeTimeZoneWindow) { _ in
+        .onChange(of: state.changeTimeZoneWindow) {
             openWindow(id: GeoTagApp.adjustTimeZone)
         }
-
-        // sheets
-        .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in
+        .sheet(item: $state.sheetType, onDismiss: sheetDismissed) { sheet in
             sheet
         }
-        .link($contentViewModel.sheetType, with: $sheetType)
-
-        // confirmations
-        .confirmationDialog("Are you sure?", isPresented: $presentConfirmation) {
-            Button("I'm sure", role: .destructive) {
-                if contentViewModel.confirmationAction != nil {
-                    contentViewModel.confirmationAction!()
+        .areYouSure()                       // confirmations
+        .removeBackupsAlert()               // Alert: Remove Old Backup files
+        .inspector(isPresented: $state.inspectorPresented) {
+            ImageInspectorView()
+                .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
+                .toolbar {
+                    Spacer()
+                    Button {
+                        state.inspectorPresented.toggle()
+                    } label: {
+                        Label("Toggle Inspector", systemImage: "info.circle")
+                    }
+                    .keyboardShortcut("i")
                 }
-            }
-            Button("Cancel", role: .cancel) { }
-                .keyboardShortcut(.defaultAction)
-        } message: {
-            let message = contentViewModel.confirmationMessage != nil ? contentViewModel.confirmationMessage! : ""
-            Text(message)
         }
-        .link($contentViewModel.presentConfirmation, with: $presentConfirmation)
-
-        // Alert: Remove Old Backup files
-        .alert("Delete old backup files?", isPresented: $removeOldFiles) {
-            Button("Delete", role: .destructive) {
-                avm.remove(filesToRemove: contentViewModel.oldFiles)
-            }
-            Button("Cancel", role: .cancel) { }
-                .keyboardShortcut(.defaultAction)
-        } message: {
-            // swiftlint:disable line_length
-            Text("""
-                 Your current backup/save folder
-
-                     \(avm.backupURL != nil ? avm.backupURL!.path : "unknown")
-
-                 is using \(contentViewModel.folderSize / 1_000_000) MB to store backup files.
-
-                 \(contentViewModel.oldFiles.count) files using \(contentViewModel.deletedSize / 1_000_000) MB of storage were placed in the folder more than 7 days ago.
-
-                 Would you like to remove those \(contentViewModel.oldFiles.count) backup files?
-                 """)
-            // swiftlint:enable line_length
-        }
-        .link($contentViewModel.removeOldFiles, with: $removeOldFiles)
     }
 
     // when a sheet is dismissed check if there are more sheets to display
 
     func sheetDismissed() {
-        if contentViewModel.sheetStack.isEmpty {
-            contentViewModel.sheetMessage = nil
-            contentViewModel.sheetError = nil
+        if state.sheetStack.isEmpty {
+            state.sheetMessage = nil
+            state.sheetError = nil
         } else {
-            let sheetInfo = contentViewModel.sheetStack.removeFirst()
-            contentViewModel.sheetMessage = sheetInfo.sheetMessage
-            contentViewModel.sheetError = sheetInfo.sheetError
-            contentViewModel.sheetType = sheetInfo.sheetType
+            let sheetInfo = state.sheetStack.removeFirst()
+            state.sheetMessage = sheetInfo.sheetMessage
+            state.sheetError = sheetInfo.sheetError
+            state.sheetType = sheetInfo.sheetType
         }
     }
 
 }
 
-// SwiftUI sometimes has issues when a published variabe in an ObservedObject
-// or EnvironmentObject is bound in a view.  Perhaps this is a SwiftUI bug.
-// This extension on View links a Published variables to a local state variable
-// to work around the problem.
-
-extension View {
-    func link<T: Equatable>(_ published: Binding<T>,
-                            with binding: Binding<T>) -> some View {
-        self
-            .onChange(of: published.wrappedValue) { published in
-                binding.wrappedValue = published
-            }
-            .onChange(of: binding.wrappedValue) { binding in
-                published.wrappedValue = binding
-            }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .environmentObject(AppViewModel())
-    }
+#Preview {
+    ContentView()
+        .environment(AppState())
 }

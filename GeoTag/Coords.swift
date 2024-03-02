@@ -6,14 +6,124 @@
 //
 
 import Foundation
-import MapKit
+import CoreLocation
+import SwiftUI
+
+// MARK: Coords -- another name for CLLocationCoordinate2D
 
 // A shorter name for a type I'll often use
 typealias Coords = CLLocationCoordinate2D
 
-// valid references for latitudes and longitudes
-let latRef = ["N", "S"]
-let lonRef = ["E", "W"]
+// Make Coords equatable
+
+extension Coords: Equatable {
+    static public func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}
+
+// define Coordinate latitude and longitude references
+
+extension Coords {
+    static let latRef = ["N", "S"]
+    static let lonRef = ["E", "W"]
+}
+
+// MARK: Coord output formatting for latitude and longitude
+
+// Add coord formating given a format style
+extension Coords {
+    func formatted<S: FormatStyle>(_ style: S) -> S.FormatOutput
+        where S.FormatInput == Self {
+        style.format(self)
+    }
+}
+
+// latitude format style
+struct CoordsLatitudeStyle: FormatStyle {
+    func format(_ value: Coords) -> String {
+        coordToString(for: value.latitude, ref: Coords.latRef)
+    }
+}
+extension FormatStyle where Self == CoordsLatitudeStyle {
+    static var latitude: CoordsLatitudeStyle { .init() }
+}
+
+// longitude format style
+struct CoordsLongitudeStyle: FormatStyle {
+    func format(_ value: Coords) -> String {
+        coordToString(for: value.longitude, ref: Coords.lonRef)
+    }
+}
+extension FormatStyle where Self == CoordsLongitudeStyle {
+    static var longitude: CoordsLongitudeStyle { .init() }
+}
+
+// MARK: Latitude format used with TextFields
+
+struct LatitudeStyle: ParseableFormatStyle {
+    var parseStrategy: LatitudeStrategy = .init()
+
+    func format(_ value: Double?) -> String {
+        return coordToString(for: value, ref: Coords.latRef)
+    }
+}
+
+struct LatitudeStrategy: ParseStrategy {
+    func parse(_ value: String) throws -> Double? {
+        return value.validateLatitude()
+    }
+}
+
+extension FormatStyle where Self == LatitudeStyle {
+    static var latitude: LatitudeStyle { .init() }
+}
+
+// MARK: Longitude format used with TextFields
+
+struct LongitudeStyle: ParseableFormatStyle {
+    var parseStrategy: LongitudeStrategy = .init()
+
+    func format(_ value: Double?) -> String {
+        return coordToString(for: value, ref: Coords.lonRef)
+    }
+}
+
+struct LongitudeStrategy: ParseStrategy {
+    func parse(_ value: String) throws -> Double? {
+        return value.validateLongitude()
+    }
+}
+
+extension FormatStyle where Self == LongitudeStyle {
+    static var longitude: LongitudeStyle { .init() }
+}
+
+// MARK: convert a coordinate to a string using the desired format
+
+private func coordToString(for coord: Double?,
+                           ref: [String]) -> String {
+    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+
+    if let coord {
+        switch coordFormat {
+        case .deg:
+            return String(format: "% 2.6f", coord)
+        case .degMin:
+            return String(format: "%d° %.6f' %@",
+                          Int(abs(coord)),
+                          coord.minutes,
+                          coord >= 0 ? ref[0] : ref[1])
+        case .degMinSec:
+            return String(format: "%d° %d' %.2f\" %@",
+                          Int(abs(coord)),
+                          Int(abs(coord.minutes)),
+                          coord.seconds,
+                          coord >= 0 ? ref[0] : ref[1])
+        }
+    }
+    return ""
+}
 
 // extend string to validate and return a latitude./longitude as a double
 
@@ -23,6 +133,16 @@ extension String {
 
     enum CoordFormatError: Error {
         case formatError(String)
+    }
+
+    // latitude and longitude validation
+
+    func validateLatitude() -> Double? {
+        return try? validateCoord(range: 0...90, reference: Coords.latRef)
+    }
+
+    func validateLongitude() -> Double? {
+        return try? validateCoord(range: 0...180, reference: Coords.lonRef)
     }
 
     /// Convert a string assumed to contain a coordinate to a double
@@ -98,39 +218,22 @@ extension String {
     }
 }
 
-/// extend Double to handle coordinates
+// Coordinate (degree/minutes/seconds) conversions
 
 extension Double {
+    // assuming the value is some number of degrees return the fractional
+    // part as the number of minutes, truncating the whole number of degrees.
+    // dd.ddddd => mm.ddddd
     var minutes: Self {
         return abs((self*3600).truncatingRemainder(dividingBy: 3600) / 60)
     }
 
+    // assuming the value is some number of degrees return the fractional
+    // part as the number of seconds, truncating the whole number of degrees
+    // and minutes.  dd.ddddd => ss.ddddd
     var seconds: Self {
         return abs((self*3600)
-                    .truncatingRemainder(dividingBy: 3600)
-                    .truncatingRemainder(dividingBy: 60))
-    }
-
-    func dm(_ ref: [String]) -> String {
-        String(format: "%d° %.6f' %@",
-               Int(abs(self)),
-               self.minutes,
-               self >= 0 ? ref[0] : ref[1])
-    }
-
-    func dms(_ ref: [String]) -> String {
-        String(format: "%d° %d' %.2f\" %@",
-               Int(abs(self)),
-               Int(self.minutes),
-               self.seconds,
-               self >= 0 ? ref[0] : ref[1])
-    }
-}
-
-/// extend CLLocationCoordinate2D to conform to Equatable
-
-extension CLLocationCoordinate2D: Equatable {
-    static public func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+            .truncatingRemainder(dividingBy: 3600)
+            .truncatingRemainder(dividingBy: 60))
     }
 }

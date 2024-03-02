@@ -11,7 +11,7 @@ import SwiftUI
 // Extension to our Application State that handles file open and dropping
 // URLs onto the app's table of images to edit.
 
-extension AppViewModel {
+extension AppState {
 
     /// Display the File -> Open... panel for image and gpx files.  Folders may also be selected.
 
@@ -30,8 +30,8 @@ extension AppViewModel {
 
         // process any URLs selected to open in the background
         if panel.runModal() == NSApplication.ModalResponse.OK {
-            Task {
-                await prepareForEdit(inputURLs: panel.urls)
+            Task.detached {
+                await self.prepareForEdit(inputURLs: panel.urls)
             }
         }
     }
@@ -44,7 +44,7 @@ extension AppViewModel {
 
         // show the progress view
 
-        ContentViewModel.shared.showingProgressView = true
+        applicationBusy = true
 
         // expand folder URLs and remove any duplicates.
 
@@ -57,15 +57,45 @@ extension AppViewModel {
         // check for duplicates of URLs already open for processing
         // if any are found notify the user
 
-        let processedURLs = Set(images.map {$0.fileURL })
+        let processedURLs = Set(tvm.images.map {$0.fileURL })
         let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
         if !duplicateURLs.isEmpty {
-            ContentViewModel.shared.addSheet(type: .duplicateImageSheet)
+            addSheet(type: .duplicateImageSheet)
         }
 
-        // process all urls in a task group, one task per url.  Skip
-        // gpx urls for now
+        await images(for: imageURLs)
+        linkPairedImages()
+        tvm.images.sort(using: tvm.sortOrder)
 
+        // now process any gpx tracks
+
+        let gpxURLs = imageURLs.filter { $0.pathExtension.lowercased() == "gpx" }
+        if !gpxURLs.isEmpty {
+
+            // if the appViewModel update isn't done on the main queue the
+            // Discard tracks menu item doesn't see the approriate state.
+
+            let updatedTracks = await tracks(for: gpxURLs)
+            DispatchQueue.main.async {
+                for (path, track) in updatedTracks {
+                    if let track {
+                        self.updateTracks(gpx: track)
+                        self.gpxGoodFileNames.append(path)
+                        self.gpxTracks.append(track)
+                    } else {
+                        self.gpxBadFileNames.append(path)
+                    }
+                }
+                self.addSheet(type: .gpxFileNameSheet)
+            }
+        }
+
+        applicationBusy = false
+    }
+
+    // process all urls in a task group, one task per url.  Skip
+    // gpx urls for now
+    private func images(for imageURLs: [URL]) async {
         await withTaskGroup(of: ImageModel?.self) { group in
             var openedImages: [ImageModel] = []
 
@@ -75,11 +105,9 @@ extension AppViewModel {
                     do {
                         return try ImageModel(imageURL: url)
                     } catch let error as NSError {
-                        DispatchQueue.main.async {
-                            ContentViewModel.shared.addSheet(type: .unexpectedErrorSheet,
-                                                             error: error,
-                                                             message: "Failed to open file \(url.path)")
-                        }
+                        self.addSheet(type: .unexpectedErrorSheet,
+                                      error: error,
+                                      message: "Failed to open file \(url.path)")
                         return nil
                     }
                 }
@@ -87,64 +115,41 @@ extension AppViewModel {
             for await image in group.compactMap({ $0 }) {
                 openedImages.append(image)
             }
-            images.append(contentsOf: openedImages)
+            tvm.images.append(contentsOf: openedImages)
         }
-        linkPairedImages()
-        images.sort(using: sortOrder)
-
-        // now process any gpx tracks
-
-        let gpxURLs = imageURLs.filter { $0.pathExtension.lowercased() == "gpx" }
-        if !gpxURLs.isEmpty {
-            var tracks: [(String, Gpx?)] = []
-
-            await withTaskGroup(of: (String, Gpx?).self ) { group in
-                for url in gpxURLs {
-                    group.addTask {
-                        do {
-                            let gpx = try Gpx(contentsOf: url)
-                            try gpx.parse()
-                            return (url.path, gpx)
-                        } catch {
-                            return (url.path, nil)
-                        }
-                    }
-                }
-                for await (path, gpx) in group {
-                    tracks.append((path, gpx))
-                }
-            }
-
-            // if the appViewModel update isn't done on the main queue the
-            // Discard tracks menu item doesn't see the approriate state.
-
-            DispatchQueue.main.async {
-                for (path, track) in tracks {
-                    if let track {
-                        self.updateTracks(gpx: track)
-                        self.gpxGoodFileNames.append(path)
-                        self.gpxTracks.append(track)
-                    } else {
-                        self.gpxBadFileNames.append(path)
-                    }
-                }
-                ContentViewModel.shared.addSheet(type: .gpxFileNameSheet)
-            }
-        }
-
-        ContentViewModel.shared.showingProgressView = false
     }
 
-    /// Check if a given file URL refers to a folder
+    // process gpx track files
+    private func tracks(for gpxURLs: [URL]) async -> [(String, Gpx?)] {
+        var tracks: [(String, Gpx?)] = []
 
+        await withTaskGroup(of: (String, Gpx?).self ) { group in
+            for url in gpxURLs {
+                group.addTask {
+                    do {
+                        let gpx = try Gpx(contentsOf: url)
+                        try gpx.parse()
+                        return (url.path, gpx)
+                    } catch {
+                        return (url.path, nil)
+                    }
+                }
+            }
+            for await (path, gpx) in group {
+                tracks.append((path, gpx))
+            }
+        }
+        return tracks
+    }
+
+    // Check if a given file URL refers to a folder
     private func isFolder(url: URL) -> Bool {
         let resources = try? url.resourceValues(forKeys: [.isDirectoryKey])
         return resources?.isDirectory ?? false
     }
 
-    /// iterate over a folder looking for files.
-    /// Returns an array of contained the urls
-
+    // iterate over a folder looking for files.
+    // Returns an array of contained the urls
     private func urlsIn(folder url: URL) -> [URL] {
         var foundURLs = [URL]()
         let fileManager = FileManager.default
@@ -168,7 +173,7 @@ extension AppViewModel {
     private func linkPairedImages() {
         @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
 
-        let imageURLs = images.map { $0.fileURL }
+        let imageURLs = tvm.images.map { $0.fileURL }
 
         for url in imageURLs {
             // only look at jpeg files
@@ -183,11 +188,11 @@ extension AppViewModel {
                 && pairedURL.pathExtension.lowercased() != xmpExtension
                 && pairedURL.deletingPathExtension() == baseURL {
                 // url and otherURL are part of an image pair.
-                self[url].pairedID = pairedURL
-                self[pairedURL].pairedID = url
+                tvm[url].pairedID = pairedURL
+                tvm[pairedURL].pairedID = url
                 // disable the jpeg version if requested
                 if disablePairedJpegs {
-                    self[url].isValid = false
+                    tvm[url].isValid = false
                 }
                 break
             }

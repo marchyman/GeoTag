@@ -6,21 +6,63 @@
 //
 
 import Foundation
+import Observation
 import MapKit
+import OSLog
 
 // Data about an image that may have its geo-location metadata changed.
 
-struct ImageModel: Identifiable {
+@Observable
+final class ImageModel: Identifiable {
 
-    // Identifying data.
+    // MARK: Class Properties
+
+    // Image is identified by its URL.  Doubles as ID as duplicate instances
+    // are not allowed.  The "Name" column of image tables is derived from
+    // this property.
     let fileURL: URL
     var id: URL {
         fileURL
+    }
+    var name: String {
+        fileURL.lastPathComponent + (sidecarExists ? "*" : "")
+    }
+
+    // Timestamp of the image when present.   The "Timestamp" column of image
+    // tables is derived from this property.
+    // data shown to and adjusted by the user.
+    var dateTimeCreated: String?
+    var timeStamp: String {
+        dateTimeCreated ?? ""
+    }
+
+    // Image location.  The "Latitude" and "Longitude" columns of image tables
+    // are derived from this value.
+    var location: Coords?
+    var formattedLatitude: String {
+        location?.formatted(.latitude) ?? ""
+    }
+    var formattedLongitude: String {
+        location?.formatted(.longitude) ?? ""
+    }
+
+    // Image elevation and formatting for use as a tool tip.
+    var elevation: Double?
+    var formattedElevation: String {
+        var value = "Elevation: "
+        if let elevation {
+            value += String(format: "% 4.2f", elevation)
+            value += " meters"
+        } else {
+            value += "Unknown"
+        }
+        return value
     }
 
     // URL of related sidecar file (if one exists) and an NSFilePresenter
     // to access the sidecar/XMP file
     let sidecarURL: URL
+    let sidecarExists: Bool
     let xmpPresenter: XmpPresenter
 
     // Optional ID of a paired file.  Used when both raw and jpeg versions
@@ -29,11 +71,6 @@ struct ImageModel: Identifiable {
 
     // is this an image file or something else?
     var isValid = false
-
-    // data shown to and adjusted by the user.
-    var dateTimeCreated: String?
-    var location: Coords?
-    var elevation: Double?
 
     // when image data is modified the original data is kept to restore
     // should the user decide to change their mind
@@ -48,18 +85,21 @@ struct ImageModel: Identifiable {
                     elevation != originalElevation)
     }
 
-    // true if a sidexare file exists for this image
-    var sidecarExists: Bool {
-        FileManager.default.fileExists(atPath: sidecarURL.path)
-    }
-
     // The thumbnail image displayed when and image is selected for editing
     var thumbnail: NSImage?
 
+    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
+                                       category: "ImageModel")
+
+    // MARK: Initialization
+
     // initialization of image data given its URL.
     init(imageURL: URL, forPreview: Bool = false) throws {
+        // Self.logger.trace("image \(imageURL) created")
         fileURL = imageURL
         sidecarURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
+        sidecarExists = fileURL != sidecarURL
+                        && FileManager.default.fileExists(atPath: sidecarURL.path)
         xmpPresenter = XmpPresenter(for: fileURL)
 
         // shortcut initialization when creating an image for preview
@@ -82,23 +122,41 @@ struct ImageModel: Identifiable {
             loadXmpMetadata()
         }
     }
+}
+
+// MARK: ImageModel public functions
+
+extension ImageModel {
 
     // reset the timestamp and location to their initial values.  Initial
     // values are updated whenever an image is saved.
-    mutating func revert() {
+    func revert() {
         dateTimeCreated = originalDateTimeCreated
         location = originalLocation
         elevation = originalElevation
     }
 
-    /// obtain image metadata
-    /// - Returns: true if successful
-    ///
-    /// If image propertied can not be accessed or if needed properties
-    /// do not exist the file is assumed to be a non-image file
+    // an invalid location read from metadata (corrupted file) will crash
+    // the program. Validate coords and return valid data or nil
+    func validCoords(latitude: Double, longitude: Double) -> Coords? {
+        var coords: Coords?
 
+        if (0...90).contains(latitude.magnitude) &&
+            (0...180).contains(longitude.magnitude) {
+            coords = Coords(latitude: latitude, longitude: longitude)
+        }
+        return coords
+    }
+
+}
+
+// MARK: ImageModel private functions
+
+extension ImageModel {
+
+    // extract metadata from Image file
     private
-    mutating func loadImageMetadata() throws -> Bool {
+    func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
             enum ImageError: Error {
                 case cgSourceError
@@ -153,27 +211,8 @@ struct ImageModel: Identifiable {
         return true
     }
 
-    // an invalid location read from metadata (corrupted file) will crash
-    // the program. Return a valid Coords or nil
-
-    func validCoords(latitude: Double, longitude: Double) -> Coords? {
-        var coords: Coords?
-
-        if (0...90).contains(latitude.magnitude) &&
-            (0...180).contains(longitude.magnitude) {
-            coords = Coords(latitude: latitude, longitude: longitude)
-        }
-        return coords
-    }
-
-    /// obtain metadata from a sidecar file.
-    ///
-    /// Extract desired metadata from an XMP file using ExifTool.  Apple ImageIO functions
-    /// do not work with XMP sidecar files.  The sidecar file is assumed to exist when this
-    /// function is called/
-
-    private
-    mutating func loadXmpMetadata() {
+    // Extract metadata from sidecar file
+    func loadXmpMetadata() {
         NSFileCoordinator.addFilePresenter(xmpPresenter)
         let results = Exiftool.helper.metadataFrom(xmp: sidecarURL)
         NSFileCoordinator.removeFilePresenter(xmpPresenter)
@@ -191,16 +230,16 @@ struct ImageModel: Identifiable {
 
 }
 
-// Add init functions for preview models and a just-in-case no-image model
+// MARK: Convenience initializers for preview generation.
 
 extension ImageModel {
 
     // create a model for SwiftUI preview
-
-    init(imageURL: URL,
-         validImage: Bool,
-         dateTimeCreated: String, latitude: Double?,
-         longitude: Double?) {
+    convenience init(imageURL: URL,
+                     validImage: Bool,
+                     dateTimeCreated: String,
+                     latitude: Double?,
+                     longitude: Double?) {
         do {
             try self.init(imageURL: imageURL, forPreview: true)
         } catch {
@@ -215,8 +254,7 @@ extension ImageModel {
 
     // create an instance of an ImageModel when one is needed but there
     // is otherwise no instance to return.
-
-    init() {
+    convenience init() {
         do {
             try self.init(imageURL: URL(filePath: ""), forPreview: true)
         } catch {
@@ -225,7 +263,7 @@ extension ImageModel {
     }
 }
 
-// ImageModel instances are compared and hashed on id
+// MARK: ImageModel instances are compared and hashed on id
 
 extension ImageModel: Equatable, Hashable {
     public static func == (lhs: ImageModel, rhs: ImageModel) -> Bool {
@@ -252,7 +290,8 @@ extension URL: Comparable {
 extension ImageModel: @unchecked Sendable {}
 extension NSImage: @unchecked Sendable {}
 
-// Date formatter used to put timestamps in the form used by exiftool
+// Date formatter used to put timestamps in the form used by exiftool when
+// editing timestamps.
 
 extension ImageModel {
     static let dateFormat = "yyyy:MM:dd HH:mm:ss"
@@ -271,7 +310,7 @@ extension ImageModel {
     }
 }
 
-// CFString to (NS)*String casts for Image Property constants
+// MARK: CFString to (NS)*String casts for Image Property constants
 
 extension ImageModel {
     static let exifDictionary = kCGImagePropertyExifDictionary as NSString

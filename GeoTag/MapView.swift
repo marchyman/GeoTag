@@ -13,19 +13,21 @@ import MapKit
 // Stick with this version for now.
 
 struct MapView: NSViewRepresentable {
-    @EnvironmentObject var avm: AppViewModel
-    @ObservedObject var mvm = MapViewModel.shared
+    @Environment(AppState.self) var state
+    @State var mvm = MapViewModel.shared
+
+    @AppStorage(AppSettings.mapConfigurationKey)  var mapConfiguration = 0
 
     let center: CLLocationCoordinate2D
     let altitude: Double
 
     func makeCoordinator() -> MapView.Coordinator {
-        Coordinator(vm: avm)
+        Coordinator(state: state)
     }
 
     func makeNSView(context: Context) -> ClickMapView {
         let view = ClickMapView(frame: .zero)
-        view.viewModel = avm
+        view.state = state
         view.delegate = context.coordinator
         view.camera = MKMapCamera(lookingAtCenter: center,
                                   fromEyeCoordinate: center,
@@ -35,9 +37,11 @@ struct MapView: NSViewRepresentable {
     }
 
     func updateNSView(_ view: ClickMapView, context: Context) {
+        let interval = state.markStart("updateMapView")
+        defer { state.markEnd("updateMapView", interval: interval) }
         setMapConfiguration(view)
-        mainPin(for: avm.mostSelected, on: view)
-        otherPins(for: avm.selection, on: view)
+        mainPin(for: state.tvm.mostSelected, on: view)
+        otherPins(for: state.tvm.selected, on: view)
         trackChanges(for: view)
 
         // re-center the map
@@ -52,7 +56,7 @@ struct MapView: NSViewRepresentable {
     // Change the look of the map
 
     func setMapConfiguration(_ view: ClickMapView) {
-        switch mvm.mapConfiguration {
+        switch mapConfiguration {
         case 0:
             view.preferredConfiguration = MKStandardMapConfiguration()
         case 1:
@@ -66,9 +70,9 @@ struct MapView: NSViewRepresentable {
 
     // map pin changes for the most selected item
 
-    func mainPin(for id: ImageModel.ID?, on view: ClickMapView) {
-        if let id,
-           let location = avm[id].location {
+    func mainPin(for image: ImageModel?, on view: ClickMapView) {
+        if let image,
+           let location = image.location {
             // always update pin as the view, Pin vs OtherPin, may have changed
             // example: deselecting the image associated with mainPin may
             // cause a pin currently displayed as an OtherPin to be selected
@@ -99,13 +103,13 @@ struct MapView: NSViewRepresentable {
     // create pins for other selected items that have a location.  Their
     // title also names the image that represents the pin on the map.
 
-    func otherPins(for selection: Set<ImageModel.ID>, on view: ClickMapView) {
+    func otherPins(for images: [ImageModel], on view: ClickMapView) {
         var pins = [MKPointAnnotation]()
-        for id in selection.filter({ $0 != avm.mostSelected
-                                     && avm[$0].location != nil }) {
+        for image in images.filter({ $0 != state.tvm.mostSelected &&
+                                     $0.location != nil }) {
             let pin = MKPointAnnotation()
             pin.title = "OtherPin"
-            pin.coordinate = avm[id].location!
+            pin.coordinate = image.location!
             pins.append(pin)
         }
         mvm.otherPins = pins
@@ -178,11 +182,11 @@ extension MapView {
     // Coordinator class conforming to MKMapViewDelegate
 
     class Coordinator: NSObject, MKMapViewDelegate {
-        @ObservedObject var mvm = MapViewModel.shared
-        @ObservedObject var avm: AppViewModel
+        var mvm = MapViewModel.shared
+        var state: AppState
 
-        init(vm: AppViewModel) {
-            self.avm = vm
+        init(state: AppState) {
+            self.state = state
         }
 
         // view for annnotation.
@@ -216,14 +220,14 @@ extension MapView {
                      annotationView view: MKAnnotationView,
                      didChange newState: MKAnnotationView.DragState,
                      fromOldState oldState: MKAnnotationView.DragState) {
-            if let id = avm.mostSelected {
+            if let image = state.tvm.mostSelected {
                 switch newState {
                 case .starting:
                     view.image = NSImage(named: "DragPin")
                 case .ending:
                     view.image = NSImage(named: "Pin")
-                    avm.update(id: id, location: view.annotation!.coordinate)
-                    avm.undoManager.setActionName("set location (drag)")
+                    state.update(image, location: view.annotation!.coordinate)
+                    state.undoManager.setActionName("set location (drag)")
                 default:
                     break
                 }
@@ -235,13 +239,16 @@ extension MapView {
         @MainActor
         func mapView(_ mapview: MKMapView,
                      rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+            @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
+
             // swiftlint:disable force_cast
             let polyline = overlay as! MKPolyline
             // swiftlint:enable force_cast
             if mvm.mapLines.contains(polyline) {
                 let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = NSColor(mvm.trackColor)
-                renderer.lineWidth = CGFloat(mvm.trackWidth)
+                renderer.strokeColor = NSColor(trackColor)
+                renderer.lineWidth = CGFloat(trackWidth)
                 return renderer
             }
             return MKOverlayRenderer(overlay: overlay)
@@ -255,7 +262,7 @@ struct MapView_Previews: PreviewProvider {
         MapView(center: CLLocationCoordinate2D(latitude: 37.7244,
                                                longitude: -122.4381),
                 altitude: 50000.0)
-            .environmentObject(AppViewModel())
+            .environment(AppState())
     }
 }
 #endif

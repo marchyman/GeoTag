@@ -7,18 +7,20 @@
 
 import SwiftUI
 
-extension AppViewModel {
+extension AppState {
     /// Convert a security scoped bookmark to its URL
     ///  - Returns the URL if the bookmark could be converted, else nil
 
     func getBackupURL() -> URL? {
+        @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
         var staleBookmark = false
-        let url = try? URL(resolvingBookmarkData: saveBookmark,
+
+        let url = try? URL(resolvingBookmarkData: savedBookmark,
                            options: [.withoutUI, .withSecurityScope],
                            bookmarkDataIsStale: &staleBookmark)
         if let url {
             if staleBookmark {
-                saveBookmark = getBookmark(from: url)
+                savedBookmark = getBookmark(from: url)
             }
             checkBackupFolder(url)
         }
@@ -33,10 +35,9 @@ extension AppViewModel {
         do {
             try bookmark = url.bookmarkData(options: .withSecurityScope)
         } catch let error as NSError {
-            ContentViewModel.shared
-                .addSheet(type: .unexpectedErrorSheet,
-                          error: error,
-                          message: "Error creating security scoped bookmark for backup location \(url.path)")
+            addSheet(type: .unexpectedErrorSheet,
+                     error: error,
+                     message: "Error creating security scoped bookmark for backup location \(url.path)")
         }
         return bookmark
     }
@@ -50,8 +51,6 @@ extension AppViewModel {
     /// - Parameter _: The URL of the folder containing backups
 
     func checkBackupFolder(_ url: URL?) {
-        let cvm = ContentViewModel.shared
-
         guard let url else { return }
         let propertyKeys: Set = [URLResourceKey
                                     .totalFileSizeKey,
@@ -69,9 +68,9 @@ extension AppViewModel {
                                       to: Date()) else { return }
 
         // starting state
-        cvm.oldFiles = []
-        cvm.folderSize = 0
-        cvm.deletedSize = 0
+        oldFiles = []
+        folderSize = 0
+        deletedSize = 0
 
         // loop through the files accumulating storage requirements and a count
         // of older files
@@ -81,22 +80,22 @@ extension AppViewModel {
                     try? fileUrl.resourceValues(forKeys: propertyKeys),
                 let fileSize = resources.totalFileSize,
                 let fileDate = resources.addedToDirectoryDate else { break }
-            cvm.folderSize += fileSize
+            folderSize += fileSize
             if fileDate < sevenDaysAgo {
-                cvm.oldFiles.append(fileUrl)
-                cvm.deletedSize += fileSize
+                oldFiles.append(fileUrl)
+                deletedSize += fileSize
             }
         }
 
         // Alert if there are any old files
         DispatchQueue.main.async {
-            cvm.removeOldFiles = !cvm.oldFiles.isEmpty
+            self.removeOldFiles = !self.oldFiles.isEmpty
         }
     }
 
     nonisolated func remove(filesToRemove: [URL]) {
         Task {
-            let folderURL = await backupURL
+            let folderURL = backupURL
             _ = folderURL?.startAccessingSecurityScopedResource()
             defer { folderURL?.stopAccessingSecurityScopedResource() }
             let fileManager = FileManager.default

@@ -13,7 +13,7 @@ import MapKit
 // function on a mouse).
 
 class ClickMapView: MKMapView {
-    var viewModel: AppViewModel!
+    var state: AppState!
     var clickTimer: Timer?
     var dragInProgress = false
 
@@ -23,7 +23,7 @@ class ClickMapView: MKMapView {
     override
     func mouseUp(with theEvent: NSEvent) {
         super.mouseUp(with: theEvent)
-        if viewModel.mostSelected != nil &&
+        if state.tvm.mostSelected != nil &&
             theEvent.clickCount == 1 && !dragInProgress {
             // start a timer for this location.  The location will be marked
             // when the timer fires unless this is a double click
@@ -54,13 +54,13 @@ class ClickMapView: MKMapView {
         // swiftlint:enable force_cast
         clickTimer?.invalidate()
         clickTimer = nil
-        if !viewModel.selection.isEmpty {
-            viewModel.undoManager.beginUndoGrouping()
-            for id in viewModel.selection {
-                viewModel.update(id: id, location: coords)
+        if !state.tvm.selected.isEmpty {
+            state.undoManager.beginUndoGrouping()
+            for image in state.tvm.selected {
+                state.update(image, location: coords)
             }
-            viewModel.undoManager.endUndoGrouping()
-            viewModel.undoManager.setActionName("set location")
+            state.undoManager.endUndoGrouping()
+            state.undoManager.setActionName("set location")
         }
     }
 }

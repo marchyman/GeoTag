@@ -1,4 +1,4 @@
-## GeoTag for macOS -- macOS 13 or later
+## GeoTag for macOS -- macOS 14 or later
 
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
@@ -12,39 +12,30 @@ image metadata -- your image pixels are not touched.
 See <http://exiftool.org> for information about ExifTool.
 **ExifTool is built in to GeoTag.**
 
-GeoTag Version 5 is a re-write of the program taking advantage of features in
-the current version of macOS. Those not using macOS Ventura can use GeoTag
+GeoTag 5.2 will require macOS Sonoma or later.  Use GeoTag 5.1 if running on
+macOS Ventura.  Those running earlier versions of macOS can use GeoTag
 version 4.15.
 
-## Version 5.1
+## WIP
 
 ### Updates
 
-* Add option to always create sidecar (XMP) files when updating images.
-* Update both images of a raw/jpeg pair when the location of one of the
-  paired images changes. This only applies if both images of the pair were
-  opened and enabled or if updates are written to a sidecar file.
-* Add "Report a bug..." to the help menu.  Selecting this will open the GeoTag
-  github issues page in your browser.
-* ExifTool version 12.62
-
-### Bug Fixes
-
-* Performance improvement when opening large number of images.
-* Do not clear window changed indicator when there are save errors.
-* GPS Timestamp written to sidecar files sometimes included a timezone
-  instead of being a UTC/GMT relative timestamp.
-* Crash that could occur when opening the Setting window.
-* Sidecar file backups would sometimes fail.
-* image thumbnail could fail to show until the selection changed.
+* Latitude/Longitude and Timestamp keyboard updates are now done in an
+  inspector.  Control/right click on an entry and select Edit... or click
+  on the inspectory icon (circled i) to show the inspector for the selected
+  item.
 
 ### Known bugs
 
-* performance is still an issue.  When opening 1200 images, for example,
-  it takes 15-20 seconds on a 3.6 GHz 8-Core Intel Core i9.  When selecting
-  an image from the table it takes 4-5 seconds before the selected image is
-  rendered.  The performance issue is related to number of images.  The
-  selection delay is barely noticeable when 120 images are open.
+* Keyboard shortcuts for cut/copy/delete/paste/select all do not work
+  when editing text fields, i.e. latitude, longitude, and timestamps.
+  Main menu items also do not work.
+  Workaround: use a context menu (right click) in the field being edited.
+
+* If you select an image that has a location and them pan the map to some
+  other locations, changing the map style causes the map to re-center around
+  the pin if the pin is off screen. If the pin is on screen the map viewport
+  doesn’t change.
 
 ### See the file named *History* for earlier changes and bug fixes
 
@@ -81,11 +72,7 @@ Undo/Redo image location changes.
 
 Double click the map to zoom in.  Or use the pinch gestures to zoom in and out.
 
-Three map types --- Standard, Hybrid, and Satellite --- are supported. You
-can also use street view, but... the latitude and longitude of a map marker
-in street view do not match the same marker on one of the other three map
-views.
-
+Three map types --- Standard, Hybrid, and Satellite --- are supported.
 If you find yourself working in a specific area of a map you can save
 the map type, location, and zoom level by clicking on the *Save map location*
 button.   When GeoTag is launched the map will load to the last saved

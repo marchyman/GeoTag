@@ -10,7 +10,8 @@ import SwiftUI
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    @StateObject var avm = AppViewModel()
+    @State var state = AppState()
+    @FocusedBinding(\.textfieldBinding) var textfieldBinding
 
     let windowWidth = 1200.0
     let windowHeight = 900.0
@@ -19,11 +20,11 @@ struct GeoTagApp: App {
         Window("GeoTag Version Five", id: "main") {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
-                .background(WindowAccessor(window: $avm.mainWindow))
+                .background(WindowAccessor(window: $state.mainWindow))
                 .onAppear {
-                    appDelegate.avm = avm
+                    appDelegate.state = state
                 }
-                .environmentObject(avm)
+                .environment(state)
         }
         .commands {
             newItemCommandGroup
@@ -37,7 +38,7 @@ struct GeoTagApp: App {
         Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
             AdjustTimezoneView()
                 .frame(width: 500.0, height: 570.0)
-                .environmentObject(avm)
+                .environment(state)
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
@@ -46,7 +47,7 @@ struct GeoTagApp: App {
         Settings {
             SettingsView()
                 .frame(width: 600.0, height: 590.0, alignment: .top)
-                .environmentObject(avm)
+                .environment(state)
         }
         .windowResizability(.contentSize)
 
@@ -57,4 +58,18 @@ struct GeoTagApp: App {
 
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
+}
+
+// Text field focus. When the bound value is true a text field
+// has focus.  Used when processing pasteboard commands.
+
+struct FocusedTextfield: FocusedValueKey {
+    typealias Value = Binding<Double?>
+}
+
+extension FocusedValues {
+    var textfieldBinding: FocusedTextfield.Value? {
+        get { self[FocusedTextfield.self] }
+        set { self[FocusedTextfield.self] = newValue }
+    }
 }

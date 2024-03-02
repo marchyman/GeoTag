@@ -11,8 +11,8 @@ import MapKit
 /// manage GeoTag's use of exiftool
 
 struct Exiftool {
-    @AppStorage(AppSettings.fileModificationTimeKey) var updateFileModTime = false
-    @AppStorage(AppSettings.gpsTimestampKey) var updateGPSTimestamp = false
+    @AppStorage(AppSettings.updateFileModificationTimesKey) var updateFileModificationTimes = false
+    @AppStorage(AppSettings.updateGPSTimestampsKey) var updateGPSTimestamps = false
 
     // singleton instance of this class
     static let helper = Exiftool()
@@ -93,11 +93,11 @@ struct Exiftool {
                               latArg, latRefArg,
                               lonArg, lonRefArg,
                               eleArg, eleRefArg]
-        if updateFileModTime {
+        if updateFileModificationTimes {
             exiftool.arguments! += ["-FileModifyDate<DateTimeOriginal"]
         }
 
-        if updateGPSTimestamp {
+        if updateGPSTimestamps {
             // calculate the gps timestamp
             let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone)
 
@@ -215,15 +215,18 @@ struct Exiftool {
         printFrom(pipe: err)
     }
 
-    /// return selected metadate from a file
-    /// - Parameter xmp: URL of XMP file
-    /// - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)
-    ///
-    /// Apple's ImageIO functions can not extract metadata from XMP sidecar
-    /// files.  ExifTool is used for that purpose.
-
-    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool, location: Coords, elevation: Double?) {
-        // swiftlint:disable:previous large_tuple
+    // return selected metadate from a file
+    // - Parameter xmp: URL of XMP file
+    // - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)
+    //
+    // Apple's ImageIO functions can not extract metadata from XMP sidecar
+    // files.  ExifTool is used for that purpose.
+    // swiftlint:disable large_tuple
+    // swiftlint:disable cyclomatic_complexity
+    func metadataFrom(xmp: URL) -> (dto: String,
+                                    valid: Bool,
+                                    location: Coords,
+                                    elevation: Double?) {
         let exiftool = Process()
         let pipe = Pipe()
         let err = Pipe()
@@ -305,6 +308,8 @@ struct Exiftool {
         }
         return (createDate, validGPS, location, elevation)
     }
+    // swiftlint:enable cyclomatic_complexity
+    // swiftlint:enable large_tuple
 
     private func printFrom(pipe: Pipe) {
         let data = pipe.fileHandleForReading.availableData

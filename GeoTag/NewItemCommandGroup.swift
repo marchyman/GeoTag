@@ -12,7 +12,7 @@ import SwiftUI
 extension GeoTagApp {
     var newItemCommandGroup: some Commands {
         CommandGroup(replacing: .newItem) {
-            Button("Open…") { avm.showOpenPanel() }
+            Button("Open…") { state.showOpenPanel() }
                 .keyboardShortcut("o")
         }
     }
