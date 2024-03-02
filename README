@@ -1,4 +1,4 @@
-## GeoTag for macOS -- macOS 13 or later
+## GeoTag for macOS -- macOS 14 or later
 
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
@@ -27,11 +27,15 @@ version 4.15.
 
 ### Known bugs
 
-* performance is still an issue.  When opening 1200 images, for example,
-  it takes 15-20 seconds on a 3.6 GHz 8-Core Intel Core i9.  When selecting
-  an image from the table it takes 4-5 seconds before the selected image is
-  rendered.  The performance issue is related to number of images.  The
-  selection delay is barely noticeable when 120 images are open.
+* Keyboard shortcuts for cut/copy/delete/paste/select all do not work
+  when editing text fields, i.e. latitude, longitude, and timestamps.
+  Main menu items also do not work.
+  Workaround: use a context menu (right click) in the field being edited.
+
+* If you select an image that has a location and them pan the map to some
+  other locations, changing the map style causes the map to re-center around
+  the pin if the pin is off screen. If the pin is on screen the map viewport
+  doesn’t change.
 
 ### See the file named *History* for earlier changes and bug fixes
 
