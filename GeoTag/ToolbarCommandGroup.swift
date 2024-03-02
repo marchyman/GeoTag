@@ -18,7 +18,7 @@ extension GeoTagApp {
                     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
                     hideInvalidImages.toggle()
                 } label: {
-                    Text("\(showOrHide()) Disabled Files")
+                    ShowHidePinView()
                 }
                 .keyboardShortcut("d")
 
@@ -27,10 +27,13 @@ extension GeoTagApp {
 
         }
     }
+}
 
-    private func showOrHide() -> String {
-        @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
-        return hideInvalidImages ? "Show" : "Hide"
+struct ShowHidePinView: View {
+    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+
+    var body: some View {
+        Text("\(hideInvalidImages ? "Show" : "Hide") Disabled Files")
     }
 }
 

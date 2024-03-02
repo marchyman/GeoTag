@@ -14,7 +14,7 @@ import MapKit
 
 struct MapView: NSViewRepresentable {
     @Environment(AppState.self) var state
-    var mvm = MapViewModel.shared
+    @State var mvm = MapViewModel.shared
 
     @AppStorage(AppSettings.mapConfigurationKey)  var mapConfiguration = 0
 

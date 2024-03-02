@@ -21,7 +21,7 @@ extension AppState {
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
            ImageModel.decodeStringRep(value: pasteVal) != nil,
-           (context != nil || tvm.mostSelected != nil) {
+           context != nil || tvm.mostSelected != nil {
             return false
         }
         return true

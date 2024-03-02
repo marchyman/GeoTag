@@ -135,7 +135,7 @@ extension AppState {
 }
 
 extension AppState {
-    static var logger = Logger(subsystem: "org.snafu.GeoTag",
+    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                category: "AppState")
     private static let signposter = OSSignposter(logger: logger)
 

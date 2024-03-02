@@ -215,15 +215,18 @@ struct Exiftool {
         printFrom(pipe: err)
     }
 
-    /// return selected metadate from a file
-    /// - Parameter xmp: URL of XMP file
-    /// - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)
-    ///
-    /// Apple's ImageIO functions can not extract metadata from XMP sidecar
-    /// files.  ExifTool is used for that purpose.
-
-    func metadataFrom(xmp: URL) -> (dto: String, valid: Bool, location: Coords, elevation: Double?) {
-        // swiftlint:disable:previous large_tuple
+    // return selected metadate from a file
+    // - Parameter xmp: URL of XMP file
+    // - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)
+    //
+    // Apple's ImageIO functions can not extract metadata from XMP sidecar
+    // files.  ExifTool is used for that purpose.
+    // swiftlint:disable large_tuple
+    // swiftlint:disable cyclomatic_complexity
+    func metadataFrom(xmp: URL) -> (dto: String,
+                                    valid: Bool,
+                                    location: Coords,
+                                    elevation: Double?) {
         let exiftool = Process()
         let pipe = Pipe()
         let err = Pipe()
@@ -305,6 +308,8 @@ struct Exiftool {
         }
         return (createDate, validGPS, location, elevation)
     }
+    // swiftlint:enable cyclomatic_complexity
+    // swiftlint:enable large_tuple
 
     private func printFrom(pipe: Pipe) {
         let data = pipe.fileHandleForReading.availableData

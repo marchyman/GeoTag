@@ -41,7 +41,8 @@ struct ContentView: View {
             }
         }
         .dropDestination(for: URL.self) {items, _ in
-            Task {
+            let state = state
+            Task.detached {
                 await state.prepareForEdit(inputURLs: items)
             }
             return true

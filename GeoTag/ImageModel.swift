@@ -62,6 +62,7 @@ final class ImageModel: Identifiable {
     // URL of related sidecar file (if one exists) and an NSFilePresenter
     // to access the sidecar/XMP file
     let sidecarURL: URL
+    let sidecarExists: Bool
     let xmpPresenter: XmpPresenter
 
     // Optional ID of a paired file.  Used when both raw and jpeg versions
@@ -84,11 +85,6 @@ final class ImageModel: Identifiable {
                     elevation != originalElevation)
     }
 
-    // true if a sidecar file exists for this image
-    var sidecarExists: Bool {
-        FileManager.default.fileExists(atPath: sidecarURL.path)
-    }
-
     // The thumbnail image displayed when and image is selected for editing
     var thumbnail: NSImage?
 
@@ -102,6 +98,8 @@ final class ImageModel: Identifiable {
         // Self.logger.trace("image \(imageURL) created")
         fileURL = imageURL
         sidecarURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
+        sidecarExists = fileURL != sidecarURL
+                        && FileManager.default.fileExists(atPath: sidecarURL.path)
         xmpPresenter = XmpPresenter(for: fileURL)
 
         // shortcut initialization when creating an image for preview

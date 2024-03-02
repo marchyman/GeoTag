@@ -30,8 +30,8 @@ extension AppState {
 
         // process any URLs selected to open in the background
         if panel.runModal() == NSApplication.ModalResponse.OK {
-            Task {
-                await prepareForEdit(inputURLs: panel.urls)
+            Task.detached {
+                await self.prepareForEdit(inputURLs: panel.urls)
             }
         }
     }
@@ -63,9 +63,39 @@ extension AppState {
             addSheet(type: .duplicateImageSheet)
         }
 
-        // process all urls in a task group, one task per url.  Skip
-        // gpx urls for now
+        await images(for: imageURLs)
+        linkPairedImages()
+        tvm.images.sort(using: tvm.sortOrder)
 
+        // now process any gpx tracks
+
+        let gpxURLs = imageURLs.filter { $0.pathExtension.lowercased() == "gpx" }
+        if !gpxURLs.isEmpty {
+
+            // if the appViewModel update isn't done on the main queue the
+            // Discard tracks menu item doesn't see the approriate state.
+
+            let updatedTracks = await tracks(for: gpxURLs)
+            DispatchQueue.main.async {
+                for (path, track) in updatedTracks {
+                    if let track {
+                        self.updateTracks(gpx: track)
+                        self.gpxGoodFileNames.append(path)
+                        self.gpxTracks.append(track)
+                    } else {
+                        self.gpxBadFileNames.append(path)
+                    }
+                }
+                self.addSheet(type: .gpxFileNameSheet)
+            }
+        }
+
+        applicationBusy = false
+    }
+
+    // process all urls in a task group, one task per url.  Skip
+    // gpx urls for now
+    private func images(for imageURLs: [URL]) async {
         await withTaskGroup(of: ImageModel?.self) { group in
             var openedImages: [ImageModel] = []
 
@@ -87,63 +117,39 @@ extension AppState {
             }
             tvm.images.append(contentsOf: openedImages)
         }
-        linkPairedImages()
-        tvm.images.sort(using: tvm.sortOrder)
-
-        // now process any gpx tracks
-
-        let gpxURLs = imageURLs.filter { $0.pathExtension.lowercased() == "gpx" }
-        if !gpxURLs.isEmpty {
-            var tracks: [(String, Gpx?)] = []
-
-            await withTaskGroup(of: (String, Gpx?).self ) { group in
-                for url in gpxURLs {
-                    group.addTask {
-                        do {
-                            let gpx = try Gpx(contentsOf: url)
-                            try gpx.parse()
-                            return (url.path, gpx)
-                        } catch {
-                            return (url.path, nil)
-                        }
-                    }
-                }
-                for await (path, gpx) in group {
-                    tracks.append((path, gpx))
-                }
-            }
-
-            // if the appViewModel update isn't done on the main queue the
-            // Discard tracks menu item doesn't see the approriate state.
-
-            let updatedTracks = tracks
-            DispatchQueue.main.async {
-                for (path, track) in updatedTracks {
-                    if let track {
-                        self.updateTracks(gpx: track)
-                        self.gpxGoodFileNames.append(path)
-                        self.gpxTracks.append(track)
-                    } else {
-                        self.gpxBadFileNames.append(path)
-                    }
-                }
-                self.addSheet(type: .gpxFileNameSheet)
-            }
-        }
-
-        applicationBusy = false
     }
 
-    /// Check if a given file URL refers to a folder
+    // process gpx track files
+    private func tracks(for gpxURLs: [URL]) async -> [(String, Gpx?)] {
+        var tracks: [(String, Gpx?)] = []
 
+        await withTaskGroup(of: (String, Gpx?).self ) { group in
+            for url in gpxURLs {
+                group.addTask {
+                    do {
+                        let gpx = try Gpx(contentsOf: url)
+                        try gpx.parse()
+                        return (url.path, gpx)
+                    } catch {
+                        return (url.path, nil)
+                    }
+                }
+            }
+            for await (path, gpx) in group {
+                tracks.append((path, gpx))
+            }
+        }
+        return tracks
+    }
+
+    // Check if a given file URL refers to a folder
     private func isFolder(url: URL) -> Bool {
         let resources = try? url.resourceValues(forKeys: [.isDirectoryKey])
         return resources?.isDirectory ?? false
     }
 
-    /// iterate over a folder looking for files.
-    /// Returns an array of contained the urls
-
+    // iterate over a folder looking for files.
+    // Returns an array of contained the urls
     private func urlsIn(folder url: URL) -> [URL] {
         var foundURLs = [URL]()
         let fileManager = FileManager.default
