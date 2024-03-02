@@ -31,27 +31,32 @@ extension Coords {
 
 // MARK: Coord output formatting for latitude and longitude
 
+// Add coord formating given a format style
 extension Coords {
-    func formatted<S: FormatStyle>(_ style: S) -> S.FormatOutput where S.FormatInput == Self {
+    func formatted<S: FormatStyle>(_ style: S) -> S.FormatOutput
+        where S.FormatInput == Self {
         style.format(self)
     }
 }
 
-struct CoordsLatitudeFormat: FormatStyle {
+// latitude format style
+struct CoordsLatitudeStyle: FormatStyle {
     func format(_ value: Coords) -> String {
         coordToString(for: value.latitude, ref: Coords.latRef)
     }
 }
+extension FormatStyle where Self == CoordsLatitudeStyle {
+    static var latitude: CoordsLatitudeStyle { .init() }
+}
 
-struct CoordsLongitudeFormat: FormatStyle {
+// longitude format style
+struct CoordsLongitudeStyle: FormatStyle {
     func format(_ value: Coords) -> String {
         coordToString(for: value.longitude, ref: Coords.lonRef)
     }
 }
-
-extension FormatStyle where Self == CoordsLatitudeFormat {
-    static var latitude: CoordsLatitudeFormat { .init() }
-    static var longitude: CoordsLongitudeFormat { .init() }
+extension FormatStyle where Self == CoordsLongitudeStyle {
+    static var longitude: CoordsLongitudeStyle { .init() }
 }
 
 // MARK: Latitude format used with TextFields
