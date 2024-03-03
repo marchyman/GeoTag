@@ -37,31 +37,28 @@ extension AppState {
         Task { @MainActor in
             applicationBusy = true
             await withTaskGroup(of: (Coords, Double?)?.self) { group in
+                undoManager.beginUndoGrouping()
                 for image in tvm.selected {
-                    if let convertedDate = dateFormatter.date(from: image.timeStamp) {
-                        group.addTask { [self] in
-                            // do not use forEach as once a match is
-                            // found there is no need to search other tracks for
-                            // the current image.
+                    group.addTask { [self] in
+                        if let convertedDate = dateFormatter.date(from: image.timeStamp) {
                             for track in gpxTracks {
                                 if let locn = await track.search(imageTime: convertedDate.timeIntervalSince1970) {
                                     return locn
                                 }
                             }
-                            return nil
                         }
+                        return nil
+                    }
 
-                        undoManager.beginUndoGrouping()
-                        for await locn in group {
-                            if let locn {
-                                update(image, location: locn.0,
-                                       elevation: locn.1)
-                            }
+                    for await locn in group {
+                        if let locn {
+                            update(image, location: locn.0,
+                                   elevation: locn.1)
                         }
-                        undoManager.endUndoGrouping()
-                        undoManager.setActionName("locn from track")
                     }
                 }
+                undoManager.endUndoGrouping()
+                undoManager.setActionName("locn from track")
             }
             applicationBusy = false
         }
