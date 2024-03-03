@@ -24,7 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Process open with...
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        Task {
+        Task.detached {
             await self.state?.prepareForEdit(inputURLs: urls)
         }
     }
