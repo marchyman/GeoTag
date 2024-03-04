@@ -106,7 +106,6 @@ struct LongitudeView: View {
     }
 }
 
-
 struct ImageTableView_Previews: PreviewProvider {
 
     static var images = [
