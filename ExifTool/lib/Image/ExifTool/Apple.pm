@@ -16,7 +16,7 @@ use vars qw($VERSION);
 use Image::ExifTool::Exif;
 use Image::ExifTool::PLIST;
 
-$VERSION = '1.08';
+$VERSION = '1.11';
 
 sub ConvertPLIST($$);
 
@@ -110,24 +110,32 @@ sub ConvertPLIST($$);
     },
     # 0x0010 - int32s: 1 (SphereStatus, ref 2)
     0x0011 => { # (if defined, there is a live photo associated with the video, #forum13565) (AssetIdentifier, ref 2)
-        Name => 'MediaGroupUUID', #NealKrawetz private communication
-        # (changed in 12.19 from Name => 'ContentIdentifier', #forum8750)
+        Name => 'ContentIdentifier',
+        Notes => 'called MediaGroupUUID when it appears as an XAttr',
+        # - originally called ContentIdentifier, forum8750
+        # - changed in 12.19 to MediaGroupUUID, NealKrawetz private communication
+        # - changed back to ContentIdentifier since Apple writes this to Keys content.identifier (forum14874)
         Writable => 'string',
+        
     },
     # 0x0012 - (QRMOutputType, ref 2)
     # 0x0013 - (SphereExternalForceOffset, ref 2)
     0x0014 => { # (StillImageCaptureType, ref 2)
         Name => 'ImageCaptureType',
         Writable => 'int32s',
-        Unknown => 1, # (don't know what the values mean)
         # seen: 1,2,3,4,5,10,12
+        PrintConv => { #forum15096
+            1 => 'ProRAW',
+            2 => 'Portrait',
+            10 => 'Photo',
+        },
     },
     0x0015 => { # (ImageGroupIdentifier, ref 2)
         Name => 'ImageUniqueID',
         Writable => 'string',
     },
     # 0x0016 - string[29]: "AXZ6pMTOh2L+acSh4Kg630XCScoO\0" (PhotosOriginatingSignature, ref 2)
-    0x0017 => { #forum13565 (only valid if MediaGroupUUID exists) (StillImageCaptureFlags, ref 2)
+    0x0017 => { #forum13565 (only valid if MediaGroupUUID/ContentIdentifier exists) (StillImageCaptureFlags, ref 2)
         Name => 'LivePhotoVideoIndex',
         Notes => 'divide by RunTimeScale to get time in seconds',
     },
@@ -153,7 +161,7 @@ sub ConvertPLIST($$);
     # 0x001e - (OriginatingAppID, ref 2)
     # 0x001f - int32s: 0,1 (PhotosAppFeatureFlags, ref 2)
     0x0020 => { # (ImageCaptureRequestIdentifier, ref 2)
-        Name => 'ImageCaptureReqestID',
+        Name => 'ImageCaptureRequestID',
         Writable => 'string',
         Unknown => 1,
     },
@@ -182,7 +190,10 @@ sub ConvertPLIST($$);
     # 0x0028 - int32s (UBMethod, ref 2)
     # 0x0029 - string (SpatialOverCaptureGroupIdentifier, ref 2)
     # 0x002A - (iCloudServerSoftwareVersionForDynamicallyGeneratedMedia, ref 2)
-    # 0x002B - (PhotoIdentifier, ref 2)
+    0x002b => {
+        Name => 'PhotoIdentifier', #2
+        Writable => 'string',
+    },
     # 0x002C - (SpatialOverCaptureImageType, ref 2)
     # 0x002D - (CCT, ref 2)
     # 0x002E - (ApsMode, ref 2)
@@ -308,7 +319,7 @@ sub ConvertPLIST($$)
     $val = $$dirInfo{Value};
     if (ref $val eq 'HASH' and not $et->Options('Struct')) {
         require 'Image/ExifTool/XMPStruct.pl';
-        $val = Image::ExifTool::XMP::SerializeStruct($val);
+        $val = Image::ExifTool::XMP::SerializeStruct($et, $val);
     }
     return $val;
 }
@@ -332,7 +343,7 @@ Apple maker notes in EXIF information.
 
 =head1 AUTHOR
 
-Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

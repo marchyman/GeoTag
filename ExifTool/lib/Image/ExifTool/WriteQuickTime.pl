@@ -96,6 +96,8 @@ my %ctboID = (
     "\xbe\x7a\xcf\xcb\x97\xa9\x42\xe8\x9c\x71\x99\x94\x91\xe3\xaf\xac" => 1, # XMP
     "\xea\xf4\x2b\x5e\x1c\x98\x4b\x88\xb9\xfb\xb7\xdc\x40\x6e\x4d\x16" => 2, # PreviewImage
     # ID 3 is used for 'mdat' atom (not a uuid)
+    # (haven't seen ID 4 yet)
+    "\x57\x66\xb8\x29\xbb\x6a\x47\xc5\xbc\xfb\x8b\x9f\x22\x60\xd0\x6d" => 5, # something to do with burst-roll image
 );
 
 # mark UserData tags that don't have ItemList counterparts as Preferred
@@ -167,8 +169,11 @@ sub ConvInvISO6709($)
         #  with more than 5 digits after the decimal place:
         #  https://exiftool.org/forum/index.php?topic=11055.msg67171#msg67171 )
         my @fmt = ('%s%02d.%s%s','%s%03d.%s%s','%s%d.%s%s');
+        my @limit = (90,180);
         foreach (@a) {
             return undef unless Image::ExifTool::IsFloat($_);
+            my $lim = shift @limit;
+            warn((@limit ? 'Lat' : 'Long') . "itude out of range\n") if $lim and abs($_) > $lim;
             $_ =~ s/^([-+]?)(\d+)\.?(\d*)/sprintf(shift(@fmt),$1||'+',$2,$3,length($3)<3 ? '0'x(3-length($3)) : '')/e;
         }
         return join '', @a, '/';
@@ -780,7 +785,7 @@ sub WriteQuickTime($$$)
     my ($rtnVal, $rtnErr) = $dataPt ? (undef, undef) : (1, 0);
 
     if ($dataPt) {
-        $raf = new File::RandomAccess($dataPt);
+        $raf = File::RandomAccess->new($dataPt);
     } else {
         return 0 unless $raf;
     }
@@ -973,16 +978,14 @@ sub WriteQuickTime($$$)
                 }
             } elsif ($tag eq 'CTBO' or $tag eq 'uuid') { # hack for updating CR3 CTBO offsets
                 push @{$$dirInfo{ChunkOffset}}, [ $tag, length($$outfile), length($hdr) + $size ];
-            } elsif (not $flg) {
-                my $grp = $$et{CUR_WRITE_GROUP} || $parent;
-                $et->Error("Can't locate data reference to update offsets for $grp");
-                return $rtnVal;
+            } elsif (not $flg or $flg == 1) {
+                # assume "1" if stsd is yet to be read
+                $flg or $$et{AssumedDataRef} = 1;
+                # must update offsets since the data is in this file
+                push @{$$dirInfo{ChunkOffset}}, [ $tag, length($$outfile) + length($hdr), $size ];
             } elsif ($flg == 3) {
                 $et->Error("Can't write files with mixed internal/external media data");
                 return $rtnVal;
-            } elsif ($flg == 1) {
-                # must update offsets since the data is in this file
-                push @{$$dirInfo{ChunkOffset}}, [ $tag, length($$outfile) + length($hdr), $size ];
             }
         }
 
@@ -1036,8 +1039,10 @@ sub WriteQuickTime($$$)
 
             if ($subdir) {  # process atoms in this container from a buffer in memory
 
-                undef $$et{HandlerType} if $tag eq 'trak';  # init handler type for this track
-
+                if ($tag eq 'trak') {
+                    undef $$et{HandlerType};  # init handler type for this track
+                    delete $$et{AssumedDataRef};
+                }
                 my $subName = $$subdir{DirName} || $$tagInfo{Name};
                 my $start = $$subdir{Start} || 0;
                 my $base = ($$dirInfo{Base} || 0) + $raf->Tell() - $size;
@@ -1054,6 +1059,7 @@ sub WriteQuickTime($$$)
                     Parent   => $dirName,
                     DirName  => $subName,
                     Name     => $$tagInfo{Name},
+                    TagInfo  => $tagInfo,
                     DirID    => $tag,
                     DataPt   => \$buff,
                     DataLen  => $size,
@@ -1102,6 +1108,11 @@ sub WriteQuickTime($$$)
                     # do nothing if trying to delete tag from a PERMANENT table
                     $$et{CHANGED} = $oldChanged;
                     undef $newData;
+                }
+                if ($tag eq 'trak' and $$et{AssumedDataRef}) {
+                    my $grp = $$et{CUR_WRITE_GROUP} || $dirName;
+                    $et->Error("Can't locate data reference to update offsets for $grp");
+                    delete $$et{AssumedDataRef};
                 }
                 $$et{CUR_WRITE_GROUP} = $oldWriteGroup;
                 SetByteOrder('MM');
@@ -1405,6 +1416,13 @@ sub WriteQuickTime($$$)
                 $flg = 1; # (this seems to be the case)
             }
             $$et{QtDataFlg} = $flg;
+            if ($$et{AssumedDataRef}) {
+                if ($flg != $$et{AssumedDataRef}) {
+                    my $grp = $$et{CUR_WRITE_GROUP} || $parent;
+                    $et->Error("Assumed incorrect data reference for $grp (was $flg)");
+                }
+                delete $$et{AssumedDataRef};
+            }
         }
         if ($tagInfo and $$tagInfo{WriteLast}) {
             $writeLast = ($writeLast || '') . $hdr . $buff;
@@ -1943,7 +1961,7 @@ QuickTime-based file formats like MOV and MP4.
 
 =head1 AUTHOR
 
-Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -29,7 +29,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:Public);
 use Image::ExifTool::GPS;
 
-$VERSION = '1.71';
+$VERSION = '1.74';
 
 sub JITTER() { return 2 }       # maximum time jitter
 
@@ -174,7 +174,7 @@ sub LoadTrackLog($$;$)
         # $val is track file name
         if ($et->Open(\*EXIFTOOL_TRKFILE, $val)) {
             $trackFile = $val;
-            $raf = new File::RandomAccess(\*EXIFTOOL_TRKFILE);
+            $raf = File::RandomAccess->new(\*EXIFTOOL_TRKFILE);
             unless ($raf->Read($_, 256)) {
                 close EXIFTOOL_TRKFILE;
                 return "Empty track file '${val}'";
@@ -202,7 +202,7 @@ sub LoadTrackLog($$;$)
     }
     unless ($from) {
         # set up RAF for reading log file in memory
-        $raf = new File::RandomAccess(\$val);
+        $raf = File::RandomAccess->new(\$val);
         $from = 'data';
     }
 
@@ -224,6 +224,9 @@ sub LoadTrackLog($$;$)
         # determine file format
         if (not $format) {
             s/^\xef\xbb\xbf//;          # remove leading BOM if it exists
+            if (/^\xff\xfe|\xfe\xff/) {
+                return "ExifTool doesn't yet read UTF16-format track logs";
+            }
             if (/^<(\?xml|gpx)[\s>]/) { # look for XML or GPX header
                 $format = 'XML';
             # check for NMEA sentence
@@ -1106,7 +1109,7 @@ sub SetGeoValues($$;$)
                     $iExt = $i1;
                 }
                 if (abs($time - $tn) > $geoMaxExtSecs) {
-                    $err or $err = 'Time is too far from nearest GPS fix';
+                    $err or $err = 'Time is too far from nearest GPS fix'.' '.abs($time-$tn).' '.$geoMaxExtSecs;
                     $et->VPrint(2, '  Nearest fix:     ', PrintFixTime($tn), "\n") if $verbose > 2;
                     $fix = { } if $$geotag{DateTimeOnly};
                 } else {
@@ -1193,24 +1196,29 @@ Category:       foreach $category (qw{pos track alt orient atemp}) {
         # write GPSDateStamp if date included in track log, otherwise delete it
         $gpsDate = sprintf('%.2d:%.2d:%.2d', $t[5]+1900, $t[4]+1, $t[3]) unless $noDate;
         # write GPSAltitude tags if altitude included in track log, otherwise delete them
-        if (defined $$fix{alt}) {
-            $gpsAlt = abs $$fix{alt};
-            $gpsAltRef = ($$fix{alt} < 0 ? 1 : 0);
-        } elsif ($$has{alt} and defined $iExt) {
+        my $alt = $$fix{alt};
+        if (not defined $alt and $$has{alt} and defined $iExt) {
             my $tFix = FindFix($et,'alt',$times,$points,$iExt,$iDir,$geoMaxExtSecs);
-            if ($tFix) {
-                $gpsAlt = abs $$tFix{alt};
-                $gpsAltRef = ($$tFix{alt} < 0 ? 1 : 0);
-            }
+            $alt = $$tFix{alt} if $tFix;
         }
         # set new GPS tag values (EXIF, or XMP if write group is 'xmp')
-        my ($xmp, $exif, @r);
+        my ($xmp, $exif, $qt, @r);
         my %opts = ( Type => 'ValueConv' ); # write ValueConv values
         if ($writeGroup) {
             $opts{Group} = $writeGroup;
             $xmp = ($writeGroup =~ /xmp/i);
             $exif = ($writeGroup =~ /^(exif|gps)$/i);
+            $qt = $writeGroup =~ /^(quicktime|keys|itemlist|userdata)$/i;
         }
+        # set QuickTime GPSCoordinates
+        my $coords = "$$fix{lat} $$fix{lon}";
+        if (defined $alt) {
+            $gpsAlt = abs $alt;
+            $gpsAltRef = ($alt < 0 ? 1 : 0);
+            $coords .= " $alt";
+        }
+        @r = $et->SetNewValue(GPSCoordinates => $coords, %opts);
+        return $err if $qt; # all done if writing to QuickTime only
         # (capture error messages by calling SetNewValue in list context)
         @r = $et->SetNewValue(GPSLatitude => $$fix{lat}, %opts);
         @r = $et->SetNewValue(GPSLongitude => $$fix{lon}, %opts);
@@ -1285,7 +1293,7 @@ Category:       foreach $category (qw{pos track alt orient atemp}) {
                     GPSAltitude GPSAltitudeRef GPSDateStamp GPSTimeStamp GPSDateTime
                     GPSTrack GPSTrackRef GPSSpeed GPSSpeedRef GPSImgDirection
                     GPSImgDirectionRef GPSPitch GPSRoll CameraElevationAngle
-                    AmbientTemperature))
+                    AmbientTemperature GPSCoordinates))
         {
             my @r = $et->SetNewValue($_, undef, %opts);
         }
@@ -1484,7 +1492,7 @@ user-defined tag GPSRoll, must be active.
 
 =head1 AUTHOR
 
-Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

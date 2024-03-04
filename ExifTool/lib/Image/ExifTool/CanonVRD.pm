@@ -23,7 +23,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Canon;
 
-$VERSION = '1.35';
+$VERSION = '1.38';
 
 sub ProcessCanonVRD($$;$);
 sub WriteCanonVRD($$;$);
@@ -51,6 +51,7 @@ my %vrdFormat = (
     8 => 'int32u',
     9 => 'int32s',
     13 => 'double',
+    24 => 'int32s', # (rectangle coordinates)
     33 => 'int32u', # (array)
     38 => 'double', # (array)
     # 254 => 'undef', ?
@@ -187,6 +188,7 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     WRITE_PROC => \&Image::ExifTool::WriteBinaryData,
     CHECK_PROC => \&Image::ExifTool::CheckBinaryData,
     WRITABLE => 1,
+    PERMANENT => 1, # (can't add/delete these individually)
     FIRST_ENTRY => 0,
     GROUPS => { 2 => 'Image' },
     DATAMEMBER => [ 0x002 ],   # necessary for writing
@@ -485,6 +487,7 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     WRITE_PROC => \&Image::ExifTool::WriteBinaryData,
     CHECK_PROC => \&Image::ExifTool::CheckBinaryData,
     WRITABLE => 1,
+    PERMANENT => 1, # (can't add/delete these individually)
     FIRST_ENTRY => 0,
     FORMAT => 'int16s',
     DATAMEMBER => [ 0x58, 0xdc, 0xdf, 0xe0 ], # (required for DataMember and var-format tags)
@@ -999,6 +1002,7 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     PROCESS_PROC => \&ProcessDR4,
     WRITE_PROC => \&ProcessDR4,
     WRITABLE => 1,
+    PERMANENT => 1, # (can't add/delete these individually)
     GROUPS => { 1 => 'CanonDR4', 2 => 'Image' },
     VARS => { HEX_ID => 1, SORT_PROC => \&SortDR4 },
     NOTES => q{
@@ -1223,6 +1227,11 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     # 0x20a08 - (unknown picture style settings)
     # 0x20a09 - Custom picture style settings
     # 0x20a20 - Fine Detail picture style settings
+    0x20b10 => 'DPRAWMicroadjustBackFront', #forum15660
+    0x20b12 => 'DPRAWMicroadjustStrength', #forum15660
+    0x20b20 => 'DPRAWBokehShift', #forum15660
+    0x20b21 => 'DPRAWBokehShiftArea', #PH
+    0x20b30 => 'DPRAWGhostingReductionArea', #forum15660
     0x30101 => {
         Name => 'CropAspectRatio',
         PrintConv => {
@@ -2008,7 +2017,7 @@ sub ProcessCanonVRD($$;$)
             $verbose and print $out "  Creating CanonVRD trailer\n";
             $created = 1;
         }
-        $raf = new File::RandomAccess($dataPt);
+        $raf = File::RandomAccess->new($dataPt);
     }
     # read and validate the footer
     $raf->Seek(-0x40-$offset, 2)    or return 0;
@@ -2263,7 +2272,7 @@ files, and as a trailer in JPEG, CRW, CR2 and TIFF images.
 
 =head1 AUTHOR
 
-Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -11,6 +11,7 @@
 #               4) http://msdn.microsoft.com/en-us/library/aa380374.aspx
 #               5) http://www.cpan.org/modules/by-authors/id/H/HC/HCARVEY/File-MSWord-0.1.zip
 #               6) https://msdn.microsoft.com/en-us/library/cc313153(v=office.12).aspx
+#               7) https://learn.microsoft.com/en-us/openspecs/office_file_formats/ms-oshared/3ef02e83-afef-4b6c-9585-c109edd24e07
 #------------------------------------------------------------------------------
 
 package Image::ExifTool::FlashPix;
@@ -21,7 +22,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::ASF;   # for GetGUID()
 
-$VERSION = '1.45';
+$VERSION = '1.48';
 
 sub ProcessFPX($$);
 sub ProcessFPXR($$$);
@@ -510,6 +511,31 @@ my %fpxFileType = (
             corresponding EmbeddedImage from the Contents of a VNT file
         },
     },
+    _eeJPG => {
+        Name => 'EmbeddedImage',
+        Notes => q{
+            Not a real tag. Extracted from stream content when the ExtractEmbedded
+            option is used
+        },
+        Groups => { 2 => 'Preview' },
+        Binary => 1,
+    },
+    _eePNG => {
+        Name => 'EmbeddedPNG',
+        Notes => q{
+            Not a real tag. Extracted from stream content when the ExtractEmbedded
+            option is used
+        },
+        Groups => { 2 => 'Preview' },
+        Binary => 1,
+    },
+    _eeLink => {
+        Name => 'LinkedFileName',
+        Notes => q{
+            Not a real tag. Extracted from stream content when the ExtractEmbedded
+            option is used
+        },
+    },
 );
 
 # Summary Information properties
@@ -587,6 +613,7 @@ my %fpxFileType = (
         However, ExifTool will also extract any other information found in the
         UserDefined properties.
     },
+  # 0x01 => 'CodePage', #7
     0x02 => 'Category',
     0x03 => 'PresentationTarget',
     0x04 => 'Bytes',
@@ -631,12 +658,16 @@ my %fpxFileType = (
         Name => 'AppVersion',
         ValueConv => 'sprintf("%d.%.4d",$val >> 16, $val & 0xffff)',
     },
-  # 0x18 ? seen -1
+  # 0x18 ? seen -1 (DigitalSignature, VtDigSig format, ref 7)
   # 0x19 ? seen 0
   # 0x1a ? seen 0
   # 0x1b ? seen 0
   # 0x1c ? seen 0,1
   # 0x1d ? seen 1
+    0x1a => 'ContentType', #7, github#217
+    0x1b => 'ContentStatus', #7, github#217
+    0x1c => 'Language', #7, github#217
+    0x1d => 'DocVersion', #7, github#217
   # 0x1e ? seen 1
   # 0x1f ? seen 1,5
   # 0x20 ? seen 0,5
@@ -2174,6 +2205,9 @@ sub ProcessFPX($$)
     my ($buff, $out, $oldIndent, $miniStreamBuff);
     my ($tag, %hier, %objIndex, %loadedDifSect);
 
+    # handle FPX format in memory from PNG cpIp chunk
+    $raf or $raf = File::RandomAccess->new($$dirInfo{DataPt});
+
     # read header
     return 0 unless $raf->Read($buff,HDR_SIZE) == HDR_SIZE;
     # check signature
@@ -2285,6 +2319,8 @@ sub ProcessFPX($$)
     my $miniStream;
     $endPos = length($dir);
     my $index = 0;
+    my $ee; # name of next tag to extract if unknown
+    $ee = 0 if $et->Options('ExtractEmbedded');
 
     for ($pos=0; $pos<=$endPos-128; $pos+=128, ++$index) {
 
@@ -2304,6 +2340,9 @@ sub ProcessFPX($$)
         $tag = Image::ExifTool::Decode(undef, substr($dir,$pos,$len*2), 'UCS2', 'II', 'Latin');
         $tag =~ s/\0.*//s;  # truncate at null (in case length was wrong)
 
+        if ($tag eq '0' and not defined $ee) {
+            $et->WarnOnce('Use the ExtractEmbedded option to extract embedded information', 3);
+        }
         my $sect = Get32u(\$dir, $pos + 0x74);  # start sector number
         my $size = Get32u(\$dir, $pos + 0x78);  # stream length
 
@@ -2314,12 +2353,15 @@ sub ProcessFPX($$)
                 $et->Warn('Error loading Mini-FAT stream');
                 last;
             }
-            $miniStream = new File::RandomAccess(\$miniStreamBuff);
+            $miniStream = File::RandomAccess->new(\$miniStreamBuff);
         }
 
         my $tagInfo;
         if ($$tagTablePtr{$tag}) {
             $tagInfo = $et->GetTagInfo($tagTablePtr, $tag);
+        } elsif (defined $ee and $tag eq $ee) {
+            $tagInfo = '';  # won't know the actual tagID untile we read the stream
+            $ee = sprintf('%x', hex($ee)+1); # tag to look for next
         } else {
             # remove instance number or class ID from tag if necessary
             $tagInfo = $et->GetTagInfo($tagTablePtr, $1) if
@@ -2343,7 +2385,7 @@ sub ProcessFPX($$)
             $$sub{Parent} = $index;
         }
 
-        next unless $tagInfo or $verbose;
+        next unless defined $tagInfo or $verbose;
 
         # load the data for stream types
         my $extra = '';
@@ -2377,18 +2419,22 @@ sub ProcessFPX($$)
             $extra .= " Left=$lSib" unless $lSib == FREE_SECT;
             $extra .= " Right=$rSib" unless $rSib == FREE_SECT;
             $extra .= " Child=$chld" unless $chld == FREE_SECT;
+            $extra .= " Size=$size" if defined $size;
+            my $name;
+            $name = "Unknown_0x$tag" if not $tagInfo and $tag =~ /^[0-9a-f]{1,3}$/;
             $et->VerboseInfo($tag, $tagInfo,
                 Index  => $index,
                 Value  => $buff,
                 DataPt => \$buff,
                 Extra  => $extra,
-                Size   => $size,
+              # Size   => $size, (moved to $extra so we can see the rest of the stream if larger)
+                Name   => $name,
             );
         }
-        if ($tagInfo and $buff) {
+        if (defined $tagInfo and $buff) {
             my $num = $$et{NUM_FOUND};
-            my $subdir = $$tagInfo{SubDirectory};
-            if ($subdir) {
+            if ($tagInfo and $$tagInfo{SubDirectory}) {
+                my $subdir = $$tagInfo{SubDirectory};
                 my %dirInfo = (
                     DataPt   => \$buff,
                     DirStart => $$subdir{DirStart},
@@ -2416,6 +2462,19 @@ sub ProcessFPX($$)
                         }
                     }
                     delete $$et{DOC_NUM};
+                } elsif (not $tagInfo) {
+                    # extract some embedded information from PNG Plus images
+                    if ($buff =~ /^(.{19,40})(\xff\xd8\xff\xe0|\x89PNG\r\n\x1a\n)/sg) {
+                        my $id = $2 eq "\xff\xd8\xff\xe0" ? '_eeJPG' : '_eePNG';
+                        $et->HandleTag($tagTablePtr, $id, substr($buff, length($1)));
+                    } elsif ($buff =~ /^\0\x80\0\0\x01\0\0\0\x0e\0/ and length($buff) > 18) {
+                        my $len = unpack('x17C', $buff);
+                        next if $len + 18 > length($buff);
+                        my $filename = $et->Decode(substr($buff,18,$len), 'UTF16', 'II');
+                        $et->HandleTag($tagTablePtr, '_eeLink', $filename);
+                    } else {
+                        next;
+                    }
                 } else {
                     $et->FoundTag($tagInfo, $buff);
                 }
@@ -2502,7 +2561,7 @@ JPEG images.
 
 =head1 AUTHOR
 
-Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

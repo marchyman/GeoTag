@@ -16,7 +16,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Sigma;
 
-$VERSION = '1.30';
+$VERSION = '1.32';
 
 sub ProcessX3FHeader($$$);
 sub ProcessX3FDirectory($$$);
@@ -460,7 +460,7 @@ sub WriteX3F($$)
                     my $newData;
                     my %jpegInfo = (
                         Parent  => 'X3F',
-                        RAF     => new File::RandomAccess(\$buff),
+                        RAF     => File::RandomAccess->new(\$buff),
                         OutFile => \$newData,
                     );
                     $$et{FILE_TYPE} = 'JPEG';
@@ -549,9 +549,9 @@ sub ProcessX3FDirectory($$$)
             $len -= 28;
             # ignore all image data but JPEG compressed (version 2.0, type 2, format 18)
             unless ($buff =~ /^SECi\0\0\x02\0\x02\0\0\0\x12\0\0\0/) {
-                # do MD5 on non-preview data if requested
-                if ($$et{ImageDataMD5} and substr($buff,8,1) ne "\x02") {
-                    $et->ImageDataMD5($raf, $len, 'SigmaRaw IMAG');
+                # do hash on non-preview data if requested
+                if ($$et{ImageDataHash} and substr($buff,8,1) ne "\x02") {
+                    $et->ImageDataHash($raf, $len, 'SigmaRaw IMAG');
                 }
                 next;
             }
@@ -575,7 +575,7 @@ sub ProcessX3FDirectory($$$)
             if ($$tagInfo{Name} eq 'JpgFromRaw') {
                 my %dirInfo = (
                     Parent => 'X3F',
-                    RAF    => new File::RandomAccess(\$buff),
+                    RAF    => File::RandomAccess->new(\$buff),
                 );
                 $$et{BASE} += $offset;
                 $et->ProcessJPEG(\%dirInfo);
@@ -680,7 +680,7 @@ Sigma and Foveon X3F images.
 
 =head1 AUTHOR
 
-Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

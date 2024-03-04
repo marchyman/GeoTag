@@ -20,7 +20,7 @@ use strict;
 use vars qw($VERSION $warnString);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.29';
+$VERSION = '1.31';
 
 sub WarnProc($) { $warnString = $_[0]; }
 
@@ -259,8 +259,8 @@ my %iWorkType = (
 %Image::ExifTool::ZIP::RAR5 = (
     GROUPS => { 2 => 'Other' },
     VARS => { NO_ID => 1 },
-    NOTES => 'These tags are extracted from RAR v5 archive files.',
-    RARVersion      => { },
+    NOTES => 'These tags are extracted from RAR v5 and 7z archive files.',
+    FileVersion     => { },
     CompressedSize  => { },
     ModifyDate => {
         Groups => { 2 => 'Time' },
@@ -310,7 +310,7 @@ sub ProcessRAR($$)
         $et->SetFileType();
         SetByteOrder('II');
         my $tagTablePtr = GetTagTable('Image::ExifTool::ZIP::RAR5');
-        $et->HandleTag($tagTablePtr, 'RARVersion', 4);
+        $et->HandleTag($tagTablePtr, 'FileVersion', 'RAR v4');
         $tagTablePtr = GetTagTable('Image::ExifTool::ZIP::RAR');
 
         for (;;) {
@@ -356,7 +356,7 @@ sub ProcessRAR($$)
         return 0 unless $raf->Read($buff, 1) and $buff eq "\0";
         $et->SetFileType();
         my $tagTablePtr = GetTagTable('Image::ExifTool::ZIP::RAR5');
-        $et->HandleTag($tagTablePtr, 'RARVersion', 5);
+        $et->HandleTag($tagTablePtr, 'FileVersion', 'RAR v5');
         $$et{INDENT} .= '| ';
 
         # loop through header blocks
@@ -367,7 +367,7 @@ sub ProcessRAR($$)
             # read the header and create new RAF object for reading it
             my $header;
             $raf->Read($header, $headSize) == $headSize or last;
-            my $rafHdr = new File::RandomAccess(\$header);
+            my $rafHdr = File::RandomAccess->new(\$header);
             my $headType = ReadULEB($rafHdr);   # get header type
 
             if ($headType == 4) {  # encryption block
@@ -550,14 +550,14 @@ sub ProcessZIP($$)
         } elsif (eval { require IO::String }) {
             # read the whole file into memory (what else can I do?)
             $raf->Slurp();
-            $fh = new IO::String ${$raf->{BUFF_PT}};
+            $fh = IO::String->new(${$raf->{BUFF_PT}});
         } else {
             my $type = $raf->{FILE_PT} ? 'pipe or socket' : 'scalar reference';
             $et->Warn("Install IO::String to decode compressed ZIP information from a $type");
             last;
         }
         $et->VPrint(1, "  --- using Archive::Zip ---\n");
-        $zip = new Archive::Zip;
+        $zip = Archive::Zip->new;
         # catch all warnings! (Archive::Zip is bad for this)
         local $SIG{'__WARN__'} = \&WarnProc;
         my $status = $zip->readFromFileHandle($fh);
@@ -568,8 +568,8 @@ sub ProcessZIP($$)
             # a failed test with Perl 5.6.2 GNU/Linux 2.6.32-5-686 i686-linux-64int-ld
             $raf->Seek(0,0);
             $raf->Slurp();
-            $fh = new IO::String ${$raf->{BUFF_PT}};
-            $zip = new Archive::Zip;
+            $fh = IO::String->new(${$raf->{BUFF_PT}});
+            $zip = Archive::Zip->new;
             $status = $zip->readFromFileHandle($fh);
         }
         if ($status) {
@@ -836,7 +836,7 @@ Electronic Publication (EPUB), and Sketch design files (SKETCH).
 
 =head1 AUTHOR
 
-Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
