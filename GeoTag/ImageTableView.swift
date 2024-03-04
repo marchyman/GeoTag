@@ -25,34 +25,25 @@ struct ImageTableView: View {
               columnCustomization: $columnCustomization) {
 
             TableColumn("Name", value: \.name) { image in
-                let selectedImage = image == tvm.mostSelected
-                Text(image.name)
-                    .fontWeight(selectedImage ? .semibold : .regular)
-                    .foregroundColor(selectedImage
-                                     ? .mostSelected
-                                     : image.isValid ? .primary : .secondary)
-                    .help("Full path: \(image.fileURL.path())")
+                NameView(image: image, isSelected: image == tvm.mostSelected)
             }
             .width(min: 100)
             .customizationID("Name")
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
-                Text(image.timeStamp)
-                    .foregroundColor(image.timestampTextColor)
+                TimestampView(image: image)
             }
             .width(min: timestampMinWidth)
             .customizationID("Timestamp")
 
             TableColumn("Latitude", value: \.formattedLatitude) { image in
-                Text(image.formattedLatitude)
-                    .foregroundColor(image.locationTextColor)
+                LatitudeView(image: image)
             }
             .width(min: coordMinWidth)
             .customizationID("Latitude")
 
             TableColumn("Longitude", value: \.formattedLongitude) { image in
-                Text(image.formattedLongitude)
-                    .foregroundColor(image.locationTextColor)
+                LongitudeView(image: image)
             }
             .width(min: coordMinWidth)
             .customizationID("Longitude")
@@ -74,6 +65,47 @@ struct ImageTableView: View {
         }
     }
 }
+
+struct NameView: View {
+    let image: ImageModel
+    let isSelected: Bool
+
+    var body: some View {
+        Text(image.name)
+            .fontWeight(isSelected ? .semibold : .regular)
+            .foregroundColor(isSelected
+                             ? .mostSelected
+                             : image.isValid ? .primary : .secondary)
+            .help("Full path: \(image.fileURL.path())")
+    }
+}
+
+struct TimestampView: View {
+    let image: ImageModel
+
+    var body: some View {
+        Text(image.timeStamp)
+            .foregroundColor(image.timestampTextColor)
+    }
+}
+struct LatitudeView: View {
+    let image: ImageModel
+
+    var body: some View {
+        Text(image.formattedLatitude)
+            .foregroundColor(image.locationTextColor)
+    }
+}
+
+struct LongitudeView: View {
+    let image: ImageModel
+
+    var body: some View {
+        Text(image.formattedLongitude)
+            .foregroundColor(image.locationTextColor)
+    }
+}
+
 
 struct ImageTableView_Previews: PreviewProvider {
 
