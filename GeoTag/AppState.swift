@@ -70,6 +70,7 @@ final class AppState {
     // AppStorage.  When changed to a non-nil value the bookmark is updated
     // and the new folder is checked to see if there are old backups that
     // can be removed.
+    @ObservationIgnored
     var backupURL: URL? {
         didSet {
             @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
