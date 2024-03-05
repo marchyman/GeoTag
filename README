@@ -36,6 +36,10 @@ version 4.15.
 
 ### Known bugs
 
+* Toggling View -> Pin View -> Show pins for all selected items causes
+  the program to hang. Can not release until the cause is tracked down
+  and fixed.
+
 * If you select an image that has a location and them pan the map to some
   other locations, changing the map style causes the map to re-center around
   the pin if the pin is off screen. If the pin is on screen the map viewport
