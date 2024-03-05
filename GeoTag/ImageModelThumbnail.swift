@@ -23,10 +23,10 @@ extension ImageModel {
         }
 
         // Create a "preview" of the image. If the image is larger than
-        // 512x512 constrain the preview to that size.  512x512 is an
+        // 1024x1024 constraint the preview to that size.  1024x1024 is an
         // arbitrary limit.   Preview generation is used to work around a
         // performance hit when using large raw images
-        let maxDimension = 512
+        let maxDimension = 1024
         var imgOpts: [String: AnyObject] = [
             ImageModel.createThumbnailWithTransform: kCFBooleanTrue,
             ImageModel.createThumbnailFromImageIfAbsent: kCFBooleanTrue,
