@@ -14,7 +14,7 @@ import MapKit
 
 struct MapView: NSViewRepresentable {
     @Environment(AppState.self) var state
-    @State var mvm = MapViewModel.shared
+    var mvm = MapViewModel.shared
 
     @AppStorage(AppSettings.mapConfigurationKey)  var mapConfiguration = 0
 
@@ -72,6 +72,12 @@ struct MapView: NSViewRepresentable {
     func pins(for image: ImageModel?,
               and images: [ImageModel],
               on view: ClickMapView) {
+        // delete existing pin annotations on the map view
+        let annotations = view.annotations
+        if !annotations.isEmpty {
+            view.removeAnnotations(annotations)
+        }
+
         // Update main pin (if one exists) location.
         if let image,
            let location = image.location {
@@ -84,44 +90,33 @@ struct MapView: NSViewRepresentable {
             }
             mvm.mainPin?.title = "Pin"
             mvm.mainPin?.coordinate = location
+            view.addAnnotation(mvm.mainPin!)
+            if !view.visibleMapRect.contains(MKMapPoint(mvm.mainPin!.coordinate)) {
+                // I don't know of a better way?
+                DispatchQueue.main.async {
+                    view.setCenter(mvm.mainPin!.coordinate, animated: false)
+                }
+            }
         } else {
             mvm.mainPin = nil
         }
 
-        // Make pins for other selected items but only if their coordinates
-        // are different from mainPin
-        var pins = [MKPointAnnotation]()
-        for other in images.filter({ $0 != state.tvm.mostSelected
-                                     && $0.location != nil
-                                     && $0.location != image?.location}) {
-            let pin = MKPointAnnotation()
-            pin.title = "OtherPin"
-            pin.coordinate = other.location!
-            pins.append(pin)
-        }
-        mvm.otherPins = pins
-
-        // delete existing pin annotations on the map view
-        let annotations = view.annotations
-        if !annotations.isEmpty {
-            view.removeAnnotations(annotations)
-        }
-
-        // add annotations for "OtherPin"s when enabled
         if !mvm.onlyMostSelected {
-            view.addAnnotations(mvm.otherPins)
-        }
+            // Make pins for other selected items but only if their coordinates
+            // are different from mainPin
+            var pins = [MKPointAnnotation]()
+            for other in images.filter({ $0 != state.tvm.mostSelected
+                && $0.location != nil
+                && $0.location != image?.location}) {
+                let pin = MKPointAnnotation()
+                pin.title = "OtherPin"
+                pin.coordinate = other.location!
+                pins.append(pin)
+            }
 
-//        // now add the mainPin and scroll the map to show it if needed
-//        if let mainPin = mvm.mainPin {
-//            view.addAnnotation(mainPin)
-//            if !view.visibleMapRect.contains(MKMapPoint(mainPin.coordinate)) {
-//                // I don't know of a better way?
-//                DispatchQueue.main.async {
-//                    view.setCenter(mvm.mainPin!.coordinate, animated: false)
-//                }
-//            }
-//        }
+            // add annotations for "OtherPin"s when enabled
+            view.addAnnotations(pins)
+        }
     }
 
     // draw tracks on the map when needed

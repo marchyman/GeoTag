@@ -21,7 +21,6 @@ final class MapViewModel {
 
     // Map pins
     var mainPin: MKPointAnnotation?
-    var otherPins = [MKPointAnnotation]()
 
     // Keep track of the coords for the center of the map
     var currentMapCenter = Coords()
