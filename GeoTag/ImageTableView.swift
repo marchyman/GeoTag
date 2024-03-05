@@ -11,8 +11,8 @@ import OSLog
 struct ImageTableView: View {
     @Bindable var tvm: TableViewModel
 
-    let timestampMinWidth = 130.0
     let coordMinWidth = 120.0
+    let coordMaxWidth = 150.0
 
     @AppStorage(AppSettings.imageTableConfigKey)
     private var columnCustomization: TableColumnCustomization<ImageModel>
@@ -27,25 +27,25 @@ struct ImageTableView: View {
             TableColumn("Name", value: \.name) { image in
                 NameView(image: image, isSelected: image == tvm.mostSelected)
             }
-            .width(min: 100)
+            .width(min: 100, max: 150)
             .customizationID("Name")
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
                 TimestampView(image: image)
             }
-            .width(min: timestampMinWidth)
+            .width(min: 130, max: 150)
             .customizationID("Timestamp")
 
             TableColumn("Latitude", value: \.formattedLatitude) { image in
                 LatitudeView(image: image)
             }
-            .width(min: coordMinWidth)
+            .width(min: coordMinWidth, max: coordMaxWidth)
             .customizationID("Latitude")
 
             TableColumn("Longitude", value: \.formattedLongitude) { image in
                 LongitudeView(image: image)
             }
-            .width(min: coordMinWidth)
+            .width(min: coordMinWidth, max: coordMaxWidth)
             .customizationID("Longitude")
         } rows: {
             ForEach(hideInvalidImages

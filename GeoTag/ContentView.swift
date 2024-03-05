@@ -30,6 +30,7 @@ struct ContentView: View {
                 }
             }
             ImageMapView()
+                .frame(minWidth: 512)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
