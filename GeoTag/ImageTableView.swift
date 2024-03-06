@@ -11,12 +11,17 @@ import OSLog
 struct ImageTableView: View {
     @Bindable var tvm: TableViewModel
 
-    let coordMinWidth = 120.0
-    let coordMaxWidth = 150.0
-
     @AppStorage(AppSettings.imageTableConfigKey)
     private var columnCustomization: TableColumnCustomization<ImageModel>
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+
+    // table view column width limits
+    let nameMinWidth = 100.0
+    let nameMaxWidth = 200.0
+    let timestampMinWidth = 130.0
+    let timestampMaxWidth = 150.0
+    let coordMinWidth = 120.0
+    let coordMaxWidth = 160.0
 
     var body: some View {
         Table(of: ImageModel.self,
@@ -27,13 +32,13 @@ struct ImageTableView: View {
             TableColumn("Name", value: \.name) { image in
                 NameView(image: image, isSelected: image == tvm.mostSelected)
             }
-            .width(min: 100, max: 150)
+            .width(min: nameMinWidth, max: nameMaxWidth)
             .customizationID("Name")
 
             TableColumn("Timestamp", value: \.timeStamp) { image in
                 TimestampView(image: image)
             }
-            .width(min: 130, max: 150)
+            .width(min: timestampMinWidth, max: timestampMaxWidth)
             .customizationID("Timestamp")
 
             TableColumn("Latitude", value: \.formattedLatitude) { image in
