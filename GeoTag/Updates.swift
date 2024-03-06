@@ -19,7 +19,7 @@ extension AppState {
                 elevation: Double? = nil, documentEdited: Bool = true) {
         let currentLocation = image.location
         let currentElevation = image.elevation
-        let currentDocumentEdited = mainWindow?.isDocumentEdited ?? true
+        let currentDocumentEdited = isDocumentEdited
         undoManager.registerUndo(withTarget: self) { target in
             target.update(image, location: currentLocation,
                           elevation: currentElevation,
@@ -35,9 +35,7 @@ extension AppState {
                 pairedImage.elevation = elevation
             }
         }
-        Task { @MainActor [weak self] in
-            self?.mainWindow?.isDocumentEdited = documentEdited
-        }
+        isDocumentEdited = documentEdited
     }
 
     // Update an image with a new timestamp.  Image is identifid by its ID
@@ -46,15 +44,13 @@ extension AppState {
     func update(_ image: ImageModel, timestamp: String?,
                 documentEdited: Bool = true) {
         let currentDateTimeCreated = image.dateTimeCreated
-        let currentDocumentEdited = mainWindow?.isDocumentEdited ?? true
+        let currentDocumentEdited = isDocumentEdited
         undoManager.registerUndo(withTarget: self) { target in
             target.update(image, timestamp: currentDateTimeCreated,
                           documentEdited: currentDocumentEdited)
         }
         image.dateTimeCreated = timestamp
-        Task { @MainActor [weak self] in
-            self?.mainWindow?.isDocumentEdited = documentEdited
-        }
+        isDocumentEdited = documentEdited
     }
 
     // Add track overlays to the map

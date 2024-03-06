@@ -12,7 +12,7 @@ extension AppState {
     // return true if the save menu item should be disabled
 
     func saveDisabled() -> Bool {
-        return saveInProgress || !(mainWindow?.isDocumentEdited ?? false)
+        return saveInProgress || !isDocumentEdited
     }
 
     // Update image files with changed timestamp/location info
@@ -41,7 +41,7 @@ extension AppState {
         saveIssues = [:]
         let imagesToSave = tvm.images
         undoManager.removeAllActions()
-        mainWindow?.isDocumentEdited = false
+        isDocumentEdited = false
 
         // process the images in the background.
         Task {
@@ -98,9 +98,7 @@ extension AppState {
             }
 
             if !saveIssues.isEmpty {
-                DispatchQueue.main.async {
-                    self.mainWindow?.isDocumentEdited = true
-                }
+                isDocumentEdited = true
                 addSheet(type: .saveErrorSheet)
             }
             saveInProgress = false

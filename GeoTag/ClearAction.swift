@@ -14,7 +14,7 @@ extension AppState {
     // return true if the Clear Image List meny item should be disabled
 
     var clearDisabled: Bool {
-        tvm.images.isEmpty || (mainWindow?.isDocumentEdited ?? false)
+        tvm.images.isEmpty || isDocumentEdited
     }
 
     func clearImageListAction() {

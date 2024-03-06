@@ -12,7 +12,7 @@ extension AppState {
     // return true if the discard menu item should be disabled
 
     func discardChangesDisabled() -> Bool {
-        return !(mainWindow?.isDocumentEdited ?? false)
+        return !isDocumentEdited
     }
 
     // walk through the array of images calling the revert() function
@@ -23,6 +23,6 @@ extension AppState {
             tvm.images[index].revert()
         }
         undoManager.removeAllActions()
-        mainWindow?.isDocumentEdited = false
+        isDocumentEdited = false
     }
 }

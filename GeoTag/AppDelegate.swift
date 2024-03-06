@@ -46,7 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 return .terminateCancel
             }
 
-            if let edited = state.mainWindow?.isDocumentEdited, edited {
+            if state.isDocumentEdited {
                 state.confirmationMessage =
                     "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
                 state.confirmationAction = terminateIgnoringEdits
@@ -62,7 +62,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @MainActor
     func terminateIgnoringEdits() {
-        state?.mainWindow?.isDocumentEdited = false
+        state?.isDocumentEdited = false
         NSApp.terminate(NSApp)
     }
 

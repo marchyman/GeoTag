@@ -15,6 +15,13 @@ final class AppState {
 
     var applicationBusy = false
     var inspectorPresented = false
+    var isDocumentEdited = false {
+        didSet {
+            Task { @MainActor in
+                self.mainWindow?.isDocumentEdited = isDocumentEdited
+            }
+        }
+    }
 
     // The Apps main window
     var mainWindow: NSWindow?
