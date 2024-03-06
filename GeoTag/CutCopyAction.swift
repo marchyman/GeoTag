@@ -22,7 +22,7 @@ extension AppState {
     // A cut is a copy followed by a delete
 
     func cutAction(context: ImageModel? = nil,
-                   textfield: Double?? = nil) {
+                   textfield: Bool?? = nil) {
         if textfield == nil {
             copyAction(context: context, textfield: textfield)
             deleteAction(context: context, textfield: textfield)
@@ -32,7 +32,7 @@ extension AppState {
     }
 
     func copyAction(context: ImageModel? = nil,
-                    textfield: Double?? = nil) {
+                    textfield: Bool?? = nil) {
         if textfield == nil {
             if let context {
                 tvm.select(context: context)

@@ -16,7 +16,7 @@ extension AppState {
     // allowed when editing a textfield (textfield != nil)
 
     func pasteDisabled(context: ImageModel? = nil,
-                       textfield: Double?? = nil) -> Bool {
+                       textfield: Bool?? = nil) -> Bool {
         guard textfield == nil else { return false }
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
@@ -30,7 +30,7 @@ extension AppState {
     // paste into all selected images
 
     func pasteAction(context: ImageModel? = nil,
-                     textfield: Double?? = nil) {
+                     textfield: Bool?? = nil) {
         if textfield == nil {
             if let context {
                 tvm.select(context: context)

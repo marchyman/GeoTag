@@ -31,6 +31,7 @@ struct MapPaneView: View {
                         Spacer()
                         MapSearchView(text: $mapViewModel.searchString)
                             .frame(width: geometry.size.width * 0.80)
+                            .focusedValue(\.textfieldBinding, .constant(true))
                             .onChange(of: mapViewModel.searchString) {
                                 searchMap(for: mapViewModel.searchString)
                             }

@@ -35,7 +35,7 @@ extension AppState {
                 pairedImage.elevation = elevation
             }
         }
-        mainWindow?.isDocumentEdited = documentedEdited
+        self.mainWindow?.isDocumentEdited = documentedEdited
     }
 
     // Update an image with a new timestamp.  Image is identifid by its ID

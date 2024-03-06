@@ -27,7 +27,7 @@ extension AppState {
     // in the given context or all selected images when the context is nil.
 
     func deleteAction(context: ImageModel? = nil,
-                      textfield: Double?? = nil) {
+                      textfield: Bool?? = nil) {
         if textfield == nil {
             if let context {
                 tvm.select(context: context)

@@ -64,7 +64,7 @@ extension GeoTagApp {
 // has focus.  Used when processing pasteboard commands.
 
 struct FocusedTextfield: FocusedValueKey {
-    typealias Value = Binding<Double?>
+    typealias Value = Binding<Bool?>
 }
 
 extension FocusedValues {

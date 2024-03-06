@@ -16,7 +16,7 @@ extension AppState {
     // when textfield is non-nil a textfield is being edited and selectAll
     // is limited to the field.  Otherwise select all items in the table.
 
-    func selectAllAction(textfield: Double??) {
+    func selectAllAction(textfield: Bool??) {
         if textfield == nil {
             tvm.selection = Set(tvm.images.map { $0.id })
         } else {
