@@ -1,5 +1,7 @@
 Bugs:
 
+* Pane placement not being remembered
+
 * If you select an image that has a location and them pan the map to some
   other locations, changing the map style causes the map to re-center around
   the pin if the pin is off screen. If the pin is on screen the map viewport
