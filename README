@@ -42,7 +42,9 @@ version 4.15.
 
 * Exiting full screen mode no longer leaves the image and map panes out
   of the window.
-  
+
+* ExifTool version 12.77
+
 ### Known bugs
 
 * [internal] isDocumentEdited from main thread only
