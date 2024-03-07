@@ -46,7 +46,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 return .terminateCancel
             }
 
-            if state.isDocumentEdited {
+            if state.isDocumentEdited
+               && state.tvm.images.contains(where: { $0.changed }) {
                 state.confirmationMessage =
                     "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
                 state.confirmationAction = terminateIgnoringEdits

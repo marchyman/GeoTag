@@ -40,14 +40,15 @@ version 4.15.
 
 * Table columns can be moved.
 
+* The prompt to save images when GeoTag quits will no longer be displayed
+  when no changes would be made.
+
 * Exiting full screen mode no longer leaves the image and map panes out
   of the window.
 
 * ExifTool version 12.77
 
 ### Known bugs
-
-* [internal] isDocumentEdited from main thread only
 
 * Clicking on the cancel (x) in the map search field looks up a position
   matching the current content before clearing the content.  No lookup
@@ -60,6 +61,8 @@ version 4.15.
 
 * Sometimes ⌘Z appears to do nothing, requiring a second invocation to
   perform the undo action.
+
+* paste sometimes not enabled after cut. Can Not reproduce on demand.
 
 ### See the file named *History* for earlier changes and bug fixes
 

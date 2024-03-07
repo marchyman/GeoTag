@@ -39,7 +39,7 @@ extension AppState {
         // tasks.
         saveInProgress = true
         saveIssues = [:]
-        let imagesToSave = tvm.images
+        let imagesToSave = tvm.images.filter { $0.changed }
         undoManager.removeAllActions()
         isDocumentEdited = false
 
@@ -57,7 +57,7 @@ extension AppState {
             let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
 
             await withTaskGroup(of: SaveStatus.self) { group in
-                for image in imagesToSave where image.changed {
+                for image in imagesToSave {
                     group.addTask { [self] in
                         @AppStorage(AppSettings.createSidecarFilesKey) var createSidecarFiles = false
                         var errorDescription: String?
