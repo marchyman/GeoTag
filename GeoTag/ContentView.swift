@@ -16,21 +16,21 @@ struct ContentView: View {
 
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
+    @AppStorage(AppSettings.splitHContentKey) var hPercent = 0.45
 
     @State private var removeOldFiles = false
 
     var body: some View {
         @Bindable var state = state
-        HSplitView {
-            ZStack {
-                ImageTableView(tvm: state.tvm)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                if state.applicationBusy {
-                    ProgressView("Processing files...")
+        SplitHView(percent: $hPercent) {
+            ImageTableView(tvm: state.tvm)
+                .overlay {
+                    if state.applicationBusy {
+                        ProgressView("Processing files...")
+                    }
                 }
-            }
+        } right: {
             ImageMapView()
-                .frame(minWidth: 512)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
