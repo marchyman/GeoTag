@@ -16,6 +16,8 @@ struct LatLonSectionView: View {
     @State private var latitude: Double?
     @State private var longitude: Double?
 
+    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+
     var body: some View {
         VStack {
             LabeledContent("Latitude:") {
@@ -47,7 +49,13 @@ struct LatLonSectionView: View {
                 isFocused = false
             }
         }
+        .onAppear {
+            loadCoordinates()
+        }
         .onChange(of: image.location) {
+            loadCoordinates()
+        }
+        .onChange(of: coordFormat) {
             loadCoordinates()
         }
     }
