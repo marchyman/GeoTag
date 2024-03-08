@@ -16,7 +16,7 @@ extension AppState {
         if let image = context {
             return image.location == nil
         }
-        return tvm.mostSelected == nil
+        return tvm.mostSelected?.location == nil
     }
 
     // A cut is a copy followed by a delete
