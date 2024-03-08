@@ -9,6 +9,10 @@ import SwiftUI
 
 struct ImageInspectorForm: View {
     @Bindable var image: ImageModel
+    // swiftlint:disable line_length
+    let notice: LocalizedStringKey =
+        "Latitude and Longitude updates will not take effect until the *return* key is pressed when either field is active."
+    // swiftlint:enable line_length
 
     var body: some View {
         Form {
@@ -17,6 +21,9 @@ struct ImageInspectorForm: View {
             }
             Section("Location") {
                 LatLonSectionView(image: image)
+            }
+            Section("Notice") {
+                Text(notice)
             }
         }
     }

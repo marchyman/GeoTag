@@ -64,6 +64,9 @@ version 4.15.
 
 * paste sometimes not enabled after cut. Can Not reproduce on demand.
 
+* Changing the Coordinate Format in system settings is not shown in the
+  image table or inspector until the coordinate is changed.
+
 ### See the file named *History* for earlier changes and bug fixes
 
 ---

@@ -16,13 +16,10 @@ struct ImageInspectorView: View {
         if let image = state.tvm.mostSelected {
             ImageInspectorForm(image: image)
         } else {
-            VStack {
-                ContentUnavailableView {
-                    Image(systemName: "magnifyingglass.circle")
-                } description: {
-                    Text("Please select an image")
-                }
-                Spacer()
+            ContentUnavailableView {
+                Image(systemName: "magnifyingglass.circle")
+            } description: {
+                Text("Please select an image")
             }
         }
     }
