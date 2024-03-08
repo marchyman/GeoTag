@@ -45,9 +45,11 @@ struct MapView: NSViewRepresentable {
 
         // re-center the map
         if mvm.reCenter {
-            DispatchQueue.main.async {
-                mvm.reCenter = false
-                view.setCenter(mvm.currentMapCenter, animated: false)
+            Task {
+                await MainActor.run {
+                    mvm.reCenter = false
+                    view.setCenter(mvm.currentMapCenter, animated: false)
+                }
             }
         }
     }
@@ -93,8 +95,10 @@ struct MapView: NSViewRepresentable {
             view.addAnnotation(mvm.mainPin!)
             if !view.visibleMapRect.contains(MKMapPoint(mvm.mainPin!.coordinate)) {
                 // I don't know of a better way?
-                DispatchQueue.main.async {
-                    view.setCenter(mvm.mainPin!.coordinate, animated: false)
+                Task {
+                    await MainActor.run {
+                        view.setCenter(mvm.mainPin!.coordinate, animated: false)
+                    }
                 }
             }
         } else {
@@ -130,11 +134,13 @@ struct MapView: NSViewRepresentable {
             view.addOverlays(mvm.mapLines)
             if let span = mvm.mapSpan {
                 // I still don't know of a better way?
-                DispatchQueue.main.async {
-                    view.setRegion(MKCoordinateRegion(center: mvm.currentMapCenter,
-                                                      span: span),
-                                   animated: false)
-                    mvm.refreshTracks = false
+                Task {
+                    await MainActor.run {
+                        view.setRegion(MKCoordinateRegion(center: mvm.currentMapCenter,
+                                                          span: span),
+                                       animated: false)
+                        mvm.refreshTracks = false
+                    }
                 }
             }
         }

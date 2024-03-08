@@ -76,17 +76,19 @@ extension AppState {
             // Discard tracks menu item doesn't see the approriate state.
 
             let updatedTracks = await tracks(for: gpxURLs)
-            DispatchQueue.main.async {
-                for (path, track) in updatedTracks {
-                    if let track {
-                        self.updateTracks(gpx: track)
-                        self.gpxGoodFileNames.append(path)
-                        self.gpxTracks.append(track)
-                    } else {
-                        self.gpxBadFileNames.append(path)
+            Task {
+                await MainActor.run {
+                    for (path, track) in updatedTracks {
+                        if let track {
+                            self.updateTracks(gpx: track)
+                            self.gpxGoodFileNames.append(path)
+                            self.gpxTracks.append(track)
+                        } else {
+                            self.gpxBadFileNames.append(path)
+                        }
                     }
+                    self.addSheet(type: .gpxFileNameSheet)
                 }
-                self.addSheet(type: .gpxFileNameSheet)
             }
         }
 

@@ -88,8 +88,10 @@ extension AppState {
         }
 
         // Alert if there are any old files
-        DispatchQueue.main.async {
-            self.removeOldFiles = !self.oldFiles.isEmpty
+        Task {
+            await MainActor.run {
+                self.removeOldFiles = !self.oldFiles.isEmpty
+            }
         }
     }
 
