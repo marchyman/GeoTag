@@ -95,6 +95,7 @@ struct TimestampView: View {
 }
 struct LatitudeView: View {
     let image: ImageModel
+    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
     var body: some View {
         Text(image.formattedLatitude)
@@ -104,6 +105,7 @@ struct LatitudeView: View {
 
 struct LongitudeView: View {
     let image: ImageModel
+    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
     var body: some View {
         Text(image.formattedLongitude)
