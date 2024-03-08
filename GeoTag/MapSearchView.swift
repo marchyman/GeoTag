@@ -39,7 +39,12 @@ struct MapSearchView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: NSSearchField, context: Context) {
-        nsView.stringValue = text
+        // thread sanitizer may complain without this.
+        Task {
+            await MainActor.run {
+                nsView.stringValue = text
+            }
+        }
     }
 
     func makeSearchesMenu() -> NSMenu {
