@@ -65,7 +65,7 @@ rm -rf ${WORK}
 # codesign the dmg
 # use `security find-identity -p codesigning` to find the appropriate ID
 
-codesign --deep --force --verify --verbose -s 1BC4A429EE4A7435268EA4605A22C535E80049EE --options runtime ${DMG}
+codesign --deep --force --verify --verbose -s E10980DD546B75632A861AD57624C14BDA78A155 --options runtime ${DMG}
 
 # Upload to apple for notarization.
 
