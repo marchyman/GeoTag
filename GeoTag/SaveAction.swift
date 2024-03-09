@@ -65,11 +65,13 @@ extension AppState {
                         let sandbox: Sandbox
                         do {
                             sandbox = try Sandbox(image)
+                            if createSidecarFiles {
+                                sandbox.makeSidecarFile()
+                            }
                             if makeBackup {
                                 try await sandbox.makeBackupFile(backupFolder: url!)
                             }
-                            try await sandbox.saveChanges(timeZone: timeZone,
-                                                          createSidecarFile: createSidecarFiles)
+                            try await sandbox.saveChanges(timeZone: timeZone)
                             if tagFiles {
                                 try await sandbox.setTag(name: tagName)
                             }

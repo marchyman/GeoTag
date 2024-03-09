@@ -62,7 +62,7 @@ final class ImageModel: Identifiable {
     // URL of related sidecar file (if one exists) and an NSFilePresenter
     // to access the sidecar/XMP file
     let sidecarURL: URL
-    let sidecarExists: Bool
+    var sidecarExists: Bool
     let xmpPresenter: XmpPresenter
 
     // Optional ID of a paired file.  Used when both raw and jpeg versions

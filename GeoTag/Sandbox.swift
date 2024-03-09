@@ -73,6 +73,16 @@ struct Sandbox {
         return saveFileURL
     }
 
+    // Make a sidecar file for the given image
+
+    func makeSidecarFile() {
+        if !image.sidecarExists {
+            // create a sidecar file for this image.
+            image.sidecarExists = true
+            Exiftool.helper.makeSidecar(from: self)
+        }
+    }
+
     // Copy a sidecar file into the backup folder. The copy is done this
     // way as otherise a copy of of related item (sidecar file) to a
     // security scoped folder using FileManager's copyItem(at:to:) throws
@@ -125,15 +135,10 @@ struct Sandbox {
 
     // use exiftool to save metadata changes to the image file
 
-    func saveChanges(timeZone: TimeZone?, createSidecarFile: Bool) async throws {
+    func saveChanges(timeZone: TimeZone?) async throws {
         NSFileCoordinator.addFilePresenter(xmpPresenter)
         defer { NSFileCoordinator.removeFilePresenter(xmpPresenter) }
-        if createSidecarFile && !image.sidecarExists {
-            // create a sidecar file for this image.
-            Exiftool.helper.makeSidecar(from: self)
-        }
         try await Exiftool.helper.update(from: self, timeZone: timeZone)
-        NSFileCoordinator.removeFilePresenter(xmpPresenter)
     }
 
     // add a Finder tag to the image file
