@@ -11,7 +11,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(AppState.self) var state
-    var mvm = MapViewModel.shared
+//    var mvm = MapViewModel.shared
 
     // values stored in AppStorage
     @AppStorage(AppSettings.addTagsKey) var addTags = false
@@ -80,15 +80,15 @@ struct SettingsView: View {
                 Group {
                     ColorPicker("GPS Track Color:",
                                 selection: $trackColor)
-                        .onChange(of: trackColor.rawValue) {
-                            mvm.refreshTracks = true
-                        }
+//                        .onChange(of: trackColor.rawValue) {
+//                            mvm.refreshTracks = true
+//                        }
                         .padding(.horizontal)
                         .help("Select the color used to display GPS tracks on the map.")
 
                     TextField("GPS Track width:",
                               value: $trackWidth, format: .number)
-                        .onSubmit { mvm.refreshTracks = true }
+//                        .onSubmit { mvm.refreshTracks = true }
                         .padding([.horizontal, .bottom])
                         .frame(maxWidth: 190)
                         .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
