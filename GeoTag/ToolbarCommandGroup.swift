@@ -22,7 +22,7 @@ extension GeoTagApp {
                 }
                 .keyboardShortcut("d")
 
-                PinOptionView()
+//                PinOptionView()
             }
 
         }
@@ -37,15 +37,15 @@ struct ShowHidePinView: View {
     }
 }
 
-struct PinOptionView: View {
-    @Bindable var mapViewModel = MapViewModel.shared
-
-    var body: some View {
-        Picker("Pin view options…", selection: $mapViewModel.onlyMostSelected) {
-            Text("Show pins for all selected items").tag(false)
-            Text("Show pin for most selected item").tag(true)
-        }
-        .pickerStyle(.menu)
-
-    }
-}
+//struct PinOptionView: View {
+//    @Bindable var mapViewModel = MapViewModel.shared
+//
+//    var body: some View {
+//        Picker("Pin view options…", selection: $mapViewModel.onlyMostSelected) {
+//            Text("Show pins for all selected items").tag(false)
+//            Text("Show pin for most selected item").tag(true)
+//        }
+//        .pickerStyle(.menu)
+//
+//    }
+//}

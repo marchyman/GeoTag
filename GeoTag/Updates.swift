@@ -86,18 +86,18 @@ extension AppState {
                     }
                     let mapLine = MKPolyline(coordinates: &trackCoords,
                                              count: segment.points.count)
-                    MapViewModel.shared.mapLines.append(mapLine)
+//                    MapViewModel.shared.mapLines.append(mapLine)
                     newOverlay = true
                 }
             }
         }
-        if newOverlay {
-            MapViewModel.shared.mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
-                                                           longitudeDelta: maxlon - minlon)
-            MapViewModel.shared.currentMapCenter = Coords(latitude: (minlat + maxlat)/2,
-                                                          longitude: (minlon + maxlon)/2)
-            MapViewModel.shared.refreshTracks = true
-        }
+//        if newOverlay {
+//            MapViewModel.shared.mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
+//                                                           longitudeDelta: maxlon - minlon)
+//            MapViewModel.shared.currentMapCenter = Coords(latitude: (minlat + maxlat)/2,
+//                                                          longitude: (minlon + maxlon)/2)
+//            MapViewModel.shared.refreshTracks = true
+//        }
     }
 
 }

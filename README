@@ -16,6 +16,12 @@ GeoTag 5.2 will require macOS Sonoma or later.  Use GeoTag 5.1 if running on
 macOS Ventura.  Those running earlier versions of macOS can use GeoTag
 version 4.15.
 
+## branch newmaps
+
+- strip out the NSViewRepresentable MapView and replace it with a
+  SwiftUI implementation. I think I'll be able to do everything but
+  drag pins.
+
 ## GeoTag 5.2.1 (not available in app store)
 
 The minimum window size has been reduced.  The screen can now be adjusted

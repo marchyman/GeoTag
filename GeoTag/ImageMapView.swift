@@ -14,7 +14,7 @@ struct ImageMapView: View {
         SplitVView(percent: $percent) {
             ImageView()
         } bottom: {
-            MapPaneView()
+            MapView()
         }
     }
 }
