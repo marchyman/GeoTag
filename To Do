@@ -1,9 +1,9 @@
 Known bugs are now in the README file
 
-Misc:
-* Clean up lat/lon display, perhaps use NumberFormater?
-
 Feature Requests:
-* check for overlap before assigning locations from a track log and warn the user
-  if necessary.
-* Handle location display of video files.  Exiftool does not allow updates.
+- Would be nice to be able to copy the coordinates in the same format as
+  selected in the GeoTag settings.
+- Access images in the photos library.
+- check for overlap before assigning locations from a track log and warn the
+  user if necessary.
+- Handle location display of video files.  Exiftool does not allow updates.
