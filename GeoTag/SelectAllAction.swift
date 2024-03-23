@@ -9,14 +9,15 @@ import AppKit
 
 extension AppState {
 
-    func selectAllDisabled() -> Bool {
+    func selectAllDisabled(textfield: Bool? = nil) -> Bool {
+        guard textfield == nil else { return false }
         return tvm.images.isEmpty
     }
 
     // when textfield is non-nil a textfield is being edited and selectAll
     // is limited to the field.  Otherwise select all items in the table.
 
-    func selectAllAction(textfield: Bool??) {
+    func selectAllAction(textfield: Bool?) {
         if textfield == nil {
             tvm.selection = Set(tvm.images.map { $0.id })
         } else {

@@ -10,8 +10,10 @@ import SwiftUI
 // Replace the toolbar commands group.  The command has nothing to do with a
 // toolbar, but it's in the View menu which is where I want it.
 
-extension GeoTagApp {
-    var toolbarCommandGroup: some Commands {
+struct ToolbarCommands: Commands {
+    var state: AppState
+
+    var body: some Commands {
         CommandGroup(replacing: .toolbar) {
             Section {
                 Button {

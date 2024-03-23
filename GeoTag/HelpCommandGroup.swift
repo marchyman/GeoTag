@@ -9,8 +9,9 @@ import SwiftUI
 
 // Add a help button that will link to the on line help pages.
 
-extension GeoTagApp {
-    var helpCommandGroup: some Commands {
+struct HelpCommands: Commands {
+
+    var body: some Commands {
         CommandGroup(replacing: .help) {
             Button("GeoTag 5 Help…") {
                 let helpPagePath = "https://www.snafu.org/GeoTag/GeoTag5Help/"
