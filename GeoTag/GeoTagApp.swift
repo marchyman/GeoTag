@@ -11,18 +11,7 @@ import SwiftUI
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @State var state = AppState()
-    @State var location = LocationModel(latitude: 0, longitude: 0)
 
-    init() {
-        @AppStorage("AppSettings.initialMapLatitudeKey")
-            var initialMapLatitude = 37.7244
-        @AppStorage("AppSettings.initialMapLongitudeKey")
-            var initialMapLongitude = -122.4381
-
-        _location =
-            State(initialValue: LocationModel(latitude: initialMapLatitude,
-                                              longitude: initialMapLongitude))
-    }
     let windowWidth = 1000.0
     let windowHeight = 700.0
 
@@ -35,7 +24,6 @@ struct GeoTagApp: App {
                     appDelegate.state = state
                 }
                 .environment(state)
-                .environment(location)
         }
         .commands {
             NewItemCommands(state: state)

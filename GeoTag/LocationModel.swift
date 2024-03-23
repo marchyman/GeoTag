@@ -10,13 +10,23 @@ import SwiftUI
 
 @Observable
 final class LocationModel {
+    // shared instance
+    static let shared: LocationModel = .init()
+
     // map center
     var center: Coordinate
     var mainPin: Coordinate?
     var otherPins: [Coordinate] = []
 
-    init(latitude: Double, longitude: Double) {
-        self.center = Coordinate(latitude: latitude, longitude: longitude)
+    // use the shared instance
+
+    private init() {
+        @AppStorage("AppSettings.initialMapLatitudeKey")
+            var initialMapLatitude = 37.7244
+        @AppStorage("AppSettings.initialMapLongitudeKey")
+            var initialMapLongitude = -122.4381
+        self.center = Coordinate(latitude: initialMapLatitude,
+                                 longitude: initialMapLongitude)
     }
 }
 

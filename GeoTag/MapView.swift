@@ -9,7 +9,7 @@ import MapKit
 import SwiftUI
 
 struct MapView: View {
-    @Environment(LocationModel.self) var location
+    let location = LocationModel.shared
 
     @AppStorage("AppSettings.initialMapDistanceKey")
         var initialMapDistance = 50000.0
@@ -140,5 +140,4 @@ struct MapView: View {
 
 #Preview {
     MapView()
-        .environment(LocationModel(latitude: 37.7244, longitude: -122.4381))
 }
