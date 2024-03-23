@@ -16,8 +16,10 @@ extension AppState {
     // all selected items
 
     func deleteDisabled(context: ImageModel? = nil,
-                        textfield: Bool? = nil) -> Bool {
-        guard textfield == nil else { return false }
+                        textfield: String? = nil) -> Bool {
+        if let textfield {
+            return textfield.isEmpty
+        }
         if let image = context {
             return image.location == nil
         }
@@ -29,7 +31,7 @@ extension AppState {
     // in the given context or all selected images when the context is nil.
 
     func deleteAction(context: ImageModel? = nil,
-                      textfield: Bool? = nil) {
+                      textfield: String? = nil) {
         if textfield == nil {
             if let context {
                 tvm.select(context: context)

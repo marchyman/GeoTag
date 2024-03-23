@@ -11,13 +11,13 @@ import SwiftUI
 // toolbar, but it's in the View menu which is where I want it.
 
 struct ToolbarCommands: Commands {
-    var state: AppState
-
     var body: some Commands {
         CommandGroup(replacing: .toolbar) {
             Section {
                 Button {
-                    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+                    @AppStorage(AppSettings.hideInvalidImagesKey)
+                        var hideInvalidImages = false
+
                     hideInvalidImages.toggle()
                 } label: {
                     ShowHidePinView()
