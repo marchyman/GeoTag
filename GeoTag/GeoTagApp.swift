@@ -42,7 +42,7 @@ struct GeoTagApp: App {
             SaveItemCommands(state: state)
             UndoRedoCommands(state: state)
             PasteboardCommands(state: state)
-            ToolbarCommands(state: state)
+            ToolbarCommands()
             HelpCommands()
         }
 
@@ -75,7 +75,7 @@ extension GeoTagApp {
 // has focus.  Used when processing pasteboard commands.
 
 struct FocusedTextfield: FocusedValueKey {
-    typealias Value = Bool
+    typealias Value = String
 }
 
 extension FocusedValues {

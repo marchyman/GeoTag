@@ -29,7 +29,7 @@ struct SearchBarView: View {
                         .disableAutocorrection(true)
                         .focusEffectDisabled()
                         .focused(mapFocus, equals: .search)
-                        .focusedValue(\.textfieldFocused, true)
+                        .focusedValue(\.textfieldFocused, workingSearch)
                         .overlay(alignment: .trailing) {
                             if mapFocus.wrappedValue == .search {
                                 Button {

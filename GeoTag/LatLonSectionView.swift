@@ -18,6 +18,11 @@ struct LatLonSectionView: View {
 
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
+    // notice the bogus "focused" value given to .focusedValue. I need a non
+    // empty string to enable cut/copy/paste/select all and this was an
+    // easy way to do it with a side effect of the menu commands being
+    // enabled even when the fields are empty.
+
     var body: some View {
         VStack {
             LabeledContent("Latitude:") {
@@ -26,7 +31,7 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldFocused, true)
+                    .focusedValue(\.textfieldFocused, "focused")
             }
 
             LabeledContent("Longitude:") {
@@ -35,7 +40,7 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldFocused, true)
+                    .focusedValue(\.textfieldFocused, "focused")
             }
         }
         .textFieldStyle(.roundedBorder)
