@@ -8,7 +8,7 @@
 import MapKit
 import SwiftUI
 
-fileprivate let maxPlaces = 10
+private let maxPlaces = 10
 
 // an Observable class to hold map search state
 
@@ -126,4 +126,3 @@ extension SearchState {
         }
     }
 }
-

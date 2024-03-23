@@ -65,7 +65,7 @@ extension AppState {
         var newOverlay = false
         for track in gpx.tracks {
             for segment in track.segments {
-                var trackCoords = segment.points.map {
+                let trackCoords = segment.points.map {
                     CLLocationCoordinate2D(latitude: $0.lat,
                                            longitude: $0.lon)
                 }
@@ -84,20 +84,19 @@ extension AppState {
                             maxlon = loc.longitude
                         }
                     }
-                    let mapLine = MKPolyline(coordinates: &trackCoords,
-                                             count: segment.points.count)
-//                    MapViewModel.shared.mapLines.append(mapLine)
+                    LocationModel.shared.add(track: trackCoords)
                     newOverlay = true
                 }
             }
         }
-//        if newOverlay {
-//            MapViewModel.shared.mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
-//                                                           longitudeDelta: maxlon - minlon)
-//            MapViewModel.shared.currentMapCenter = Coords(latitude: (minlat + maxlat)/2,
-//                                                          longitude: (minlon + maxlon)/2)
-//            MapViewModel.shared.refreshTracks = true
-//        }
+        if newOverlay {
+            LocationModel.shared.trackSpan =
+                MKCoordinateSpan(latitudeDelta: maxlat - minlat,
+                                 longitudeDelta: maxlon - minlon)
+            LocationModel.shared.center =
+                Coordinate(latitude: (minlat + maxlat)/2,
+                           longitude: (minlon + maxlon)/2)
+        }
     }
 
 }

@@ -9,11 +9,11 @@ import MapKit
 import SwiftUI
 
 struct MapContextMenu: View {
-    @AppStorage("AppSettings.initialMapLatitudeKey")
+    @AppStorage(AppSettings.initialMapLatitudeKey)
         var initialMapLatitude = 37.7244
-    @AppStorage("AppSettings.initialMapLongitudeKey")
+    @AppStorage(AppSettings.initialMapLongitudeKey)
         var initialMapLongitude = -122.4381
-    @AppStorage("AppSettings.initialMapDistanceKey")
+    @AppStorage(AppSettings.initialMapDistanceKey)
         var initialMapDistance = 50000.0
 
     @Binding var camera: MapCamera?
