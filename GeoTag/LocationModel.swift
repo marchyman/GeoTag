@@ -18,6 +18,8 @@ final class LocationModel {
     var mainPin: Coordinate?
     var otherPins: [Coordinate] = []
 
+    var refreshTracks: Bool = false
+
     // use the shared instance
 
     private init() {
