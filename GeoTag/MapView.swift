@@ -42,7 +42,7 @@ struct MapView: View {
                         }
                         .annotationTitles(.hidden)
                     }
-                    ForEach(location.otherPins) { pin in
+                    ForEach(location.visablePins) { pin in
                         Annotation("other pin",
                                    coordinate: pin.coord2D,
                                    anchor: .bottom) {
