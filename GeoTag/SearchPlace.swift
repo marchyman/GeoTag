@@ -51,4 +51,3 @@ extension SearchPlace: Equatable, Hashable {
         hasher.combine(coordinate.longitude)
     }
 }
-

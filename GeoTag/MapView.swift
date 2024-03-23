@@ -11,10 +11,12 @@ import SwiftUI
 struct MapView: View {
     let location = LocationModel.shared
 
-    @AppStorage("AppSettings.initialMapDistanceKey")
+    @AppStorage(AppSettings.initialMapDistanceKey)
         var initialMapDistance = 50000.0
-    @AppStorage("AppSettings.mapStyleKey")
+    @AppStorage(AppSettings.mapStyleKey)
         var savedMapStyle = MapStyleName.standard.rawValue
+    @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
+    @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
     @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var camera: MapCamera?
@@ -30,7 +32,8 @@ struct MapView: View {
     var body: some View {
         ZStack {
             MapReader { mapProxy in
-                Map(position: $cameraPosition) {
+                Map(position: $cameraPosition,
+                    bounds: location.mapCameraBounds) {
                     if let pin = location.mainPin {
                         Annotation("main pin",
                                    coordinate: pin.coord2D,
@@ -47,6 +50,10 @@ struct MapView: View {
                         }
                         .annotationTitles(.hidden)
                     }
+                    ForEach(location.tracks) { track in
+                        MapPolyline(coordinates: track.track)
+                            .stroke(trackColor, lineWidth: trackWidth)
+                    }
                 }
                 .focusable()
                 .focusEffectDisabled()
@@ -62,6 +69,7 @@ struct MapView: View {
                 }
                 .onMapCameraChange(frequency: .onEnd) { context in
                     camera = context.camera
+                    location.trackSpan = nil
                 }
                 .onAppear {
                     cameraPosition =

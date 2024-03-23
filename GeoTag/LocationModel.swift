@@ -18,17 +18,41 @@ final class LocationModel {
     var mainPin: Coordinate?
     var otherPins: [Coordinate] = []
 
-    var refreshTracks: Bool = false
+    // control displayed map tracks
+    var tracks: [Track] = []
+    var trackSpan: MKCoordinateSpan?
+    var mapCameraBounds: MapCameraBounds? {
+        if let trackSpan {
+            let region = MKCoordinateRegion(center: center.coord2D,
+                                            span: trackSpan)
+            return MapCameraBounds(centerCoordinateBounds: region)
+        }
+        return nil
+    }
 
     // use the shared instance
 
     private init() {
-        @AppStorage("AppSettings.initialMapLatitudeKey")
+        @AppStorage(AppSettings.initialMapLatitudeKey)
             var initialMapLatitude = 37.7244
-        @AppStorage("AppSettings.initialMapLongitudeKey")
+        @AppStorage(AppSettings.initialMapLongitudeKey)
             var initialMapLongitude = -122.4381
         self.center = Coordinate(latitude: initialMapLatitude,
                                  longitude: initialMapLongitude)
+    }
+}
+
+// An identifiable container for tracks
+
+extension LocationModel {
+    struct Track: Identifiable {
+        let id = UUID()
+        let track: [Coords]
+    }
+
+    func add(track: [Coords]) {
+        let newTrack = Track(track: track)
+        tracks.append(newTrack)
     }
 }
 
