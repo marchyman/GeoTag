@@ -17,6 +17,10 @@ final class LocationModel {
     var center: Coordinate
     var mainPin: Coordinate?
     var otherPins: [Coordinate] = []
+    var showOtherPins: Bool = false
+    var visablePins: [Coordinate] {
+        return showOtherPins ? otherPins : []
+    }
 
     // control displayed map tracks
     var tracks: [Track] = []
