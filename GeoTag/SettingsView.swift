@@ -11,16 +11,21 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(AppState.self) var state
-//    var mvm = MapViewModel.shared
+    let location = LocationModel.shared
 
     // values stored in AppStorage
     @AppStorage(AppSettings.addTagsKey) var addTags = false
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.coordFormatKey)
+        var coordFormat: AppSettings.CoordFormat = .deg
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.createSidecarFilesKey) var createSidecarFiles = false
-    @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
-    @AppStorage(AppSettings.updateFileModificationTimesKey) var updateFileModificationTimes = false
-    @AppStorage(AppSettings.updateGPSTimestampsKey) var updateGPSTimestamps = false
+    @AppStorage(AppSettings.createSidecarFilesKey)
+        var createSidecarFiles = false
+    @AppStorage(AppSettings.disablePairedJpegsKey)
+        var disablePairedJpegs = false
+    @AppStorage(AppSettings.updateFileModificationTimesKey)
+        var updateFileModificationTimes = false
+    @AppStorage(AppSettings.updateGPSTimestampsKey)
+        var updateGPSTimestamps = false
     @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
     @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
@@ -80,15 +85,15 @@ struct SettingsView: View {
                 Group {
                     ColorPicker("GPS Track Color:",
                                 selection: $trackColor)
-//                        .onChange(of: trackColor.rawValue) {
-//                            mvm.refreshTracks = true
-//                        }
+                        .onChange(of: trackColor.rawValue) {
+                            location.refreshTracks = true
+                        }
                         .padding(.horizontal)
                         .help("Select the color used to display GPS tracks on the map.")
 
                     TextField("GPS Track width:",
                               value: $trackWidth, format: .number)
-//                        .onSubmit { mvm.refreshTracks = true }
+                        .onSubmit { location.refreshTracks = true }
                         .padding([.horizontal, .bottom])
                         .frame(maxWidth: 190)
                         .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
