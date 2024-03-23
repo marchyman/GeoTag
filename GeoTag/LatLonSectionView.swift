@@ -26,7 +26,7 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldBinding, .constant(true))
+                    .focusedValue(\.textfieldFocused, true)
             }
 
             LabeledContent("Longitude:") {
@@ -35,7 +35,7 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldBinding, .constant(true))
+                    .focusedValue(\.textfieldFocused, true)
             }
         }
         .textFieldStyle(.roundedBorder)

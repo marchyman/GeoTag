@@ -12,7 +12,6 @@ struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @State var state = AppState()
     @State var location = LocationModel(latitude: 0, longitude: 0)
-    @FocusedBinding(\.textfieldBinding) var textfieldBinding
 
     init() {
         @AppStorage("AppSettings.initialMapLatitudeKey")
@@ -39,12 +38,12 @@ struct GeoTagApp: App {
                 .environment(location)
         }
         .commands {
-            newItemCommandGroup
-            saveItemCommandGroup
-            undoRedoCommandGroup
-            pasteBoardCommandGroup
-            toolbarCommandGroup
-            helpCommandGroup
+            NewItemCommands(state: state)
+            SaveItemCommands(state: state)
+            UndoRedoCommands(state: state)
+            PasteboardCommands(state: state)
+            ToolbarCommands(state: state)
+            HelpCommands()
         }
 
         Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
@@ -76,11 +75,11 @@ extension GeoTagApp {
 // has focus.  Used when processing pasteboard commands.
 
 struct FocusedTextfield: FocusedValueKey {
-    typealias Value = Binding<Bool?>
+    typealias Value = Bool
 }
 
 extension FocusedValues {
-    var textfieldBinding: FocusedTextfield.Value? {
+    var textfieldFocused: FocusedTextfield.Value? {
         get { self[FocusedTextfield.self] }
         set { self[FocusedTextfield.self] = newValue }
     }

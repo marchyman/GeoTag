@@ -9,8 +9,10 @@ import SwiftUI
 
 // Add a file open command in place of New...
 
-extension GeoTagApp {
-    var newItemCommandGroup: some Commands {
+struct NewItemCommands: Commands {
+    var state: AppState
+
+    var body: some Commands {
         CommandGroup(replacing: .newItem) {
             Button("Open…") { state.showOpenPanel() }
                 .keyboardShortcut("o")
