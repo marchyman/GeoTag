@@ -55,9 +55,6 @@ struct MapView: View {
                         .stroke(trackColor, lineWidth: trackWidth)
                 }
             }
-//            .focusable()
-//            .focusEffectDisabled()
-//            .focused(mapFocus, equals: .map)
             .mapStyle(translateLocal(mapStyleName))
             .mapControls {
                 MapCompass()
@@ -97,6 +94,8 @@ struct MapView: View {
                 }
             }
             .onTapGesture(coordinateSpace: .named("map")) { position in
+                mapFocus.wrappedValue = nil  // get rid of any search views
+
                 // when using local coordinate space the conversion from
                 // coordinate space to location is off by an amount that
                 // varies with window/pane size.
