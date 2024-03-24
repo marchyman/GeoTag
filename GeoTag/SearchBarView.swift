@@ -11,8 +11,7 @@ struct SearchBarView: View {
     @Environment(\.colorScheme) var colorScheme
 
     var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
-    var searchState: SearchState
-    @State private var workingSearch: String = ""
+    @Bindable var searchState: SearchState
 
     private var searchBackgroundColor: Color {
         colorScheme == .dark ? .black : .white
@@ -25,16 +24,17 @@ struct SearchBarView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.primary)
-                    TextField(" Search location", text: $workingSearch )
+                    TextField(" Search location", text: $searchState.searchText )
                         .disableAutocorrection(true)
                         .focusEffectDisabled()
                         .focused(mapFocus, equals: .search)
-                        .focusedValue(\.textfieldFocused, workingSearch)
+                        .focusedValue(\.textfieldFocused,
+                                       searchState.searchText)
                         .overlay(alignment: .trailing) {
                             if mapFocus.wrappedValue == .search {
                                 Button {
-                                    mapFocus.wrappedValue = .map
-                                    workingSearch = ""
+                                    mapFocus.wrappedValue = nil
+                                    searchState.searchText = ""
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
                                 }
@@ -43,12 +43,10 @@ struct SearchBarView: View {
                             }
                         }
                         .onKeyPress(.escape) {
-                            mapFocus.wrappedValue = .map
+                            mapFocus.wrappedValue = nil
                             return .handled
                         }
                         .onSubmit {
-                            searchState.searchText = workingSearch
-                            workingSearch = ""
                             mapFocus.wrappedValue = .searchList
                         }
                 }

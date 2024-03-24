@@ -55,9 +55,9 @@ struct MapView: View {
                         .stroke(trackColor, lineWidth: trackWidth)
                 }
             }
-            .focusable()
-            .focusEffectDisabled()
-            .focused(mapFocus, equals: .map)
+//            .focusable()
+//            .focusEffectDisabled()
+//            .focused(mapFocus, equals: .map)
             .mapStyle(translateLocal(mapStyleName))
             .mapControls {
                 MapCompass()
@@ -87,8 +87,13 @@ struct MapView: View {
             }
             .onChange(of: searchState.searchResult) {
                 if let searchResult = searchState.searchResult {
-                    showSearch(result: searchResult)
+                    setCameraPosition(to: searchResult.coordinate.coord2D)
                     searchState.searchText = ""
+                }
+            }
+            .onChange(of: state.tvm.mostSelected) {
+                if let location = state.tvm.mostSelected?.location {
+                    setCameraPosition(to: location)
                 }
             }
             .onTapGesture(coordinateSpace: .named("map")) { position in
@@ -118,9 +123,9 @@ struct MapView: View {
 
     // Change the camera position to the given place
 
-    private func showSearch(result: SearchPlace) {
+    private func setCameraPosition(to coords: Coords) {
         location.cameraPosition =
-            .camera(.init(centerCoordinate: .init(result.coordinate),
+            .camera(.init(centerCoordinate: coords,
                           distance: location.cameraDistance))
     }
 

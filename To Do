@@ -11,7 +11,9 @@ Feature Requests:
 WIP notes
 
 - undo/redo disabled.  Why?
-- Map not positioned when item selected and pin is off screen
-- search does not update selected items.  Should it? It did with the old maps
-  but I'm now thinking that might not be the right thing to do.
 - handle display of other selected pins
+- Perhaps the map should not be focusable as now moving a pin takes the
+  focus from the table.
+- however ^^^ when that is done the search field dos not go away if the
+  user clicks on the map.   Hmmmm.
+- Escape in the search text field does not get rid of SearchView.
