@@ -12,8 +12,5 @@ WIP notes
 
 - undo/redo disabled.  Why?
 - handle display of other selected pins
-- Perhaps the map should not be focusable as now moving a pin takes the
-  focus from the table.
-- however ^^^ when that is done the search field dos not go away if the
-  user clicks on the map.   Hmmmm.
 - Escape in the search text field does not get rid of SearchView.
+  Interesting in that the exact same code works in a test app.
