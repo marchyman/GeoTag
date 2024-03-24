@@ -22,6 +22,10 @@ final class LocationModel {
         return showOtherPins ? otherPins : []
     }
 
+    // approximation of current map rectangle.
+    @ObservationIgnored
+    var mapRect: MKMapRect?
+
     // control displayed map tracks
     var tracks: [Track] = []
     var trackSpan: MKCoordinateSpan?
@@ -55,7 +59,10 @@ extension LocationModel {
         if let coords = image?.location {
             mainPin = Coordinate(latitude: coords.latitude,
                                  longitude: coords.longitude)
-            // if pin is not visible center the map on the pin.
+            if let mapRect, mapRect.contains(.init(mainPin!.coord2D)) {
+                return
+            }
+            center = mainPin!
         } else {
             mainPin = nil
         }
