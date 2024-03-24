@@ -19,11 +19,7 @@ final class TableViewModel {
         }
     }
     var selected: [ImageModel] = []
-    var mostSelected: ImageModel? {
-        didSet {
-            LocationModel.shared.updatePin(from: mostSelected)
-        }
-    }
+    var mostSelected: ImageModel?
 
     // get/set an image from the table of images  given its ID.
     subscript(id: ImageModel.ID?) -> ImageModel {

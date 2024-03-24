@@ -21,6 +21,5 @@ extension AppState {
     func discardTracksAction() {
         gpxTracks = []
         LocationModel.shared.tracks = []
-        LocationModel.shared.trackSpan = nil
     }
 }
