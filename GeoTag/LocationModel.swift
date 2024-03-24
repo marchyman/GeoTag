@@ -46,6 +46,21 @@ final class LocationModel {
     }
 }
 
+// Main Pin location update functions.   The location of the main pin is
+// set from the table view's most selected item and may be modified by
+// clicking on the map.
+
+extension LocationModel {
+    func location(from image: ImageModel?) {
+        if let coords = image?.location {
+            mainPin = Coordinate(latitude: coords.latitude,
+                                 longitude: coords.longitude)
+            // if pin is not visible center the map on the pin.
+        } else {
+            mainPin = nil
+        }
+    }
+}
 // An identifiable container for tracks
 
 extension LocationModel {

@@ -19,7 +19,11 @@ final class TableViewModel {
         }
     }
     var selected: [ImageModel] = []
-    var mostSelected: ImageModel?
+    var mostSelected: ImageModel? {
+        didSet {
+            LocationModel.shared.location(from: mostSelected)
+        }
+    }
 
     // get/set an image from the table of images  given its ID.
     subscript(id: ImageModel.ID?) -> ImageModel {
