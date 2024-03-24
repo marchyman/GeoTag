@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchBarView: View {
     @Environment(\.colorScheme) var colorScheme
 
-    var mapFocus: FocusState<MapView.MapFocus?>.Binding
+    var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
     var searchState: SearchState
     @State private var workingSearch: String = ""
 
@@ -60,7 +60,7 @@ struct SearchBarView: View {
 }
 
 #Preview {
-    @FocusState var mapFocus: MapView.MapFocus?
+    @FocusState var mapFocus: MapWrapperView.MapFocus?
     return SearchBarView(mapFocus: $mapFocus, searchState: SearchState())
         .frame(maxWidth: 400)
         .padding()

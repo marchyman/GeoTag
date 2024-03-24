@@ -9,6 +9,10 @@ import MapKit
 import SwiftUI
 
 struct MapView: View {
+    var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
+    @Binding var searchState: SearchState
+    let mapHeight: Double
+
     let location = LocationModel.shared
 
     @AppStorage(AppSettings.initialMapDistanceKey)
@@ -18,122 +22,91 @@ struct MapView: View {
     @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
-    @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var camera: MapCamera?
     @State private var mapStyleName: MapStyleName = .standard
-    @State var searchState: SearchState = .init()
-
-    enum MapFocus: Hashable {
-        case map, search, searchList
-    }
-
-    @FocusState var mapFocus: MapFocus?
 
     var body: some View {
-        ZStack {
-            GeometryReader { geometry in
-                MapReader { mapProxy in
-                    Map(position: $cameraPosition) {
-                        if let pin = location.mainPin {
-                            Annotation("main pin",
-                                       coordinate: pin.coord2D,
-                                       anchor: .bottom) {
-                                Image(.pin)
-                            }
-                                       .annotationTitles(.hidden)
-                        }
-                        ForEach(location.visablePins) { pin in
-                            Annotation("other pin",
-                                       coordinate: pin.coord2D,
-                                       anchor: .bottom) {
-                                Image(.otherPin)
-                            }
-                                       .annotationTitles(.hidden)
-                        }
-                        ForEach(location.tracks) { track in
-                            MapPolyline(coordinates: track.track)
-                                .stroke(trackColor, lineWidth: trackWidth)
-                        }
+        @Bindable var location = location
+        MapReader { mapProxy in
+            Map(position: $location.cameraPosition) {
+                if let pin = location.mainPin {
+                    Annotation("main pin",
+                               coordinate: pin.coord2D,
+                               anchor: .bottom) {
+                        Image(.pin)
                     }
-                    .focusable()
-                    .focusEffectDisabled()
-                    .focused($mapFocus, equals: .map)
-                    .mapStyle(translateLocal(mapStyleName))
-                    .mapControls {
-                        MapCompass()
-                        MapPitchToggle()
-                    }
-                    .contextMenu {
-                        MapContextMenu(camera: $camera,
-                                       mapStyleName: $mapStyleName)
-                    }
-                    .onMapCameraChange(frequency: .onEnd) { context in
-                        camera = context.camera
-                        location.mapRect = context.rect
-                        location.trackSpan = nil
-                    }
-                    .onAppear {
-                        cameraPosition =
-                            .camera(.init(centerCoordinate: location.center.coord2D,
-                                          distance: initialMapDistance))
-                        mapStyleName = .init(rawValue: savedMapStyle) ?? .standard
-                    }
-                    .onChange(of: mapStyleName) {
-                        savedMapStyle = mapStyleName.rawValue
-                    }
-                    .onChange(of: searchState.searchResult) {
-                        if let searchResult = searchState.searchResult {
-                            showSearch(result: searchResult)
-                            searchState.searchText = ""
-                        }
-                    }
-                    .onTapGesture(coordinateSpace: .named("map")) { position in
-                        // when using local coordinate space the conversion from
-                        // coordinate space to location is off by an amount that
-                        // varies with window/pane size.
-
-                        // when using a named coordinate space the Y coordinate
-                        // is calculated from the wrong axis. Therefore the
-                        // MapReader is wraped in a GeometryReader so I can
-                        // subtract the given positions Y coord from the height
-                        // of the frame to get an accurate conversion. I hope.
-                        // I'm writing this before actually testing if that
-                        // works. Update: it worked.
-                        if location.mainPin != nil {
-                            let convertedPosition =
-                                CGPoint(x: position.x,
-                                        y: geometry.size.height - position.y)
-                            if let coords = mapProxy.convert(convertedPosition,
-                                                             from: .named("map")) {
-                                location.center = .init(coords)
-                                location.mainPin = .init(coords)
-                            }
-                        }
-                    }
+                               .annotationTitles(.hidden)
                 }
-                .coordinateSpace(.named("map"))
+                ForEach(location.visablePins) { pin in
+                    Annotation("other pin",
+                               coordinate: pin.coord2D,
+                               anchor: .bottom) {
+                        Image(.otherPin)
+                    }
+                               .annotationTitles(.hidden)
+                }
+                ForEach(location.tracks) { track in
+                    MapPolyline(coordinates: track.track)
+                        .stroke(trackColor, lineWidth: trackWidth)
+                }
             }
+            .focusable()
+            .focusEffectDisabled()
+            .focused(mapFocus, equals: .map)
+            .mapStyle(translateLocal(mapStyleName))
+            .mapControls {
+                MapCompass()
+                MapPitchToggle()
+            }
+            .contextMenu {
+                MapContextMenu(camera: $camera,
+                               mapStyleName: $mapStyleName)
+            }
+            .onMapCameraChange(frequency: .onEnd) { context in
+                camera = context.camera
+                location.mapRect = context.rect
+                location.trackSpan = nil
+            }
+            .onAppear {
+                location.cameraPosition =
+                    .camera(.init(centerCoordinate: location.center.coord2D,
+                                  distance: initialMapDistance))
+                mapStyleName = .init(rawValue: savedMapStyle) ?? .standard
+            }
+            .onChange(of: mapStyleName) {
+                savedMapStyle = mapStyleName.rawValue
+            }
+            .onChange(of: searchState.searchResult) {
+                if let searchResult = searchState.searchResult {
+                    showSearch(result: searchResult)
+                    searchState.searchText = ""
+                }
+            }
+            .onTapGesture(coordinateSpace: .named("map")) { position in
+                // when using local coordinate space the conversion from
+                // coordinate space to location is off by an amount that
+                // varies with window/pane size.
 
-            // Using map overlay and/or safeAreaInset caused run time errors
-            // instead of tracking those down I'll use a ZStack
-
-            SearchBarView(mapFocus: $mapFocus, searchState: searchState)
-                .padding(30)
-                .frame(width: 400)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-
-            if mapFocus == .search || mapFocus == .searchList {
-                GeometryReader { geometry in
-                    SearchView(mapFocus: $mapFocus,
-                               searchState: searchState,
-                               cameraPosition: cameraPosition)
-                    .frame(width: 400)
-                    .frame(maxWidth: .infinity,
-                           maxHeight: geometry.size.height - 70,
-                           alignment: .topLeading)
+                // when using a named coordinate space the Y coordinate
+                // is calculated from the wrong axis. Therefore the
+                // MapReader is wraped in a GeometryReader so I can
+                // subtract the given positions Y coord from the height
+                // of the frame to get an accurate conversion. I hope.
+                // I'm writing this before actually testing if that
+                // works. Update: it worked.
+                if location.mainPin != nil {
+                    let convertedPosition =
+                    CGPoint(x: position.x,
+                            y: mapHeight - position.y)
+                    if let coords = mapProxy.convert(convertedPosition,
+                                                     from: .named("map")) {
+                        location.center = .init(coords)
+                        location.mainPin = .init(coords)
+                    }
                 }
             }
         }
+        .coordinateSpace(.named("map"))
     }
 
     // Change the camera position to the given place
@@ -141,7 +114,7 @@ struct MapView: View {
     private func showSearch(result: SearchPlace) {
         location.center = result.coordinate
         location.mainPin = location.center
-        cameraPosition =
+        location.cameraPosition =
             .camera(.init(centerCoordinate: .init(result.coordinate),
                           distance: camera?.distance ?? initialMapDistance))
     }
@@ -163,5 +136,10 @@ struct MapView: View {
 }
 
 #Preview {
-    MapView()
+    @State var searchState: SearchState = .init()
+    @FocusState var mapFocus: MapWrapperView.MapFocus?
+    return MapView(mapFocus: $mapFocus,
+                   searchState: $searchState,
+                   mapHeight: 512.0)
+                .frame(width: 512, height: 512)
 }

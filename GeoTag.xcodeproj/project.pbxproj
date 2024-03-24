@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */; };
+		4902B3BE2BB0A6F30038ED19 /* MapWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4902B3BD2BB0A6F30038ED19 /* MapWrapperView.swift */; };
 		490A17A42960BA1D00ACA9FD /* CutCopyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */; };
 		490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A72960DE9B00ACA9FD /* PasteAction.swift */; };
 		490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A929611DD900ACA9FD /* TextColors.swift */; };
@@ -80,6 +81,7 @@
 /* Begin PBXFileReference section */
 		490114B5297117FD00193BD3 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelThumbnail.swift; sourceTree = "<group>"; };
+		4902B3BD2BB0A6F30038ED19 /* MapWrapperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWrapperView.swift; sourceTree = "<group>"; };
 		490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutCopyAction.swift; sourceTree = "<group>"; };
 		490A17A72960DE9B00ACA9FD /* PasteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteAction.swift; sourceTree = "<group>"; };
 		490A17A929611DD900ACA9FD /* TextColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextColors.swift; sourceTree = "<group>"; };
@@ -318,6 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				49AB65D22BAE389A0050EC60 /* LocationModel.swift */,
+				4902B3BD2BB0A6F30038ED19 /* MapWrapperView.swift */,
 				49AB65D02BAE38510050EC60 /* MapView.swift */,
 				49AB65D42BAE397D0050EC60 /* MapContextMenu.swift */,
 				49AB65D62BAE398A0050EC60 /* MapStylePicker.swift */,
@@ -486,6 +489,7 @@
 				498AE5B1294AB78A0063B1C1 /* XmpPresenter.swift in Sources */,
 				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
 				4952EF0B2A5F2D0200277508 /* LatLonSectionView.swift in Sources */,
+				4902B3BE2BB0A6F30038ED19 /* MapWrapperView.swift in Sources */,
 				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
 				49AB65DF2BAE3AF20050EC60 /* SearchView.swift in Sources */,
 				49AB65DB2BAE3ADC0050EC60 /* SearchPlace.swift in Sources */,
