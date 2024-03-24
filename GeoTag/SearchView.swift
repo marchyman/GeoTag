@@ -22,7 +22,8 @@ struct SearchView: View {
         VStack(alignment: .leading) {
             List(selection: $selection) {
                 Button {
-                    mapFocus.wrappedValue = .map
+                    searchState.searchText = ""
+                    mapFocus.wrappedValue = nil
                 } label: {
                     Text("Cancel")
                         .padding(.horizontal)
@@ -83,10 +84,11 @@ struct SearchView: View {
         .padding()
         .onChange(of: selection) {
             searchState.saveResult(selection)
-            mapFocus.wrappedValue = .map
+            mapFocus.wrappedValue = nil
         }
         .onKeyPress(.escape) {
-            mapFocus.wrappedValue = .map
+            searchState.searchText = ""
+            mapFocus.wrappedValue = nil
             return .handled
         }
         .task(id: searchState.searchText) {
@@ -94,7 +96,7 @@ struct SearchView: View {
                 searchResponse = []
             } else {
                 search(for: searchState.searchText)
-                mapFocus.wrappedValue = .searchList
+//                mapFocus.wrappedValue = .searchList
             }
         }
     }

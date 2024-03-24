@@ -15,7 +15,7 @@ import SwiftUI
 struct SearchPlace: Identifiable, Codable {
     var name: String
     var coordinate: Coordinate
-    var id: String { return name }
+    var id = UUID()
 
     init(from item: MKMapItem) {
         self.name = item.name ?? "unknown"
