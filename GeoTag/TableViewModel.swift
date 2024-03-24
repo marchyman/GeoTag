@@ -21,7 +21,7 @@ final class TableViewModel {
     var selected: [ImageModel] = []
     var mostSelected: ImageModel? {
         didSet {
-            LocationModel.shared.location(from: mostSelected)
+            LocationModel.shared.updatePin(from: mostSelected)
         }
     }
 

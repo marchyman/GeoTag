@@ -9,10 +9,9 @@ import MapKit
 import SwiftUI
 
 struct SearchView: View {
-    var mapFocus: FocusState<MapView.MapFocus?>.Binding
+    var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
 
     var searchState: SearchState
-    let cameraPosition: MapCameraPosition
 
     @State private var searchResponse: [SearchPlace] = []
     @State private var selection: SearchPlace?
@@ -104,7 +103,7 @@ struct SearchView: View {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         // search the entire world
-        let center = cameraPosition.camera?.centerCoordinate ??
+        let center = LocationModel.shared.cameraPosition.camera?.centerCoordinate ??
             CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
         let span = MKCoordinateSpan(latitudeDelta: 90.0,
                                     longitudeDelta: 180.0)
@@ -124,8 +123,7 @@ struct SearchView: View {
 }
 
 #Preview {
-    @FocusState var mapFocus: MapView.MapFocus?
+    @FocusState var mapFocus: MapWrapperView.MapFocus?
     return SearchView(mapFocus: $mapFocus,
-                      searchState: SearchState(),
-                      cameraPosition: .automatic)
+                      searchState: SearchState())
 }

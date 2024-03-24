@@ -22,6 +22,8 @@ final class LocationModel {
         return showOtherPins ? otherPins : []
     }
 
+    var cameraPosition: MapCameraPosition = .automatic
+
     // approximation of current map rectangle.
     @ObservationIgnored
     var mapRect: MKMapRect?
@@ -55,7 +57,7 @@ final class LocationModel {
 // clicking on the map.
 
 extension LocationModel {
-    func location(from image: ImageModel?) {
+    func updatePin(from image: ImageModel?) {
         if let coords = image?.location {
             mainPin = Coordinate(latitude: coords.latitude,
                                  longitude: coords.longitude)
