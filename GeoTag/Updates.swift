@@ -93,9 +93,9 @@ extension AppState {
             LocationModel.shared.trackSpan =
                 MKCoordinateSpan(latitudeDelta: maxlat - minlat,
                                  longitudeDelta: maxlon - minlon)
-            LocationModel.shared.center =
-                Coordinate(latitude: (minlat + maxlat)/2,
-                           longitude: (minlon + maxlon)/2)
+//            LocationModel.shared.center =
+//                Coordinate(latitude: (minlat + maxlat)/2,
+//                           longitude: (minlon + maxlon)/2)
         }
     }
 
