@@ -31,71 +31,87 @@ struct MapView: View {
 
     var body: some View {
         ZStack {
-            MapReader { mapProxy in
-                Map(position: $cameraPosition,
-                    bounds: location.mapCameraBounds) {
-                    if let pin = location.mainPin {
-                        Annotation("main pin",
-                                   coordinate: pin.coord2D,
-                                   anchor: .bottom) {
-                            Image(.pin)
+            GeometryReader { geometry in
+                MapReader { mapProxy in
+                    Map(position: $cameraPosition) {
+                        if let pin = location.mainPin {
+                            Annotation("main pin",
+                                       coordinate: pin.coord2D,
+                                       anchor: .bottom) {
+                                Image(.pin)
+                            }
+                                       .annotationTitles(.hidden)
                         }
-                        .annotationTitles(.hidden)
-                    }
-                    ForEach(location.visablePins) { pin in
-                        Annotation("other pin",
-                                   coordinate: pin.coord2D,
-                                   anchor: .bottom) {
-                            Image(.otherPin)
+                        ForEach(location.visablePins) { pin in
+                            Annotation("other pin",
+                                       coordinate: pin.coord2D,
+                                       anchor: .bottom) {
+                                Image(.otherPin)
+                            }
+                                       .annotationTitles(.hidden)
                         }
-                        .annotationTitles(.hidden)
+                        ForEach(location.tracks) { track in
+                            MapPolyline(coordinates: track.track)
+                                .stroke(trackColor, lineWidth: trackWidth)
+                        }
                     }
-                    ForEach(location.tracks) { track in
-                        MapPolyline(coordinates: track.track)
-                            .stroke(trackColor, lineWidth: trackWidth)
+                    .focusable()
+                    .focusEffectDisabled()
+                    .focused($mapFocus, equals: .map)
+                    .mapStyle(translateLocal(mapStyleName))
+                    .mapControls {
+                        MapCompass()
+                        MapPitchToggle()
+                    }
+                    .contextMenu {
+                        MapContextMenu(camera: $camera,
+                                       mapStyleName: $mapStyleName)
+                    }
+                    .onMapCameraChange(frequency: .onEnd) { context in
+                        camera = context.camera
+                        location.mapRect = context.rect
+                        location.trackSpan = nil
+                    }
+                    .onAppear {
+                        cameraPosition =
+                            .camera(.init(centerCoordinate: location.center.coord2D,
+                                          distance: initialMapDistance))
+                        mapStyleName = .init(rawValue: savedMapStyle) ?? .standard
+                    }
+                    .onChange(of: mapStyleName) {
+                        savedMapStyle = mapStyleName.rawValue
+                    }
+                    .onChange(of: searchState.searchResult) {
+                        if let searchResult = searchState.searchResult {
+                            showSearch(result: searchResult)
+                            searchState.searchText = ""
+                        }
+                    }
+                    .onTapGesture(coordinateSpace: .named("map")) { position in
+                        // when using local coordinate space the conversion from
+                        // coordinate space to location is off by an amount that
+                        // varies with window/pane size.
+
+                        // when using a named coordinate space the Y coordinate
+                        // is calculated from the wrong axis. Therefore the
+                        // MapReader is wraped in a GeometryReader so I can
+                        // subtract the given positions Y coord from the height
+                        // of the frame to get an accurate conversion. I hope.
+                        // I'm writing this before actually testing if that
+                        // works. Update: it worked.
+                        if location.mainPin != nil {
+                            let convertedPosition =
+                                CGPoint(x: position.x,
+                                        y: geometry.size.height - position.y)
+                            if let coords = mapProxy.convert(convertedPosition,
+                                                             from: .named("map")) {
+                                location.center = .init(coords)
+                                location.mainPin = .init(coords)
+                            }
+                        }
                     }
                 }
-                .focusable()
-                .focusEffectDisabled()
-                .focused($mapFocus, equals: .map)
-                .mapStyle(translateLocal(mapStyleName))
-                .mapControls {
-                    MapCompass()
-                    MapPitchToggle()
-                }
-                .contextMenu {
-                    MapContextMenu(camera: $camera,
-                                   mapStyleName: $mapStyleName)
-                }
-                .onMapCameraChange(frequency: .onEnd) { context in
-                    camera = context.camera
-                    location.trackSpan = nil
-                }
-                .onAppear {
-                    cameraPosition =
-                        .camera(.init(centerCoordinate: location.center.coord2D,
-                                      distance: initialMapDistance))
-                    mapStyleName = .init(rawValue: savedMapStyle) ?? .standard
-                }
-                .onChange(of: mapStyleName) {
-                    savedMapStyle = mapStyleName.rawValue
-                }
-                .onChange(of: searchState.searchResult) {
-                    if let searchResult = searchState.searchResult {
-                        showSearch(result: searchResult)
-                        searchState.searchText = ""
-                    }
-                }
-                .onTapGesture { position in
-                    // the position seems to be off my 25 points in y?
-                    let adjustedPosition = CGPoint(x: position.x,
-                                                   y: position.y + 25)
-                    if let coords = mapProxy.convert(adjustedPosition,
-                                                     from: .local) {
-                        location.center = .init(coords)
-                        location.mainPin = location.center
-                    }
-                }
+                .coordinateSpace(.named("map"))
             }
 
             // Using map overlay and/or safeAreaInset caused run time errors
