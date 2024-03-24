@@ -7,3 +7,11 @@ Feature Requests:
 - check for overlap before assigning locations from a track log and warn the
   user if necessary.
 - Handle location display of video files.  Exiftool does not allow updates.
+
+WIP notes
+
+- undo/redo disabled.  Why?
+- Map not positioned when item selected and pin is off screen
+- search does not update selected items.  Should it? It did with the old maps
+  but I'm now thinking that might not be the right thing to do.
+- handle display of other selected pins

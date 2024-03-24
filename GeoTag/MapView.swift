@@ -9,6 +9,7 @@ import MapKit
 import SwiftUI
 
 struct MapView: View {
+    @Environment(AppState.self) var state
     var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
     @Binding var searchState: SearchState
     let mapHeight: Double
@@ -19,7 +20,7 @@ struct MapView: View {
         var initialMapLatitude = 37.7244
     @AppStorage(AppSettings.initialMapLongitudeKey)
         var initialMapLongitude = -122.4381
-   @AppStorage(AppSettings.initialMapDistanceKey)
+    @AppStorage(AppSettings.initialMapDistanceKey)
         var initialMapDistance = 50000.0
     @AppStorage(AppSettings.mapStyleKey)
         var savedMapStyle = MapStyleName.standard.rawValue
@@ -33,22 +34,22 @@ struct MapView: View {
         @Bindable var location = location
         MapReader { mapProxy in
             Map(position: $location.cameraPosition) {
-                if let pin = location.mainPin {
+                if let coords = state.tvm.mostSelected?.location {
                     Annotation("main pin",
-                               coordinate: pin.coord2D,
+                               coordinate: coords,
                                anchor: .bottom) {
                         Image(.pin)
                     }
-                               .annotationTitles(.hidden)
+                    .annotationTitles(.hidden)
                 }
-                ForEach(location.visablePins) { pin in
-                    Annotation("other pin",
-                               coordinate: pin.coord2D,
-                               anchor: .bottom) {
-                        Image(.otherPin)
-                    }
-                               .annotationTitles(.hidden)
-                }
+//                ForEach(location.visablePins) { pin in
+//                    Annotation("other pin",
+//                               coordinate: pin.coord2D,
+//                               anchor: .bottom) {
+//                        Image(.otherPin)
+//                    }
+//                               .annotationTitles(.hidden)
+//                }
                 ForEach(location.tracks) { track in
                     MapPolyline(coordinates: track.track)
                         .stroke(trackColor, lineWidth: trackWidth)
@@ -71,8 +72,6 @@ struct MapView: View {
                 if let distance = camera?.distance {
                     location.cameraDistance = distance
                 }
-                location.mapRect = context.rect
-                location.trackSpan = nil
             }
             .onAppear {
                 let center = Coords(latitude: initialMapLatitude,
@@ -104,13 +103,12 @@ struct MapView: View {
                 // of the frame to get an accurate conversion. I hope.
                 // I'm writing this before actually testing if that
                 // works. Update: it worked.
-                if location.mainPin != nil {
-                    let convertedPosition =
-                    CGPoint(x: position.x,
-                            y: mapHeight - position.y)
+                if let image = state.tvm.mostSelected {
+                    let convertedPosition = CGPoint(x: position.x,
+                                                    y: mapHeight - position.y)
                     if let coords = mapProxy.convert(convertedPosition,
                                                      from: .named("map")) {
-                        location.mainPin = .init(coords)
+                        state.update(image, location: coords)
                     }
                 }
             }
@@ -121,7 +119,6 @@ struct MapView: View {
     // Change the camera position to the given place
 
     private func showSearch(result: SearchPlace) {
-        location.mainPin = result.coordinate
         location.cameraPosition =
             .camera(.init(centerCoordinate: .init(result.coordinate),
                           distance: location.cameraDistance))
