@@ -14,7 +14,6 @@ final class LocationModel {
     static let shared: LocationModel = .init()
 
     // map center
-    var center: Coordinate
     var mainPin: Coordinate?
     var otherPins: [Coordinate] = []
     var showOtherPins: Bool = false
@@ -23,6 +22,7 @@ final class LocationModel {
     }
 
     var cameraPosition: MapCameraPosition = .automatic
+    var cameraDistance: Double = 0
 
     // approximation of current map rectangle.
     @ObservationIgnored
@@ -31,24 +31,17 @@ final class LocationModel {
     // control displayed map tracks
     var tracks: [Track] = []
     var trackSpan: MKCoordinateSpan?
-    var mapCameraBounds: MapCameraBounds? {
-        if let trackSpan {
-            let region = MKCoordinateRegion(center: center.coord2D,
-                                            span: trackSpan)
-            return MapCameraBounds(centerCoordinateBounds: region)
-        }
-        return nil
-    }
-
-    // use the shared instance
+//    var mapCameraBounds: MapCameraBounds? {
+//        if let trackSpan {
+//            let region = MKCoordinateRegion(center: center.coord2D,
+//                                            span: trackSpan)
+//            return MapCameraBounds(centerCoordinateBounds: region)
+//        }
+//        return nil
+//    }
 
     private init() {
-        @AppStorage(AppSettings.initialMapLatitudeKey)
-            var initialMapLatitude = 37.7244
-        @AppStorage(AppSettings.initialMapLongitudeKey)
-            var initialMapLongitude = -122.4381
-        self.center = Coordinate(latitude: initialMapLatitude,
-                                 longitude: initialMapLongitude)
+        // use the shared instance
     }
 }
 
@@ -64,7 +57,9 @@ extension LocationModel {
             if let mapRect, mapRect.contains(.init(mainPin!.coord2D)) {
                 return
             }
-            center = mainPin!
+            cameraPosition =
+                .camera(.init(centerCoordinate: mainPin!.coord2D,
+                              distance: cameraDistance))
         } else {
             mainPin = nil
         }

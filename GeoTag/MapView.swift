@@ -15,7 +15,11 @@ struct MapView: View {
 
     let location = LocationModel.shared
 
-    @AppStorage(AppSettings.initialMapDistanceKey)
+    @AppStorage(AppSettings.initialMapLatitudeKey)
+        var initialMapLatitude = 37.7244
+    @AppStorage(AppSettings.initialMapLongitudeKey)
+        var initialMapLongitude = -122.4381
+   @AppStorage(AppSettings.initialMapDistanceKey)
         var initialMapDistance = 50000.0
     @AppStorage(AppSettings.mapStyleKey)
         var savedMapStyle = MapStyleName.standard.rawValue
@@ -64,13 +68,19 @@ struct MapView: View {
             }
             .onMapCameraChange(frequency: .onEnd) { context in
                 camera = context.camera
+                if let distance = camera?.distance {
+                    location.cameraDistance = distance
+                }
                 location.mapRect = context.rect
                 location.trackSpan = nil
             }
             .onAppear {
+                let center = Coords(latitude: initialMapLatitude,
+                                    longitude: initialMapLongitude)
+                location.cameraDistance = initialMapDistance
                 location.cameraPosition =
-                    .camera(.init(centerCoordinate: location.center.coord2D,
-                                  distance: initialMapDistance))
+                    .camera(.init(centerCoordinate: center,
+                                  distance: location.cameraDistance))
                 mapStyleName = .init(rawValue: savedMapStyle) ?? .standard
             }
             .onChange(of: mapStyleName) {
@@ -100,7 +110,6 @@ struct MapView: View {
                             y: mapHeight - position.y)
                     if let coords = mapProxy.convert(convertedPosition,
                                                      from: .named("map")) {
-                        location.center = .init(coords)
                         location.mainPin = .init(coords)
                     }
                 }
@@ -112,11 +121,10 @@ struct MapView: View {
     // Change the camera position to the given place
 
     private func showSearch(result: SearchPlace) {
-        location.center = result.coordinate
-        location.mainPin = location.center
+        location.mainPin = result.coordinate
         location.cameraPosition =
             .camera(.init(centerCoordinate: .init(result.coordinate),
-                          distance: camera?.distance ?? initialMapDistance))
+                          distance: location.cameraDistance))
     }
 
     private func translateLocal(_ mapStyleName: MapStyleName) -> MapStyle {
