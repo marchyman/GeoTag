@@ -14,3 +14,6 @@ WIP notes
 - handle display of other selected pins
 - Escape in the search text field does not get rid of SearchView.
   Interesting in that the exact same code works in a test app.
+- TableView does not update to follow mostSelected if it changes without
+  the table changing, e.g. when using the context menu on an item that
+  is part of the selection.

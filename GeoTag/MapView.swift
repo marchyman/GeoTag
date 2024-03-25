@@ -42,14 +42,14 @@ struct MapView: View {
                     }
                     .annotationTitles(.hidden)
                 }
-//                ForEach(location.visablePins) { pin in
-//                    Annotation("other pin",
-//                               coordinate: pin.coord2D,
-//                               anchor: .bottom) {
-//                        Image(.otherPin)
-//                    }
-//                               .annotationTitles(.hidden)
-//                }
+                ForEach(otherPins()) { image in
+                    Annotation("other pin",
+                               coordinate: image.location!,
+                               anchor: .bottom) {
+                        Image(.otherPin)
+                    }
+                   .annotationTitles(.hidden)
+                }
                 ForEach(location.tracks) { track in
                     MapPolyline(coordinates: track.track)
                         .stroke(trackColor, lineWidth: trackWidth)
@@ -118,6 +118,18 @@ struct MapView: View {
             }
         }
         .coordinateSpace(.named("map"))
+    }
+
+    // return an array of images with coordinates for selected pins that do
+    // not match the mostSelected pin if enabled.
+
+    private func otherPins() -> [ImageModel] {
+        if location.showOtherPins && !state.tvm.selected.isEmpty {
+            let images = state.tvm.selected.filter { $0.location != nil }
+            let mainImage = state.tvm.mostSelected ?? ImageModel()
+            return images.filter { $0.location != mainImage.location }
+        }
+        return []
     }
 
     // Change the camera position to the given place

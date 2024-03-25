@@ -13,14 +13,9 @@ final class LocationModel {
     // shared instance
     static let shared: LocationModel = .init()
 
-    var otherPins: [Coordinate] = []
-    var showOtherPins: Bool = false
-    var visablePins: [Coordinate] {
-        return showOtherPins ? otherPins : []
-    }
-
     var cameraPosition: MapCameraPosition = .automatic
     var cameraDistance: Double = 0
+    var showOtherPins: Bool = false
 
     // displayed map tracks
     var tracks: [Track] = []
@@ -42,33 +37,5 @@ extension LocationModel {
         let newTrack = Track(track: track)
         tracks.append(newTrack)
         cameraPosition = .automatic
-    }
-}
-
-// MARK: Coordinate
-// a codable struct to hold the same data as a CLLocationCoordiante2D
-
-struct Coordinate: Codable, Hashable, Identifiable {
-    var latitude: Double
-    var longitude: Double
-    var id = UUID()
-    var coord2D: CLLocationCoordinate2D {
-        .init(self)
-    }
-}
-
-// conversions between Coordinate and CLLocationCoordinate2d
-
-extension CLLocationCoordinate2D {
-    init(_ coordinate: Coordinate) {
-        self = .init(latitude: coordinate.latitude,
-                     longitude: coordinate.longitude)
-    }
-}
-
-extension Coordinate {
-    init(_ coordinate: CLLocationCoordinate2D) {
-        self = .init(latitude: coordinate.latitude,
-                     longitude: coordinate.longitude)
     }
 }
