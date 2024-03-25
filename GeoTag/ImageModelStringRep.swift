@@ -10,12 +10,13 @@ import Foundation
 // The representation of location and optionally elevation as a string.
 // This value is used for copy and paste.
 // Format: "latitude | longitude | elevation"
+// latitude and longitude are formatted per GeoTag settings
 
 extension ImageModel {
     var stringRepresentation: String {
         var stringRep = ""
-        if let location {
-            stringRep = "\(location.latitude) | \(location.longitude)"
+        if location != nil {
+            stringRep = "\(formattedLatitude) | \(formattedLongitude)"
             if let elevation {
                 stringRep += " | \(elevation)"
             }

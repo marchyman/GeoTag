@@ -1,8 +1,6 @@
 Known bugs are now in the README file
 
 Feature Requests:
-- Would be nice to be able to copy the coordinates in the same format as
-  selected in the GeoTag settings.
 - Access images in the photos library.
 - check for overlap before assigning locations from a track log and warn the
   user if necessary.
@@ -13,3 +11,5 @@ WIP notes
 - undo/redo disabled.  Why?
 - Escape in the search text field does not get rid of SearchView.
   Interesting in that the exact same code works in a test app.
+- Coordinate format change doesn't take effect until some action occurs
+  in the table view.

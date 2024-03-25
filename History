@@ -1,3 +1,41 @@
+## 5.2
+
+### Updates
+
+* The major performance bottleneck has been found and fixed.  Valid, but
+  in hindsight poorly thought out code triggered massive processing to
+  keep the user interface in sync.  Because the processing was being done
+  in an Apple framework it took much trial and error before I figured
+  out what, exactly, I was doing to cause the issue. A few minor performance
+  enhancements were made while looking for the big one.
+* Latitude/Longitude and Timestamp keyboard updates are now done in an
+  inspector.  Control/right click on an entry and select Edit... or click
+  on the inspectory icon (circled i) to show the inspector for the selected
+  item.
+* keyboard driven pasteboard actions are now supported in the location
+  and map search fields.
+* Thumbnail images can now be up to 1024x1024 in size.  They were limited
+  to 512x512.
+* Table columns can be moved.
+* The prompt to save images when GeoTag quits will no longer be displayed
+  when no changes would be made.
+* Exiting full screen mode no longer leaves the image and map panes out
+  of the window.
+* ExifTool version 12.77
+
+### Known bugs
+
+* Clicking on the cancel (x) in the map search field looks up a position
+  matching the current content before clearing the content.  No lookup
+  should occur.
+* If you select an image that has a location and them pan the map to some
+  other locations, changing the map style causes the map to re-center around
+  the pin if the pin is off screen. If the pin is on screen the map viewport
+  doesn’t change.
+* Sometimes ⌘Z appears to do nothing, requiring a second invocation to
+  perform the undo action.
+* paste sometimes not enabled after cut. Can Not reproduce on demand.
+
 ## 5.1
 
 ### Updates
