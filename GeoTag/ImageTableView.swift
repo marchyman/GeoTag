@@ -12,7 +12,7 @@ struct ImageTableView: View {
     @Bindable var tvm: TableViewModel
 
     @AppStorage(AppSettings.imageTableConfigKey)
-    private var columnCustomization: TableColumnCustomization<ImageModel>
+        private var columnCustomization: TableColumnCustomization<ImageModel>
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
 
     // table view column width limits
@@ -24,13 +24,15 @@ struct ImageTableView: View {
     let coordMaxWidth = 160.0
 
     var body: some View {
+        // force the view to notice changes in tvm.mostSelected
+        let mostSelected = tvm.mostSelected
         Table(of: ImageModel.self,
               selection: $tvm.selection,
               sortOrder: $tvm.sortOrder,
               columnCustomization: $columnCustomization) {
 
             TableColumn("Name", value: \.name) { image in
-                NameView(image: image, isSelected: image == tvm.mostSelected)
+                NameView(image: image, isSelected: image == mostSelected)
             }
             .width(min: nameMinWidth, max: nameMaxWidth)
             .customizationID("Name")
@@ -95,7 +97,8 @@ struct TimestampView: View {
 }
 struct LatitudeView: View {
     let image: ImageModel
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.coordFormatKey)
+        var coordFormat: AppSettings.CoordFormat = .deg
 
     var body: some View {
         Text(image.formattedLatitude)
@@ -105,7 +108,8 @@ struct LatitudeView: View {
 
 struct LongitudeView: View {
     let image: ImageModel
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.coordFormatKey)
+        var coordFormat: AppSettings.CoordFormat = .deg
 
     var body: some View {
         Text(image.formattedLongitude)
