@@ -1,5 +1,5 @@
 //
-//  SplitHView.swift
+//  SplitVView.swift
 //  GeoTag
 //
 //  Created by Marco S Hyman on 3/6/24.
