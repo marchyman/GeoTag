@@ -12,7 +12,6 @@ struct MapView: View {
     @Environment(AppState.self) var state
     var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
     @Binding var searchState: SearchState
-    let mapHeight: Double
 
     let location = LocationModel.shared
 
@@ -93,31 +92,17 @@ struct MapView: View {
                     setCameraPosition(to: location)
                 }
             }
-            .onTapGesture(coordinateSpace: .named("map")) { position in
+            .onTapGesture { position in
                 mapFocus.wrappedValue = nil  // get rid of any search views
 
-                // when using local coordinate space the conversion from
-                // coordinate space to location is off by an amount that
-                // varies with window/pane size.
-
-                // when using a named coordinate space the Y coordinate
-                // is calculated from the wrong axis. Therefore the
-                // MapReader is wraped in a GeometryReader so I can
-                // subtract the given positions Y coord from the height
-                // of the frame to get an accurate conversion. I hope.
-                // I'm writing this before actually testing if that
-                // works. Update: it worked.
                 if let image = state.tvm.mostSelected {
-                    let convertedPosition = CGPoint(x: position.x,
-                                                    y: mapHeight - position.y)
-                    if let coords = mapProxy.convert(convertedPosition,
-                                                     from: .named("map")) {
+                    if let coords = mapProxy.convert(position,
+                                                     from: .local) {
                         state.update(image, location: coords)
                     }
                 }
             }
         }
-        .coordinateSpace(.named("map"))
     }
 
     // return an array of images with coordinates for selected pins that do
@@ -160,7 +145,6 @@ struct MapView: View {
     @State var searchState: SearchState = .init()
     @FocusState var mapFocus: MapWrapperView.MapFocus?
     return MapView(mapFocus: $mapFocus,
-                   searchState: $searchState,
-                   mapHeight: 512.0)
+                   searchState: $searchState)
                 .frame(width: 512, height: 512)
 }

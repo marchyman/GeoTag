@@ -24,8 +24,7 @@ struct MapWrapperView: View {
         ZStack {
             GeometryReader { geometry in
                 MapView(mapFocus: $mapFocus,
-                        searchState: $searchState,
-                        mapHeight: geometry.size.height)
+                        searchState: $searchState)
 
                 SearchBarView(mapFocus: $mapFocus, searchState: searchState)
                     .padding(30)
