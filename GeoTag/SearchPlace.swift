@@ -40,6 +40,8 @@ struct SearchPlace: Identifiable, Codable {
     }
 }
 
+// Equatable and Hashable conformance
+
 extension SearchPlace: Equatable, Hashable {
     public static func == (lhs: SearchPlace, rhs: SearchPlace) -> Bool {
         lhs.id == rhs.id
@@ -49,5 +51,32 @@ extension SearchPlace: Equatable, Hashable {
         hasher.combine(name)
         hasher.combine(coordinate.latitude)
         hasher.combine(coordinate.longitude)
+    }
+}
+
+// MARK: Coordinate
+// a codable struct to hold the same data as a CLLocationCoordiante2D
+
+struct Coordinate: Codable, Hashable {
+    var latitude: Double
+    var longitude: Double
+    var coord2D: CLLocationCoordinate2D {
+        .init(self)
+    }
+}
+
+// conversions between Coordinate and CLLocationCoordinate2d
+
+extension CLLocationCoordinate2D {
+    init(_ coordinate: Coordinate) {
+        self = .init(latitude: coordinate.latitude,
+                     longitude: coordinate.longitude)
+    }
+}
+
+extension Coordinate {
+    init(_ coordinate: CLLocationCoordinate2D) {
+        self = .init(latitude: coordinate.latitude,
+                     longitude: coordinate.longitude)
     }
 }
