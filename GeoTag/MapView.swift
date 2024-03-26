@@ -95,15 +95,8 @@ struct MapView: View {
             }
             .gesture(zoomOut)
             .onTapGesture(count: 2) { position in
-                // zoom in around click point on double click
-                if let coords = mapProxy.convert(position,
-                                                 from: .local),
-                   let camera {
-                    withAnimation(.easeInOut) {
-                        location.cameraPosition =
-                            .camera(.init(centerCoordinate: coords,
-                                          distance: camera.distance / 2))
-                    }
+                if let coords = mapProxy.convert(position, from: .local) {
+                    zoom(around: coords)
                 }
             }
             .onTapGesture { position in
@@ -123,11 +116,19 @@ struct MapView: View {
     var zoomOut: some Gesture {
         TapGesture(count: 2).modifiers(.option).onEnded {
             if let camera {
-                withAnimation(.easeInOut) {
-                    location.cameraPosition =
-                        .camera(.init(centerCoordinate: camera.centerCoordinate,
-                                      distance: camera.distance * 2))
-                }
+                zoom(around: camera.centerCoordinate, out: true)
+            }
+        }
+    }
+
+    private func zoom(around coords: Coords, out: Bool = false) {
+        if let camera {
+            let distance = out ? camera.distance * 2
+                               : camera.distance / 2
+            withAnimation(.easeInOut) {
+                location.cameraPosition =
+                    .camera(.init(centerCoordinate: coords,
+                                  distance: distance))
             }
         }
     }
