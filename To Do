@@ -9,5 +9,4 @@ Feature Requests:
 WIP notes
 
 - undo/redo disabled.  Why?
-- Escape in the search text field does not get rid of SearchView.
-  Interesting in that the exact same code works in a test app.
+- double click to zoom does not work
