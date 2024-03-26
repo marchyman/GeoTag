@@ -36,6 +36,14 @@ version 4.15.
 - Bug Fix: Changing the map style no longer repositions the map.
 - Bug Fix: Coordinate format changes take effect immediately in the image table.
 
+### Issues
+
+- undo/redo menu items are always enabled, even when there are no undo or
+  redo actions that could be performed. The menu title are also not updated
+  for the action to be performed.
+- There is a short delay between clicking on the map and a map pin being
+  placed.
+
 ### See the file named *History* for earlier changes and bug fixes
 
 ---
