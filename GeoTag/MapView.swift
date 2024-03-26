@@ -93,8 +93,9 @@ struct MapView: View {
                     setCameraPosition(to: location)
                 }
             }
+            .gesture(zoomOut)
             .onTapGesture(count: 2) { position in
-                // would like to zoom out if double click with option key.
+                // zoom in around click point on double click
                 if let coords = mapProxy.convert(position,
                                                  from: .local),
                    let camera {
@@ -113,6 +114,19 @@ struct MapView: View {
                                                      from: .local) {
                         state.update(image, location: coords)
                     }
+                }
+            }
+        }
+    }
+
+    // zoom out around center on double click with option key
+    var zoomOut: some Gesture {
+        TapGesture(count: 2).modifiers(.option).onEnded {
+            if let camera {
+                withAnimation(.easeInOut) {
+                    location.cameraPosition =
+                        .camera(.init(centerCoordinate: camera.centerCoordinate,
+                                      distance: camera.distance * 2))
                 }
             }
         }
