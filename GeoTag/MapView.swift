@@ -58,6 +58,7 @@ struct MapView: View {
             .mapControls {
                 MapCompass()
                 MapPitchToggle()
+                MapScaleView()
             }
             .contextMenu {
                 MapContextMenu(camera: $camera,
@@ -90,6 +91,18 @@ struct MapView: View {
             .onChange(of: state.tvm.mostSelected) {
                 if let location = state.tvm.mostSelected?.location {
                     setCameraPosition(to: location)
+                }
+            }
+            .onTapGesture(count: 2) { position in
+                // would like to zoom out if double click with option key.
+                if let coords = mapProxy.convert(position,
+                                                 from: .local),
+                   let camera {
+                    withAnimation(.easeInOut) {
+                        location.cameraPosition =
+                            .camera(.init(centerCoordinate: coords,
+                                          distance: camera.distance / 2))
+                    }
                 }
             }
             .onTapGesture { position in
