@@ -26,7 +26,7 @@ extension ImageModel {
         // 1024x1024 constraint the preview to that size.  1024x1024 is an
         // arbitrary limit.   Preview generation is used to work around a
         // performance hit when using large raw images
-        let maxDimension = 1024
+        let maxDimension = 1024.0
         var imgOpts: [String: AnyObject] = [
             ImageModel.createThumbnailWithTransform: kCFBooleanTrue,
             ImageModel.createThumbnailFromImageIfAbsent: kCFBooleanTrue,
@@ -39,7 +39,7 @@ extension ImageModel {
                 let imgHeight = CGFloat(imgPreview.height)
                 let imgWidth = CGFloat(imgPreview.width)
                 if imgOpts[ImageModel.createThumbnailFromImageAlways] == nil &&
-                    imgHeight < 512 && imgWidth < 512 {
+                    imgHeight < maxDimension && imgWidth < maxDimension {
                     // thumbnail too small.   Build a larger thumbnail
                     imgOpts[ImageModel.createThumbnailFromImageIfAbsent] = nil
                     imgOpts[ImageModel.createThumbnailFromImageAlways] = kCFBooleanTrue
