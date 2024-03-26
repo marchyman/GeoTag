@@ -42,9 +42,9 @@ struct SearchBarView: View {
                                 .offset(x: -5)
                             }
                         }
-                        .onKeyPress(.escape) {
+                        .onExitCommand {
+                            searchState.searchText = ""
                             mapFocus.wrappedValue = nil
-                            return .handled
                         }
                         .onSubmit {
                             mapFocus.wrappedValue = .searchList
