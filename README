@@ -69,14 +69,15 @@ location can be changed by clicking on the desired location. Hitting the delete
 key will remove location information from all selected images.  You can
 Undo/Redo image location changes.
 
-Double click the map to zoom in.  Or use the pinch gestures to zoom in and out.
+Double click the map to zoom in. Option-double click to zoom out. Or use
+pinch gestures to zoom in and out.
 
 Five map styles --- Standard, Imagery, Hybrid, Standard with traffic, and
 Hybrid with traffic --- are supported. Right click on the map to select
 the desired map style. If you find yourself working in a specific area of a
 map you can save the location and zoom level by right clicking on the map
-and selecting the *Save map location* option.  When GeoTag is launched the
-map will load to the last saved location using the last map stylei selected.
+and selecting *Save map location*.  When GeoTag is launched the map will
+load to the last saved location using the last map style selected.
 
 You may cut or copy location information from a single image and then paste
 that information into one or more images.  If you make an error you can
