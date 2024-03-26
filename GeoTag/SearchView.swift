@@ -29,6 +29,7 @@ struct SearchView: View {
                         .padding(.horizontal)
                 }
                 .padding(.vertical)
+                .listRowSeparator(.hidden)
 
                 Section {
                     ForEach(searchResponse, id: \.self) { item in
@@ -48,32 +49,27 @@ struct SearchView: View {
                 .listSectionSeparator(.hidden)
 
                 Section {
-                    if searchState.searchPlaces.isEmpty {
-                        Text("None")
-                            .foregroundStyle(.secondary)
-                            .padding(.leading, leadingInset)
-                    } else {
-                        ForEach(searchState.searchPlaces, id: \.self) { item in
-                            Text(item.name)
-                        }
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets.init(top: 0,
-                                                       leading: leadingInset,
-                                                       bottom: 0,
-                                                       trailing: 0))
-                        Button {
-                            searchState.clearPlaces()
-                        } label: {
-                            Text("Clear list")
-                        }
-                        .padding(.vertical)
-                        .padding(.leading, leadingInset)
+                    ForEach(searchState.searchPlaces, id: \.self) { item in
+                        Text(item.name)
                     }
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets.init(top: 0,
+                                                   leading: leadingInset,
+                                                   bottom: 0,
+                                                   trailing: 0))
+                    Button {
+                        searchState.clearPlaces()
+                    } label: {
+                        Text("Clear list")
+                    }
+                    .padding(.vertical)
+                    .padding(.leading, leadingInset)
                 } header: {
                     Text("Previously selected locations:")
                         .font(.subheadline)
                 }
                 .listSectionSeparator(.hidden)
+                .opacity(searchState.searchPlaces.isEmpty ? 0 : 1)
             }
             .padding()
         }
@@ -96,7 +92,6 @@ struct SearchView: View {
                 searchResponse = []
             } else {
                 search(for: searchState.searchText)
-//                mapFocus.wrappedValue = .searchList
             }
         }
     }
