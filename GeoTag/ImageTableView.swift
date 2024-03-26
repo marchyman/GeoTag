@@ -25,6 +25,12 @@ struct ImageTableView: View {
     let coordMinWidth = 120.0
     let coordMaxWidth = 160.0
 
+    // filtered images
+    var filteredImages: [ImageModel] {
+        return hideInvalidImages ? tvm.images.filter { $0.isValid }
+                                 : tvm.images
+    }
+
     var body: some View {
         // force the view to notice changes in tvm.mostSelected and coordFormat
         let mostSelected = tvm.mostSelected
@@ -61,9 +67,7 @@ struct ImageTableView: View {
             .width(min: coordMinWidth, max: coordMaxWidth)
             .customizationID("Longitude")
         } rows: {
-            ForEach(hideInvalidImages
-                    ? tvm.images.filter { $0.isValid }
-                    : tvm.images) { image in
+            ForEach(filteredImages) { image in
                 TableRow(image)
                     .contextMenu {
                         ContextMenuView(context: image)
