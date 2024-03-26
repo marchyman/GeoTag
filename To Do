@@ -8,4 +8,8 @@ Feature Requests:
 
 WIP notes
 
-- undo/redo disabled.  Why?
+- undo/redo disabled.  Why? Checking undo/redo status to disable the menu item
+  in the MenuCommand is not working. Apparently the current state is not being
+  refreshed.
+- Exiftool not reading related xmp file.
+  Error opening file - /Users/marc/Pictures/test data/262M0339.xmp
