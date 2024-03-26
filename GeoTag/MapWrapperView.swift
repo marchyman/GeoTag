@@ -46,4 +46,5 @@ struct MapWrapperView: View {
 
 #Preview {
     MapWrapperView()
+        .environment(AppState())
 }
