@@ -14,6 +14,8 @@ struct ImageTableView: View {
     @AppStorage(AppSettings.imageTableConfigKey)
         private var columnCustomization: TableColumnCustomization<ImageModel>
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+    @AppStorage(AppSettings.coordFormatKey)
+        var coordFormat: AppSettings.CoordFormat = .deg
 
     // table view column width limits
     let nameMinWidth = 100.0
@@ -24,8 +26,12 @@ struct ImageTableView: View {
     let coordMaxWidth = 160.0
 
     var body: some View {
-        // force the view to notice changes in tvm.mostSelected
+        // force the view to notice changes in tvm.mostSelected and coordFormat
         let mostSelected = tvm.mostSelected
+        // swiftlint:disable redundant_discardable_let
+        let _ = coordFormat
+        // swiftlint:enable redundant_discardable_let
+
         Table(of: ImageModel.self,
               selection: $tvm.selection,
               sortOrder: $tvm.sortOrder,

@@ -34,6 +34,7 @@ version 4.15.
 - Bug Fix: cancelling a search no longer looks up whatever happended to
   be typed into the search bar.
 - Bug Fix: Changing the map style no longer repositions the map.
+- Bug Fix: Coordinate format changes take effect immediately in the image table.
 
 ### See the file named *History* for earlier changes and bug fixes
 
