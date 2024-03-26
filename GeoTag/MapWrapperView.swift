@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MapWrapperView: View {
-    @Environment(AppState.self) var state
     @State var searchState: SearchState = .init()
 
     enum MapFocus: Hashable {
