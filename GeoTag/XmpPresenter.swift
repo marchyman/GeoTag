@@ -45,5 +45,3 @@ final class XmpPresenter: NSObject, NSFilePresenter {
         return data
     }
 }
-
-extension XmpPresenter: Sendable {}
