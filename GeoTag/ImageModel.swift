@@ -211,20 +211,40 @@ extension ImageModel {
         return true
     }
 
-    // Extract metadata from sidecar file
+    // Extract metadata from sidecar file.  For an unknown reason exiftool
+    // can no longer read the xmp file for an image file unless explicitly
+    // opened or in a folder that was explicitly opened.  Using the XMP
+    // file presenter and NSFileCoordination do not help.
+    //
+    // (Temporary?) solution: make a copy of an exising XMP file inside the
+    // sandbox and pass the copy to exiftool.  Every file in the sandbox
+    // is placed in a unique folder: using "tmpfile.xmp" as the name does
+    // does not collide.
+
     func loadXmpMetadata() {
-        NSFileCoordinator.addFilePresenter(xmpPresenter)
-        let results = Exiftool.helper.metadataFrom(xmp: sidecarURL)
-        NSFileCoordinator.removeFilePresenter(xmpPresenter)
-        if results.dto != "" {
-            dateTimeCreated = results.dto
-            originalDateTimeCreated = results.dto
-        }
-        if results.valid {
-            location = results.location
-            originalLocation = location
-            elevation = results.elevation
-            originalElevation = elevation
+        if let sandbox = try? Sandbox(self) {
+            let tmpfileURL = sandbox.sidecarURL
+                                .deletingLastPathComponent()
+                                .appendingPathComponent("tmpfile.xmp")
+
+            NSFileCoordinator.addFilePresenter(sandbox.xmpPresenter)
+            defer { NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter) }
+
+            if let data = sandbox.xmpPresenter.readData() {
+                try? data.write(to: tmpfileURL)
+            }
+            let results = Exiftool.helper.metadataFrom(xmp: tmpfileURL)
+
+            if results.dto != "" {
+                dateTimeCreated = results.dto
+                originalDateTimeCreated = results.dto
+            }
+            if results.valid {
+                location = results.location
+                originalLocation = location
+                elevation = results.elevation
+                originalElevation = elevation
+            }
         }
     }
 
