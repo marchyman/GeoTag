@@ -27,6 +27,9 @@ final class AppState {
     var mainWindow: NSWindow?
     var undoManager = UndoManager()
 
+    // when set the import files dialog will be opened
+    var importFiles = false
+
     // A second save can not be triggered while a save is in progress.
     // App termination is denied, too.
     var saveInProgress = false
