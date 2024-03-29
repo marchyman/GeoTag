@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Window look and feel values
 let windowBorderColor = Color.gray
@@ -69,11 +70,21 @@ struct ContentView: View {
                     .keyboardShortcut("i")
                 }
         }
+        .fileImporter(isPresented: $state.importFiles,
+                      allowedContentTypes: importTypes(),
+                      allowsMultipleSelection: true) { result in
+            switch result {
+            case .success(let files):
+                importFiles(files)
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
 
     // when a sheet is dismissed check if there are more sheets to display
 
-    func sheetDismissed() {
+    private func sheetDismissed() {
         if state.sheetStack.isEmpty {
             state.sheetMessage = nil
             state.sheetError = nil
@@ -85,6 +96,29 @@ struct ContentView: View {
         }
     }
 
+    // the UTTypes that can be imported into this app.
+
+    private func importTypes() -> [UTType] {
+        var types: [UTType] = [.image, .folder]
+        if let type = UTType(filenameExtension: "gpx") {
+            types.append(type)
+        }
+        return types
+    }
+
+    private func importFiles(_ urls: [URL]) {
+        let state = state
+        Task.detached {
+            var scopedURLs: [URL] = []
+            for url in urls where url.startAccessingSecurityScopedResource() {
+                scopedURLs.append(url)
+            }
+            await state.prepareForEdit(inputURLs: scopedURLs)
+            for url in scopedURLs {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+    }
 }
 
 #Preview {
