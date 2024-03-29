@@ -109,14 +109,8 @@ struct ContentView: View {
     private func importFiles(_ urls: [URL]) {
         let state = state
         Task.detached {
-            var scopedURLs: [URL] = []
-            for url in urls where url.startAccessingSecurityScopedResource() {
-                scopedURLs.append(url)
-            }
-            await state.prepareForEdit(inputURLs: scopedURLs)
-            for url in scopedURLs {
-                url.stopAccessingSecurityScopedResource()
-            }
+            state.startSecurityScoping(urls: urls)
+            await state.prepareForEdit(inputURLs: urls)
         }
     }
 }

@@ -29,7 +29,7 @@ extension AppState {
 
         let imageURLs = inputURLs
             .flatMap { url in
-                isFolder(url: url) ? urlsIn(folder: url) : [url]
+                isFolder(url) ? urlsIn(folder: url) : [url]
             }
             .uniqued()
 
@@ -124,7 +124,7 @@ extension AppState {
     }
 
     // Check if a given file URL refers to a folder
-    private func isFolder(url: URL) -> Bool {
+    private func isFolder(_ url: URL) -> Bool {
         let resources = try? url.resourceValues(forKeys: [.isDirectoryKey])
         return resources?.isDirectory ?? false
     }
@@ -140,7 +140,7 @@ extension AppState {
                                        options: [.skipsHiddenFiles],
                                        errorHandler: nil) else { return []}
         while let fileUrl = urlEnumerator.nextObject() as? URL {
-            if !isFolder(url: fileUrl) {
+            if !isFolder(fileUrl) {
                 foundURLs.append(fileUrl)
             }
         }
