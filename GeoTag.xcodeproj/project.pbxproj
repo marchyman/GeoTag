@@ -43,6 +43,7 @@
 		49901CEB2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */; };
 		49901CED2A5B71EB00C28CAD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49901CEC2A5B71EB00C28CAD /* AppState.swift */; };
 		49918F8629736652000D6590 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 492E3F5D29481A7D0044C1F3 /* Credits.rtf */; };
+		499DB20F2BB60018002DFDA2 /* GeoTagUISettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499DB20E2BB60018002DFDA2 /* GeoTagUISettingsTests.swift */; };
 		49A1326F294BFB9300F1B393 /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49A1326E294BFB9300F1B393 /* ExifTool */; };
 		49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729B12953E7AA00DF1AAF /* ImageMapView.swift */; };
 		49A99FBC296F6D5900392EEA /* PathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A99FBB296F6D5900392EEA /* PathView.swift */; };
@@ -131,6 +132,7 @@
 		49901CEC2A5B71EB00C28CAD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		49918F84297352AB000D6590 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		49918F8529735AE0000D6590 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
+		499DB20E2BB60018002DFDA2 /* GeoTagUISettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUISettingsTests.swift; sourceTree = "<group>"; };
 		49A1326E294BFB9300F1B393 /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ExifTool; sourceTree = "<group>"; };
 		49A729B12953E7AA00DF1AAF /* ImageMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMapView.swift; sourceTree = "<group>"; };
 		49A99FBB296F6D5900392EEA /* PathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathView.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 			children = (
 				4984CF8D2BB4BECD0008DDF8 /* GeoTagUITests.swift */,
 				4984CF8F2BB4BECD0008DDF8 /* GeoTagUITestsLaunchTests.swift */,
+				499DB20E2BB60018002DFDA2 /* GeoTagUISettingsTests.swift */,
 			);
 			path = GeoTagUITests;
 			sourceTree = "<group>";
@@ -544,6 +547,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4984CF8E2BB4BECD0008DDF8 /* GeoTagUITests.swift in Sources */,
+				499DB20F2BB60018002DFDA2 /* GeoTagUISettingsTests.swift in Sources */,
 				4984CF902BB4BECD0008DDF8 /* GeoTagUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
