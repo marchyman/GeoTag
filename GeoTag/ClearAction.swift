@@ -19,6 +19,7 @@ extension AppState {
 
     func clearImageListAction() {
         if !clearDisabled {
+            stopSecurityScoping()
             tvm.selection = Set()
             tvm.images = []
         }

@@ -14,7 +14,7 @@ struct NewItemCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
-            Button("Open…") { state.showOpenPanel() }
+            Button("Open…") { state.importFiles = true }
                 .keyboardShortcut("o")
         }
     }

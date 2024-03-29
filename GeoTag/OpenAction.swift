@@ -5,40 +5,19 @@
 //  Created by Marco S Hyman on 12/13/22.
 //
 
-import UniformTypeIdentifiers
 import SwiftUI
 
-// Extension to our Application State that handles file open and dropping
+// Extension to Application State to handles file open and dropping
 // URLs onto the app's table of images to edit.
 
 extension AppState {
 
-    /// Display the File -> Open... panel for image and gpx files.  Folders may also be selected.
+    // The open dialog is handled by a fileImporter in ContentView.swift.
+    // Selecting Open… from the menu or keyboard shortcut will toggle the
+    // state variable that causes the open process to start.  These functions
+    // process both files Opened or Dragged into the app.
 
-    func showOpenPanel() {
-
-        // allow image and gpx types
-        var types = [UTType.image]
-        if let type = UTType(filenameExtension: "gpx") {
-            types.append(type)
-        }
-        let panel = NSOpenPanel()
-        panel.allowedContentTypes = types
-        panel.allowsMultipleSelection = true
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = true
-
-        // process any URLs selected to open in the background
-        if panel.runModal() == NSApplication.ModalResponse.OK {
-            Task.detached {
-                await self.prepareForEdit(inputURLs: panel.urls)
-            }
-        }
-    }
-
-    /// process URLs opened or dragged to the app.  In the case of a drag a URL may
-    /// be of any type.  The path of non-image files will be listed in the app's table but will
-    /// not be flagged as a valid image.
+    // process URLs opened or dragged to the app.
 
     func prepareForEdit(inputURLs: [URL]) async {
 
@@ -50,7 +29,7 @@ extension AppState {
 
         let imageURLs = inputURLs
             .flatMap { url in
-                isFolder(url: url) ? urlsIn(folder: url) : [url]
+                isFolder(url) ? urlsIn(folder: url) : [url]
             }
             .uniqued()
 
@@ -145,7 +124,7 @@ extension AppState {
     }
 
     // Check if a given file URL refers to a folder
-    private func isFolder(url: URL) -> Bool {
+    private func isFolder(_ url: URL) -> Bool {
         let resources = try? url.resourceValues(forKeys: [.isDirectoryKey])
         return resources?.isDirectory ?? false
     }
@@ -161,7 +140,7 @@ extension AppState {
                                        options: [.skipsHiddenFiles],
                                        errorHandler: nil) else { return []}
         while let fileUrl = urlEnumerator.nextObject() as? URL {
-            if !isFolder(url: fileUrl) {
+            if !isFolder(fileUrl) {
                 foundURLs.append(fileUrl)
             }
         }

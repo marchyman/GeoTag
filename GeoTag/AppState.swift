@@ -27,6 +27,9 @@ final class AppState {
     var mainWindow: NSWindow?
     var undoManager = UndoManager()
 
+    // when set the import files dialog will be opened
+    var importFiles = false
+
     // A second save can not be triggered while a save is in progress.
     // App termination is denied, too.
     var saveInProgress = false
@@ -89,6 +92,12 @@ final class AppState {
         }
     }
 
+    // URLs obtained from the open panel are security scoped.  Keep track of
+    // them so we can  run stopSecurityScopedResource() when the files/folders
+    // are no longer needed
+    @ObservationIgnored
+    var scopedURLs: [URL] = []
+
     // MARK: initialization
 
     // get the backupURL from AppStorage if needed.  This will also trigger
@@ -99,6 +108,22 @@ final class AppState {
 
         if !doNotBackup {
             backupURL = getBackupURL()
+        }
+    }
+}
+
+// MARK: Security scoping methods
+extension AppState {
+
+    func startSecurityScoping(urls: [URL]) {
+        for url in urls where url.startAccessingSecurityScopedResource() {
+            scopedURLs.append(url)
+        }
+    }
+
+    func stopSecurityScoping() {
+        for url in scopedURLs {
+            url.stopAccessingSecurityScopedResource()
         }
     }
 }
