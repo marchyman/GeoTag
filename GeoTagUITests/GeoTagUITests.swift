@@ -78,7 +78,6 @@ final class GeoTagUITests: XCTestCase {
     // when the app is launched in future tests.
     func test1SetNoBackup() {
         app.menuItems["Settings…"].click()
-        print(app.debugDescription)
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
         app.checkBoxes["Disable image backups"].click()
         app.buttons["Close"].click()
