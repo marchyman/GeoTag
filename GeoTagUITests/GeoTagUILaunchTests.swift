@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class GeoTagUITestsLaunchTests: XCTestCase {
+final class GeoTagUILaunchTests: XCTestCase {
 
     private var app: XCUIApplication!
 
