@@ -72,7 +72,7 @@ struct SettingsView: View {
                        selection: $coordFormat) {
                     Text("dd.dddddd")
                         .tag(AppSettings.CoordFormat.deg)
-                    Text("dd mm.mmmmmm'")
+                    Text("dd° mm.mmmmmm'")
                         .tag(AppSettings.CoordFormat.degMin)
                     Text("dd° mm' ss.ss\"")
                         .tag(AppSettings.CoordFormat.degMinSec)
