@@ -104,13 +104,13 @@ final class GeoTagUISettingsTests: XCTestCase {
         // It will have to be tested by hand.  Ditto GPS Track Color.
         // Put everything else in a known state
 
-        if let value = settings.checkBoxes["Disable image backups"].value as? Int? {
+        if let value = settings.checkBoxes["Disable image backups"].value as? Int {
             if value == 1 {
                 settings.checkBoxes["Disable image backups"].click()
             }
         }
 
-        if let value = settings.checkBoxes["Create Sidecar (XMP) files"].value as? Int? {
+        if let value = settings.checkBoxes["Create Sidecar (XMP) files"].value as? Int {
             if value == 0 {
                 settings.checkBoxes["Create Sidecar (XMP) files"].click()
             }
@@ -126,25 +126,25 @@ final class GeoTagUISettingsTests: XCTestCase {
         textField0.typeKey(.delete, modifierFlags: [])
         textField0.typeText("3")
 
-        if let value = settings.checkBoxes["Disable paired jpegs"].value as? Int? {
+        if let value = settings.checkBoxes["Disable paired jpegs"].value as? Int {
             if value == 0 {
                 settings.checkBoxes["Disable paired jpegs"].click()
             }
         }
 
-        if let value = settings.checkBoxes["Set File Modification Time"].value as? Int? {
+        if let value = settings.checkBoxes["Set File Modification Time"].value as? Int {
             if value == 0 {
                 settings.checkBoxes["Set File Modification Time"].click()
             }
         }
 
-        if let value = settings.checkBoxes["Update GPS Date/Time"].value as? Int? {
+        if let value = settings.checkBoxes["Update GPS Date/Time"].value as? Int {
             if value == 0 {
                 settings.checkBoxes["Update GPS Date/Time"].click()
             }
         }
 
-        if let value = settings.checkBoxes["Tag updated files"].value as? Int? {
+        if let value = settings.checkBoxes["Tag updated files"].value as? Int {
             if value == 0 {
                 settings.checkBoxes["Tag updated files"].click()
             }
@@ -157,13 +157,58 @@ final class GeoTagUISettingsTests: XCTestCase {
         textField1.typeText("TestTag")
 
         settings.buttons["Close"].click()
-
-        XCTAssertTrue(validateSettings())
         // swiftlint: enable cyclomatic_complexity
     }
 
-    func validateSettings() -> Bool {
-        // validate that standard defaults are as set in the calling function
-        return true
+    func test2ValidateSettings() {
+        app.typeKey(",", modifierFlags: .command)
+        XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
+        let settings = app.windows["GeoTag Settings"]
+
+        // There is no XCTest access to the SwiftUI wrapped NSPathControl.
+        // It will have to be tested by hand.  Ditto GPS Track Color.
+        // Put everything else in a known state
+
+        let dib = settings.checkBoxes["Disable image backups"].value as? Int
+        XCTAssertNotNil(dib)
+        XCTAssertTrue(dib == 0)
+
+        let csf = settings.checkBoxes["Create Sidecar (XMP) files"].value as? Int
+        XCTAssertNotNil(csf)
+        XCTAssertTrue(csf == 1)
+
+        let coord = settings.radioButtons["dd° mm' ss.ss\""].value as? Int
+        XCTAssertNotNil(coord)
+        XCTAssertTrue(coord == 1)
+
+        let dpg = settings.checkBoxes["Disable paired jpegs"].value as? Int
+        XCTAssertNotNil(dpg)
+        XCTAssertTrue(dpg == 1)
+
+        let sfmt = settings.checkBoxes["Set File Modification Time"].value as? Int
+        XCTAssertNotNil(sfmt)
+        XCTAssertTrue(sfmt == 1)
+
+        let ugdt = settings.checkBoxes["Update GPS Date/Time"].value as? Int
+        XCTAssertNotNil(ugdt)
+        XCTAssertTrue(ugdt == 1)
+
+        let tuf = settings.checkBoxes["Tag updated files"].value as? Int
+        XCTAssertNotNil(tuf)
+        XCTAssertTrue(tuf == 1)
+
+        settings.buttons["Close"].click()
+    }
+
+    func test3NormalSettings() {
+        app.typeKey(",", modifierFlags: .command)
+        XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
+        let settings = app.windows["GeoTag Settings"]
+
+        // the last test left most settings enabled.  Turn off a
+        // couple of them.
+
+        settings.checkBoxes["Create Sidecar (XMP) files"].click()
+        settings.checkBoxes["Tag updated files"].click()
     }
 }
