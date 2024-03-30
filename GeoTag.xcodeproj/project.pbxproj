@@ -34,7 +34,7 @@
 		49630F0E2980BC00009FB418 /* ToolbarCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49630F0D2980BC00009FB418 /* ToolbarCommandGroup.swift */; };
 		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
 		4984CF8E2BB4BECD0008DDF8 /* GeoTagUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8D2BB4BECD0008DDF8 /* GeoTagUITests.swift */; };
-		4984CF902BB4BECD0008DDF8 /* GeoTagUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8F2BB4BECD0008DDF8 /* GeoTagUITestsLaunchTests.swift */; };
+		4984CF902BB4BECD0008DDF8 /* GeoTagUILaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8F2BB4BECD0008DDF8 /* GeoTagUILaunchTests.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
@@ -122,7 +122,7 @@
 		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
 		4984CF8B2BB4BECC0008DDF8 /* GeoTagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4984CF8D2BB4BECD0008DDF8 /* GeoTagUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUITests.swift; sourceTree = "<group>"; };
-		4984CF8F2BB4BECD0008DDF8 /* GeoTagUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4984CF8F2BB4BECD0008DDF8 /* GeoTagUILaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUILaunchTests.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
@@ -216,7 +216,7 @@
 			isa = PBXGroup;
 			children = (
 				4984CF8D2BB4BECD0008DDF8 /* GeoTagUITests.swift */,
-				4984CF8F2BB4BECD0008DDF8 /* GeoTagUITestsLaunchTests.swift */,
+				4984CF8F2BB4BECD0008DDF8 /* GeoTagUILaunchTests.swift */,
 				499DB20E2BB60018002DFDA2 /* GeoTagUISettingsTests.swift */,
 			);
 			path = GeoTagUITests;
@@ -548,7 +548,7 @@
 			files = (
 				4984CF8E2BB4BECD0008DDF8 /* GeoTagUITests.swift in Sources */,
 				499DB20F2BB60018002DFDA2 /* GeoTagUISettingsTests.swift in Sources */,
-				4984CF902BB4BECD0008DDF8 /* GeoTagUITestsLaunchTests.swift in Sources */,
+				4984CF902BB4BECD0008DDF8 /* GeoTagUILaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
