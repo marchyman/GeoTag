@@ -13,7 +13,9 @@ final class GeoTagUI01LaunchTests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+
         app = XCUIApplication()
+        app.launchEnvironment = ["BACKUP": NSTemporaryDirectory()]
 
         app.launch()
     }
@@ -23,6 +25,11 @@ final class GeoTagUI01LaunchTests: XCTestCase {
         // invocation of each test method in the class.
         try super.tearDownWithError()
         app = nil
+    }
+
+    func testSetBackup() {
+        // do nothing.  A side effect of running the test will set up
+        // a backup folder.
     }
 
     func testLaunchPerformance() throws {

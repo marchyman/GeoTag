@@ -10,7 +10,6 @@ import XCTest
 final class GeoTagUI02SettingsTests: XCTestCase {
 
     private var app: XCUIApplication!
-    let trashFile = NSTemporaryDirectory()
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -42,6 +41,10 @@ final class GeoTagUI02SettingsTests: XCTestCase {
                       userInfo: nil)
         attachment.lifetime = .keepAlways
         add(attachment)
+    }
+
+    func testSetBackup() {
+
     }
 
     func test0SettingsOpened() throws {
