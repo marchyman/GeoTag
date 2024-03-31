@@ -19,12 +19,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // no tabbing in GeoTag
         NSWindow.allowsAutomaticWindowTabbing = false
-
-        // blow away settings when user interface testing
-        if let uitests = ProcessInfo.processInfo.environment["UITESTS"],
-           uitests == "1" {
-            AppSettings.resetSettings()
-        }
     }
 
     // Process open with...
