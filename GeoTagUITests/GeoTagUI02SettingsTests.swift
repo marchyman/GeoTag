@@ -1,5 +1,5 @@
 //
-//  GeoTagUISettingsTests.swift
+//  GeoTagUI02SettingsTests.swift
 //  GeoTagUITests
 //
 //  Created by Marco S Hyman on 3/28/24.
@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class GeoTagUISettingsTests: XCTestCase {
+final class GeoTagUI02SettingsTests: XCTestCase {
 
     private var app: XCUIApplication!
     let trashFile = NSTemporaryDirectory()

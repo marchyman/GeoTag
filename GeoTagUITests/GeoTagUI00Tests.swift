@@ -1,5 +1,5 @@
 //
-//  GeoTagUITests.swift
+//  GeoTagUI00Tests.swift
 //  GeoTagUITests
 //
 //  Created by Marco S Hyman on 3/27/24.
@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class GeoTagUITests: XCTestCase {
+final class GeoTagUI00Tests: XCTestCase {
 
     private var app: XCUIApplication!
 
@@ -22,7 +22,7 @@ final class GeoTagUITests: XCTestCase {
         // a sheet saying no backup file exists.  Dismiss the sheet.
 
         let sheet = app.windows.sheets.element
-        XCTAssertTrue(sheet.exists)
+        XCTAssertTrue(sheet.waitForExistence(timeout: 2))
         takeScreenshot(name: "InitialLaunch")
         sheet.buttons.firstMatch.click()
         takeScreenshot(name: "Launch")

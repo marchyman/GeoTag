@@ -106,6 +106,11 @@ final class AppState {
     init() {
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
 
+        // blow away settings when user interface testing
+        if let uitests = ProcessInfo.processInfo.environment["UITESTS"] {
+            AppSettings.resetSettings()
+        }
+
         if !doNotBackup {
             backupURL = getBackupURL()
         }

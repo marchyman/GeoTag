@@ -1,5 +1,5 @@
 //
-//  GeoTagUITestsLaunchTests.swift
+//  GeoTagUI01LaunchTests.swift
 //  GeoTagUITests
 //
 //  Created by Marco S Hyman on 3/27/24.
@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class GeoTagUILaunchTests: XCTestCase {
+final class GeoTagUI01LaunchTests: XCTestCase {
 
     private var app: XCUIApplication!
 
