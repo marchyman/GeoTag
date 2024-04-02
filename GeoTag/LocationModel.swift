@@ -20,7 +20,10 @@ final class LocationModel {
     // displayed map tracks
     var tracks: [Track] = []
 
+    let showLocation: Bool
+
     private init() {
+        showLocation = ProcessInfo.processInfo.environment["MAPTEST"] != nil
         // use the shared instance
     }
 }
@@ -37,5 +40,19 @@ extension LocationModel {
         let newTrack = Track(track: track)
         tracks.append(newTrack)
         cameraPosition = .automatic
+    }
+}
+
+// Format center location for UI User Interface testing
+extension LocationModel {
+    var centerLocation: String {
+        if let camera = cameraPosition.camera {
+            return  """
+                    Lat: \(camera.centerCoordinate.latitude)
+                    Lon: \(camera.centerCoordinate.longitude)
+                    """
+        } else {
+            return "Unknown center"
+        }
     }
 }
