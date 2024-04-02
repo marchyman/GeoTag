@@ -10,6 +10,8 @@ import SwiftUI
 struct MapWrapperView: View {
     @State var searchState: SearchState = .init()
 
+    let location = LocationModel.shared
+
     enum MapFocus: Hashable {
         case map, search, searchList
     }
@@ -38,6 +40,15 @@ struct MapWrapperView: View {
                         .frame(maxWidth: .infinity,
                                maxHeight: geometry.size.height - 70,
                                alignment: .topLeading)
+                }
+
+                // used by automated user interface testing
+                if location.showLocation {
+                    Text(location.centerLocation)
+                        .padding()
+                        .background(.thickMaterial)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity,
+                               alignment: .topTrailing)
                 }
             }
         }
