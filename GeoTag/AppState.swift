@@ -25,7 +25,7 @@ final class AppState {
 
     // The Apps main window
     var mainWindow: NSWindow?
-    var undoManager = UndoManager()
+    let undoManager = UndoManager()
 
     // when set the import files dialog will be opened
     var importFiles = false
