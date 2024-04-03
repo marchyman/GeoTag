@@ -43,7 +43,6 @@ struct SearchBarView: View {
                             }
                         }
                         .onExitCommand {
-                            searchState.searchText = ""
                             mapFocus.wrappedValue = nil
                         }
                         .onSubmit {
