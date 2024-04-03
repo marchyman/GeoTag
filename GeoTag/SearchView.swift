@@ -90,7 +90,7 @@ struct SearchView: View {
         .task(id: searchState.searchText) {
             if searchState.searchText.isEmpty {
                 searchResponse = []
-            } else {
+            } else if mapFocus.wrappedValue != nil {
                 search(for: searchState.searchText)
             }
         }
