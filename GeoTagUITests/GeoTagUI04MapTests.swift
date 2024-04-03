@@ -121,4 +121,62 @@ final class GeoTagUI04MapTests: XCTestCase {
         XCTAssertFalse(table.tableRows.element(boundBy: 4).exists)
         app.buttons["Cancel"].click()
     }
+
+    // Map context menu
+    func test3MapContextMenu() {
+        let map = app.maps.firstMatch
+        map.rightClick()
+        let menu = app.windows.menus.firstMatch
+        XCTAssertTrue(menu.waitForExistence(timeout: 2))
+        XCTAssertTrue(menu.menuItems["Standard"].exists)
+        XCTAssertTrue(menu.menuItems["Imagery"].exists)
+        XCTAssertTrue(menu.menuItems["Hybrid"].exists)
+        XCTAssertTrue(menu.menuItems["Save map location"].exists)
+        menu.menuItems["Hybrid"].click()
+        XCTAssertFalse(menu.exists)
+        XCTAssertTrue(app.buttons["ModeButton3D"].exists)
+
+        // position the map and save the current position
+        let searchText = app.textFields[" Search location"]
+        searchText.click()
+        searchText.typeText("Bakersfield, CA")
+        searchText.typeKey(.return, modifierFlags: [])
+        XCTAssertTrue(app.staticTexts["Bakersfield, CA"].waitForExistence(timeout: 2))
+        app.staticTexts["Bakersfield, CA"].click()
+        map.rightClick()
+        XCTAssertTrue(menu.waitForExistence(timeout: 2))
+        menu.menuItems["Save map location"].click()
+        app.typeKey("q", modifierFlags: [.command])
+    }
+
+    // more map context menu.
+    func test4MapContextMenu() {
+        // verify the state is correct, i.e. things changed above were
+        // sticky
+        XCTAssertTrue(app.buttons["ModeButton3D"].exists)
+        if let value = app.staticTexts.firstMatch.value as? String {
+            XCTAssertFalse(value.hasPrefix("35.373333"))
+        } else {
+            XCTAssert(false, "wrong location")
+        }
+
+        // change back to the standard map
+        let map = app.maps.firstMatch
+        map.rightClick()
+        let menu = app.windows.menus.firstMatch
+        menu.menuItems["Standard"].click()
+
+        // Back to the SF Bay Area
+        let searchText = app.textFields[" Search location"]
+        searchText.click()
+        let table = app.tables.firstMatch
+        XCTAssertTrue(table.exists)
+        searchText.typeText("oakland, ca")
+        searchText.typeKey(.return, modifierFlags: [])
+        XCTAssertTrue(table.staticTexts["Oakland, CA"].waitForExistence(timeout: 2))
+        table.staticTexts["Oakland, CA"].click()
+        map.rightClick()
+        XCTAssertTrue(menu.waitForExistence(timeout: 2))
+        menu.menuItems["Save map location"].click()
+    }
 }
