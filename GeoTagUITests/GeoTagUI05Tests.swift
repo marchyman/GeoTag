@@ -65,4 +65,41 @@ final class GeoTagUI05Tests: XCTestCase {
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
         app.sheets.buttons.firstMatch.click()
     }
+
+    func test1MapClick() {
+        openTestFile()
+        let row = app.outlineRows.firstMatch
+        XCTAssertTrue(row.staticTexts["IMG_7158.CR2*"]
+                         .waitForExistence(timeout: 2))
+        row.staticTexts["IMG_7158.CR2*"].click()
+
+        // click on the map, verify location and pin
+        let map = app.maps.firstMatch
+        map.click()
+        XCTAssertTrue(row.staticTexts.element(boundBy: 2)
+                         .waitForExistence(timeout: 1))
+        XCTAssertTrue(row.staticTexts.element(boundBy: 3).exists)
+        XCTAssertTrue(map.images["Pin"].exists)
+
+        // delete the location.
+        app.typeKey(.delete, modifierFlags: [])
+        XCTAssertFalse(row.staticTexts.element(boundBy: 2)
+                          .waitForExistence(timeout: 1))
+        XCTAssertFalse(row.staticTexts.element(boundBy: 3).exists)
+        XCTAssertFalse(map.images["Pin"].exists)
+
+//        // undo the delete
+//        app.typeKey("z", modifierFlags: [.command])
+//        XCTAssertTrue(row.staticTexts.element(boundBy: 2)
+//                         .waitForExistence(timeout: 1))
+//        XCTAssertTrue(row.staticTexts.element(boundBy: 3).exists)
+//        XCTAssertTrue(map.images["Pin"].exists)
+//
+//        // redo the delete
+//        app.typeKey("z", modifierFlags: [.shift, .command])
+//        XCTAssertFalse(row.staticTexts.element(boundBy: 2)
+//                          .waitForExistence(timeout: 1))
+//        XCTAssertFalse(row.staticTexts.element(boundBy: 3).exists)
+//        XCTAssertFalse(map.images["Pin"].exists)
+    }
 }
