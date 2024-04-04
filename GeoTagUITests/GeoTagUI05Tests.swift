@@ -9,33 +9,60 @@ import XCTest
 
 final class GeoTagUI05Tests: XCTestCase {
 
+    private var app: XCUIApplication!
+    private var testImageFolder = ""
+
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
+        app = XCUIApplication()
 
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        app.launch()
+
+        // remove the "no backups sheet" sheet if it is present.
+        let sheet = app.windows.sheets.element
+        if sheet.exists {
+            sheet.buttons.firstMatch.click()
+        }
+
+        if let imagePath = ProcessInfo.processInfo.environment["ImagePath"] {
+            testImageFolder = imagePath
+        }
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        // Put teardown code here. This method is called after the
+        // invocation of each test method in the class.
+        try super.tearDownWithError()
+        app = nil
     }
 
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-        app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
+    func openTestFile(folder: Bool = false) {
+        app.typeKey("o", modifierFlags: [.command])
+        app.typeKey("g", modifierFlags: [.shift, .command])
+        app.typeText(testImageFolder)
+        if !folder {
+            app.typeText("/TestPictures/IMG_7158.CR2")
         }
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+    }
+
+    func test0DuplicateImage() {
+        openTestFile()
+        XCTAssertTrue(app.staticTexts["IMG_7158.CR2*"]
+                         .waitForExistence(timeout: 2))
+
+        // open again.  Should get a dup image sheet
+        openTestFile()
+        XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
+        app.sheets.buttons.firstMatch.click()
+
+        // open the folder in which the file exists.  Should be a dup.
+        // should also get a tracks loaded sheet.
+        openTestFile(folder: true)
+        XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
+        app.sheets.buttons.firstMatch.click()
+        XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
+        app.sheets.buttons.firstMatch.click()
     }
 }
