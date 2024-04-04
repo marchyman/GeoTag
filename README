@@ -39,6 +39,7 @@ version 4.15.
 - Bug Fix: Data in XMP sidecar files was not read unless the XMP file was in
   a folder that was opened or the XMP file itself was explicity opened.
   Note: xmp files can no longer be selected to open.
+- Bug Fix: Duplicate image processing does more than give a warning.
 
 ### Issues
 
