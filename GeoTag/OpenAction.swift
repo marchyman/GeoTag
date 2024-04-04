@@ -27,28 +27,32 @@ extension AppState {
 
         // expand folder URLs and remove any duplicates.
 
-        let imageURLs = inputURLs
-            .flatMap { url in
-                isFolder(url) ? urlsIn(folder: url) : [url]
-            }
-            .uniqued()
+        let imageURLs = inputURLs.flatMap { url in
+            isFolder(url) ? urlsIn(folder: url) : [url]
+        }
 
         // check for duplicates of URLs already open for processing
         // if any are found notify the user
 
         let processedURLs = Set(tvm.images.map {$0.fileURL })
         let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
-        if !duplicateURLs.isEmpty {
+        let uniqueURLs: [URL]
+        if duplicateURLs.isEmpty {
+            uniqueURLs = imageURLs.uniqued()
+        } else {
             addSheet(type: .duplicateImageSheet)
+            // remove the duplicates from the images to process
+            uniqueURLs = imageURLs.filter { !duplicateURLs.contains($0) }
+                                  .uniqued()
         }
 
-        await images(for: imageURLs)
+        await images(for: uniqueURLs)
         linkPairedImages()
         tvm.images.sort(using: tvm.sortOrder)
 
         // now process any gpx tracks
 
-        let gpxURLs = imageURLs.filter { $0.pathExtension.lowercased() == "gpx" }
+        let gpxURLs = uniqueURLs.filter { $0.pathExtension.lowercased() == "gpx" }
         if !gpxURLs.isEmpty {
 
             // if the appViewModel update isn't done on the main queue the
