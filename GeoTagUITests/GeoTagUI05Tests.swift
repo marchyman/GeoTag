@@ -88,13 +88,26 @@ final class GeoTagUI05Tests: XCTestCase {
         XCTAssertFalse(row.staticTexts.element(boundBy: 3).exists)
         XCTAssertFalse(map.images["Pin"].exists)
 
-//        // undo the delete
+        /*
+         * When undoing in the following test undo is called twice, approx
+         * 200 microsecends appart.   The result is that both of the above
+         * actions are undone instead of just the first. This causes the test
+         * to fail.
+         *
+         * This ALWAYS happens when running tests.  It rarely happens in actual
+         * use and the few times I have seen it happen have only been on the
+         * first run following this test failure.
+         *
+         * I'm going to ignore it for now and move on to other tests.
+         */
+        // undo the delete
+//        app.menuItems["Undo"].click()
 //        app.typeKey("z", modifierFlags: [.command])
 //        XCTAssertTrue(row.staticTexts.element(boundBy: 2)
 //                         .waitForExistence(timeout: 1))
 //        XCTAssertTrue(row.staticTexts.element(boundBy: 3).exists)
 //        XCTAssertTrue(map.images["Pin"].exists)
-//
+
 //        // redo the delete
 //        app.typeKey("z", modifierFlags: [.shift, .command])
 //        XCTAssertFalse(row.staticTexts.element(boundBy: 2)

@@ -17,6 +17,16 @@ extension AppState {
 
     func update(_ image: ImageModel, location: Coords?,
                 elevation: Double? = nil, documentEdited: Bool = true) {
+        // swiftlint: disable line_length
+        if undoManager.isUndoing {
+            Self.logger.debug("Undo in progress: \(image.name): \(image.location.debugDescription) -> \(location.debugDescription)")
+        } else if undoManager.isRedoing {
+            Self.logger.debug("Redo in progress: \(image.name): \(image.location.debugDescription) -> \(location.debugDescription)")
+        } else {
+            Self.logger.debug("undoManager registration: \(image.name): \(image.location.debugDescription) -> \(location.debugDescription)")
+        }
+        // swiftlint: enable line_length
+
         let currentLocation = image.location
         let currentElevation = image.elevation
         let currentDocumentEdited = isDocumentEdited
@@ -25,7 +35,6 @@ extension AppState {
                           elevation: currentElevation,
                           documentEdited: currentDocumentEdited)
         }
-
         image.location = location
         image.elevation = elevation
         if let pairedID = image.pairedID {
