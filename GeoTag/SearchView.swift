@@ -99,6 +99,7 @@ struct SearchView: View {
     private func search(for query: String) {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
+        request.resultTypes = .address
         // search the entire world
         let center = LocationModel.shared.cameraPosition.camera?.centerCoordinate ??
             CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
