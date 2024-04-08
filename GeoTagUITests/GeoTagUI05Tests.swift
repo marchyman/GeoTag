@@ -11,6 +11,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
     private var app: XCUIApplication!
     private var testImageFolder = ""
+    private var saveImageFolder = ""
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -24,8 +25,12 @@ final class GeoTagUI05Tests: XCTestCase {
             sheet.buttons.firstMatch.click()
         }
 
+        // grab needed test location from the environment
         if let imagePath = ProcessInfo.processInfo.environment["ImagePath"] {
             testImageFolder = imagePath
+        }
+        if let savePath = ProcessInfo.processInfo.environment["SavePath"] {
+            saveImageFolder = savePath
         }
     }
 
@@ -258,5 +263,42 @@ final class GeoTagUI05Tests: XCTestCase {
         XCTAssert(tzWindow.staticTexts["currentTimeZone"].value as? String
                   == newZone)
         tzCancel.click()
+    }
+
+    // save tests.  This test modifies items in the source tree.  There
+    // should be no changes pending allowing a git reset --hard to reset
+    // the source tree after testing.
+
+    let results: [(String, String, String, String)] = [
+        ("IMG_7158.CR2*", "2015:11:12 13:06:56", "38° 31' 15.88\" N", "123° 12' 1.24\" W"),
+        ("L1000038.DNG", "2015:11:12 09:41:11", "38° 16' 10.27\" N", "122° 40' 15.12\" W"),
+        ("P1000685.JPG", "2015:11:12 13:02:28", "38° 31' 45.91\" N", "123° 12' 52.03\" W"),
+        ("P1000686.JPG", "1980:01:01 12:00:00", "", "")
+    ]
+
+    func test4Save() {
+        // open the images to modify
+        app.typeKey("o", modifierFlags: [.command])
+        app.typeKey("g", modifierFlags: [.shift, .command])
+        app.typeText(saveImageFolder)
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+
+        // open the track file from the test folder
+        app.typeKey("o", modifierFlags: [.command])
+        app.typeKey("g", modifierFlags: [.shift, .command])
+        app.typeText(testImageFolder)
+        app.typeText("/TestTrack.GPX")
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+        XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
+        app.sheets.buttons.firstMatch.click()
+
+        // select the images and apply the changes
+        app.typeKey("a", modifierFlags: [.command])
+        app.typeKey("l", modifierFlags: [.command])
+
+        sleep(5)
+        print(app.windows.firstMatch.debugDescription)
     }
 }
