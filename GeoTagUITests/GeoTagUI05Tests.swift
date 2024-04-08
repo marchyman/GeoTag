@@ -269,12 +269,14 @@ final class GeoTagUI05Tests: XCTestCase {
     // should be no changes pending allowing a git reset --hard to reset
     // the source tree after testing.
 
+    // swiftlint: disable large_tuple
     let results: [(String, String, String, String)] = [
         ("IMG_7158.CR2*", "2015:11:12 13:06:56", "38° 31' 15.88\" N", "123° 12' 1.24\" W"),
         ("L1000038.DNG", "2015:11:12 09:41:11", "38° 16' 10.27\" N", "122° 40' 15.12\" W"),
         ("P1000685.JPG", "2015:11:12 13:02:28", "38° 31' 45.91\" N", "123° 12' 52.03\" W"),
         ("P1000686.JPG", "1980:01:01 12:00:00", "", "")
     ]
+    // swiftlint: enable large_tuple
 
     func test4Save() {
         // open the images to modify
@@ -298,7 +300,21 @@ final class GeoTagUI05Tests: XCTestCase {
         app.typeKey("a", modifierFlags: [.command])
         app.typeKey("l", modifierFlags: [.command])
 
-        sleep(5)
-        print(app.windows.firstMatch.debugDescription)
+        for ix in 0 ..< results.count {
+            XCTAssert(app.outlineRows.element(boundBy: ix)
+                .staticTexts[results[ix].0].exists)
+            XCTAssert(app.outlineRows.element(boundBy: ix)
+                .staticTexts[results[ix].1].exists)
+            if ix == results.count - 1 {
+                break
+            }
+            XCTAssert(app.outlineRows.element(boundBy: ix)
+                .staticTexts[results[ix].2].exists)
+            XCTAssert(app.outlineRows.element(boundBy: ix)
+                .staticTexts[results[ix].3].exists)
+        }
+
+        // save the changes
+        
     }
 }
