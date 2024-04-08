@@ -204,4 +204,59 @@ final class GeoTagUI05Tests: XCTestCase {
         app.buttons["Toggle Inspector"].firstMatch.click()
         XCTAssert(newRow.staticTexts["38° 30' 0.00\" N"].exists)
     }
+
+    // change time zone test.  NOTE: Assumes the local time zone isn't
+    // GMT -4.  If it is the test should be changed
+
+    let newZone = "-4"
+
+    func test3TimeZone() {
+        // show the change time zone window
+        let tzItem = app.menuItems["Specify Time Zone…"]
+        XCTAssert(tzItem.exists)
+        tzItem.click()
+        let tzWindow = app.windows["Change Time Zone"]
+        XCTAssert(tzWindow.exists)
+
+        // dismiss the window without changes
+        let tzCancel = tzWindow.buttons["Cancel"]
+        XCTAssert(tzCancel.exists)
+        tzCancel.click()
+        XCTAssert(tzWindow.exists == false)
+
+        // show the window again and change the time zone
+        tzItem.click()
+        let tzButton = tzWindow.popUpButtons.firstMatch
+        XCTAssert(tzButton.exists)
+        tzButton.click()
+        let tzButtonItem = tzButton.menuItems[newZone]
+        XCTAssert(tzButtonItem.exists)
+        tzButtonItem.click()
+        XCTAssert(tzButton.value as? String == newZone)
+
+        // Cancel the change.
+        tzCancel.click()
+        XCTAssert(tzWindow.exists == false)
+
+        // verify the change was NOT made
+        tzItem.click()
+        XCTAssert(tzWindow.staticTexts["currentTimeZone"].value as? String
+                  != newZone)
+
+        // make the change, again
+        tzButton.click()
+        tzButtonItem.click()
+
+        // Save the change
+        let tzChange = tzWindow.buttons["Change"]
+        XCTAssert(tzChange.exists)
+        tzChange.click()
+        XCTAssert(tzWindow.exists == false)
+
+        // Re-open the window and verify the change was made.
+        tzItem.click()
+        XCTAssert(tzWindow.staticTexts["currentTimeZone"].value as? String
+                  == newZone)
+        tzCancel.click()
+    }
 }
