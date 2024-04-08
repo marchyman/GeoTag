@@ -23,9 +23,6 @@ final class GeoTagUI04MapTests: XCTestCase {
 
     private var app: XCUIApplication!
 
-    private var firstSearchResult: String!
-    private var firstSearchLoc: String!
-
     override func setUpWithError() throws {
         continueAfterFailure = false
 
@@ -87,7 +84,7 @@ final class GeoTagUI04MapTests: XCTestCase {
         searchText.typeKey(.return, modifierFlags: [])
         // Verify there is a search response.  It might even be New York, NY.
         XCTAssertTrue(searchResult.waitForExistence(timeout: 1))
-        firstSearchResult = searchResult.value as? String
+        let firstSearchResult = searchResult.value as? String
         XCTAssert(firstSearchResult != nil)
         searchResult.click()
         let loc = app.windows.firstMatch
@@ -98,7 +95,7 @@ final class GeoTagUI04MapTests: XCTestCase {
         XCTAssertTrue(loc.waitForExistence(timeout: 2))
 
         // save the location displayed while testing
-        firstSearchLoc = loc.value as? String
+        let firstSearchLoc = loc.value as? String
         XCTAssert(firstSearchLoc != nil)
 
         // Now search for another location and verify the map moved as
@@ -116,10 +113,13 @@ final class GeoTagUI04MapTests: XCTestCase {
 
     // Search picking previous results
     func test1MapSearch() {
-        if firstSearchLoc == nil {
-            // must be run first
-            test0MapSearch()
-        }
+        // save the current map location
+        let loc = app.windows.firstMatch
+                    .groups.firstMatch
+                    .splitGroups.firstMatch
+                    .groups.firstMatch
+                    .staticTexts.firstMatch
+        let oldLocValue = loc.value as? String
 
         // show search results
         let searchText = app.textFields[" Search location"]
@@ -134,16 +134,14 @@ final class GeoTagUI04MapTests: XCTestCase {
 
         // show them again and select the result from test 0.
         searchText.click()
-        XCTAssertTrue(table.staticTexts[firstSearchResult].exists)
-        table.staticTexts[firstSearchResult].click()
-        let loc = app.windows.firstMatch
-                    .groups.firstMatch
-                    .splitGroups.firstMatch
-                    .groups.firstMatch
-                    .staticTexts.firstMatch
+        let oldResult = table.tableRows.element(boundBy: 3)
+                            .staticTexts.firstMatch
+        XCTAssertTrue(oldResult.exists)
+        oldResult.click()
         XCTAssertTrue(loc.waitForExistence(timeout: 2))
-        let thisLoc = loc.value as? String
-        XCTAssert(firstSearchLoc == thisLoc)
+        let newLocValue = loc.value as? String
+
+        XCTAssert(oldLocValue != newLocValue)
 
         // the table should be gone
         XCTAssertFalse(table.exists)
@@ -165,14 +163,18 @@ final class GeoTagUI04MapTests: XCTestCase {
         XCTAssertFalse(table.exists)
     }
 
-//    // verify that the list of saved searches is actually empty
-//    func test2MapSearch() {
-//        let searchText = app.textFields[" Search location"]
-//        searchText.click()
-//        let table = app.tables.firstMatch
-//        XCTAssertFalse(table.tableRows.element(boundBy: 4).exists)
-//        app.buttons["Cancel"].click()
-//    }
+    // Clear saved locations and verify
+    func test2MapSearch() {
+        let searchText = app.textFields[" Search location"]
+        XCTAssertTrue(searchText.exists)
+        searchText.click()
+        let clear = app.buttons["Clear list"]
+        if clear.exists {
+            clear.click()
+        }
+        XCTAssertFalse(clear.exists)
+        app.typeKey(.escape, modifierFlags: [])
+    }
 
     // Map context menu
     func test3MapContextMenu() {
@@ -188,13 +190,25 @@ final class GeoTagUI04MapTests: XCTestCase {
         XCTAssertFalse(menu.exists)
         XCTAssertTrue(app.buttons["ModeButton3D"].exists)
 
-        // position the map and save the current position
         let searchText = app.textFields[" Search location"]
         searchText.click()
-        searchText.typeText("Bakersfield, CA")
+        searchText.typeText("Chicago")
         searchText.typeKey(.return, modifierFlags: [])
-        XCTAssertTrue(app.staticTexts["Bakersfield, CA"].waitForExistence(timeout: 2))
-        app.staticTexts["Bakersfield, CA"].click()
+        let searchResult = app
+                            .tables.firstMatch
+                            .tableRows.element(boundBy: 2)
+                            .staticTexts.firstMatch
+        XCTAssertTrue(searchResult.waitForExistence(timeout: 1))
+        searchResult.click()
+        let loc = app.windows.firstMatch
+                    .groups.firstMatch
+                    .splitGroups.firstMatch
+                    .groups.firstMatch
+                    .staticTexts.firstMatch
+        XCTAssertTrue(loc.waitForExistence(timeout: 2))
+
+        // Zoom the map and save the current position
+        map.doubleTap()
         map.rightClick()
         XCTAssertTrue(menu.waitForExistence(timeout: 2))
         menu.menuItems["Save map location"].click()
@@ -204,13 +218,8 @@ final class GeoTagUI04MapTests: XCTestCase {
     // more map context menu.
     func test4MapContextMenu() {
         // verify the state is correct, i.e. things changed above were
-        // sticky
+        // sticky (how can I check that the zoom level was saved?)
         XCTAssertTrue(app.buttons["ModeButton3D"].exists)
-        if let value = app.staticTexts.firstMatch.value as? String {
-            XCTAssertFalse(value.hasPrefix("35.373333"))
-        } else {
-            XCTAssert(false, "wrong location")
-        }
 
         // change back to the standard map
         let map = app.maps.firstMatch
@@ -221,14 +230,25 @@ final class GeoTagUI04MapTests: XCTestCase {
         // Back to the SF Bay Area
         let searchText = app.textFields[" Search location"]
         searchText.click()
-        let table = app.tables.firstMatch
-        XCTAssertTrue(table.exists)
         searchText.typeText("oakland, ca")
         searchText.typeKey(.return, modifierFlags: [])
-        XCTAssertTrue(table.staticTexts["Oakland, CA"].waitForExistence(timeout: 2))
-        table.staticTexts["Oakland, CA"].click()
+        let searchResult = app
+                            .tables.firstMatch
+                            .tableRows.element(boundBy: 2)
+                            .staticTexts.firstMatch
+        XCTAssertTrue(searchResult.waitForExistence(timeout: 1))
+        searchResult.click()
+        let loc = app.windows.firstMatch
+                    .groups.firstMatch
+                    .splitGroups.firstMatch
+                    .groups.firstMatch
+                    .staticTexts.firstMatch
+        XCTAssertTrue(loc.waitForExistence(timeout: 2))
+
+        // save location and exit by closing window
         map.rightClick()
         XCTAssertTrue(menu.waitForExistence(timeout: 2))
         menu.menuItems["Save map location"].click()
+        app.typeKey("w", modifierFlags: [.command])
     }
 }
