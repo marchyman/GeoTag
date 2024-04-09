@@ -24,9 +24,10 @@ version 4.15.
 
 ### Updates
 
+- Map pins can not be dragged. Click on the desired location to move a pin.
 - Copied/Cut coordinates are now in the same format as selected in GeoTag
   settings.
-- map configuration options are now in a map context (right click) menu.
+- Map configuration options are now in a map context (right click) menu.
 - At an appropriate zoom level you are given the option to use a 3D map
   representation.  Look for the "3D" button near the upper right corner of
   the map.
@@ -44,7 +45,7 @@ version 4.15.
 ### Issues
 
 - undo/redo menu items are always enabled, even when there are no undo or
-  redo actions that could be performed. The menu title are also not updated
+  redo actions that could be performed. The menu titles are also not updated
   for the action to be performed.
 - There is a short delay between clicking on the map and a map pin being
   placed.
@@ -83,7 +84,7 @@ key will remove location information from all selected images.  You can
 Undo/Redo image location changes.
 
 Double click the map to zoom in. Option-double click to zoom out. Or use
-pinch gestures to zoom in and out.
+pinch gestures to zoom in and out if using a touch pad.
 
 Five map styles --- Standard, Imagery, Hybrid, Standard with traffic, and
 Hybrid with traffic --- are supported. Right click on the map to select
