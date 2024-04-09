@@ -76,21 +76,22 @@ enum TimeZoneName: String, Identifiable, CaseIterable {
     }
 
     // Return the name associated with a TimeZone. If the given zone
-    // is nil use TimeZone.autoupdatingCurrent
+    // is nil use TimeZone.autoupdatingCurrent [unused]
 
-    static func timeZoneName(zone: TimeZone?) -> String {
-        return timeZoneCase(zone: zone).rawValue
-    }
+    // static func timeZoneName(zone: TimeZone?) -> String {
+    //     return timeZoneCase(zone: zone).rawValue
+    // }
 
     // return the identifier for a given TimeZone.  If no zone is
     // specified return the identifier for TimeZone.autoupdatingCurrent
+    // [unused]
 
-    static func timeZoneIdentifier(zone: TimeZone?) -> String {
-        if let zone {
-            return zone.identifier
-        }
-        return TimeZone.autoupdatingCurrent.identifier
-    }
+    // static func timeZoneIdentifier(zone: TimeZone?) -> String {
+    //     if let zone {
+    //         return zone.identifier
+    //     }
+    //     return TimeZone.autoupdatingCurrent.identifier
+    // }
 
     // return the timeZoneCase given a TimeZone. If the given zone
     // is nil use TimeZone.autoupdatingCurrent
