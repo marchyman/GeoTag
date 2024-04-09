@@ -210,6 +210,7 @@ final class GeoTagUI05Tests: XCTestCase {
             .groups.firstMatch
             .splitGroups.firstMatch
             .groups.element(boundBy: 1)
+        XCTAssert(inspector.waitForExistence(timeout: 1))
         XCTAssert(inspector.staticTexts["Date and Time"].exists)
         XCTAssert(inspector.staticTexts["Location"].exists)
         let lat = inspector.textFields.firstMatch
