@@ -11,20 +11,11 @@ final class GeoTagUI01LaunchTests: XCTestCase {
 
     private var app: XCUIApplication!
 
-    override func setUpWithError() throws {
+    override func setUp() {
         continueAfterFailure = false
-
-        app = XCUIApplication()
-        app.launchEnvironment = ["BACKUP": NSTemporaryDirectory()]
-
-        app.launch()
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the
-        // invocation of each test method in the class.
-        try super.tearDownWithError()
-        app = nil
+    override func tearDown() {
     }
 
     func testLaunchPerformance() throws {
