@@ -162,20 +162,21 @@ extension AppState {
         }
     }
 
-    // return true if a sheet of the given type is enqueued
+    // Add a sheet of a given type only once.
+    // [unused]
 
-    func hasSheet(type: SheetType) -> Bool {
-        if sheetType == type {
-            return true
-        }
-        return sheetStack.contains { $0.sheetType == type }
-    }
+    // func hasSheet(type: SheetType) -> Bool {
+    //     if sheetType == type {
+    //         return true
+    //     }
+    //     return sheetStack.contains { $0.sheetType == type }
+    // }
 
-    func addSheetOnce(type: SheetType, error: NSError? = nil, message: String? = nil) {
-        if !hasSheet(type: type) {
-            addSheet(type: type, error: error, message: message)
-        }
-    }
+    // func addSheetOnce(type: SheetType, error: NSError? = nil, message: String? = nil) {
+    //     if !hasSheet(type: type) {
+    //         addSheet(type: type, error: error, message: message)
+    //     }
+    // }
 }
 
 extension AppState {
