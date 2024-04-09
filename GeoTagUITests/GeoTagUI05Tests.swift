@@ -105,6 +105,12 @@ final class GeoTagUI05Tests: XCTestCase {
         XCTAssertTrue(row.staticTexts.element(boundBy: 3).exists)
         XCTAssertTrue(map.images["Pin"].exists)
 
+        // Ask to quit.  Verify confirmation presented.  Cancel Quit
+        app.typeKey("q", modifierFlags: [.command])
+        XCTAssert(app.sheets.firstMatch.waitForExistence(timeout: 1))
+        XCTAssert(app.sheets.firstMatch.buttons["Cancel"].exists)
+        app.sheets.firstMatch.buttons["Cancel"].click()
+
         // delete the location.
         app.typeKey(.delete, modifierFlags: [])
         XCTAssertFalse(row.staticTexts.element(boundBy: 2)
