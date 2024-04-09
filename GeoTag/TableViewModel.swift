@@ -21,26 +21,18 @@ final class TableViewModel {
     var selected: [ImageModel] = []
     var mostSelected: ImageModel?
 
-    // get/set an image from the table of images  given its ID.
+    // get an image from the table of images  given its ID.
+    // No setter is defined
     subscript(id: ImageModel.ID?) -> ImageModel {
-        get {
-            if let index = images.firstIndex(where: { $0.id == id }) {
-                Self.logger.trace("get \(self.images[index].name)")
-                return images[index]
-            }
-
-            // A view may hold on to an ID that is no longer in the table
-            // If it tries to access the image associated with that id
-            // return a fake image
-            return ImageModel()
+        if let index = images.firstIndex(where: { $0.id == id }) {
+            Self.logger.trace("get \(self.images[index].name)")
+            return images[index]
         }
-
-        set(newValue) {
-            if let index = images.firstIndex(where: { $0.id == newValue.id }) {
-                Self.logger.trace("set \(newValue.name)")
-                images[index] = newValue
-            }
-        }
+        
+        // A view may hold on to an ID that is no longer in the table
+        // If it tries to access the image associated with that id
+        // return a fake image
+        return ImageModel()
     }
 
     // A copy of the current sort order
