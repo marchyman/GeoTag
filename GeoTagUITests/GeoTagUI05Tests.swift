@@ -7,6 +7,7 @@
 
 import XCTest
 
+// swiftlint: disable type_body_length
 final class GeoTagUI05Tests: XCTestCase {
 
     private var app: XCUIApplication!
@@ -373,3 +374,4 @@ final class GeoTagUI05Tests: XCTestCase {
         app.typeKey("q", modifierFlags: [.command])
     }
 }
+// swiftlint: enable type_body_length

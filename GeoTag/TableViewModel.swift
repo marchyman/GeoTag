@@ -28,7 +28,7 @@ final class TableViewModel {
             Self.logger.trace("get \(self.images[index].name)")
             return images[index]
         }
-        
+
         // A view may hold on to an ID that is no longer in the table
         // If it tries to access the image associated with that id
         // return a fake image
