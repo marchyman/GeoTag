@@ -49,6 +49,9 @@ version 4.15.
   for the action to be performed.
 - There is a short delay between clicking on the map and a map pin being
   placed.
+- When showing pins for all selected locations the red (most selected) pin
+  may be hidden by the pin of another location near by unless the zoom level
+  is such that both locations are slightly separated on the map.
 
 ### See the file named *History* for earlier changes and bug fixes
 
