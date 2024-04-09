@@ -12,11 +12,13 @@ final class GeoTagUI05Tests: XCTestCase {
     private var app: XCUIApplication!
     private var testImageFolder = ""
     private var saveImageFolder = ""
+    private var saveBackupFolder = ""
 
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-
+        // force the first save to fail
+        app.launchEnvironment = ["BACKUP": NSTemporaryDirectory()]
         app.launch()
 
         // remove the "no backups sheet" sheet if it is present.
@@ -31,6 +33,9 @@ final class GeoTagUI05Tests: XCTestCase {
         }
         if let savePath = ProcessInfo.processInfo.environment["SavePath"] {
             saveImageFolder = savePath
+        }
+        if let backupPath = ProcessInfo.processInfo.environment["BackupPath"] {
+            saveBackupFolder = backupPath
         }
     }
 
@@ -314,7 +319,51 @@ final class GeoTagUI05Tests: XCTestCase {
                 .staticTexts[results[ix].3].exists)
         }
 
-        // save the changes
-        
+        // attempt to save the changes
+        app.typeKey("s", modifierFlags: [.command])
+        XCTAssert(app.sheets.firstMatch.waitForExistence(timeout: 1))
+        XCTAssert(app.sheets.firstMatch.buttons["Dismiss"].exists)
+        app.sheets.firstMatch.buttons["Dismiss"].click()
+
+        // Update the backup folder in settings.
+        app.typeKey(",", modifierFlags: [.command])
+        let settings = app.windows.firstMatch
+        settings.staticTexts["backupPath"].click()
+        settings.menuItems["Choose…"].click()
+        app.typeKey("g", modifierFlags: [.shift, .command])
+        app.typeText(saveBackupFolder)
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+        settings.buttons["Close"].click()
+
+        // attempt to save changes, again
+        app.typeKey("s", modifierFlags: [.command])
+
+        // clear the table of images and re-load from disk.
+        app.menuItems["Clear Image List"].click()
+        app.menuItems["Open…"].click()
+        app.typeKey("g", modifierFlags: [.shift, .command])
+        app.typeText(saveImageFolder)
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+        XCTAssert(app.outlines.firstMatch.waitForExistence(timeout: 1))
+
+        // verify the newly loaded data has the proper (saved) info.
+        for ix in 0 ..< results.count {
+            XCTAssert(app.outlineRows.element(boundBy: ix)
+                .staticTexts[results[ix].0].exists)
+            XCTAssert(app.outlineRows.element(boundBy: ix)
+                .staticTexts[results[ix].1].exists)
+            if ix == results.count - 1 {
+                break
+            }
+            XCTAssert(app.outlineRows.element(boundBy: ix)
+                .staticTexts[results[ix].2].exists)
+            XCTAssert(app.outlineRows.element(boundBy: ix)
+                .staticTexts[results[ix].3].exists)
+        }
+
+        // quit
+        app.typeKey("q", modifierFlags: [.command])
     }
 }

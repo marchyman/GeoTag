@@ -48,6 +48,11 @@
             value = "$(SRCROOT)/SaveData/"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "BackupPath"
+            value = "$(SRCROOT)/SaveBackup/"
+            isEnabled = "YES">
+         </EnvironmentVariable>
       </EnvironmentVariables>
       <Testables>
          <TestableReference
