@@ -52,6 +52,7 @@ struct SettingsView: View {
                     } else {
                         LabeledContent("Backup folder:") {
                             PathView(url: $state.backupURL)
+                                .accessibilityValue("backupPath")
                                 .frame(width: 280)
                         }
                         .padding(.bottom)
