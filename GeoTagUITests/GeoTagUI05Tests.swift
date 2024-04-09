@@ -75,7 +75,7 @@ final class GeoTagUI05Tests: XCTestCase {
     func test0DuplicateImage() {
         openTestFile()
         XCTAssertTrue(app.staticTexts["IMG_7158.CR2*"]
-                         .waitForExistence(timeout: 2))
+            .waitForExistence(timeout: 2))
 
         // open again.  Should get a dup image sheet
         openTestFile()
@@ -95,14 +95,14 @@ final class GeoTagUI05Tests: XCTestCase {
         openTestFile()
         let row = app.outlineRows.firstMatch
         XCTAssertTrue(row.staticTexts["IMG_7158.CR2*"]
-                         .waitForExistence(timeout: 2))
+            .waitForExistence(timeout: 2))
         row.staticTexts["IMG_7158.CR2*"].click()
 
         // click on the map, verify location and pin
         let map = app.maps.firstMatch
         map.click()
         XCTAssertTrue(row.staticTexts.element(boundBy: 2)
-                         .waitForExistence(timeout: 1))
+            .waitForExistence(timeout: 1))
         XCTAssertTrue(row.staticTexts.element(boundBy: 3).exists)
         XCTAssertTrue(map.images["Pin"].exists)
 
@@ -115,7 +115,7 @@ final class GeoTagUI05Tests: XCTestCase {
         // delete the location.
         app.typeKey(.delete, modifierFlags: [])
         XCTAssertFalse(row.staticTexts.element(boundBy: 2)
-                          .waitForExistence(timeout: 1))
+            .waitForExistence(timeout: 1))
         XCTAssertFalse(row.staticTexts.element(boundBy: 3).exists)
         XCTAssertFalse(map.images["Pin"].exists)
 
@@ -132,19 +132,19 @@ final class GeoTagUI05Tests: XCTestCase {
          * I'm going to ignore it for now and move on to other tests.
          */
         // undo the delete
-//        app.menuItems["Undo"].click()
-//        app.typeKey("z", modifierFlags: [.command])
-//        XCTAssertTrue(row.staticTexts.element(boundBy: 2)
-//                         .waitForExistence(timeout: 1))
-//        XCTAssertTrue(row.staticTexts.element(boundBy: 3).exists)
-//        XCTAssertTrue(map.images["Pin"].exists)
+        //        app.menuItems["Undo"].click()
+        //        app.typeKey("z", modifierFlags: [.command])
+        //        XCTAssertTrue(row.staticTexts.element(boundBy: 2)
+        //                         .waitForExistence(timeout: 1))
+        //        XCTAssertTrue(row.staticTexts.element(boundBy: 3).exists)
+        //        XCTAssertTrue(map.images["Pin"].exists)
 
-//        // redo the delete
-//        app.typeKey("z", modifierFlags: [.shift, .command])
-//        XCTAssertFalse(row.staticTexts.element(boundBy: 2)
-//                          .waitForExistence(timeout: 1))
-//        XCTAssertFalse(row.staticTexts.element(boundBy: 3).exists)
-//        XCTAssertFalse(map.images["Pin"].exists)
+        //        // redo the delete
+        //        app.typeKey("z", modifierFlags: [.shift, .command])
+        //        XCTAssertFalse(row.staticTexts.element(boundBy: 2)
+        //                          .waitForExistence(timeout: 1))
+        //        XCTAssertFalse(row.staticTexts.element(boundBy: 3).exists)
+        //        XCTAssertFalse(map.images["Pin"].exists)
     }
 
     func test2TableMenu() {
@@ -156,10 +156,10 @@ final class GeoTagUI05Tests: XCTestCase {
         let table = app.outlines.firstMatch
         table.rightClick()
         let menu = app.windows.firstMatch
-                    .groups.firstMatch
-                    .splitGroups.firstMatch
-                    .groups.firstMatch
-                    .menus.firstMatch
+            .groups.firstMatch
+            .splitGroups.firstMatch
+            .groups.firstMatch
+            .menus.firstMatch
         XCTAssert(menu.waitForExistence(timeout: 1))
         XCTAssert(menu.menuItems["Edit…"].exists)
         XCTAssert(menu.menuItems["Cut"].exists)
@@ -210,7 +210,6 @@ final class GeoTagUI05Tests: XCTestCase {
             .groups.firstMatch
             .splitGroups.firstMatch
             .groups.element(boundBy: 1)
-        print(inspector.debugDescription)
         XCTAssert(inspector.staticTexts["Date and Time"].exists)
         XCTAssert(inspector.staticTexts["Location"].exists)
         let lat = inspector.textFields.firstMatch
@@ -286,18 +285,36 @@ final class GeoTagUI05Tests: XCTestCase {
         ("IMG_7158.CR2*", "2015:11:12 13:06:56", "38° 31' 15.88\" N", "123° 12' 1.24\" W"),
         ("L1000038.DNG", "2015:11:12 09:41:11", "38° 16' 10.27\" N", "122° 40' 15.12\" W"),
         ("P1000685.JPG", "2015:11:12 13:02:28", "38° 31' 45.91\" N", "123° 12' 52.03\" W"),
-        ("P1000686.JPG", "1980:01:01 12:00:00", "", "")
+        ("P1000686.JPG", "1980:02:01 12:00:00", "", "")
     ]
     // swiftlint: enable large_tuple
 
     func test4Save() {
-        // open the images to modify
+        openImages()
+        openTrack()
+        applyTrackLocations()
+        adjustImageTime()
+        verifyResults()
+        saveWithBadBackupFolder()
+        setBackupFolder()
+        app.typeKey("s", modifierFlags: [.command]) // save images
+        app.menuItems["Clear Image List"].click()
+        openImages()
+        verifyResults()
+        app.typeKey("q", modifierFlags: [.command]) // quit
+    }
+
+    // helper functions for test 4
+    func openImages() {
         app.typeKey("o", modifierFlags: [.command])
         app.typeKey("g", modifierFlags: [.shift, .command])
         app.typeText(saveImageFolder)
         app.typeKey(.enter, modifierFlags: [])
         app.typeKey(.enter, modifierFlags: [])
+        XCTAssert(app.outlines.firstMatch.waitForExistence(timeout: 1))
+    }
 
+    func openTrack() {
         // open the track file from the test folder
         app.typeKey("o", modifierFlags: [.command])
         app.typeKey("g", modifierFlags: [.shift, .command])
@@ -307,11 +324,39 @@ final class GeoTagUI05Tests: XCTestCase {
         app.typeKey(.enter, modifierFlags: [])
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
         app.sheets.buttons.firstMatch.click()
+    }
 
+    func applyTrackLocations() {
         // select the images and apply the changes
         app.typeKey("a", modifierFlags: [.command])
         app.typeKey("l", modifierFlags: [.command])
+    }
 
+    func adjustImageTime() {
+        // modify the time of one of the images.
+        let row = app.outlineRows.element(boundBy: 3)
+        XCTAssert(row.staticTexts["1980:01:01 12:00:00"].exists)
+        row.staticTexts.firstMatch.click()
+        row.staticTexts.firstMatch.rightClick()
+        let menu = app.windows.firstMatch
+            .groups.firstMatch
+            .splitGroups.firstMatch
+            .groups.firstMatch
+            .menus.firstMatch
+        menu.menuItems["Edit…"].click()
+        let inspector = app
+            .windows.firstMatch
+            .groups.firstMatch
+            .splitGroups.firstMatch
+            .groups.element(boundBy: 1)
+        XCTAssert(inspector.waitForExistence(timeout: 1))
+        let datePicker = inspector.datePickers["newDatePicker"]
+        XCTAssert(datePicker.exists)
+        datePicker.incrementArrows.firstMatch.click()
+        app.buttons["Toggle Inspector"].firstMatch.click()
+    }
+
+    func verifyResults() {
         for ix in 0 ..< results.count {
             XCTAssert(app.outlineRows.element(boundBy: ix)
                 .staticTexts[results[ix].0].exists)
@@ -325,14 +370,16 @@ final class GeoTagUI05Tests: XCTestCase {
             XCTAssert(app.outlineRows.element(boundBy: ix)
                 .staticTexts[results[ix].3].exists)
         }
+    }
 
-        // attempt to save the changes
+    func saveWithBadBackupFolder() {
         app.typeKey("s", modifierFlags: [.command])
         XCTAssert(app.sheets.firstMatch.waitForExistence(timeout: 1))
         XCTAssert(app.sheets.firstMatch.buttons["Dismiss"].exists)
         app.sheets.firstMatch.buttons["Dismiss"].click()
+    }
 
-        // Update the backup folder in settings.
+    func setBackupFolder() {
         app.typeKey(",", modifierFlags: [.command])
         let settings = app.windows.firstMatch
         settings.staticTexts["backupPath"].click()
@@ -342,36 +389,6 @@ final class GeoTagUI05Tests: XCTestCase {
         app.typeKey(.enter, modifierFlags: [])
         app.typeKey(.enter, modifierFlags: [])
         settings.buttons["Close"].click()
-
-        // attempt to save changes, again
-        app.typeKey("s", modifierFlags: [.command])
-
-        // clear the table of images and re-load from disk.
-        app.menuItems["Clear Image List"].click()
-        app.menuItems["Open…"].click()
-        app.typeKey("g", modifierFlags: [.shift, .command])
-        app.typeText(saveImageFolder)
-        app.typeKey(.enter, modifierFlags: [])
-        app.typeKey(.enter, modifierFlags: [])
-        XCTAssert(app.outlines.firstMatch.waitForExistence(timeout: 1))
-
-        // verify the newly loaded data has the proper (saved) info.
-        for ix in 0 ..< results.count {
-            XCTAssert(app.outlineRows.element(boundBy: ix)
-                .staticTexts[results[ix].0].exists)
-            XCTAssert(app.outlineRows.element(boundBy: ix)
-                .staticTexts[results[ix].1].exists)
-            if ix == results.count - 1 {
-                break
-            }
-            XCTAssert(app.outlineRows.element(boundBy: ix)
-                .staticTexts[results[ix].2].exists)
-            XCTAssert(app.outlineRows.element(boundBy: ix)
-                .staticTexts[results[ix].3].exists)
-        }
-
-        // quit
-        app.typeKey("q", modifierFlags: [.command])
     }
 }
 // swiftlint: enable type_body_length

@@ -24,6 +24,7 @@ struct DateTimeSectionView: View {
 
             DatePicker("New Date/Time", selection: $newDate,
                        displayedComponents: .init(rawValue: 1234521450295224572))
+            .accessibilityValue("newDatePicker")
             .focused($isFocused)
             .padding([.horizontal, .bottom])
             .help("If one image is selected it is set to this value. " +
