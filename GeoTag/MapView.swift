@@ -59,6 +59,7 @@ struct MapView: View {
                 MapCompass()
                 MapPitchToggle()
                 MapScaleView()
+                MapZoomStepper()
             }
             .contextMenu {
                 MapContextMenu(camera: $camera,
