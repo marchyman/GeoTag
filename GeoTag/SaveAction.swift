@@ -39,12 +39,16 @@ extension AppState {
         // tasks.
         saveInProgress = true
         saveIssues = [:]
-        let imagesToSave = tvm.images.filter { $0.changed }
+        let libraryPhotosToSave = tvm.images.filter { $0.asset != nil && $0.isValid}
+        let imagesToSave = tvm.images.filter { $0.asset == nil && $0.changed }
         undoManager.removeAllActions()
         isDocumentEdited = false
 
         // process the images in the background.
         Task {
+            if !libraryPhotosToSave.isEmpty {
+                await saveLibraryPhotos(images: libraryPhotosToSave)
+            }
             @AppStorage(AppSettings.addTagsKey) var addTags = false
             @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
             @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
@@ -105,5 +109,9 @@ extension AppState {
             }
             saveInProgress = false
         }
+    }
+
+    private func saveLibraryPhotos(images: [ImageModel]) async {
+        // do the save, here.
     }
 }
