@@ -21,7 +21,7 @@ final class PhotoLibrary {
     }
 }
 
-// A photoLibrary entry containing data needed to update images
+// A PhotoLibrary entry containing data needed to update images
 extension PhotoLibrary {
     struct LibraryEntry {
         let item: PhotosPickerItem
@@ -31,18 +31,14 @@ extension PhotoLibrary {
         // fake a URL from the item.itemIdentifier
 
         var url: URL {
-            let id = item.itemIdentifier ?? UUID().uuidString
-            let fakePath = "file://Photo/Library/\(id)"
-            return URL(fileURLWithPath: fakePath)
+            PhotoLibrary.fakeURL(itemId: item.itemIdentifier)
         }
+    }
 
-        init(item: PhotosPickerItem,
-             image: Image?,
-             asset: PHAsset?) {
-            self.item = item
-            self.image = image
-            self.asset = asset
-        }
+    static func fakeURL(itemId: String?) -> URL {
+        let id = itemId ?? UUID().uuidString
+        let fakePath = "file://Photo/Library/\(id)"
+        return URL(fileURLWithPath: fakePath)
     }
 }
 
@@ -58,24 +54,25 @@ extension PhotoLibrary {
 // functions to build a LibraryEntry and add it to the array of
 // selected photos
 extension PhotoLibrary {
-    func addPhotos(from selection: [PhotosPickerItem]) async {
+    func addPhotos(from selection: [PhotosPickerItem],
+                   to tvm: TableViewModel) async {
         for item in selection {
-            guard !isDuplicate(item) else { continue }
+            guard !isDuplicate(item, in: tvm) else { continue }
             let libraryEntry = LibraryEntry(item: item,
                                             image: await getImage(for: item),
                                             asset: getAssets(for: item))
-            print(libraryEntry)
-//            await MainActor.run {
-//                libraryPhotos.append(libraryPhoto)
-//            }
+            let image = ImageModel(libraryEntry: libraryEntry)
+            await MainActor.run {
+                tvm.images.append(image)
+            }
         }
     }
 
-    func isDuplicate(_ item: PhotosPickerItem) -> Bool {
-//        return libraryPhotos.contains(where: {
-//            $0.item.itemIdentifier == item.itemIdentifier
-//        })
-        return false    // until I figure things out
+    func isDuplicate(_ item: PhotosPickerItem,
+                     in tvm: TableViewModel) -> Bool {
+        return tvm.images.contains(where: {
+            $0.id == Self.fakeURL(itemId: item.itemIdentifier)
+        })
     }
 
     func getImage(for item: PhotosPickerItem) async -> Image? {
