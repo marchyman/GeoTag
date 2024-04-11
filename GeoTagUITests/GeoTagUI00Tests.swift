@@ -53,7 +53,7 @@ final class GeoTagUI00Tests: XCTestCase {
         let window = app.windows["main"]
         XCTAssertTrue(window.exists)
         XCTAssertEqual(window.descendants(matching: .tableColumn).count, 4)
-        XCTAssertEqual(window.descendants(matching: .image).count, 2)
+        XCTAssertEqual(window.descendants(matching: .image).count, 4)
         XCTAssertTrue(window.descendants(matching: .map).element.exists)
         XCTAssertTrue(window.descendants(matching: .toolbar).element.exists)
         XCTAssertTrue(app.buttons["Toggle Inspector"].exists)

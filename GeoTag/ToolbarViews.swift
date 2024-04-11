@@ -18,14 +18,16 @@ struct PhotoPickerView: View {
             PhotosPicker(selection: $pickerItems,
                          matching: .images,
                          photoLibrary: .shared()) {
-                Label("Photo Library", systemImage: "photo.circle")
+                Label("Photo Library", systemImage: "photo")
+                    .imageScale(.large)
             }
             .keyboardShortcut("i", modifiers: [.shift, .command])
         } else {
             Button {
                 photoLibrary.requestAuth()
             } label: {
-                Label("Photo Library", systemImage: "photo.circle")
+                Label("Photo Library", systemImage: "photo")
+                    .imageScale(.large)
             }
         }
     }
