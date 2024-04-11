@@ -21,6 +21,23 @@ final class PhotoLibrary {
     }
 }
 
+// A photoLibrary entry containing data needed to update images
+extension PhotoLibrary {
+    struct LibraryEntry {
+        let item: PhotosPickerItem
+        let image: Image?
+        var asset: PHAsset?
+
+        init(item: PhotosPickerItem,
+             image: Image?,
+             asset: PHAsset?) {
+            self.item = item
+            self.image = image
+            self.asset = asset
+        }
+    }
+}
+
 // Request authorization to access users photo library
 extension PhotoLibrary {
     func requestAuth() {
@@ -36,9 +53,10 @@ extension PhotoLibrary {
     func addPhotos(from selection: [PhotosPickerItem]) async {
         for item in selection {
             guard !isDuplicate(item) else { continue }
-//            let libraryPhoto = LibraryPhoto(item: item,
-//                                            image: await getImage(for: item),
-//                                            asset: getAssets(for: item))
+            let libraryEntry = LibraryEntry(item: item,
+                                            image: await getImage(for: item),
+                                            asset: getAssets(for: item))
+            print(libraryEntry)
 //            await MainActor.run {
 //                libraryPhotos.append(libraryPhoto)
 //            }

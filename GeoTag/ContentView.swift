@@ -5,7 +5,6 @@
 //  Created by Marco S Hyman on 12/9/22.
 //
 
-import PhotosUI
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -20,9 +19,6 @@ struct ContentView: View {
     @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
     @AppStorage(AppSettings.splitHContentKey) var hPercent = 0.45
 
-    var photoLibrary = PhotoLibrary.shared
-
-    @State private var pickerItems: [PhotosPickerItem] = []
     @State private var removeOldFiles = false
 
     var body: some View {
@@ -76,26 +72,8 @@ struct ContentView: View {
             }
         }
         .toolbar {
-            if photoLibrary.enabled {
-                PhotosPicker(selection: $pickerItems,
-                             matching: .images,
-                             photoLibrary: .shared()) {
-                    Label("Photo Library", systemImage: "photo.circle")
-                }
-                .keyboardShortcut("i", modifiers: [.shift, .command])
-            } else {
-                Button {
-                    photoLibrary.requestAuth()
-                } label: {
-                    Label("Photo Library", systemImage: "photo.circle")
-                }
-            }
-            Button {
-                state.inspectorPresented.toggle()
-            } label: {
-                Label("Toggle Inspector", systemImage: "info.circle")
-            }
-            .keyboardShortcut("i")
+            PhotoPickerView()
+            InspectorButtonView()
         }
 
     }
