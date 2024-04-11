@@ -37,8 +37,7 @@ extension PhotoLibrary {
 
     static func fakeURL(itemId: String?) -> URL {
         let id = itemId ?? UUID().uuidString
-        let fakePath = "file://Photo/Library/\(id)"
-        return URL(fileURLWithPath: fakePath)
+        return URL(fileURLWithPath: id)
     }
 }
 

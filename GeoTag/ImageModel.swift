@@ -27,7 +27,10 @@ final class ImageModel: Identifiable {
         fileURL
     }
     var name: String {
-        fileURL.lastPathComponent + (sidecarExists ? "*" : "")
+        if asset != nil {
+            return String(fileURL.path().prefix(13))
+        }
+        return fileURL.lastPathComponent + (sidecarExists ? "*" : "")
     }
 
     // Timestamp of the image when present.   The "Timestamp" column of image
