@@ -28,6 +28,14 @@ extension PhotoLibrary {
         let image: Image?
         var asset: PHAsset?
 
+        // fake a URL from the item.itemIdentifier
+
+        var url: URL {
+            let id = item.itemIdentifier ?? UUID().uuidString
+            let fakePath = "file://Photo/Library/\(id)"
+            return URL(fileURLWithPath: fakePath)
+        }
+
         init(item: PhotosPickerItem,
              image: Image?,
              asset: PHAsset?) {
