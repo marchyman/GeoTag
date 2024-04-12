@@ -13,8 +13,8 @@ struct GeoTagApp: App {
     @State var state = AppState()
     @FocusedBinding(\.textfieldBinding) var textfieldBinding
 
-    let windowWidth = 1200.0
-    let windowHeight = 900.0
+    let windowWidth = 1000.0
+    let windowHeight = 700.0
 
     var body: some Scene {
         Window("GeoTag Version Five", id: "main") {
