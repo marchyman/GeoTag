@@ -5,21 +5,18 @@
 //  Created by Marco S Hyman on 12/18/22.
 //
 
-import Foundation
 import AppKit
+import SwiftUI
 
 extension ImageModel {
 
-    /// Create an image thumbnail
-    ///
-    /// If image propertied can not be accessed or if needed properties
-    /// do not exist the file is assumed to be a non-image file and a zero
-    /// sized empty image is created.
+    // create a thumbnail image
+    // if an image can not be created a placeholder image is returned
 
-    func makeThumbnail() async -> NSImage {
+    func makeThumbnail() async -> Image {
         var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
-            return image
+            return Image(systemName: "photo")
         }
 
         // Create a "preview" of the image. If the image is larger than
@@ -56,7 +53,7 @@ extension ImageModel {
             }
             checkSize = false
         } while checkSize
-        return image
+        return Image(nsImage: image)
     }
 }
 

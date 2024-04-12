@@ -60,15 +60,6 @@ struct ContentView: View {
         .inspector(isPresented: $state.inspectorPresented) {
             ImageInspectorView()
                 .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
-                .toolbar {
-                    Spacer()
-                    Button {
-                        state.inspectorPresented.toggle()
-                    } label: {
-                        Label("Toggle Inspector", systemImage: "info.circle")
-                    }
-                    .keyboardShortcut("i")
-                }
         }
         .fileImporter(isPresented: $state.importFiles,
                       allowedContentTypes: importTypes(),
@@ -79,6 +70,10 @@ struct ContentView: View {
             case .failure(let error):
                 print(error.localizedDescription)
             }
+        }
+        .toolbar {
+            PhotoPickerView()
+            InspectorButtonView()
         }
     }
 

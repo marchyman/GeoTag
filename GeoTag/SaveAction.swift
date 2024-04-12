@@ -39,12 +39,19 @@ extension AppState {
         // tasks.
         saveInProgress = true
         saveIssues = [:]
-        let imagesToSave = tvm.images.filter { $0.changed }
+        // get the indices of images from the PhotosLibrary
+        let libraryPhotosToSave = tvm.images.indices.filter {
+            tvm.images[$0].asset != nil && tvm.images[$0].isValid
+        }
+        let imagesToSave = tvm.images.filter { $0.asset == nil && $0.changed }
         undoManager.removeAllActions()
         isDocumentEdited = false
 
         // process the images in the background.
         Task {
+            if !libraryPhotosToSave.isEmpty {
+                saveLibraryPhotos(indices: libraryPhotosToSave)
+            }
             @AppStorage(AppSettings.addTagsKey) var addTags = false
             @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
             @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
@@ -99,11 +106,21 @@ extension AppState {
                 }
             }
 
-            if !saveIssues.isEmpty {
-                isDocumentEdited = true
-                addSheet(type: .saveErrorSheet)
+            await MainActor.run {
+                if !saveIssues.isEmpty {
+                    isDocumentEdited = true
+                    addSheet(type: .saveErrorSheet)
+                }
+                saveInProgress = false
             }
-            saveInProgress = false
+        }
+    }
+
+    private func saveLibraryPhotos(indices: [Int]) {
+        let photoLibrary = PhotoLibrary.shared
+
+        for index in indices {
+            photoLibrary.saveChanges(for: index, of: tvm.images, in: timeZone)
         }
     }
 }

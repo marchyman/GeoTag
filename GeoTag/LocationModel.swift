@@ -15,6 +15,7 @@ final class LocationModel {
 
     var cameraPosition: MapCameraPosition = .automatic
     var cameraDistance: Double = 0
+    var mapRect: MKMapRect?
     var showOtherPins: Bool = false
 
     // displayed map tracks
@@ -25,6 +26,42 @@ final class LocationModel {
     private init() {
         showLocation = ProcessInfo.processInfo.environment["MAPTEST"] != nil
         // use the shared instance
+    }
+}
+
+extension LocationModel {
+
+    // return an array of images with coordinates for selected pins that do
+    // not match the mostSelected pin if enabled.
+
+    func otherPins(tvm: TableViewModel) -> [ImageModel] {
+        if showOtherPins && !tvm.selected.isEmpty {
+            let images = tvm.selected.filter { $0.location != nil }
+            let mainImage = tvm.mostSelected ?? ImageModel()
+            return images.filter { $0.location != mainImage.location }
+        }
+        return []
+    }
+
+    // Change the camera position to the given place
+
+    func setCameraPosition(to coords: Coords) {
+        cameraPosition =
+            .camera(.init(centerCoordinate: coords,
+                          distance: cameraDistance))
+    }
+
+    // if the given locn is not nil and is not on the map center the map
+    // on the locn
+    func recenterMap(locn: Coords?) {
+        if let locn {
+            if let rect = mapRect {
+                if rect.contains(MKMapPoint(locn)) {
+                    return
+                }
+            }
+            setCameraPosition(to: locn)
+        }
     }
 }
 

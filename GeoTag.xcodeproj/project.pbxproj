@@ -42,6 +42,8 @@
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
 		498AE5B1294AB78A0063B1C1 /* XmpPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */; };
 		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
+		498FF4952BC76518003D691B /* PhotoLibraryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FF4942BC76518003D691B /* PhotoLibraryController.swift */; };
+		498FF4972BC77BB0003D691B /* ToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FF4962BC77BB0003D691B /* ToolbarViews.swift */; };
 		49901CEB2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */; };
 		49901CED2A5B71EB00C28CAD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49901CEC2A5B71EB00C28CAD /* AppState.swift */; };
 		49918F8629736652000D6590 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 492E3F5D29481A7D0044C1F3 /* Credits.rtf */; };
@@ -133,6 +135,8 @@
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
 		498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpPresenter.swift; sourceTree = "<group>"; };
 		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
+		498FF4942BC76518003D691B /* PhotoLibraryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryController.swift; sourceTree = "<group>"; };
+		498FF4962BC77BB0003D691B /* ToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarViews.swift; sourceTree = "<group>"; };
 		49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveBackupsAlert.swift; sourceTree = "<group>"; };
 		49901CEC2A5B71EB00C28CAD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		49918F84297352AB000D6590 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
@@ -251,6 +255,7 @@
 				493E5F432A5B88B300B29DCF /* TableViewModel.swift */,
 				495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */,
 				49BA29A22962285300B26F03 /* Updates.swift */,
+				498FF4942BC76518003D691B /* PhotoLibraryController.swift */,
 				49BA299E2962250200B26F03 /* WindowAccessor.swift */,
 			);
 			name = "App Group";
@@ -284,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				49B039592944429E003B7C53 /* ContentView.swift */,
+				498FF4962BC77BB0003D691B /* ToolbarViews.swift */,
 				49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */,
 				493E5F452A5BA46200B29DCF /* AreYouSure.swift */,
 				4912D2D22B99085300AC38DB /* SplitHView.swift */,
@@ -616,6 +622,7 @@
 				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
+				498FF4952BC76518003D691B /* PhotoLibraryController.swift in Sources */,
 				49A99FBE296F8B4B00392EEA /* BackupFolder.swift in Sources */,
 				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
 				492719E02A5CC7B100451573 /* ImageInspectorView.swift in Sources */,
@@ -623,6 +630,7 @@
 				495F2F63295EB1A5002A8A88 /* TableViewSelections.swift in Sources */,
 				490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */,
 				4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */,
+				498FF4972BC77BB0003D691B /* ToolbarViews.swift in Sources */,
 				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
 				49AB65D12BAE38510050EC60 /* MapView.swift in Sources */,
@@ -827,6 +835,7 @@
 				INFOPLIST_FILE = GeoTag/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022-2024 Marco S Hyman";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Update Photo Timestamps and Location Coordinates";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -861,6 +870,7 @@
 				INFOPLIST_FILE = GeoTag/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022-2024 Marco S Hyman";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Update Photo Timestamps and Location Coordinates";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

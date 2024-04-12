@@ -41,7 +41,7 @@ struct MapView: View {
                     }
                     .annotationTitles(.hidden)
                 }
-                ForEach(otherPins()) { image in
+                ForEach(location.otherPins(tvm: state.tvm)) { image in
                     Annotation("other pin",
                                coordinate: image.location!,
                                anchor: .bottom) {
@@ -70,6 +70,7 @@ struct MapView: View {
                 if let distance = camera?.distance {
                     location.cameraDistance = distance
                 }
+                location.mapRect = context.rect
             }
             .onAppear {
                 let center = Coords(latitude: initialMapLatitude,
@@ -85,14 +86,12 @@ struct MapView: View {
             }
             .onChange(of: searchState.searchResult) {
                 if let searchResult = searchState.searchResult {
-                    setCameraPosition(to: searchResult.coordinate.coord2D)
+                    location.setCameraPosition(to: searchResult.coordinate.coord2D)
                     searchState.searchText = ""
                 }
             }
             .onChange(of: state.tvm.mostSelected) {
-                if let location = state.tvm.mostSelected?.location {
-                    setCameraPosition(to: location)
-                }
+                location.recenterMap(locn: state.tvm.mostSelected?.location)
             }
             .gesture(zoomOut)
             .onTapGesture(count: 2) { position in
@@ -132,26 +131,6 @@ struct MapView: View {
                                   distance: distance))
             }
         }
-    }
-
-    // return an array of images with coordinates for selected pins that do
-    // not match the mostSelected pin if enabled.
-
-    private func otherPins() -> [ImageModel] {
-        if location.showOtherPins && !state.tvm.selected.isEmpty {
-            let images = state.tvm.selected.filter { $0.location != nil }
-            let mainImage = state.tvm.mostSelected ?? ImageModel()
-            return images.filter { $0.location != mainImage.location }
-        }
-        return []
-    }
-
-    // Change the camera position to the given place
-
-    private func setCameraPosition(to coords: Coords) {
-        location.cameraPosition =
-            .camera(.init(centerCoordinate: coords,
-                          distance: location.cameraDistance))
     }
 
     private func translateLocal(_ mapStyleName: MapStyleName) -> MapStyle {

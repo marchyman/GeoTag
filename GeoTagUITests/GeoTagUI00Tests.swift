@@ -22,7 +22,7 @@ final class GeoTagUI00Tests: XCTestCase {
         // a sheet saying no backup file exists.  Dismiss the sheet.
 
         let sheet = app.windows.sheets.element
-        XCTAssertTrue(sheet.waitForExistence(timeout: 2))
+        XCTAssert(sheet.waitForExistence(timeout: 2))
         takeScreenshot(name: "InitialLaunch")
         sheet.buttons.firstMatch.click()
         takeScreenshot(name: "Launch")
@@ -51,19 +51,28 @@ final class GeoTagUI00Tests: XCTestCase {
     // the appropriate menu items appear.
     func test0Startup() {
         let window = app.windows["main"]
-        XCTAssertTrue(window.exists)
+        XCTAssert(window.exists)
         XCTAssertEqual(window.descendants(matching: .tableColumn).count, 4)
-        XCTAssertEqual(window.descendants(matching: .image).count, 2)
-        XCTAssertTrue(window.descendants(matching: .map).element.exists)
-        XCTAssertTrue(window.descendants(matching: .toolbar).element.exists)
-        XCTAssertTrue(app.buttons["Toggle Inspector"].exists)
+        XCTAssertEqual(window.descendants(matching: .image).count, 4)
+        XCTAssert(window.descendants(matching: .map).element.exists)
+        XCTAssert(window.descendants(matching: .toolbar).element.exists)
+
+        XCTAssert(app.buttons["Toggle Inspector"].exists)
         app.buttons["Toggle Inspector"].firstMatch.click()
-        XCTAssertTrue(app.staticTexts["Please select an image"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Please select an image"].waitForExistence(timeout: 2))
         takeScreenshot(name: "Inspector")
         app.buttons["Toggle Inspector"].firstMatch.click()
 
+        // The photo picker does not show up as one of the apps XCUIElements.
+        // I can take a screenshot.
+        XCTAssert(app.buttons["Photo Library"].exists)
+        app.buttons["Photo Library"].firstMatch.click()
+        sleep(1)
+        takeScreenshot(name: "Photo Library")
+        app.typeKey(.escape, modifierFlags: [])
+
         let menubar = app.menuBars.element
-        XCTAssertTrue(menubar.exists)
+        XCTAssert(menubar.exists)
         XCTAssertEqual(menubar.children(matching: .menuBarItem).count, 7)
         menuBarItem0(menubar.children(matching: .menuBarItem).element(boundBy: 0))
         menuBarItem1(menubar.children(matching: .menuBarItem).element(boundBy: 1))
@@ -78,77 +87,77 @@ final class GeoTagUI00Tests: XCTestCase {
     // when the app is launched in future tests.
     func test1SetNoBackup() {
         app.menuItems["Settings…"].click()
-        XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
+        XCTAssert(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
         app.checkBoxes["Disable image backups"].click()
         app.buttons["Close"].click()
     }
 
     // Apple menu
     func menuBarItem0(_ item: XCUIElement) {
-        XCTAssertTrue(item.exists)
+        XCTAssert(item.exists)
     }
 
     // GeoTag menu
     func menuBarItem1(_ item: XCUIElement) {
-        XCTAssertTrue(item.exists)
+        XCTAssert(item.exists)
         XCTAssertEqual(item.title, "GeoTag")
-        XCTAssertTrue(item.descendants(matching: .menuItem)["About GeoTag"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Settings…"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Quit GeoTag"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["About GeoTag"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Settings…"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Quit GeoTag"].exists)
     }
 
     // File menu
     func menuBarItem2(_ item: XCUIElement) {
-        XCTAssertTrue(item.exists)
+        XCTAssert(item.exists)
         XCTAssertEqual(item.title, "File")
         XCTAssertGreaterThan(item.descendants(matching: .menuItem).count, 6)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Open…"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Close"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Save…"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Discard changes"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Discard tracks"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Clear Image List"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Open…"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Close"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Save…"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Discard changes"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Discard tracks"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Clear Image List"].exists)
     }
 
     // Edit menu
     func menuBarItem3(_ item: XCUIElement) {
-        XCTAssertTrue(item.exists)
+        XCTAssert(item.exists)
         XCTAssertEqual(item.title, "Edit")
         XCTAssertGreaterThan(item.descendants(matching: .menuItem).count, 10)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Undo"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Redo"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Cut"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Copy"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Paste"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Delete"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Select All"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Show In Finder"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Locn From Track"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Specify Time Zone…"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Undo"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Redo"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Cut"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Copy"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Paste"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Delete"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Select All"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Show In Finder"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Locn From Track"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Specify Time Zone…"].exists)
     }
 
     // View menu
     func menuBarItem4(_ item: XCUIElement) {
-        XCTAssertTrue(item.exists)
+        XCTAssert(item.exists)
         XCTAssertEqual(item.title, "View")
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Hide Disabled Files"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Pin view options…"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Show pins for all selected items"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Show pin for most selected item"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Hide Disabled Files"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Pin view options…"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Show pins for all selected items"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Show pin for most selected item"].exists)
     }
 
     // Window menu
     func menuBarItem5(_ item: XCUIElement) {
-        XCTAssertTrue(item.exists)
+        XCTAssert(item.exists)
         XCTAssertEqual(item.title, "Window")
     }
 
     // Help menu
     func menuBarItem6(_ item: XCUIElement) {
-        XCTAssertTrue(item.exists)
+        XCTAssert(item.exists)
         XCTAssertEqual(item.title, "Help")
-        XCTAssertTrue(item.descendants(matching: .menuItem)["GeoTag 5 Help…"].exists)
-        XCTAssertTrue(item.descendants(matching: .menuItem)["Report a bug…"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["GeoTag 5 Help…"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Report a bug…"].exists)
     }
 
 }
