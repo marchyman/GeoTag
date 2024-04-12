@@ -89,3 +89,59 @@ extension PhotoLibrary {
         return nil
     }
 }
+
+extension PhotoLibrary {
+    func saveChanges(for index: Int,
+                     of images: [ImageModel],
+                     in timeZone: TimeZone?) {
+        guard index >= 0 && index < images.count else { return }
+        if let asset = images[index].asset {
+            Task {
+                let library = PHPhotoLibrary.shared()
+                let image = images[index]
+                do {
+                    try await library.performChanges { [self] in
+                        let assetChangeReqeust = PHAssetChangeRequest(for: asset)
+                        if image.location != image.originalLocation ||
+                            image.elevation != image.originalElevation {
+                                assetChangeReqeust.location =
+                            newLocation(from: image, in: timeZone)
+                        }
+                        if image.dateTimeCreated != image.originalDateTimeCreated {
+                            assetChangeReqeust.creationDate = image.timestamp(for: nil)
+                        }
+                    }
+                    // get the current asset and update the image
+                    let newAsset = getAssets(for: image.pickerItem)
+                    await MainActor.run {
+                        images[index].loadLibraryMetadata(asset: newAsset)
+                    }
+                } catch {
+                    print("return some kind of error?")
+                }
+            }
+        }
+    }
+
+    private func newLocation(from image: ImageModel,
+                             in timeZone: TimeZone?) -> CLLocation? {
+        if let coords = image.location {
+            let altitude: Double
+            let verticalAccuracy: Double
+            if let elevation = image.elevation {
+                altitude = elevation
+                verticalAccuracy = 20   // a number picked out of the air
+            } else {
+                altitude = 0
+                verticalAccuracy = 0
+            }
+            let timeStamp = image.gmtTimeStamp(timeZone)
+            return CLLocation(coordinate: coords,
+                              altitude: altitude,
+                              horizontalAccuracy: 10,
+                              verticalAccuracy: verticalAccuracy,
+                              timestamp: timeStamp)
+        }
+        return nil
+    }
+}

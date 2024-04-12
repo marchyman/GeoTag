@@ -23,7 +23,7 @@ struct PhotoPickerView: View {
                     Label("Photo Library", systemImage: "photo")
                         .imageScale(.large)
                 }
-                             .keyboardShortcut("i", modifiers: [.shift, .command])
+                .keyboardShortcut("i", modifiers: [.shift, .command])
             } else {
                 Button {
                     photoLibrary.requestAuth()

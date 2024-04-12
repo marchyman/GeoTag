@@ -24,6 +24,9 @@ version 4.15.
 
 ### Updates
 
+- Images can be selected from your Photos Library.  Timestamps and locations
+  can be changed and "written" back to the library. The original file is not
+  modified. No backups are made.
 - Map pins can not be dragged. Click on the desired location to move a pin.
 - Copied/Cut coordinates are now in the same format as selected in GeoTag
   settings.

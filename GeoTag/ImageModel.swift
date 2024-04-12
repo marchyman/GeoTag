@@ -8,6 +8,7 @@
 import MapKit
 import OSLog
 import Photos
+import PhotosUI
 import SwiftUI
 
 // Data about an image that may have its geo-location metadata changed.
@@ -20,8 +21,7 @@ final class ImageModel: Identifiable {
     // MARK: Class Properties
 
     // Image is identified by its URL.  Doubles as ID as duplicate instances
-    // are not allowed.  The "Name" column of image tables is derived from
-    // this property.
+    // are not allowed.
     let fileURL: URL
     var id: URL {
         fileURL
@@ -33,9 +33,8 @@ final class ImageModel: Identifiable {
         return fileURL.lastPathComponent + (sidecarExists ? "*" : "")
     }
 
-    // Timestamp of the image when present.   The "Timestamp" column of image
+    // Timestamp of the image when present.  The "Timestamp" column of image
     // tables is derived from this property.
-    // data shown to and adjusted by the user.
     var dateTimeCreated: String?
     var timeStamp: String {
         dateTimeCreated ?? ""
@@ -64,7 +63,9 @@ final class ImageModel: Identifiable {
         return value
     }
 
-    // the Photos asset if the image came from a Photo Library
+    // the Photo picker item and Photos asset if the image came from a
+    // Photo Library
+    var pickerItem: PhotosPickerItem?
     var asset: PHAsset?
 
     // URL of related sidecar file (if one exists) and an NSFilePresenter
@@ -129,6 +130,7 @@ final class ImageModel: Identifiable {
         if isValid && sidecarExists {
             loadXmpMetadata()
         }
+        _ = gmtTimeStamp()
     }
 
     // initialization of image data from images stored in the Photos Library.
@@ -140,6 +142,7 @@ final class ImageModel: Identifiable {
         xmpPresenter = XmpPresenter(for: fileURL)
         isValid = libraryEntry.asset != nil
         thumbnail = libraryEntry.image
+        pickerItem = libraryEntry.item
         loadLibraryMetadata(asset: libraryEntry.asset)
     }
 }
@@ -170,7 +173,7 @@ extension ImageModel {
 
 }
 
-// MARK: ImageModel private functions
+// MARK: Grab image metadata
 
 extension ImageModel {
 
@@ -241,7 +244,7 @@ extension ImageModel {
     // is placed in a unique folder: using "tmpfile.xmp" as the name does
     // does not collide.
 
-    func loadXmpMetadata() {
+    private func loadXmpMetadata() {
         if let sandbox = try? Sandbox(self) {
             let tmpfileURL = sandbox.sidecarURL
                 .deletingLastPathComponent()
@@ -268,7 +271,7 @@ extension ImageModel {
         }
     }
 
-    // extract metadata from a PHAsset obtained
+    // extract metadata from a PHAsset obtained from the photo library
     func loadLibraryMetadata(asset: PHAsset?) {
         self.asset = asset
         if let asset {
@@ -343,15 +346,13 @@ extension URL: Comparable {
     }
 }
 
-// ImageModel is sendable.  For the purposes of ImageModel NSImage can
-// be treated as sendable. ImageModel is marked as unchecked to get rid
+// ImageModel is sendable. ImageModel is marked as unchecked to get rid
 // of the pairedID warning.
 
 extension ImageModel: @unchecked Sendable {}
-extension NSImage: @unchecked Sendable {}
 
 // Date formatter used to put timestamps in the form used by exiftool when
-// editing timestamps.
+// editing timestamps and calculating the date in GMT.
 
 extension ImageModel {
     static let dateFormat = "yyyy:MM:dd HH:mm:ss"
@@ -367,6 +368,16 @@ extension ImageModel {
             }
         }
         return nil
+    }
+
+    // return a Date object set to the creation date adjusted by an optional
+    // timeZone relative to GMT
+    func gmtTimeStamp(_ timeZone: TimeZone? = nil) -> Date {
+        let tz = timeZone ?? .current
+        let date = timestamp(for: tz) ?? Date.now
+        let offset = Double(tz.secondsFromGMT(for: date))
+        let gmtDate = Date(timeInterval: offset, since: date)
+        return gmtDate
     }
 }
 

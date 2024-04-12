@@ -9,3 +9,5 @@ Feature Requests:
 WIP notes
 
 - needs lots of testing
+- map being centered when image selected even when the image would otherwise
+  have been seen.
