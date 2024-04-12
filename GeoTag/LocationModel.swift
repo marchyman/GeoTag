@@ -15,6 +15,7 @@ final class LocationModel {
 
     var cameraPosition: MapCameraPosition = .automatic
     var cameraDistance: Double = 0
+    var mapRect: MKMapRect?
     var showOtherPins: Bool = false
 
     // displayed map tracks
@@ -28,6 +29,29 @@ final class LocationModel {
     }
 }
 
+extension LocationModel {
+
+    // Change the camera position to the given place
+
+    func setCameraPosition(to coords: Coords) {
+        cameraPosition =
+            .camera(.init(centerCoordinate: coords,
+                          distance: cameraDistance))
+    }
+
+    // if the given locn is not nil and is not on the map center the map
+    // on the locn
+    func recenterMap(locn: Coords?) {
+        if let locn {
+            if let rect = mapRect {
+                if rect.contains(MKMapPoint(locn)) {
+                    return
+                }
+            }
+            setCameraPosition(to: locn)
+        }
+    }
+}
 // An identifiable container for tracks
 
 extension LocationModel {

@@ -44,6 +44,7 @@ version 4.15.
   a folder that was opened or the XMP file itself was explicity opened.
   Note: xmp files can no longer be selected to open.
 - Bug Fix: Duplicate image processing does more than give a warning.
+- Bug Fix: extraneous map centering removed
 
 ### Issues
 
@@ -55,6 +56,10 @@ version 4.15.
 - When showing pins for all selected locations the red (most selected) pin
   may be hidden by the pin of another location near by unless the zoom level
   is such that both locations are slightly separated on the map.
+- when changing the selection to an image that has a location some of the pin
+  may off the map view.  In an extreme case only the point of the pin is on
+  the map and can not be seen. If you do not see a pin when you expect to
+  zoom out slightly.
 
 ### See the file named *History* for earlier changes and bug fixes
 
