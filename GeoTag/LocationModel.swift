@@ -31,6 +31,18 @@ final class LocationModel {
 
 extension LocationModel {
 
+    // return an array of images with coordinates for selected pins that do
+    // not match the mostSelected pin if enabled.
+
+    func otherPins(tvm: TableViewModel) -> [ImageModel] {
+        if showOtherPins && !tvm.selected.isEmpty {
+            let images = tvm.selected.filter { $0.location != nil }
+            let mainImage = tvm.mostSelected ?? ImageModel()
+            return images.filter { $0.location != mainImage.location }
+        }
+        return []
+    }
+
     // Change the camera position to the given place
 
     func setCameraPosition(to coords: Coords) {
@@ -52,6 +64,7 @@ extension LocationModel {
         }
     }
 }
+
 // An identifiable container for tracks
 
 extension LocationModel {
