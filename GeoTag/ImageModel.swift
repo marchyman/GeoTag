@@ -93,8 +93,7 @@ final class ImageModel: Identifiable {
     // The thumbnail image displayed when and image is selected for editing
     var thumbnail: Image?
 
-    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
-                                       category: "ImageModel")
+
 
     // MARK: Initialization
 
@@ -213,6 +212,11 @@ extension ImageModel {
             fatalError("ImageModel no-image init failed")
         }
     }
+}
+
+extension ImageModel {
+    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
+                                       category: "ImageModel")
 }
 
 // MARK: ImageModel instances are compared and hashed on id

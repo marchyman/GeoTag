@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 4/10/24.
 //
 
+import OSLog
 import Photos
 import PhotosUI
 import SwiftUI
@@ -48,6 +49,11 @@ extension PhotoLibrary {
             self.enabled = status == .authorized
         }
     }
+}
+
+extension PhotoLibrary {
+    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                               category: "PhotoLibrary")
 }
 
 // functions to build a LibraryEntry and add it to the array of
@@ -117,7 +123,7 @@ extension PhotoLibrary {
                         images[index].loadLibraryMetadata(asset: newAsset)
                     }
                 } catch {
-                    print("return some kind of error?")
+                    Self.logger.error("saveChanges: \(error.localizedDescription)")
                 }
             }
         }

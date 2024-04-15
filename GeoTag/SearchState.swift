@@ -6,6 +6,7 @@
 //
 
 import MapKit
+import OSLog
 import SwiftUI
 
 private let maxPlaces = 10
@@ -24,6 +25,11 @@ final class SearchState {
             searchPlaces = fetchPlaces()
         }
     }
+}
+
+extension SearchState {
+    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                               category: "SearchState")
 }
 
 // SearchState functions to update the list of visited places and store
@@ -86,18 +92,15 @@ extension SearchState {
                                                  from: places)
                 return decoded
             } catch let DecodingError.dataCorrupted(context) {
-                print(context)
+                Self.logger.error("corrupted \(context.debugDescription)")
             } catch let DecodingError.keyNotFound(key, context) {
-                print("Key '\(key)' not found:", context.debugDescription)
-                print("codingPath:", context.codingPath)
+                Self.logger.error("Key '\(key.stringValue)' not found: \(context.debugDescription)")
             } catch let DecodingError.valueNotFound(value, context) {
-                print("Value '\(value)' not found:", context.debugDescription)
-                print("codingPath:", context.codingPath)
+                Self.logger.error("Value '\(value)' not found: \(context.debugDescription)")
             } catch let DecodingError.typeMismatch(type, context) {
-                print("Type '\(type)' mismatch:", context.debugDescription)
-                print("codingPath:", context.codingPath)
+                Self.logger.error("Type '\(type)' mismatch: \(context.debugDescription)")
             } catch {
-                print("error: ", error)
+                Self.logger.error("\(error)")
             }
             fatalError("JSON Decoding Error for \(url)")
         }

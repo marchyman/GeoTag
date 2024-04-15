@@ -5,8 +5,9 @@
 //  Created by Marco S Hyman on 7/15/16.
 //
 
-import SwiftUI
 import MapKit
+import OSLog
+import SwiftUI
 
 /// manage GeoTag's use of exiftool
 
@@ -27,7 +28,7 @@ struct Exiftool {
 
     // Build the url needed to access to the embedded version of ExifTool
 
-    init() {
+    private init() {
         if let exiftoolUrl = Bundle.main.url(forResource: "ExifTool",
                                              withExtension: nil) {
             url = exiftoolUrl.appendingPathComponent("exiftool")
@@ -123,7 +124,7 @@ struct Exiftool {
 //        dump(exiftool.arguments!)
         try exiftool.run()
         exiftool.waitUntilExit()
-        printFrom(pipe: pipe)
+        logFrom(pipe: pipe)
         if exiftool.terminationStatus != 0 {
             throw ExiftoolError.runFailed(code: Int(exiftool.terminationStatus))
         }
@@ -177,7 +178,7 @@ struct Exiftool {
         do {
             try exiftool.run()
             exiftool.waitUntilExit()
-            printFrom(pipe: err)
+            logFrom(pipe: err)
             if exiftool.terminationStatus == 0 {
                 let data = pipe.fileHandleForReading.availableData
                 if data.count > 0,
@@ -190,7 +191,7 @@ struct Exiftool {
                 }
             }
         } catch {
-            print("fileTypeIsWritable exiftool run error")
+            Self.logger.error("fileTypeIsWritable: \(error.localizedDescription)")
         }
         return false
     }
@@ -209,10 +210,10 @@ struct Exiftool {
         do {
             try exiftool.run()
         } catch {
-            print("makeSidecar exiftool run error")
+            Self.logger.error("makeSidecar: \(error.localizedDescription)")
         }
         exiftool.waitUntilExit()
-        printFrom(pipe: err)
+        logFrom(pipe: err)
     }
 
     // return selected metadate from a file
@@ -239,10 +240,10 @@ struct Exiftool {
         do {
             try exiftool.run()
         } catch {
-            print("metadataFrom exiftool run error")
+            Self.logger.error("metadataFrom: \(error.localizedDescription)")
         }
         exiftool.waitUntilExit()
-        printFrom(pipe: err)
+        logFrom(pipe: err)
 
         var createDate = ""
         var location = Coords()
@@ -311,11 +312,17 @@ struct Exiftool {
     // swiftlint:enable cyclomatic_complexity
     // swiftlint:enable large_tuple
 
-    private func printFrom(pipe: Pipe) {
+    private func logFrom(pipe: Pipe) {
         let data = pipe.fileHandleForReading.availableData
         if data.count > 0,
            let string = String(data: data, encoding: String.Encoding.utf8) {
-            print("Exiftool: \(string)")
+            Self.logger.warning("stderr: \(string)")
         }
     }
+}
+
+extension Exiftool {
+    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                               category: "ExifTool")
+
 }

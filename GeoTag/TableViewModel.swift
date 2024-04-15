@@ -38,10 +38,18 @@ final class TableViewModel {
     // A copy of the current sort order
     var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
-    // Instruments performance logging tools
-    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
-                                       category: "TableView")
-    private static let signposter = OSSignposter(logger: logger)
+    init() {
+        Self.logger.trace("TableViewModel created")
+    }
+
+    // init for preview
+
+    init(images: [ImageModel]) {
+        self.images.append(contentsOf: images)
+    }
+}
+
+extension TableViewModel {
 
     func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
         let signpostID = Self.signposter.makeSignpostID()
@@ -66,13 +74,10 @@ final class TableViewModel {
         }
     }
 
-    init() {
-        Self.logger.trace("TableViewModel created")
-    }
+}
 
-    // init for preview
-
-    init(images: [ImageModel]) {
-        self.images.append(contentsOf: images)
-    }
+extension TableViewModel {
+    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
+                                       category: "TableView")
+    private static let signposter = OSSignposter(logger: logger)
 }
