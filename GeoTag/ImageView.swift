@@ -28,10 +28,16 @@ struct ImageView: View {
             if let image = state.tvm.mostSelected {
                 let interval = state.markStart("thumbnail")
                 defer { state.markEnd("thumbnail", interval: interval) }
-                if image.thumbnail == nil {
-                    image.thumbnail = await image.makeThumbnail()
+                var tn = image.thumbnail
+                if tn == nil {
+                    tn = await image.makeThumbnail()
                 }
-                thumbnail = image.thumbnail
+                await MainActor.run {
+                    if image.thumbnail == nil {
+                        image.thumbnail = tn
+                    }
+                    thumbnail = tn
+                }
                 return
             }
             thumbnail = nil
