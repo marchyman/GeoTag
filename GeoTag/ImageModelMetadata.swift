@@ -125,3 +125,18 @@ extension ImageModel {
         }
     }
 }
+
+// MARK: CFString to (NS)*String casts for Image Property constants
+
+extension ImageModel {
+    static let exifDictionary = kCGImagePropertyExifDictionary as NSString
+    static let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
+    static let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
+    static let GPSStatus = kCGImagePropertyGPSStatus as String
+    static let GPSLatitude = kCGImagePropertyGPSLatitude as String
+    static let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
+    static let GPSLongitude = kCGImagePropertyGPSLongitude as String
+    static let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
+    static let GPSAltitude = kCGImagePropertyGPSAltitude as String
+    static let GPSAltitudeRef = kCGImagePropertyGPSAltitudeRef as String
+}

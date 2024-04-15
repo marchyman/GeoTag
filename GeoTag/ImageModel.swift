@@ -128,7 +128,6 @@ final class ImageModel: Identifiable {
         if isValid && sidecarExists {
             loadXmpMetadata()
         }
-        _ = gmtTimeStamp()
     }
 
     // initialization of image data from images stored in the Photos Library.
@@ -240,48 +239,3 @@ extension URL: Comparable {
 // of the pairedID warning.
 
 extension ImageModel: @unchecked Sendable {}
-
-// Date formatter used to put timestamps in the form used by exiftool when
-// editing timestamps and calculating the date in GMT.
-
-extension ImageModel {
-    static let dateFormat = "yyyy:MM:dd HH:mm:ss"
-
-    func timestamp(for timeZone: TimeZone?) -> Date? {
-        let dateFormatter = DateFormatter()
-
-        if let dateTime = dateTimeCreated {
-            dateFormatter.dateFormat = ImageModel.dateFormat
-            dateFormatter.timeZone = timeZone
-            if let date = dateFormatter.date(from: dateTime) {
-                return date
-            }
-        }
-        return nil
-    }
-
-    // return a Date object set to the creation date adjusted by an optional
-    // timeZone relative to GMT
-    func gmtTimeStamp(_ timeZone: TimeZone? = nil) -> Date {
-        let tz = timeZone ?? .current
-        let date = timestamp(for: tz) ?? Date.now
-        let offset = Double(tz.secondsFromGMT(for: date))
-        let gmtDate = Date(timeInterval: offset, since: date)
-        return gmtDate
-    }
-}
-
-// MARK: CFString to (NS)*String casts for Image Property constants
-
-extension ImageModel {
-    static let exifDictionary = kCGImagePropertyExifDictionary as NSString
-    static let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
-    static let GPSDictionary = kCGImagePropertyGPSDictionary as NSString
-    static let GPSStatus = kCGImagePropertyGPSStatus as String
-    static let GPSLatitude = kCGImagePropertyGPSLatitude as String
-    static let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
-    static let GPSLongitude = kCGImagePropertyGPSLongitude as String
-    static let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
-    static let GPSAltitude = kCGImagePropertyGPSAltitude as String
-    static let GPSAltitudeRef = kCGImagePropertyGPSAltitudeRef as String
-}
