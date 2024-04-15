@@ -81,6 +81,7 @@
 		49BA29AE29624E5400B26F03 /* ShowInFinderAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */; };
 		49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */; };
 		49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29B12962676E00B26F03 /* GpxSearch.swift */; };
+		49BC9EBA2BCCB88800C46C05 /* ImageModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */; };
 		49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD6C922966589E00905B43 /* TimeZoneHelper.swift */; };
 		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
 		49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */; };
@@ -179,6 +180,7 @@
 		49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowInFinderAction.swift; sourceTree = "<group>"; };
 		49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocnFromTrack.swift; sourceTree = "<group>"; };
 		49BA29B12962676E00B26F03 /* GpxSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpxSearch.swift; sourceTree = "<group>"; };
+		49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelMetadata.swift; sourceTree = "<group>"; };
 		49BD6C922966589E00905B43 /* TimeZoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelper.swift; sourceTree = "<group>"; };
 		49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI04MapTests.swift; sourceTree = "<group>"; };
 		49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 			isa = PBXGroup;
 			children = (
 				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
+				49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */,
 				4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */,
 				4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */,
 				49B9EDE029493F4000574D18 /* Coords.swift */,
@@ -608,6 +611,7 @@
 				49AB65D92BAE3ABA0050EC60 /* SearchState.swift in Sources */,
 				493E5F462A5BA46200B29DCF /* AreYouSure.swift in Sources */,
 				492719DE2A5CB5BE00451573 /* ImageInspectorForm.swift in Sources */,
+				49BC9EBA2BCCB88800C46C05 /* ImageModelMetadata.swift in Sources */,
 				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
 				49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */,
 				49901CEB2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift in Sources */,
