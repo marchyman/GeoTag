@@ -103,9 +103,9 @@ extension PhotoLibrary {
                     try await library.performChanges { [self] in
                         let assetChangeReqeust = PHAssetChangeRequest(for: asset)
                         if image.location != image.originalLocation ||
-                            image.elevation != image.originalElevation {
-                                assetChangeReqeust.location =
-                            newLocation(from: image, in: timeZone)
+                           image.elevation != image.originalElevation {
+                            assetChangeReqeust.location =
+                                newLocation(from: image, in: timeZone)
                         }
                         if image.dateTimeCreated != image.originalDateTimeCreated {
                             assetChangeReqeust.creationDate = image.timestamp(for: nil)
