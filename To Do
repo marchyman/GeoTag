@@ -1,7 +1,6 @@
 Known bugs are now in the README file
 
 Feature Requests:
-- Access images in the photos library.
 - check for overlap before assigning locations from a track log and warn the
   user if necessary.
 - Handle location display of video files.  Exiftool does not allow updates.
@@ -9,3 +8,6 @@ Feature Requests:
 WIP notes
 
 - needs lots of testing
+- see bookmarked code
+- log exiftool errors? Add method to save and show log on screen? I think that
+  can be done.

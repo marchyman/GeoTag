@@ -57,7 +57,7 @@ struct LatLonSectionView: View {
         .onAppear {
             loadCoordinates()
         }
-        .onChange(of: image.location) {
+        .onChange(of: image.location) { // .task and combine with above?
             loadCoordinates()
         }
         .onChange(of: coordFormat) {
