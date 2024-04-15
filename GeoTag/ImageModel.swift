@@ -147,7 +147,11 @@ final class ImageModel: Identifiable {
             loadLibraryMetadata(asset: libraryEntry.asset)
         } else {
             isValid = false
-            name = "unknown"
+            if let id = libraryEntry.item.itemIdentifier {
+                name = String(id.prefix(13))
+            } else {
+                name = "unknown"
+            }
             asset = nil
         }
     }
