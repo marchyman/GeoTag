@@ -10,6 +10,7 @@ import SwiftUI
 // Add a help button that will link to the on line help pages.
 
 struct HelpCommands: Commands {
+    var state: AppState
 
     var body: some Commands {
         CommandGroup(replacing: .help) {
@@ -23,6 +24,9 @@ struct HelpCommands: Commands {
                 let bugReportPath = "https://github.com/marchyman/GeoTag/issues"
                 let bugReportPage = URL(string: bugReportPath)!
                 NSWorkspace.shared.open(bugReportPage)
+            }
+            Button("Show Log Output…") {
+                state.showLogWindow.toggle()
             }
         }
     }

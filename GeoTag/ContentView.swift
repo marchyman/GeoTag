@@ -52,6 +52,9 @@ struct ContentView: View {
         .onChange(of: state.changeTimeZoneWindow) {
             openWindow(id: GeoTagApp.adjustTimeZone)
         }
+        .onChange(of: state.showLogWindow) {
+            openWindow(id: GeoTagApp.showRunLog)
+        }
         .sheet(item: $state.sheetType, onDismiss: sheetDismissed) { sheet in
             sheet
         }

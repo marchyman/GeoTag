@@ -37,6 +37,8 @@
 		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
 		4984CF8E2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */; };
 		4984CF902BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */; };
+		49895D072BCDA8C80093D11B /* AppStateLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D062BCDA8C80093D11B /* AppStateLogger.swift */; };
+		49895D0A2BCDAE2B0093D11B /* ShowLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D092BCDAE2B0093D11B /* ShowLogView.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
@@ -132,6 +134,8 @@
 		4984CF8B2BB4BECC0008DDF8 /* GeoTagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI00Tests.swift; sourceTree = "<group>"; };
 		4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI01LaunchTests.swift; sourceTree = "<group>"; };
+		49895D062BCDA8C80093D11B /* AppStateLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateLogger.swift; sourceTree = "<group>"; };
+		49895D092BCDAE2B0093D11B /* ShowLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowLogView.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
@@ -239,6 +243,14 @@
 			path = GeoTagUITests;
 			sourceTree = "<group>";
 		};
+		49895D082BCDADFD0093D11B /* Show Log Group */ = {
+			isa = PBXGroup;
+			children = (
+				49895D092BCDAE2B0093D11B /* ShowLogView.swift */,
+			);
+			name = "Show Log Group";
+			sourceTree = "<group>";
+		};
 		498A7354294EA67A00C62B14 /* Image Table Group */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,6 +268,7 @@
 				49B039572944429E003B7C53 /* GeoTagApp.swift */,
 				49BA299C296223F700B26F03 /* AppDelegate.swift */,
 				49901CEC2A5B71EB00C28CAD /* AppState.swift */,
+				49895D062BCDA8C80093D11B /* AppStateLogger.swift */,
 				493E5F432A5B88B300B29DCF /* TableViewModel.swift */,
 				495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */,
 				49BA29A22962285300B26F03 /* Updates.swift */,
@@ -340,6 +353,7 @@
 			children = (
 				498A735A294EC5F800C62B14 /* App Group */,
 				4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */,
+				49895D082BCDADFD0093D11B /* Show Log Group */,
 				49FFC5BF2984F0EE00501D08 /* Menu Commands Group */,
 				49FFC5C02984F11C00501D08 /* Menu Actions Group */,
 				49777FEF29830D6900ECD5BF /* GPX  Group */,
@@ -601,6 +615,7 @@
 				4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */,
 				49B4D34B2957D05D00A4BCFD /* DeleteAction.swift in Sources */,
 				49AB65DD2BAE3AE80050EC60 /* SearchBarView.swift in Sources */,
+				49895D072BCDA8C80093D11B /* AppStateLogger.swift in Sources */,
 				49630F0E2980BC00009FB418 /* ToolbarCommandGroup.swift in Sources */,
 				49BA29AE29624E5400B26F03 /* ShowInFinderAction.swift in Sources */,
 				49BA299D296223F700B26F03 /* AppDelegate.swift in Sources */,
@@ -635,6 +650,7 @@
 				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
 				492719E02A5CC7B100451573 /* ImageInspectorView.swift in Sources */,
 				4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */,
+				49895D0A2BCDAE2B0093D11B /* ShowLogView.swift in Sources */,
 				495F2F63295EB1A5002A8A88 /* TableViewSelections.swift in Sources */,
 				490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */,
 				4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */,

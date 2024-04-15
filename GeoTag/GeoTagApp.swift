@@ -31,12 +31,21 @@ struct GeoTagApp: App {
             UndoRedoCommands(state: state)
             PasteboardCommands(state: state)
             ToolbarCommands()
-            HelpCommands()
+            HelpCommands(state: state)
         }
 
         Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
             AdjustTimezoneView()
                 .frame(width: 500.0, height: 570.0)
+                .environment(state)
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .commandsRemoved()
+
+        Window(GeoTagApp.showRunLog, id: GeoTagApp.showRunLog) {
+            ShowLogView()
+                .frame(width: 700, height: 500)
                 .environment(state)
         }
         .windowStyle(.hiddenTitleBar)
@@ -57,6 +66,7 @@ struct GeoTagApp: App {
 
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
+    static var showRunLog = "Show Run Log"
 }
 
 // Text field focus. When the bound value is true a text field
