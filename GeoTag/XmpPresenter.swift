@@ -27,9 +27,12 @@ final class XmpPresenter: NSObject, NSFilePresenter {
     init(for imageURL: URL) {
         primaryPresentedItemURL = imageURL
         presentedItemURL = imageURL
-                            .deletingPathExtension()
-                            .appendingPathExtension(xmpExtension)
+            .deletingPathExtension()
+            .appendingPathExtension(xmpExtension)
     }
+}
+
+extension XmpPresenter {
 
     // return the contents of the presentedItemURL
 
