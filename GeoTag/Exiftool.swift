@@ -26,6 +26,21 @@ struct Exiftool {
     // URL of the embedded version of ExifTool
     var url: URL
 
+    // File Type codes for the file types that exiftool can write
+    //
+    // notes: png files are read/writable by exiftool, but macOS can not
+    // read the resulting metadata.  Remove it from the table.
+    // Last updated to match ExifTool version 12.30
+    let writableTypes: Set = [
+        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
+        "CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
+        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
+        "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
+        "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
+        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", // "PNG",
+        "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
+        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
+
     // Build the url needed to access to the embedded version of ExifTool
 
     private init() {
@@ -36,6 +51,15 @@ struct Exiftool {
             fatalError("The Application Bundle is corrupt.")
         }
     }
+}
+
+extension Exiftool {
+    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                               category: "ExifTool")
+
+}
+
+extension Exiftool {
 
     /// Use the embedded copy of exiftool to update the geolocation metadata
     /// in the file containing the passed image
@@ -147,21 +171,6 @@ struct Exiftool {
         }
         return ""
     }
-
-    // File Type codes for the file types that exiftool can write
-    //
-    // notes: png files are read/writable by exiftool, but macOS can not
-    // read the resulting metadata.  Remove it from the table.
-    // Last updated to match ExifTool version 12.30
-    let writableTypes: Set = [
-        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
-        "CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
-        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
-        "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
-        "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
-        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", // "PNG",
-        "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
-        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
 
     /// Check if exiftool supports writing to a type of file
     /// - Parameter for: a URL of a file to check
@@ -319,10 +328,4 @@ struct Exiftool {
             Self.logger.warning("stderr: \(string, privacy: .public)")
         }
     }
-}
-
-extension Exiftool {
-    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                               category: "ExifTool")
-
 }
