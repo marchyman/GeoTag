@@ -31,7 +31,8 @@ extension AppState {
 
     func getLogEntries() -> [String] {
         var loggedMessages: [String] = []
-
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm:ss.SSS"
         do {
             let subsystem = Bundle.main.bundleIdentifier!
             let logStore = try OSLogStore(scope: .currentProcessIdentifier)
@@ -39,13 +40,12 @@ extension AppState {
                                         .compactMap { $0 as? OSLogEntryLog }
                                         .filter { $0.subsystem == subsystem }
             for entry in myEntries {
-                let formattedDate = entry.date
-                    .formatted(.dateTime.hour().minute().second())
-                let formatedEntry = "\(formattedDate) \(entry.category) \(entry.composedMessage)"
+                let formattedTime = timeFormatter.string(from: entry.date)
+                let formatedEntry = "\(formattedTime):  \(entry.category)  \(entry.composedMessage)"
                 loggedMessages.append(formatedEntry)
             }
         } catch {
-            // log an error!
+            Self.logger.error("failed to access log store: \(error.localizedDescription, privacy: .public)")
         }
         return loggedMessages
     }

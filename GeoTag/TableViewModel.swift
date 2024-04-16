@@ -25,7 +25,7 @@ final class TableViewModel {
     // No setter is defined
     subscript(id: ImageModel.ID?) -> ImageModel {
         if let index = images.firstIndex(where: { $0.id == id }) {
-            Self.logger.trace("get \(self.images[index].name)")
+            Self.logger.notice("get \(self.images[index].name, privacy: .public)")
             return images[index]
         }
 
@@ -39,7 +39,7 @@ final class TableViewModel {
     var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
     init() {
-        Self.logger.trace("TableViewModel created")
+        Self.logger.notice("TableViewModel created")
     }
 
     // init for preview

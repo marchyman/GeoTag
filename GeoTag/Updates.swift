@@ -19,11 +19,11 @@ extension AppState {
                 elevation: Double? = nil, documentEdited: Bool = true) {
         // swiftlint: disable line_length
         if undoManager.isUndoing {
-            Self.logger.debug("Undo in progress: \(image.name): \(image.location.debugDescription) -> \(location.debugDescription)")
+            Self.logger.notice("Undo in progress: \(image.name, privacy: .public): \(image.location.debugDescription, privacy: .public) -> \(location.debugDescription, privacy: .public)")
         } else if undoManager.isRedoing {
-            Self.logger.debug("Redo in progress: \(image.name): \(image.location.debugDescription) -> \(location.debugDescription)")
+            Self.logger.notice("Redo in progress: \(image.name, privacy: .public): \(image.location.debugDescription, privacy: .public) -> \(location.debugDescription, privacy: .public)")
         } else {
-            Self.logger.debug("undoManager registration: \(image.name): \(image.location.debugDescription) -> \(location.debugDescription)")
+            Self.logger.notice("undoManager registration: \(image.name, privacy: .public): \(image.location.debugDescription, privacy: .public) -> \(location.debugDescription, privacy: .public)")
         }
         // swiftlint: enable line_length
 

@@ -93,8 +93,6 @@ final class ImageModel: Identifiable {
     // The thumbnail image displayed when and image is selected for editing
     var thumbnail: Image?
 
-
-
     // MARK: Initialization
 
     // initialization of image data given its URL.

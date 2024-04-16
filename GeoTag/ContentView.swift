@@ -71,7 +71,7 @@ struct ContentView: View {
             case .success(let files):
                 importFiles(files)
             case .failure(let error):
-                AppState.logger.error("file import: \(error.localizedDescription)")
+                AppState.logger.error("file import: \(error.localizedDescription, privacy: .public)")
             }
         }
         .toolbar {

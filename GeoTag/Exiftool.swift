@@ -191,7 +191,7 @@ struct Exiftool {
                 }
             }
         } catch {
-            Self.logger.error("fileTypeIsWritable: \(error.localizedDescription)")
+            Self.logger.error("fileTypeIsWritable: \(error.localizedDescription, privacy: .public)")
         }
         return false
     }
@@ -210,7 +210,7 @@ struct Exiftool {
         do {
             try exiftool.run()
         } catch {
-            Self.logger.error("makeSidecar: \(error.localizedDescription)")
+            Self.logger.error("makeSidecar: \(error.localizedDescription, privacy: .public)")
         }
         exiftool.waitUntilExit()
         logFrom(pipe: err)
@@ -240,7 +240,7 @@ struct Exiftool {
         do {
             try exiftool.run()
         } catch {
-            Self.logger.error("metadataFrom: \(error.localizedDescription)")
+            Self.logger.error("metadataFrom: \(error.localizedDescription, privacy: .public)")
         }
         exiftool.waitUntilExit()
         logFrom(pipe: err)
@@ -316,7 +316,7 @@ struct Exiftool {
         let data = pipe.fileHandleForReading.availableData
         if data.count > 0,
            let string = String(data: data, encoding: String.Encoding.utf8) {
-            Self.logger.warning("stderr: \(string)")
+            Self.logger.warning("stderr: \(string, privacy: .public)")
         }
     }
 }

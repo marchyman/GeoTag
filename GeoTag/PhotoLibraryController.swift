@@ -123,7 +123,7 @@ extension PhotoLibrary {
                         images[index].loadLibraryMetadata(asset: newAsset)
                     }
                 } catch {
-                    Self.logger.error("saveChanges: \(error.localizedDescription)")
+                    Self.logger.error("saveChanges: \(error.localizedDescription, privacy: .public)")
                 }
             }
         }
