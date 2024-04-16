@@ -51,6 +51,10 @@ final class TableViewModel {
 
 extension TableViewModel {
 
+    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
+                                       category: "TableView")
+    private static let signposter = OSSignposter(logger: logger)
+
     func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
         let signpostID = Self.signposter.makeSignpostID()
         let interval = Self.signposter.beginInterval(desc, id: signpostID)
@@ -74,10 +78,4 @@ extension TableViewModel {
         }
     }
 
-}
-
-extension TableViewModel {
-    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
-                                       category: "TableView")
-    private static let signposter = OSSignposter(logger: logger)
 }
