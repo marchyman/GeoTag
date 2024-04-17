@@ -9,6 +9,7 @@ import SwiftUI
 
 // swiftlint:disable line_length
 
+@MainActor
 struct SettingsView: View {
     @Environment(AppState.self) var state
     let location = LocationModel.shared

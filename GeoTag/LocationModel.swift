@@ -8,6 +8,7 @@
 import MapKit
 import SwiftUI
 
+@MainActor
 @Observable
 final class LocationModel {
     // shared instance

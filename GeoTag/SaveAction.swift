@@ -19,7 +19,6 @@ extension AppState {
 
     func saveAction() {
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-        @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
         @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
         // returned status of the save operation

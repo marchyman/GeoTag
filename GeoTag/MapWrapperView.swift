@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct MapWrapperView: View {
     @State var searchState: SearchState = .init()
 

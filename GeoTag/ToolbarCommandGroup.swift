@@ -41,6 +41,7 @@ struct ShowHidePinView: View {
     }
 }
 
+@MainActor
 struct PinOptionView: View {
     @Bindable var location = LocationModel.shared
 

@@ -8,6 +8,7 @@
 import MapKit
 import SwiftUI
 
+@MainActor
 struct MapView: View {
     @Environment(AppState.self) var state
     var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding

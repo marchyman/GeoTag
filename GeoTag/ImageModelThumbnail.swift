@@ -16,7 +16,7 @@ extension ImageModel {
     func makeThumbnail() async -> Image {
         // first check if the image came from the Photos Library
         if let pickerItem {
-            let library = PhotoLibrary.shared
+            let library = await PhotoLibrary.shared
             if let thumbnail = await library.getImage(for: pickerItem) {
                 return thumbnail
             }

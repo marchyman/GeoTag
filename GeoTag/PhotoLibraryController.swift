@@ -10,6 +10,7 @@ import Photos
 import PhotosUI
 import SwiftUI
 
+@MainActor
 @Observable
 final class PhotoLibrary {
     var enabled: Bool
@@ -35,7 +36,7 @@ extension PhotoLibrary {
         }
     }
 
-    static func fakeURL(itemId: String?) -> URL {
+    nonisolated static func fakeURL(itemId: String?) -> URL {
         let id = itemId ?? UUID().uuidString
         return URL(fileURLWithPath: id)
     }

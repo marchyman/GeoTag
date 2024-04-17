@@ -13,7 +13,6 @@ struct ImageTableView: View {
 
     @AppStorage(AppSettings.imageTableConfigKey)
         private var columnCustomization: TableColumnCustomization<ImageModel>
-    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
     @AppStorage(AppSettings.coordFormatKey)
         var coordFormat: AppSettings.CoordFormat = .deg
 
@@ -24,12 +23,6 @@ struct ImageTableView: View {
     let timestampMaxWidth = 150.0
     let coordMinWidth = 120.0
     let coordMaxWidth = 160.0
-
-    // filtered images
-    var filteredImages: [ImageModel] {
-        return hideInvalidImages ? tvm.images.filter { $0.isValid }
-                                 : tvm.images
-    }
 
     var body: some View {
         // force the view to notice changes in tvm.mostSelected and coordFormat
@@ -67,7 +60,7 @@ struct ImageTableView: View {
             .width(min: coordMinWidth, max: coordMaxWidth)
             .customizationID("Longitude")
         } rows: {
-            ForEach(filteredImages) { image in
+            ForEach(tvm.filteredImages) { image in
                 TableRow(image)
                     .contextMenu {
                         ContextMenuView(context: image)

@@ -96,6 +96,7 @@ struct SearchView: View {
         }
     }
 
+    @MainActor
     private func search(for query: String) {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query

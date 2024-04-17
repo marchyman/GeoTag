@@ -10,9 +10,16 @@ import OSLog
 
 // MARK: State variables used primarily to control the table of images
 
+@MainActor
 @Observable
 final class TableViewModel {
     var images: [ImageModel] = []
+    var filteredImages: [ImageModel] {
+        @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
+
+        return hideInvalidImages ? images.filter { $0.isValid }
+                                 : images
+    }
     var selection: Set<ImageModel.ID> = [] {
         didSet {
             selectionChanged()
