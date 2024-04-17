@@ -33,7 +33,7 @@ struct DateTimeSectionView: View {
                   "applied to each image.")
 
         }
-        .onChange(of: newDate) {  // onSubmit
+        .onChange(of: newDate) {
             if oldDate != newDate {
                 updateTimestamps()
                 oldDate = newDate

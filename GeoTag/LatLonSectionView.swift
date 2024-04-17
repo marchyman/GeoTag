@@ -54,13 +54,10 @@ struct LatLonSectionView: View {
                 isFocused = false
             }
         }
-        .onAppear {
-            loadCoordinates()
-        }
-        .onChange(of: image.location) { // .task and combine with above?
-            loadCoordinates()
-        }
         .onChange(of: coordFormat) {
+            loadCoordinates()
+        }
+        .task(id: image.location) {
             loadCoordinates()
         }
     }
