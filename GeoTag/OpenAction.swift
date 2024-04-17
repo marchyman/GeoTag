@@ -90,9 +90,11 @@ extension AppState {
                     do {
                         return try ImageModel(imageURL: url)
                     } catch let error as NSError {
-                        self.addSheet(type: .unexpectedErrorSheet,
-                                      error: error,
-                                      message: "Failed to open file \(url.path)")
+                        await MainActor.run {
+                            self.addSheet(type: .unexpectedErrorSheet,
+                                          error: error,
+                                          message: "Failed to open file \(url.path)")
+                        }
                         return nil
                     }
                 }

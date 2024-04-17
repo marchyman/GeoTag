@@ -97,7 +97,7 @@ extension AppState {
 
     nonisolated func remove(filesToRemove: [URL]) {
         Task {
-            let folderURL = backupURL
+            let folderURL = await backupURL
             _ = folderURL?.startAccessingSecurityScopedResource()
             defer { folderURL?.stopAccessingSecurityScopedResource() }
             let fileManager = FileManager.default

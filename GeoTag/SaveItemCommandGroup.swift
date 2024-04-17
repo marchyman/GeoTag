@@ -12,6 +12,7 @@ import SwiftUI
 struct SaveItemCommands: Commands {
     var state: AppState
 
+    @MainActor
     var body: some Commands {
         CommandGroup(after: .saveItem) {
             Button("Save…") { state.saveAction() }

@@ -22,6 +22,8 @@ extension TableViewModel {
         // id as being the "most selected".
         if selected.isEmpty {
             mostSelected = nil
+        } else if selected.count == 1 {
+            mostSelected = selected.first
         } else {
             // If the image that was the "most" selected is in the proposed
             // selection set don't pick another

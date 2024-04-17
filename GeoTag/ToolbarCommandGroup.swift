@@ -11,6 +11,8 @@ import SwiftUI
 // toolbar, but it's in the View menu which is where I want it.
 
 struct ToolbarCommands: Commands {
+
+    @MainActor
     var body: some Commands {
         CommandGroup(replacing: .toolbar) {
             Section {

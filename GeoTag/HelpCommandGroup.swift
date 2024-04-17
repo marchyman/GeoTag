@@ -12,6 +12,7 @@ import SwiftUI
 struct HelpCommands: Commands {
     var state: AppState
 
+    @MainActor
     var body: some Commands {
         CommandGroup(replacing: .help) {
             Button("GeoTag 5 Help…") {
