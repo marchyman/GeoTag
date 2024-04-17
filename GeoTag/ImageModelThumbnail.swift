@@ -14,6 +14,16 @@ extension ImageModel {
     // if an image can not be created a placeholder image is returned
 
     func makeThumbnail() async -> Image {
+        // first check if the image came from the Photos Library
+        if let pickerItem {
+            let library = PhotoLibrary.shared
+            if let thumbnail = await library.getImage(for: pickerItem) {
+                return thumbnail
+            }
+            return Image(systemName: "exclamationmark.octagon.fill")
+        }
+
+        // build an image of an appropriate size
         var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
             return Image(systemName: "photo")

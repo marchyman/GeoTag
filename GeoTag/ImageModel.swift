@@ -134,7 +134,6 @@ final class ImageModel: Identifiable {
         sidecarURL = fileURL.appendingPathExtension(xmpExtension)
         sidecarExists = false
         xmpPresenter = XmpPresenter(for: fileURL)
-        thumbnail = libraryEntry.image
         pickerItem = libraryEntry.item
         if let asset = libraryEntry.asset {
             isValid = true

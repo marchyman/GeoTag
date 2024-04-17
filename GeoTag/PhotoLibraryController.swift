@@ -26,7 +26,6 @@ final class PhotoLibrary {
 extension PhotoLibrary {
     struct LibraryEntry {
         let item: PhotosPickerItem
-        let image: Image?
         var asset: PHAsset?
 
         // fake a URL from the item.itemIdentifier
@@ -64,7 +63,6 @@ extension PhotoLibrary {
         for item in selection {
             guard !isDuplicate(item, in: tvm) else { continue }
             let libraryEntry = LibraryEntry(item: item,
-                                            image: await getImage(for: item),
                                             asset: getAssets(for: item))
             let image = ImageModel(libraryEntry: libraryEntry)
             await MainActor.run {
