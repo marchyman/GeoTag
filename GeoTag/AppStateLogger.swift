@@ -8,7 +8,7 @@
 import OSLog
 
 extension AppState {
-    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                category: "AppState")
     private static let signposter = OSSignposter(logger: logger)
 

@@ -51,7 +51,7 @@ extension PhotoLibrary {
 }
 
 extension PhotoLibrary {
-    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                category: "PhotoLibrary")
 }
 

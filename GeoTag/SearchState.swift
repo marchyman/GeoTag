@@ -28,7 +28,7 @@ final class SearchState {
 }
 
 extension SearchState {
-    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+    private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                category: "SearchState")
 }
 

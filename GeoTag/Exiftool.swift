@@ -54,7 +54,7 @@ struct Exiftool {
 }
 
 extension Exiftool {
-    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                category: "ExifTool")
 
 }
