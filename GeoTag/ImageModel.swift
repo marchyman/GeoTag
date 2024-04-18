@@ -114,11 +114,7 @@ final class ImageModel: Identifiable {
 
         // Load image metadata if we can.  If not mark it as not a valid image
         // even though Exitool wouldn't have problems writing the file.
-        do {
-            isValid = try loadImageMetadata()
-        } catch let error {
-            throw error
-        }
+        isValid = try loadImageMetadata()
 
         // If a sidecar file exists read metadata from it as sidecar files
         // take precidence.
