@@ -10,11 +10,11 @@ import Foundation
 extension TableViewModel {
 
     // Process the set of selected images.  Pick one as the "most" selected if
-    // the current most selected image is not in the set.  Filter out any
-    // items that are not valid images.
+    // the current most selected image is not in the set of valid images.
 
     func selectionChanged() {
         let id = markStart("selectionChanged")
+        defer { markEnd("selectionChanged", interval: id) }
 
         selected = selection.map({ self[$0] }).filter { $0.isValid }
 
@@ -27,14 +27,11 @@ extension TableViewModel {
         } else {
             // If the image that was the "most" selected is in the proposed
             // selection set don't pick another
-            if !selected.contains(where: { $0 == mostSelected }) {
-                let id = markStart("changeMostSelected")
+            if mostSelected == nil ||
+               !selected.contains(where: { $0 == mostSelected }) {
                 mostSelected = selected.first
-                markEnd("changeMostSelected", interval: id)
             }
         }
-
-        markEnd("selectionChanged", interval: id)
     }
 
     // If the context item is in the current selection make it the
