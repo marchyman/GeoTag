@@ -7,9 +7,8 @@
 
 import AppKit
 
-/// GeoTag AppDelegate Class
-///
-/// App Delegate needed to get some desired behaviors such as terminate app when window closed
+// open with..., unsaved changes upon termination, and other checks
+
 final class AppDelegate: NSObject, NSApplicationDelegate {
     var state: AppState?
 
@@ -67,8 +66,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.terminate(NSApp)
     }
 
-    // remove up the app sandbox before going away.  There is nothing in
-    // it that needs to be kept.
+    // remove up the app sandbox documents directory before going away.
+    // There is nothing in it that needs to be kept.
 
     func applicationWillTerminate(_ notification: Notification) {
         let environ = ProcessInfo.processInfo.environment

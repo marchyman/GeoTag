@@ -113,6 +113,7 @@ final class AppState {
             AppSettings.resetSettings()
         }
 
+        // also for UI testing... assign a backup folder
         if let testBackup = ProcessInfo.processInfo.environment["BACKUP"] {
             let testURL = URL(fileURLWithPath: testBackup, isDirectory: true)
             savedBookmark = getBookmark(from: testURL)
@@ -125,6 +126,7 @@ final class AppState {
 }
 
 // MARK: Security scoping methods
+
 extension AppState {
 
     func startSecurityScoping(urls: [URL]) {
@@ -158,8 +160,8 @@ extension AppState {
         } else {
             // create a SheetInfo and add it to the stack of pending sheets
             sheetStack.append(SheetInfo(sheetType: type,
-                                      sheetError: error,
-                                      sheetMessage: message))
+                                        sheetError: error,
+                                        sheetMessage: message))
         }
     }
 

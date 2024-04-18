@@ -69,8 +69,8 @@ extension GeoTagApp {
     static var showRunLog = "Show Run Log"
 }
 
-// Text field focus. When the bound value is true a text field
-// has focus.  Used when processing pasteboard commands.
+// Text field focus. When non-nil a text field has focus.  Used to enable
+// appropriate pasteboard actions for text fields.
 
 struct FocusedTextfield: FocusedValueKey {
     typealias Value = String
