@@ -60,15 +60,13 @@ extension PhotoLibrary {
 // selected photos
 extension PhotoLibrary {
     func addPhotos(from selection: [PhotosPickerItem],
-                   to tvm: TableViewModel) async {
+                   to tvm: TableViewModel) {
         for item in selection {
             guard !isDuplicate(item, in: tvm) else { continue }
             let libraryEntry = LibraryEntry(item: item,
                                             asset: getAssets(for: item))
             let image = ImageModel(libraryEntry: libraryEntry)
-            await MainActor.run {
-                tvm.images.append(image)
-            }
+            tvm.images.append(image)
         }
     }
 
@@ -80,7 +78,13 @@ extension PhotoLibrary {
     }
 
     func getImage(for item: PhotosPickerItem) async -> Image? {
-        return try? await item.loadTransferable(type: Image.self)
+        // Data -> NSImage -> Image dance needed to get proper orientation of
+        // HEIC images.
+        if let data = try? await item.loadTransferable(type: Data.self),
+           let nsImage = NSImage(data: data) {
+            return Image(nsImage: nsImage)
+        }
+        return nil
     }
 
     func getAssets(for item: PhotosPickerItem?) -> PHAsset? {
