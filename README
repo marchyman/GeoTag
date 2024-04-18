@@ -45,6 +45,8 @@ version 4.15.
   Note: xmp files can no longer be selected to open.
 - Bug Fix: Duplicate image processing does more than give a warning.
 - Bug Fix: extraneous map centering removed
+- Bug Fix: Time zone handling when adjusting for zones with a non-zero number
+  of minutes east of GMT.
 
 ### Issues
 
