@@ -88,11 +88,7 @@ extension AppState {
         }
 
         // Alert if there are any old files
-        Task {
-            await MainActor.run {
-                self.removeOldFiles = !self.oldFiles.isEmpty
-            }
-        }
+        self.removeOldFiles = !self.oldFiles.isEmpty
     }
 
     nonisolated func remove(filesToRemove: [URL]) {
