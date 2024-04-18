@@ -47,7 +47,7 @@ extension AppState {
         isDocumentEdited = documentEdited
     }
 
-    // Update an image with a new timestamp.  Image is identifid by its ID
+    // Update an image with a new timestamp.  Image is identifid by its ID.
     // timestamp is in the string format used by Exiftool
 
     func update(_ image: ImageModel, timestamp: String?,
@@ -62,7 +62,7 @@ extension AppState {
         isDocumentEdited = documentEdited
     }
 
-    // Add track overlays to the map
+    // Add track overlays to the map.  This is not undoable.
 
     func updateTracks(gpx: Gpx) {
         guard gpx.tracks.count > 0 else { return}
