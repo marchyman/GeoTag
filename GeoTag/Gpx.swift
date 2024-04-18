@@ -7,13 +7,11 @@
 
 import Foundation
 
-/// GPX file processing
-///
-/// An instance of a Gpx is created whenever a gpx file is opened.  The file is parsed and the
-/// instance fully populated with Track information by the URLToImageHelper Actor running in a Task.
-/// Once the instance is fully populated it is never changed.  This occurs before the task ends.
-/// For this reason it is safe to pass fully filed out instances between Actors and the class is marked
-/// as @unchecked Sendable.
+// GPX file processing
+//
+// An instance of a Gpx is created whenever a gpx file is opened.  The file is
+// parsed and the instance fully populated with Track information at that time.
+// Once the instance is fully populated it is never changed.
 
 final class Gpx: NSObject {
     // GPX Parsing errors
@@ -60,7 +58,20 @@ final class Gpx: NSObject {
     var tracks = [Track]()
     var parseState = ParseState.none
 
-    // Access/update the last track, segment, or point in the tracks array
+    init(contentsOf url: URL) throws {
+        guard let parser = XMLParser(contentsOf: url) else {
+            throw GpxParseError.gpxOpenError
+        }
+        self.parser = parser
+        super.init()
+        self.parser.delegate = self
+    }
+}
+
+// computed variables to access/update tracks, segments, and points.
+
+extension Gpx {
+
     var lastTrack: Track? {
         get { return tracks.last }
         set {
@@ -88,8 +99,8 @@ final class Gpx: NSObject {
         set {
             let trackIx = tracks.count - 1
             if newValue == nil ||
-               tracks.isEmpty ||
-               tracks[trackIx].segments.isEmpty {
+                tracks.isEmpty ||
+                tracks[trackIx].segments.isEmpty {
                 parseState = .error
             } else {
                 let segmentIx = tracks[trackIx].segments.count - 1
@@ -97,19 +108,11 @@ final class Gpx: NSObject {
             }
         }
     }
+}
 
-    /// init from contents of a URL
-    init(contentsOf url: URL) throws {
-        guard let parser = XMLParser(contentsOf: url) else {
-            throw GpxParseError.gpxOpenError
-        }
-        self.parser = parser
-        super.init()
-        self.parser.delegate = self
-    }
+// XML parsing
 
-    /// parse the XML in the URL associated with this object
-    /// - Returns: true if the file was parsed without error
+extension Gpx {
 
     func parse() throws {
         if parser.parse() && parseState != .error {
@@ -128,13 +131,14 @@ final class Gpx: NSObject {
             throw GpxParseError.gpxParsingError
         }
     }
-
 }
+
+// parser delegate functions
 
 extension Gpx: XMLParserDelegate {
 
-    /// process the start of an element according to the current state.
-    /// Most elements are ignored
+    // process the start of an element according to the current state.
+    // Most elements are ignored
 
     func parser(_ parser: XMLParser,
                 didStartElement elementName: String,
@@ -208,7 +212,7 @@ extension Gpx: XMLParserDelegate {
         }
     }
 
-    /// at the end of the elements we care about wind back the state
+    // at the end of the elements we care about wind back the state
 
     func parser(_ parser: XMLParser,
                 didEndElement elementName: String,
@@ -272,8 +276,9 @@ extension Gpx: XMLParserDelegate {
         }
     }
 
-    /// process the string of characters for the current element.  This
-    /// program only cares about characters for the time element and the ele element
+    // process the string of characters for the current element.  This
+    // program only cares about characters for the time element and
+    // the ele element
 
     func parser(_ parser: XMLParser,
                 foundCharacters string: String) {
