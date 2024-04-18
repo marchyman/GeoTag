@@ -15,7 +15,7 @@ import Foundation
 /// For this reason it is safe to pass fully filed out instances between Actors and the class is marked
 /// as @unchecked Sendable.
 
-final class Gpx: NSObject, @unchecked Sendable {
+final class Gpx: NSObject {
     // GPX Parsing errors
     enum GpxParseError: Error {
         case gpxOpenError
