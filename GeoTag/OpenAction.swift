@@ -54,25 +54,17 @@ extension AppState {
 
         let gpxURLs = uniqueURLs.filter { $0.pathExtension.lowercased() == "gpx" }
         if !gpxURLs.isEmpty {
-
-            // if the appViewModel update isn't done on the main queue the
-            // Discard tracks menu item doesn't see the approriate state.
-
             let updatedTracks = await tracks(for: gpxURLs)
-            Task {
-                await MainActor.run {
-                    for (path, track) in updatedTracks {
-                        if let track {
-                            self.updateTracks(gpx: track)
-                            self.gpxGoodFileNames.append(path)
-                            self.gpxTracks.append(track)
-                        } else {
-                            self.gpxBadFileNames.append(path)
-                        }
-                    }
-                    self.addSheet(type: .gpxFileNameSheet)
+            for (path, track) in updatedTracks {
+                if let track {
+                    self.updateTracks(gpx: track)
+                    self.gpxGoodFileNames.append(path)
+                    self.gpxTracks.append(track)
+                } else {
+                    self.gpxBadFileNames.append(path)
                 }
             }
+            self.addSheet(type: .gpxFileNameSheet)
         }
 
         applicationBusy = false
