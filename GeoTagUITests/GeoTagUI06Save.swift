@@ -162,6 +162,11 @@ final class GeoTagUI06Save: XCTestCase {
         app.typeText(saveBackupFolder)
         app.typeKey(.enter, modifierFlags: [])
         app.typeKey(.enter, modifierFlags: [])
-        settings.buttons["Close"].click()
+        if app.sheets.firstMatch.exists {
+            // get rid of Delete Old Backup alert
+            app.sheets.firstMatch.buttons["Delete"].click()
+        } else {
+            settings.buttons["Close"].click()
+        }
     }
 }
