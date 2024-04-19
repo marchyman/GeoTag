@@ -14,10 +14,12 @@ import OSLog
 @Observable
 final class TableViewModel {
     var images: [ImageModel] = []
+    var searchImages: [ImageModel] = []
     var filteredImages: [ImageModel] {
         @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
 
-        return hideInvalidImages ? images.filter { $0.isValid }
+        let listedImages = searchImages.isEmpty ? images : searchImages
+        return hideInvalidImages ? listedImages.filter { $0.isValid }
                                  : images
     }
     var selection: Set<ImageModel.ID> = [] {
@@ -56,6 +58,20 @@ final class TableViewModel {
     }
 }
 
+// search related functions
+
+extension TableViewModel {
+    func search(for match: String) {
+        Self.logger.notice("Searching for \(match, privacy: .public)")
+        searchImages = images.filter { $0.name.fuzzy(match) }
+    }
+
+    func clearSearch() {
+        Self.logger.notice("Clearing search")
+        searchImages = []
+    }
+}
+
 extension TableViewModel {
 
     private static let logger = Logger(subsystem: "org.snafu.GeoTag",
@@ -85,4 +101,21 @@ extension TableViewModel {
         }
     }
 
+}
+
+// a simple, fast enough search. Return true if the string characters match
+// "pattern" characters in the given order ignoring case.
+
+extension String {
+    func fuzzy(_ pattern: String) -> Bool {
+        // an empty pattern matches anything
+        guard !pattern.isEmpty else { return true }
+        var remainder = pattern[...]
+        for char in self
+            where char.lowercased() == remainder[remainder.startIndex].lowercased() {
+            remainder.removeFirst()
+            if remainder.isEmpty { return true }
+        }
+        return false
+    }
 }

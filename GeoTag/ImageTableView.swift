@@ -24,6 +24,9 @@ struct ImageTableView: View {
     let coordMinWidth = 120.0
     let coordMaxWidth = 160.0
 
+    @State private var searchFor: String = ""
+    @State private var isSearching: Bool = false
+
     var body: some View {
         // force the view to notice changes in tvm.mostSelected and coordFormat
         let mostSelected = tvm.mostSelected
@@ -72,6 +75,17 @@ struct ImageTableView: View {
         }
         .onChange(of: tvm.sortOrder) {
             tvm.images.sort(using: tvm.sortOrder)
+        }
+        .searchable(text: $searchFor, isPresented: $isSearching,
+                    placement: .automatic, prompt: "Image name")
+        .background(Button("", action: { isSearching = true }).keyboardShortcut("f").hidden())
+        .onChange(of: searchFor) {
+            if searchFor.isEmpty {
+                tvm.clearSearch()
+            }
+        }
+        .onSubmit(of: .search) {
+            tvm.search(for: searchFor)
         }
     }
 }
