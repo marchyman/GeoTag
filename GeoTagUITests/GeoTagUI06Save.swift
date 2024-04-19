@@ -82,6 +82,10 @@ final class GeoTagUI06Save: XCTestCase {
         app.typeKey(.enter, modifierFlags: [])
         app.typeKey(.enter, modifierFlags: [])
         XCTAssert(app.outlines.firstMatch.waitForExistence(timeout: 1))
+        // Hide non-image files if necessary
+        if app.menuItems["Hide Disabled Files"].exists {
+            app.typeKey("d", modifierFlags: [.command])
+        }
     }
 
     func openTrack() {
