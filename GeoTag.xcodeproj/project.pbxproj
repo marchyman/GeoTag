@@ -50,6 +50,7 @@
 		49901CED2A5B71EB00C28CAD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49901CEC2A5B71EB00C28CAD /* AppState.swift */; };
 		49918F8629736652000D6590 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 492E3F5D29481A7D0044C1F3 /* Credits.rtf */; };
 		499DB20F2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499DB20E2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift */; };
+		499EAEEA2BD2069C0002E28E /* GeoTagUI06Save.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499EAEE92BD2069C0002E28E /* GeoTagUI06Save.swift */; };
 		49A1326F294BFB9300F1B393 /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49A1326E294BFB9300F1B393 /* ExifTool */; };
 		49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729B12953E7AA00DF1AAF /* ImageMapView.swift */; };
 		49A99FBC296F6D5900392EEA /* PathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A99FBB296F6D5900392EEA /* PathView.swift */; };
@@ -148,6 +149,7 @@
 		49918F84297352AB000D6590 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		49918F8529735AE0000D6590 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
 		499DB20E2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI02SettingsTests.swift; sourceTree = "<group>"; };
+		499EAEE92BD2069C0002E28E /* GeoTagUI06Save.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI06Save.swift; sourceTree = "<group>"; };
 		49A1326E294BFB9300F1B393 /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ExifTool; sourceTree = "<group>"; };
 		49A729B12953E7AA00DF1AAF /* ImageMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMapView.swift; sourceTree = "<group>"; };
 		49A99FBB296F6D5900392EEA /* PathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathView.swift; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 				493394BA2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift */,
 				49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */,
 				493F286C2BBF38CB002C8A44 /* GeoTagUI05Tests.swift */,
+				499EAEE92BD2069C0002E28E /* GeoTagUI06Save.swift */,
 			);
 			path = GeoTagUITests;
 			sourceTree = "<group>";
@@ -582,6 +585,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				493394BB2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift in Sources */,
+				499EAEEA2BD2069C0002E28E /* GeoTagUI06Save.swift in Sources */,
 				49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */,
 				4984CF8E2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift in Sources */,
 				499DB20F2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift in Sources */,

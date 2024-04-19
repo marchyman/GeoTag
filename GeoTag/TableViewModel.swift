@@ -15,13 +15,6 @@ import OSLog
 final class TableViewModel {
     var images: [ImageModel] = []
     var searchImages: [ImageModel] = []
-    var filteredImages: [ImageModel] {
-        @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
-
-        let listedImages = searchImages.isEmpty ? images : searchImages
-        return hideInvalidImages ? listedImages.filter { $0.isValid }
-                                 : images
-    }
     var selection: Set<ImageModel.ID> = [] {
         didSet {
             selectionChanged()
@@ -63,7 +56,8 @@ final class TableViewModel {
 extension TableViewModel {
     func search(for match: String) {
         Self.logger.notice("Searching for \(match, privacy: .public)")
-        searchImages = images.filter { $0.name.fuzzy(match) }
+        searchImages = images.filter { $0.isValid && $0.name.fuzzy(match) }
+        Self.logger.notice("Matched \(self.searchImages.count) images")
     }
 
     func clearSearch() {

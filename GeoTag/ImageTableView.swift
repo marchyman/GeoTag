@@ -8,6 +8,7 @@
 import SwiftUI
 import OSLog
 
+@MainActor
 struct ImageTableView: View {
     @Bindable var tvm: TableViewModel
 
@@ -15,6 +16,7 @@ struct ImageTableView: View {
         private var columnCustomization: TableColumnCustomization<ImageModel>
     @AppStorage(AppSettings.coordFormatKey)
         var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
 
     // table view column width limits
     let nameMinWidth = 100.0
@@ -23,6 +25,14 @@ struct ImageTableView: View {
     let timestampMaxWidth = 150.0
     let coordMinWidth = 120.0
     let coordMaxWidth = 160.0
+
+    var filteredImages: [ImageModel] {
+        return tvm.searchImages.isEmpty
+            ? hideInvalidImages
+                ? tvm.images.filter { $0.isValid }
+                : tvm.images
+            : tvm.searchImages
+    }
 
     @State private var searchFor: String = ""
     @State private var isSearching: Bool = false
@@ -63,7 +73,7 @@ struct ImageTableView: View {
             .width(min: coordMinWidth, max: coordMaxWidth)
             .customizationID("Longitude")
         } rows: {
-            ForEach(tvm.filteredImages) { image in
+            ForEach(filteredImages) { image in
                 TableRow(image)
                     .contextMenu {
                         ContextMenuView(context: image)
@@ -78,7 +88,9 @@ struct ImageTableView: View {
         }
         .searchable(text: $searchFor, isPresented: $isSearching,
                     placement: .automatic, prompt: "Image name")
-        .background(Button("", action: { isSearching = true }).keyboardShortcut("f").hidden())
+        .background(Button("",
+                           action: { isSearching = true })
+                        .keyboardShortcut("f").hidden())
         .onChange(of: searchFor) {
             if searchFor.isEmpty {
                 tvm.clearSearch()
@@ -86,6 +98,7 @@ struct ImageTableView: View {
         }
         .onSubmit(of: .search) {
             tvm.search(for: searchFor)
+            isSearching = false
         }
     }
 }
