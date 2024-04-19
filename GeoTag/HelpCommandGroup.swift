@@ -26,7 +26,7 @@ struct HelpCommands: Commands {
                 let bugReportPage = URL(string: bugReportPath)!
                 NSWorkspace.shared.open(bugReportPage)
             }
-            Button("Show Log Output…") {
+            Button("Show log…") {
                 state.showLogWindow.toggle()
             }
         }

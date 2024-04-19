@@ -52,6 +52,7 @@ final class GeoTagUI00Tests: XCTestCase {
     func test0Startup() {
         let window = app.windows["main"]
         XCTAssert(window.exists)
+        print(window.debugDescription)
         XCTAssertEqual(window.descendants(matching: .tableColumn).count, 4)
         XCTAssertEqual(window.descendants(matching: .image).count, 4)
         XCTAssert(window.descendants(matching: .map).element.exists)
@@ -62,6 +63,7 @@ final class GeoTagUI00Tests: XCTestCase {
         XCTAssert(app.staticTexts["Please select an image"].waitForExistence(timeout: 2))
         takeScreenshot(name: "Inspector")
         app.buttons["Toggle Inspector"].firstMatch.click()
+        XCTAssert(app.searchFields["Image name"].exists)
 
         // The photo picker does not show up as one of the apps XCUIElements.
         // I can take a screenshot.
@@ -158,6 +160,7 @@ final class GeoTagUI00Tests: XCTestCase {
         XCTAssertEqual(item.title, "Help")
         XCTAssert(item.descendants(matching: .menuItem)["GeoTag 5 Help…"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Report a bug…"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Show log…"].exists)
     }
 
 }
