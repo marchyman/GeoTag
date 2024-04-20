@@ -9,16 +9,16 @@ import Foundation
 
 // The representation of location and optionally elevation as a string.
 // This value is used for copy and paste.
-// Format: "latitude | longitude | elevation"
+// Format: "latitude, longitude, elevation"
 // latitude and longitude are formatted per GeoTag settings
 
 extension ImageModel {
     var stringRepresentation: String {
         var stringRep = ""
         if location != nil {
-            stringRep = "\(formattedLatitude) | \(formattedLongitude)"
+            stringRep = "\(formattedLatitude), \(formattedLongitude)"
             if let elevation {
-                stringRep += " | \(elevation)"
+                stringRep += ", \(elevation)"
             }
         }
         return stringRep
@@ -28,13 +28,15 @@ extension ImageModel {
     // coordinates and optional elevation.
 
     static func decodeStringRep(value: String) -> (Coords, Double?)? {
-        let components = value.components(separatedBy: "|")
+        // accept "| " as a separator for backwards compatibility
+        let separator = /[,|]\s+/
+        let components = value.split(separator: separator)
         if components.count == 2 || components.count == 3 {
             var coords: Coords
 
-            if let latitude = try? components[0]
+            if let latitude = try? String(components[0])
                     .validateCoord(range: 0...90, reference: Coords.latRef),
-               let longitude = try? components[1]
+               let longitude = try? String(components[1])
                     .validateCoord(range: 0...180, reference: Coords.lonRef) {
                 coords = Coords(latitude: latitude, longitude: longitude)
                 if components.count == 3 {

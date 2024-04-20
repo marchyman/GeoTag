@@ -37,6 +37,10 @@ version 4.15.
 - The last 10 map searches are saved across GeoTag runs.
 - Updated app icon to match current guidelines re size and rounded corners
 - You can "fuzzy" search for images in the table by name.
+- Copy and paste format changed: the coordinate separator is now ", ".
+  A separator of "| " is also accepted for backward compatibility.
+  Example (lat, lon, elevation): 38.530196, -123.214981, 466.38
+  Elevation is optional.
 - Bug Fix: cancelling a search no longer looks up whatever happended to
   be typed into the search bar.
 - Bug Fix: Changing the map style no longer repositions the map.
