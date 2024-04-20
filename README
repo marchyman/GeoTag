@@ -36,6 +36,7 @@ version 4.15.
   the map.
 - The last 10 map searches are saved across GeoTag runs.
 - Updated app icon to match current guidelines re size and rounded corners
+- You can "fuzzy" search for images in the table by name.
 - Bug Fix: cancelling a search no longer looks up whatever happended to
   be typed into the search bar.
 - Bug Fix: Changing the map style no longer repositions the map.
