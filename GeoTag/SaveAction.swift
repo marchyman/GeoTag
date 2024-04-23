@@ -27,22 +27,21 @@ extension AppState {
             let error: String?
         }
 
-        // before starting check that image files backups are disabled
-        // or the image backup folder exists.
-        guard doNotBackup || backupURL != nil else {
-            addSheet(type: .noBackupFolderSheet)
-            return
-        }
-
-        // copy images.  The info in the copies will be saved in background
-        // tasks.
-        saveInProgress = true
-        saveIssues = [:]
         // get the indices of images from the PhotosLibrary
         let libraryPhotosToSave = tvm.images.indices.filter {
             tvm.images[$0].asset != nil && tvm.images[$0].isValid
         }
+        // get the image files that need saving
         let imagesToSave = tvm.images.filter { $0.asset == nil && $0.changed }
+
+        // before starting check if a backup folder is needed
+        guard imagesToSave.isEmpty || doNotBackup || backupURL != nil else {
+            addSheet(type: .noBackupFolderSheet)
+            return
+        }
+
+        saveInProgress = true
+        saveIssues = [:]
         undoManager.removeAllActions()
         isDocumentEdited = false
 
