@@ -36,8 +36,7 @@ struct PhotoPickerView: View {
         }
         .onChange(of: pickerItems) {
             Task {
-                await photoLibrary.addPhotos(from: pickerItems,
-                                             to: state.tvm)
+                photoLibrary.addPhotos(from: pickerItems, to: state.tvm)
                 await MainActor.run {
                     pickerItems = []
                 }
