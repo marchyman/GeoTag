@@ -95,7 +95,9 @@ extension AppState {
             for await image in group.compactMap({ $0 }) {
                 openedImages.append(image)
             }
-            tvm.images.append(contentsOf: openedImages)
+            await MainActor.run {
+                tvm.images.append(contentsOf: openedImages)
+            }
         }
     }
 
