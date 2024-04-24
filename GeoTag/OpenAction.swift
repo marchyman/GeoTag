@@ -73,6 +73,7 @@ extension AppState {
     // process all urls in a task group, one task per url.  Skip
     // gpx urls for now
     private func images(for imageURLs: [URL]) async {
+        Self.logger.debug("Thread \(Thread.isMainThread ? "main" : "other")")
         await withTaskGroup(of: ImageModel?.self) { group in
             var openedImages: [ImageModel] = []
 

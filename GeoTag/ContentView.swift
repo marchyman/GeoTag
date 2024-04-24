@@ -44,7 +44,7 @@ struct ContentView: View {
         }
         .dropDestination(for: URL.self) {items, _ in
             let state = state
-            Task.detached {
+            Task {
                 await state.prepareForEdit(inputURLs: items)
             }
             return true
@@ -107,7 +107,7 @@ struct ContentView: View {
 
     private func importFiles(_ urls: [URL]) {
         let state = state
-        Task.detached {
+        Task {
             await state.startSecurityScoping(urls: urls)
             await state.prepareForEdit(inputURLs: urls)
         }

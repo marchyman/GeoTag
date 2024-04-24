@@ -114,7 +114,7 @@ extension SearchState {
     private func savePlaces() {
         if !writing {
             writing = true
-            Task.detached { [self] in
+            Task { [self] in
                 let url = appSupportURL()
                 do {
                     let encoder = JSONEncoder()
