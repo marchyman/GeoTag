@@ -153,28 +153,47 @@ extension AppState {
     // that option is selected
 
     private func linkPairedImages() {
-        @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
+        Self.logger.notice(#function)
+        let interval = markStart(#function)
+        defer { markEnd(#function, interval: interval) }
 
-        let imageURLs = tvm.images.map { $0.fileURL }
+        struct URLBase {
+            let url: URL
+            let base: String
+        }
 
-        for url in imageURLs {
-            // only look at jpeg files
-            let pathExtension = url.pathExtension.lowercased()
-            guard pathExtension == "jpg" || pathExtension == "jpeg" else { continue }
+        @AppStorage(AppSettings.disablePairedJpegsKey)
+        var disablePairedJpegs = false
 
-            // extract the base URL for comparison
-            let baseURL = url.deletingPathExtension()
+        let jpegBase =
+            tvm.images.filter {
+                let pathExtension = $0.fileURL.pathExtension.lowercased()
+                return pathExtension == "jpg" || pathExtension == "jpeg"
+            }
+            .map {
+                URLBase( url: $0.fileURL,
+                         base: $0.fileURL.deletingPathExtension().path)
+            }
+        let rawBase =
+            tvm.images.filter {
+                let pathExtension = $0.fileURL.pathExtension.lowercased()
+                return pathExtension != xmpExtension &&
+                       pathExtension != "jpg" &&
+                       pathExtension != "jpeg"
+            }
+            .map {
+                URLBase(url: $0.fileURL,
+                        base: $0.fileURL.deletingPathExtension().path)
+            }
 
-            // look for non-xmp files that match baseURL
-            for pairedURL in imageURLs where pairedURL != url
-                && pairedURL.pathExtension.lowercased() != xmpExtension
-                && pairedURL.deletingPathExtension() == baseURL {
-                // url and otherURL are part of an image pair.
-                tvm[url].pairedID = pairedURL
-                tvm[pairedURL].pairedID = url
+        for jpeg in jpegBase {
+            if let raw = rawBase.first(where: { $0.base == jpeg.base }) {
+                Self.logger.notice("Pairing \(jpeg.url, privacy: .public) <> \(raw.url, privacy: .public)")
+                tvm[jpeg.url].pairedID = raw.url
+                tvm[raw.url].pairedID = jpeg.url
                 // disable the jpeg version if requested
                 if disablePairedJpegs {
-                    tvm[url].isValid = false
+                    tvm[jpeg.url].isValid = false
                 }
                 break
             }
