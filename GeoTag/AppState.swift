@@ -122,6 +122,7 @@ final class AppState {
         if !doNotBackup {
             backupURL = getBackupURL()
         }
+        Self.logger.notice("AppState created")
     }
 }
 

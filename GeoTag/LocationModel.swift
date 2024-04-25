@@ -6,6 +6,7 @@
 //
 
 import MapKit
+import OSLog
 import SwiftUI
 
 @MainActor
@@ -26,8 +27,13 @@ final class LocationModel {
 
     private init() {
         showLocation = ProcessInfo.processInfo.environment["MAPTEST"] != nil
-        // use the shared instance
+        Self.logger.notice("LocationModel created")
     }
+}
+
+extension LocationModel {
+    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                               category: "LocationModel")
 }
 
 extension LocationModel {

@@ -15,15 +15,19 @@ private let maxPlaces = 10
 
 @Observable
 final class SearchState {
+    // shared instance
+    static let shared: SearchState = .init()
+
     var searchResult: SearchPlace?
     var searchPlaces: [SearchPlace] = []
     var searchText: String = ""
     var writing = false
 
-    init() {
+    private init() {
         Task {
             searchPlaces = fetchPlaces()
         }
+        Self.logger.notice("SearchState created")
     }
 }
 

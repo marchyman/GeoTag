@@ -9,8 +9,7 @@ import SwiftUI
 
 @MainActor
 struct MapWrapperView: View {
-    @State var searchState: SearchState = .init()
-
+    let searchState = SearchState.shared
     let location = LocationModel.shared
 
     enum MapFocus: Hashable {
@@ -26,7 +25,7 @@ struct MapWrapperView: View {
         ZStack {
             GeometryReader { geometry in
                 MapView(mapFocus: $mapFocus,
-                        searchState: $searchState)
+                        searchState: searchState)
 
                 SearchBarView(mapFocus: $mapFocus, searchState: searchState)
                     .padding(30)

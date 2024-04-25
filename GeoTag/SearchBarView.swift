@@ -58,7 +58,7 @@ struct SearchBarView: View {
 
 #Preview {
     @FocusState var mapFocus: MapWrapperView.MapFocus?
-    return SearchBarView(mapFocus: $mapFocus, searchState: SearchState())
+    return SearchBarView(mapFocus: $mapFocus, searchState: SearchState.shared)
         .frame(maxWidth: 400)
         .padding()
 }

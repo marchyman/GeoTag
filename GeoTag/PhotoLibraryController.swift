@@ -20,6 +20,7 @@ final class PhotoLibrary {
     private init() {
         enabled =
             PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized
+        Self.logger.notice("PhotoLibrary created")
     }
 }
 

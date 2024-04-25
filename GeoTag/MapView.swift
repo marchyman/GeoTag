@@ -12,7 +12,7 @@ import SwiftUI
 struct MapView: View {
     @Environment(AppState.self) var state
     var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
-    @Binding var searchState: SearchState
+    let searchState: SearchState
 
     let location = LocationModel.shared
 
@@ -151,9 +151,8 @@ struct MapView: View {
 }
 
 #Preview {
-    @State var searchState: SearchState = .init()
     @FocusState var mapFocus: MapWrapperView.MapFocus?
     return MapView(mapFocus: $mapFocus,
-                   searchState: $searchState)
+                   searchState: SearchState.shared)
                 .frame(width: 512, height: 512)
 }

@@ -124,5 +124,5 @@ struct SearchView: View {
 #Preview {
     @FocusState var mapFocus: MapWrapperView.MapFocus?
     return SearchView(mapFocus: $mapFocus,
-                      searchState: SearchState())
+                      searchState: SearchState.shared)
 }
