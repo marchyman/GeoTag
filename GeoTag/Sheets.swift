@@ -216,16 +216,14 @@ extension View {
 #Preview("GpxLoadView") {
     let state = AppState()
     state.gpxGoodFileNames.append("Good/File/Name")
-    return GpxLoadView()
-        .withDismiss()
+    return SheetType.gpxFileNameSheet
         .environment(state)
 }
 
 #Preview("GpxLoadView (bad)") {
     let state = AppState()
     state.gpxBadFileNames.append("Bad/File/Name")
-    return GpxLoadView()
-        .withDismiss()
+    return SheetType.gpxFileNameSheet
         .environment(state)
 }
 
@@ -233,31 +231,26 @@ extension View {
     let state = AppState()
     state.gpxGoodFileNames.append("Good/File/Name")
     state.gpxBadFileNames.append("Bad/File/Name")
-    return GpxLoadView()
-        .withDismiss()
+    return SheetType.gpxFileNameSheet
         .environment(state)
 }
 
 #Preview("DuplicateImageView") {
-    DuplicateImageView()
-        .withDismiss()
+    SheetType.duplicateImageSheet
 }
 
 #Preview("NoBackupFolderView") {
-    NoBackupFolderView()
-        .withDismiss()
+    SheetType.noBackupFolderSheet
 }
 
 #Preview("SavingUpdatesView") {
-    SavingUpdatesView()
-        .withDismiss()
+    SheetType.savingUpdatesSheet
 }
 
 #Preview("SaveErrorView") {
     let state = AppState()
     state.saveIssues[URL(fileURLWithPath: "/path/to/some/image.jpg")] = "some save error"
     state.saveIssues[URL(fileURLWithPath: "/path/to/some/other.jpg")] = "some other error"
-    return SaveErrorView()
-        .withDismiss()
+    return SheetType.saveErrorSheet
         .environment(state)
 }
