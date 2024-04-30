@@ -95,4 +95,5 @@ struct AdjustTimezoneView: View {
 #Preview {
     AdjustTimezoneView()
         .environment(AppState())
+        .frame(height: 570)
 }
