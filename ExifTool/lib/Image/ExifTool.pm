@@ -29,7 +29,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
             %static_vars);
 
-$VERSION = '12.77';
+$VERSION = '12.84';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -103,6 +103,7 @@ sub VerboseValue($$$;$);
 sub VPrint($$@);
 sub Rationalize($;$);
 sub Write($@);
+sub GetGeolocateTags($$;$);
 sub WriteTrailerBuffer($$$);
 sub AddNewTrailers($;@);
 sub Tell($);
@@ -920,7 +921,7 @@ $testLen = 1024;    # number of bytes to read when testing for magic number
     DICOM=> '(.{128}DICM|\0[\x02\x04\x06\x08]\0[\0-\x20]|[\x02\x04\x06\x08]\0[\0-\x20]\0)',
     DOCX => 'PK\x03\x04',
     DPX  => '(SDPX|XPDS)',
-    DR4  => 'IIII\x04\0\x04\0',
+    DR4  => 'IIII[\x04|\x05]\0\x04\0',
     DSS  => '(\x02dss|\x03ds2)',
     DV   => '\x1f\x07\0[\x3f\xbf]', # (not tested if extension recognized)
     DWF  => '\(DWF V\d',
@@ -953,7 +954,7 @@ $testLen = 1024;    # number of bytes to read when testing for magic number
     JPEG => '\xff\xd8\xff',
     JSON => '(\xef\xbb\xbf)?\s*(\[\s*)?\{\s*"[^"]*"\s*:',
     JUMBF=> '.{4}jumb\0.{3}jumd',
-    JXL  => '\xff\x0a|\0\0\0\x0cJXL \x0d\x0a......ftypjxl ',
+    JXL  => '(\xff\x0a|\0\0\0\x0cJXL \x0d\x0a......ftypjxl )',
     LFP  => '\x89LFP\x0d\x0a\x1a\x0a',
     LIF  => '\x70\0{3}.{4}\x2a.{4}<\0',
     LNK  => '.{4}\x01\x14\x02\0{5}\xc0\0{6}\x46',
@@ -1101,6 +1102,11 @@ my @availableOptions = (
     [ 'Filter',           undef,  'output filter for all tag values' ],
     [ 'FilterW',          undef,  'input filter when writing tag values' ],
     [ 'FixBase',          undef,  'fix maker notes base offsets' ],
+    [ 'Geolocation',      undef,  'generate geolocation tags' ],
+    [ 'GeolocAltNames',   1,      'search alternate city names if available' ],
+    [ 'GeolocFeature',    undef,  'regular expression of geolocation features to match' ],
+    [ 'GeolocMinPop',     undef,  'minimum geolocation population' ],
+    [ 'GeolocMaxDist',    undef,  'maximum geolocation distance' ],
     [ 'GeoMaxIntSecs',    1800,   'geotag maximum interpolation time (secs)' ],
     [ 'GeoMaxExtSecs',    1800,   'geotag maximum extrapolation time (secs)' ],
     [ 'GeoMaxHDOP',       undef,  'geotag maximum HDOP' ],
@@ -1112,6 +1118,7 @@ my @availableOptions = (
     [ 'HexTagIDs',        0,      'use hex tag ID\'s in family 7 group names' ],
     [ 'HtmlDump',         0,      'HTML dump (0-3, higher # = bigger limit)' ],
     [ 'HtmlDumpBase',     undef,  'base address for HTML dump' ],
+    [ 'IgnoreGroups',     undef,  'list of groups to ignore when extracting' ],
     [ 'IgnoreMinorErrors',undef,  'ignore minor errors when reading/writing' ],
     [ 'IgnoreTags',       undef,  'list of tags to ignore when extracting' ],
     [ 'ImageHashType',    'MD5',  'image hash algorithm' ],
@@ -1131,6 +1138,7 @@ my @availableOptions = (
     [ 'NoPDFList',        undef,  'flag to avoid splitting PDF List-type tag values' ],
     [ 'NoWarning',        undef,  'regular expression for warnings to suppress' ],
     [ 'Password',         undef,  'password for password-protected PDF documents' ],
+    [ 'PrintCSV',         undef,  'flag to print CSV directly (selected metadata types only)' ],
     [ 'PrintConv',        1,      'flag to enable print conversion' ],
     [ 'QuickTimeHandler', 1,      'flag to add mdir Handler to newly created Meta box' ],
     [ 'QuickTimePad',     undef,  'flag to preserve padding of QuickTime CR3 tags' ],
@@ -1168,6 +1176,7 @@ my @defaultWriteGroups = qw(
 
 # group hash for ExifTool-generated tags
 my %allGroupsExifTool = ( 0 => 'ExifTool', 1 => 'ExifTool', 2 => 'ExifTool' );
+my %geoInfo = ( Groups => { 0 => 'ExifTool', 1 => 'ExifTool', 2 => 'Location' } );
 
 # special tag names (not used for tag info)
 %specialTags = map { $_ => 1 } qw(
@@ -1197,7 +1206,7 @@ sub DummyWriteProc { return 1; }
 
 my %systemTagsNotes = (
     Notes => q{
-        extracted only if specifically requested or the L<SystemTags|../ExifTool.html#SystemTags> or L<RequestAll|../ExifTool.html#RequestAll> API
+        extracted only if specifically requested or the API L<SystemTags|../ExifTool.html#SystemTags> or L<RequestAll|../ExifTool.html#RequestAll>
         option is set
     },
 );
@@ -1480,7 +1489,7 @@ my %systemTagsNotes = (
     FileAttributes => {
         Groups => { 1 => 'System', 2 => 'Other' },
         Notes => q{
-            extracted only if specifically requested or the L<SystemTags|../ExifTool.html#SystemTags> or L<RequestAll|../ExifTool.html#RequestAll> API
+            extracted only if specifically requested or the API L<SystemTags|../ExifTool.html#SystemTags> or L<RequestAll|../ExifTool.html#RequestAll>
             option is set.  2 or 3 values: 0. File type, 1. Attribute bits, 2. Windows
             attribute bits if Win32API::File is available
         },
@@ -1535,7 +1544,7 @@ my %systemTagsNotes = (
     FileUserID => {
         Groups => { 1 => 'System', 2 => 'Other' },
         Notes => q{
-            extracted only if specifically requested or the L<SystemTags|../ExifTool.html#SystemTags> or L<RequestAll|../ExifTool.html#RequestAll> API
+            extracted only if specifically requested or the API L<SystemTags|../ExifTool.html#SystemTags> or L<RequestAll|../ExifTool.html#RequestAll>
             option is set.  Returns user ID number with the -n option, or name
             otherwise.  May be written with either user name or number
         },
@@ -1549,7 +1558,7 @@ my %systemTagsNotes = (
     FileGroupID => {
         Groups => { 1 => 'System', 2 => 'Other' },
         Notes => q{
-            extracted only if specifically requested or the L<SystemTags|../ExifTool.html#SystemTags> or L<RequestAll|../ExifTool.html#RequestAll> API
+            extracted only if specifically requested or the API L<SystemTags|../ExifTool.html#SystemTags> or L<RequestAll|../ExifTool.html#RequestAll>
             option is set.  Returns group ID number with the -n option, or name
             otherwise.  May be written with either group name or number
         },
@@ -1685,7 +1694,7 @@ my %systemTagsNotes = (
         Flags => ['Writable' ,'Protected', 'Binary'],
         Permanent => 0, # (this is 1 by default for MakerNotes tags)
         WriteCheck => q{
-            return undef if $val =~ /^IIII\x04\0\x04\0/;
+            return undef if $val =~ /^IIII[\x04|\x05]\0\x04\0/;
             return 'Invalid CanonDR4 data';
         },
     },
@@ -1749,6 +1758,11 @@ my %systemTagsNotes = (
         Notes => 'PDF-format embedded preview image',
         Binary => 1,
     },
+    PreviewJXL => {
+        Groups => { 2 => 'Preview' },
+        Notes => 'JXL-format embedded preview image',
+        Binary => 1,
+    },
     ExifByteOrder => {
         Writable => 1,
         DelCheck => q{"Can't delete"},
@@ -1787,7 +1801,7 @@ my %systemTagsNotes = (
         Groups => { 0 => 'ExifTool', 1 => 'ExifTool', 2 => 'Other' },
         Notes => q{
             the clock time in seconds taken by ExifTool to extract information from this
-            file.  Not generated unless specifically requested or the L<RequestAll|../ExifTool.html#RequestAll> API
+            file.  Not generated unless specifically requested or the API L<RequestAll|../ExifTool.html#RequestAll>
             option is set.  Requires Time::HiRes
         },
         PrintConv => 'sprintf("%.3g s", $val)',
@@ -1928,7 +1942,7 @@ my %systemTagsNotes = (
         Groups => { 0 => 'Trailer' },
         Notes => q{
             the full JPEG trailer data block.  Extracted only if specifically requested
-            or the API RequestAll option is set to 3 or higher
+            or the API L<RequestAll|../ExifTool.html#RequestAll> option is set to 3 or higher
         },
         Writable => 1,
         Protected => 1,
@@ -1957,6 +1971,92 @@ my %systemTagsNotes = (
             the this hash value and the hash type in the file.
         },
     },
+    Geolocate => {
+        Writable => 1,
+        WriteOnly => 1,
+        WriteNothing => 1,
+        AllowGroup => '(exif|gps|xmp|xmp-exif|xmp-iptcext|xmp-iptccore|xmp-photoshop|iptc|quicktime|itemlist|keys|userdata)',
+        Notes => q{
+            this write-only tag may be used to write geolocation city, region, country
+            code and country based in input GPS coordinates, or to write GPS
+            coordinates based on geolocation name.  See the
+            L<Writing section of the Geolocation page|../geolocation.html#Write> for
+            details.  This tag is writable regardless of the API L<Geolocation|../ExifTool.html#Geolocation>
+            option setting
+        },
+        DelCheck => q{
+            my @tags = $self->GetGeolocateTags($wantGroup);
+            $self->SetNewValue($_) foreach @tags;
+            return '';
+        },
+        ValueConvInv => q{
+            require Image::ExifTool::Geolocation;
+            # write this tag later if geotagging
+            return $val if $val =~ /\bgeotag\b/i;
+            $val .= ',both';
+            my $opts = $$self{OPTIONS};
+            my ($cities, $dist) = Image::ExifTool::Geolocation::Geolocate($self->Encode($val,'UTF8'), $opts);
+            return '' unless $cities;
+            if (@$cities > 1 and $self->Warn('Multiple matching cities found',2)) {
+                warn "$$self{VALUE}{Warning}\n";
+                return '';
+            }
+            my @geo = Image::ExifTool::Geolocation::GetEntry($$cities[0], $$opts{Lang});
+            my @tags = $self->GetGeolocateTags($wantGroup, $dist ? 0 : 1);
+            my %geoNum = ( City => 0, Province => 1, State => 1, Code => 3, Country => 4,
+                           Coordinates => 89, Latitude => 8, Longitude => 9 );
+            my ($tag, $value);
+            foreach $tag (@tags) {
+                if ($tag =~ /GPS(Coordinates|Latitude|Longitude)?/) {
+                    $value = $geoNum{$1} == 89 ? "$geo[8],$geo[9]" : $geo[$geoNum{$1}];
+                } elsif ($tag =~ /(Code)/ or $tag =~ /(City|Province|State|Country)/) {
+                    $value = $geo[$geoNum{$1}];
+                    next unless defined $value;
+                    $value = $self->Decode($value,'UTF8');
+                    $value .= ' ' if $tag eq 'iptc:Country-PrimaryLocationCode'; # (IPTC requires 3-char code)
+                } elsif ($tag =~ /LocationName/) {
+                    $value = $geo[0] or next;
+                    $value .= ', ' . $geo[1] if $geo[1];
+                    $value .= ', ' . $geo[4] if $geo[4];
+                    $value = $self->Decode($value, 'UTF8');
+                } else {
+                    next; # (shouldn't happen)
+                }
+                $self->SetNewValue($tag => $value, Type => 'PrintConv');
+            }
+            return '';
+        },
+        PrintConvInv => q{
+            my @args = split /\s*,\s*/, $val;
+            my $lat = 1;
+            foreach (@args) {
+                next unless /^[-+]?\d/;
+                require Image::ExifTool::GPS;
+                $_ = Image::ExifTool::GPS::ToDegrees($_, 1, $lat ? 'lat' : 'lon');
+                $lat ^= 1;
+            }
+            return join(',', @args);
+        },
+    },
+    GeolocationBearing  => { %geoInfo,
+        Notes => q{
+            compass bearing to GeolocationCity center. Geolocation tags are
+            generated only if API L<Geolocation|../ExifTool.html#Geolocation> option is set
+        },
+    },
+    GeolocationCity     => { %geoInfo, Notes => 'name of city nearest to the current GPS coordinates', ValueConv => '$self->Decode($val,"UTF8")' },
+    GeolocationRegion   => { %geoInfo, Notes => 'geolocation state, province or region', ValueConv => '$self->Decode($val,"UTF8")' },
+    GeolocationSubregion=> { %geoInfo, Notes => 'geolocation county or subregion', ValueConv => '$self->Decode($val,"UTF8")' },
+    GeolocationCountry  => { %geoInfo, Notes => 'geolocation country name', ValueConv => '$self->Decode($val,"UTF8")' },
+    GeolocationCountryCode=>{%geoInfo, Notes => 'geolocation country code' },
+    GeolocationTimeZone => { %geoInfo, Notes => 'geolocation time zone ID' },
+    GeolocationFeatureCode=>{%geoInfo, Notes => 'feature code, see L<http://www.geonames.org/export/codes.html#P>' },
+    GeolocationPopulation=>{ %geoInfo, Notes => 'city population rounded to 2 significant digits' },
+    GeolocationDistance => { %geoInfo, Notes => 'distance in km from current GPS to city', PrintConv => '"$val km"' },
+    GeolocationPosition => { %geoInfo, Notes => 'approximate GPS coordinates of city',
+        PrintConv => '$val =~ s/ /, /; $val',
+    },
+    GeolocationWarning  => { %geoInfo },
 );
 
 # tags defined by UserParam option (added at runtime)
@@ -2371,12 +2471,12 @@ sub Options($$;@)
             } else {
                 $$options{$param} = undef;  # clear the list
             }
-        } elsif ($param eq 'IgnoreTags') {
+        } elsif ($param =~ /^(IgnoreTags|IgnoreGroups)$/) {
             if (defined $newVal) {
                 # parse list from delimited string if necessary
-                my @ignoreList = (ref $newVal eq 'ARRAY') ? @$newVal : ($newVal =~ /[-\w?*:]+/g);
-                ExpandShortcuts(\@ignoreList);
-                # add to existing tags to ignore
+                my @ignoreList = (ref $newVal eq 'ARRAY') ? @$newVal : ($newVal =~ /[-\w?*:#]+/g);
+                ExpandShortcuts(\@ignoreList) if $param eq 'IgnoreTags';
+                # add to existing tags/groups to ignore
                 $$options{$param} or $$options{$param} = { };
                 foreach (@ignoreList) {
                     /^(.*:)?([-\w?*]+)#?$/ or next;
@@ -2456,6 +2556,8 @@ sub Options($$;@)
             } else {
                 warn("Can't set $param to undef\n");
             }
+        } elsif (lc $param eq 'geodir') {
+            $Image::ExifTool::Geolocation::geoDir = $newVal; # (undocumented)
         } else {
             if ($param eq 'Escape') {
                 # set ESCAPE_PROC
@@ -2474,7 +2576,15 @@ sub Options($$;@)
                 delete $$self{GLOBAL_TIME_OFFSET};  # reset our calculated offset
             } elsif ($param eq 'TimeZone' and defined $newVal and length $newVal) {
                 $ENV{TZ} = $newVal;
-                eval { require POSIX; POSIX::tzset() };
+                if ($^O eq 'MSWin32') {
+                    if (eval { require Time::Piece }) {
+                        eval { Time::Piece::_tzset() };
+                    } else {
+                        warn("Install Time::Piece to set time zone in Windows\n");
+                    }
+                } else {
+                    eval { require POSIX; POSIX::tzset() };
+                }
             } elsif ($param eq 'Validate') {
                 # load Validate module if Validate option enabled
                 $newVal and require Image::ExifTool::Validate;
@@ -2552,7 +2662,6 @@ sub ExtractInfo($;@)
             $self->Options(Duplicates => 1) if $$options{HtmlDump};
             # enable Validate option if Validate tag is requested
             $self->Options(Validate => 1) if $$req{validate};
-
             if (defined $_[0]) {
                 # only initialize filename if called with arguments
                 $$self{FILENAME} = undef;   # name of file (or '' if we didn't open it)
@@ -2561,8 +2670,14 @@ sub ExtractInfo($;@)
                 $self->ParseArguments(@_);  # initialize from our arguments
             }
         }
+        # ignore all tags and set ExtractEmbedded if outputting CSV directly
+        if ($self->Options('PrintCSV')) {
+            $$self{OPTIONS}{IgnoreTags} = { all => 1 };
+            $self->Options(ExtractEmbedded => 1);
+        }
         # initialize ExifTool object members
         $self->Init();
+        $$self{InExtract} = 1;  # set flag indicating we are inside ExtractInfo
 
         delete $$self{MAKER_NOTE_FIXUP};    # fixup information for extracted maker notes
         delete $$self{MAKER_NOTE_BYTE_ORDER};
@@ -2738,8 +2853,10 @@ sub ExtractInfo($;@)
         if ($isDir or (defined $stat[2] and ($stat[2] & 0170000) == 0040000)) {
             $self->FoundTag('FileType', 'DIR');
             $self->FoundTag('FileTypeExtension', '');
-            $self->ExtractAltInfo();
+            $self->DoneExtract();
             $raf->Close() if $raf;
+            %saveOptions and $$self{OPTIONS} = \%saveOptions;
+            delete $$self{InExtract} unless $reEntry;
             return 1;
         }
         # get list of file types to check
@@ -2756,7 +2873,7 @@ sub ExtractInfo($;@)
             } else {
                 $self->Error('Unknown file type');
             }
-            $self->ExtractAltInfo();
+            $self->DoneExtract();
             last;   # don't read the file
         }
         if (@fileTypeList) {
@@ -2924,7 +3041,7 @@ sub ExtractInfo($;@)
         }
         unless ($reEntry) {
             $$self{PATH} = [ ];     # reset PATH
-            $self->ExtractAltInfo();
+            $self->DoneExtract();
             # do our HTML dump if requested
             if ($$self{HTML_DUMP}) {
                 $raf->Seek(0, 2);   # seek to end of file
@@ -2959,26 +3076,9 @@ sub ExtractInfo($;@)
         last;   # (loop was a cheap "goto")
     }
 
-    # generate Validate tag if requested
-    if ($$options{Validate} and not $reEntry) {
-        Image::ExifTool::Validate::FinishValidate($self, $$req{validate});
-    }
-
+    # Note: This should be the only tag generated after BuildCompositeTags,
+    # and as such it can't be used in user-defined Composite tags
     @startTime and $self->FoundTag('ProcessingTime', Time::HiRes::tv_interval(\@startTime));
-
-    # add user-defined parameters that ended with '!'
-    if (%{$$options{UserParam}}) {
-        my $doMsg = $$options{Verbose};
-        my $table = GetTagTable('Image::ExifTool::UserParam');
-        foreach (sort keys %{$$options{UserParam}}) {
-            next unless /#$/;
-            if ($doMsg) {
-                $self->VPrint(0, "UserParam tags:\n");
-                undef $doMsg;
-            }
-            $self->HandleTag($table, $_, $$options{UserParam}{$_});
-        }
-    }
 
     # restore original options
     %saveOptions and $$self{OPTIONS} = \%saveOptions;
@@ -2987,13 +3087,13 @@ sub ExtractInfo($;@)
         # restore necessary members when exiting re-entrant code
         $$self{$_} = $$reEntry{$_} foreach keys %$reEntry;
         SetByteOrder($saveOrder);
-    } elsif ($$self{ImageDataHash}) {
-        my $digest = $$self{ImageDataHash}->hexdigest;
-        # (don't store empty digest)
-        $self->FoundTag(ImageDataHash => $digest) unless
-            $digest eq 'd41d8cd98f00b204e9800998ecf8427e' or
-            $digest eq 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' or
-            $digest eq 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e';
+    } else {
+        # call cleanup routines if necessary
+        if ($$self{Cleanup}) {
+            &$_($self) foreach @{$$self{Cleanup}};
+            delete $$self{Cleanup};
+        }
+        delete $$self{InExtract};
     }
 
     # ($type may be undef without an Error when processing sub-documents)
@@ -3014,8 +3114,13 @@ sub GetInfo($;@)
 {
     local $_;
     my $self = shift;
-    my %saveOptions;
+    my (%saveOptions, @saveMembers, @savedMembers);
 
+    # save necessary members to allow GetInfo to be called from within ExtractInfo
+    if ($$self{InExtract}) {
+        @saveMembers = qw(REQUESTED_TAGS REQ_TAG_LOOKUP IO_TAG_LIST);
+        @savedMembers = @$self{@saveMembers};
+    }
     unless (@_ and not defined $_[0]) {
         %saveOptions = %{$$self{OPTIONS}}; # save original options
         # must set FILENAME so it isn't parsed from the arguments
@@ -3098,8 +3203,9 @@ sub GetInfo($;@)
         @{$$self{IO_TAG_LIST}} = $self->GetTagList($rtnTags, $sort, $$self{OPTIONS}{Sort2});
     }
 
-    # restore original options
+    # restore original options and member variables
     %saveOptions and $$self{OPTIONS} = \%saveOptions;
+    @$self{@saveMembers} = @savedMembers if @saveMembers;
 
     return \%info;
 }
@@ -4164,17 +4270,151 @@ sub CombineInfo($;@)
 }
 
 #------------------------------------------------------------------------------
-# Read metadata from alternate files and build composite tags
+# Finish generating tags after extracting information from a file
 # Inputs: 0) ExifTool ref
-# Notes: This is called after reading the main file so the tags are available
-#        for being used in the file name, but before building Composite tags
-#        so tags from the alternate files may be used in the Composite tags
-sub ExtractAltInfo($)
+# Notes: The sequencing here is a bit tricky because tags from the main file
+#        may be used in the names of alternate files, so we finish generating
+#        all main file tags first (including all Composite tags which don't
+#        rely on alternate files) before extracting tags from alternate files,
+#        then we finish by generating the remaingin Composite tags.
+sub DoneExtract($)
 {
     my $self = shift;
     # extract information from alternate files if necessary
     my ($g8, $altExifTool);
     my $opts = $$self{OPTIONS};
+
+    # generate ImageDataHash if requested
+    if ($$self{ImageDataHash}) {
+        my $digest = $$self{ImageDataHash}->hexdigest;
+        # (don't store empty digest)
+        $self->FoundTag(ImageDataHash => $digest) unless
+            $digest eq 'd41d8cd98f00b204e9800998ecf8427e' or
+            $digest eq 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' or
+            $digest eq 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e';
+    }
+    # generate Validate tag if requested
+    if ($$opts{Validate}) {
+        Image::ExifTool::Validate::FinishValidate($self, $$self{REQ_TAG_LOOKUP}{validate});
+    }
+    # generate geolocation tags if requested
+    if ($$opts{Geolocation}) {
+        my ($arg, @defaults, @tags, $tag, @coord, @ref, @city, $doneCity, $both);
+        my $geoOpt = $$opts{Geolocation};
+        my @args = split /\s*,\s*/, $$opts{Geolocation};
+        foreach $arg (@args) {
+            lc $arg eq 'both' and $both = 1, next;
+            $arg !~ s/^\$// and push(@defaults, $arg), next;
+            push @tags, $arg;   # argument is a tag name
+        }
+        unless (@tags) {
+            # default tags to read if not specified
+            @tags = qw(GPSLatitude GPSLongitude GPSLatitudeRef GPSLongitudeRef
+                       GPSCoordinates LocationShownGPSLatitude LocationShownGPSLongitude
+                       XMP:City State CountryCode Country
+                       IPTC:City Province-State Country-PrimaryLocationCode Country-PrimaryLocationName
+                       LocationShownCity LocationShownProvinceState LocationShownCountryCode LocationShownCountryName);
+        }
+        # get information for specified tags
+        my $info = $self->GetInfo(\@tags, { PrintConv => 0, Duplicates => 0 }); # (returns tags in proper case)
+        $opts = $$self{OPTIONS};    # (necessary because GetInfo changes the OPTIONS hash)
+        foreach $tag (@tags) {
+            my $val = $$info{$tag};
+            next unless defined $val;
+            $self->VPrint(0, "Found $tag ($val)\n");
+            if ($tag =~ /Coordinates/) {
+                next if defined $coord[0] and defined $coord[1];
+                @coord = split ' ', $val;
+                next;
+            }
+            my $n = $tag =~ /Latitude/ ? 0 : ($tag =~ /Longitude/ ? 1 : undef);
+            if (defined $n) {
+                if ($tag =~ /Ref$/) {
+                    $ref[$n] = $val unless $ref[$n];
+                } else {
+                    $coord[$n] = $val unless defined $coord[$n];
+                }
+                next;
+            }
+            # handle city tags (save info for first city found)
+            if ($tag =~ /City/) {
+                @city and $doneCity = 1, next;
+                push @city, $val;
+            } elsif (@city) {
+                push @city, $val unless $doneCity;
+                next if $doneCity;
+            }
+        }
+        if (defined $coord[0] and defined $coord[1]) {
+            $coord[0] = -$coord[0] if $ref[0] and $coord[0] > 0 and $ref[0] eq 'S';
+            $coord[1] = -$coord[1] if $ref[1] and $coord[1] > 0 and $ref[1] eq 'W';
+            $arg = join ',', @coord;
+        } elsif (@city) {
+            $arg = join ',', @city;
+        }
+        if (not defined $arg) {
+            # use specified default values if no tags found
+            $arg = join ',', @defaults;
+            undef $arg if $arg eq '1';
+            $both = 1;  # use 'both' GPS and place names if provided
+        }
+        if ($arg) {
+            $arg .= ',both' if $both;
+            $arg = $self->Encode($arg, 'UTF8');
+            require Image::ExifTool::Geolocation;
+            if ($$opts{Verbose}) {
+                if ($Image::ExifTool::Geolocation::dbInfo) {
+                    print "Loaded $Image::ExifTool::Geolocation::dbInfo\n";
+                } else {
+                    print "Error loading Geolocation.dat\n";
+                }
+            }
+            local $SIG{'__WARN__'} = \&SetWarning;
+            undef $evalWarning;
+            $$opts{GeolocMulti} = $$opts{Duplicates};
+            my ($cities, $dist) = Image::ExifTool::Geolocation::Geolocate($arg, $opts);
+            delete $$opts{GeolocMulti};
+            if ($cities and (@$cities < 2 or $dist or not $self->Warn('Multiple Geolocation cities are possible',2))) {
+                $self->FoundTag(GeolocationWarning => 'Search matched '.scalar(@$cities).' cities') if @$cities > 1;
+                my $city;
+                foreach $city (@$cities) {
+                    $$self{DOC_NUM} = ++$$self{DOC_COUNT} unless $city eq $$cities[0];
+                    my @geo = Image::ExifTool::Geolocation::GetEntry($city, $$opts{Lang});
+                    $self->FoundTag(GeolocationCity => $geo[0]);
+                    $self->FoundTag(GeolocationRegion => $geo[1]) if $geo[1];
+                    $self->FoundTag(GeolocationSubregion => $geo[2]) if $geo[2];
+                    $self->FoundTag(GeolocationCountryCode => $geo[3]);
+                    $self->FoundTag(GeolocationCountry => $geo[4]) if $geo[4];
+                    $self->FoundTag(GeolocationTimeZone => $geo[5]) if $geo[5];
+                    $self->FoundTag(GeolocationFeatureCode => $geo[6]);
+                    $self->FoundTag(GeolocationPopulation => $geo[7]);
+                    $self->FoundTag(GeolocationPosition => "$geo[8] $geo[9]");
+                    if ($dist) {
+                        $self->FoundTag(GeolocationDistance => $$dist[0][0]);
+                        $self->FoundTag(GeolocationBearing => $$dist[0][1]);
+                        shift @$dist;
+                    }
+                    last unless $$opts{Duplicates};
+                }
+                delete $$self{DOC_NUM};
+            } elsif ($evalWarning) {
+                $self->Warn(CleanWarning());
+            }
+        }
+    }
+    # generate tags for user-defined parameters that ended with '#'
+    if (%{$$opts{UserParam}}) {
+        my $doMsg = $$opts{Verbose};
+        my $table = GetTagTable('Image::ExifTool::UserParam');
+        foreach (sort keys %{$$opts{UserParam}}) {
+            next unless /#$/;
+            if ($doMsg) {
+                $self->VPrint(0, "UserParam tags:\n");
+                undef $doMsg;
+            }
+            $self->HandleTag($table, $_, $$opts{UserParam}{$_});
+        }
+    }
     if ($$opts{Composite} and (not $$opts{FastScan} or $$opts{FastScan} < 5)) {
         # build all composite tags except those requiring tags from alternate files
         $self->BuildCompositeTags();
@@ -4185,6 +4425,7 @@ sub ExtractAltInfo($)
         $$altExifTool{OPTIONS} = $$self{OPTIONS};
         $$altExifTool{GLOBAL_TIME_OFFSET} = $$self{GLOBAL_TIME_OFFSET};
         $$altExifTool{REQ_TAG_LOOKUP} = $$self{REQ_TAG_LOOKUP};
+        $$altExifTool{ReqTagAlreadySet} = 1;
         my $fileName = $$altExifTool{ALT_FILE};
         # allow tags from the main file to be used in the alternate file names
         # (eg. -file1 '$originalfilename')
@@ -4554,7 +4795,7 @@ sub ParseArguments($;@)
     my (@exclude, $wasExcludeOpt);
 
     $$self{REQUESTED_TAGS}  = [ ];
-    $$self{REQ_TAG_LOOKUP}  = { };
+    $$self{REQ_TAG_LOOKUP}  = { } unless $$self{ReqTagAlreadySet};
     $$self{EXCL_TAG_LOOKUP} = { };
     $$self{IO_TAG_LIST} = undef;
     delete $$self{EXCL_XMP_LOOKUP};
@@ -4838,6 +5079,7 @@ sub SetFoundTags($)
                 $allTag = 1;
             } elsif ($tag =~ /[*?]/) {
                 # allow wildcards in tag names
+                $tag =~ tr/-_A-Za-z0-9*?//dc; # sterilize
                 $tag =~ s/\*/[-\\w]*/g;
                 $tag =~ s/\?/[-\\w]/g;
                 $tag .= '( \\(.*)?' if $doDups or $allGrp;
@@ -4845,6 +5087,7 @@ sub SetFoundTags($)
                 next unless @matches;   # don't want entry in list for wildcard tags
                 $allTag = 1;
             } elsif ($doDups or defined $group) {
+                $tag =~ tr/-_A-Za-z0-9//dc; # sterilize
                 # must also look for tags like "Tag (1)"
                 # (but be sure not to match temporary ValueConv entries like "Tag #")
                 @matches = grep(/^$tag( \(|$)/i, keys %$tagHash);
@@ -5055,6 +5298,16 @@ sub DoAutoLoad(@)
 sub AUTOLOAD
 {
     return DoAutoLoad($AUTOLOAD, @_);
+}
+
+#------------------------------------------------------------------------------
+# Add cleanup routine to call before returning from Extract
+# Inputs: 0) ExifTool ref, 1) code ref to routine with ExifTool ref as an argument
+sub AddCleanup($)
+{
+    my ($self, $sub) = @_;
+    $$self{Cleanup} or $$self{Cleanup} = [ ];
+    push @{$$self{Cleanup}}, $sub;
 }
 
 #------------------------------------------------------------------------------
@@ -5811,7 +6064,7 @@ sub Decode($$$;$$$)
 # Inputs: 0) ExifTool object ref, 1) string, 2) destination character set name,
 #         3) optional destination byte order (2-byte and 4-byte fixed-width sets only)
 # Returns: string in specified encoding
-sub Encode($$$;$)
+sub Encode($$;$$)
 {
     my ($self, $val, $to, $toOrder) = @_;
     return $self->Decode($val, undef, undef, $to, $toOrder);
@@ -5892,8 +6145,8 @@ sub MakeTagName($)
     my $name = shift;
     $name =~ tr/-_a-zA-Z0-9//dc;    # remove illegal characters
     $name = ucfirst $name;          # capitalize first letter
-    $name = "Tag$name" if length($name) < 2 or $name =~ /^[-0-9]/;
     # must at least 2 characters long and not start with - or 0-9-
+    $name = "Tag$name" if length($name) < 2 or $name =~ /^[-0-9]/;
     return $name;
 }
 
@@ -6124,6 +6377,7 @@ sub TimeLocal(@)
     if ($^O eq 'MSWin32') {
         # patch for ActivePerl timezone bug
         my @t2 = localtime($tm);
+        $t2[5] += 1900;
         my $t2 = Time::Local::timelocal(@t2);
         # adjust timelocal() return value to be consistent with localtime()
         $tm += $tm - $t2;
@@ -8698,6 +8952,12 @@ sub FoundTag($$$;@)
     }
     $grps[0] or $grps[0] = $$self{SET_GROUP0};
     $grps[1] or $grps[1] = $$self{SET_GROUP1};
+    if ($$options{IgnoreGroups}) {
+        foreach (0..1) {
+            my $g = lc($grps[$_] || $$tagInfo{Groups}{$_} || $$tagInfo{Table}{GROUPS}{$_});
+            return undef if $$options{IgnoreGroups}{$g} or $$options{IgnoreGroups}{"$_$g"};
+        }
+    }
     my $valueHash = $$self{VALUE};
 
     if ($$tagInfo{RawConv}) {

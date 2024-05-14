@@ -71,7 +71,7 @@ supported by ExifTool (r = read, w = write, c = create):
   3GP   r/w   | DSS   r     | JP2   r/w   | ODT   r     | RWL   r/w
   7Z    r     | DV    r     | JPEG  r/w   | OFR   r     | RWZ   r
   A     r     | DVB   r/w   | JSON  r     | OGG   r     | RM    r
-  AA    r     | DVR-MS r    | JXL   r     | OGV   r     | SEQ   r
+  AA    r     | DVR-MS r    | JXL   r/w   | OGV   r     | SEQ   r
   AAC   r     | DYLIB r     | K25   r     | ONP   r     | SKETCH r
   AAE   r     | EIP   r     | KDC   r     | OPUS  r     | SO    r
   AAX   r/w   | EPS   r/w   | KEY   r     | ORF   r/w   | SR2   r/w
@@ -592,9 +592,10 @@ Format for printing GPS coordinates.  This is a printf format string with
 specifiers for degrees, minutes and seconds in that order, however minutes
 and seconds may be omitted.  If the hemisphere is known, a reference
 direction (N, S, E or W) is appended to each printed coordinate, but adding
-a C<+> to the first format specifier (eg. C<%+.6f>) prints a signed
-coordinate instead.  For example, the following table gives the output for
-the same coordinate using various formats:
+a C<+> or C<-> to the first format specifier (eg. C<%+.6f> or C<%-.6f>)
+prints a signed coordinate instead (C<+> also adds a leading plus sign to
+positive coordinates, while C<-> does not).  For example, the following
+table gives the output for the same coordinate using various formats:
 
       CoordFormat        Example Output
   -------------------  ------------------
@@ -714,6 +715,44 @@ value to be added to the maker notes base offset.  It may also be set to the
 empty string ('') for ExifTool will take its best guess at the correct base,
 or undef (the default) for no base adjustment.
 
+=item Geolocation
+
+Flag to generate geolocation tags based on the GPSLatitude/GPSLongitude or
+City/State/Province/Country read from a file.  This feature uses an included
+database with cities over a population of 2000 from geonames.org. May be set
+to a string of the form "Lat,Lon" (eg. "44.56,-72.33") or city with optional
+state/province, country and/or country code (eg. "Paris,France") to act as a
+default for files not containing GPS or geolocation information, or include
+tag names with leading dollar signs separated by commas to specify the tags
+to use for the geolocation input.  May also include regular expressions for
+more flexible matching.  See L<https://exiftool.org/geolocation.html> for
+more details.  Default is undef.
+
+=item GeolocAltNames
+
+Flag to search alternate Geolocation city names if available (ie. if
+$Image::ExifTool::Geolocation::altDir has been set).  Set to 0 to disable
+use of the alternate names.  Default is 1.
+
+=item GeolocFeature
+
+Comma-separated list of feature codes to include in city search, or exclude
+if the list begins with a dash (-).  Valid feature codes are PPL, PPLA,
+PPLA2, PPLA3, PPLA4, PPLA5, PPLC, PPLCH, PPLF, PPLG, PPLH, PPLL, PPLQ, PPLR,
+PPLS, PPLW, PPLX, STLMT and Other, plus possible user-include codes if an
+alternate database is used.  See L<http://www.geonames.org/export/codes.html#P>
+for a description of these codes.  Default is undef.
+
+=item GeolocMaxDist
+
+Maximum distance in km to the geolocation city.  The Geolocation tags are
+not generated if the distance is greater than this.  Default is undef.
+
+=item GeolocMinPop
+
+Minimum population for the Geolocation city.  Cities smaller than this are
+ignored.  Default is undef.
+
 =item GeoMaxIntSecs
 
 Maximum interpolation time in seconds for geotagging.  Geotagging is treated
@@ -787,6 +826,12 @@ goes to the file specified by the TextOut option (\*STDOUT by default).
 Base for HTML dump offsets.  If not defined, the EXIF/TIFF base offset is
 used.  Set to 0 for absolute offsets.  Default is undef.
 
+=item IgnoreGroups
+
+Comma-separated list of group names to ignore when reading.  The group names
+are case insensitive and may be preceeded by a family number.  Set to undef
+to clear the previous IgnoreGroups list.  Default is undef.
+
 =item IgnoreMinorErrors
 
 Flag to ignore minor errors.  Causes minor errors to be downgraded to
@@ -800,12 +845,12 @@ warnings are denoted by "[minor]" at the start of the message, or "[Minor]"
 
 =item IgnoreTags
 
-List of tag names to ignore when reading.  This may help in situations where
-memory is limited because the ignored tag values are not stored in memory.
-The tag names are case insensitive and group names and wildcards are not
-allowed.  A special tag name of "All" may be used to ignore all tags except
-those specified by the L</RequestTags> option.  Set to undef to clear the
-previous IgnoreTags list.  Default is undef.
+Comma-separated list of tag names to ignore when reading.  This may help in
+situations where memory is limited because the ignored tag values are not
+stored in memory. The tag names are case insensitive and group names and
+wildcards are not allowed.  A special tag name of "All" may be used to
+ignore all tags except those specified by the L</RequestTags> option.  Set
+to undef to clear the previous IgnoreTags list.  Default is undef.
 
 =item ImageHashType
 
@@ -916,6 +961,14 @@ by the value of the Charset option at processing time.  Default is undef.
 Flag to enable automatic print conversion.  Also enables inverse
 print conversion for writing.  Default is 1.
 
+=item PrintCSV
+
+Flag to directly print CSV-format output rather than extracting tags
+normally.  Currently this feature applies only to GM PDR data (see
+L<Image::ExifTool::TagNames/GM Tags>).  Setting this option automatically
+sets L</IgnoreTags> to "all", and L</ExtractEmbedded> to 1.  Default is
+undef.
+    
 =item QuickTimeHandler
 
 Flag set to add an 'mdir' Handler to a newly created Meta box when adding
@@ -966,8 +1019,7 @@ the list.  Default is undef.
 
 Flag to save EXIF/TIFF format type as the family 6 group name when
 extracting information.  Without this option set, the family 6 group names
-are not generated.  Default is undef.  See the L</GetGroup> option for more
-details.
+are not generated.  Default is undef.  See L</GetGroup> for more details.
 
 =item SavePath
 
@@ -1054,10 +1106,12 @@ Output file reference for Verbose and HtmlDump options.  Default is
 
 =item TimeZone
 
-Time zone for local date/time values.  May be set to any valid TZ string.
-Uses the system time zone if not specified.  Default is undef.  (Requires
-POSIX::tzset, which may not be available in Windows.  A work-around in
-Windows is to C<set TZ=E<lt>zoneE<gt>> before running ExifTool.)
+Set the time zone for local date/time values.  The value is a time zone
+offset like "+05:00" (but note that the offset is to UTC, not from UTC, so
+it is positive for western time zones), or a time zone name like "EST5EDT".
+For Unix-based systems, the value may also be a time zone ID like
+"America/New_York".  Requires Time::Piece on Windows, or POSIX::tzset on
+other systems.  Default is undef.
 
 =item Unknown
 
@@ -1181,7 +1235,7 @@ L</ExtractInfo>:
 
 Binary, Charset, CharsetEXIF, CharsetFileName, CharsetID3, CharsetIPTC,
 CharsetPhotoshop, CharsetQuickTime, CharsetRIFF, Composite, ExtendedXMP,
-ExtractEmbedded, FastScan, FixBase, HtmlDump, HtmlDumpBase,
+ExtractEmbedded, FastScan, FixBase, HtmlDump, HtmlDumpBase, IgnoreGroups,
 IgnoreMinorErrors, IgnoreTags, Lang, LargeFileSupport, MakerNotes,
 MDItemTags, NoPDFList, Password, QuickTimeUTC (enforced 1904 time zero),
 RequestAll, RequestTags, SaveFormat, SavePath, ScanForXMP, Struct, TextOut,
@@ -2441,14 +2495,14 @@ Here is a complete list of groups for each of these families:
 AAC, AFCP, AIFF, APE, APP0, APP1, APP11, APP12, APP13, APP14, APP15, APP2,
 APP3, APP4, APP5, APP6, APP7, APP8, APP9, ASF, Audible, Canon, CanonVRD,
 Composite, DICOM, DNG, DV, DjVu, Ducky, EXE, EXIF, ExifTool, FITS, FLAC,
-FLIR, File, Flash, FlashPix, Font, FotoStation, GIF, GIMP, GeoTiff, GoPro,
-H264, HTML, ICC_Profile, ID3, IPTC, ISO, ITC, JFIF, JPEG, JSON, JUMBF,
-Jpeg2000, LNK, Leaf, Lytro, M2TS, MIE, MIFF, MISB, MNG, MOI, MPC, MPEG, MPF,
-MXF, MakerNotes, Matroska, Meta, Ogg, OpenEXR, Opus, PDF, PICT, PLIST, PNG,
-PSP, Palm, PanasonicRaw, Parrot, PhotoCD, PhotoMechanic, Photoshop,
-PostScript, PrintIM, QuickTime, RAF, RIFF, RSRC, RTF, Radiance, Rawzor,
-Real, Red, SVG, SigmaRaw, Sony, Stim, Theora, Torrent, Trailer, VCard,
-Vorbis, WTV, XML, XMP, ZIP
+FLIR, File, Flash, FlashPix, Font, FotoStation, GIF, GIMP, GM, GeoTiff,
+GoPro, H264, HTML, ICC_Profile, ID3, IPTC, ISO, ITC, JFIF, JPEG, JSON,
+JUMBF, Jpeg2000, LNK, Leaf, Lytro, M2TS, MIE, MIFF, MISB, MNG, MOI, MPC,
+MPEG, MPF, MXF, MakerNotes, Matroska, Meta, Ogg, OpenEXR, Opus, PDF, PICT,
+PLIST, PNG, PSP, Palm, PanasonicRaw, Parrot, PhotoCD, PhotoMechanic,
+Photoshop, PostScript, PrintIM, QuickTime, RAF, RIFF, RSRC, RTF, Radiance,
+Rawzor, Real, Red, SVG, SigmaRaw, Sony, Stim, Theora, Torrent, Trailer,
+VCard, Vorbis, WTV, XML, XMP, ZIP
 
 =item Family 1 (Specific Location):
 
@@ -2456,7 +2510,7 @@ AAC, AC3, AFCP, AIFF, APE, ASF, AVI1, Adobe, AdobeCM, AdobeDNG, Apple,
 Audible, CBOR, CIFF, CameraIFD, Canon, CanonCustom, CanonDR4, CanonRaw,
 CanonVRD, Casio, Chapter#, Composite, DICOM, DJI, DNG, DV, DjVu, DjVu-Meta,
 Ducky, EPPIM, EXE, EXIF, ExifIFD, ExifTool, FITS, FLAC, FLIR, File, Flash,
-FlashPix, Font, FotoStation, FujiFilm, FujiIFD, GE, GIF, GIMP, GPS,
+FlashPix, Font, FotoStation, FujiFilm, FujiIFD, GE, GIF, GIMP, GM, GPS,
 GSpherical, Garmin, GeoTiff, GlobParamIFD, GoPro, GraphConv, H264, HP, HTC,
 HTML, HTML-dc, HTML-ncc, HTML-office, HTML-prod, HTML-vw96, HTTP-equiv,
 ICC-chrm, ICC-clrt, ICC-header, ICC-meas, ICC-meta, ICC-view, ICC_Profile,
@@ -2470,27 +2524,27 @@ MIE-Lens, MIE-Main, MIE-MakerNotes, MIE-Meta, MIE-Orient, MIE-Preview,
 MIE-Thumbnail, MIE-UTM, MIE-Unknown, MIE-Video, MIFF, MISB, MNG, MOBI, MOI,
 MPC, MPEG, MPF0, MPImage, MS-DOC, MXF, MacOS, MakerNotes, MakerUnknown,
 Matroska, MediaJukebox, Meta, MetaIFD, Microsoft, Minolta, MinoltaRaw,
-Motorola, NITF, Nikon, NikonCapture, NikonCustom, NikonScan, NikonSettings,
-NineEdits, Nintendo, Ocad, Ogg, Olympus, OpenEXR, Opus, PDF, PICT, PNG,
-PNG-cICP, PNG-pHYs, PSP, Palm, Panasonic, PanasonicRaw, Parrot, Pentax,
-PhaseOne, PhotoCD, PhotoMechanic, Photoshop, PictureInfo, PostScript,
-PreviewIFD, PrintIM, ProfileIFD, Qualcomm, QuickTime, RAF, RAF2, RIFF,
-RMETA, RSRC, RTF, Radiance, Rawzor, Real, Real-CONT, Real-MDPR, Real-PROP,
-Real-RA3, Real-RA4, Real-RA5, Real-RJMD, Reconyx, Red, Ricoh, SPIFF, SR2,
-SR2DataIFD, SR2SubIFD, SRF#, SVG, Samsung, Sanyo, Scalado, Sigma, SigmaRaw,
-Sony, SonyIDC, Stim, SubIFD, System, Theora, Torrent, Track#, UserData,
-VCalendar, VCard, VNote, Version0, Vorbis, WTV, XML, XMP, XMP-DICOM,
-XMP-Device, XMP-GAudio, XMP-GCamera, XMP-GCreations, XMP-GDepth, XMP-GFocus,
-XMP-GImage, XMP-GPano, XMP-GSpherical, XMP-LImage, XMP-MP, XMP-MP1,
-XMP-PixelLive, XMP-aas, XMP-acdsee, XMP-album, XMP-apple-fi, XMP-ast,
-XMP-aux, XMP-cc, XMP-cell, XMP-crd, XMP-creatorAtom, XMP-crs, XMP-dc,
-XMP-dex, XMP-digiKam, XMP-drone-dji, XMP-dwc, XMP-et, XMP-exif, XMP-exifEX,
-XMP-expressionmedia, XMP-extensis, XMP-fpv, XMP-getty, XMP-hdr, XMP-hdrgm,
-XMP-ics, XMP-iptcCore, XMP-iptcExt, XMP-lr, XMP-mediapro, XMP-microsoft,
-XMP-mwg-coll, XMP-mwg-kw, XMP-mwg-rs, XMP-nine, XMP-panorama, XMP-pdf,
-XMP-pdfx, XMP-photomech, XMP-photoshop, XMP-plus, XMP-pmi, XMP-prism,
-XMP-prl, XMP-prm, XMP-pur, XMP-rdf, XMP-sdc, XMP-swf, XMP-tiff, XMP-x,
-XMP-xmp, XMP-xmpBJ, XMP-xmpDM, XMP-xmpDSA, XMP-xmpMM, XMP-xmpNote,
+Motorola, NITF, Nextbase, Nikon, NikonCapture, NikonCustom, NikonScan,
+NikonSettings, NineEdits, Nintendo, Ocad, Ogg, Olympus, OpenEXR, Opus, PDF,
+PICT, PNG, PNG-cICP, PNG-pHYs, PSP, Palm, Panasonic, PanasonicRaw, Parrot,
+Pentax, PhaseOne, PhotoCD, PhotoMechanic, Photoshop, PictureInfo,
+PostScript, PreviewIFD, PrintIM, ProfileIFD, Qualcomm, QuickTime, RAF, RAF2,
+RIFF, RMETA, RSRC, RTF, Radiance, Rawzor, Real, Real-CONT, Real-MDPR,
+Real-PROP, Real-RA3, Real-RA4, Real-RA5, Real-RJMD, Reconyx, Red, Ricoh,
+SPIFF, SR2, SR2DataIFD, SR2SubIFD, SRF#, SVG, Samsung, Sanyo, Scalado,
+Sigma, SigmaRaw, Sony, SonyIDC, Stim, SubIFD, System, Theora, Torrent,
+Track#, UserData, VCalendar, VCard, VNote, Version0, Vorbis, WTV, XML, XMP,
+XMP-DICOM, XMP-Device, XMP-GAudio, XMP-GCamera, XMP-GCreations, XMP-GDepth,
+XMP-GFocus, XMP-GImage, XMP-GPano, XMP-GSpherical, XMP-LImage, XMP-MP,
+XMP-MP1, XMP-PixelLive, XMP-aas, XMP-acdsee, XMP-album, XMP-apple-fi,
+XMP-ast, XMP-aux, XMP-cc, XMP-cell, XMP-crd, XMP-creatorAtom, XMP-crs,
+XMP-dc, XMP-dex, XMP-digiKam, XMP-drone-dji, XMP-dwc, XMP-et, XMP-exif,
+XMP-exifEX, XMP-expressionmedia, XMP-extensis, XMP-fpv, XMP-getty, XMP-hdr,
+XMP-hdrgm, XMP-ics, XMP-iptcCore, XMP-iptcExt, XMP-lr, XMP-mediapro,
+XMP-microsoft, XMP-mwg-coll, XMP-mwg-kw, XMP-mwg-rs, XMP-nine, XMP-panorama,
+XMP-pdf, XMP-pdfx, XMP-photomech, XMP-photoshop, XMP-plus, XMP-pmi,
+XMP-prism, XMP-prl, XMP-prm, XMP-pur, XMP-rdf, XMP-sdc, XMP-swf, XMP-tiff,
+XMP-x, XMP-xmp, XMP-xmpBJ, XMP-xmpDM, XMP-xmpDSA, XMP-xmpMM, XMP-xmpNote,
 XMP-xmpPLUS, XMP-xmpRights, XMP-xmpTPg, ZIP, iTunes
 
 =item Family 2 (Category):

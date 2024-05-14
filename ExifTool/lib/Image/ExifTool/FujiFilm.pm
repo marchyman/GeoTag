@@ -31,7 +31,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.92';
+$VERSION = '1.94';
 
 sub ProcessFujiDir($$$);
 sub ProcessFaceRec($$$);
@@ -528,6 +528,7 @@ my %faceCategories = (
             1 => 'Full-frame on GFX', #IB
             2 => 'Sports Finder Mode', # (mechanical shutter)
             4 => 'Electronic Shutter 1.25x Crop', # (continuous high)
+            8 => 'Digital Tele-Conv', #forum15784
         },
     },
     0x104e => { #forum10800 (X-Pro3)
@@ -549,6 +550,16 @@ my %faceCategories = (
             3 => 'Electronic Front Curtain', #10
         },
     },
+    0x1051 => { #forum15784
+        Name => 'CropFlag',
+        Writable => 'int8u',
+        Notes => q(
+            this tag exists only if the image was cropped, and is 0 for cropped JPG
+            image or 1 for a cropped RAF
+        ),
+    },
+    0x1052 => { Name => 'CropTopLeft', Writable => 'int32u' }, #forum15784
+    0x1053 => { Name => 'CropSize',    Writable => 'int32u' }, #forum15784
     # 0x1100 - This may not work well for newer cameras (ref forum12682)
     0x1100 => [{
         Name => 'AutoBracketing',
@@ -1030,14 +1041,19 @@ my %faceCategories = (
     },
     0.5 => {
         Name => 'AFAreaZoneSize',
-        Mask => 0xf0000,
+        Mask => 0xff0000,
         PrintConv => {
             0 => 'n/a',
             OTHER => sub {
                 my ($val, $inv) = @_;
-                return "$val x $val" unless $inv;
-                $val =~ s/ ?x.*//;
-                return $val;
+                my ($w, $h);
+                if ($inv) {
+                    my ($w, $h) = $val =~ /(\d+)/g;
+                    return 0 unless $w and $h;
+                    return((($h << 5) & 0xf0) | ($w & 0x0f));
+                }
+                ($w, $h) = ($val & 0x0f, $val >> 5);
+                return "$w x $h";
             },
         },
     },

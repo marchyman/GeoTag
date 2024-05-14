@@ -15,6 +15,7 @@
 #               2019/11/10 - PH Also write pitch to CameraElevationAngle
 #               2020/12/01 - PH Added ability to read DJI CSV log files
 #               2022/06/21 - PH Added ability to read Google Takeout JSON files
+#               2024/04/23 - PH Added ability to read more OpenTracks GPS tags
 #
 # References:   1) http://www.topografix.com/GPX/1/1/
 #               2) http://www.gpsinformation.org/dale/nmea.htm#GSA
@@ -29,7 +30,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:Public);
 use Image::ExifTool::GPS;
 
-$VERSION = '1.74';
+$VERSION = '1.76';
 
 sub JITTER() { return 2 }       # maximum time jitter
 
@@ -66,6 +67,8 @@ my %xmlTag = (
     course      => 'dir',       # (written by Arduino)
     pitch       => 'pitch',     # (written by Arduino)
     roll        => 'roll',      # (written by Arduino)
+    speed       => 'speed',     # (OpenTrack gpx)
+    accuracy_horizontal => 'err',#(OpenTrack gpx)
     # XML containers (fix is reset at the opening tag of these properties)
     wpt         => '',          # GPX
     trkpt       => '',          # GPX
@@ -85,6 +88,7 @@ my %fixInfoKeys = (
     alt    => [ 'alt' ],
     orient => [ 'dir', 'pitch', 'roll' ],
     atemp  => [ 'atemp' ],
+    err    => [ 'err' ],
 );
 
 my %isOrient = ( dir => 1, pitch => 1, roll => 1 ); # test for orientation key
@@ -346,8 +350,8 @@ sub LoadTrackLog($$;$)
                             # validate altitude
                             undef $$fix{alt} if defined $$fix{alt} and $$fix{alt} !~ /^[+-]?\d+\.?\d*/;
                             $$has{alt} = 1 if $$fix{alt};   # set "has altitude" flag if appropriate
-                        } elsif ($tag eq 'atemp') {
-                            $$has{atemp} = 1;
+                        } elsif ($tag eq 'atemp' or $tag eq 'speed' or $tag eq 'err') {
+                            $$has{$tag} = 1;
                         }
                     }
                 }
@@ -392,8 +396,8 @@ sub LoadTrackLog($$;$)
                                     # validate altitude
                                     undef $$fix{alt} if defined $$fix{alt} and $$fix{alt} !~ /^[+-]?\d+\.?\d*/;
                                     $$has{alt} = 1 if $$fix{alt};   # set "has altitude" flag if appropriate
-                                } elsif ($tag eq 'atemp') {
-                                    $$has{atemp} = 1;
+                                } elsif ($tag eq 'atemp' or $tag eq 'speed' or $tag eq 'err') {
+                                    $$has{$tag} = 1;
                                 }
                             }
                         }
@@ -1109,7 +1113,7 @@ sub SetGeoValues($$;$)
                     $iExt = $i1;
                 }
                 if (abs($time - $tn) > $geoMaxExtSecs) {
-                    $err or $err = 'Time is too far from nearest GPS fix'.' '.abs($time-$tn).' '.$geoMaxExtSecs;
+                    $err or $err = 'Time is too far from nearest GPS fix'.' '.abs($time-$tn).' > '.$geoMaxExtSecs;
                     $et->VPrint(2, '  Nearest fix:     ', PrintFixTime($tn), "\n") if $verbose > 2;
                     $fix = { } if $$geotag{DateTimeOnly};
                 } else {
@@ -1126,7 +1130,7 @@ sub SetGeoValues($$;$)
                 # loop through available fix information categories
                 # (pos, track, alt, orient)
                 my ($category, $key);
-Category:       foreach $category (qw{pos track alt orient atemp}) {
+Category:       foreach $category (qw{pos track alt orient atemp err}) {
                     next unless $$has{$category};
                     my ($f, $p0b, $p1b, $f0b);
                     # loop through specific fix information keys
@@ -1218,16 +1222,29 @@ Category:       foreach $category (qw{pos track alt orient atemp}) {
             $coords .= " $alt";
         }
         @r = $et->SetNewValue(GPSCoordinates => $coords, %opts);
+        # also Geolocate if specified
+        my $nvHash;
+        my $geoloc = $et->GetNewValue('Geolocate', \$nvHash);
+        if ($geoloc and $geoloc =~ /\bgeotag\b/i) {
+            my $tag = ($$nvHash{WantGroup} ? "$$nvHash{WantGroup}:" : '') . 'Geolocate';
+            # pass along any regular expressions to qualify geolocation search
+            my $parms = join ',', grep m(/), split /\s*,\s*/, $geoloc;
+            $parms and $parms = ",$parms,both"; 
+            $et->SetNewValue($tag => "$$fix{lat},$$fix{lon}$parms");
+            # (the Geolocate tag will be restored to its original value
+            # by RestoreNewValues before the next file in batch processing)
+        }
         return $err if $qt; # all done if writing to QuickTime only
         # (capture error messages by calling SetNewValue in list context)
         @r = $et->SetNewValue(GPSLatitude => $$fix{lat}, %opts);
         @r = $et->SetNewValue(GPSLongitude => $$fix{lon}, %opts);
         @r = $et->SetNewValue(GPSAltitude => $gpsAlt, %opts);
         @r = $et->SetNewValue(GPSAltitudeRef => $gpsAltRef, %opts);
-        if ($$has{track}) {
+        if ($$has{track} or $$has{speed}) {
+            my $type = $$has{track} ? 'track' : 'speed';
             my $tFix = $fix;
-            if (not defined $$fix{track} and defined $iExt) {
-                my $p = FindFix($et,'track',$times,$points,$iExt,$iDir,$geoMaxExtSecs);
+            if (not defined $$fix{$type} and defined $iExt) {
+                my $p = FindFix($et,$type,$times,$points,$iExt,$iDir,$geoMaxExtSecs);
                 $tFix = $p if $p;
             }
             @r = $et->SetNewValue(GPSTrack => $$tFix{track}, %opts);
@@ -1268,6 +1285,9 @@ Category:       foreach $category (qw{pos track alt orient atemp}) {
             }
             @r = $et->SetNewValue(AmbientTemperature => $$tFix{atemp}, %opts);
         }
+        if ($$has{err}) {
+            @r = $et->SetNewValue(GPSHPositioningError => $$fix{err}, %opts);
+        }
         unless ($xmp) {
             my ($latRef, $lonRef);
             $latRef = ($$fix{lat} > 0 ? 'N' : 'S') if defined $$fix{lat};
@@ -1293,7 +1313,7 @@ Category:       foreach $category (qw{pos track alt orient atemp}) {
                     GPSAltitude GPSAltitudeRef GPSDateStamp GPSTimeStamp GPSDateTime
                     GPSTrack GPSTrackRef GPSSpeed GPSSpeedRef GPSImgDirection
                     GPSImgDirectionRef GPSPitch GPSRoll CameraElevationAngle
-                    AmbientTemperature GPSCoordinates))
+                    AmbientTemperature GPSHPositioningError GPSCoordinates))
         {
             my @r = $et->SetNewValue($_, undef, %opts);
         }

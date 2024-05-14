@@ -50,7 +50,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.63';
+$VERSION = '3.65';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -171,6 +171,7 @@ my %xmpNS = (
     pmi       => 'http://prismstandard.org/namespaces/pmi/2.2/',
     prm       => 'http://prismstandard.org/namespaces/prm/3.0/',
     acdsee    => 'http://ns.acdsee.com/iptc/1.0/',
+   'acdsee-rs'=> 'http://ns.acdsee.com/regions/',
     digiKam   => 'http://www.digikam.org/ns/1.0/',
     swf       => 'http://ns.adobe.com/swf/1.0/',
     cell      => 'http://developer.sonyericsson.com/cell/1.0/',
@@ -282,11 +283,12 @@ my %recognizedAttrs = (
 # NOTE: this lookup is duplicated in TagLookup.pm!!
 %specialStruct = (
     STRUCT_NAME => 1, # [optional] name of structure
-    NAMESPACE   => 1, # [mandatory] namespace prefix used for fields of this structure
+    NAMESPACE   => 1, # [mandatory for XMP] namespace prefix used for fields of this structure
     NOTES       => 1, # [optional] notes for documentation about this structure
     TYPE        => 1, # [optional] rdf:type resource for struct (if used, the StructType flag
                       # will be set automatically for all derived flattened tags when writing)
     GROUPS      => 1, # [optional] specifies family group 2 name for the structure
+    SORT_ORDER  => 1, # [optional] order for sorting fields in documentation
 );
 # XMP structures (each structure is similar to a tag table so we can
 # recurse through them in SetPropertyPath() as if they were tag tables)
@@ -801,6 +803,10 @@ my %sRangeMask = (
     acdsee => {
         Name => 'acdsee',
         SubDirectory => { TagTable => 'Image::ExifTool::XMP::acdsee' },
+    },
+   'acdsee-rs' => {
+        Name => 'acdsee-rs',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::ACDSeeRegions' },
     },
     digiKam => {
         Name => 'digiKam',
@@ -2554,7 +2560,17 @@ my %sPantryItem = (
             return $val;
         },
     },
-    ApproximateFocusDistance => { Writable => 'rational' }, #PH (LR3)
+    ApproximateFocusDistance => {
+        Writable => 'rational',
+        PrintConv => {
+            4294967295 => 'infinity',
+            OTHER => sub {
+                my ($val, $inv) = @_;
+                return $val eq 'infinity' ? 4294967295 : $val if $inv;
+                return $val eq 4294967295 ? 'infinity' : $val;
+            },
+        },
+    }, #PH (LR3)
     # the following new in LR6 (ref forum6497)
     IsMergedPanorama         => { Writable => 'boolean' },
     IsMergedHDR              => { Writable => 'boolean' },
@@ -2572,6 +2588,7 @@ my %sPantryItem = (
     EnhanceDenoiseAlreadyApplied    => { Writable => 'boolean' }, #forum14760
     EnhanceDenoiseVersion           => { }, #forum14760 integer?
     EnhanceDenoiseLumaAmount        => { }, #forum14760 integer?
+    # FujiRatingAlreadyApplied - boolean written by LR classic 13.2 (forum15815)
 );
 
 # IPTC Core namespace properties (Iptc4xmpCore) (ref 4)

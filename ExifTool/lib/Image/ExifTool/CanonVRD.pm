@@ -23,7 +23,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Canon;
 
-$VERSION = '1.38';
+$VERSION = '1.41';
 
 sub ProcessCanonVRD($$;$);
 sub WriteCanonVRD($$;$);
@@ -1020,6 +1020,18 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     # 0x10018 - fmt=8: 0
     # 0x10020 - fmt=2: ''
     0x10021 => 'CustomPictureStyle', # (string)
+    0x10100 => { #forum15965
+        Name => 'Rating',
+        PrintConv => {
+            0 => 'Unrated',
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
+            4294967295 => 'Rejected',
+        },
+    },
     0x10101 => {
         Name => 'CheckMark',
         PrintConv => {
@@ -1427,15 +1439,16 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     4 => 'CropY',
     5 => 'CropWidth',
     6 => 'CropHeight',
+    7 => 'CropRotation',
     8 => {
-        Name => 'CropRotation',
+        Name => 'CropAngle',
         Format => 'double',
         PrintConv => 'sprintf("%.7g",$val)',
         PrintConvInv => '$val',
     },
-    0x0a => 'CropOriginalWidth',
-    0x0b => 'CropOriginalHeight',
-    # 0x0c double - value: 100
+    10 => 'CropOriginalWidth',
+    11 => 'CropOriginalHeight',
+    # 12 double - value: 100
 );
 
 # DR4 Stamp Tool tags (ref PH)
@@ -1758,7 +1771,7 @@ sub ProcessDR4($$;$)
     } else {
         # load DR4 file into memory
         my $buff;
-        $raf->Read($buff, 8) == 8 and $buff eq "IIII\x04\0\x04\0" or return 0;
+        $raf->Read($buff, 8) == 8 and $buff =~ /^IIII[\x04|\x05]\0\x04\0/ or return 0;
         $et->SetFileType();
         $raf->Seek(0, 2) or return $err = 1;
         $dirLen = $raf->Tell();

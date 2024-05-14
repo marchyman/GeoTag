@@ -11,7 +11,7 @@ use strict;
 use warnings;
 require 5.004;
 
-my $version = '12.77';
+my $version = '12.84';
 
 # add our 'lib' directory to the include list BEFORE 'use Image::ExifTool'
 my $exePath;
@@ -166,6 +166,7 @@ my $filtered;       # flag indicating file was filtered by name
 my $filterFlag;     # file filter flag (0x01=deny extensions, 0x02=allow extensions, 0x04=add ext)
 my $fixLen;         # flag to fix description lengths when writing alternate languages
 my $forcePrint;     # string to use for missing tag values (undef to not print them)
+my $geoOnly;        # flag to extract Geolocation tags only
 my $helped;         # flag to avoid printing help if no tags specified
 my $html;           # flag for html-formatted output (2=html dump)
 my $interrupted;    # flag set if CTRL-C is pressed during a critical process
@@ -216,7 +217,7 @@ my $tmpFile;        # temporary file to delete on exit
 my $tmpText;        # temporary text file
 my $validFile;      # flag indicating we processed a valid file
 my $verbose;        # verbose setting
-my $vout;           # verbose output file reference (\*STDOUT or \*STDERR)
+my $vout;           # verbose output file reference (\*STDOUT or \*STDERR by default)
 my $windowTitle;    # title for console window
 my %wroteHEAD;      # list of output txt files to which we wrote HEAD
 my $xml;            # flag for XML-formatted output
@@ -490,6 +491,7 @@ undef $fileHeader;
 undef $filtered;
 undef $fixLen;
 undef $forcePrint;
+undef $geoOnly;
 undef $ignoreHidden;
 undef $joinLists;
 undef $langOpt;
@@ -587,6 +589,11 @@ if (not $preserveTime and $^O eq 'MSWin32') {
     $preserveTime = 2 if  eval { require Win32::API } and eval { require Win32API::File };
 }
 
+# add user-defined command-line arguments
+if (@Image::ExifTool::UserDefined::Arguments) {
+    unshift @ARGV, @Image::ExifTool::UserDefined::Arguments;
+}
+
 # parse command-line options in 2 passes...
 # pass 1: set all of our ExifTool options
 # pass 2: print all of our help and informational output (-list, -ver, etc)
@@ -663,7 +670,7 @@ for (;;) {
         next;
     }
     my $a = lc $_;
-    if (/^list([wfrdx]|wf|g(\d*))?$/i) {
+    if (/^list([wfrdx]|wf|g(\d*)|geo)?$/i) {
         $pass or push @nextPass, "-$_";
         my $type = lc($1 || '');
         if (not $type or $type eq 'w' or $type eq 'x') {
@@ -712,6 +719,29 @@ for (;;) {
             PrintTagList('Recognized file extensions', GetFileType(undef, 0));
         } elsif ($type eq 'd') {
             PrintTagList('Deletable groups', GetDeleteGroups());
+        } elsif ($type eq 'geo') {
+            require Image::ExifTool::Geolocation;
+            my ($i, $entry);
+            print "Geolocation database:\n" unless $quiet;
+            my $isAlt = $mt->Options('GeolocAltNames') ? ',AltNames' : '';
+            $isAlt = '' if $isAlt and not Image::ExifTool::Geolocation::ReadAltNames();
+            print "City,Region,Subregion,CountryCode,Country,TimeZone,FeatureCode,Population,Latitude,Longitude$isAlt\n";
+            Image::ExifTool::Geolocation::SortDatabase('City') if $sortOpt;
+            my $minPop = $mt->Options('GeolocMinPop');
+            my $feature = $mt->Options('GeolocFeature') || '';
+            my $neg = $feature =~ s/^-//;
+            my %fcodes = map { lc($_) => 1 } split /\s*,\s*/, $feature;
+            my @isUTF8 = (0,1,2,4);   # items that need converting from UTF8
+            push @isUTF8, 10 if $isAlt;
+            for ($i=0; ; ++$i) {
+                my @entry = Image::ExifTool::Geolocation::GetEntry($i,$langOpt,1) or last;
+                next if $minPop and $entry[7] < $minPop;
+                next if %fcodes and $neg ? $fcodes{lc $entry[6]} : not $fcodes{lc $entry[6]};
+                push @entry, Image::ExifTool::Geolocation::GetAltNames($i,1) if $isAlt;
+                $_ = defined $_ ? $mt->Decode($_, 'UTF8') : '' foreach @entry[@isUTF8];
+                pop @entry if $isAlt and not $entry[10];
+                print join(',', @entry), "\n";
+            }
         } else { # 'g(\d*)'
             # list all groups in specified family
             my $family = $2 || 0;
@@ -1102,7 +1132,7 @@ for (;;) {
         } else {
             $pass or push(@nextPass, '-lang'), next;
         }
-        my $langs = "Available languages:\n";
+        my $langs = $quiet ? '' : "Available languages:\n";
         $langs .= "  $_ - $Image::ExifTool::langName{$_}\n" foreach @Image::ExifTool::langs;
         $langs =~ tr/_/-/;  # display dashes instead of underlines in language codes
         $langs = Image::ExifTool::HTML::EscapeHTML($langs) if $escapeHTML;
@@ -1136,7 +1166,7 @@ for (;;) {
     if (/^p(-?)$/ or /^printformat(-?)$/i) {
         my $fmt = shift;
         if ($pass) {
-            LoadPrintFormat($fmt, $1);
+            LoadPrintFormat($fmt, $1 || $binaryOutput);
             # load MWG module now if necessary
             if (not $useMWG and grep /^mwg:/i, @requestTags) {
                 $useMWG = 1;
@@ -1341,11 +1371,11 @@ for (;;) {
             $useMWG = 1;
         } elsif (/^([-\w]+:)*(filename|directory|testname)\b/i) {
             $doSetFileName = 1;
-        } elsif (/^([-\w]+:)*(geotag|geotime|geosync)\b/i) {
+        } elsif (/^([-\w]+:)*(geotag|geotime|geosync|geolocate)\b/i) {
             if (lc $2 eq 'geotime') {
                 $addGeotime = '';
             } else {
-                # add geotag/geosync commands first
+                # add geotag/geosync/geolocate commands first
                 unshift @newValues, pop @newValues;
                 if (lc $2 eq 'geotag' and (not defined $addGeotime or $addGeotime) and length $val) {
                     $addGeotime = ($1 || '') . 'Geotime<DateTimeOriginal#';
@@ -1414,8 +1444,15 @@ if ($useMWG and not defined $mt->Options('CharsetEXIF')) {
     $mt->Options(CharsetEXIF => 'UTF8');
 }
 
+# allow geolocation without input file if set to a position
+if (not @files and not $outOpt and not @newValues) {
+    my $loc = $mt->Options('Geolocation');
+    # use undocumented feature to input JSON file directly from command line
+    $loc and $loc ne '1' and push(@files, qq(\@JSON:{})), $geoOnly = 1;
+}
+
 # print help
-unless ((@tags and not $outOpt) or @files or @newValues) {
+unless ((@tags and not $outOpt) or @files or @newValues or $geoOnly) {
     if ($doGlob and $doGlob == 2) {
         Warn "No matching files\n";
         $rtnVal = 1;
@@ -2113,6 +2150,11 @@ sub GetImageInfo($$)
         # can't make use of $info if verbose because we must reprocess
         # the file anyway to generate the verbose output
         undef $info if $verbose or defined $fastCondition;
+    } elsif ($file =~ s/^(\@JSON:)(.*)/$1/) {
+        # read JSON file from command line
+        my $dat = $2;
+        $info = $et->ImageInfo(\$dat, \@foundTags);
+        if ($geoOnly) { /^Geolocation/ or delete $$info{$_} foreach keys %$info; $file = ' ' }
     }
     if (defined $deleteOrig) {
         Progress($vout, "======== $file") if defined $verbose;
@@ -2139,7 +2181,7 @@ sub GetImageInfo($$)
 
     my $lineCount = 0;
     my ($fp, $outfile, $append);
-    if ($textOut and $verbose and not $tagOut) {
+    if ($textOut and ($verbose or $et->Options('PrintCSV')) and not $tagOut) {
         ($fp, $outfile, $append) = OpenOutputFile($orig);
         $fp or EFile($file), ++$countBad, return;
         # delete file if we exit prematurely (unless appending)
@@ -2169,7 +2211,7 @@ sub GetImageInfo($$)
     }
 
     # extract information from this file
-    unless ($file eq '-' or $et->Exists($file)) {
+    unless ($file eq '-' or $et->Exists($file) or $info) {
         Warn "Error: File not found - $file\n";
         FileNotFound($file);
         defined $outfile and close($fp), undef($tmpText), $et->Unlink($outfile);
@@ -2202,6 +2244,14 @@ sub GetImageInfo($$)
         if (%printFmt) {
             $et->Options(Duplicates => 1);
             $et->Options(RequestTags => \@requestTags);
+            if ($printFmt{SetTags}) {
+                # initialize options so we can set any tags we want
+                $$et{TAGS_FROM_FILE} = 1;
+                $et->Options(MakerNotes => 1);
+                $et->Options(Struct => 2);
+                $et->Options(List => 1);
+                $et->Options(CoordFormat => '%d %d %.8f') unless $et->Options('CoordFormat');
+            }
         } else {
             @foundTags = @tags;
         }
@@ -2254,15 +2304,15 @@ sub GetImageInfo($$)
         # output using print format file (-p) option
         my ($type, $doc, $grp, $lastDoc, $cache);
         $fileTrailer = '';
-        # repeat for each embedded document if necessary
-        if ($et->Options('ExtractEmbedded')) {
+        # repeat for each sub-document if necessary
+        if ($$et{DOC_COUNT}) {
             # (cache tag keys if there are sub-documents)
             $lastDoc = $$et{DOC_COUNT} and $cache = { };
         } else {
             $lastDoc = 0;
         }
         for ($doc=0; $doc<=$lastDoc; ++$doc) {
-            my $skipBody;
+            my ($skipBody, $opt);
             foreach $type (qw(HEAD SECT IF BODY ENDS TAIL)) {
                 my $prf = $printFmt{$type} or next;
                 if ($type eq 'HEAD' and defined $outfile) {
@@ -2270,6 +2320,12 @@ sub GetImageInfo($$)
                     $wroteHEAD{$outfile} = 1;
                 }
                 next if $type eq 'BODY' and $skipBody;
+                # silence "IF" warnings and warnings for subdocuments > 1
+                if ($type eq 'IF' or ($doc > 1 and not $$et{OPTIONS}{IgnoreMinorErrors})) {
+                    $opt = 'Silent';
+                } else {
+                    $opt = 'Warn';
+                }
                 if ($lastDoc) {
                     if ($doc) {
                         next if $type eq 'HEAD' or $type eq 'TAIL'; # only repeat SECT/IF/BODY/ENDS
@@ -2279,7 +2335,6 @@ sub GetImageInfo($$)
                     }
                 }
                 my @lines;
-                my $opt = $type eq 'IF' ? 'Silent' : 'Warn'; # silence "IF" warnings
                 foreach (@$prf) {
                     my $line = $et->InsertTagValues($_, \@foundTags, $opt, $grp, $cache);
                     if ($type eq 'IF') {
@@ -2354,7 +2409,7 @@ sub GetImageInfo($$)
                 # set delimiters for JSON or PHP output
                 ($bra, $ket, $sep) = $json == 1 ? ('{','}',':') : ('Array(',')',' =>');
                 print $fp ",\n" if $comma;
-                print $fp qq($bra\n  "SourceFile"$sep ), EscapeJSON(MyConvertFileName($et,$file));
+                print $fp qq($bra\n  "SourceFile"$sep ), EscapeJSON(MyConvertFileName($et,$file),1);
                 $comma = 1;
                 $ind = (defined $showGroup and not $allGroup) ? '    ' : '  ';
             } elsif ($csv) {
@@ -4074,6 +4129,7 @@ sub AddPrintFormat($)
     push @{$printFmt{$type}}, $expr;
     # add to list of requested tags
     push @requestTags, $expr =~ /\$\{?((?:[-\w]+:)*[-\w?*]+)/g;
+    $printFmt{SetTags} = 1 if $expr =~ /\bSetTags\b/;
 }
 
 #------------------------------------------------------------------------------
@@ -4629,7 +4685,7 @@ B<exiftool> [I<OPTIONS>] B<-tagsFromFile> I<SRCFILE>
 =head2 Other
 
 B<exiftool> [ B<-ver> |
-B<-list>[B<w>|B<f>|B<r>|B<wf>|B<g>[I<NUM>]|B<d>|B<x>] ]
+B<-list>[B<w>|B<f>|B<r>|B<wf>|B<g>[I<NUM>]|B<d>|B<x>|B<geo>] ]
 
 For specific examples, see the L<EXAMPLES|/READING EXAMPLES> sections below.
 
@@ -4670,7 +4726,7 @@ supported by ExifTool (r = read, w = write, c = create):
   3GP   r/w   | DSS   r     | JP2   r/w   | ODT   r     | RWL   r/w
   7Z    r     | DV    r     | JPEG  r/w   | OFR   r     | RWZ   r
   A     r     | DVB   r/w   | JSON  r     | OGG   r     | RM    r
-  AA    r     | DVR-MS r    | JXL   r     | OGV   r     | SEQ   r
+  AA    r     | DVR-MS r    | JXL   r/w   | OGV   r     | SEQ   r
   AAC   r     | DYLIB r     | K25   r     | ONP   r     | SKETCH r
   AAE   r     | EIP   r     | KDC   r     | OPUS  r     | SO    r
   AAX   r/w   | EPS   r/w   | KEY   r     | ORF   r/w   | SR2   r/w
@@ -4839,7 +4895,7 @@ L<Advanced options|/Advanced options>
   -common_args                     Define common arguments
   -config CFGFILE                  Specify configuration file name
   -echo[NUM] TEXT                  Echo text to stdout or stderr
-  -efile[NUM][!] ERRFILE           Save names of files with errors
+  -efile[NUM][!] TXTFILE           Save names of files with errors
   -execute[NUM]                    Execute multiple commands on one line
   -fileNUM ALTFILE                 Load tags from alternate file
   -list_dir                        List directories, not their contents
@@ -5231,8 +5287,9 @@ Notes:
 when copying tags using the B<-tagsFromFile> option.
 
 2) If the hemisphere is known, a reference direction (N, S, E or W) is
-appended to each printed coordinate, but adding a C<+> to the format
-specifier (eg. C<%+.6f>) prints a signed coordinate instead.
+appended to each printed coordinate, but adding a C<+> or C<-> to the format
+specifier (eg. C<%+.6f> or C<%-.6f>) prints a signed coordinate instead. 
+(C<+> adds a leading "+" for positive coordinates, but C<-> does not.)
 
 3) This print formatting may be disabled with the B<-n> option to extract
 coordinates as signed decimal degrees.
@@ -5594,7 +5651,7 @@ it from subsequent text (and must be used if subsequent text begins with an
 alphanumeric character, hyphen, underline, colon or number sign).  Use C<$$>
 to represent a C<$> symbol, and C<$/> for a newline.  When the string
 argument is used (ie. I<STR>), a newline is added to the end of the string
-unless B<-p-> is specified.
+unless B<-p-> is specified or the B<-b> option is used.
 
 Multiple B<-p> options may be used.  Lines beginning with C<#[HEAD]> and
 C<#[TAIL]> are output before the first processed file and after the last
@@ -5620,7 +5677,7 @@ with this command:
 
 produces output like this:
 
-    -- Generated by ExifTool 12.77 --
+    -- Generated by ExifTool 12.84 --
     File: a.jpg - 2003:10:31 15:44:19
     (f/5.6, 1/60s, ISO 100)
     File: b.jpg - 2006:05:23 11:57:38
@@ -6382,22 +6439,25 @@ prevent the command window from closing when run as a Windows drag and drop
 application.
 
 =item B<-list>, B<-listw>, B<-listf>, B<-listr>, B<-listwf>,
-B<-listg>[I<NUM>], B<-listd>, B<-listx>
+B<-listg>[I<NUM>], B<-listd>, B<-listx>, B<-listgeo>
 
 Print a list of all valid tag names (B<-list>), all writable tag names
 (B<-listw>), all supported file extensions (B<-listf>), all recognized file
 extensions (B<-listr>), all writable file extensions (B<-listwf>), all tag
 groups [in a specified family] (B<-listg>[I<NUM>]), all deletable tag groups
-(B<-listd>), or an XML database of tag details including language
-translations (B<-listx>).  The B<-list>, B<-listw> and B<-listx> options may
-be followed by an additional argument of the form C<-GROUP:All> to list only
-tags in a specific group, where C<GROUP> is one or more family 0-2 group
-names (excepting EXIF IFD groups) separated by colons.  With B<-listg>,
-I<NUM> may be given to specify the group family, otherwise family 0 is
-assumed.  The B<-l> option may be combined with B<-listf>, B<-listr> or
-B<-listwf> to add file descriptions to the list.  The B<-lang> option may be
-combined with B<-listx> to output descriptions in a single language.  Here
-are some examples:
+(B<-listd>), an XML database of tag details including language translations
+(B<-listx>), or the Geolocation database (B<-listgeo>).  The B<-list>,
+B<-listw> and B<-listx> options may be followed by an additional argument of
+the form C<-GROUP:All> to list only tags in a specific group, where C<GROUP>
+is one or more family 0-2 group names (excepting EXIF IFD groups) separated
+by colons.  With B<-listg>, I<NUM> may be given to specify the group family,
+otherwise family 0 is assumed.  The B<-l> option may be combined with
+B<-listf>, B<-listr> or B<-listwf> to add file descriptions to the list. 
+The B<-lang> option may be combined with B<-listx> to output descriptions in
+a single language, and the B<-sort> and/or B<-lang> options may be combined
+with B<-listgeo>.  Also, the API GeolocMinPop, GeolocFeature and
+GeolocAltNames options apply to the B<-listgeo> output.  Here are some
+examples:
 
     -list               # list all tag names
     -list -EXIF:All     # list all EXIF tags
@@ -6410,6 +6470,7 @@ are some examples:
     -listd              # list all deletable groups
     -listx -EXIF:All    # list database of EXIF tags in XML format
     -listx -XMP:All -s  # list short XML database of XMP tags
+    -listgeo -lang de   # list geolocation database in German
 
 When combined with B<-listx>, the B<-s> option shortens the output by
 omitting the descriptions and values (as in the last example above), and
@@ -6497,6 +6558,10 @@ Beacon TXT, and GPS/IMU CSV files.  See L</GEOTAGGING EXAMPLES> for
 examples. Also see "geotag.html" in the full ExifTool distribution and the
 L<Image::ExifTool Options|Image::ExifTool/Options> for more details and for
 information about geotag configuration options.
+
+The API Geolocation option may be set to the value "geotag" to also write
+the name, province/state and country of the nearest city while geotagging.
+See L<https://exiftool.org/geolocation.html> for details.
 
 =item B<-globalTimeShift> I<SHIFT>
 
@@ -6611,15 +6676,15 @@ respectively) after processing is complete.  For B<-echo3> and B<-echo4>,
 "${status}" may be used in the I<TEXT> string to represent the numerical
 exit status of the command (see L</EXIT STATUS>).
 
-=item B<-efile>[I<NUM>][!] I<ERRFILE>
+=item B<-efile>[I<NUM>][!] I<TXTFILE>
 
 Save the names of files giving errors (I<NUM> missing or 1), files that were
 unchanged (I<NUM> is 2), files that fail the B<-if> condition (I<NUM> is 4),
 files that were updated (I<NUM> is 8), files that were created (I<NUM> is
 16), or any combination thereof by summing I<NUM> (eg. B<-efile3> is the
 same has having both B<-efile> and B<-efile2> options with the same
-I<ERRFILE>). By default, file names are appended to any existing I<ERRFILE>,
-but I<ERRFILE> is overwritten if an exclamation point is added to the option
+I<TXTFILE>). By default, file names are appended to any existing I<TXTFILE>,
+but I<TXTFILE> is overwritten if an exclamation point is added to the option
 (eg. B<-efile!>).  Saves the name of the file specified by the B<-srcfile>
 option if applicable.
 
@@ -6845,6 +6910,19 @@ the duplicates may be removed when accumulating list items from multiple
 sources.  An equivalent to the above commands using this feature would be:
 
     exiftool -tagsfromfile @ -keywords -api nodups a.jpg
+
+C<SetTags>
+
+Used to set tags in extracted images.  With no arguments, copies all tags
+from the source file to the embedded image:
+
+    exiftool -p '${previewimage;SetTags}' -b a.arw > preview.jpg
+
+Arguments may be added to copy or set specific tags.  Arguments take exactly
+the same form as those on the command line when copying or writing tags,
+but without the leading dash.  For example:
+
+    exiftool -p '${previewimage;SetTags("comment=test","title<filename")}' ...
 
 =head1 WINDOWS UNICODE FILE NAMES
 
@@ -7394,6 +7472,12 @@ Geotag an image (C<a.jpg>) from position information in a GPS track log
 (C<track.log>).  Since the C<Geotime> tag is not specified, the value of
 DateTimeOriginal is used for geotagging.  Local system time is assumed
 unless DateTimeOriginal contains a timezone.
+
+=item exiftool -geotag track.log -geolocate=geotag a.jpg
+
+Geotag an image and also write geolocation information of the nearest city
+(city name, state/province and country).  Read here for more details about
+the Geolocation feature: L<https://exiftool.org/geolocation.html#Write>
 
 =item exiftool -geotag t.log -geotime='2009:04:02 13:41:12-05:00' a.jpg
 
