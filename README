@@ -16,11 +16,7 @@ GeoTag 5.2+ requires macOS Sonoma or later.  Use GeoTag 5.1 if running on
 macOS Ventura.  Those running earlier versions of macOS can use GeoTag
 version 4.15.
 
-## branch newmaps
-
-- strip out the NSViewRepresentable MapView and replace it with a
-  SwiftUI implementation. I think I'll be able to do everything but
-  drag pins.
+## GeoTag 5.3
 
 ### Updates
 
@@ -72,23 +68,17 @@ version 4.15.
 
 ---
 
-### General Note
-
-Photos (OSX 10.10.3 and later) will let you modify existing location metadata
-but not add location data to an image. Use GeoTag to add location metadata
-**before** importing the images into Photos. This may also hold true for other
-image editing applications.
-
 ### Operating Instructions:
 
 *See <https://www.snafu.org/GeoTag/GeoTag5Help/> for more information.*
 
 Run Program.  Use the Open command from the menu or ⌘O to select files to
 modify. You can also drag files from the finder into the table on the left side
-of the application window.  File names shown in a light grey color are not
-recognized as valid image files or are disabled for other reasons.  Such files
-can not be modified. Dragging or opening a folder will add all the files
-in the folder and any subfolders.
+of the application window.  Or you may select images from your Photos
+Library. File names shown in a light grey color are not recognized as valid
+image files or are disabled for other reasons.  Such files can not be
+modified. Dragging or opening a folder will add all the files in the folder
+and any subfolders.
 
 Select one or more images. When selecting multiple images one of the
 images is considered the "most selected". The name of the most selected
