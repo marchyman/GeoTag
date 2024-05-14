@@ -17,6 +17,16 @@ extension AppState {
 
     func update(_ image: ImageModel, location: Coords?,
                 elevation: Double? = nil, documentEdited: Bool = true) {
+        // swiftlint: disable line_length
+        if undoManager.isUndoing {
+            Self.logger.notice("Undo in progress: \(image.name, privacy: .public): \(image.location.debugDescription, privacy: .public) -> \(location.debugDescription, privacy: .public)")
+        } else if undoManager.isRedoing {
+            Self.logger.notice("Redo in progress: \(image.name, privacy: .public): \(image.location.debugDescription, privacy: .public) -> \(location.debugDescription, privacy: .public)")
+        } else {
+            Self.logger.notice("undoManager registration: \(image.name, privacy: .public): \(image.location.debugDescription, privacy: .public) -> \(location.debugDescription, privacy: .public)")
+        }
+        // swiftlint: enable line_length
+
         let currentLocation = image.location
         let currentElevation = image.elevation
         let currentDocumentEdited = isDocumentEdited
@@ -25,7 +35,6 @@ extension AppState {
                           elevation: currentElevation,
                           documentEdited: currentDocumentEdited)
         }
-
         image.location = location
         image.elevation = elevation
         if let pairedID = image.pairedID {
@@ -38,7 +47,7 @@ extension AppState {
         isDocumentEdited = documentEdited
     }
 
-    // Update an image with a new timestamp.  Image is identifid by its ID
+    // Update an image with a new timestamp.  Image is identifid by its ID.
     // timestamp is in the string format used by Exiftool
 
     func update(_ image: ImageModel, timestamp: String?,
@@ -53,50 +62,20 @@ extension AppState {
         isDocumentEdited = documentEdited
     }
 
-    // Add track overlays to the map
+    // Add track overlays to the map.  This is not undoable.
 
     func updateTracks(gpx: Gpx) {
         guard gpx.tracks.count > 0 else { return}
-        // storage for min/max latitude found in the track
-        var minlat = CLLocationDegrees(90)
-        var minlon = CLLocationDegrees(180)
-        var maxlat = CLLocationDegrees(-90)
-        var maxlon = CLLocationDegrees(-180)
-        var newOverlay = false
         for track in gpx.tracks {
             for segment in track.segments {
-                var trackCoords = segment.points.map {
+                let trackCoords = segment.points.map {
                     CLLocationCoordinate2D(latitude: $0.lat,
                                            longitude: $0.lon)
                 }
                 if !trackCoords.isEmpty {
-                    for loc in trackCoords {
-                        if loc.latitude < minlat {
-                            minlat = loc.latitude
-                        }
-                        if loc.latitude > maxlat {
-                            maxlat = loc.latitude
-                        }
-                        if loc.longitude < minlon {
-                            minlon = loc.longitude
-                        }
-                        if loc.longitude > maxlon {
-                            maxlon = loc.longitude
-                        }
-                    }
-                    let mapLine = MKPolyline(coordinates: &trackCoords,
-                                             count: segment.points.count)
-                    MapViewModel.shared.mapLines.append(mapLine)
-                    newOverlay = true
+                    LocationModel.shared.add(track: trackCoords)
                 }
             }
-        }
-        if newOverlay {
-            MapViewModel.shared.mapSpan = MKCoordinateSpan(latitudeDelta: maxlat - minlat,
-                                                           longitudeDelta: maxlon - minlon)
-            MapViewModel.shared.currentMapCenter = Coords(latitude: (minlat + maxlat)/2,
-                                                          longitude: (minlon + maxlon)/2)
-            MapViewModel.shared.refreshTracks = true
         }
     }
 

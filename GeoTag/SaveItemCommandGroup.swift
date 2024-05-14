@@ -9,8 +9,11 @@ import SwiftUI
 
 // Add Save... and other menu, items
 
-extension GeoTagApp {
-    var saveItemCommandGroup: some Commands {
+struct SaveItemCommands: Commands {
+    var state: AppState
+
+    @MainActor
+    var body: some Commands {
         CommandGroup(after: .saveItem) {
             Button("Save…") { state.saveAction() }
                 .keyboardShortcut("s")

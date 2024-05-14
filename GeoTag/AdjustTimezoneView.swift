@@ -42,6 +42,7 @@ struct AdjustTimezoneView: View {
                 LabeledContent("Current Camera Time Zone:") {
                     VStack(alignment: .leading) {
                         Text(currentZone.rawValue)
+                            .accessibilityIdentifier("currentTimeZone")
                         Text(currentZone.timeZone.identifier)
                     }
                 }
@@ -94,4 +95,5 @@ struct AdjustTimezoneView: View {
 #Preview {
     AdjustTimezoneView()
         .environment(AppState())
+        .frame(height: 570)
 }

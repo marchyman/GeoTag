@@ -18,6 +18,11 @@ struct LatLonSectionView: View {
 
     @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
 
+    // notice the bogus "focused" value given to .focusedValue. I need a non
+    // empty string to enable cut/copy/paste/select all and this was an
+    // easy way to do it with a side effect of the menu commands being
+    // enabled even when the fields are empty.
+
     var body: some View {
         VStack {
             LabeledContent("Latitude:") {
@@ -26,7 +31,7 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldBinding, .constant(true))
+                    .focusedValue(\.textfieldFocused, "focused")
             }
 
             LabeledContent("Longitude:") {
@@ -35,7 +40,7 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldBinding, .constant(true))
+                    .focusedValue(\.textfieldFocused, "focused")
             }
         }
         .textFieldStyle(.roundedBorder)
@@ -49,13 +54,10 @@ struct LatLonSectionView: View {
                 isFocused = false
             }
         }
-        .onAppear {
-            loadCoordinates()
-        }
-        .onChange(of: image.location) {
-            loadCoordinates()
-        }
         .onChange(of: coordFormat) {
+            loadCoordinates()
+        }
+        .task(id: image.location) {
             loadCoordinates()
         }
     }
@@ -87,6 +89,7 @@ struct LatLonSectionView: View {
     // update all selected images with the location specified by the
     // state variables.
 
+    @MainActor
     private func updateLocation() {
         // function won't be called if lat/lon are nil.
         // guard used to convert to non-optional values

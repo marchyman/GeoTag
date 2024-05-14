@@ -76,21 +76,22 @@ enum TimeZoneName: String, Identifiable, CaseIterable {
     }
 
     // Return the name associated with a TimeZone. If the given zone
-    // is nil use TimeZone.autoupdatingCurrent
+    // is nil use TimeZone.autoupdatingCurrent [unused]
 
-    static func timeZoneName(zone: TimeZone?) -> String {
-        return timeZoneCase(zone: zone).rawValue
-    }
+    // static func timeZoneName(zone: TimeZone?) -> String {
+    //     return timeZoneCase(zone: zone).rawValue
+    // }
 
     // return the identifier for a given TimeZone.  If no zone is
     // specified return the identifier for TimeZone.autoupdatingCurrent
+    // [unused]
 
-    static func timeZoneIdentifier(zone: TimeZone?) -> String {
-        if let zone {
-            return zone.identifier
-        }
-        return TimeZone.autoupdatingCurrent.identifier
-    }
+    // static func timeZoneIdentifier(zone: TimeZone?) -> String {
+    //     if let zone {
+    //         return zone.identifier
+    //     }
+    //     return TimeZone.autoupdatingCurrent.identifier
+    // }
 
     // return the timeZoneCase given a TimeZone. If the given zone
     // is nil use TimeZone.autoupdatingCurrent
@@ -115,15 +116,21 @@ enum TimeZoneName: String, Identifiable, CaseIterable {
         }
         // hourly time zones
         let minutes = seconds / 60
-        let hours = minutes / 60
         if minutes % 60 == 0 {
-            return hours < 0 ? "\(hours)" : "+" + "\(hours)"
+            return timeZoneTitleHours(from: minutes)
         }
         // half hour time zones
         if minutes % 30 == 0 {
-            return "\(hours):30"
+            return "\(timeZoneTitleHours(from: minutes)):30"
         }
         // It should be one of the :45 time Zones
-        return "\(hours):45"
+        return "\(timeZoneTitleHours(from: minutes)):45"
+    }
+
+    // Convert minutes to hours with a + or - prefix
+
+    static func timeZoneTitleHours(from minutes: Int) -> String {
+        let hours = minutes / 60
+        return hours < 0 ? "\(hours)" : "+" + "\(hours)"
     }
 }

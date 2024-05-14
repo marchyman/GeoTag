@@ -4,6 +4,8 @@ GeoTag-testing
 
 Build/
 DerivedData/
+SaveBackup/*
+tmp/
 xcuserdata/
 *.xcworkspace/
 *.trace/

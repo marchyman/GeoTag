@@ -41,7 +41,7 @@ extension AppState {
                 for image in tvm.selected {
                     group.addTask { [self] in
                         if let convertedDate = dateFormatter.date(from: image.timeStamp) {
-                            for track in gpxTracks {
+                            for track in await gpxTracks {
                                 if let locn = await track.search(imageTime: convertedDate.timeIntervalSince1970) {
                                     return locn
                                 }

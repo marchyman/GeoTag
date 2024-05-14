@@ -9,16 +9,19 @@ import SwiftUI
 
 // Replace the undoRedo commands group
 
-extension GeoTagApp {
-    var undoRedoCommandGroup: some Commands {
+struct UndoRedoCommands: Commands {
+    var state: AppState
+
+    @MainActor
+    var body: some Commands {
         CommandGroup(replacing: .undoRedo) {
             Button(state.undoManager.undoMenuItemTitle) { state.undoAction() }
                 .keyboardShortcut("z")
-                .disabled(state.undoDisabled)
+                 .disabled(state.undoDisabled)
 
             Button(state.undoManager.redoMenuItemTitle) { state.redoAction() }
                 .keyboardShortcut("z", modifiers: [.shift, .command])
-                .disabled(state.redoDisabled)
+                 .disabled(state.redoDisabled)
         }
     }
 }

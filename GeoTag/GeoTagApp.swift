@@ -11,7 +11,6 @@ import SwiftUI
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @State var state = AppState()
-    @FocusedBinding(\.textfieldBinding) var textfieldBinding
 
     let windowWidth = 1000.0
     let windowHeight = 700.0
@@ -27,17 +26,26 @@ struct GeoTagApp: App {
                 .environment(state)
         }
         .commands {
-            newItemCommandGroup
-            saveItemCommandGroup
-            undoRedoCommandGroup
-            pasteBoardCommandGroup
-            toolbarCommandGroup
-            helpCommandGroup
+            NewItemCommands(state: state)
+            SaveItemCommands(state: state)
+            UndoRedoCommands(state: state)
+            PasteboardCommands(state: state)
+            ToolbarCommands()
+            HelpCommands(state: state)
         }
 
         Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
             AdjustTimezoneView()
                 .frame(width: 500.0, height: 570.0)
+                .environment(state)
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .commandsRemoved()
+
+        Window(GeoTagApp.showRunLog, id: GeoTagApp.showRunLog) {
+            ShowLogView()
+                .frame(width: 700, height: 500)
                 .environment(state)
         }
         .windowStyle(.hiddenTitleBar)
@@ -58,17 +66,18 @@ struct GeoTagApp: App {
 
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
+    static var showRunLog = "Show Run Log"
 }
 
-// Text field focus. When the bound value is true a text field
-// has focus.  Used when processing pasteboard commands.
+// Text field focus. When non-nil a text field has focus.  Used to enable
+// appropriate pasteboard actions for text fields.
 
 struct FocusedTextfield: FocusedValueKey {
-    typealias Value = Binding<Bool?>
+    typealias Value = String
 }
 
 extension FocusedValues {
-    var textfieldBinding: FocusedTextfield.Value? {
+    var textfieldFocused: FocusedTextfield.Value? {
         get { self[FocusedTextfield.self] }
         set { self[FocusedTextfield.self] = newValue }
     }

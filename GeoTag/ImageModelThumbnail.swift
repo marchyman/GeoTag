@@ -5,28 +5,35 @@
 //  Created by Marco S Hyman on 12/18/22.
 //
 
-import Foundation
 import AppKit
+import SwiftUI
 
 extension ImageModel {
 
-    /// Create an image thumbnail
-    ///
-    /// If image propertied can not be accessed or if needed properties
-    /// do not exist the file is assumed to be a non-image file and a zero
-    /// sized empty image is created.
+    // create a thumbnail image
+    // if an image can not be created a placeholder image is returned
 
-    func makeThumbnail() async -> NSImage {
+    func makeThumbnail() async -> Image {
+        // first check if the image came from the Photos Library
+        if let pickerItem {
+            let library = await PhotoLibrary.shared
+            if let thumbnail = await library.getImage(for: pickerItem) {
+                return thumbnail
+            }
+            return Image(systemName: "exclamationmark.octagon.fill")
+        }
+
+        // build an image of an appropriate size
         var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
-            return image
+            return Image(systemName: "photo")
         }
 
         // Create a "preview" of the image. If the image is larger than
         // 1024x1024 constraint the preview to that size.  1024x1024 is an
         // arbitrary limit.   Preview generation is used to work around a
         // performance hit when using large raw images
-        let maxDimension = 1024
+        let maxDimension = 1024.0
         var imgOpts: [String: AnyObject] = [
             ImageModel.createThumbnailWithTransform: kCFBooleanTrue,
             ImageModel.createThumbnailFromImageIfAbsent: kCFBooleanTrue,
@@ -39,7 +46,7 @@ extension ImageModel {
                 let imgHeight = CGFloat(imgPreview.height)
                 let imgWidth = CGFloat(imgPreview.width)
                 if imgOpts[ImageModel.createThumbnailFromImageAlways] == nil &&
-                    imgHeight < 512 && imgWidth < 512 {
+                    imgHeight < maxDimension && imgWidth < maxDimension {
                     // thumbnail too small.   Build a larger thumbnail
                     imgOpts[ImageModel.createThumbnailFromImageIfAbsent] = nil
                     imgOpts[ImageModel.createThumbnailFromImageAlways] = kCFBooleanTrue
@@ -56,7 +63,7 @@ extension ImageModel {
             }
             checkSize = false
         } while checkSize
-        return image
+        return Image(nsImage: image)
     }
 }
 

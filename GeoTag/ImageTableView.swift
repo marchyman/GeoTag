@@ -8,11 +8,14 @@
 import SwiftUI
 import OSLog
 
+@MainActor
 struct ImageTableView: View {
     @Bindable var tvm: TableViewModel
 
     @AppStorage(AppSettings.imageTableConfigKey)
-    private var columnCustomization: TableColumnCustomization<ImageModel>
+        private var columnCustomization: TableColumnCustomization<ImageModel>
+    @AppStorage(AppSettings.coordFormatKey)
+        var coordFormat: AppSettings.CoordFormat = .deg
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
 
     // table view column width limits
@@ -23,14 +26,31 @@ struct ImageTableView: View {
     let coordMinWidth = 120.0
     let coordMaxWidth = 160.0
 
+    var filteredImages: [ImageModel] {
+        return tvm.searchImages.isEmpty
+            ? hideInvalidImages
+                ? tvm.images.filter { $0.isValid }
+                : tvm.images
+            : tvm.searchImages
+    }
+
+    @State private var searchFor: String = ""
+    @State private var isSearching: Bool = false
+
     var body: some View {
+        // force the view to notice changes in tvm.mostSelected and coordFormat
+        let mostSelected = tvm.mostSelected
+        // swiftlint:disable redundant_discardable_let
+        let _ = coordFormat
+        // swiftlint:enable redundant_discardable_let
+
         Table(of: ImageModel.self,
               selection: $tvm.selection,
               sortOrder: $tvm.sortOrder,
               columnCustomization: $columnCustomization) {
 
             TableColumn("Name", value: \.name) { image in
-                NameView(image: image, isSelected: image == tvm.mostSelected)
+                NameView(image: image, isSelected: image == mostSelected)
             }
             .width(min: nameMinWidth, max: nameMaxWidth)
             .customizationID("Name")
@@ -53,9 +73,7 @@ struct ImageTableView: View {
             .width(min: coordMinWidth, max: coordMaxWidth)
             .customizationID("Longitude")
         } rows: {
-            ForEach(hideInvalidImages
-                    ? tvm.images.filter { $0.isValid }
-                    : tvm.images) { image in
+            ForEach(filteredImages) { image in
                 TableRow(image)
                     .contextMenu {
                         ContextMenuView(context: image)
@@ -67,6 +85,20 @@ struct ImageTableView: View {
         }
         .onChange(of: tvm.sortOrder) {
             tvm.images.sort(using: tvm.sortOrder)
+        }
+        .searchable(text: $searchFor, isPresented: $isSearching,
+                    placement: .automatic, prompt: "Image name")
+        .background(Button("",
+                           action: { isSearching = true })
+                        .keyboardShortcut("f").hidden())
+        .onChange(of: searchFor) {
+            if searchFor.isEmpty {
+                tvm.clearSearch()
+            }
+        }
+        .onSubmit(of: .search) {
+            tvm.search(for: searchFor)
+            isSearching = false
         }
     }
 }
@@ -95,7 +127,8 @@ struct TimestampView: View {
 }
 struct LatitudeView: View {
     let image: ImageModel
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.coordFormatKey)
+        var coordFormat: AppSettings.CoordFormat = .deg
 
     var body: some View {
         Text(image.formattedLatitude)
@@ -105,7 +138,8 @@ struct LatitudeView: View {
 
 struct LongitudeView: View {
     let image: ImageModel
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.coordFormatKey)
+        var coordFormat: AppSettings.CoordFormat = .deg
 
     var body: some View {
         Text(image.formattedLongitude)

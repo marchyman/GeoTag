@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */; };
+		4902B3BE2BB0A6F30038ED19 /* MapWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4902B3BD2BB0A6F30038ED19 /* MapWrapperView.swift */; };
 		490A17A42960BA1D00ACA9FD /* CutCopyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */; };
 		490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A72960DE9B00ACA9FD /* PasteAction.swift */; };
 		490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A929611DD900ACA9FD /* TextColors.swift */; };
@@ -23,29 +24,45 @@
 		492719DE2A5CB5BE00451573 /* ImageInspectorForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492719DD2A5CB5BE00451573 /* ImageInspectorForm.swift */; };
 		492719E02A5CC7B100451573 /* ImageInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492719DF2A5CC7B100451573 /* ImageInspectorView.swift */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
+		493394BB2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493394BA2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift */; };
 		493E5F442A5B88B300B29DCF /* TableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493E5F432A5B88B300B29DCF /* TableViewModel.swift */; };
 		493E5F462A5BA46200B29DCF /* AreYouSure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493E5F452A5BA46200B29DCF /* AreYouSure.swift */; };
+		493F286D2BBF38CB002C8A44 /* GeoTagUI05Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F286C2BBF38CB002C8A44 /* GeoTagUI05Tests.swift */; };
 		494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */; };
-		494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0F2956BC97005FFC23 /* ClickMapView.swift */; };
 		4952EF0B2A5F2D0200277508 /* LatLonSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4952EF0A2A5F2D0200277508 /* LatLonSectionView.swift */; };
 		4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */; };
 		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
 		495F2F63295EB1A5002A8A88 /* TableViewSelections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */; };
 		49630F0E2980BC00009FB418 /* ToolbarCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49630F0D2980BC00009FB418 /* ToolbarCommandGroup.swift */; };
 		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
-		4977988A297F6F7F0081A776 /* PinAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49779889297F6F7F0081A776 /* PinAnnotationView.swift */; };
+		4984CF8E2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */; };
+		4984CF902BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */; };
+		49895D072BCDA8C80093D11B /* AppStateLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D062BCDA8C80093D11B /* AppStateLogger.swift */; };
+		49895D0A2BCDAE2B0093D11B /* ShowLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D092BCDAE2B0093D11B /* ShowLogView.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
 		498AE5B1294AB78A0063B1C1 /* XmpPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */; };
 		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
+		498FF4952BC76518003D691B /* PhotoLibraryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FF4942BC76518003D691B /* PhotoLibraryController.swift */; };
+		498FF4972BC77BB0003D691B /* ToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FF4962BC77BB0003D691B /* ToolbarViews.swift */; };
 		49901CEB2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */; };
 		49901CED2A5B71EB00C28CAD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49901CEC2A5B71EB00C28CAD /* AppState.swift */; };
 		49918F8629736652000D6590 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 492E3F5D29481A7D0044C1F3 /* Credits.rtf */; };
+		499DB20F2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499DB20E2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift */; };
+		499EAEEA2BD2069C0002E28E /* GeoTagUI06Save.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499EAEE92BD2069C0002E28E /* GeoTagUI06Save.swift */; };
 		49A1326F294BFB9300F1B393 /* ExifTool in Resources */ = {isa = PBXBuildFile; fileRef = 49A1326E294BFB9300F1B393 /* ExifTool */; };
 		49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A729B12953E7AA00DF1AAF /* ImageMapView.swift */; };
 		49A99FBC296F6D5900392EEA /* PathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A99FBB296F6D5900392EEA /* PathView.swift */; };
 		49A99FBE296F8B4B00392EEA /* BackupFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A99FBD296F8B4B00392EEA /* BackupFolder.swift */; };
+		49AB65D12BAE38510050EC60 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65D02BAE38510050EC60 /* MapView.swift */; };
+		49AB65D32BAE389A0050EC60 /* LocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65D22BAE389A0050EC60 /* LocationModel.swift */; };
+		49AB65D52BAE397D0050EC60 /* MapContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65D42BAE397D0050EC60 /* MapContextMenu.swift */; };
+		49AB65D72BAE398A0050EC60 /* MapStylePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65D62BAE398A0050EC60 /* MapStylePicker.swift */; };
+		49AB65D92BAE3ABA0050EC60 /* SearchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65D82BAE3ABA0050EC60 /* SearchState.swift */; };
+		49AB65DB2BAE3ADC0050EC60 /* SearchPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DA2BAE3ADC0050EC60 /* SearchPlace.swift */; };
+		49AB65DD2BAE3AE80050EC60 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DC2BAE3AE80050EC60 /* SearchBarView.swift */; };
+		49AB65DF2BAE3AF20050EC60 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DE2BAE3AF20050EC60 /* SearchView.swift */; };
 		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
 		49B0395A2944429E003B7C53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039592944429E003B7C53 /* ContentView.swift */; };
 		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
@@ -67,18 +84,27 @@
 		49BA29AE29624E5400B26F03 /* ShowInFinderAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */; };
 		49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */; };
 		49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29B12962676E00B26F03 /* GpxSearch.swift */; };
+		49BC9EBA2BCCB88800C46C05 /* ImageModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */; };
+		49BC9EBC2BCCD11C00C46C05 /* ImageModelTimestamps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */; };
 		49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD6C922966589E00905B43 /* TimeZoneHelper.swift */; };
-		49C45BA72984851000CC7F0E /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C45BA62984851000CC7F0E /* MapViewModel.swift */; };
-		49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFB2951009500804B74 /* MapPaneView.swift */; };
-		49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFD295100A600804B74 /* MapStyleView.swift */; };
-		49E29F002951011300804B74 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29EFF2951011300804B74 /* MapView.swift */; };
-		49E29F03295101D600804B74 /* MapSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E29F02295101D600804B74 /* MapSearchView.swift */; };
+		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
 		49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4984CF912BB4BECD0008DDF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49B0394C2944429E003B7C53 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49B039532944429E003B7C53;
+			remoteInfo = GeoTag;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		490114B5297117FD00193BD3 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelThumbnail.swift; sourceTree = "<group>"; };
+		4902B3BD2BB0A6F30038ED19 /* MapWrapperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWrapperView.swift; sourceTree = "<group>"; };
 		490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutCopyAction.swift; sourceTree = "<group>"; };
 		490A17A72960DE9B00ACA9FD /* PasteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteAction.swift; sourceTree = "<group>"; };
 		490A17A929611DD900ACA9FD /* TextColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextColors.swift; sourceTree = "<group>"; };
@@ -95,30 +121,47 @@
 		492719DF2A5CC7B100451573 /* ImageInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInspectorView.swift; sourceTree = "<group>"; };
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		493394BA2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI03OpenTests.swift; sourceTree = "<group>"; };
 		493E5F432A5B88B300B29DCF /* TableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewModel.swift; sourceTree = "<group>"; };
 		493E5F452A5BA46200B29DCF /* AreYouSure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreYouSure.swift; sourceTree = "<group>"; };
+		493F286C2BBF38CB002C8A44 /* GeoTagUI05Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI05Tests.swift; sourceTree = "<group>"; };
 		494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardCommandGroup.swift; sourceTree = "<group>"; };
-		494FED0F2956BC97005FFC23 /* ClickMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickMapView.swift; sourceTree = "<group>"; };
 		4952EF0A2A5F2D0200277508 /* LatLonSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatLonSectionView.swift; sourceTree = "<group>"; };
 		4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuView.swift; sourceTree = "<group>"; };
 		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
 		495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewSelections.swift; sourceTree = "<group>"; };
 		49630F0D2980BC00009FB418 /* ToolbarCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarCommandGroup.swift; sourceTree = "<group>"; };
 		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
-		49779889297F6F7F0081A776 /* PinAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinAnnotationView.swift; sourceTree = "<group>"; };
+		4984CF8B2BB4BECC0008DDF8 /* GeoTagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI00Tests.swift; sourceTree = "<group>"; };
+		4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI01LaunchTests.swift; sourceTree = "<group>"; };
+		49895D062BCDA8C80093D11B /* AppStateLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateLogger.swift; sourceTree = "<group>"; };
+		49895D092BCDAE2B0093D11B /* ShowLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowLogView.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
 		498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmpPresenter.swift; sourceTree = "<group>"; };
 		498AE5B2294AD5D00063B1C1 /* Exiftool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exiftool.swift; sourceTree = "<group>"; };
+		498FF4942BC76518003D691B /* PhotoLibraryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryController.swift; sourceTree = "<group>"; };
+		498FF4962BC77BB0003D691B /* ToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarViews.swift; sourceTree = "<group>"; };
 		49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveBackupsAlert.swift; sourceTree = "<group>"; };
 		49901CEC2A5B71EB00C28CAD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		49918F84297352AB000D6590 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		49918F8529735AE0000D6590 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
+		499DB20E2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI02SettingsTests.swift; sourceTree = "<group>"; };
+		499EAEE92BD2069C0002E28E /* GeoTagUI06Save.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI06Save.swift; sourceTree = "<group>"; };
 		49A1326E294BFB9300F1B393 /* ExifTool */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ExifTool; sourceTree = "<group>"; };
 		49A729B12953E7AA00DF1AAF /* ImageMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMapView.swift; sourceTree = "<group>"; };
 		49A99FBB296F6D5900392EEA /* PathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathView.swift; sourceTree = "<group>"; };
 		49A99FBD296F8B4B00392EEA /* BackupFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackupFolder.swift; sourceTree = "<group>"; };
+		49AB65D02BAE38510050EC60 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		49AB65D22BAE389A0050EC60 /* LocationModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationModel.swift; sourceTree = "<group>"; };
+		49AB65D42BAE397D0050EC60 /* MapContextMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapContextMenu.swift; sourceTree = "<group>"; };
+		49AB65D62BAE398A0050EC60 /* MapStylePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapStylePicker.swift; sourceTree = "<group>"; };
+		49AB65D82BAE3ABA0050EC60 /* SearchState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchState.swift; sourceTree = "<group>"; };
+		49AB65DA2BAE3ADC0050EC60 /* SearchPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchPlace.swift; sourceTree = "<group>"; };
+		49AB65DC2BAE3AE80050EC60 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
+		49AB65DE2BAE3AF20050EC60 /* SearchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B039572944429E003B7C53 /* GeoTagApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagApp.swift; sourceTree = "<group>"; };
 		49B039592944429E003B7C53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -144,17 +187,22 @@
 		49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowInFinderAction.swift; sourceTree = "<group>"; };
 		49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocnFromTrack.swift; sourceTree = "<group>"; };
 		49BA29B12962676E00B26F03 /* GpxSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpxSearch.swift; sourceTree = "<group>"; };
+		49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelMetadata.swift; sourceTree = "<group>"; };
+		49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelTimestamps.swift; sourceTree = "<group>"; };
 		49BD6C922966589E00905B43 /* TimeZoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelper.swift; sourceTree = "<group>"; };
-		49C45BA62984851000CC7F0E /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
-		49E29EFB2951009500804B74 /* MapPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPaneView.swift; sourceTree = "<group>"; };
-		49E29EFD295100A600804B74 /* MapStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleView.swift; sourceTree = "<group>"; };
-		49E29EFF2951011300804B74 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
-		49E29F02295101D600804B74 /* MapSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchView.swift; sourceTree = "<group>"; };
+		49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI04MapTests.swift; sourceTree = "<group>"; };
 		49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAllAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4984CF882BB4BECC0008DDF8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		49B039512944429E003B7C53 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -184,6 +232,28 @@
 			name = "GPX  Group";
 			sourceTree = "<group>";
 		};
+		4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */ = {
+			isa = PBXGroup;
+			children = (
+				4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */,
+				4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */,
+				499DB20E2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift */,
+				493394BA2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift */,
+				49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */,
+				493F286C2BBF38CB002C8A44 /* GeoTagUI05Tests.swift */,
+				499EAEE92BD2069C0002E28E /* GeoTagUI06Save.swift */,
+			);
+			path = GeoTagUITests;
+			sourceTree = "<group>";
+		};
+		49895D082BCDADFD0093D11B /* Show Log Group */ = {
+			isa = PBXGroup;
+			children = (
+				49895D092BCDAE2B0093D11B /* ShowLogView.swift */,
+			);
+			name = "Show Log Group";
+			sourceTree = "<group>";
+		};
 		498A7354294EA67A00C62B14 /* Image Table Group */ = {
 			isa = PBXGroup;
 			children = (
@@ -201,9 +271,11 @@
 				49B039572944429E003B7C53 /* GeoTagApp.swift */,
 				49BA299C296223F700B26F03 /* AppDelegate.swift */,
 				49901CEC2A5B71EB00C28CAD /* AppState.swift */,
+				49895D062BCDA8C80093D11B /* AppStateLogger.swift */,
 				493E5F432A5B88B300B29DCF /* TableViewModel.swift */,
 				495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */,
 				49BA29A22962285300B26F03 /* Updates.swift */,
+				498FF4942BC76518003D691B /* PhotoLibraryController.swift */,
 				49BA299E2962250200B26F03 /* WindowAccessor.swift */,
 			);
 			name = "App Group";
@@ -223,6 +295,8 @@
 			isa = PBXGroup;
 			children = (
 				49B9EDDE29493D5600574D18 /* ImageModel.swift */,
+				49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */,
+				49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */,
 				4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */,
 				4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */,
 				49B9EDE029493F4000574D18 /* Coords.swift */,
@@ -237,6 +311,7 @@
 			isa = PBXGroup;
 			children = (
 				49B039592944429E003B7C53 /* ContentView.swift */,
+				498FF4962BC77BB0003D691B /* ToolbarViews.swift */,
 				49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */,
 				493E5F452A5BA46200B29DCF /* AreYouSure.swift */,
 				4912D2D22B99085300AC38DB /* SplitHView.swift */,
@@ -261,6 +336,7 @@
 				49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */,
 				49A1326E294BFB9300F1B393 /* ExifTool */,
 				49B039562944429E003B7C53 /* GeoTag */,
+				4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */,
 				49B039552944429E003B7C53 /* Products */,
 				49B0396729444855003B7C53 /* Frameworks */,
 			);
@@ -270,6 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				49B039542944429E003B7C53 /* GeoTag.app */,
+				4984CF8B2BB4BECC0008DDF8 /* GeoTagUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -279,6 +356,7 @@
 			children = (
 				498A735A294EC5F800C62B14 /* App Group */,
 				4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */,
+				49895D082BCDADFD0093D11B /* Show Log Group */,
 				49FFC5BF2984F0EE00501D08 /* Menu Commands Group */,
 				49FFC5C02984F11C00501D08 /* Menu Actions Group */,
 				49777FEF29830D6900ECD5BF /* GPX  Group */,
@@ -315,13 +393,15 @@
 		49E29F012951012400804B74 /* Map View Group */ = {
 			isa = PBXGroup;
 			children = (
-				49C45BA62984851000CC7F0E /* MapViewModel.swift */,
-				49E29EFB2951009500804B74 /* MapPaneView.swift */,
-				49E29EFD295100A600804B74 /* MapStyleView.swift */,
-				49E29EFF2951011300804B74 /* MapView.swift */,
-				49779889297F6F7F0081A776 /* PinAnnotationView.swift */,
-				494FED0F2956BC97005FFC23 /* ClickMapView.swift */,
-				49E29F02295101D600804B74 /* MapSearchView.swift */,
+				49AB65D22BAE389A0050EC60 /* LocationModel.swift */,
+				4902B3BD2BB0A6F30038ED19 /* MapWrapperView.swift */,
+				49AB65D02BAE38510050EC60 /* MapView.swift */,
+				49AB65D42BAE397D0050EC60 /* MapContextMenu.swift */,
+				49AB65D62BAE398A0050EC60 /* MapStylePicker.swift */,
+				49AB65D82BAE3ABA0050EC60 /* SearchState.swift */,
+				49AB65DA2BAE3ADC0050EC60 /* SearchPlace.swift */,
+				49AB65DC2BAE3AE80050EC60 /* SearchBarView.swift */,
+				49AB65DE2BAE3AF20050EC60 /* SearchView.swift */,
 			);
 			name = "Map View Group";
 			sourceTree = "<group>";
@@ -362,6 +442,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4984CF8A2BB4BECC0008DDF8 /* GeoTagUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4984CF952BB4BECD0008DDF8 /* Build configuration list for PBXNativeTarget "GeoTagUITests" */;
+			buildPhases = (
+				4984CF872BB4BECC0008DDF8 /* Sources */,
+				4984CF882BB4BECC0008DDF8 /* Frameworks */,
+				4984CF892BB4BECC0008DDF8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4984CF922BB4BECD0008DDF8 /* PBXTargetDependency */,
+			);
+			name = GeoTagUITests;
+			productName = GeoTagUITests;
+			productReference = 4984CF8B2BB4BECC0008DDF8 /* GeoTagUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		49B039532944429E003B7C53 /* GeoTag */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49B039632944429F003B7C53 /* Build configuration list for PBXNativeTarget "GeoTag" */;
@@ -388,9 +486,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1410;
+				LastSwiftUpdateCheck = 1530;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					4984CF8A2BB4BECC0008DDF8 = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = 49B039532944429E003B7C53;
+					};
 					49B039532944429E003B7C53 = {
 						CreatedOnToolsVersion = 14.1;
 					};
@@ -410,11 +512,19 @@
 			projectRoot = "";
 			targets = (
 				49B039532944429E003B7C53 /* GeoTag */,
+				4984CF8A2BB4BECC0008DDF8 /* GeoTagUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4984CF892BB4BECC0008DDF8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		49B039522944429E003B7C53 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -470,30 +580,47 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4984CF872BB4BECC0008DDF8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				493394BB2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift in Sources */,
+				499EAEEA2BD2069C0002E28E /* GeoTagUI06Save.swift in Sources */,
+				49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */,
+				4984CF8E2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift in Sources */,
+				499DB20F2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift in Sources */,
+				4984CF902BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift in Sources */,
+				493F286D2BBF38CB002C8A44 /* GeoTagUI05Tests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		49B039502944429E003B7C53 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				498A734C294E916700C62B14 /* SettingsView.swift in Sources */,
+				49AB65D52BAE397D0050EC60 /* MapContextMenu.swift in Sources */,
 				490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */,
 				49BA299F2962250200B26F03 /* WindowAccessor.swift in Sources */,
 				49BA29A82962370200B26F03 /* SaveAction.swift in Sources */,
-				494FED102956BC97005FFC23 /* ClickMapView.swift in Sources */,
 				492E3F602948361D0044C1F3 /* ImageView.swift in Sources */,
 				498AE5B1294AB78A0063B1C1 /* XmpPresenter.swift in Sources */,
 				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
 				4952EF0B2A5F2D0200277508 /* LatLonSectionView.swift in Sources */,
+				4902B3BE2BB0A6F30038ED19 /* MapWrapperView.swift in Sources */,
 				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
+				49AB65DF2BAE3AF20050EC60 /* SearchView.swift in Sources */,
+				49AB65DB2BAE3ADC0050EC60 /* SearchPlace.swift in Sources */,
 				493E5F442A5B88B300B29DCF /* TableViewModel.swift in Sources */,
+				49AB65D32BAE389A0050EC60 /* LocationModel.swift in Sources */,
 				490A17A42960BA1D00ACA9FD /* CutCopyAction.swift in Sources */,
-				49E29EFE295100A600804B74 /* MapStyleView.swift in Sources */,
 				49B9EDDF29493D5600574D18 /* ImageModel.swift in Sources */,
 				49BA29A32962285300B26F03 /* Updates.swift in Sources */,
 				4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */,
-				49E29EFC2951009500804B74 /* MapPaneView.swift in Sources */,
 				49B4D34B2957D05D00A4BCFD /* DeleteAction.swift in Sources */,
+				49AB65DD2BAE3AE80050EC60 /* SearchBarView.swift in Sources */,
+				49895D072BCDA8C80093D11B /* AppStateLogger.swift in Sources */,
 				49630F0E2980BC00009FB418 /* ToolbarCommandGroup.swift in Sources */,
-				49E29F002951011300804B74 /* MapView.swift in Sources */,
 				49BA29AE29624E5400B26F03 /* ShowInFinderAction.swift in Sources */,
 				49BA299D296223F700B26F03 /* AppDelegate.swift in Sources */,
 				49B9EDDD29493CC200574D18 /* ImageTableView.swift in Sources */,
@@ -503,33 +630,38 @@
 				49BA29A629622B5200B26F03 /* SaveItemCommandGroup.swift in Sources */,
 				49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */,
 				4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */,
+				49AB65D92BAE3ABA0050EC60 /* SearchState.swift in Sources */,
 				493E5F462A5BA46200B29DCF /* AreYouSure.swift in Sources */,
 				492719DE2A5CB5BE00451573 /* ImageInspectorForm.swift in Sources */,
+				49BC9EBA2BCCB88800C46C05 /* ImageModelMetadata.swift in Sources */,
 				4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */,
 				49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */,
 				49901CEB2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift in Sources */,
 				490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */,
 				49901CED2A5B71EB00C28CAD /* AppState.swift in Sources */,
+				49AB65D72BAE398A0050EC60 /* MapStylePicker.swift in Sources */,
 				49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */,
 				49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */,
 				49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */,
 				4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */,
-				49E29F03295101D600804B74 /* MapSearchView.swift in Sources */,
 				4912D2F42B996E0300AC38DB /* SplitVView.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
-				4977988A297F6F7F0081A776 /* PinAnnotationView.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
+				49BC9EBC2BCCD11C00C46C05 /* ImageModelTimestamps.swift in Sources */,
 				498A734E294E949B00C62B14 /* AppSetting.swift in Sources */,
+				498FF4952BC76518003D691B /* PhotoLibraryController.swift in Sources */,
 				49A99FBE296F8B4B00392EEA /* BackupFolder.swift in Sources */,
 				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
 				492719E02A5CC7B100451573 /* ImageInspectorView.swift in Sources */,
 				4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */,
+				49895D0A2BCDAE2B0093D11B /* ShowLogView.swift in Sources */,
 				495F2F63295EB1A5002A8A88 /* TableViewSelections.swift in Sources */,
 				490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */,
 				4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */,
-				49C45BA72984851000CC7F0E /* MapViewModel.swift in Sources */,
+				498FF4972BC77BB0003D691B /* ToolbarViews.swift in Sources */,
 				49B0395A2944429E003B7C53 /* ContentView.swift in Sources */,
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
+				49AB65D12BAE38510050EC60 /* MapView.swift in Sources */,
 				49B448232A5F298D002939C5 /* DateTimeSectionView.swift in Sources */,
 				4912D2D32B99085300AC38DB /* SplitHView.swift in Sources */,
 				4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */,
@@ -541,7 +673,56 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4984CF922BB4BECD0008DDF8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 49B039532944429E003B7C53 /* GeoTag */;
+			targetProxy = 4984CF912BB4BECD0008DDF8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		4984CF932BB4BECD0008DDF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A3UXBEBE8Z;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTagUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = GeoTag;
+			};
+			name = Debug;
+		};
+		4984CF942BB4BECD0008DDF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A3UXBEBE8Z;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTagUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = GeoTag;
+			};
+			name = Release;
+		};
 		49B039612944429F003B7C53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -682,6 +863,7 @@
 				INFOPLIST_FILE = GeoTag/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022-2024 Marco S Hyman";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Update Photo Timestamps and Location Coordinates";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -716,6 +898,7 @@
 				INFOPLIST_FILE = GeoTag/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022-2024 Marco S Hyman";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Update Photo Timestamps and Location Coordinates";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -732,6 +915,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4984CF952BB4BECD0008DDF8 /* Build configuration list for PBXNativeTarget "GeoTagUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4984CF932BB4BECD0008DDF8 /* Debug */,
+				4984CF942BB4BECD0008DDF8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		49B0394F2944429E003B7C53 /* Build configuration list for PBXProject "GeoTag" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

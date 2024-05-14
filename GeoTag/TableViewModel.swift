@@ -10,9 +10,11 @@ import OSLog
 
 // MARK: State variables used primarily to control the table of images
 
+@MainActor
 @Observable
 final class TableViewModel {
     var images: [ImageModel] = []
+    var searchImages: [ImageModel] = []
     var selection: Set<ImageModel.ID> = [] {
         didSet {
             selectionChanged()
@@ -21,32 +23,51 @@ final class TableViewModel {
     var selected: [ImageModel] = []
     var mostSelected: ImageModel?
 
-    // get/set an image from the table of images  given its ID.
+    // get an image from the table of images  given its ID.
+    // No setter is defined
     subscript(id: ImageModel.ID?) -> ImageModel {
-        get {
-            if let index = images.firstIndex(where: { $0.id == id }) {
-                Self.logger.trace("get \(self.images[index].name)")
-                return images[index]
-            }
-
-            // A view may hold on to an ID that is no longer in the table
-            // If it tries to access the image associated with that id
-            // return a fake image
-            return ImageModel()
+        if let index = images.firstIndex(where: { $0.id == id }) {
+            Self.logger.notice("get \(self.images[index].name, privacy: .public)")
+            return images[index]
         }
 
-        set(newValue) {
-            if let index = images.firstIndex(where: { $0.id == newValue.id }) {
-                Self.logger.trace("set \(newValue.name)")
-                images[index] = newValue
-            }
-        }
+        // A view may hold on to an ID that is no longer in the table
+        // If it tries to access the image associated with that id
+        // return a fake image
+        return ImageModel()
     }
 
     // A copy of the current sort order
     var sortOrder = [KeyPathComparator(\ImageModel.name)]
 
-    // Instruments performance logging tools
+    init() {
+        Self.logger.notice("TableViewModel created")
+    }
+
+    // init for preview
+
+    init(images: [ImageModel]) {
+        self.images.append(contentsOf: images)
+    }
+}
+
+// search related functions
+
+extension TableViewModel {
+    func search(for match: String) {
+        Self.logger.notice("Searching for \(match, privacy: .public)")
+        searchImages = images.filter { $0.isValid && $0.name.fuzzy(match) }
+        Self.logger.notice("Matched \(self.searchImages.count) images")
+    }
+
+    func clearSearch() {
+        Self.logger.notice("Clearing search")
+        searchImages = []
+    }
+}
+
+extension TableViewModel {
+
     private static let logger = Logger(subsystem: "org.snafu.GeoTag",
                                        category: "TableView")
     private static let signposter = OSSignposter(logger: logger)
@@ -74,13 +95,21 @@ final class TableViewModel {
         }
     }
 
-    init() {
-        Self.logger.trace("TableViewModel created")
-    }
+}
 
-    // init for preview
+// a simple, fast enough search. Return true if the string characters match
+// "pattern" characters in the given order ignoring case.
 
-    init(images: [ImageModel]) {
-        self.images.append(contentsOf: images)
+extension String {
+    func fuzzy(_ pattern: String) -> Bool {
+        // an empty pattern matches anything
+        guard !pattern.isEmpty else { return true }
+        var remainder = pattern[...]
+        for char in self
+            where char.lowercased() == remainder[remainder.startIndex].lowercased() {
+            remainder.removeFirst()
+            if remainder.isEmpty { return true }
+        }
+        return false
     }
 }

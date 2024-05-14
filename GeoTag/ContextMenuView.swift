@@ -15,7 +15,7 @@ struct ContextMenuView: View {
 
     var body: some View {
         Group {
-            Button("Edit...") {
+            Button("Edit…") {
                 if let context {
                     state.tvm.select(context: context)
                 }

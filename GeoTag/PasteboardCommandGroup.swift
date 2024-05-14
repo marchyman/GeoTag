@@ -9,29 +9,43 @@ import SwiftUI
 
 // Replace the pasteboard commands group
 
-extension GeoTagApp {
-    var pasteBoardCommandGroup: some Commands {
+struct PasteboardCommands: Commands {
+    var state: AppState
+    @FocusedValue(\.textfieldFocused) var textfieldFocused
+
+    @MainActor
+    var body: some Commands {
         CommandGroup(replacing: .pasteboard) {
             Group {
-                Button("Cut") { state.cutAction(textfield: textfieldBinding) }
-                    .keyboardShortcut("x")
-                    .disabled(state.cutCopyDisabled())
+                Button("Cut") {
+                    state.cutAction(textfield: textfieldFocused)
+                }
+                .keyboardShortcut("x")
+                .disabled(state.cutCopyDisabled(textfield: textfieldFocused))
 
-                Button("Copy") { state.copyAction(textfield: textfieldBinding) }
-                    .keyboardShortcut("c")
-                    .disabled(state.cutCopyDisabled())
+                Button("Copy") {
+                    state.copyAction(textfield: textfieldFocused)
+                }
+                .keyboardShortcut("c")
+                .disabled(state.cutCopyDisabled(textfield: textfieldFocused))
 
-                Button("Paste") { state.pasteAction(textfield: textfieldBinding) }
-                    .keyboardShortcut("v")
-                    .disabled(state.pasteDisabled(textfield: textfieldBinding))
+                Button("Paste") {
+                    state.pasteAction(textfield: textfieldFocused)
+                }
+                .keyboardShortcut("v")
+                .disabled(state.pasteDisabled(textfield: textfieldFocused))
 
-                Button("Delete") { state.deleteAction(textfield: textfieldBinding) }
-                    .keyboardShortcut(.delete, modifiers: [])
-                    .disabled(state.deleteDisabled())
+                Button("Delete") {
+                    state.deleteAction(textfield: textfieldFocused)
+                }
+                .keyboardShortcut(.delete, modifiers: [])
+                .disabled(state.deleteDisabled(textfield: textfieldFocused))
 
-                Button("Select All") { state.selectAllAction(textfield: textfieldBinding) }
-                    .keyboardShortcut("a")
-                    .disabled(state.selectAllDisabled())
+                Button("Select All") {
+                    state.selectAllAction(textfield: textfieldFocused)
+                }
+                .keyboardShortcut("a")
+                .disabled(state.selectAllDisabled(textfield: textfieldFocused))
             }
 
             Divider()

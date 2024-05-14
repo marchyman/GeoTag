@@ -20,8 +20,6 @@ extension AppState {
 
     func discardTracksAction() {
         gpxTracks = []
-        MapViewModel.shared.mapLines = []
-        MapViewModel.shared.mapSpan = nil
-        MapViewModel.shared.refreshTracks = true
+        LocationModel.shared.tracks = []
     }
 }

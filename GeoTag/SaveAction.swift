@@ -19,7 +19,6 @@ extension AppState {
 
     func saveAction() {
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-        @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
         @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
         // returned status of the save operation
@@ -28,23 +27,29 @@ extension AppState {
             let error: String?
         }
 
-        // before starting check that image files backups are disabled
-        // or the image backup folder exists.
-        guard doNotBackup || backupURL != nil else {
+        // get the indices of images from the PhotosLibrary
+        let libraryPhotosToSave = tvm.images.indices.filter {
+            tvm.images[$0].asset != nil && tvm.images[$0].isValid
+        }
+        // get the image files that need saving
+        let imagesToSave = tvm.images.filter { $0.asset == nil && $0.changed }
+
+        // before starting check if a backup folder is needed
+        guard imagesToSave.isEmpty || doNotBackup || backupURL != nil else {
             addSheet(type: .noBackupFolderSheet)
             return
         }
 
-        // copy images.  The info in the copies will be saved in background
-        // tasks.
         saveInProgress = true
         saveIssues = [:]
-        let imagesToSave = tvm.images.filter { $0.changed }
         undoManager.removeAllActions()
         isDocumentEdited = false
 
         // process the images in the background.
         Task {
+            if !libraryPhotosToSave.isEmpty {
+                saveLibraryPhotos(indices: libraryPhotosToSave)
+            }
             @AppStorage(AppSettings.addTagsKey) var addTags = false
             @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
             @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
@@ -99,11 +104,21 @@ extension AppState {
                 }
             }
 
-            if !saveIssues.isEmpty {
-                isDocumentEdited = true
-                addSheet(type: .saveErrorSheet)
+            await MainActor.run {
+                if !saveIssues.isEmpty {
+                    isDocumentEdited = true
+                    addSheet(type: .saveErrorSheet)
+                }
+                saveInProgress = false
             }
-            saveInProgress = false
+        }
+    }
+
+    private func saveLibraryPhotos(indices: [Int]) {
+        let photoLibrary = PhotoLibrary.shared
+
+        for index in indices {
+            photoLibrary.saveChanges(for: index, of: tvm.images, in: timeZone)
         }
     }
 }

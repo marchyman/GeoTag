@@ -5,8 +5,9 @@
 //  Created by Marco S Hyman on 7/15/16.
 //
 
-import SwiftUI
 import MapKit
+import OSLog
+import SwiftUI
 
 /// manage GeoTag's use of exiftool
 
@@ -25,9 +26,24 @@ struct Exiftool {
     // URL of the embedded version of ExifTool
     var url: URL
 
+    // File Type codes for the file types that exiftool can write
+    //
+    // notes: png files are read/writable by exiftool, but macOS can not
+    // read the resulting metadata.  Remove it from the table.
+    // Last updated to match ExifTool version 12.30
+    let writableTypes: Set = [
+        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
+        "CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
+        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
+        "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
+        "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
+        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", // "PNG",
+        "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
+        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
+
     // Build the url needed to access to the embedded version of ExifTool
 
-    init() {
+    private init() {
         if let exiftoolUrl = Bundle.main.url(forResource: "ExifTool",
                                              withExtension: nil) {
             url = exiftoolUrl.appendingPathComponent("exiftool")
@@ -35,6 +51,15 @@ struct Exiftool {
             fatalError("The Application Bundle is corrupt.")
         }
     }
+}
+
+extension Exiftool {
+    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                               category: "ExifTool")
+
+}
+
+extension Exiftool {
 
     /// Use the embedded copy of exiftool to update the geolocation metadata
     /// in the file containing the passed image
@@ -123,7 +148,7 @@ struct Exiftool {
 //        dump(exiftool.arguments!)
         try exiftool.run()
         exiftool.waitUntilExit()
-        printFrom(pipe: pipe)
+        logFrom(pipe: pipe)
         if exiftool.terminationStatus != 0 {
             throw ExiftoolError.runFailed(code: Int(exiftool.terminationStatus))
         }
@@ -147,21 +172,6 @@ struct Exiftool {
         return ""
     }
 
-    // File Type codes for the file types that exiftool can write
-    //
-    // notes: png files are read/writable by exiftool, but macOS can not
-    // read the resulting metadata.  Remove it from the table.
-    // Last updated to match ExifTool version 12.30
-    let writableTypes: Set = [
-        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
-        "CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
-        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
-        "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
-        "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
-        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", // "PNG",
-        "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
-        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
-
     /// Check if exiftool supports writing to a type of file
     /// - Parameter for: a URL of a file to check
     /// - Returns: true if exiftool can write to the file type of the URL
@@ -177,7 +187,7 @@ struct Exiftool {
         do {
             try exiftool.run()
             exiftool.waitUntilExit()
-            printFrom(pipe: err)
+            logFrom(pipe: err)
             if exiftool.terminationStatus == 0 {
                 let data = pipe.fileHandleForReading.availableData
                 if data.count > 0,
@@ -190,7 +200,7 @@ struct Exiftool {
                 }
             }
         } catch {
-            print("fileTypeIsWritable exiftool run error")
+            Self.logger.error("fileTypeIsWritable: \(error.localizedDescription, privacy: .public)")
         }
         return false
     }
@@ -209,10 +219,10 @@ struct Exiftool {
         do {
             try exiftool.run()
         } catch {
-            print("makeSidecar exiftool run error")
+            Self.logger.error("makeSidecar: \(error.localizedDescription, privacy: .public)")
         }
         exiftool.waitUntilExit()
-        printFrom(pipe: err)
+        logFrom(pipe: err)
     }
 
     // return selected metadate from a file
@@ -239,10 +249,10 @@ struct Exiftool {
         do {
             try exiftool.run()
         } catch {
-            print("metadataFrom exiftool run error")
+            Self.logger.error("metadataFrom: \(error.localizedDescription, privacy: .public)")
         }
         exiftool.waitUntilExit()
-        printFrom(pipe: err)
+        logFrom(pipe: err)
 
         var createDate = ""
         var location = Coords()
@@ -311,11 +321,11 @@ struct Exiftool {
     // swiftlint:enable cyclomatic_complexity
     // swiftlint:enable large_tuple
 
-    private func printFrom(pipe: Pipe) {
+    private func logFrom(pipe: Pipe) {
         let data = pipe.fileHandleForReading.availableData
         if data.count > 0,
            let string = String(data: data, encoding: String.Encoding.utf8) {
-            print("Exiftool: \(string)")
+            Self.logger.warning("stderr: \(string, privacy: .public)")
         }
     }
 }

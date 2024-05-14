@@ -5,40 +5,19 @@
 //  Created by Marco S Hyman on 12/13/22.
 //
 
-import UniformTypeIdentifiers
 import SwiftUI
 
-// Extension to our Application State that handles file open and dropping
+// Extension to Application State to handles file open and dropping
 // URLs onto the app's table of images to edit.
 
 extension AppState {
 
-    /// Display the File -> Open... panel for image and gpx files.  Folders may also be selected.
+    // The open dialog is handled by a fileImporter in ContentView.swift.
+    // Selecting Open… from the menu or keyboard shortcut will toggle the
+    // state variable that causes the open process to start.  These functions
+    // process both files Opened or Dragged into the app.
 
-    func showOpenPanel() {
-
-        // allow image and gpx types
-        var types = [UTType.image]
-        if let type = UTType(filenameExtension: "gpx") {
-            types.append(type)
-        }
-        let panel = NSOpenPanel()
-        panel.allowedContentTypes = types
-        panel.allowsMultipleSelection = true
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = true
-
-        // process any URLs selected to open in the background
-        if panel.runModal() == NSApplication.ModalResponse.OK {
-            Task.detached {
-                await self.prepareForEdit(inputURLs: panel.urls)
-            }
-        }
-    }
-
-    /// process URLs opened or dragged to the app.  In the case of a drag a URL may
-    /// be of any type.  The path of non-image files will be listed in the app's table but will
-    /// not be flagged as a valid image.
+    // process URLs opened or dragged to the app.
 
     func prepareForEdit(inputURLs: [URL]) async {
 
@@ -48,48 +27,44 @@ extension AppState {
 
         // expand folder URLs and remove any duplicates.
 
-        let imageURLs = inputURLs
-            .flatMap { url in
-                isFolder(url: url) ? urlsIn(folder: url) : [url]
-            }
-            .uniqued()
+        let imageURLs = inputURLs.flatMap { url in
+            isFolder(url) ? urlsIn(folder: url) : [url]
+        }
 
         // check for duplicates of URLs already open for processing
         // if any are found notify the user
 
         let processedURLs = Set(tvm.images.map {$0.fileURL })
         let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
-        if !duplicateURLs.isEmpty {
+        let uniqueURLs: [URL]
+        if duplicateURLs.isEmpty {
+            uniqueURLs = imageURLs.uniqued()
+        } else {
             addSheet(type: .duplicateImageSheet)
+            // remove the duplicates from the images to process
+            uniqueURLs = imageURLs.filter { !duplicateURLs.contains($0) }
+                                  .uniqued()
         }
 
-        await images(for: imageURLs)
+        await images(for: uniqueURLs)
         linkPairedImages()
         tvm.images.sort(using: tvm.sortOrder)
 
         // now process any gpx tracks
 
-        let gpxURLs = imageURLs.filter { $0.pathExtension.lowercased() == "gpx" }
+        let gpxURLs = uniqueURLs.filter { $0.pathExtension.lowercased() == "gpx" }
         if !gpxURLs.isEmpty {
-
-            // if the appViewModel update isn't done on the main queue the
-            // Discard tracks menu item doesn't see the approriate state.
-
             let updatedTracks = await tracks(for: gpxURLs)
-            Task {
-                await MainActor.run {
-                    for (path, track) in updatedTracks {
-                        if let track {
-                            self.updateTracks(gpx: track)
-                            self.gpxGoodFileNames.append(path)
-                            self.gpxTracks.append(track)
-                        } else {
-                            self.gpxBadFileNames.append(path)
-                        }
-                    }
-                    self.addSheet(type: .gpxFileNameSheet)
+            for (path, track) in updatedTracks {
+                if let track {
+                    self.updateTracks(gpx: track)
+                    self.gpxGoodFileNames.append(path)
+                    self.gpxTracks.append(track)
+                } else {
+                    self.gpxBadFileNames.append(path)
                 }
             }
+            self.addSheet(type: .gpxFileNameSheet)
         }
 
         applicationBusy = false
@@ -98,6 +73,7 @@ extension AppState {
     // process all urls in a task group, one task per url.  Skip
     // gpx urls for now
     private func images(for imageURLs: [URL]) async {
+        Self.logger.debug("Thread \(Thread.isMainThread ? "main" : "other")")
         await withTaskGroup(of: ImageModel?.self) { group in
             var openedImages: [ImageModel] = []
 
@@ -107,9 +83,11 @@ extension AppState {
                     do {
                         return try ImageModel(imageURL: url)
                     } catch let error as NSError {
-                        self.addSheet(type: .unexpectedErrorSheet,
-                                      error: error,
-                                      message: "Failed to open file \(url.path)")
+                        await MainActor.run {
+                            self.addSheet(type: .unexpectedErrorSheet,
+                                          error: error,
+                                          message: "Failed to open file \(url.path)")
+                        }
                         return nil
                     }
                 }
@@ -117,7 +95,9 @@ extension AppState {
             for await image in group.compactMap({ $0 }) {
                 openedImages.append(image)
             }
-            tvm.images.append(contentsOf: openedImages)
+            await MainActor.run {
+                tvm.images.append(contentsOf: openedImages)
+            }
         }
     }
 
@@ -145,7 +125,7 @@ extension AppState {
     }
 
     // Check if a given file URL refers to a folder
-    private func isFolder(url: URL) -> Bool {
+    private func isFolder(_ url: URL) -> Bool {
         let resources = try? url.resourceValues(forKeys: [.isDirectoryKey])
         return resources?.isDirectory ?? false
     }
@@ -161,7 +141,7 @@ extension AppState {
                                        options: [.skipsHiddenFiles],
                                        errorHandler: nil) else { return []}
         while let fileUrl = urlEnumerator.nextObject() as? URL {
-            if !isFolder(url: fileUrl) {
+            if !isFolder(fileUrl) {
                 foundURLs.append(fileUrl)
             }
         }
@@ -173,28 +153,47 @@ extension AppState {
     // that option is selected
 
     private func linkPairedImages() {
-        @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
+        Self.logger.notice(#function)
+        let interval = markStart(#function)
+        defer { markEnd(#function, interval: interval) }
 
-        let imageURLs = tvm.images.map { $0.fileURL }
+        struct URLBase {
+            let url: URL
+            let base: String
+        }
 
-        for url in imageURLs {
-            // only look at jpeg files
-            let pathExtension = url.pathExtension.lowercased()
-            guard pathExtension == "jpg" || pathExtension == "jpeg" else { continue }
+        @AppStorage(AppSettings.disablePairedJpegsKey)
+        var disablePairedJpegs = false
 
-            // extract the base URL for comparison
-            let baseURL = url.deletingPathExtension()
+        let jpegBase =
+            tvm.images.filter {
+                let pathExtension = $0.fileURL.pathExtension.lowercased()
+                return pathExtension == "jpg" || pathExtension == "jpeg"
+            }
+            .map {
+                URLBase( url: $0.fileURL,
+                         base: $0.fileURL.deletingPathExtension().path)
+            }
+        let rawBase =
+            tvm.images.filter {
+                let pathExtension = $0.fileURL.pathExtension.lowercased()
+                return pathExtension != xmpExtension &&
+                       pathExtension != "jpg" &&
+                       pathExtension != "jpeg"
+            }
+            .map {
+                URLBase(url: $0.fileURL,
+                        base: $0.fileURL.deletingPathExtension().path)
+            }
 
-            // look for non-xmp files that match baseURL
-            for pairedURL in imageURLs where pairedURL != url
-                && pairedURL.pathExtension.lowercased() != xmpExtension
-                && pairedURL.deletingPathExtension() == baseURL {
-                // url and otherURL are part of an image pair.
-                tvm[url].pairedID = pairedURL
-                tvm[pairedURL].pairedID = url
+        for jpeg in jpegBase {
+            if let raw = rawBase.first(where: { $0.base == jpeg.base }) {
+                Self.logger.notice("Pairing \(jpeg.url, privacy: .public) <> \(raw.url, privacy: .public)")
+                tvm[jpeg.url].pairedID = raw.url
+                tvm[raw.url].pairedID = jpeg.url
                 // disable the jpeg version if requested
                 if disablePairedJpegs {
-                    tvm[url].isValid = false
+                    tvm[jpeg.url].isValid = false
                 }
                 break
             }

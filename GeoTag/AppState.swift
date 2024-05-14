@@ -5,9 +5,9 @@
 //  Created by Marco S Hyman on 7/9/23.
 //
 
-import OSLog
 import SwiftUI
 
+@MainActor
 @Observable
 final class AppState {
 
@@ -25,7 +25,10 @@ final class AppState {
 
     // The Apps main window
     var mainWindow: NSWindow?
-    var undoManager = UndoManager()
+    let undoManager = UndoManager()
+
+    // when set the import files dialog will be opened
+    var importFiles = false
 
     // A second save can not be triggered while a save is in progress.
     // App termination is denied, too.
@@ -53,6 +56,7 @@ final class AppState {
 
     var removeOldFiles = false
     var changeTimeZoneWindow = false
+    var showLogWindow = false
 
     // The folder containing backups is scanned at startup and the user
     // is given the option to remove backups older than 7 days.  This info
@@ -89,6 +93,12 @@ final class AppState {
         }
     }
 
+    // URLs obtained from the open panel are security scoped.  Keep track of
+    // them so we can  run stopSecurityScopedResource() when the files/folders
+    // are no longer needed
+    @ObservationIgnored
+    var scopedURLs: [URL] = []
+
     // MARK: initialization
 
     // get the backupURL from AppStorage if needed.  This will also trigger
@@ -96,9 +106,39 @@ final class AppState {
 
     init() {
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+        @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
+
+        // blow away settings when user interface testing
+        if ProcessInfo.processInfo.environment["UITESTS"] != nil {
+            AppSettings.resetSettings()
+        }
+
+        // also for UI testing... assign a backup folder
+        if let testBackup = ProcessInfo.processInfo.environment["BACKUP"] {
+            let testURL = URL(fileURLWithPath: testBackup, isDirectory: true)
+            savedBookmark = getBookmark(from: testURL)
+        }
 
         if !doNotBackup {
             backupURL = getBackupURL()
+        }
+        Self.logger.notice("AppState created")
+    }
+}
+
+// MARK: Security scoping methods
+
+extension AppState {
+
+    func startSecurityScoping(urls: [URL]) {
+        for url in urls where url.startAccessingSecurityScopedResource() {
+            scopedURLs.append(url)
+        }
+    }
+
+    func stopSecurityScoping() {
+        for url in scopedURLs {
+            url.stopAccessingSecurityScopedResource()
         }
     }
 }
@@ -121,47 +161,24 @@ extension AppState {
         } else {
             // create a SheetInfo and add it to the stack of pending sheets
             sheetStack.append(SheetInfo(sheetType: type,
-                                      sheetError: error,
-                                      sheetMessage: message))
+                                        sheetError: error,
+                                        sheetMessage: message))
         }
     }
 
-    // return true if a sheet of the given type is enqueued
+    // Add a sheet of a given type only once.
+    // [unused]
 
-    func hasSheet(type: SheetType) -> Bool {
-        if sheetType == type {
-            return true
-        }
-        return sheetStack.contains { $0.sheetType == type }
-    }
+    // func hasSheet(type: SheetType) -> Bool {
+    //     if sheetType == type {
+    //         return true
+    //     }
+    //     return sheetStack.contains { $0.sheetType == type }
+    // }
 
-    func addSheetOnce(type: SheetType, error: NSError? = nil, message: String? = nil) {
-        if !hasSheet(type: type) {
-            addSheet(type: type, error: error, message: message)
-        }
-    }
-}
-
-extension AppState {
-    static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                               category: "AppState")
-    private static let signposter = OSSignposter(logger: logger)
-
-    func withInterval<T>(_ desc: StaticString,
-                         around task: () throws -> T) rethrows -> T {
-        try Self.signposter.withIntervalSignpost(desc) {
-            try task()
-        }
-    }
-
-    func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
-        let signpostID = Self.signposter.makeSignpostID()
-        let interval = Self.signposter.beginInterval(desc, id: signpostID)
-        return interval
-    }
-
-    func markEnd(_ desc: StaticString, interval: OSSignpostIntervalState) {
-        Self.signposter.endInterval(desc, interval)
-    }
-
+    // func addSheetOnce(type: SheetType, error: NSError? = nil, message: String? = nil) {
+    //     if !hasSheet(type: type) {
+    //         addSheet(type: type, error: error, message: message)
+    //     }
+    // }
 }

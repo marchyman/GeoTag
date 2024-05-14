@@ -94,7 +94,6 @@ struct DuplicateImageView: View {
             Text("One or more files were not opened. Unopened files were " +
                  "duplicates of files previously opened for editing.")
                 .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
         }
         .frame(maxWidth: 400, minHeight: 100)
@@ -113,7 +112,6 @@ struct NoBackupFolderView: View {
                  "Please open the program settings window (⌘ ,) and select " +
                  "a folder for image backups.")
                 .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
         }
         .frame(maxWidth: 400, minHeight: 200)
@@ -129,7 +127,6 @@ struct SavingUpdatesView: View {
             Text("Image updates are still being processed.  Please wait " +
                  "for the updates to complete before quiting GeoTag.")
                 .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
         }
         .frame(maxWidth: 400, minHeight: 100)
@@ -144,9 +141,8 @@ struct SaveErrorView: View {
             Text("One or more files could not be saved")
                 .font(.title)
                 .padding()
-            Text("The updates to one or more files could not be saved.")
+            Text("The updates to one or more files could not be updated.")
                 .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 40)
             List {
                 ForEach(state.saveIssues.sorted(by: >), id: \.key) { key, value in
@@ -175,12 +171,10 @@ struct UnexpectedErrorView: View {
                 .padding()
             if let message = state.sheetMessage {
                 Text(message)
-                    .fixedSize(horizontal: false, vertical: true)
                     .padding()
             }
             if let error = state.sheetError {
                 Text(error.localizedDescription)
-                    .fixedSize(horizontal: false, vertical: true)
                     .padding()
             }
         }
@@ -215,4 +209,48 @@ extension View {
     func withDismiss() -> some View {
         self.modifier(DismissModifier())
     }
+}
+
+// MARK: Previews
+
+#Preview("GpxLoadView") {
+    let state = AppState()
+    state.gpxGoodFileNames.append("Good/File/Name")
+    return SheetType.gpxFileNameSheet
+        .environment(state)
+}
+
+#Preview("GpxLoadView (bad)") {
+    let state = AppState()
+    state.gpxBadFileNames.append("Bad/File/Name")
+    return SheetType.gpxFileNameSheet
+        .environment(state)
+}
+
+#Preview("GpxLoadView (both)") {
+    let state = AppState()
+    state.gpxGoodFileNames.append("Good/File/Name")
+    state.gpxBadFileNames.append("Bad/File/Name")
+    return SheetType.gpxFileNameSheet
+        .environment(state)
+}
+
+#Preview("DuplicateImageView") {
+    SheetType.duplicateImageSheet
+}
+
+#Preview("NoBackupFolderView") {
+    SheetType.noBackupFolderSheet
+}
+
+#Preview("SavingUpdatesView") {
+    SheetType.savingUpdatesSheet
+}
+
+#Preview("SaveErrorView") {
+    let state = AppState()
+    state.saveIssues[URL(fileURLWithPath: "/path/to/some/image.jpg")] = "some save error"
+    state.saveIssues[URL(fileURLWithPath: "/path/to/some/other.jpg")] = "some other error"
+    return SheetType.saveErrorSheet
+        .environment(state)
 }

@@ -9,18 +9,24 @@ import SwiftUI
 
 // swiftlint:disable line_length
 
+@MainActor
 struct SettingsView: View {
     @Environment(AppState.self) var state
-    var mvm = MapViewModel.shared
+    let location = LocationModel.shared
 
     // values stored in AppStorage
     @AppStorage(AppSettings.addTagsKey) var addTags = false
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.coordFormatKey)
+        var coordFormat: AppSettings.CoordFormat = .deg
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.createSidecarFilesKey) var createSidecarFiles = false
-    @AppStorage(AppSettings.disablePairedJpegsKey) var disablePairedJpegs = false
-    @AppStorage(AppSettings.updateFileModificationTimesKey) var updateFileModificationTimes = false
-    @AppStorage(AppSettings.updateGPSTimestampsKey) var updateGPSTimestamps = false
+    @AppStorage(AppSettings.createSidecarFilesKey)
+        var createSidecarFiles = false
+    @AppStorage(AppSettings.disablePairedJpegsKey)
+        var disablePairedJpegs = false
+    @AppStorage(AppSettings.updateFileModificationTimesKey)
+        var updateFileModificationTimes = false
+    @AppStorage(AppSettings.updateGPSTimestampsKey)
+        var updateGPSTimestamps = false
     @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
     @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
     @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
@@ -47,6 +53,7 @@ struct SettingsView: View {
                     } else {
                         LabeledContent("Backup folder:") {
                             PathView(url: $state.backupURL)
+                                .accessibilityValue("backupPath")
                                 .frame(width: 280)
                         }
                         .padding(.bottom)
@@ -67,7 +74,7 @@ struct SettingsView: View {
                        selection: $coordFormat) {
                     Text("dd.dddddd")
                         .tag(AppSettings.CoordFormat.deg)
-                    Text("dd mm.mmmmmm'")
+                    Text("dd° mm.mmmmmm'")
                         .tag(AppSettings.CoordFormat.degMin)
                     Text("dd° mm' ss.ss\"")
                         .tag(AppSettings.CoordFormat.degMinSec)
@@ -80,15 +87,11 @@ struct SettingsView: View {
                 Group {
                     ColorPicker("GPS Track Color:",
                                 selection: $trackColor)
-                        .onChange(of: trackColor.rawValue) {
-                            mvm.refreshTracks = true
-                        }
                         .padding(.horizontal)
                         .help("Select the color used to display GPS tracks on the map.")
 
                     TextField("GPS Track width:",
                               value: $trackWidth, format: .number)
-                        .onSubmit { mvm.refreshTracks = true }
                         .padding([.horizontal, .bottom])
                         .frame(maxWidth: 190)
                         .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")

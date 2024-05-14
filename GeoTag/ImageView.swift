@@ -9,12 +9,12 @@ import SwiftUI
 
 struct ImageView: View {
     @Environment(AppState.self) var state
-    @State private var thumbnail: NSImage?
+    @State private var thumbnail: Image?
 
     var body: some View {
         Group {
             if let image = thumbnail {
-                Image(nsImage: image)
+                image
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             } else {
@@ -28,10 +28,16 @@ struct ImageView: View {
             if let image = state.tvm.mostSelected {
                 let interval = state.markStart("thumbnail")
                 defer { state.markEnd("thumbnail", interval: interval) }
-                if image.thumbnail == nil {
-                    image.thumbnail = await image.makeThumbnail()
+                var tn = image.thumbnail
+                if tn == nil {
+                    tn = await image.makeThumbnail()
                 }
-                thumbnail = image.thumbnail
+                await MainActor.run {
+                    if image.thumbnail == nil {
+                        image.thumbnail = tn
+                    }
+                    thumbnail = tn
+                }
                 return
             }
             thumbnail = nil

@@ -125,7 +125,7 @@ private func coordToString(for coord: Double?,
     return ""
 }
 
-// extend string to validate and return a latitude./longitude as a double
+// extend string to validate and return a latitude/longitude as a double
 
 extension String {
 

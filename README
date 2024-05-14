@@ -12,62 +12,61 @@ image metadata -- your image pixels are not touched.
 See <http://exiftool.org> for information about ExifTool.
 **ExifTool is built in to GeoTag.**
 
-GeoTag 5.2 will require macOS Sonoma or later.  Use GeoTag 5.1 if running on
+GeoTag 5.2+ requires macOS Sonoma or later.  Use GeoTag 5.1 if running on
 macOS Ventura.  Those running earlier versions of macOS can use GeoTag
 version 4.15.
 
-## GeoTag 5.2.1 (not available in app store)
+## branch newmaps
 
-The minimum window size has been reduced.  The screen can now be adjusted
-to fit on a 13" MacBook Pro.
-
-## GeoTag 5.2
+- strip out the NSViewRepresentable MapView and replace it with a
+  SwiftUI implementation. I think I'll be able to do everything but
+  drag pins.
 
 ### Updates
 
-* The major performance bottleneck has been found and fixed.  Valid, but
-  in hindsight poorly thought out code triggered massive processing to
-  keep the user interface in sync.  Because the processing was being done
-  in an Apple framework it took much trial and error before I figured
-  out what, exactly, I was doing to cause the issue. A few minor performance
-  enhancements were made while looking for the big one.
+- Images can be selected from your Photos Library.  Timestamps and locations
+  can be changed and "written" back to the library. The original file is not
+  modified. No backups are made.
+- Map pins can not be dragged. Click on the desired location to move a pin.
+- Copied/Cut coordinates are now in the same format as selected in GeoTag
+  settings.
+- Map configuration options are now in a map context (right click) menu.
+- At an appropriate zoom level you are given the option to use a 3D map
+  representation.  Look for the "3D" button near the upper right corner of
+  the map.
+- The last 10 map searches are saved across GeoTag runs.
+- Updated app icon to match current guidelines re size and rounded corners
+- You can "fuzzy" search for images in the table by name.
+- Copy and paste format changed: the coordinate separator is now ", ".
+  A separator of "| " is also accepted for backward compatibility.
+  Example (lat, lon, elevation): 38.530196, -123.214981, 466.38
+  Elevation is optional.
+- Bug Fix: cancelling a search no longer looks up whatever happended to
+  be typed into the search bar.
+- Bug Fix: Changing the map style no longer repositions the map.
+- Bug Fix: Coordinate format changes take effect immediately in the image table.
+- Bug Fix: Data in XMP sidecar files was not read unless the XMP file was in
+  a folder that was opened or the XMP file itself was explicity opened.
+  Note: xmp files can no longer be selected to open.
+- Bug Fix: Duplicate image processing does more than give a warning.
+- Bug Fix: extraneous map centering removed
+- Bug Fix: Time zone handling when adjusting for zones with a non-zero number
+  of minutes east of GMT.
 
-* Latitude/Longitude and Timestamp keyboard updates are now done in an
-  inspector.  Control/right click on an entry and select Edit... or click
-  on the inspectory icon (circled i) to show the inspector for the selected
-  item.
+### Issues
 
-* keyboard driven pasteboard actions are now supported in the location
-  and map search fields.
-
-* Thumbnail images can now be up to 1024x1024 in size.  They were limited
-  to 512x512.
-
-* Table columns can be moved.
-
-* The prompt to save images when GeoTag quits will no longer be displayed
-  when no changes would be made.
-
-* Exiting full screen mode no longer leaves the image and map panes out
-  of the window.
-
-* ExifTool version 12.77
-
-### Known bugs
-
-* Clicking on the cancel (x) in the map search field looks up a position
-  matching the current content before clearing the content.  No lookup
-  should occur.
-
-* If you select an image that has a location and them pan the map to some
-  other locations, changing the map style causes the map to re-center around
-  the pin if the pin is off screen. If the pin is on screen the map viewport
-  doesn’t change.
-
-* Sometimes ⌘Z appears to do nothing, requiring a second invocation to
-  perform the undo action.
-
-* paste sometimes not enabled after cut. Can Not reproduce on demand.
+- undo/redo menu items are always enabled, even when there are no undo or
+  redo actions that could be performed. The menu titles are also not updated
+  for the action to be performed.
+- There is a short delay between clicking on the map and a map pin being
+  placed.
+- When showing pins for all selected locations the red (most selected) pin
+  may be hidden by the pin of another location near by unless the zoom level
+  is such that both locations are slightly separated on the map.
+- when changing the selection to an image that has a location some of the pin
+  may off the map view.  In an extreme case only the point of the pin is on
+  the map and can not be seen. If you do not see a pin when you expect to
+  zoom out slightly.
 
 ### See the file named *History* for earlier changes and bug fixes
 
@@ -102,13 +101,15 @@ location can be changed by clicking on the desired location. Hitting the delete
 key will remove location information from all selected images.  You can
 Undo/Redo image location changes.
 
-Double click the map to zoom in.  Or use the pinch gestures to zoom in and out.
+Double click the map to zoom in. Option-double click to zoom out. Or use
+pinch gestures to zoom in and out if using a touch pad.
 
-Three map types --- Standard, Hybrid, and Satellite --- are supported.
-If you find yourself working in a specific area of a map you can save
-the map type, location, and zoom level by clicking on the *Save map location*
-button.   When GeoTag is launched the map will load to the last saved
-location.
+Five map styles --- Standard, Imagery, Hybrid, Standard with traffic, and
+Hybrid with traffic --- are supported. Right click on the map to select
+the desired map style. If you find yourself working in a specific area of a
+map you can save the location and zoom level by right clicking on the map
+and selecting *Save map location*.  When GeoTag is launched the map will
+load to the last saved location using the last map style selected.
 
 You may cut or copy location information from a single image and then paste
 that information into one or more images.  If you make an error you can
@@ -117,7 +118,7 @@ undo/redo your changes. You can undo all changes to all images by selecting
 once changes are discarded or saved.
 
 The original versions of images that have been updated are saved are in a
-backup folder.  The backup folder may be changed using GeoTag Preferences.
+backup folder.  The backup folder may be changed using GeoTag Settings.
 The first time GeoTag is run it will prompt you to select a backup folder.
 Images updates can not be saved until a backup folder is selected or backups
 are disabled (not recommended).

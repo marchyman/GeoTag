@@ -48,6 +48,9 @@ struct Sandbox {
     enum BackupError: Error {
         case backupError(String)
     }
+}
+
+extension Sandbox {
 
     // Modify name for backup file. Add a suffix to the name until no file
     // is found at the save location
@@ -158,5 +161,4 @@ struct Sandbox {
         let url = imageURL as NSURL
         try url.setResourceValue(tagValues, forKey: .tagNamesKey)
     }
-
 }
