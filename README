@@ -63,6 +63,9 @@ version 4.15.
   may off the map view.  In an extreme case only the point of the pin is on
   the map and can not be seen. If you do not see a pin when you expect to
   zoom out slightly.
+- The results of a search are not applied to selected images.
+- When pasting a lat, lon into an image the map is not updated to show the
+  new location.
 
 ### See the file named *History* for earlier changes and bug fixes
 
