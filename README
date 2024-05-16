@@ -66,6 +66,8 @@ version 4.15.
 - The results of a search are not applied to selected images.
 - When pasting a lat, lon into an image the map is not updated to show the
   new location.
+- When multiple images are selected clicking on the map only applies the
+  location to the most selected image.
 
 ### See the file named *History* for earlier changes and bug fixes
 
