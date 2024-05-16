@@ -22,6 +22,7 @@ final class SearchState {
     var searchPlaces: [SearchPlace] = []
     var searchText: String = ""
     var writing = false
+    var pickFirst = false
 
     private init() {
         Task {

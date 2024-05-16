@@ -47,6 +47,7 @@ struct SearchBarView: View {
                         }
                         .onSubmit {
                             mapFocus.wrappedValue = .searchList
+                            searchState.pickFirst.toggle()
                         }
                 }
                 .padding(.vertical, 12)

@@ -82,6 +82,12 @@ struct SearchView: View {
             searchState.saveResult(selection)
             mapFocus.wrappedValue = nil
         }
+        .onChange(of: searchState.pickFirst) {
+            if !searchResponse.isEmpty {
+                searchState.saveResult(searchResponse[0])
+                mapFocus.wrappedValue = nil
+            }
+        }
         .onKeyPress(.escape) {
             searchState.searchText = ""
             mapFocus.wrappedValue = nil
