@@ -23,7 +23,7 @@ version 4.15.
 - Hitting the return key after entering text in the map search field will
   automatically select the first search result and position the map at
   that location.
-- Bug fix: locations selected by clickiung on map are applied to all selected
+- Bug fix: locations selected by clicking on map are applied to all selected
   images, not only the most selected item.
 - Bug fix: recenter map when pasting lat/lon into selected item
 - Bug fix: Apply search results locations to any selected images and zoom
