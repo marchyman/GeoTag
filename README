@@ -16,6 +16,14 @@ GeoTag 5.2+ requires macOS Sonoma or later.  Use GeoTag 5.1 if running on
 macOS Ventura.  Those running earlier versions of macOS can use GeoTag
 version 4.15.
 
+## WIP
+
+### Updates
+
+- Bug fix: locations selected by clickiung on map are applied to all selected
+  images, not only the most selected item.
+
+
 ## GeoTag 5.3
 
 ### Updates

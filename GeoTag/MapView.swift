@@ -103,11 +103,15 @@ struct MapView: View {
             .onTapGesture { position in
                 mapFocus.wrappedValue = nil  // get rid of any search views
 
-                if let image = state.tvm.mostSelected {
-                    if let coords = mapProxy.convert(position,
-                                                     from: .local) {
+                // apply changes to all selected locations.
+                if !state.tvm.selected.isEmpty,
+                    let coords = mapProxy.convert(position, from: .local) {
+                    state.undoManager.beginUndoGrouping()
+                    for image in state.tvm.selected {
                         state.update(image, location: coords)
                     }
+                    state.undoManager.endUndoGrouping()
+                    state.undoManager.setActionName("modify location")
                 }
             }
         }
