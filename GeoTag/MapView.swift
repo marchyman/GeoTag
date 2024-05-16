@@ -89,9 +89,11 @@ struct MapView: View {
                 if let searchResult = searchState.searchResult {
                     location.setCameraPosition(to: searchResult.coordinate.coord2D)
                     searchState.searchText = ""
+                    // To Do: update selected items here
+                    // zoom in map if mnecessary
                 }
             }
-            .onChange(of: state.tvm.mostSelected) {
+            .onChange(of: state.tvm.mostSelected?.location) {
                 location.recenterMap(locn: state.tvm.mostSelected?.location)
             }
             .gesture(zoomOut)
