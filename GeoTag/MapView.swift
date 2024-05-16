@@ -12,6 +12,7 @@ import SwiftUI
 struct MapView: View {
     @Environment(AppState.self) var state
     var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
+    let zoomDistance = 1000.0
     let searchState: SearchState
 
     let location = LocationModel.shared
@@ -87,10 +88,16 @@ struct MapView: View {
             }
             .onChange(of: searchState.searchResult) {
                 if let searchResult = searchState.searchResult {
-                    location.setCameraPosition(to: searchResult.coordinate.coord2D)
+                    if !state.tvm.selected.isEmpty {
+                        // zoom in to better show pin when necessary
+                        if location.cameraDistance > zoomDistance {
+                            location.cameraDistance = zoomDistance
+                        }
+                        changeSelected(to: searchResult.coordinate.coord2D)
+                    } else {
+                        location.setCameraPosition(to: searchResult.coordinate.coord2D)
+                    }
                     searchState.searchText = ""
-                    // To Do: update selected items here
-                    // zoom in map if mnecessary
                 }
             }
             .onChange(of: state.tvm.mostSelected?.location) {
@@ -104,18 +111,20 @@ struct MapView: View {
             }
             .onTapGesture { position in
                 mapFocus.wrappedValue = nil  // get rid of any search views
-
-                // apply changes to all selected locations.
-                if !state.tvm.selected.isEmpty,
-                    let coords = mapProxy.convert(position, from: .local) {
-                    state.undoManager.beginUndoGrouping()
-                    for image in state.tvm.selected {
-                        state.update(image, location: coords)
-                    }
-                    state.undoManager.endUndoGrouping()
-                    state.undoManager.setActionName("modify location")
-                }
+                changeSelected(to: mapProxy.convert(position, from: .local))
             }
+        }
+    }
+
+    // apply coordinate change to all selected locations.
+    private func changeSelected(to coords: Coords?) {
+        if !state.tvm.selected.isEmpty {
+            state.undoManager.beginUndoGrouping()
+            for image in state.tvm.selected {
+                state.update(image, location: coords)
+            }
+            state.undoManager.endUndoGrouping()
+            state.undoManager.setActionName("modify location")
         }
     }
 

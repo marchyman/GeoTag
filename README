@@ -23,6 +23,8 @@ version 4.15.
 - Bug fix: locations selected by clickiung on map are applied to all selected
   images, not only the most selected item.
 - Bug fix: recenter map when pasting lat/lon into selected item
+- Bug fix: Apply search results locations to any selected images and zoom
+  into the location when necessary.
 
 ## GeoTag 5.3
 
