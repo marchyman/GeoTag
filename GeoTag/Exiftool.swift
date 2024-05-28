@@ -122,9 +122,8 @@ extension Exiftool {
             exiftool.arguments! += ["-FileModifyDate<DateTimeOriginal"]
         }
 
-        if updateGPSTimestamps {
-            // calculate the gps timestamp
-            let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone)
+        if updateGPSTimestamps,
+           let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone) {
 
             // args vary depending upon saving to an image file or a GPX file
             if usingSidecar {
@@ -155,11 +154,11 @@ extension Exiftool {
     }
 
     // convert the dateTimeCreated string to a string with time zone to
-    // update GPS timestamp fields.  Return an empty string if there is
+    // update GPS timestamp fields.  Return nil if there is
     // no timestamp or formatting failed.
 
     func gpsTimestamp(for image: ImageModel,
-                      in timeZone: TimeZone?) -> String {
+                      in timeZone: TimeZone?) -> String? {
         if let dateTime = image.dateTimeCreated {
             dateFormatter.dateFormat = ImageModel.dateFormat
             dateFormatter.timeZone = timeZone
@@ -169,7 +168,7 @@ extension Exiftool {
                 return dateFormatter.string(from: date) + "Z"
             }
         }
-        return ""
+        return nil
     }
 
     /// Check if exiftool supports writing to a type of file

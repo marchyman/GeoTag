@@ -28,6 +28,8 @@ version 4.15.
 - Bug fix: recenter map when pasting lat/lon into selected item
 - Bug fix: Apply search results locations to any selected images and zoom
   into the location when necessary.
+- Bug fix: Don't attempt to update the GPS timestamp when the image does
+  not have timestamp.
 
 ## GeoTag 5.3
 
