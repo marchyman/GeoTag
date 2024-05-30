@@ -30,6 +30,8 @@ version 4.15.
   into the location when necessary.
 - Bug fix: Don't attempt to update the GPS timestamp when the image does
   not have timestamp.
+- Bug fix: Don't limit map search result to address types as that hided
+  otherwise valid search results.
 
 ## GeoTag 5.3
 
