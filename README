@@ -32,6 +32,8 @@ version 4.15.
   not have timestamps.
 - Bug fix: Don't limit map search result to address types as that hid
   otherwise valid search results.
+- Bug fix: allow location updates to PNG files again. Whatever limitation
+  that caused support to be removed in 2020 no longer applies.
 
 ## GeoTag 5.3
 
