@@ -29,8 +29,8 @@ version 4.15.
 - Bug fix: Apply search results locations to any selected images and zoom
   into the location when necessary.
 - Bug fix: Don't attempt to update the GPS timestamp when the image does
-  not have timestamp.
-- Bug fix: Don't limit map search result to address types as that hided
+  not have timestamps.
+- Bug fix: Don't limit map search result to address types as that hid
   otherwise valid search results.
 
 ## GeoTag 5.3
