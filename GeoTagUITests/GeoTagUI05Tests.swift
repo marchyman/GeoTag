@@ -27,6 +27,11 @@ final class GeoTagUI05Tests: XCTestCase {
         if let imagePath = ProcessInfo.processInfo.environment["ImagePath"] {
             testImageFolder = imagePath
         }
+
+        // make sure disabled files are hidden at start of test
+        if app.menuItems["Hide Disabled Files"].exists {
+            app.typeKey("d", modifierFlags: [.command])
+        }
     }
 
     override func tearDown() {
@@ -211,7 +216,7 @@ final class GeoTagUI05Tests: XCTestCase {
         XCTAssert(newRow.staticTexts["38° 30' 0.00\" N"].exists)
     }
 
-    let allFileCount = 17
+    let allFileCount = 18
     let jpgFileCount = 8
     let fuzzyFileCount = 6
 
