@@ -16,13 +16,16 @@ GeoTag 5.2+ requires macOS Sonoma or later.  Use GeoTag 5.1 if running on
 macOS Ventura.  Those running earlier versions of macOS can use GeoTag
 version 4.15.
 
-## WIP
+## GeoTag 5.3.1
 
 ### Updates
 
 - Hitting the return key after entering text in the map search field will
   automatically select the first search result and position the map at
   that location.
+
+### Bug fixes
+
 - Bug fix: locations selected by clicking on map are applied to all selected
   images, not only the most selected item.
 - Bug fix: recenter map when pasting lat/lon into selected item
@@ -35,40 +38,7 @@ version 4.15.
 - Bug fix: allow location updates to PNG files again. Whatever limitation
   that caused support to be removed in 2020 no longer applies.
 
-## GeoTag 5.3
-
-### Updates
-
-- Images can be selected from your Photos Library.  Timestamps and locations
-  can be changed and "written" back to the library. The original file is not
-  modified. No backups are made.
-- Map pins can not be dragged. Click on the desired location to move a pin.
-- Copied/Cut coordinates are now in the same format as selected in GeoTag
-  settings.
-- Map configuration options are now in a map context (right click) menu.
-- At an appropriate zoom level you are given the option to use a 3D map
-  representation.  Look for the "3D" button near the upper right corner of
-  the map.
-- The last 10 map searches are saved across GeoTag runs.
-- Updated app icon to match current guidelines re size and rounded corners
-- You can "fuzzy" search for images in the table by name.
-- Copy and paste format changed: the coordinate separator is now ", ".
-  A separator of "| " is also accepted for backward compatibility.
-  Example (lat, lon, elevation): 38.530196, -123.214981, 466.38
-  Elevation is optional.
-- Bug Fix: cancelling a search no longer looks up whatever happended to
-  be typed into the search bar.
-- Bug Fix: Changing the map style no longer repositions the map.
-- Bug Fix: Coordinate format changes take effect immediately in the image table.
-- Bug Fix: Data in XMP sidecar files was not read unless the XMP file was in
-  a folder that was opened or the XMP file itself was explicity opened.
-  Note: xmp files can no longer be selected to open.
-- Bug Fix: Duplicate image processing does more than give a warning.
-- Bug Fix: extraneous map centering removed
-- Bug Fix: Time zone handling when adjusting for zones with a non-zero number
-  of minutes east of GMT.
-
-### Issues
+### Known Issues
 
 - undo/redo menu items are always enabled, even when there are no undo or
   redo actions that could be performed. The menu titles are also not updated
@@ -82,11 +52,6 @@ version 4.15.
   may off the map view.  In an extreme case only the point of the pin is on
   the map and can not be seen. If you do not see a pin when you expect to
   zoom out slightly.
-- The results of a search are not applied to selected images.
-- When pasting a lat, lon into an image the map is not updated to show the
-  new location.
-- When multiple images are selected clicking on the map only applies the
-  location to the most selected image.
 
 ### See the file named *History* for earlier changes and bug fixes
 

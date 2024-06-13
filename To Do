@@ -1,6 +1,4 @@
 Known bugs are now in the README file
 
-Feature Requests:
-- check for overlap before assigning locations from a track log and warn the
-  user if necessary.
-- Handle location display of video files.  Exiftool does not allow updates.
+Feature requests and bug details (where known) are on github. See
+https://github.com/marchyman/GeoTag/issues

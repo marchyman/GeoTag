@@ -1,3 +1,39 @@
+## 5.3
+
+### Updates
+
+- Images can be selected from your Photos Library.  Timestamps and locations
+  can be changed and "written" back to the library. The original file is not
+  modified. No backups are made.
+- Map pins can not be dragged. Click on the desired location to move a pin.
+- Copied/Cut coordinates are now in the same format as selected in GeoTag
+  settings.
+- Map configuration options are now in a map context (right click) menu.
+- At an appropriate zoom level you are given the option to use a 3D map
+  representation.  Look for the "3D" button near the upper right corner of
+  the map.
+- The last 10 map searches are saved across GeoTag runs.
+- Updated app icon to match current guidelines re size and rounded corners
+- You can "fuzzy" search for images in the table by name.
+- Copy and paste format changed: the coordinate separator is now ", ".
+  A separator of "| " is also accepted for backward compatibility.
+  Example (lat, lon, elevation): 38.530196, -123.214981, 466.38
+  Elevation is optional.
+
+### Bug Fixes
+
+- Bug Fix: cancelling a search no longer looks up whatever happended to
+  be typed into the search bar.
+- Bug Fix: Changing the map style no longer repositions the map.
+- Bug Fix: Coordinate format changes take effect immediately in the image table.
+- Bug Fix: Data in XMP sidecar files was not read unless the XMP file was in
+  a folder that was opened or the XMP file itself was explicity opened.
+  Note: xmp files can no longer be selected to open.
+- Bug Fix: Duplicate image processing does more than give a warning.
+- Bug Fix: extraneous map centering removed
+- Bug Fix: Time zone handling when adjusting for zones with a non-zero number
+  of minutes east of GMT.
+
 ## 5.2
 
 ### Updates
@@ -22,19 +58,6 @@
 * Exiting full screen mode no longer leaves the image and map panes out
   of the window.
 * ExifTool version 12.77
-
-### Known bugs
-
-* Clicking on the cancel (x) in the map search field looks up a position
-  matching the current content before clearing the content.  No lookup
-  should occur.
-* If you select an image that has a location and them pan the map to some
-  other locations, changing the map style causes the map to re-center around
-  the pin if the pin is off screen. If the pin is on screen the map viewport
-  doesn’t change.
-* Sometimes ⌘Z appears to do nothing, requiring a second invocation to
-  perform the undo action.
-* paste sometimes not enabled after cut. Can Not reproduce on demand.
 
 ## 5.1
 
