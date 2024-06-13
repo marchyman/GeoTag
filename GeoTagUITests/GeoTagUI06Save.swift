@@ -55,7 +55,8 @@ final class GeoTagUI06Save: XCTestCase {
         ("IMG_7158.CR2*", "2015:11:12 13:06:56", "38° 31' 15.88\" N", "123° 12' 1.24\" W"),
         ("L1000038.DNG", "2015:11:12 09:41:11", "38° 16' 10.27\" N", "122° 40' 15.12\" W"),
         ("P1000685.JPG", "2015:11:12 13:02:28", "38° 31' 45.91\" N", "123° 12' 52.03\" W"),
-        ("P1000686.JPG", "1980:02:01 12:00:00", "", "")
+        ("P1000686.JPG", "1980:02:01 12:00:00", "", ""),
+        ("Screenshot.png", "", "38° 30' 0.00\" N", "123° 27' 21.60\" W")
     ]
     // swiftlint: enable large_tuple
 
@@ -64,6 +65,7 @@ final class GeoTagUI06Save: XCTestCase {
         openTrack()
         applyTrackLocations()
         adjustImageTime()
+        adjustImageLocation()
         verifyResults()
         saveWithBadBackupFolder()
         setBackupFolder()
@@ -130,19 +132,57 @@ final class GeoTagUI06Save: XCTestCase {
         app.buttons["Toggle Inspector"].firstMatch.click()
     }
 
+    func adjustImageLocation() {
+        // modify the location of the PNG file
+        let row = app.outlineRows.element(boundBy: 4)
+        row.staticTexts.firstMatch.click()
+        row.staticTexts.firstMatch.rightClick()
+        let menu = app.windows.firstMatch
+            .groups.firstMatch
+            .splitGroups.firstMatch
+            .groups.firstMatch
+            .menus.firstMatch
+        menu.menuItems["Edit…"].click()
+        let inspector = app
+            .windows.firstMatch
+            .groups.firstMatch
+            .splitGroups.firstMatch
+            .groups.element(boundBy: 1)
+        XCTAssert(inspector.waitForExistence(timeout: 1))
+        XCTAssert(inspector.staticTexts["Date and Time"].exists)
+        XCTAssert(inspector.staticTexts["Location"].exists)
+        let lat = inspector.textFields.firstMatch
+        lat.click()
+        lat.typeKey("a", modifierFlags: [.command])
+        lat.typeText("38.5")
+        lat.typeKey(.return, modifierFlags: [])
+        let lon = inspector.textFields.element(boundBy: 1)
+        lon.click()
+        lon.typeKey("a", modifierFlags: [.command])
+        lon.typeText("-123.456")
+        lon.typeKey(.return, modifierFlags: [])
+        app.buttons["Toggle Inspector"].firstMatch.click()
+    }
     func verifyResults() {
         for ix in 0 ..< results.count {
+            // all elements have a name
             XCTAssert(app.outlineRows.element(boundBy: ix)
                 .staticTexts[results[ix].0].exists)
-            XCTAssert(app.outlineRows.element(boundBy: ix)
-                .staticTexts[results[ix].1].exists)
-            if ix == results.count - 1 {
-                break
+            // skip elements without a time
+            if results[ix].1 != "" {
+                XCTAssert(app.outlineRows.element(boundBy: ix)
+                    .staticTexts[results[ix].1].exists)
             }
-            XCTAssert(app.outlineRows.element(boundBy: ix)
-                .staticTexts[results[ix].2].exists)
-            XCTAssert(app.outlineRows.element(boundBy: ix)
-                .staticTexts[results[ix].3].exists)
+            // skip elements without a latitude
+            if results[ix].2 != "" {
+                XCTAssert(app.outlineRows.element(boundBy: ix)
+                    .staticTexts[results[ix].2].exists)
+            }
+            // skip elements without a longitude
+            if results[ix].3 != "" {
+                XCTAssert(app.outlineRows.element(boundBy: ix)
+                    .staticTexts[results[ix].3].exists)
+            }
         }
     }
 

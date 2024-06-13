@@ -28,8 +28,6 @@ struct Exiftool {
 
     // File Type codes for the file types that exiftool can write
     //
-    // notes: png files are read/writable by exiftool, but macOS can not
-    // read the resulting metadata.  Remove it from the table.
     // Last updated to match ExifTool version 12.30
     let writableTypes: Set = [
         "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
@@ -37,7 +35,7 @@ struct Exiftool {
         "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
         "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
         "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
-        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", // "PNG",
+        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", "PNG",
         "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
         "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
 
@@ -122,9 +120,8 @@ extension Exiftool {
             exiftool.arguments! += ["-FileModifyDate<DateTimeOriginal"]
         }
 
-        if updateGPSTimestamps {
-            // calculate the gps timestamp
-            let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone)
+        if updateGPSTimestamps,
+           let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone) {
 
             // args vary depending upon saving to an image file or a GPX file
             if usingSidecar {
@@ -155,11 +152,11 @@ extension Exiftool {
     }
 
     // convert the dateTimeCreated string to a string with time zone to
-    // update GPS timestamp fields.  Return an empty string if there is
+    // update GPS timestamp fields.  Return nil if there is
     // no timestamp or formatting failed.
 
     func gpsTimestamp(for image: ImageModel,
-                      in timeZone: TimeZone?) -> String {
+                      in timeZone: TimeZone?) -> String? {
         if let dateTime = image.dateTimeCreated {
             dateFormatter.dateFormat = ImageModel.dateFormat
             dateFormatter.timeZone = timeZone
@@ -169,7 +166,7 @@ extension Exiftool {
                 return dateFormatter.string(from: date) + "Z"
             }
         }
-        return ""
+        return nil
     }
 
     /// Check if exiftool supports writing to a type of file
