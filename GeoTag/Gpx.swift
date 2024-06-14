@@ -9,11 +9,42 @@ import Foundation
 
 // GPX file processing
 //
-// An instance of a Gpx is created whenever a gpx file is opened.  The file is
-// parsed and the instance fully populated with Track information at that time.
-// Once the instance is fully populated it is never changed.
+// A GPX file may contain Tracks.  Tracks are made up of one or more
+// segments.  A segment is made up of points. Track points contain
+// (at least) a latitude, longitude, and timestamp
 
-final class Gpx: NSObject {
+struct Track {
+    var segments = [Segment]()
+}
+
+struct Segment {
+    var points = [Point]()
+}
+
+struct Point: Equatable {
+    let lat: Double
+    let lon: Double
+    var ele: Double?
+    var time: String
+    var timeFromEpoch: TimeInterval
+}
+
+// An instance of a GpxTrackLog is created by opening and parsing a GPX file.
+// once the GpxTrackLot is created it is never modified.
+
+struct GpxTrackLog: Sendable {
+    var tracks = [Track]()
+
+    init(contentsOf url: URL) throws {
+        let gpxFile = try Gpx(contentsOf: url)
+        tracks = try gpxFile.parse()
+    }
+}
+
+// A private class used to parse a GPX file. The parse method returns an
+// array of parsed tracks assuming no errors.
+
+private class Gpx: NSObject {
     // GPX Parsing errors
     enum GpxParseError: Error {
         case gpxOpenError
@@ -32,29 +63,10 @@ final class Gpx: NSObject {
         case error      // bad GPX file
     }
 
-    /// A track consists of one or more track segments
-    struct Track {
-        var segments = [Segment]()
-    }
-
-    /// A track segment consists of one or more track points
-    struct Segment {
-        var points = [Point]()
-    }
-
     /// date formater for track point timestamps.
-    static let pointTimeFormat = ISO8601DateFormatter()
+    nonisolated(unsafe) static let pointTimeFormat = ISO8601DateFormatter()
 
-    /// Track points contain (at least) a latitude, longitude, and timestamp
-    struct Point: Equatable {
-        let lat: Double
-        let lon: Double
-        var ele: Double?
-        var time: String
-        var timeFromEpoch: TimeInterval
-    }
-
-    var parser: XMLParser
+    let parser: XMLParser
     var tracks = [Track]()
     var parseState = ParseState.none
 
@@ -68,7 +80,32 @@ final class Gpx: NSObject {
     }
 }
 
-// computed variables to access/update tracks, segments, and points.
+// GPX parse function.  The XML Parser and parse delegate do all of
+// the work.
+
+extension Gpx {
+    func parse() throws -> [Track] {
+        if parser.parse() && parseState != .error {
+            var segments = 0
+            var points = 0
+            for track in tracks {
+                segments += track.segments.count
+                for segment in track.segments {
+                    points += segment.points.count
+                }
+            }
+            if points == 0 {
+                throw GpxParseError.gpxNoPoints
+            }
+        } else {
+            throw GpxParseError.gpxParsingError
+        }
+        return tracks
+    }
+}
+
+// computed variables to access/update tracks, segments, and points
+// when parsing a GPX file.
 
 extension Gpx {
 
@@ -106,29 +143,6 @@ extension Gpx {
                 let segmentIx = tracks[trackIx].segments.count - 1
                 tracks[trackIx].segments[segmentIx].points.append(newValue!)
             }
-        }
-    }
-}
-
-// XML parsing
-
-extension Gpx {
-
-    func parse() throws {
-        if parser.parse() && parseState != .error {
-            var segments = 0
-            var points = 0
-            for track in tracks {
-                segments += track.segments.count
-                for segment in track.segments {
-                    points += segment.points.count
-                }
-            }
-            if points == 0 {
-                throw GpxParseError.gpxNoPoints
-            }
-        } else {
-            throw GpxParseError.gpxParsingError
         }
     }
 }

@@ -57,7 +57,7 @@ extension AppState {
             let updatedTracks = await tracks(for: gpxURLs)
             for (path, track) in updatedTracks {
                 if let track {
-                    self.updateTracks(gpx: track)
+                    self.updateTracks(trackLog: track)
                     self.gpxGoodFileNames.append(path)
                     self.gpxTracks.append(track)
                 } else {
@@ -102,23 +102,22 @@ extension AppState {
     }
 
     // process gpx track files
-    private func tracks(for gpxURLs: [URL]) async -> [(String, Gpx?)] {
-        var tracks: [(String, Gpx?)] = []
+    private func tracks(for gpxURLs: [URL]) async -> [(String, GpxTrackLog?)] {
+        var tracks: [(String, GpxTrackLog?)] = []
 
-        await withTaskGroup(of: (String, Gpx?).self ) { group in
+        await withTaskGroup(of: (String, GpxTrackLog?).self ) { group in
             for url in gpxURLs {
                 group.addTask {
                     do {
-                        let gpx = try Gpx(contentsOf: url)
-                        try gpx.parse()
-                        return (url.path, gpx)
+                        let trackLog = try GpxTrackLog(contentsOf: url)
+                        return (url.path, trackLog)
                     } catch {
                         return (url.path, nil)
                     }
                 }
             }
-            for await (path, gpx) in group {
-                tracks.append((path, gpx))
+            for await (path, trackLog) in group {
+                tracks.append((path, trackLog))
             }
         }
         return tracks

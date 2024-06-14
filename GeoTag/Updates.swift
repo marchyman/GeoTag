@@ -64,9 +64,9 @@ extension AppState {
 
     // Add track overlays to the map.  This is not undoable.
 
-    func updateTracks(gpx: Gpx) {
-        guard gpx.tracks.count > 0 else { return}
-        for track in gpx.tracks {
+    func updateTracks(trackLog: GpxTrackLog) {
+        guard trackLog.tracks.count > 0 else { return}
+        for track in trackLog.tracks {
             for segment in track.segments {
                 let trackCoords = segment.points.map {
                     CLLocationCoordinate2D(latitude: $0.lat,

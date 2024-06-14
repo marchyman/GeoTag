@@ -70,7 +70,7 @@ final class AppState {
     var tvm: TableViewModel = TableViewModel()
 
     // Tracks displayed on map
-    var gpxTracks: [Gpx] = []
+    var gpxTracks: [GpxTrackLog] = []
 
     // GPX File Loading sheet information
     var gpxGoodFileNames: [String] = []

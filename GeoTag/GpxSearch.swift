@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Gpx {
+extension GpxTrackLog {
 
     /// Search for the last point in the track log with a timestamp <= the
     /// timestamp of a given image.
