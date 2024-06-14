@@ -88,7 +88,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '4.74';
+$VERSION = '4.77';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -2128,6 +2128,13 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
             TagTable => 'Image::ExifTool::Canon::RawBurstInfo',
         }
     },
+    0x4059 => { #forum16111
+        Name => 'LevelInfo',
+        SubDirectory => {
+            Validate => 'Image::ExifTool::Canon::Validate($dirData,$subdirStart,$size)',
+            TagTable => 'Image::ExifTool::Canon::LevelInfo',
+        }
+    },
 );
 
 #..............................................................................
@@ -2590,6 +2597,14 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
     },
     # 47 - related to aspect ratio: 100=4:3,70=1:1/16:9,90=3:2,60=4:5 (PH G12)
     #      (roughly image area in percent - 4:3=100%,1:1/16:9=75%,3:2=89%,4:5=60%)
+    # 48 - 3 for CR2/CR3, 4 or 7 for JPG, -1 for edited JPG (see forum16127)
+    51 => { #forum16036 (EOS R models)
+        Name => 'Clarity',
+        PrintConv => {
+            OTHER => sub { shift },
+            0x7fff => 'n/a',
+        },
+    },
 );
 
 # focal length information (MakerNotes tag 0x02)
@@ -4715,12 +4730,15 @@ my %ciMaxFocal = (
     FIRST_ENTRY => 0,
     PRIORITY => 0,
     GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
-    NOTES => 'CameraInfo tags for the EOS R6.',
+    NOTES => 'CameraInfo tags for the EOS R5 and R6.',
+    # (see forum16111 for more notes on these tags)
+    # 0x0a5d - some sort of sequence number starting from 1 (ref forum16111)
     0x0af1 => { #forum15210/15579
         Name => 'ShutterCount',
         Format => 'int32u',
         Notes => 'includes electronic + mechanical shutter',
     },
+    # 0x0bb7 - counts down during focus stack (ref forum16111)
 );
 
 # ref https://exiftool.org/forum/index.php?topic=15356.0
@@ -7031,7 +7049,7 @@ my %ciMaxFocal = (
         },
     },
     2 => { #12
-        Name => 'Sharpness',
+        Name => 'Sharpness', # (unsharp mask strength for the EOS R5)
         Notes => 'all models except the 20D and 350D',
         Condition => '$$self{Model} !~ /\b(20D|350D|REBEL XT|Kiss Digital N)\b/',
         Priority => 0,  # (maybe not as reliable as other sharpness values)
@@ -7077,6 +7095,8 @@ my %ciMaxFocal = (
         Name => 'WBShiftGM',
         Notes => 'positive is a shift toward green',
     },
+    14 => 'UnsharpMaskFineness', #forum16036
+    15 => 'UnsharpMaskThreshold', #forum16036
 );
 
 # Color balance information (MakerNotes tag 0xa9) (ref PH)
@@ -8759,7 +8779,7 @@ my %ciMaxFocal = (
         Name => 'DigitalLensOptimizer',
         PrintConv => {
             0 => 'Off',
-            1 => 'Stanard',
+            1 => 'Standard',
             2 => 'High',
         },
     },
@@ -8992,20 +9012,32 @@ my %filterConv = (
              4 => 'Focus High Priority',
         },
     },
-    7 => { #52
+    7 => [{ #forum16068
         Name => 'USMLensElectronicMF',
+        Condition => '$$self{Model} =~ /EOS R\d/',
+        Notes => 'EOS R models',
+        PrintConv => {
+             0 => 'Disable After One-Shot',
+             1 => 'One-Shot -> Enabled',
+             2 => 'One-Shot -> Enabled (magnify)',
+             3 => 'Disable in AF Mode',
+        },
+    },{ #52
+        Name => 'USMLensElectronicMF',
+        Notes => 'Other models',
         PrintConv => {
              0 => 'Enable After AF',
              1 => 'Disable After AF',
              2 => 'Disable in AF Mode',
         },
-    },
+    }],
     8 => { #52
         Name => 'AFAssistBeam',
         PrintConv => {
              0 => 'Enable',
              1 => 'Disable',
              2 => 'IR AF Assist Beam Only',
+             3 => 'LED AF Assist Beam Only', #forum16068
         },
     },
     9 => { #52
@@ -9104,6 +9136,19 @@ my %filterConv = (
              2 => 'Auto', #PH (1DXmkII)
         },
     },
+    20 => { #forum16068
+        Name => 'SubjectToDetect',
+        PrintConv => {
+            0 => 'None',
+            1 => 'People',
+            2 => 'Animals',
+            3 => 'Vehicles',
+        },
+    },
+    24 => { #forum16068
+        Name => 'EyeDetection',
+        PrintConv => \%offOn,
+    },
 );
 
 # RAW burst mode info (MakerNotes tag 0x403f) (ref 25)
@@ -9114,6 +9159,48 @@ my %filterConv = (
     FIRST_ENTRY => 1,
     1 => 'RawBurstImageNum',
     2 => 'RawBurstImageCount',
+);
+
+# level information (ref forum16111, EOS R5)
+%Image::ExifTool::Canon::LevelInfo = (
+    %binaryDataAttrs,
+    GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
+    FORMAT => 'int32s',
+    FIRST_ENTRY => 1,
+    4 => {
+        Name => 'RollAngle',
+        Notes => 'converted to degrees of clockwise camera rotation',
+        ValueConv => '$val > 1800 and $val -= 3600; -$val / 10',
+        ValueConvInv => '$val > 0 and $val -= 360; int(-$val * 10 + 0.5)',
+    },
+    5 => {
+        Name => 'PitchAngle',
+        Notes => 'converted to degrees of upward camera tilt',
+        ValueConv => '$val > 1800 and $val -= 3600; $val / 10',
+        ValueConvInv => '$val < 0 and $val += 360; int($val * 10 + 0.5)',
+    },
+    7 => {
+        Name => 'FocalLength',
+        ValueConv => '$val / 10',
+        ValueConvInv => 'int($val * 10 + 0.5)',
+        PrintConv => '"$val mm"',
+        PrintConvInv => '$val=~s/\s*mm//;$val',
+    },
+    8 => {
+        Name => 'MinFocalLength',
+        ValueConv => '$val / 10',
+        ValueConvInv => 'int($val * 10 + 0.5)',
+        PrintConv => '"$val mm"',
+        PrintConvInv => '$val=~s/\s*mm//;$val',
+    },
+    9 => {
+        Name => 'MaxFocalLength',
+        ValueConv => '$val / 10',
+        ValueConvInv => 'int($val * 10 + 0.5)',
+        PrintConv => '"$val mm"',
+        PrintConvInv => '$val=~s/\s*mm//;$val',
+    },
+
 );
 
 # Canon UUID atoms (ref PH, SX280)

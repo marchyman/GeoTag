@@ -23,6 +23,7 @@ version 4.15.
 - Hitting the return key after entering text in the map search field will
   automatically select the first search result and position the map at
   that location.
+- ExifTool version 12.87
 
 ### Bug fixes
 

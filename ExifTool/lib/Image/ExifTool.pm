@@ -27,9 +27,9 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %noWriteFile %magicNumber @langs $defaultLang %langName %charsetName
             %mimeType $swapBytes $swapWords $currentByteOrder %unpackStd
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
-            %static_vars);
+            %static_vars $advFmtSelf);
 
-$VERSION = '12.84';
+$VERSION = '12.87';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -145,17 +145,18 @@ sub ReadValue($$$;$$$);
     SigmaRaw JPEG GIMP Jpeg2000 GIF BMP BMP::OS2 BMP::Extra BPG BPG::Extensions
     WPG ICO PICT PNG MNG FLIF DjVu DPX OpenEXR ZISRAW MRC LIF MRC::FEI12 MIFF
     PCX PGF PSP PhotoCD Radiance Other::PFM PDF PostScript Photoshop::Header
-    Photoshop::Layers Photoshop::ImageData FujiFilm::RAF FujiFilm::IFD
-    FujiFilm::MRAW Samsung::Trailer Sony::SRF2 Sony::SR2SubIFD Sony::PMP ITC ID3
-    ID3::Lyrics3 FLAC AAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible
-    MPC MPEG::Audio MPEG::Video MPEG::Xing M2TS QuickTime QuickTime::ImageFile
-    QuickTime::Stream QuickTime::Tags360Fly Matroska Matroska::StdTag MOI MXF DV
-    Flash Flash::FLV Real::Media Real::Audio Real::Metafile Red RIFF AIFF ASF
-    WTV DICOM FITS XISF MIE JSON HTML XMP::SVG Palm Palm::MOBI Palm::EXTH
-    Torrent EXE EXE::PEVersion EXE::PEString EXE::MachO EXE::PEF EXE::ELF
-    EXE::AR EXE::CHM LNK Font VCard Text VCard::VCalendar VCard::VNote RSRC
-    Rawzor ZIP ZIP::GZIP ZIP::RAR ZIP::RAR5 RTF OOXML iWork ISO FLIR::AFF
-    FLIR::FPF MacOS MacOS::MDItem FlashPix::DocTable
+    Photoshop::Layers Photoshop::ImageData FujiFilm::RAFHeader FujiFilm::RAF
+    FujiFilm::IFD FujiFilm::MRAW Samsung::Trailer Sony::SRF2 Sony::SR2SubIFD
+    Sony::PMP ITC ID3 ID3::Lyrics3 FLAC AAC Ogg Vorbis APE APE::NewHeader
+    APE::OldHeader Audible MPC MPEG::Audio MPEG::Video MPEG::Xing M2TS QuickTime
+    QuickTime::ImageFile QuickTime::Stream QuickTime::Tags360Fly Matroska
+    Matroska::StdTag MOI MXF DV Flash Flash::FLV Real::Media Real::Audio
+    Real::Metafile Red RIFF AIFF ASF WTV DICOM FITS XISF MIE JSON HTML XMP::SVG
+    Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion EXE::PEString
+    EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard Text
+    VCard::VCalendar VCard::VNote RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR ZIP::RAR5
+    RTF OOXML iWork ISO FLIR::AFF FLIR::FPF MacOS MacOS::MDItem
+    FlashPix::DocTable
 );
 
 # alphabetical list of current Lang modules
@@ -198,7 +199,7 @@ $defaultLang = 'en';    # default language
                 RAR 7Z BZ2 CZI TAR EXE EXR HDR CHM LNK WMF AVC DEX DPX RAW Font
                 JUMBF RSRC M2TS MacOS PHP PCX DCX DWF DWG DXF WTV Torrent VCard
                 LRI R3D AA PDB PFM2 MRC LIF JXL MOI ISO ALIAS JSON MP3 DICOM PCD
-                ICO TXT AAC);
+                NKA ICO TXT AAC);
 
 # file types that we can write (edit)
 my @writeTypes = qw(JPEG TIFF GIF CRW MRW ORF RAF RAW PNG MIE PSD XMP PPM EPS
@@ -210,7 +211,7 @@ my %writeTypes; # lookup for writable file types (hash filled if required)
 # (See here for 3FR reason: https://exiftool.org/forum/index.php?msg=17570)
 %noWriteFile = (
     TIFF => [ qw(3FR DCR K25 KDC SRF) ],
-    XMP  => [ qw(SVG INX) ],
+    XMP  => [ qw(SVG INX NXD) ],
     JP2  => [ qw(J2C JPC) ],
     MOV  => [ qw(INSV) ],
 );
@@ -426,10 +427,12 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
   # NDPI => ['TIFF', 'Hamamatsu NanoZoomer Digital Pathology Image'],
     NEF  => ['TIFF', 'Nikon (RAW) Electronic Format'],
     NEWER => 'COS',
+    NKA  => ['NKA',  'Nikon NX Studio Settings'],
     NKSC => ['XMP',  'Nikon Sidecar'],
     NMBTEMPLATE => ['ZIP','Apple Numbers Template'],
     NRW  => ['TIFF', 'Nikon RAW (2)'],
     NUMBERS => ['ZIP','Apple Numbers spreadsheet'],
+    NXD  => ['XMP',  'Nikon NX-D Settings'],
     O    => ['EXE',  'Relocatable Object'],
     ODB  => ['ZIP',  'Open Document Database'],
     ODC  => ['ZIP',  'Open Document Chart'],
@@ -869,6 +872,7 @@ my %moduleName = (
     MKV  => 'Matroska',
     MP3  => 'ID3',
     MRW  => 'MinoltaRaw',
+    NKA  => 'Nikon',
     OGG  => 'Ogg',
     ORF  => 'Olympus',
     PDB  => 'Palm',
@@ -972,6 +976,7 @@ $testLen = 1024;    # number of bytes to read when testing for magic number
     MRC  => '.{64}[\x01\x02\x03]\0\0\0[\x01\x02\x03]\0\0\0[\x01\x02\x03]\0\0\0.{132}MAP[\0 ](\x44\x44|\x44\x41|\x11\x11)\0\0',
     MRW  => '\0MR[MI]',
     MXF  => '\x06\x0e\x2b\x34\x02\x05\x01\x01\x0d\x01\x02', # (not tested if extension recognized)
+    NKA  => 'NIKONADJ',
     OGG  => '(OggS|ID3)',
     ORF  => '(II|MM)',
   # PCD  =>  signature is at byte 2048
@@ -1269,6 +1274,7 @@ my %systemTagsNotes = (
         },
         Writable => 1,
         WritePseudo => 1,
+        Priority => 2,
         DelCheck => q{"Can't delete"},
         Protected => 1,
         RawConv => '$self->ConvertFileName($val)',
@@ -1281,6 +1287,7 @@ my %systemTagsNotes = (
         WritePseudo => 1,
         DelCheck => q{"Can't delete"},
         Protected => 1,
+        Priority => 2,
         Notes => q{
             may be written with a full path name to set FileName and Directory in one
             operation.  This is such a powerful feature that a TestName tag is provided
@@ -1293,6 +1300,7 @@ my %systemTagsNotes = (
     },
     BaseName => {
         Groups => { 1 => 'System', 2 => 'Other' },
+        Priority => 2,
         Notes => q{
             file name without extension. Not generated unless specifically requested or
             the API L<RequestAll|../ExifTool.html#RequestAll> option is set
@@ -1362,6 +1370,7 @@ my %systemTagsNotes = (
     },
     FileType => {
         Groups => { 2 => 'Other' },
+        Priority => 2,
         Notes => q{
             a short description of the file type.  For many file types this is the just
             the uppercase file extension
@@ -1807,6 +1816,7 @@ my %systemTagsNotes = (
         PrintConv => 'sprintf("%.3g s", $val)',
     },
     RAFVersion => { Notes => 'RAF file version number' },
+    RAFCompression => { PrintConv => { 0 => 'Uncompressed', 2 => 'Compressed' } }, # 1 maybe lossy?
     JPEGDigest => {
         Notes => q{
             an MD5 digest of the JPEG quantization tables is combined with the component
@@ -2031,6 +2041,8 @@ my %systemTagsNotes = (
             my $lat = 1;
             foreach (@args) {
                 next unless /^[-+]?\d/;
+                my @reals = /\.\d+/g;
+                next if @reals > 1; # (allow floating "lat lon" format)
                 require Image::ExifTool::GPS;
                 $_ = Image::ExifTool::GPS::ToDegrees($_, 1, $lat ? 'lat' : 'lon');
                 $lat ^= 1;
@@ -2050,7 +2062,8 @@ my %systemTagsNotes = (
     GeolocationCountry  => { %geoInfo, Notes => 'geolocation country name', ValueConv => '$self->Decode($val,"UTF8")' },
     GeolocationCountryCode=>{%geoInfo, Notes => 'geolocation country code' },
     GeolocationTimeZone => { %geoInfo, Notes => 'geolocation time zone ID' },
-    GeolocationFeatureCode=>{%geoInfo, Notes => 'feature code, see L<http://www.geonames.org/export/codes.html#P>' },
+    GeolocationFeatureCode=>{%geoInfo, Notes => 'geolocation feature code, see L<http://www.geonames.org/export/codes.html#P>' },
+    GeolocationFeatureType=>{%geoInfo, Notes => 'geolocation feature type' },
     GeolocationPopulation=>{ %geoInfo, Notes => 'city population rounded to 2 significant digits' },
     GeolocationDistance => { %geoInfo, Notes => 'distance in km from current GPS to city', PrintConv => '"$val km"' },
     GeolocationPosition => { %geoInfo, Notes => 'approximate GPS coordinates of city',
@@ -2796,6 +2809,7 @@ sub ExtractInfo($;@)
             # (note that Windows directories will still show the
             #  daylight savings time bug -- should fix this sometime)
             @stat = stat $$raf{FILE_PT};
+            $stat[7] = undef if -p $$raf{FILE_PT};  # (pipe buffer size isn't useful)
         }
         my $fileSize = $stat[7];
         $self->FoundTag('FileSize', $stat[7]) if defined $stat[7];
@@ -4144,7 +4158,8 @@ sub GetFileType(;$$)
 #------------------------------------------------------------------------------
 # Return true if we can write the specified file type
 # Inputs: 0) file name or ext
-# Returns: true if writable, 0 if not writable, undef if unrecognized
+# Returns: true if writable, 0 if not writable, '' if not writable due to extension,
+#          undef if unrecognized
 sub CanWrite($)
 {
     local $_;
@@ -4153,7 +4168,7 @@ sub CanWrite($)
     if ($noWriteFile{$type}) {
         # can't write TIFF files with certain extensions (various RAW formats)
         my $ext = GetFileExtension($file) || uc($file);
-        return grep(/^$ext$/, @{$noWriteFile{$type}}) ? 0 : 1 if $ext;
+        return grep(/^$ext$/, @{$noWriteFile{$type}}) ? '' : 1 if $ext;
     }
     if ($onlyWriteFile{$type}) {
         my $ext = GetFileExtension($file) || uc($file);
@@ -4387,6 +4402,7 @@ sub DoneExtract($)
                     $self->FoundTag(GeolocationCountry => $geo[4]) if $geo[4];
                     $self->FoundTag(GeolocationTimeZone => $geo[5]) if $geo[5];
                     $self->FoundTag(GeolocationFeatureCode => $geo[6]);
+                    $self->FoundTag(GeolocationFeatureType => $geo[10]) if $geo[10];
                     $self->FoundTag(GeolocationPopulation => $geo[7]);
                     $self->FoundTag(GeolocationPosition => "$geo[8] $geo[9]");
                     if ($dist) {
@@ -6849,11 +6865,12 @@ sub DirStart($$;$)
 #------------------------------------------------------------------------------
 # Extract metadata from a jpg image
 # Inputs: 0) ExifTool object reference, 1) dirInfo ref with RAF set
+#         2) tag table ref to process JPEG-like metadata
 # Returns: 1 on success, 0 if this wasn't a valid JPEG file
-sub ProcessJPEG($$)
+sub ProcessJPEG($$;$)
 {
     local $_;
-    my ($self, $dirInfo) = @_;
+    my ($self, $dirInfo, $optionalTagTable) = @_;
     my $options = $$self{OPTIONS};
     my $verbose = $$options{Verbose};
     my $out = $$options{TextOut};
@@ -6861,20 +6878,29 @@ sub ProcessJPEG($$)
     my $raf = $$dirInfo{RAF};
     my $req = $$self{REQ_TAG_LOOKUP};
     my $htmlDump = $$self{HTML_DUMP};
-    my %dumpParms = ( Out => $out );
-    my ($ch, $s, $length, $hash, $hashsize);
+    my %dumpParms = ( Out => $out, Prefix => $$self{INDENT} );
+    my ($ch, $s, $length, $hash, $hashsize, $indent);
     my ($success, $wantTrailer, $trailInfo, $foundSOS, $gotSize, %jumbfChunk);
     my (@iccChunk, $iccChunkCount, $iccChunksTotal, @flirChunk, $flirCount, $flirTotal);
     my ($preview, $scalado, @dqt, $subSampling, $dumpEnd, %extendedXMP);
 
+    ($indent = $$self{INDENT}) =~ s/  $//;
+    unless ($raf) {
+        $raf = File::RandomAccess->new($$dirInfo{DataPt});
+        $self->VerboseDir('JPEG', undef, length(${$$dirInfo{DataPt}}));
+    }
     # get pointer to hash object if it exists and we are the top-level JPEG or JP2
     if ($$self{FILE_TYPE} =~ /^(JPEG|JP2)$/ and not $$self{DOC_NUM}) {
         $hash = $$self{ImageDataHash};
         $hashsize = 0;
     }
-
     # check to be sure this is a valid JPG (or J2C, or EXV) file
-    return 0 unless $raf->Read($s, 2) == 2 and $s =~ /^\xff[\xd8\x4f\x01]/;
+    if ($raf->Read($s, 2) == 2 and $s =~ /^\xff[\xd8\x4f\x01]/) {
+        undef $optionalTagTable;
+    } else {
+        return 0 unless $optionalTagTable and $s =~ /^\xff[\xe0-\xef]/;
+        $raf->Seek(-2, 1) or $self->Error('Seek error'), return 1;
+    }
     if ($s eq "\xff\x01") {
         return 0 unless $raf->Read($s, 5) == 5 and $s eq 'Exiv2';
         $$self{FILE_TYPE} = 'EXV';
@@ -6892,7 +6918,7 @@ sub ProcessJPEG($$)
     $$raf{NoBuffer} = 1 if $self->Options('FastScan'); # disable buffering in FastScan mode
 
     $dumpParms{MaxLen} = 128 if $verbose < 4;
-    if ($htmlDump) {
+    if ($htmlDump and not $optionalTagTable) {
         $dumpEnd = $raf->Tell();
         my ($n, $t, $m) = $s eq 'Exiv2' ? (7,'EXV','TEM') : (2,'JPEG','SOI');
         my $pos = $dumpEnd - $n;
@@ -6911,6 +6937,7 @@ sub ProcessJPEG($$)
     Marker: for (;;) {
         # set marker and data pointer for current segment
         my $marker = $nextMarker;
+        last if $marker and $marker < 0;
         my $segDataPt = $nextSegDataPt;
         my $segPos = $nextSegPos;
         my $skipped;
@@ -6919,12 +6946,17 @@ sub ProcessJPEG($$)
 #
 # read ahead to the next segment unless we have reached EOI, SOS or SOD
 #
-        unless ($marker and ($marker==0xd9 or ($marker==0xda and not $wantTrailer and not $hash) or
+        until ($marker and ($marker==0xd9 or ($marker==0xda and not $wantTrailer and not $hash) or
             $marker==0x93))
         {
             # read up to next marker (JPEG markers begin with 0xff)
             my $buff;
-            $raf->ReadLine($buff) or last;
+            unless ($raf->ReadLine($buff)) {
+                last Marker unless $optionalTagTable;
+                $nextMarker = -1;
+                $success = 1;
+                last;
+            }
             $skipped = length($buff) - 1;
             # JPEG markers can be padded with unlimited 0xff's
             for (;;) {
@@ -6936,21 +6968,21 @@ sub ProcessJPEG($$)
             # read segment data if it exists
             if (not defined $markerLenBytes{$nextMarker}) {
                 # read record length word
-                last unless $raf->Read($s, 2) == 2;
+                last Marker unless $raf->Read($s, 2) == 2;
                 my $len = unpack('n',$s);   # get data length
-                last unless defined($len) and $len >= 2;
+                last Marker unless defined($len) and $len >= 2;
                 $nextSegPos = $raf->Tell();
                 $len -= 2;  # subtract size of length word
-                last unless $raf->Read($buff, $len) == $len;
+                last Marker unless $raf->Read($buff, $len) == $len;
                 $nextSegDataPt = \$buff;    # set pointer to our next data
             } elsif ($markerLenBytes{$nextMarker} == 4) {
                 # handle J2C extensions with 4-byte length word
-                last unless $raf->Read($s, 4) == 4;
+                last Marker unless $raf->Read($s, 4) == 4;
                 my $len = unpack('N',$s);   # get data length
-                last unless defined($len) and $len >= 4;
+                last Marker unless defined($len) and $len >= 4;
                 $nextSegPos = $raf->Tell();
                 $len -= 4;  # subtract size of length word
-                last unless $raf->Seek($len, 1);
+                last Marker unless $raf->Seek($len, 1);
             } elsif ($hash and defined $marker and ($marker == 0x00 or $marker == 0xda or
                 ($marker >= 0xd0 and $marker <= 0xd7)))
             {
@@ -6966,7 +6998,8 @@ sub ProcessJPEG($$)
                 $hashsize += $skipped + 2;
             }
             # read second segment too if this was the first
-            next unless defined $marker;
+            next Marker unless defined $marker;
+            last;
         }
         # set some useful variables for the current segment
         my $markerName = JpegMarkerName($marker);
@@ -6986,7 +7019,7 @@ sub ProcessJPEG($$)
         if (($marker & 0xf0) == 0xc0 and ($marker == 0xc0 or $marker & 0x03)) {
             $length = length $$segDataPt;
             if ($verbose) {
-                print $out "JPEG $markerName ($length bytes):\n";
+                print $out "${indent}JPEG $markerName ($length bytes):\n";
                 HexDump($segDataPt, undef, %dumpParms, Addr=>$segPos) if $verbose>2;
             } elsif ($htmlDump) {
                 $self->HDump($segPos-4, $length+4, "[JPEG $markerName]", undef, 0x08);
@@ -7029,7 +7062,7 @@ sub ProcessJPEG($$)
             next;
         } elsif ($marker == 0xd9) {         # EOI
             pop @$path;
-            $verbose and print $out "JPEG EOI\n";
+            $verbose and print $out "${indent}JPEG EOI\n";
             my $pos = $raf->Tell();
             $$self{TrailerStart} = $pos unless $$self{DOC_NUM};
             if ($htmlDump and $dumpEnd) {
@@ -7090,7 +7123,7 @@ sub ProcessJPEG($$)
                             # adjust PreviewImageStart to this location
                             my $actual = $pos + pos($buff) - 4;
                             if ($start and $start ne $actual and $verbose > 1) {
-                                print $out "(Fixed PreviewImage location: $start -> $actual)\n";
+                                print $out "${indent}(Fixed PreviewImage location: $start -> $actual)\n";
                             }
                             # update preview image offsets
                             if ($start) {
@@ -7144,7 +7177,7 @@ sub ProcessJPEG($$)
             pop @$path;
             $foundSOS = 1;
             # all done with meta information unless we have a trailer
-            $verbose and print $out "JPEG SOS\n";
+            $verbose and print $out "${indent}JPEG SOS\n";
             unless ($fast) {
                 $trailInfo = IdentifyTrailer($raf);
                 # process trailer now unless we are doing verbose dump
@@ -7184,7 +7217,7 @@ sub ProcessJPEG($$)
             last;   # all done parsing file
         } elsif ($marker == 0x93) {
             pop @$path;
-            $verbose and print $out "JPEG SOD\n";
+            $verbose and print $out "${indent}JPEG SOD\n";
             $success = 1;
             if ($hash and $$self{FILE_TYPE} eq 'JP2') {
                 my $pos = $raf->Tell();
@@ -7195,7 +7228,7 @@ sub ProcessJPEG($$)
             last;   # all done parsing file
         } elsif (defined $markerLenBytes{$marker}) {
             # handle other stand-alone markers and segments we skipped over
-            $verbose and $marker and print $out "JPEG $markerName\n";
+            $verbose and $marker and print $out "${indent}JPEG $markerName\n";
             next;
         } elsif ($marker == 0xdb and length($$segDataPt) and    # DQT
             # save the DQT data only if JPEGDigest has been requested
@@ -7215,7 +7248,7 @@ sub ProcessJPEG($$)
         $length = length $$segDataPt;
         $appBytes += $length + 4 if ($marker & 0xf0) == 0xe0;  # total size of APP segments
         if ($verbose) {
-            print $out "JPEG $markerName ($length bytes):\n";
+            print $out "${indent}JPEG $markerName ($length bytes):\n";
             if ($verbose > 2) {
                 my %extraParms = ( Addr => $segPos );
                 $extraParms{MaxLen} = 128 if $verbose == 4;
@@ -7373,7 +7406,7 @@ sub ProcessJPEG($$)
                 # some software erroneously writes zeros for the chunk counts)
                 my $chunkNum = Get8u($segDataPt, 6);
                 my $chunksTot = Get8u($segDataPt, 7) + 1; # (note the "+ 1"!)
-                $verbose and printf $out "$$self{INDENT}FLIR chunk %d of %d\n",
+                $verbose and printf $out "${indent}FLIR chunk %d of %d\n",
                                     $chunkNum + 1, $chunksTot;
                 if (defined $flirTotal) {
                     # abort parsing FLIR if the total chunk count is inconsistent
@@ -7438,7 +7471,7 @@ sub ProcessJPEG($$)
                 # some software erroneously writes zeros for the chunk counts)
                 my $chunkNum = Get8u($segDataPt, 12);
                 my $chunksTot = Get8u($segDataPt, 13);
-                $verbose and print $out "$$self{INDENT}ICC_Profile chunk $chunkNum of $chunksTot\n";
+                $verbose and print $out "${indent}ICC_Profile chunk $chunkNum of $chunksTot\n";
                 if (defined $iccChunksTotal) {
                     # abort parsing ICC_Profile if the total chunk count is inconsistent
                     undef $iccChunkCount if $chunksTot != $iccChunksTotal;
@@ -7991,7 +8024,7 @@ sub ProcessJPEG($$)
         }
     }
     # print verbose hash message if necessary
-    print $out "$$self{INDENT}(ImageDataHash: $hashsize bytes of JPEG image data)\n" if $hashsize and $verbose;
+    print $out "${indent}(ImageDataHash: $hashsize bytes of JPEG image data)\n" if $hashsize and $verbose;
     # calculate JPEGDigest if requested
     if (@dqt) {
         require Image::ExifTool::JPEGDigest;

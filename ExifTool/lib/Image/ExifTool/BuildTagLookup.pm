@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.56';
+$VERSION = '3.58';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -98,6 +98,8 @@ my %tweakOrder = (
     GIMP    => 'Microsoft',
     DarwinCore => 'AFCP',
     MWG     => 'Shortcuts',
+    'FujiFilm::RAF' => 'FujiFilm::RAFHeader',
+    'FujiFilm::RAFData' => 'FujiFilm::RAF',
 );
 
 # list of all recognized Format strings
@@ -600,7 +602,8 @@ running ExifTool the old information may be removed permanently using the
     DNG => q{
 The main DNG tags are found in the EXIF table.  The tables below define only
 information found within structures of these main DNG tag values.  See
-L<http://www.adobe.com/products/dng/> for the official DNG specification.
+L<https://helpx.adobe.com/camera-raw/digital-negative.html> for the official
+DNG specification.
 },
     MPEG => q{
 The MPEG format doesn't specify any file-level meta information.  In lieu of
@@ -905,6 +908,9 @@ TagID:  foreach $tagID (@keys) {
                 @infoArray = GetTagInfoList($table,$tagID);
             }
             foreach $tagInfo (@infoArray) {
+                if ($binaryTable and $$tagInfo{Writable} and $$tagInfo{Writable} ne '1') {
+                    warn("$tableName $$tagInfo{Name} Writable should be 1, not $$tagInfo{Writable}\n");
+                }
                 my $name = $$tagInfo{Name};
                 if ($$tagInfo{WritePseudo}) {
                     push @writePseudo, $name;

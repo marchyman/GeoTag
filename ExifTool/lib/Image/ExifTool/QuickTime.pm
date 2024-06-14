@@ -48,7 +48,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.96';
+$VERSION = '2.97';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -238,7 +238,11 @@ my %useExt = ( GLV => 'MP4' );
 
 # information for int32u date/time tags (time zero is Jan 1, 1904)
 my %timeInfo = (
-    Notes => 'converted from UTC to local time if the QuickTimeUTC option is set',
+    Notes => q{
+        converted from UTC to local time if the QuickTimeUTC option is set.  This
+        tag is part of a binary data structure so it may not be deleted -- instead
+        the value is set to zero if the tag is deleted individually
+    },
     Shift => 'Time',
     Writable => 1,
     Permanent => 1,
@@ -502,6 +506,11 @@ my %eeBox2 = (
 
 # image types in AVIF and HEIC files
 my %isImageData = ( av01 => 1, avc1 => 1, hvc1 => 1, lhv1 => 1, hvt1 => 1 );
+
+my %userDefined = (
+    ALBUMARTISTSORT => 'AlbumArtistSort',
+    ASIN => 'ASIN',
+);
 
 # QuickTime atoms
 %Image::ExifTool::QuickTime::Main = (
@@ -2332,6 +2341,14 @@ my %isImageData = ( av01 => 1, avc1 => 1, hvc1 => 1, lhv1 => 1, hvt1 => 1 );
         Binary => 1,
     }],
     # ---- Ricoh ----
+    RICO => { #PH (G900SE)
+        Name => 'RicohInfo',
+        Condition => '$$valPt =~ /^\xff\xe1..Exif\0\0/s',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::JPEG::Main',
+            ProcessProc => \&Image::ExifTool::ProcessJPEG,
+        }
+    },
     RTHU => { #PH (GR)
         Name => 'PreviewImage',
         Groups => { 2 => 'Preview' },
@@ -2929,8 +2946,12 @@ my %isImageData = ( av01 => 1, avc1 => 1, hvc1 => 1, lhv1 => 1, hvt1 => 1 );
         Format => 'int8u',
         Writable => 'int8u',
         Protected => 1,
-        ValueConv => '$val * 90',
-        ValueConvInv => 'int($val / 90 + 0.5)',
+        PrintConv => {
+            0 => 'Horizontal (Normal)',
+            1 => 'Rotate 270 CW',
+            2 => 'Rotate 180',
+            3 => 'Rotate 90 CW',
+        },
     },
     ispe => {
         Name => 'ImageSpatialExtent',
@@ -3425,7 +3446,7 @@ my %isImageData = ( av01 => 1, avc1 => 1, hvc1 => 1, lhv1 => 1, hvt1 => 1 );
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::iTunesInfo' },
     },
     aART => { Name => 'AlbumArtist', Groups => { 2 => 'Author' } },
-    covr => { Name => 'CoverArt',    Groups => { 2 => 'Preview' } },
+    covr => { Name => 'CoverArt',    Groups => { 2 => 'Preview' }, Binary => 1 },
     cpil => { #10
         Name => 'Compilation',
         Format => 'int8u', #27 (ref 23 contradicts what AtomicParsley actually writes, which is int8s)
@@ -6497,8 +6518,8 @@ my %isImageData = ( av01 => 1, avc1 => 1, hvc1 => 1, lhv1 => 1, hvt1 => 1 );
     ownr => 'Owner', #PH (obscure) (ref ChrisAdan private communication)
     'xid ' => 'ISRC', #PH
     # found in DJI Osmo Action4 video
-    tnal => { Name => 'ThumbnailImage',  Groups => { 2 => 'Preview' } },
-    snal => { Name => 'PreviewImage',    Groups => { 2 => 'Preview' } },
+    tnal => { Name => 'ThumbnailImage',  Binary => 1, Groups => { 2 => 'Preview' } },
+    snal => { Name => 'PreviewImage',    Binary => 1, Groups => { 2 => 'Preview' } },
 );
 
 # tag decoded from timed face records
@@ -8255,8 +8276,8 @@ my %isImageData = ( av01 => 1, avc1 => 1, hvc1 => 1, lhv1 => 1, hvt1 => 1 );
     GROUPS => { 2 => 'Video' },
     Rotation => {
         Notes => q{
-            writing this tag updates QuickTime MatrixStructure for all tracks with a
-            non-zero image size
+            degrees of clockwise camera rotation. Writing this tag updates QuickTime
+            MatrixStructure for all tracks with a non-zero image size
         },
         Require => {
             0 => 'QuickTime:MatrixStructure',
@@ -9471,7 +9492,8 @@ sub ProcessMOV($$;$)
     my $dataPt = $$dirInfo{DataPt};
     my $verbose = $et->Options('Verbose');
     my $validate = $$et{OPTIONS}{Validate};
-    my $dataPos = $$dirInfo{Base} || 0;
+    my $dirBase = $$dirInfo{Base} || 0;
+    my $dataPos = $dirBase;
     my $dirID = $$dirInfo{DirID} || '';
     my $charsetQuickTime = $et->Options('CharsetQuickTime');
     my ($buff, $tag, $size, $track, $isUserData, %triplet, $doDefaultLang, $index);
@@ -9556,6 +9578,7 @@ sub ProcessMOV($$;$)
         $atomCount = $$tagTablePtr{VARS}{ATOM_COUNT};
     }
     my $lastTag = '';
+    my $lastPos = 0;
     for (;;) {
         my ($eeTag, $ignore);
         last if defined $atomCount and --$atomCount < 0;
@@ -9758,7 +9781,7 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
             }
             # use value to get tag info if necessary
             $tagInfo or $tagInfo = $et->GetTagInfo($tagTablePtr, $tag, \$val);
-            my $hasData = ($$dirInfo{HasData} and $val =~ /\0...data\0/s);
+            my $hasData = ($$dirInfo{HasData} and $val =~ /^....data\0/s);
             if ($verbose and not $hasData) {
                 my $tval;
                 if ($tagInfo and $$tagInfo{Format}) {
@@ -10068,14 +10091,15 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
             ) if $verbose;
             if ($size and (not $raf->Seek($size-1, 1) or $raf->Read($buff, 1) != 1)) {
                 my $t = PrintableTagID($tag,2);
-                $warnStr = "Truncated '${t}' data";
+                $warnStr = sprintf("Truncated '${t}' data at offset 0x%x", $lastPos);
                 last;
             }
         }
         $dataPos += $size + 8;  # point to start of next atom data
         last if $dirEnd and $dataPos >= $dirEnd; # (note: ignores last value if 0 bytes)
+        $lastPos = $raf->Tell() + $dirBase;
         $raf->Read($buff, 8) == 8 or last;
-        $lastTag = $tag if $$tagTablePtr{$tag};
+        $lastTag = $tag if $$tagTablePtr{$tag} and $tag ne 'free'; # (Insta360 sometimes puts free block before trailer)
         ($size, $tag) = unpack('Na4', $buff);
         ++$index if defined $index;
     }
@@ -10085,7 +10109,11 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
         if (($lastTag eq 'mdat' or $lastTag eq 'moov') and (not $$tagTablePtr{$tag} or
             ref $$tagTablePtr{$tag} eq 'HASH' and $$tagTablePtr{$tag}{Unknown}))
         {
-            $et->Warn('Unknown trailer with '.lcfirst($warnStr));
+            if ($size == 0x1000000 - 8 and $tag =~ /^(\x94\xc0\x7e\0|\0\x02\0\0)/) {
+                $et->Warn(sprintf('Insta360 trailer at offset 0x%x', $lastPos), 1);
+            } else {
+                $et->Warn('Unknown trailer with '.lcfirst($warnStr));
+            }
         } else {
             $et->Warn($warnStr);
         }
