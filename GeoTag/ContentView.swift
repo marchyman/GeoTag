@@ -82,7 +82,6 @@ struct ContentView: View {
 
     // when a sheet is dismissed check if there are more sheets to display
 
-    @MainActor
     private func sheetDismissed() {
         if state.sheetStack.isEmpty {
             state.sheetMessage = nil
@@ -106,9 +105,8 @@ struct ContentView: View {
     }
 
     private func importFiles(_ urls: [URL]) {
-        let state = state
         Task {
-            await state.startSecurityScoping(urls: urls)
+            state.startSecurityScoping(urls: urls)
             await state.prepareForEdit(inputURLs: urls)
         }
     }

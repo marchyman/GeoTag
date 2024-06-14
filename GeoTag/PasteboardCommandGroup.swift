@@ -13,7 +13,6 @@ struct PasteboardCommands: Commands {
     var state: AppState
     @FocusedValue(\.textfieldFocused) var textfieldFocused
 
-    @MainActor
     var body: some Commands {
         CommandGroup(replacing: .pasteboard) {
             Group {

@@ -12,7 +12,6 @@ import SwiftUI
 struct NewItemCommands: Commands {
     var state: AppState
 
-    @MainActor
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
             Button("Open…") { state.importFiles = true }

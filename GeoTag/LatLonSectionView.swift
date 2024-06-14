@@ -89,7 +89,6 @@ struct LatLonSectionView: View {
     // update all selected images with the location specified by the
     // state variables.
 
-    @MainActor
     private func updateLocation() {
         // function won't be called if lat/lon are nil.
         // guard used to convert to non-optional values

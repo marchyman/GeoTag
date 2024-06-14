@@ -8,7 +8,6 @@
 import PhotosUI
 import SwiftUI
 
-@MainActor
 struct PhotoPickerView: View {
     @Environment(AppState.self) var state
     var photoLibrary = PhotoLibrary.shared
@@ -37,9 +36,7 @@ struct PhotoPickerView: View {
         .onChange(of: pickerItems) {
             Task {
                 photoLibrary.addPhotos(from: pickerItems, to: state.tvm)
-                await MainActor.run {
-                    pickerItems = []
-                }
+                pickerItems = []
             }
         }
     }

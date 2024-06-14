@@ -45,7 +45,6 @@ struct DateTimeSectionView: View {
         }
     }
 
-    @MainActor
     private func date() -> Date {
         if let date = image.timestamp(for: state.timeZone) {
             return date
@@ -53,7 +52,6 @@ struct DateTimeSectionView: View {
         return Date()
     }
 
-    @MainActor
     private func updateTimestamps() {
         // calclulate the adjustment to make to selected images
         let adjustment = newDate.timeIntervalSince1970 - oldDate.timeIntervalSince1970

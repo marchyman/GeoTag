@@ -9,6 +9,7 @@ import AppKit
 
 // open with..., unsaved changes upon termination, and other checks
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     var state: AppState?
 
@@ -37,7 +38,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Check if there are changes that haven't been saved before allowing
     // the app to quit.
 
-    @MainActor
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if let state {
             if state.saveInProgress {
@@ -60,7 +60,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // passed as the action method to terminate confirmation view and
     // called when the user wants to terminate without saving changes.
 
-    @MainActor
     func terminateIgnoringEdits() {
         state?.isDocumentEdited = false
         NSApp.terminate(NSApp)

@@ -13,6 +13,7 @@ private let maxPlaces = 10
 
 // an Observable class to hold map search state
 
+@MainActor
 @Observable
 final class SearchState {
     // shared instance

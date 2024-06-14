@@ -12,7 +12,6 @@ import SwiftUI
 
 struct ToolbarCommands: Commands {
 
-    @MainActor
     var body: some Commands {
         CommandGroup(replacing: .toolbar) {
             Section {
@@ -41,7 +40,6 @@ struct ShowHidePinView: View {
     }
 }
 
-@MainActor
 struct PinOptionView: View {
     @Bindable var location = LocationModel.shared
 

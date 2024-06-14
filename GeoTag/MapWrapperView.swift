@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-@MainActor
 struct MapWrapperView: View {
     let searchState = SearchState.shared
     let location = LocationModel.shared

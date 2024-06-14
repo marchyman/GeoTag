@@ -12,7 +12,6 @@ import SwiftUI
 struct UndoRedoCommands: Commands {
     var state: AppState
 
-    @MainActor
     var body: some Commands {
         CommandGroup(replacing: .undoRedo) {
             Button(state.undoManager.undoMenuItemTitle) { state.undoAction() }

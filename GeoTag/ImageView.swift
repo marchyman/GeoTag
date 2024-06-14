@@ -32,12 +32,10 @@ struct ImageView: View {
                 if tn == nil {
                     tn = await image.makeThumbnail()
                 }
-                await MainActor.run {
-                    if image.thumbnail == nil {
-                        image.thumbnail = tn
-                    }
-                    thumbnail = tn
+                if image.thumbnail == nil {
+                    image.thumbnail = tn
                 }
+                thumbnail = tn
                 return
             }
             thumbnail = nil

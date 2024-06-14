@@ -8,7 +8,6 @@
 import SwiftUI
 import OSLog
 
-@MainActor
 struct ImageTableView: View {
     @Bindable var tvm: TableViewModel
 
