@@ -9,28 +9,8 @@ import Foundation
 
 // GPX file processing
 //
-// A GPX file may contain Tracks.  Tracks are made up of one or more
-// segments.  A segment is made up of points. Track points contain
-// (at least) a latitude, longitude, and timestamp
-
-struct Track {
-    var segments = [Segment]()
-}
-
-struct Segment {
-    var points = [Point]()
-}
-
-struct Point: Equatable {
-    let lat: Double
-    let lon: Double
-    var ele: Double?
-    var time: String
-    var timeFromEpoch: TimeInterval
-}
-
 // An instance of a GpxTrackLog is created by opening and parsing a GPX file.
-// once the GpxTrackLot is created it is never modified.
+// once an instance of a GpxTrackLog is created it is never modified.
 
 struct GpxTrackLog: Sendable {
     var tracks = [Track]()
@@ -41,8 +21,30 @@ struct GpxTrackLog: Sendable {
     }
 }
 
-// A private class used to parse a GPX file. The parse method returns an
-// array of parsed tracks assuming no errors.
+// Definitions of the elements that make up a track.
+
+extension GpxTrackLog {
+    // Tracks are made up of one or more Segments.
+    struct Track {
+        var segments = [Segment]()
+    }
+
+    // Segments are made up of Points.
+    struct Segment {
+        var points = [Point]()
+    }
+
+    // points contain (at least) a latitude, longitude, and timestamp.
+    struct Point: Equatable {
+        let lat: Double
+        let lon: Double
+        var ele: Double?
+        var time: String
+        var timeFromEpoch: TimeInterval
+    }
+}
+
+// A private class used to parse a GPX file.
 
 private class Gpx: NSObject {
     // GPX Parsing errors
@@ -67,7 +69,7 @@ private class Gpx: NSObject {
     nonisolated(unsafe) static let pointTimeFormat = ISO8601DateFormatter()
 
     let parser: XMLParser
-    var tracks = [Track]()
+    var tracks = [GpxTrackLog.Track]()
     var parseState = ParseState.none
 
     init(contentsOf url: URL) throws {
@@ -80,11 +82,11 @@ private class Gpx: NSObject {
     }
 }
 
-// GPX parse function.  The XML Parser and parse delegate do all of
-// the work.
+// GPX parse method.  The XML Parser and parse delegate do all of the work.
+// The parse method returns an array of parsed tracks assuming no errors.
 
 extension Gpx {
-    func parse() throws -> [Track] {
+    func parse() throws -> [GpxTrackLog.Track] {
         if parser.parse() && parseState != .error {
             var segments = 0
             var points = 0
@@ -109,7 +111,7 @@ extension Gpx {
 
 extension Gpx {
 
-    var lastTrack: Track? {
+    var lastTrack: GpxTrackLog.Track? {
         get { return tracks.last }
         set {
             if newValue == nil {
@@ -120,7 +122,7 @@ extension Gpx {
         }
     }
 
-    var lastSegment: Segment? {
+    var lastSegment: GpxTrackLog.Segment? {
         get { return tracks.last?.segments.last }
         set {
             if newValue == nil || tracks.isEmpty {
@@ -131,7 +133,7 @@ extension Gpx {
         }
     }
 
-    var lastPoint: Point? {
+    var lastPoint: GpxTrackLog.Point? {
         get { return tracks.last?.segments.last?.points.last }
         set {
             let trackIx = tracks.count - 1
@@ -163,7 +165,7 @@ extension Gpx: XMLParserDelegate {
         case .none:
             // ignore everything until the trk element
             if elementName == "trk" {
-                lastTrack = Track()
+                lastTrack = GpxTrackLog.Track()
                 parseState = .trk
             }
         case .trk:
@@ -173,7 +175,7 @@ extension Gpx: XMLParserDelegate {
                 parseState = .error
             case "trkseg":
                 if lastTrack != nil {
-                    lastSegment = Segment()
+                    lastSegment = GpxTrackLog.Segment()
                     parseState = .trkSeg
                 } else {
                     parseState = .error
@@ -196,7 +198,9 @@ extension Gpx: XMLParserDelegate {
                        let lat = Double(latString),
                        let lonString = attributeDict["lon"],
                        let lon = Double(lonString) {
-                        lastPoint = Point(lat: lat, lon: lon, ele: nil, time: "", timeFromEpoch: 0)
+                        lastPoint = GpxTrackLog.Point(lat: lat, lon: lon,
+                                                      ele: nil, time: "",
+                                                      timeFromEpoch: 0)
                         parseState = .trkPt
                     } else {
                         parseState = .error
