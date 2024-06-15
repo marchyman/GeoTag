@@ -34,9 +34,10 @@ struct PhotoPickerView: View {
             }
         }
         .onChange(of: pickerItems) {
+            let selectedItems = pickerItems
+            pickerItems = []
             Task {
-                photoLibrary.addPhotos(from: pickerItems, to: state.tvm)
-                pickerItems = []
+                await photoLibrary.addPhotos(from: selectedItems, to: state.tvm)
             }
         }
     }

@@ -10,13 +10,13 @@ import Photos
 import PhotosUI
 import SwiftUI
 
-@MainActor
-@Observable
-final class PhotoLibrary {
+// Access to the users photo library.
+
+final class PhotoLibrary: @unchecked Sendable {
     var enabled: Bool
 
     // force use of shared instance
-    static var shared: PhotoLibrary = .init()
+    @MainActor static var shared: PhotoLibrary = .init()
     private init() {
         enabled =
             PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized
@@ -37,7 +37,7 @@ extension PhotoLibrary {
         }
     }
 
-    nonisolated static func fakeURL(itemId: String?) -> URL {
+    static func fakeURL(itemId: String?) -> URL {
         let id = itemId ?? UUID().uuidString
         return URL(fileURLWithPath: id)
     }
@@ -61,21 +61,20 @@ extension PhotoLibrary {
 // selected photos
 extension PhotoLibrary {
     func addPhotos(from selection: [PhotosPickerItem],
-                   to tvm: TableViewModel) {
+                   to tvm: TableViewModel) async {
         for item in selection {
-            guard !isDuplicate(item, in: tvm) else { continue }
+            let itemId = Self.fakeURL(itemId: item.itemIdentifier)
+            let isDuplicate = await MainActor.run {
+                return tvm.images.contains(where: {$0.id == itemId })
+            }
+            guard !isDuplicate else { continue }
             let libraryEntry = LibraryEntry(item: item,
                                             asset: getAssets(for: item))
             let image = ImageModel(libraryEntry: libraryEntry)
-            tvm.images.append(image)
+            Task { @MainActor in
+                tvm.images.append(image)
+            }
         }
-    }
-
-    func isDuplicate(_ item: PhotosPickerItem,
-                     in tvm: TableViewModel) -> Bool {
-        return tvm.images.contains(where: {
-            $0.id == Self.fakeURL(itemId: item.itemIdentifier)
-        })
     }
 
     func getImage(for item: PhotosPickerItem) async -> Image? {
