@@ -72,7 +72,8 @@ extension AppState {
 
     // process all urls in a task group, one task per url.  Skip
     // gpx urls for now
-    nonisolated private func images(for imageURLs: [URL]) async {
+    nonisolated private
+    func images(for imageURLs: [URL]) async {
         await withTaskGroup(of: ImageModel?.self) { group in
             for url in imageURLs {
                 guard url.pathExtension.lowercased() != "gpx" else { continue }
@@ -98,7 +99,8 @@ extension AppState {
     }
 
     // process gpx track files
-    nonisolated private func tracks(for gpxURLs: [URL]) async -> [(String, GpxTrackLog?)] {
+    nonisolated private
+    func tracks(for gpxURLs: [URL]) async -> [(String, GpxTrackLog?)] {
         var tracks: [(String, GpxTrackLog?)] = []
 
         await withTaskGroup(of: (String, GpxTrackLog?).self ) { group in

@@ -25,42 +25,50 @@ extension AppState {
         if let context {
             tvm.select(context: context)
         }
+
+        // use a separate task in a group to update each image
+        Task {
+            applicationBusy = true
+            undoManager.beginUndoGrouping()
+            await updateImageLocations(for: tvm.selected)
+            undoManager.endUndoGrouping()
+            undoManager.setActionName("locn from track")
+            applicationBusy = false
+        }
+    }
+
+    nonisolated private
+    func updateImageLocations(for images: [ImageModel]) async {
         // image timestamps must be converted to seconds from the epoch
         // to match track logs.  Prepare a dateformatter to handle the
         // conversion.
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = ImageModel.dateFormat
-        dateFormatter.timeZone = timeZone
+        dateFormatter.timeZone = await timeZone
 
-        // use a separate task in a group to update each image
-        Task { @MainActor in
-            applicationBusy = true
-            await withTaskGroup(of: (Coords, Double?)?.self) { group in
-                undoManager.beginUndoGrouping()
-                for image in tvm.selected {
-                    group.addTask { [self] in
-                        if let convertedDate = dateFormatter.date(from: image.timeStamp) {
-                            for track in await gpxTracks {
-                                if let locn = await track.search(imageTime: convertedDate.timeIntervalSince1970) {
-                                    return locn
-                                }
+        await withTaskGroup(of: (Coords, Double?)?.self) { group in
+            for image in images {
+                group.addTask { [self] in
+                    if let convertedDate = dateFormatter.date(from: image.timeStamp) {
+                        for track in await gpxTracks {
+                            if let locn = await track.search(imageTime: convertedDate.timeIntervalSince1970) {
+                                return locn
                             }
                         }
-                        return nil
                     }
+                    return nil
+                }
 
-                    for await locn in group {
-                        if let locn {
+                for await locn in group {
+                    if let locn {
+                        await MainActor.run {
                             update(image, location: locn.0,
                                    elevation: locn.1)
                         }
                     }
                 }
-                undoManager.endUndoGrouping()
-                undoManager.setActionName("locn from track")
             }
-            applicationBusy = false
         }
     }
 }
