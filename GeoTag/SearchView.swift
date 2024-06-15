@@ -102,23 +102,20 @@ struct SearchView: View {
         }
     }
 
-    private func search(for query: String) async {
+    nonisolated private func search(for query: String) async {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         let searcher = MKLocalSearch(request: request)
         if let response = try? await searcher.start() {
+            let places = response.mapItems.map {
+                SearchPlace(from: $0)
+            }
             await MainActor.run {
-                searchResponse = response.mapItems.map {
-                    SearchPlace(from: $0)
-                }
+                searchResponse = places
             }
         }
     }
 }
-
-// This gets rid of swift 6 warnings but I suspect it is incorrect.
-
-extension MKLocalSearch.Response: @retroactive @unchecked Sendable {}
 
 #Preview {
     @FocusState var mapFocus: MapWrapperView.MapFocus?
