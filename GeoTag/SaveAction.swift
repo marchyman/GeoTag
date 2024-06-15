@@ -21,16 +21,14 @@ extension AppState {
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
         @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
-        // returned status of the save operation
-        struct SaveStatus: Sendable {
-            let image: ImageModel
-            let error: String?
-        }
-
-        // get the indices of images from the PhotosLibrary
+        // Update data for images that came from the photos library
         let libraryPhotosToSave = tvm.images.indices.filter {
             tvm.images[$0].asset != nil && tvm.images[$0].isValid
         }
+        if !libraryPhotosToSave.isEmpty {
+            saveLibraryPhotos(indices: libraryPhotosToSave)
+        }
+
         // get the image files that need saving
         let imagesToSave = tvm.images.filter { $0.asset == nil && $0.changed }
 
@@ -41,76 +39,17 @@ extension AppState {
         }
 
         saveInProgress = true
-        saveIssues = [:]
         undoManager.removeAllActions()
         isDocumentEdited = false
 
-        // process the images in the background.
+        // process the image file saves in the background.
         Task {
-            if !libraryPhotosToSave.isEmpty {
-                saveLibraryPhotos(indices: libraryPhotosToSave)
+            saveIssues = await saveImageFiles(images: imagesToSave)
+            if !saveIssues.isEmpty {
+                isDocumentEdited = true
+                addSheet(type: .saveErrorSheet)
             }
-            @AppStorage(AppSettings.addTagsKey) var addTags = false
-            @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-            @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
-
-            // get the field that won't change from the view model before
-            // spinning off new tasks.
-            let makeBackup = !doNotBackup
-            let url = backupURL
-            let tagFiles = addTags
-            let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
-
-            await withTaskGroup(of: SaveStatus.self) { group in
-                for image in imagesToSave {
-                    group.addTask { [self] in
-                        @AppStorage(AppSettings.createSidecarFilesKey) var createSidecarFiles = false
-                        var errorDescription: String?
-                        // saving must occur in the app sandbox.
-                        let sandbox: Sandbox
-                        do {
-                            sandbox = try Sandbox(image)
-                            if createSidecarFiles {
-                                sandbox.makeSidecarFile()
-                            }
-                            if makeBackup {
-                                try await sandbox.makeBackupFile(backupFolder: url!)
-                            }
-                            try await sandbox.saveChanges(timeZone: timeZone)
-                            if tagFiles {
-                                try await sandbox.setTag(name: tagName)
-                            }
-
-                        } catch {
-                            errorDescription = error.localizedDescription
-                        }
-                        return SaveStatus(image: image,
-                                          error: errorDescription)
-                    }
-                }
-
-                // Update image original values after update for images
-                // with no errors.
-                for await status in group {
-                    if status.error == nil {
-                        let image = status.image
-                        image.originalDateTimeCreated = image.dateTimeCreated
-                        image.originalLocation = image.location
-                        image.originalElevation = image.elevation
-                    } else {
-                        saveIssues.updateValue(status.error!,
-                                               forKey: status.image.id)
-                    }
-                }
-            }
-
-            await MainActor.run {
-                if !saveIssues.isEmpty {
-                    isDocumentEdited = true
-                    addSheet(type: .saveErrorSheet)
-                }
-                saveInProgress = false
-            }
+            saveInProgress = false
         }
     }
 
@@ -120,5 +59,71 @@ extension AppState {
         for index in indices {
             photoLibrary.saveChanges(for: index, of: tvm.images, in: timeZone)
         }
+    }
+
+    nonisolated private
+    func saveImageFiles(images: [ImageModel]) async -> [ImageModel.ID: String] {
+        @AppStorage(AppSettings.addTagsKey) var addTags = false
+        @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+        @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
+
+        // type of returned status of the save operation
+        struct SaveStatus: Sendable {
+            let image: ImageModel
+            let error: String?
+        }
+
+        // get the fields that won't change from the view model before
+        // spinning off new tasks.
+        let makeBackup = !doNotBackup
+        let url = await backupURL
+        let tagFiles = addTags
+        let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
+        let saveTimeZone = await timeZone
+        var localSaveIssues = [ImageModel.ID: String]()
+
+        await withTaskGroup(of: SaveStatus.self) { group in
+            for image in images {
+                group.addTask {
+                    @AppStorage(AppSettings.createSidecarFilesKey)
+                    var createSidecarFiles = false
+                    var errorDescription: String?
+                    // saving must occur in the app sandbox.
+                    let sandbox: Sandbox
+                    do {
+                        sandbox = try Sandbox(image)
+                        if createSidecarFiles {
+                            sandbox.makeSidecarFile()
+                        }
+                        if makeBackup {
+                            try await sandbox.makeBackupFile(backupFolder: url!)
+                        }
+                        try await sandbox.saveChanges(timeZone: saveTimeZone)
+                        if tagFiles {
+                            try await sandbox.setTag(name: tagName)
+                        }
+                    } catch {
+                        errorDescription = error.localizedDescription
+                    }
+                    return SaveStatus(image: image,
+                                      error: errorDescription)
+                }
+            }
+
+            // Update image original values after update for images
+            // with no errors.
+            for await status in group {
+                if status.error == nil {
+                    let image = status.image
+                    image.originalDateTimeCreated = image.dateTimeCreated
+                    image.originalLocation = image.location
+                    image.originalElevation = image.elevation
+                } else {
+                    localSaveIssues.updateValue(status.error!,
+                                                forKey: status.image.id)
+                }
+            }
+        }
+        return localSaveIssues
     }
 }

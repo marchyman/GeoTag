@@ -72,8 +72,7 @@ extension AppState {
 
     // process all urls in a task group, one task per url.  Skip
     // gpx urls for now
-    private func images(for imageURLs: [URL]) async {
-        Self.logger.debug("Thread \(Thread.isMainThread ? "main" : "other")")
+    nonisolated private func images(for imageURLs: [URL]) async {
         await withTaskGroup(of: ImageModel?.self) { group in
             for url in imageURLs {
                 guard url.pathExtension.lowercased() != "gpx" else { continue }
@@ -91,13 +90,15 @@ extension AppState {
                 }
             }
             for await image in group.compactMap({ $0 }) {
+                await MainActor.run {
                     tvm.images.append(image)
+                }
             }
         }
     }
 
     // process gpx track files
-    private func tracks(for gpxURLs: [URL]) async -> [(String, GpxTrackLog?)] {
+    nonisolated private func tracks(for gpxURLs: [URL]) async -> [(String, GpxTrackLog?)] {
         var tracks: [(String, GpxTrackLog?)] = []
 
         await withTaskGroup(of: (String, GpxTrackLog?).self ) { group in
