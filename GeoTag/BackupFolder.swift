@@ -34,7 +34,7 @@ extension AppState {
         var bookmark = Data()
         do {
             try bookmark = url.bookmarkData(options: .withSecurityScope)
-        } catch let error as NSError {
+        } catch {
             addSheet(type: .unexpectedErrorSheet,
                      error: error,
                      message: "Error creating security scoped bookmark for backup location \(url.path)")

@@ -22,7 +22,7 @@ extension AppState {
         @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
         // returned status of the save operation
-        struct SaveStatus {
+        struct SaveStatus: Sendable {
             let image: ImageModel
             let error: String?
         }

@@ -19,7 +19,7 @@ struct PathView: NSViewRepresentable {
             _backupURL = backupURL
         }
 
-        @objc func action(sender: NSPathControl) {
+        @MainActor @objc func action(sender: NSPathControl) {
             backupURL = sender.clickedPathItem?.url
         }
 

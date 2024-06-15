@@ -67,7 +67,7 @@ enum AppSettings {
 // is a base64 encoded string.
 // This extension allows a Color to be stored in AppStorage
 
-extension Color: RawRepresentable {
+extension Color: @retroactive RawRepresentable {
     public init?(rawValue: String) {
         guard let data = Data(base64Encoded: rawValue) else {
             self = .blue

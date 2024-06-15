@@ -226,7 +226,7 @@ extension ImageModel: Equatable, Hashable {
 
 // URLs in this program can be compared
 
-extension URL: Comparable {
+extension URL: @retroactive Comparable {
     public static func < (lhs: URL, rhs: URL) -> Bool {
         lhs.path < rhs.path
     }

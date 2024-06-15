@@ -16,7 +16,7 @@ typealias Coords = CLLocationCoordinate2D
 
 // Make Coords equatable
 
-extension Coords: Equatable {
+extension Coords: @retroactive Equatable {
     static public func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }

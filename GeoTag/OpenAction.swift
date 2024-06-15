@@ -75,14 +75,12 @@ extension AppState {
     private func images(for imageURLs: [URL]) async {
         Self.logger.debug("Thread \(Thread.isMainThread ? "main" : "other")")
         await withTaskGroup(of: ImageModel?.self) { group in
-            var openedImages: [ImageModel] = []
-
             for url in imageURLs {
                 guard url.pathExtension.lowercased() != "gpx" else { continue }
                 group.addTask {
                     do {
                         return try ImageModel(imageURL: url)
-                    } catch let error as NSError {
+                    } catch {
                         await MainActor.run {
                             self.addSheet(type: .unexpectedErrorSheet,
                                           error: error,
@@ -93,10 +91,7 @@ extension AppState {
                 }
             }
             for await image in group.compactMap({ $0 }) {
-                openedImages.append(image)
-            }
-            await MainActor.run {
-                tvm.images.append(contentsOf: openedImages)
+                    tvm.images.append(image)
             }
         }
     }

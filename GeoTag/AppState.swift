@@ -43,7 +43,7 @@ final class AppState {
     // is supported so important notifications are not lost
     var sheetType: SheetType?
     var sheetStack = [SheetInfo]()
-    var sheetError: NSError?
+    var sheetError: Error?
     var sheetMessage: String?
     var saveIssues = [ImageModel.ID: String]()
 
@@ -149,11 +149,11 @@ extension AppState {
 
     struct SheetInfo {
         let sheetType: SheetType
-        let sheetError: NSError?
+        let sheetError: Error?
         let sheetMessage: String?
     }
 
-    func addSheet(type: SheetType, error: NSError? = nil, message: String? = nil) {
+    func addSheet(type: SheetType, error: Error? = nil, message: String? = nil) {
         if sheetType == nil {
             sheetType = type
             sheetError = error
