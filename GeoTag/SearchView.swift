@@ -97,34 +97,28 @@ struct SearchView: View {
             if searchState.searchText.isEmpty {
                 searchResponse = []
             } else if mapFocus.wrappedValue != nil {
-                search(for: searchState.searchText)
+                await search(for: searchState.searchText)
             }
         }
     }
 
-    @MainActor
-    private func search(for query: String) {
+    private func search(for query: String) async {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
-        // search the entire world
-        let center = LocationModel.shared.cameraPosition.camera?.centerCoordinate ??
-            CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-        let span = MKCoordinateSpan(latitudeDelta: 90.0,
-                                    longitudeDelta: 180.0)
-        request.region = MKCoordinateRegion(center: center,
-                                            span: span)
-        Task {
-            let searcher = MKLocalSearch(request: request)
-            if let response = try? await searcher.start() {
-                await MainActor.run {
-                    searchResponse = response.mapItems.map {
-                        SearchPlace(from: $0)
-                    }
+        let searcher = MKLocalSearch(request: request)
+        if let response = try? await searcher.start() {
+            await MainActor.run {
+                searchResponse = response.mapItems.map {
+                    SearchPlace(from: $0)
                 }
             }
         }
     }
 }
+
+// This gets rid of swift 6 warnings but I suspect it is incorrect.
+
+extension MKLocalSearch.Response: @retroactive @unchecked Sendable {}
 
 #Preview {
     @FocusState var mapFocus: MapWrapperView.MapFocus?
