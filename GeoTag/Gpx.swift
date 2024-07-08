@@ -39,7 +39,6 @@ extension GpxTrackLog {
         let lat: Double
         let lon: Double
         var ele: Double?
-        var time: String
         var timeFromEpoch: TimeInterval
     }
 }
@@ -56,13 +55,13 @@ private class Gpx: NSObject {
 
     // parser states
     enum ParseState {
-        case none       // starting state
-        case trk        // <trk> seen
-        case trkSeg     // <trkseg> seen
-        case trkPt      // <trkpt> seen
-        case time       // <time> inside of a <trkpt>
-        case ele        // <ele> inside of a <trkpt>
-        case error      // bad GPX file
+        case none           // starting state
+        case trk            // <trk> seen
+        case trkSeg         // <trkseg> seen
+        case trkPt          // <trkpt> seen
+        case time(String)   // <time> inside of a <trkpt>
+        case ele            // <ele> inside of a <trkpt>
+        case error          // bad GPX file
     }
 
     /// date formater for track point timestamps.
@@ -87,7 +86,11 @@ private class Gpx: NSObject {
 
 extension Gpx {
     func parse() throws -> [GpxTrackLog.Track] {
-        if parser.parse() && parseState != .error {
+        if parser.parse() {
+            if case .error = parseState {
+                throw GpxParseError.gpxParsingError
+            }
+
             var segments = 0
             var points = 0
             for track in tracks {
@@ -199,7 +202,7 @@ extension Gpx: XMLParserDelegate {
                        let lonString = attributeDict["lon"],
                        let lon = Double(lonString) {
                         lastPoint = GpxTrackLog.Point(lat: lat, lon: lon,
-                                                      ele: nil, time: "",
+                                                      ele: nil,
                                                       timeFromEpoch: 0)
                         parseState = .trkPt
                     } else {
@@ -220,7 +223,7 @@ extension Gpx: XMLParserDelegate {
             case "ele":
                 parseState = .ele
             case "time":
-                parseState = .time
+                parseState = .time("")
             default:
                 // ignore everything else
                 break
@@ -238,29 +241,27 @@ extension Gpx: XMLParserDelegate {
                 qualifiedName qName: String?) {
         switch elementName {
         case "ele":
-            if parseState == .ele {
+            if case .ele = parseState {
                 parseState = .trkPt
+            } else {
+                parseState = .error
             }
         case "time":
-            if parseState == .time {
-                parseState = .trkPt
-            }
-        case "trkpt":
-            if parseState == .trkPt {
+            if case .time(let timestamp) = parseState {
+                // convert the parsed timestamp to a date.
+                let trimmedTime = timestamp
+                    .replacingOccurrences(of: "\\.\\d+",
+                                          with: "",
+                                          options: .regularExpression)
+                let convertedTime = Gpx.pointTimeFormat.date(from: trimmedTime)
+
                 // find the latest point and update its timeFromEpoch
                 let trackIx = tracks.count - 1
                 if !tracks.isEmpty && !tracks[trackIx].segments.isEmpty {
                     let segmentIx = tracks[trackIx].segments.count - 1
                     if !tracks[trackIx].segments[segmentIx].points.isEmpty {
                         let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
-                        let trimmedTime = tracks[trackIx]
-                            .segments[segmentIx]
-                            .points[pointIx]
-                            .time
-                            .replacingOccurrences(of: "\\.\\d+",
-                                                  with: "",
-                                                  options: .regularExpression)
-                        if let convertedTime = Gpx.pointTimeFormat.date(from: trimmedTime) {
+                        if let convertedTime {
                             tracks[trackIx]
                                 .segments[segmentIx]
                                 .points[pointIx]
@@ -273,18 +274,24 @@ extension Gpx: XMLParserDelegate {
                         }
                     }
                 }
+                parseState = .trkPt
+            } else {
+                parseState = .error
+            }
+        case "trkpt":
+            if case .trkPt = parseState {
                 parseState = .trkSeg
             } else {
                 parseState = .error
             }
         case "trkseg":
-            if parseState == .trkSeg {
+            if case .trkSeg = parseState {
                 parseState = .trk
             } else {
                 parseState = .error
             }
         case "trk":
-            if parseState == .trk {
+            if case .trk = parseState {
                 parseState = .none
             } else {
                 parseState = .error
@@ -301,22 +308,20 @@ extension Gpx: XMLParserDelegate {
     func parser(_ parser: XMLParser,
                 foundCharacters string: String) {
         switch parseState {
-        case .ele, .time:
+        case .ele:
             // find the latest point
             let trackIx = tracks.count - 1
             if !tracks.isEmpty && !tracks[trackIx].segments.isEmpty {
                 let segmentIx = tracks[trackIx].segments.count - 1
                 if !tracks[trackIx].segments[segmentIx].points.isEmpty {
                     let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
-                    if parseState == .ele {
-                        tracks[trackIx].segments[segmentIx].points[pointIx].ele = Double(string)
-                    } else {
-                        tracks[trackIx].segments[segmentIx].points[pointIx].time += string
-                    }
+                    tracks[trackIx].segments[segmentIx].points[pointIx].ele = Double(string)
                     return
                 }
                 parseState = .error
             }
+        case .time:
+            parseState = .time(string)
         default:
             break
         }
