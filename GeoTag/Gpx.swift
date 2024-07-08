@@ -247,6 +247,8 @@ extension Gpx: XMLParserDelegate {
                 parseState = .error
             }
         case "time":
+            // Time shows up in multiple spots in a GPX file. Need to be in
+            // .time parseState to process.  Otherwise ignore.
             if case .time(let timestamp) = parseState {
                 // convert the parsed timestamp to a date.
                 let trimmedTime = timestamp
@@ -275,8 +277,6 @@ extension Gpx: XMLParserDelegate {
                     }
                 }
                 parseState = .trkPt
-            } else {
-                parseState = .error
             }
         case "trkpt":
             if case .trkPt = parseState {

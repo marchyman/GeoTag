@@ -89,11 +89,19 @@
 		49BC9EBC2BCCD11C00C46C05 /* ImageModelTimestamps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */; };
 		49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD6C922966589E00905B43 /* TimeZoneHelper.swift */; };
 		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
+		49E16D202C3C9E49003EF130 /* GpxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E16D1F2C3C9E49003EF130 /* GpxTest.swift */; };
 		49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		4984CF912BB4BECD0008DDF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49B0394C2944429E003B7C53 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49B039532944429E003B7C53;
+			remoteInfo = GeoTag;
+		};
+		49E16D212C3C9E49003EF130 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 49B0394C2944429E003B7C53 /* Project object */;
 			proxyType = 1;
@@ -194,6 +202,8 @@
 		49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelTimestamps.swift; sourceTree = "<group>"; };
 		49BD6C922966589E00905B43 /* TimeZoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelper.swift; sourceTree = "<group>"; };
 		49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI04MapTests.swift; sourceTree = "<group>"; };
+		49E16D1D2C3C9E49003EF130 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		49E16D1F2C3C9E49003EF130 /* GpxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpxTest.swift; sourceTree = "<group>"; };
 		49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAllAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -211,6 +221,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49E16D1A2C3C9E49003EF130 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +358,7 @@
 				49A1326E294BFB9300F1B393 /* ExifTool */,
 				49B039562944429E003B7C53 /* GeoTag */,
 				4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */,
+				49E16D1E2C3C9E49003EF130 /* GeoTagTests */,
 				49B039552944429E003B7C53 /* Products */,
 				49B0396729444855003B7C53 /* Frameworks */,
 			);
@@ -351,6 +369,7 @@
 			children = (
 				49B039542944429E003B7C53 /* GeoTag.app */,
 				4984CF8B2BB4BECC0008DDF8 /* GeoTagUITests.xctest */,
+				49E16D1D2C3C9E49003EF130 /* GeoTagTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -393,6 +412,14 @@
 				49B0396829444855003B7C53 /* MapKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		49E16D1E2C3C9E49003EF130 /* GeoTagTests */ = {
+			isa = PBXGroup;
+			children = (
+				49E16D1F2C3C9E49003EF130 /* GpxTest.swift */,
+			);
+			path = GeoTagTests;
 			sourceTree = "<group>";
 		};
 		49E29F012951012400804B74 /* Map View Group */ = {
@@ -484,6 +511,24 @@
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
 			productType = "com.apple.product-type.application";
 		};
+		49E16D1C2C3C9E49003EF130 /* GeoTagTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49E16D232C3C9E49003EF130 /* Build configuration list for PBXNativeTarget "GeoTagTests" */;
+			buildPhases = (
+				49E16D192C3C9E49003EF130 /* Sources */,
+				49E16D1A2C3C9E49003EF130 /* Frameworks */,
+				49E16D1B2C3C9E49003EF130 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				49E16D222C3C9E49003EF130 /* PBXTargetDependency */,
+			);
+			name = GeoTagTests;
+			productName = GeoTagTests;
+			productReference = 49E16D1D2C3C9E49003EF130 /* GeoTagTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -491,7 +536,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1530;
+				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					4984CF8A2BB4BECC0008DDF8 = {
@@ -500,6 +545,10 @@
 					};
 					49B039532944429E003B7C53 = {
 						CreatedOnToolsVersion = 14.1;
+					};
+					49E16D1C2C3C9E49003EF130 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 49B039532944429E003B7C53;
 					};
 				};
 			};
@@ -518,6 +567,7 @@
 			targets = (
 				49B039532944429E003B7C53 /* GeoTag */,
 				4984CF8A2BB4BECC0008DDF8 /* GeoTagUITests */,
+				49E16D1C2C3C9E49003EF130 /* GeoTagTests */,
 			);
 		};
 /* End PBXProject section */
@@ -539,6 +589,13 @@
 				49B0395F2944429F003B7C53 /* Preview Assets.xcassets in Resources */,
 				495AFFF52C2F32BD002D516F /* PrivacyInfo.xcprivacy in Resources */,
 				49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49E16D1B2C3C9E49003EF130 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,6 +734,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		49E16D192C3C9E49003EF130 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49E16D202C3C9E49003EF130 /* GpxTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -684,6 +749,11 @@
 			isa = PBXTargetDependency;
 			target = 49B039532944429E003B7C53 /* GeoTag */;
 			targetProxy = 4984CF912BB4BECD0008DDF8 /* PBXContainerItemProxy */;
+		};
+		49E16D222C3C9E49003EF130 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 49B039532944429E003B7C53 /* GeoTag */;
+			targetProxy = 49E16D212C3C9E49003EF130 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -920,6 +990,49 @@
 			};
 			name = Release;
 		};
+		49E16D242C3C9E49003EF130 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A3UXBEBE8Z;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTagTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GeoTag.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GeoTag";
+			};
+			name = Debug;
+		};
+		49E16D252C3C9E49003EF130 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A3UXBEBE8Z;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.snafu.GeoTagTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GeoTag.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GeoTag";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -946,6 +1059,15 @@
 			buildConfigurations = (
 				49B039642944429F003B7C53 /* Debug */,
 				49B039652944429F003B7C53 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		49E16D232C3C9E49003EF130 /* Build configuration list for PBXNativeTarget "GeoTagTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49E16D242C3C9E49003EF130 /* Debug */,
+				49E16D252C3C9E49003EF130 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
