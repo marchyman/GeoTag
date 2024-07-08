@@ -51,7 +51,7 @@ cp background.png ${BG_DIR}
 # Add the files and Applications link
 ln -s /Applications ${DIR}
 cp -R ~/Desktop/GeoTag.app ${DIR}
-cp README ${DIR}/Readme.txt
+cp README.md ${DIR}/Readme.txt
 echo ${BUILD_VERSION} > ${DIR}/Version.txt
 
 # make it look pretty and eject the dmg

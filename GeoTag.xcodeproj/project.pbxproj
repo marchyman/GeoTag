@@ -149,7 +149,7 @@
 		498FF4962BC77BB0003D691B /* ToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarViews.swift; sourceTree = "<group>"; };
 		49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveBackupsAlert.swift; sourceTree = "<group>"; };
 		49901CEC2A5B71EB00C28CAD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		49918F84297352AB000D6590 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		49918F84297352AB000D6590 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		49918F8529735AE0000D6590 /* History */ = {isa = PBXFileReference; lastKnownFileType = text; path = History; sourceTree = "<group>"; };
 		499DB20E2BB60018002DFDA2 /* GeoTagUI02SettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI02SettingsTests.swift; sourceTree = "<group>"; };
 		499EAEE92BD2069C0002E28E /* GeoTagUI06Save.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI06Save.swift; sourceTree = "<group>"; };
@@ -333,7 +333,7 @@
 			isa = PBXGroup;
 			children = (
 				49BA29A42962296600B26F03 /* To Do */,
-				49918F84297352AB000D6590 /* README */,
+				49918F84297352AB000D6590 /* README.md */,
 				49918F8529735AE0000D6590 /* History */,
 				490114B5297117FD00193BD3 /* LICENSE */,
 				495AFFF62C2F33EC002D516F /* Config.xcconfig */,
