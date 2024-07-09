@@ -36,6 +36,7 @@
 		495F2F63295EB1A5002A8A88 /* TableViewSelections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */; };
 		49630F0E2980BC00009FB418 /* ToolbarCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49630F0D2980BC00009FB418 /* ToolbarCommandGroup.swift */; };
 		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
+		496FA4532C3DD25800EFDD12 /* TimeZoneHelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496FA4522C3DD25800EFDD12 /* TimeZoneHelperTest.swift */; };
 		4984CF8E2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */; };
 		4984CF902BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */; };
 		49895D072BCDA8C80093D11B /* AppStateLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D062BCDA8C80093D11B /* AppStateLogger.swift */; };
@@ -143,6 +144,7 @@
 		495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewSelections.swift; sourceTree = "<group>"; };
 		49630F0D2980BC00009FB418 /* ToolbarCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarCommandGroup.swift; sourceTree = "<group>"; };
 		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
+		496FA4522C3DD25800EFDD12 /* TimeZoneHelperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelperTest.swift; sourceTree = "<group>"; };
 		4984CF8B2BB4BECC0008DDF8 /* GeoTagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI00Tests.swift; sourceTree = "<group>"; };
 		4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI01LaunchTests.swift; sourceTree = "<group>"; };
@@ -418,6 +420,7 @@
 			isa = PBXGroup;
 			children = (
 				49E16D1F2C3C9E49003EF130 /* GpxTest.swift */,
+				496FA4522C3DD25800EFDD12 /* TimeZoneHelperTest.swift */,
 			);
 			path = GeoTagTests;
 			sourceTree = "<group>";
@@ -738,6 +741,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				496FA4532C3DD25800EFDD12 /* TimeZoneHelperTest.swift in Sources */,
 				49E16D202C3C9E49003EF130 /* GpxTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

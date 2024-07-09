@@ -123,11 +123,15 @@ enum TimeZoneName: String, Identifiable, CaseIterable {
         if minutes % 30 == 0 {
             return "\(timeZoneTitleHours(from: minutes)):30"
         }
-        // It should be one of the :45 time Zones
-        return "\(timeZoneTitleHours(from: minutes)):45"
+        if minutes % 60 == 45 {
+            return "\(timeZoneTitleHours(from: minutes)):45"
+        }
+        // Unknown time zone, treat it as GMT
+        return "±0"
     }
 
-    // Convert minutes to hours with a + or - prefix
+    // Convert minutes to hours with a + or - prefix.  Returns whole number
+    // of hours, ignoring any remainder minutes.
 
     static func timeZoneTitleHours(from minutes: Int) -> String {
         let hours = minutes / 60
