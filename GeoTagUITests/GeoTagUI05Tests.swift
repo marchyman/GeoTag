@@ -12,6 +12,7 @@ final class GeoTagUI05Tests: XCTestCase {
     private var app: XCUIApplication!
     private var testImageFolder = ""
 
+    @MainActor
     override func setUp() {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -41,6 +42,7 @@ final class GeoTagUI05Tests: XCTestCase {
         app = nil
     }
 
+    @MainActor
     func openTestFile(folder: Bool = false) {
         app.typeKey("o", modifierFlags: [.command])
         app.typeKey("g", modifierFlags: [.shift, .command])
@@ -52,6 +54,7 @@ final class GeoTagUI05Tests: XCTestCase {
         app.typeKey(.enter, modifierFlags: [])
     }
 
+    @MainActor
     func changeCoordFormat(_ fmt: Int) {
         let format: [String] = [
             "dd.dddddd",
@@ -66,6 +69,7 @@ final class GeoTagUI05Tests: XCTestCase {
         settings.buttons["Close"].click()
     }
 
+    @MainActor
     func test0DuplicateImage() {
         openTestFile()
         XCTAssertTrue(app.staticTexts["IMG_7158.CR2*"]
@@ -85,6 +89,7 @@ final class GeoTagUI05Tests: XCTestCase {
         app.sheets.buttons.firstMatch.click()
     }
 
+    @MainActor
     func test1MapClick() {
         openTestFile()
         let row = app.outlineRows.firstMatch
@@ -141,6 +146,7 @@ final class GeoTagUI05Tests: XCTestCase {
         //        XCTAssertFalse(map.images["Pin"].exists)
     }
 
+    @MainActor
     func test2TableMenu() {
         openTestFile(folder: true)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
@@ -220,6 +226,7 @@ final class GeoTagUI05Tests: XCTestCase {
     let jpgFileCount = 8
     let fuzzyFileCount = 6
 
+    @MainActor
     func test3Search() {
         openTestFile(folder: true)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
@@ -255,6 +262,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
     let newZone = "-4"
 
+    @MainActor
     func test4TimeZone() {
         // show the change time zone window
         let tzItem = app.menuItems["Specify Time Zone…"]

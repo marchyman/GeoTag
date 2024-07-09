@@ -14,9 +14,9 @@ struct GpxTests {
         if let gpxPath = ProcessInfo.processInfo.environment["GpxPath"] {
             let gpxUrl = URL(fileURLWithPath: "\(gpxPath)/TestTrack.GPX")
             let trackLog = try GpxTrackLog(contentsOf: gpxUrl)
-            var tracks = trackLog.tracks.count
-            var segments = trackLog.tracks.reduce(0) { $0 + $1.segments.count }
-            var points = trackLog.tracks.reduce(0) {
+            let tracks = trackLog.tracks.count
+            let segments = trackLog.tracks.reduce(0) { $0 + $1.segments.count }
+            let points = trackLog.tracks.reduce(0) {
                 $0 + $1.segments.reduce(0) { $0 + $1.points.count }
             }
             print("\(tracks) tracks, \(segments) segments, \(points) points")
@@ -30,7 +30,7 @@ struct GpxTests {
         if let gpxPath = ProcessInfo.processInfo.environment["GpxPath"] {
             let gpxUrl = URL(fileURLWithPath: "\(gpxPath)/NoTrack.GPX")
             #expect(throws: Error.self) {
-                let trackLog = try GpxTrackLog(contentsOf: gpxUrl)
+                _ = try GpxTrackLog(contentsOf: gpxUrl)
             }
             return
         }
@@ -42,7 +42,7 @@ struct GpxTests {
         if let gpxPath = ProcessInfo.processInfo.environment["GpxPath"] {
             let gpxUrl = URL(fileURLWithPath: "\(gpxPath)/BadTrack.GPX")
             #expect(throws: Error.self) {
-                let trackLog = try GpxTrackLog(contentsOf: gpxUrl)
+                _ = try GpxTrackLog(contentsOf: gpxUrl)
             }
             return
         }

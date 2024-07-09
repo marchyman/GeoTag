@@ -23,6 +23,7 @@ final class GeoTagUI04MapTests: XCTestCase {
 
     private var app: XCUIApplication!
 
+    @MainActor
     override func setUpWithError() throws {
         continueAfterFailure = false
 
@@ -38,6 +39,7 @@ final class GeoTagUI04MapTests: XCTestCase {
         app = nil
     }
 
+    @MainActor
     func takeScreenshot(name: String) {
         let screenshot = app.windows.firstMatch.screenshot()
 
@@ -51,6 +53,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // search
+    @MainActor
     func test0MapSearch() {
         let map = app.maps.firstMatch
         XCTAssertTrue(map.exists)
@@ -112,6 +115,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // Search picking previous results
+    @MainActor
     func test1MapSearch() {
         // save the current map location
         let loc = app.windows.firstMatch
@@ -164,6 +168,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // Clear saved locations and verify
+    @MainActor
     func test2MapSearch() {
         let searchText = app.textFields[" Search location"]
         XCTAssertTrue(searchText.exists)
@@ -177,6 +182,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // Map context menu
+    @MainActor
     func test3MapContextMenu() {
         let map = app.maps.firstMatch
         map.rightClick()
@@ -216,6 +222,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // more map context menu.
+    @MainActor
     func test4MapContextMenu() {
         // verify the state is correct, i.e. things changed above were
         // sticky (how can I check that the zoom level was saved?)
