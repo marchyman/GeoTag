@@ -66,8 +66,9 @@ extension PhotoLibrary {
         for item in selection {
             let itemId = Self.fakeURL(itemId: item.itemIdentifier)
             guard !tvm.images.contains(where: {$0.id == itemId }) else { continue }
-            let libraryEntry = LibraryEntry(item: item,
-                                            asset: getAssets(for: item))
+            let libraryEntry =
+                await LibraryEntry(item: item,
+                                   asset: getAssets(for: item.itemIdentifier ))
             let image = ImageModel(libraryEntry: libraryEntry)
             tvm.images.append(image)
         }
@@ -83,9 +84,9 @@ extension PhotoLibrary {
         return nil
     }
 
-    func getAssets(for item: PhotosPickerItem?) -> PHAsset? {
-        if let item, let id = item.itemIdentifier {
-            let result = PHAsset.fetchAssets(withLocalIdentifiers: [id],
+    func getAssets(for itemId: String?) async -> PHAsset? {
+        if let itemId {
+            let result = PHAsset.fetchAssets(withLocalIdentifiers: [itemId],
                                              options: nil)
             if let asset = result.firstObject {
                 return asset
@@ -117,7 +118,8 @@ extension PhotoLibrary {
                         }
                     }
                     // get the current asset and update the image
-                    let newAsset = getAssets(for: image.pickerItem)
+                    let newAsset =
+                        await getAssets(for: image.pickerItem?.itemIdentifier)
                     await MainActor.run {
                         images[index].loadLibraryMetadata(asset: newAsset)
                     }
