@@ -72,13 +72,6 @@ extension GeoTagApp {
 // Text field focus. When non-nil a text field has focus.  Used to enable
 // appropriate pasteboard actions for text fields.
 
-struct FocusedTextfield: FocusedValueKey {
-    typealias Value = String
-}
-
 extension FocusedValues {
-    var textfieldFocused: FocusedTextfield.Value? {
-        get { self[FocusedTextfield.self] }
-        set { self[FocusedTextfield.self] = newValue }
-    }
+    @Entry var textfieldFocused: String?
 }
