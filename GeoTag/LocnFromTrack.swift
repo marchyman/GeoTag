@@ -27,10 +27,13 @@ extension AppState {
         }
 
         // use a separate task in a group to update each image
+        // copy the current selection in case it changes while the update
+        // is running.
+        let selectedImages = tvm.selected
         Task {
             applicationBusy = true
             undoManager.beginUndoGrouping()
-            await updateImageLocations(for: tvm.selected)
+            await updateImageLocations(for: selectedImages)
             undoManager.endUndoGrouping()
             undoManager.setActionName("locn from track")
             applicationBusy = false

@@ -97,7 +97,8 @@ struct SearchView: View {
             if searchState.searchText.isEmpty {
                 searchResponse = []
             } else if mapFocus.wrappedValue != nil {
-                await search(for: searchState.searchText)
+                let currentSearch = searchState.searchText
+                await search(for: currentSearch)
             }
         }
     }
