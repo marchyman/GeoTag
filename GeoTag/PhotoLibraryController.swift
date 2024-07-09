@@ -60,20 +60,16 @@ extension PhotoLibrary {
 // functions to build a LibraryEntry and add it to the array of
 // selected photos
 extension PhotoLibrary {
+    @MainActor
     func addPhotos(from selection: [PhotosPickerItem],
                    to tvm: TableViewModel) async {
         for item in selection {
             let itemId = Self.fakeURL(itemId: item.itemIdentifier)
-            let isDuplicate = await MainActor.run {
-                return tvm.images.contains(where: {$0.id == itemId })
-            }
-            guard !isDuplicate else { continue }
+            guard !tvm.images.contains(where: {$0.id == itemId }) else { continue }
             let libraryEntry = LibraryEntry(item: item,
                                             asset: getAssets(for: item))
             let image = ImageModel(libraryEntry: libraryEntry)
-            Task { @MainActor in
-                tvm.images.append(image)
-            }
+            tvm.images.append(image)
         }
     }
 
