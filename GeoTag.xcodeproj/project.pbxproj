@@ -171,6 +171,8 @@
 		49AB65DA2BAE3ADC0050EC60 /* SearchPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchPlace.swift; sourceTree = "<group>"; };
 		49AB65DC2BAE3AE80050EC60 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		49AB65DE2BAE3AF20050EC60 /* SearchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		49ABF7922C40828600DF6AC3 /* SplitHView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SplitHView; sourceTree = "<group>"; };
+		49ABF7932C4082ED00DF6AC3 /* SplitVView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SplitVView; sourceTree = "<group>"; };
 		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B039572944429E003B7C53 /* GeoTagApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagApp.swift; sourceTree = "<group>"; };
 		49B039592944429E003B7C53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -199,7 +201,6 @@
 		49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelMetadata.swift; sourceTree = "<group>"; };
 		49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelTimestamps.swift; sourceTree = "<group>"; };
 		49BD6C922966589E00905B43 /* TimeZoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelper.swift; sourceTree = "<group>"; };
-		49C186E52C4072C100E71C8A /* SplitViews */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SplitViews; sourceTree = "<group>"; };
 		49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI04MapTests.swift; sourceTree = "<group>"; };
 		49E16D1D2C3C9E49003EF130 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49E16D1F2C3C9E49003EF130 /* GpxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpxTest.swift; sourceTree = "<group>"; };
@@ -346,6 +347,8 @@
 		49B0394B2944429E003B7C53 = {
 			isa = PBXGroup;
 			children = (
+				49ABF7932C4082ED00DF6AC3 /* SplitVView */,
+				49ABF7922C40828600DF6AC3 /* SplitHView */,
 				49BA29A42962296600B26F03 /* To Do */,
 				49918F84297352AB000D6590 /* README.md */,
 				49918F8529735AE0000D6590 /* History */,
@@ -354,7 +357,6 @@
 				49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */,
 				49A1326E294BFB9300F1B393 /* ExifTool */,
 				49B039562944429E003B7C53 /* GeoTag */,
-				49C186E52C4072C100E71C8A /* SplitViews */,
 				4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */,
 				49E16D1E2C3C9E49003EF130 /* GeoTagTests */,
 				49B039552944429E003B7C53 /* Products */,
@@ -506,6 +508,8 @@
 			dependencies = (
 			);
 			name = GeoTag;
+			packageProductDependencies = (
+			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
 			productType = "com.apple.product-type.application";
