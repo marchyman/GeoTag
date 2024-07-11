@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import SplitViews
 
 /// Window look and feel values
 let windowBorderColor = Color.gray

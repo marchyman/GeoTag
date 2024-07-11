@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SplitViews
 
 struct ImageMapView: View {
     @AppStorage(AppSettings.splitVImageMapKey) var percent: Double = 0.60

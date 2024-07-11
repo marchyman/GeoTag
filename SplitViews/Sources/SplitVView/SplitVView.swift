@@ -11,12 +11,12 @@ import SwiftUI
 // The divider is stored as a percentage of the window height for the
 // reserved for the bottom side of the view.
 
-struct SplitVView<Top: View, Bottom: View>: View {
+public struct SplitVView<Top: View, Bottom: View>: View {
     @Binding var percent: Double
     @ViewBuilder var top: () -> Top
     @ViewBuilder var bottom: () -> Bottom
 
-    init(percent: Binding<Double>,
+    public init(percent: Binding<Double>,
          @ViewBuilder top: @escaping () -> Top,
          @ViewBuilder bottom: @escaping () -> Bottom) {
         self._percent = percent
@@ -24,7 +24,7 @@ struct SplitVView<Top: View, Bottom: View>: View {
         self.bottom = bottom
     }
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { geometry in
             VStack {
                 top()

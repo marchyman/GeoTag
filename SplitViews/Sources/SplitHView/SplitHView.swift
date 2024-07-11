@@ -11,12 +11,12 @@ import SwiftUI
 // The divider is stored as a percentage of the window width for the
 // reserved for the right side of the view.
 
-struct SplitHView<Left: View, Right: View>: View {
+public struct SplitHView<Left: View, Right: View>: View {
     @Binding var percent: Double
     @ViewBuilder var left: () -> Left
     @ViewBuilder var right: () -> Right
 
-    init(percent: Binding<Double>,
+    public init(percent: Binding<Double>,
          @ViewBuilder left: @escaping () -> Left,
          @ViewBuilder right: @escaping () -> Right) {
         self._percent = percent
@@ -24,7 +24,7 @@ struct SplitHView<Left: View, Right: View>: View {
         self.right = right
     }
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { geometry in
             HStack {
                 left()
