@@ -14,8 +14,6 @@
 		490A17AA29611DD900ACA9FD /* TextColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A929611DD900ACA9FD /* TextColors.swift */; };
 		490A17AC29613FC600ACA9FD /* HelpCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */; };
 		490A642029C397CD00A1310C /* Sandbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A641F29C397CD00A1310C /* Sandbox.swift */; };
-		4912D2D32B99085300AC38DB /* SplitHView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4912D2D22B99085300AC38DB /* SplitHView.swift */; };
-		4912D2F42B996E0300AC38DB /* SplitVView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4912D2F32B996E0300AC38DB /* SplitVView.swift */; };
 		4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */; };
 		4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */; };
 		4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */; };
@@ -65,6 +63,8 @@
 		49AB65DB2BAE3ADC0050EC60 /* SearchPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DA2BAE3ADC0050EC60 /* SearchPlace.swift */; };
 		49AB65DD2BAE3AE80050EC60 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DC2BAE3AE80050EC60 /* SearchBarView.swift */; };
 		49AB65DF2BAE3AF20050EC60 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DE2BAE3AF20050EC60 /* SearchView.swift */; };
+		49AD2BC02C408455003A810F /* SplitHView in Frameworks */ = {isa = PBXBuildFile; productRef = 49AD2BBF2C408455003A810F /* SplitHView */; };
+		49AD2BC22C408455003A810F /* SplitVView in Frameworks */ = {isa = PBXBuildFile; productRef = 49AD2BC12C408455003A810F /* SplitVView */; };
 		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
 		49B0395A2944429E003B7C53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039592944429E003B7C53 /* ContentView.swift */; };
 		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
@@ -120,8 +120,6 @@
 		490A17A929611DD900ACA9FD /* TextColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextColors.swift; sourceTree = "<group>"; };
 		490A17AB29613FC600ACA9FD /* HelpCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCommandGroup.swift; sourceTree = "<group>"; };
 		490A641F29C397CD00A1310C /* Sandbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sandbox.swift; sourceTree = "<group>"; };
-		4912D2D22B99085300AC38DB /* SplitHView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitHView.swift; sourceTree = "<group>"; };
-		4912D2F32B996E0300AC38DB /* SplitVView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitVView.swift; sourceTree = "<group>"; };
 		4915D331296A3B5800B09AC9 /* ImageModelStringRep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelStringRep.swift; sourceTree = "<group>"; };
 		4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoCommandGroup.swift; sourceTree = "<group>"; };
 		4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoAction.swift; sourceTree = "<group>"; };
@@ -175,6 +173,8 @@
 		49AB65DA2BAE3ADC0050EC60 /* SearchPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchPlace.swift; sourceTree = "<group>"; };
 		49AB65DC2BAE3AE80050EC60 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		49AB65DE2BAE3AF20050EC60 /* SearchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		49ABF7922C40828600DF6AC3 /* SplitHView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SplitHView; sourceTree = "<group>"; };
+		49ABF7932C4082ED00DF6AC3 /* SplitVView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SplitVView; sourceTree = "<group>"; };
 		49B039542944429E003B7C53 /* GeoTag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoTag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B039572944429E003B7C53 /* GeoTagApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagApp.swift; sourceTree = "<group>"; };
 		49B039592944429E003B7C53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -222,7 +222,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49AD2BC22C408455003A810F /* SplitVView in Frameworks */,
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
+				49AD2BC02C408455003A810F /* SplitHView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,9 +338,7 @@
 				498FF4962BC77BB0003D691B /* ToolbarViews.swift */,
 				49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */,
 				493E5F452A5BA46200B29DCF /* AreYouSure.swift */,
-				4912D2D22B99085300AC38DB /* SplitHView.swift */,
 				49A729B12953E7AA00DF1AAF /* ImageMapView.swift */,
-				4912D2F32B996E0300AC38DB /* SplitVView.swift */,
 				498AE5AE294A6E430063B1C1 /* Sheets.swift */,
 				492719DF2A5CC7B100451573 /* ImageInspectorView.swift */,
 				492719DD2A5CB5BE00451573 /* ImageInspectorForm.swift */,
@@ -362,6 +362,8 @@
 				4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */,
 				49E16D1E2C3C9E49003EF130 /* GeoTagTests */,
 				49B039552944429E003B7C53 /* Products */,
+				49ABF7932C4082ED00DF6AC3 /* SplitVView */,
+				49ABF7922C40828600DF6AC3 /* SplitHView */,
 				49B0396729444855003B7C53 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -510,6 +512,10 @@
 			dependencies = (
 			);
 			name = GeoTag;
+			packageProductDependencies = (
+				49AD2BBF2C408455003A810F /* SplitHView */,
+				49AD2BC12C408455003A810F /* SplitVView */,
+			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
 			productType = "com.apple.product-type.application";
@@ -710,7 +716,6 @@
 				49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */,
 				49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */,
 				4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */,
-				4912D2F42B996E0300AC38DB /* SplitVView.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
 				49BC9EBC2BCCD11C00C46C05 /* ImageModelTimestamps.swift in Sources */,
@@ -729,7 +734,6 @@
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
 				49AB65D12BAE38510050EC60 /* MapView.swift in Sources */,
 				49B448232A5F298D002939C5 /* DateTimeSectionView.swift in Sources */,
-				4912D2D32B99085300AC38DB /* SplitHView.swift in Sources */,
 				4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */,
 				49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
@@ -1077,6 +1081,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		49AD2BBF2C408455003A810F /* SplitHView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SplitHView;
+		};
+		49AD2BC12C408455003A810F /* SplitVView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SplitVView;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 49B0394C2944429E003B7C53 /* Project object */;
 }
