@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-// A horizontal view with two children separated by a dragable divider.
+// A vertical view with two children separated by a dragable divider.
 // The divider is stored as a percentage of the window height for the
-// reserved for the right side of the view.
+// reserved for the bottom side of the view.
 
 struct SplitVView<Top: View, Bottom: View>: View {
     @Binding var percent: Double
