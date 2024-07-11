@@ -63,6 +63,8 @@
 		49AB65DB2BAE3ADC0050EC60 /* SearchPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DA2BAE3ADC0050EC60 /* SearchPlace.swift */; };
 		49AB65DD2BAE3AE80050EC60 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DC2BAE3AE80050EC60 /* SearchBarView.swift */; };
 		49AB65DF2BAE3AF20050EC60 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB65DE2BAE3AF20050EC60 /* SearchView.swift */; };
+		49AD2BC02C408455003A810F /* SplitHView in Frameworks */ = {isa = PBXBuildFile; productRef = 49AD2BBF2C408455003A810F /* SplitHView */; };
+		49AD2BC22C408455003A810F /* SplitVView in Frameworks */ = {isa = PBXBuildFile; productRef = 49AD2BC12C408455003A810F /* SplitVView */; };
 		49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039572944429E003B7C53 /* GeoTagApp.swift */; };
 		49B0395A2944429E003B7C53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B039592944429E003B7C53 /* ContentView.swift */; };
 		49B0395C2944429F003B7C53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49B0395B2944429F003B7C53 /* Assets.xcassets */; };
@@ -220,7 +222,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49AD2BC22C408455003A810F /* SplitVView in Frameworks */,
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
+				49AD2BC02C408455003A810F /* SplitHView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,6 +513,8 @@
 			);
 			name = GeoTag;
 			packageProductDependencies = (
+				49AD2BBF2C408455003A810F /* SplitHView */,
+				49AD2BC12C408455003A810F /* SplitVView */,
 			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
@@ -1075,6 +1081,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		49AD2BBF2C408455003A810F /* SplitHView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SplitHView;
+		};
+		49AD2BC12C408455003A810F /* SplitVView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SplitVView;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 49B0394C2944429E003B7C53 /* Project object */;
 }

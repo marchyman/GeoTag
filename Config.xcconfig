@@ -2,9 +2,6 @@
 
 ENABLE_USER_SCRIPT_SANDBOXING = NO
 SWIFT_STRICT_CONCURRENCY = complete
-// GeoTag will not yet compile with swift version set to 6.0 due to using
-// SwiftUI Commands to add/update macOS menus.  Error on betas 1 and 2
-// keep at version 5.0 for now
 SWIFT_VERSION = 6.0
 
 // enabling the below often gives me the error
