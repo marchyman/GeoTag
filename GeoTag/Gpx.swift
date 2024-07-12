@@ -10,10 +10,9 @@ import Foundation
 // GPX file processing
 //
 // An instance of a GpxTrackLog is created by opening and parsing a GPX file.
-// once an instance of a GpxTrackLog is created it is never modified.
 
 struct GpxTrackLog: Sendable {
-    var tracks = [Track]()
+    let tracks: [Track]
 
     init(contentsOf url: URL) throws {
         let gpxFile = try Gpx(contentsOf: url)
