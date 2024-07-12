@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 12/9/22.
 //
 
+import RunLogView
 import SwiftUI
 
 @main

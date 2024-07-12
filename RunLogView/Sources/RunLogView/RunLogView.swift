@@ -8,10 +8,12 @@
 import OSLog
 import SwiftUI
 
-struct RunLogView: View {
+public struct RunLogView: View {
     @State private var logEntries: [String] = []
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         VStack {
             Button {
                 logEntries = getLogEntries()

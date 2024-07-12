@@ -7,11 +7,10 @@ let package = Package(
     name: "RunLogView",
     platforms: [.macOS(.v14)],
     products: [
-        .library(name: "RunLogView", targets: ["RunLogView"]),
+        .library(name: "RunLogView", targets: ["RunLogView"])
     ],
     targets: [
         .target(name: "RunLogView"),
-        .testTarget(name: "RunLogViewTests", dependencies: ["RunLogView"]
-        ),
+        .testTarget(name: "RunLogViewTests", dependencies: ["RunLogView"])
     ]
 )
