@@ -43,6 +43,7 @@
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
 		498AE5B1294AB78A0063B1C1 /* XmpPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B0294AB78A0063B1C1 /* XmpPresenter.swift */; };
 		498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5B2294AD5D00063B1C1 /* Exiftool.swift */; };
+		498D9FEB2C41E6A000E9F664 /* RunLogView in Frameworks */ = {isa = PBXBuildFile; productRef = 498D9FEA2C41E6A000E9F664 /* RunLogView */; };
 		498FF4952BC76518003D691B /* PhotoLibraryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FF4942BC76518003D691B /* PhotoLibraryController.swift */; };
 		498FF4972BC77BB0003D691B /* ToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FF4962BC77BB0003D691B /* ToolbarViews.swift */; };
 		49901CEB2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49901CEA2A5B6D8B00C28CAD /* RemoveBackupsAlert.swift */; };
@@ -222,6 +223,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				498D9FEB2C41E6A000E9F664 /* RunLogView in Frameworks */,
 				49AD2BC22C408455003A810F /* SplitVView in Frameworks */,
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
 				49AD2BC02C408455003A810F /* SplitHView in Frameworks */,
@@ -507,6 +509,7 @@
 			packageProductDependencies = (
 				49AD2BBF2C408455003A810F /* SplitHView */,
 				49AD2BC12C408455003A810F /* SplitVView */,
+				498D9FEA2C41E6A000E9F664 /* RunLogView */,
 			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
@@ -1075,6 +1078,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		498D9FEA2C41E6A000E9F664 /* RunLogView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RunLogView;
+		};
 		49AD2BBF2C408455003A810F /* SplitHView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SplitHView;
