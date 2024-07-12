@@ -38,7 +38,7 @@
 		4984CF8E2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */; };
 		4984CF902BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */; };
 		49895D072BCDA8C80093D11B /* AppStateLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D062BCDA8C80093D11B /* AppStateLogger.swift */; };
-		49895D0A2BCDAE2B0093D11B /* ShowLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D092BCDAE2B0093D11B /* ShowLogView.swift */; };
+		49895D0A2BCDAE2B0093D11B /* RunLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D092BCDAE2B0093D11B /* RunLogView.swift */; };
 		498A734C294E916700C62B14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734B294E916700C62B14 /* SettingsView.swift */; };
 		498A734E294E949B00C62B14 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498A734D294E949B00C62B14 /* AppSetting.swift */; };
 		498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AE5AE294A6E430063B1C1 /* Sheets.swift */; };
@@ -147,7 +147,7 @@
 		4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI00Tests.swift; sourceTree = "<group>"; };
 		4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI01LaunchTests.swift; sourceTree = "<group>"; };
 		49895D062BCDA8C80093D11B /* AppStateLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateLogger.swift; sourceTree = "<group>"; };
-		49895D092BCDAE2B0093D11B /* ShowLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowLogView.swift; sourceTree = "<group>"; };
+		49895D092BCDAE2B0093D11B /* RunLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLogView.swift; sourceTree = "<group>"; };
 		498A734B294E916700C62B14 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498A734D294E949B00C62B14 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
 		498AE5AE294A6E430063B1C1 /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
@@ -273,7 +273,7 @@
 		49895D082BCDADFD0093D11B /* Show Log Group */ = {
 			isa = PBXGroup;
 			children = (
-				49895D092BCDAE2B0093D11B /* ShowLogView.swift */,
+				49895D092BCDAE2B0093D11B /* RunLogView.swift */,
 			);
 			name = "Show Log Group";
 			sourceTree = "<group>";
@@ -725,7 +725,7 @@
 				49BA29AA296237C500B26F03 /* DiscardChangesAction.swift in Sources */,
 				492719E02A5CC7B100451573 /* ImageInspectorView.swift in Sources */,
 				4915D332296A3B5800B09AC9 /* ImageModelStringRep.swift in Sources */,
-				49895D0A2BCDAE2B0093D11B /* ShowLogView.swift in Sources */,
+				49895D0A2BCDAE2B0093D11B /* RunLogView.swift in Sources */,
 				495F2F63295EB1A5002A8A88 /* TableViewSelections.swift in Sources */,
 				490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */,
 				4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */,

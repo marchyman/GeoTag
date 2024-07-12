@@ -44,7 +44,7 @@ struct GeoTagApp: App {
         .commandsRemoved()
 
         Window(GeoTagApp.showRunLog, id: GeoTagApp.showRunLog) {
-            ShowLogView()
+            RunLogView()
                 .frame(width: 700, height: 500)
                 .environment(state)
         }

@@ -1,5 +1,5 @@
 //
-//  ShowLogView.swift
+//  RunLogView.swift
 //  GeoTag
 //
 //  Created by Marco S Hyman on 4/15/24.
@@ -8,7 +8,7 @@
 import OSLog
 import SwiftUI
 
-struct ShowLogView: View {
+struct RunLogView: View {
     @State private var logEntries: [String] = []
 
     var body: some View {
@@ -31,7 +31,7 @@ struct ShowLogView: View {
     }
 }
 
-extension ShowLogView {
+extension RunLogView {
     private func getLogEntries() -> [String] {
         var loggedMessages: [String] = []
         let timeFormatter = DateFormatter()
@@ -56,5 +56,5 @@ extension ShowLogView {
 
 }
 #Preview {
-    ShowLogView()
+    RunLogView()
 }
