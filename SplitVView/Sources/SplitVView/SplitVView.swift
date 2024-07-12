@@ -17,8 +17,8 @@ public struct SplitVView<Top: View, Bottom: View>: View {
     @ViewBuilder var bottom: () -> Bottom
 
     public init(percent: Binding<Double>,
-         @ViewBuilder top: @escaping () -> Top,
-         @ViewBuilder bottom: @escaping () -> Bottom) {
+                @ViewBuilder top: @escaping () -> Top,
+                @ViewBuilder bottom: @escaping () -> Bottom) {
         self._percent = percent
         self.top = top
         self.bottom = bottom

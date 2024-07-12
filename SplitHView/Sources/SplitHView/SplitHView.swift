@@ -17,8 +17,8 @@ public struct SplitHView<Left: View, Right: View>: View {
     @ViewBuilder var right: () -> Right
 
     public init(percent: Binding<Double>,
-         @ViewBuilder left: @escaping () -> Left,
-         @ViewBuilder right: @escaping () -> Right) {
+                @ViewBuilder left: @escaping () -> Left,
+                @ViewBuilder right: @escaping () -> Right) {
         self._percent = percent
         self.left = left
         self.right = right
