@@ -1,8 +1,5 @@
 //
-//  Gpx.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 7/22/18.
+//  GpxTrackLog.swift
 //
 
 import Foundation
@@ -11,10 +8,10 @@ import Foundation
 //
 // An instance of a GpxTrackLog is created by opening and parsing a GPX file.
 
-struct GpxTrackLog: Sendable {
+public struct GpxTrackLog: Sendable {
     let tracks: [Track]
 
-    init(contentsOf url: URL) throws {
+    public init(contentsOf url: URL) throws {
         let gpxFile = try Gpx(contentsOf: url)
         tracks = try gpxFile.parse()
     }
