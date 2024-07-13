@@ -90,6 +90,7 @@
 		49BDF98F2C41DBF20040B287 /* RunLogView in Resources */ = {isa = PBXBuildFile; fileRef = 49BDF98E2C41DBF20040B287 /* RunLogView */; };
 		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
 		49E16D202C3C9E49003EF130 /* GpxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E16D1F2C3C9E49003EF130 /* GpxTest.swift */; };
+		49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */ = {isa = PBXBuildFile; productRef = 49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */; };
 		49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */; };
 /* End PBXBuildFile section */
 
@@ -224,6 +225,7 @@
 				49AD2BC22C408455003A810F /* SplitVView in Frameworks */,
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
 				49AD2BC02C408455003A810F /* SplitHView in Frameworks */,
+				49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -498,6 +500,7 @@
 				49AD2BBF2C408455003A810F /* SplitHView */,
 				49AD2BC12C408455003A810F /* SplitVView */,
 				498D9FEA2C41E6A000E9F664 /* RunLogView */,
+				49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */,
 			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
@@ -1075,6 +1078,10 @@
 		49AD2BC12C408455003A810F /* SplitVView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SplitVView;
+		};
+		49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GpxTrackLog;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
