@@ -89,7 +89,6 @@
 		49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD6C922966589E00905B43 /* TimeZoneHelper.swift */; };
 		49BDF98F2C41DBF20040B287 /* RunLogView in Resources */ = {isa = PBXBuildFile; fileRef = 49BDF98E2C41DBF20040B287 /* RunLogView */; };
 		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
-		49E16D202C3C9E49003EF130 /* GpxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E16D1F2C3C9E49003EF130 /* GpxTest.swift */; };
 		49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */ = {isa = PBXBuildFile; productRef = 49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */; };
 		49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */; };
 /* End PBXBuildFile section */
@@ -204,7 +203,6 @@
 		49BDF98E2C41DBF20040B287 /* RunLogView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RunLogView; sourceTree = "<group>"; };
 		49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI04MapTests.swift; sourceTree = "<group>"; };
 		49E16D1D2C3C9E49003EF130 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		49E16D1F2C3C9E49003EF130 /* GpxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpxTest.swift; sourceTree = "<group>"; };
 		49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAllAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -405,7 +403,6 @@
 		49E16D1E2C3C9E49003EF130 /* GeoTagTests */ = {
 			isa = PBXGroup;
 			children = (
-				49E16D1F2C3C9E49003EF130 /* GpxTest.swift */,
 				496FA4522C3DD25800EFDD12 /* TimeZoneHelperTest.swift */,
 			);
 			path = GeoTagTests;
@@ -730,7 +727,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				496FA4532C3DD25800EFDD12 /* TimeZoneHelperTest.swift in Sources */,
-				49E16D202C3C9E49003EF130 /* GpxTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
