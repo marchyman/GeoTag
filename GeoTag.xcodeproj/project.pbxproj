@@ -18,7 +18,6 @@
 		4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */; };
 		4915D336296A73DF00B09AC9 /* UndoRedoAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */; };
 		492175792949743E00A5EA83 /* OpenAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492175782949743E00A5EA83 /* OpenAction.swift */; };
-		4921757B2949863A00A5EA83 /* Gpx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4921757A2949863A00A5EA83 /* Gpx.swift */; };
 		492719DE2A5CB5BE00451573 /* ImageInspectorForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492719DD2A5CB5BE00451573 /* ImageInspectorForm.swift */; };
 		492719E02A5CC7B100451573 /* ImageInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492719DF2A5CC7B100451573 /* ImageInspectorView.swift */; };
 		492E3F602948361D0044C1F3 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E3F5F2948361D0044C1F3 /* ImageView.swift */; };
@@ -85,13 +84,13 @@
 		49BA29AC2962386200B26F03 /* DiscardTracksAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */; };
 		49BA29AE29624E5400B26F03 /* ShowInFinderAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */; };
 		49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */; };
-		49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29B12962676E00B26F03 /* GpxSearch.swift */; };
 		49BC9EBA2BCCB88800C46C05 /* ImageModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */; };
 		49BC9EBC2BCCD11C00C46C05 /* ImageModelTimestamps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */; };
 		49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD6C922966589E00905B43 /* TimeZoneHelper.swift */; };
 		49BDF98F2C41DBF20040B287 /* RunLogView in Resources */ = {isa = PBXBuildFile; fileRef = 49BDF98E2C41DBF20040B287 /* RunLogView */; };
 		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
 		49E16D202C3C9E49003EF130 /* GpxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E16D1F2C3C9E49003EF130 /* GpxTest.swift */; };
+		49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */ = {isa = PBXBuildFile; productRef = 49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */; };
 		49F5FAA02975F28C0070FC55 /* SelectAllAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA9F2975F28C0070FC55 /* SelectAllAction.swift */; };
 /* End PBXBuildFile section */
 
@@ -125,9 +124,9 @@
 		4915D333296A72A900B09AC9 /* UndoRedoCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoCommandGroup.swift; sourceTree = "<group>"; };
 		4915D335296A73DF00B09AC9 /* UndoRedoAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoAction.swift; sourceTree = "<group>"; };
 		492175782949743E00A5EA83 /* OpenAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAction.swift; sourceTree = "<group>"; };
-		4921757A2949863A00A5EA83 /* Gpx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gpx.swift; sourceTree = "<group>"; };
 		492719DD2A5CB5BE00451573 /* ImageInspectorForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInspectorForm.swift; sourceTree = "<group>"; };
 		492719DF2A5CC7B100451573 /* ImageInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInspectorView.swift; sourceTree = "<group>"; };
+		492AF41C2C41F9E700942583 /* GpxTrackLog */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = GpxTrackLog; sourceTree = "<group>"; };
 		492E3F5D29481A7D0044C1F3 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		492E3F5F2948361D0044C1F3 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		493394BA2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI03OpenTests.swift; sourceTree = "<group>"; };
@@ -199,7 +198,6 @@
 		49BA29AB2962386200B26F03 /* DiscardTracksAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardTracksAction.swift; sourceTree = "<group>"; };
 		49BA29AD29624E5400B26F03 /* ShowInFinderAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowInFinderAction.swift; sourceTree = "<group>"; };
 		49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocnFromTrack.swift; sourceTree = "<group>"; };
-		49BA29B12962676E00B26F03 /* GpxSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpxSearch.swift; sourceTree = "<group>"; };
 		49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelMetadata.swift; sourceTree = "<group>"; };
 		49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelTimestamps.swift; sourceTree = "<group>"; };
 		49BD6C922966589E00905B43 /* TimeZoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelper.swift; sourceTree = "<group>"; };
@@ -227,6 +225,7 @@
 				49AD2BC22C408455003A810F /* SplitVView in Frameworks */,
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
 				49AD2BC02C408455003A810F /* SplitHView in Frameworks */,
+				49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,15 +246,6 @@
 				49BD6C922966589E00905B43 /* TimeZoneHelper.swift */,
 			);
 			name = "Adjust Time Zone Group";
-			sourceTree = "<group>";
-		};
-		49777FEF29830D6900ECD5BF /* GPX  Group */ = {
-			isa = PBXGroup;
-			children = (
-				4921757A2949863A00A5EA83 /* Gpx.swift */,
-				49BA29B12962676E00B26F03 /* GpxSearch.swift */,
-			);
-			name = "GPX  Group";
 			sourceTree = "<group>";
 		};
 		4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */ = {
@@ -359,6 +349,7 @@
 				49ABF7932C4082ED00DF6AC3 /* SplitVView */,
 				49ABF7922C40828600DF6AC3 /* SplitHView */,
 				49BDF98E2C41DBF20040B287 /* RunLogView */,
+				492AF41C2C41F9E700942583 /* GpxTrackLog */,
 				49B0396729444855003B7C53 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -380,7 +371,6 @@
 				4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */,
 				49FFC5BF2984F0EE00501D08 /* Menu Commands Group */,
 				49FFC5C02984F11C00501D08 /* Menu Actions Group */,
-				49777FEF29830D6900ECD5BF /* GPX  Group */,
 				498A735C294EC7BC00C62B14 /* Image Model Group */,
 				498A735B294EC78700C62B14 /* Settings Group */,
 				498A735D294EC7D800C62B14 /* Content View Group */,
@@ -510,6 +500,7 @@
 				49AD2BBF2C408455003A810F /* SplitHView */,
 				49AD2BC12C408455003A810F /* SplitVView */,
 				498D9FEA2C41E6A000E9F664 /* RunLogView */,
+				49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */,
 			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
@@ -676,7 +667,6 @@
 				498AE5AF294A6E430063B1C1 /* Sheets.swift in Sources */,
 				4952EF0B2A5F2D0200277508 /* LatLonSectionView.swift in Sources */,
 				4902B3BE2BB0A6F30038ED19 /* MapWrapperView.swift in Sources */,
-				4921757B2949863A00A5EA83 /* Gpx.swift in Sources */,
 				49AB65DF2BAE3AF20050EC60 /* SearchView.swift in Sources */,
 				49AB65DB2BAE3ADC0050EC60 /* SearchPlace.swift in Sources */,
 				493E5F442A5B88B300B29DCF /* TableViewModel.swift in Sources */,
@@ -710,7 +700,6 @@
 				49AB65D72BAE398A0050EC60 /* MapStylePicker.swift in Sources */,
 				49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */,
 				49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */,
-				49BA29B22962676E00B26F03 /* GpxSearch.swift in Sources */,
 				4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
@@ -1089,6 +1078,10 @@
 		49AD2BC12C408455003A810F /* SplitVView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SplitVView;
+		};
+		49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GpxTrackLog;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

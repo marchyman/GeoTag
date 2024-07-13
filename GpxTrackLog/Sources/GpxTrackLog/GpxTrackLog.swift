@@ -1,8 +1,5 @@
 //
-//  Gpx.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 7/22/18.
+//  GpxTrackLog.swift
 //
 
 import Foundation
@@ -11,10 +8,10 @@ import Foundation
 //
 // An instance of a GpxTrackLog is created by opening and parsing a GPX file.
 
-struct GpxTrackLog: Sendable {
-    let tracks: [Track]
+public struct GpxTrackLog: Sendable {
+    public let tracks: [Track]
 
-    init(contentsOf url: URL) throws {
+    public init(contentsOf url: URL) throws {
         let gpxFile = try Gpx(contentsOf: url)
         tracks = try gpxFile.parse()
     }
@@ -24,21 +21,21 @@ struct GpxTrackLog: Sendable {
 
 extension GpxTrackLog {
     // Tracks are made up of one or more Segments.
-    struct Track {
-        var segments = [Segment]()
+    public struct Track: Sendable {
+        public var segments = [Segment]()
     }
 
     // Segments are made up of Points.
-    struct Segment {
-        var points = [Point]()
+    public struct Segment: Sendable {
+        public var points = [Point]()
     }
 
     // points contain (at least) a latitude, longitude, and timestamp.
-    struct Point: Equatable {
-        let lat: Double
-        let lon: Double
-        var ele: Double?
-        var timeFromEpoch: TimeInterval
+    public struct Point: Equatable, Sendable {
+        public let lat: Double
+        public let lon: Double
+        public var ele: Double?
+        public var timeFromEpoch: TimeInterval
     }
 }
 

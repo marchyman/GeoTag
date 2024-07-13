@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 extension GpxTrackLog {
 
@@ -15,7 +16,7 @@ extension GpxTrackLog {
     /// - Parameter imageTime: the  time from epoch of an image whose coords are desired
     ///
 
-    func search(imageTime: TimeInterval) async -> (Coords, Double?)? {
+    public func search(imageTime: TimeInterval) async -> (CLLocationCoordinate2D, Double?)? {
         var lastPoint: Point?
 
         // search every track for the last point with a timestamp <= the
@@ -52,7 +53,8 @@ extension GpxTrackLog {
             // image timestamp (6 hours) do not treat it as a match.
             // 21600 is an arbitrary value picked out of thin air.
             if (last.timeFromEpoch - imageTime).magnitude < 21600 {
-                return (Coords(latitude: last.lat, longitude: last.lon),
+                return (CLLocationCoordinate2D(latitude: last.lat,
+                                               longitude: last.lon),
                         last.ele)
             }
         }

@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 12/13/22.
 //
 
+import GpxTrackLog
 import SwiftUI
 
 // Extension to Application State to handles file open and dropping
