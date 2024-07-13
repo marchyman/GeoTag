@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 1/1/23.
 //
 
+import GpxTrackLog
 import SwiftUI
 import MapKit
 

@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 7/9/23.
 //
 
+import GpxTrackLog
 import SwiftUI
 
 @MainActor
