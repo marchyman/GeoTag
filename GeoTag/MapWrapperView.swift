@@ -32,23 +32,22 @@ struct MapWrapperView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity,
                            alignment: .bottomLeading)
 
-                if mapFocus == .search || mapFocus == .searchList {
-                    SearchView(mapFocus: $mapFocus,
-                               searchState: searchState)
-                        .frame(width: 400)
-                        .frame(maxWidth: .infinity,
-                               maxHeight: geometry.size.height - 70,
-                               alignment: .topLeading)
-                }
+                SearchView(mapFocus: $mapFocus,
+                           searchState: searchState)
+                    .frame(width: 400)
+                    .frame(maxHeight: geometry.size.height > 70 ?
+                                      geometry.size.height - 70 : 0,
+                           alignment: .topLeading)
+                    .opacity((mapFocus == .search ||
+                              mapFocus == .searchList) ? 1.0 : 0)
 
-                // used by automated user interface testing
-                if location.showLocation {
-                    Text(location.centerLocation)
-                        .padding()
-                        .background(.thickMaterial)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity,
-                               alignment: .topTrailing)
-                }
+                // show map center coords -- only used by XCUITesting
+                Text(location.centerLocation)
+                    .padding()
+                    .background(.thickMaterial)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity,
+                           alignment: .topTrailing)
+                    .opacity(location.showLocation ? 1.0 : 0)
             }
         }
     }
