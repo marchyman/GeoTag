@@ -13,11 +13,11 @@ import AppKit
 extension AppState {
 
     // return true if paste actions should be disabled.  Paste action always
-    // allowed when editing a textfield (textfield != nil)
+    // allowed when editing a textfield
 
     func pasteDisabled(context: ImageModel? = nil,
-                       textfield: String? = nil) -> Bool {
-        guard textfield == nil else { return false }
+                       textfield: Bool = false) -> Bool {
+        guard !textfield else { return false }
         let pb = NSPasteboard.general
         if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
            ImageModel.decodeStringRep(value: pasteVal) != nil,
@@ -30,8 +30,10 @@ extension AppState {
     // paste into all selected images
 
     func pasteAction(context: ImageModel? = nil,
-                     textfield: String? = nil) {
-        if textfield == nil {
+                     textfield: Bool = false) {
+        if textfield {
+            NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: nil)
+        } else {
             if let context {
                 tvm.select(context: context)
             }
@@ -45,8 +47,6 @@ extension AppState {
                 undoManager.endUndoGrouping()
                 undoManager.setActionName("paste location")
             }
-        } else {
-            NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: nil)
         }
     }
 }

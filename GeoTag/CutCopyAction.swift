@@ -13,9 +13,9 @@ extension AppState {
     // if context is nil use selectedImage
 
     func cutCopyDisabled(context: ImageModel? = nil,
-                         textfield: String? = nil) -> Bool {
-        if let textfield {
-            return textfield.isEmpty
+                         textfield: Bool = false) -> Bool {
+        if textfield {
+            return false
         }
         if let image = context {
             return image.location == nil
@@ -26,18 +26,20 @@ extension AppState {
     // A cut is a copy followed by a delete
 
     func cutAction(context: ImageModel? = nil,
-                   textfield: String? = nil) {
-        if textfield == nil {
+                   textfield: Bool = false) {
+        if textfield {
+            NSApp.sendAction(#selector(NSText.cut(_:)), to: nil, from: nil)
+        } else {
             copyAction(context: context, textfield: textfield)
             deleteAction(context: context, textfield: textfield)
-        } else {
-            NSApp.sendAction(#selector(NSText.cut(_:)), to: nil, from: nil)
         }
     }
 
     func copyAction(context: ImageModel? = nil,
-                    textfield: String? = nil) {
-        if textfield == nil {
+                    textfield: Bool = false) {
+        if textfield {
+            NSApp.sendAction(#selector(NSText.copy(_:)), to: nil, from: nil)
+        } else {
             if let context {
                 tvm.select(context: context)
             }
@@ -47,8 +49,6 @@ extension AppState {
                 pb.setString(image.stringRepresentation,
                              forType: NSPasteboard.PasteboardType.string)
             }
-        } else {
-            NSApp.sendAction(#selector(NSText.copy(_:)), to: nil, from: nil)
         }
     }
 }
