@@ -61,11 +61,11 @@ public struct MapAndSearchView: View {
     struct Pins: Locatable {
         var location: CLLocationCoordinate2D?
     }
-    @Previewable @State var mainPin: Pins? = nil
+    @Previewable @State var mainPin: Pins?
     @Previewable @State var allPins: [Pins] = []
     return MapAndSearchView(masData: MapAndSearchData(),
                             mainPin: mainPin,
                             allPins: allPins) { location in
-        // location changed
+        print("location changed \(location)")
     }
 }

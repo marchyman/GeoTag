@@ -39,16 +39,3 @@ struct ShowHidePinView: View {
         Text("\(hideInvalidImages ? "Show" : "Hide") Disabled Files")
     }
 }
-
-//struct PinOptionView: View {
-//    @Bindable var location = LocationModel.shared
-//
-//    var body: some View {
-//        Picker("Pin view options…", selection: $location.showOtherPins) {
-//            Text("Show pins for all selected items").tag(true)
-//            Text("Show pin for most selected item").tag(false)
-//        }
-//        .pickerStyle(.menu)
-//
-//    }
-//}
