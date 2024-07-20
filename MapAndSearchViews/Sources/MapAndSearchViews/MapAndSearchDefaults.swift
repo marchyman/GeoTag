@@ -13,7 +13,7 @@ extension MapAndSearchData {
             return 37.7244
         }
         set {
-            withMutation (keyPath: \.initialMapLatitude) {
+            withMutation(keyPath: \.initialMapLatitude) {
                 UserDefaults.standard.set(newValue, forKey: initialMapLatitudeKey)
             }
         }
@@ -45,7 +45,7 @@ extension MapAndSearchData {
             return 50_000.0
         }
         set {
-            withMutation (keyPath: \.initialMapDistance) {
+            withMutation(keyPath: \.initialMapDistance) {
                 UserDefaults.standard.set(newValue, forKey: initialMapDistanceKey)
             }
         }
@@ -59,7 +59,7 @@ extension MapAndSearchData {
                 MapStyleName.standard.rawValue
         }
         set {
-            withMutation (keyPath: \.savedMapStyle) {
+            withMutation(keyPath: \.savedMapStyle) {
                 UserDefaults.standard.set(newValue, forKey: savedMapStyleKey)
             }
         }
@@ -113,4 +113,3 @@ extension MapAndSearchData {
         }
     }
 }
-

@@ -7,12 +7,11 @@ let package = Package(
     name: "MapAndSearchViews",
     platforms: [.macOS(.v14)],
     products: [
-        .library(name: "MapAndSearchViews", targets: ["MapAndSearchViews"]),
+        .library(name: "MapAndSearchViews", targets: ["MapAndSearchViews"])
     ],
     targets: [
         .target(name: "MapAndSearchViews"),
         .testTarget(name: "MapAndSearchViewsTests",
-                    dependencies: ["MapAndSearchViews"]),
+                    dependencies: ["MapAndSearchViews"])
     ]
 )
-

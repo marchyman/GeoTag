@@ -42,4 +42,3 @@ struct MapStylePicker: View {
         .pickerStyle(.menu)
     }
 }
-
