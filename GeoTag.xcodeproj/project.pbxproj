@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4901463C2C4B448B00BC63E1 /* MapAndSearchViews in Frameworks */ = {isa = PBXBuildFile; productRef = 4901463B2C4B448B00BC63E1 /* MapAndSearchViews */; };
 		4901595B294FCE8400B9C3E5 /* ImageModelThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4901595A294FCE8400B9C3E5 /* ImageModelThumbnail.swift */; };
 		490A17A42960BA1D00ACA9FD /* CutCopyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A32960BA1D00ACA9FD /* CutCopyAction.swift */; };
 		490A17A82960DE9B00ACA9FD /* PasteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490A17A72960DE9B00ACA9FD /* PasteAction.swift */; };
@@ -202,6 +203,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4901463C2C4B448B00BC63E1 /* MapAndSearchViews in Frameworks */,
 				498D9FEB2C41E6A000E9F664 /* RunLogView in Frameworks */,
 				49AD2BC22C408455003A810F /* SplitVView in Frameworks */,
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
@@ -465,6 +467,7 @@
 				49AD2BC12C408455003A810F /* SplitVView */,
 				498D9FEA2C41E6A000E9F664 /* RunLogView */,
 				49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */,
+				4901463B2C4B448B00BC63E1 /* MapAndSearchViews */,
 			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
@@ -1021,6 +1024,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4901463B2C4B448B00BC63E1 /* MapAndSearchViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MapAndSearchViews;
+		};
 		498D9FEA2C41E6A000E9F664 /* RunLogView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RunLogView;
