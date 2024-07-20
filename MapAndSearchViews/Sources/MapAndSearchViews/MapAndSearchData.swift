@@ -55,6 +55,11 @@ extension MapAndSearchData {
         // this centers the map on the track(s)
         cameraPosition = .automatic
     }
+
+    // remove all tracks from the map
+    public func removeTracks() {
+        tracks = []
+    }
 }
 
 extension MapAndSearchData {
@@ -108,19 +113,14 @@ extension MapAndSearchData {
             let activePins = allPins.filter { $0.location != nil }
             let convertedPins = activePins.map { OtherPins(location: $0.location!) }
             if let mainLocation = mainPin?.location {
-                return convertedPins.filter { $0.location != mainLocation }
+                // filter out items with the same location as mainPin
+                return convertedPins.filter {
+                    $0.location.latitude != mainLocation.latitude ||
+                    $0.location.longitude != mainLocation.longitude
+                }
             }
             return convertedPins
         }
         return []
     }
 }
-
-// Make Coords equatable -- used by above code
-
-extension CLLocationCoordinate2D: @retroactive Equatable {
-    static public func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
-    }
-}
-

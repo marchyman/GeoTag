@@ -74,7 +74,7 @@ extension AppState {
                                            longitude: $0.lon)
                 }
                 if !trackCoords.isEmpty {
-                    LocationModel.shared.add(track: trackCoords)
+                    masData.add(coords: trackCoords)
                 }
             }
         }

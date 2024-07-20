@@ -49,12 +49,19 @@ allPins:
 - Locatable
 
 - MapAndSearchData
+
   - MapAndSearchData.showOtherPins
     Enable/Disable view of other pins
-  - MapAndDearchData.add(coords: CLLocationCoordinate2D)
+
+  - MapAndSearchData.add(coords: CLLocationCoordinate2D)
     Add track logs to the map
+
+  - MapAndSearchData.removeTracks()
+    Remove all tracks from the map
+
   - MapAndSearchData.trackColor
     Track log color (stored in UserDefaults)
+
   - MapAndSearchData.trackWidth
     Track log line width (stored in UserDefaults)
 

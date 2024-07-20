@@ -25,7 +25,7 @@ struct ToolbarCommands: Commands {
                 }
                 .keyboardShortcut("d")
 
-                PinOptionView()
+//                PinOptionView()
             }
 
         }
@@ -40,15 +40,15 @@ struct ShowHidePinView: View {
     }
 }
 
-struct PinOptionView: View {
-    @Bindable var location = LocationModel.shared
-
-    var body: some View {
-        Picker("Pin view options…", selection: $location.showOtherPins) {
-            Text("Show pins for all selected items").tag(true)
-            Text("Show pin for most selected item").tag(false)
-        }
-        .pickerStyle(.menu)
-
-    }
-}
+//struct PinOptionView: View {
+//    @Bindable var location = LocationModel.shared
+//
+//    var body: some View {
+//        Picker("Pin view options…", selection: $location.showOtherPins) {
+//            Text("Show pins for all selected items").tag(true)
+//            Text("Show pin for most selected item").tag(false)
+//        }
+//        .pickerStyle(.menu)
+//
+//    }
+//}

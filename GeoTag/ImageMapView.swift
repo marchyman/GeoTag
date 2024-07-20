@@ -12,18 +12,17 @@ import SplitVView
 struct ImageMapView: View {
     @AppStorage(AppSettings.splitVImageMapKey) var percent: Double = 0.60
     @Environment(AppState.self) var state
-    @State private var masData: MapAndSearchData
 
     var body: some View {
         SplitVView(percent: $percent) {
             ImageView()
         } bottom: {
-            MapAndSearchView(masData: masData,
+            MapAndSearchView(masData: state.masData,
                              mainPin: state.tvm.mostSelected,
-                             allPins: state.tvm.selection) { coords in
+                             allPins: state.tvm.selected) { coords in
                 if !state.tvm.selected.isEmpty {
                     state.undoManager.beginUndoGrouping()
-                    for image in state.selected {
+                    for image in state.tvm.selected {
                         state.update(image, location: coords)
                     }
                     state.undoManager.endUndoGrouping()
@@ -34,9 +33,7 @@ struct ImageMapView: View {
     }
 }
 
-struct ImageMapView_Previews: PreviewProvider {
-    static var previews: some View {
-        ImageMapView()
-            .environment(AppState())
-    }
+#Preview {
+    ImageMapView()
+        .environment(AppState())
 }

@@ -14,7 +14,6 @@ struct MapView: View {
     @State private var mapStyleName: MapStyleName = .standard
 
     var body: some View {
-        let _ = print("mainPin location \(String(describing: mainPin?.location))")
         MapReader { mapProxy in
             Map(position: $masData.cameraPosition) {
                 if let coords = mainPin?.location {
@@ -88,10 +87,11 @@ struct MapView: View {
                      masData.searchText = ""
                  }
              }
-             .onChange(of: mainPin?.location) {
-                 masData.recenterMap(coords: mainPin?.location)
-             }
-            .onAppear {
+            // TODO: how to fix this
+//             .onChange(of: mainPin?.location) {
+//                 masData.recenterMap(coords: mainPin?.location)
+//             }
+             .onAppear {
                 let center = CLLocationCoordinate2D(
                     latitude: masData.initialMapLatitude,
                     longitude: masData.initialMapLongitude)
