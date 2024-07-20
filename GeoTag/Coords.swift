@@ -14,13 +14,15 @@ import SwiftUI
 // A shorter name for a type I'll often use
 typealias Coords = CLLocationCoordinate2D
 
-// Make Coords equatable
-
+// Equatable Coords
+// The MapAndSearchViews package now provides this extension
+#if false
 extension Coords: @retroactive Equatable {
     static public func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 }
+#endif
 
 // define Coordinate latitude and longitude references
 

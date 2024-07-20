@@ -114,13 +114,18 @@ extension MapAndSearchData {
             let convertedPins = activePins.map { OtherPins(location: $0.location!) }
             if let mainLocation = mainPin?.location {
                 // filter out items with the same location as mainPin
-                return convertedPins.filter {
-                    $0.location.latitude != mainLocation.latitude ||
-                    $0.location.longitude != mainLocation.longitude
-                }
+                return convertedPins.filter { $0.location != mainLocation }
             }
             return convertedPins
         }
         return []
+    }
+}
+
+// Extend CLLocationCoordinate2D by adding Equatable conformance
+
+extension CLLocationCoordinate2D: @retroactive Equatable {
+    static public func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 }

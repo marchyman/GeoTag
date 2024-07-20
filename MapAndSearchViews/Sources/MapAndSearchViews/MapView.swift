@@ -87,10 +87,9 @@ struct MapView: View {
                      masData.searchText = ""
                  }
              }
-            // TODO: how to fix this
-//             .onChange(of: mainPin?.location) {
-//                 masData.recenterMap(coords: mainPin?.location)
-//             }
+             .onChange(of: mainPin?.location) {
+                 masData.recenterMap(coords: mainPin?.location)
+             }
              .onAppear {
                 let center = CLLocationCoordinate2D(
                     latitude: masData.initialMapLatitude,
