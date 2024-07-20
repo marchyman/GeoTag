@@ -31,7 +31,7 @@ struct GeoTagApp: App {
             SaveItemCommands(state: state)
             UndoRedoCommands(state: state)
             PasteboardCommands(state: state)
-            ToolbarCommands()
+            ToolbarCommands(state: state)
             HelpCommands(state: state)
         }
 
