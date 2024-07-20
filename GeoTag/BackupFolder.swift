@@ -98,7 +98,14 @@ extension AppState {
             defer { folderURL?.stopAccessingSecurityScopedResource() }
             let fileManager = FileManager.default
             for url in filesToRemove {
-                try? fileManager.removeItem(at: url)
+                do {
+                    try fileManager.removeItem(at: url)
+                } catch {
+                    await Self.logger.error("""
+                        Failed to remove \(url, privacy: .public): \
+                        \(error.localizedDescription, privacy: .public)")
+                        """)
+                }
             }
         }
     }

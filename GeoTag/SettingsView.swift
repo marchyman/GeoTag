@@ -5,13 +5,13 @@
 //  Created by Marco S Hyman on 12/17/22.
 //
 
+import MapAndSearchViews
 import SwiftUI
 
 // swiftlint:disable line_length
 
 struct SettingsView: View {
     @Environment(AppState.self) var state
-    let location = LocationModel.shared
 
     // values stored in AppStorage
     @AppStorage(AppSettings.addTagsKey) var addTags = false
@@ -27,8 +27,6 @@ struct SettingsView: View {
     @AppStorage(AppSettings.updateGPSTimestampsKey)
         var updateGPSTimestamps = false
     @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
-    @AppStorage(AppSettings.trackColorKey) var trackColor: Color = .blue
-    @AppStorage(AppSettings.trackWidthKey) var trackWidth: Double = 0.0
 
     var body: some View {
         @Bindable var state = state
@@ -85,12 +83,12 @@ struct SettingsView: View {
                 // Track log display configuration
                 Group {
                     ColorPicker("GPS Track Color:",
-                                selection: $trackColor)
+                                selection: $state.masData.trackColor)
                         .padding(.horizontal)
                         .help("Select the color used to display GPS tracks on the map.")
 
                     TextField("GPS Track width:",
-                              value: $trackWidth, format: .number)
+                              value: $state.masData.trackWidth, format: .number)
                         .padding([.horizontal, .bottom])
                         .frame(maxWidth: 190)
                         .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")

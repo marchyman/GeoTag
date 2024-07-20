@@ -6,6 +6,7 @@
 //
 
 import GpxTrackLog
+import MapAndSearchViews
 import SwiftUI
 
 @MainActor
@@ -69,6 +70,11 @@ final class AppState {
 
     // TableView items go in their own class
     var tvm: TableViewModel = TableViewModel()
+
+    // Map and Search View items go in their own class, part of the
+    // MapAndSearchViews package
+
+    var masData: MapAndSearchData = MapAndSearchData()
 
     // Tracks displayed on map
     var gpxTracks: [GpxTrackLog] = []

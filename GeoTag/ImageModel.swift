@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 12/13/22.
 //
 
+import MapAndSearchViews
 import MapKit
 import OSLog
 import PhotosUI
@@ -231,6 +232,10 @@ extension URL: @retroactive Comparable {
         lhs.path < rhs.path
     }
 }
+
+// ImageModel conforms to Locatable
+
+extension ImageModel: Locatable {}
 
 // ImageModel is sendable. ImageModel is marked as unchecked to get rid
 // of the pairedID warning.

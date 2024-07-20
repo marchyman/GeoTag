@@ -1,17 +1,9 @@
-//
-//  SearchView.swift
-//  SMap
-//
-//  Created by Marco S Hyman on 3/11/24.
-//
-
 import MapKit
 import SwiftUI
 
 struct SearchView: View {
-    var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
-
-    var searchState: SearchState
+    var mapFocus: FocusState<MapAndSearchView.MapFocus?>.Binding
+    var masData: MapAndSearchData
 
     @State private var searchResponse: [SearchPlace] = []
     @State private var selection: SearchPlace?
@@ -22,7 +14,7 @@ struct SearchView: View {
         VStack(alignment: .leading) {
             List(selection: $selection) {
                 Button {
-                    searchState.searchText = ""
+                    masData.searchText = ""
                     mapFocus.wrappedValue = nil
                 } label: {
                     Text("Cancel")
@@ -49,7 +41,7 @@ struct SearchView: View {
                 .listSectionSeparator(.hidden)
 
                 Section {
-                    ForEach(searchState.searchPlaces, id: \.self) { item in
+                    ForEach(masData.searchPlaces, id: \.self) { item in
                         Text(item.name)
                     }
                     .listRowSeparator(.hidden)
@@ -58,7 +50,7 @@ struct SearchView: View {
                                                    bottom: 0,
                                                    trailing: 0))
                     Button {
-                        searchState.clearPlaces()
+                        masData.clearPlaces()
                     } label: {
                         Text("Clear list")
                     }
@@ -69,7 +61,7 @@ struct SearchView: View {
                         .font(.subheadline)
                 }
                 .listSectionSeparator(.hidden)
-                .opacity(searchState.searchPlaces.isEmpty ? 0 : 1)
+                .opacity(masData.searchPlaces.isEmpty ? 0 : 1)
             }
             .padding()
         }
@@ -79,25 +71,25 @@ struct SearchView: View {
         .focused(mapFocus, equals: .searchList)
         .padding()
         .onChange(of: selection) {
-            searchState.saveResult(selection)
+            masData.saveResult(selection)
             mapFocus.wrappedValue = nil
         }
-        .onChange(of: searchState.pickFirst) {
+        .onChange(of: masData.pickFirst) {
             if !searchResponse.isEmpty {
-                searchState.saveResult(searchResponse[0])
+                masData.saveResult(searchResponse[0])
                 mapFocus.wrappedValue = nil
             }
         }
         .onKeyPress(.escape) {
-            searchState.searchText = ""
+            masData.searchText = ""
             mapFocus.wrappedValue = nil
             return .handled
         }
-        .task(id: searchState.searchText) {
-            if searchState.searchText.isEmpty {
+        .task(id: masData.searchText) {
+            if masData.searchText.isEmpty {
                 searchResponse = []
             } else if mapFocus.wrappedValue != nil {
-                let currentSearch = searchState.searchText
+                let currentSearch = masData.searchText
                 await search(for: currentSearch)
             }
         }
@@ -119,7 +111,7 @@ struct SearchView: View {
 }
 
 #Preview {
-    @FocusState var mapFocus: MapWrapperView.MapFocus?
+    @FocusState var mapFocus: MapAndSearchView.MapFocus?
     return SearchView(mapFocus: $mapFocus,
-                      searchState: SearchState.shared)
+                      masData: MapAndSearchData())
 }

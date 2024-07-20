@@ -16,9 +16,9 @@ extension AppState {
     // all selected items
 
     func deleteDisabled(context: ImageModel? = nil,
-                        textfield: String? = nil) -> Bool {
-        if let textfield {
-            return textfield.isEmpty
+                        textfield: Bool = false) -> Bool {
+        if textfield {
+            return false
         }
         if let image = context {
             return image.location == nil
@@ -31,8 +31,10 @@ extension AppState {
     // in the given context or all selected images when the context is nil.
 
     func deleteAction(context: ImageModel? = nil,
-                      textfield: String? = nil) {
-        if textfield == nil {
+                      textfield: Bool = false) {
+        if textfield {
+            NSApp.sendAction(#selector(NSText.delete(_:)), to: nil, from: nil)
+        } else {
             if let context {
                 tvm.select(context: context)
             }
@@ -44,8 +46,6 @@ extension AppState {
                 undoManager.endUndoGrouping()
                 undoManager.setActionName("delete locations")
             }
-        } else {
-            NSApp.sendAction(#selector(NSText.delete(_:)), to: nil, from: nil)
         }
     }
 }

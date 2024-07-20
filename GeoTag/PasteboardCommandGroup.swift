@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 12/23/22.
 //
 
+import MapAndSearchViews
 import SwiftUI
 
 // Replace the pasteboard commands group
@@ -17,34 +18,34 @@ struct PasteboardCommands: Commands {
         CommandGroup(replacing: .pasteboard) {
             Group {
                 Button("Cut") {
-                    state.cutAction(textfield: textfieldFocused)
+                    state.cutAction(textfield: isFocused(textfieldFocused))
                 }
                 .keyboardShortcut("x")
-                .disabled(state.cutCopyDisabled(textfield: textfieldFocused))
+                .disabled(state.cutCopyDisabled(textfield: isFocused(textfieldFocused)))
 
                 Button("Copy") {
-                    state.copyAction(textfield: textfieldFocused)
+                    state.copyAction(textfield: isFocused(textfieldFocused))
                 }
                 .keyboardShortcut("c")
-                .disabled(state.cutCopyDisabled(textfield: textfieldFocused))
+                .disabled(state.cutCopyDisabled(textfield: isFocused(textfieldFocused)))
 
                 Button("Paste") {
-                    state.pasteAction(textfield: textfieldFocused)
+                    state.pasteAction(textfield: isFocused(textfieldFocused))
                 }
                 .keyboardShortcut("v")
-                .disabled(state.pasteDisabled(textfield: textfieldFocused))
+                .disabled(state.pasteDisabled(textfield: isFocused(textfieldFocused)))
 
                 Button("Delete") {
-                    state.deleteAction(textfield: textfieldFocused)
+                    state.deleteAction(textfield: isFocused(textfieldFocused))
                 }
                 .keyboardShortcut(.delete, modifiers: [])
-                .disabled(state.deleteDisabled(textfield: textfieldFocused))
+                .disabled(state.deleteDisabled(textfield: isFocused(textfieldFocused)))
 
                 Button("Select All") {
-                    state.selectAllAction(textfield: textfieldFocused)
+                    state.selectAllAction(textfield: isFocused(textfieldFocused))
                 }
                 .keyboardShortcut("a")
-                .disabled(state.selectAllDisabled(textfield: textfieldFocused))
+                .disabled(state.selectAllDisabled(textfield: isFocused(textfieldFocused)))
             }
 
             Divider()
@@ -62,5 +63,12 @@ struct PasteboardCommands: Commands {
                 }
             }
         }
+    }
+
+    // return true if a textField is focused.  That includes the search bar
+    // in the MapAndSearchViews package which can not access the
+    // textFieldFocused FocusedValue
+    private func isFocused(_ textField: String?) -> Bool {
+        return state.masData.searchBarActive || textField != nil
     }
 }

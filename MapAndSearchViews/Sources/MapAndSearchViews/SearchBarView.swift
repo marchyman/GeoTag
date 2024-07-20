@@ -1,17 +1,10 @@
-//
-//  SearchBarView.swift
-//  SMap
-//
-//  Created by Marco S Hyman on 3/11/24.
-//
-
 import SwiftUI
 
 struct SearchBarView: View {
     @Environment(\.colorScheme) var colorScheme
 
-    var mapFocus: FocusState<MapWrapperView.MapFocus?>.Binding
-    @Bindable var searchState: SearchState
+    var mapFocus: FocusState<MapAndSearchView.MapFocus?>.Binding
+    @Bindable var masData: MapAndSearchData
 
     private var searchBackgroundColor: Color {
         colorScheme == .dark ? .black : .white
@@ -24,17 +17,15 @@ struct SearchBarView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.primary)
-                    TextField(" Search location", text: $searchState.searchText )
+                    TextField(" Search location", text: $masData.searchText )
                         .disableAutocorrection(true)
                         .focusEffectDisabled()
                         .focused(mapFocus, equals: .search)
-                        .focusedValue(\.textfieldFocused,
-                                       searchState.searchText)
                         .overlay(alignment: .trailing) {
                             if mapFocus.wrappedValue == .search {
                                 Button {
                                     mapFocus.wrappedValue = nil
-                                    searchState.searchText = ""
+                                    masData.searchText = ""
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
                                 }
@@ -47,7 +38,10 @@ struct SearchBarView: View {
                         }
                         .onSubmit {
                             mapFocus.wrappedValue = .searchList
-                            searchState.pickFirst.toggle()
+                            masData.pickFirst.toggle()
+                        }
+                        .onChange(of: mapFocus.wrappedValue) {
+                            masData.searchBarActive = mapFocus.wrappedValue == .search
                         }
                 }
                 .padding(.vertical, 12)
@@ -58,8 +52,8 @@ struct SearchBarView: View {
 }
 
 #Preview {
-    @FocusState var mapFocus: MapWrapperView.MapFocus?
-    return SearchBarView(mapFocus: $mapFocus, searchState: SearchState.shared)
+    @FocusState var mapFocus: MapAndSearchView.MapFocus?
+    return SearchBarView(mapFocus: $mapFocus, masData: MapAndSearchData())
         .frame(maxWidth: 400)
         .padding()
 }

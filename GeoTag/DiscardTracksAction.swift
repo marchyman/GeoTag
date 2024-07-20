@@ -20,6 +20,6 @@ extension AppState {
 
     func discardTracksAction() {
         gpxTracks = []
-        LocationModel.shared.tracks = []
+        masData.removeTracks()
     }
 }
