@@ -22,6 +22,8 @@ public final class MapAndSearchData {
     var searchText: String = ""
     var pickFirst = false
     @ObservationIgnored
+    public var searchBarActive = false
+    @ObservationIgnored
     var writing = false
 
     @ObservationIgnored

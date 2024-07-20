@@ -53,6 +53,10 @@ allPins:
   - MapAndSearchData.showOtherPins
     Enable/Disable view of other pins
 
+  - MapAndSearchData.searchBarActive
+    True when the search bar is active. May be used to enable system pasteboard
+    processing vs app specific overrides.
+
   - MapAndSearchData.add(coords: CLLocationCoordinate2D)
     Add track logs to the map
 

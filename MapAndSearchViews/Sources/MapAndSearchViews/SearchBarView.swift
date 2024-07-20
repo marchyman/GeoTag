@@ -21,9 +21,6 @@ struct SearchBarView: View {
                         .disableAutocorrection(true)
                         .focusEffectDisabled()
                         .focused(mapFocus, equals: .search)
-//                      TODO: how do I fix this?
-//                        .focusedValue(\.textfieldFocused,
-//                                       masData.searchText)
                         .overlay(alignment: .trailing) {
                             if mapFocus.wrappedValue == .search {
                                 Button {
@@ -42,6 +39,9 @@ struct SearchBarView: View {
                         .onSubmit {
                             mapFocus.wrappedValue = .searchList
                             masData.pickFirst.toggle()
+                        }
+                        .onChange(of: mapFocus.wrappedValue) {
+                            masData.searchBarActive = mapFocus.wrappedValue == .search
                         }
                 }
                 .padding(.vertical, 12)
