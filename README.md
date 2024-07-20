@@ -23,43 +23,15 @@ Sonoma. If you see a pin placed above the point you clicked/tapped you are
 seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 14.4.1). It is not a problem in the current version of Sonoma.
 
-## GeoTag 5.3.1
+## GeoTag WIP
 
 ### Updates
 
-- Hitting the return key after entering text in the map search field will
-  automatically select the first search result and position the map at
-  that location.
-- ExifTool version 12.87
+- Pin view options now available in the Map context menu in addition to the
+  View menu.
+- Internal changes to meet Swift 6 strict concurrency requirements
 
-### Bug fixes
-
-- Bug fix: locations selected by clicking on map are applied to all selected
-  images, not only the most selected item.
-- Bug fix: recenter map when pasting lat/lon into selected item
-- Bug fix: Apply search results locations to any selected images and zoom
-  into the location when necessary.
-- Bug fix: Don't attempt to update the GPS timestamp when the image does
-  not have timestamps.
-- Bug fix: Don't limit map search result to address types as that hid
-  otherwise valid search results.
-- Bug fix: allow location updates to PNG files again. Whatever limitation
-  that caused support to be removed in 2020 no longer applies.
-
-### Known Issues
-
-- undo/redo menu items are always enabled, even when there are no undo or
-  redo actions that could be performed. The menu titles are also not updated
-  for the action to be performed.
-- There is a short delay between clicking on the map and a map pin being
-  placed.
-- When showing pins for all selected locations the red (most selected) pin
-  may be hidden by the pin of another location near by unless the zoom level
-  is such that both locations are slightly separated on the map.
-- when changing the selection to an image that has a location some of the pin
-  may off the map view.  In an extreme case only the point of the pin is on
-  the map and can not be seen. If you do not see a pin when you expect to
-  zoom out slightly.
+### Bug Fixes
 
 ### See the file named *History* for earlier changes and bug fixes
 
