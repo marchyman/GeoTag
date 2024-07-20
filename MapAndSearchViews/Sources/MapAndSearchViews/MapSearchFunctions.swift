@@ -1,48 +1,13 @@
-//
-//  SearchState.swift
-//  SMap
-//
-//  Created by Marco S Hyman on 3/12/24.
-//
-
 import MapKit
-import OSLog
 import SwiftUI
 
 private let maxPlaces = 10
 
-// an Observable class to hold map search state
-
-@MainActor
-@Observable
-final class SearchState {
-    // shared instance
-    static let shared: SearchState = .init()
-
-    var searchResult: SearchPlace?
-    var searchPlaces: [SearchPlace] = []
-    var searchText: String = ""
-    var writing = false
-    var pickFirst = false
-
-    private init() {
-        Task {
-            searchPlaces = fetchPlaces()
-        }
-        Self.logger.notice("SearchState created")
-    }
-}
-
-extension SearchState {
-    private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                               category: "SearchState")
-}
-
-// SearchState functions to update the list of visited places and store
+// Functions to update the list of visited places and store
 // them in the Application Support folder so they won't be lost between
 // program runs.
 
-extension SearchState {
+extension MapAndSearchData {
 
     // set the current searchResult and add it to the array of places unless
     // already there.  The array is capped at maxPlaces entries
@@ -89,7 +54,8 @@ extension SearchState {
     // fetch saved Places from file in application support dir
     // this is only done when the class is initialized
     // swiftlint: disable line_length
-    private func fetchPlaces() -> [SearchPlace] {
+
+    func fetchPlaces() -> [SearchPlace] {
         let url = appSupportURL()
         if let places = try? Data(contentsOf: url) {
             do {
@@ -98,15 +64,15 @@ extension SearchState {
                                                  from: places)
                 return decoded
             } catch let DecodingError.dataCorrupted(context) {
-                Self.logger.error("corrupted \(context.debugDescription, privacy: .public)")
+                logger.error("corrupted \(context.debugDescription, privacy: .public)")
             } catch let DecodingError.keyNotFound(key, context) {
-                Self.logger.error("Key '\(key.stringValue, privacy: .public)' not found: \(context.debugDescription, privacy: .public)")
+                logger.error("Key '\(key.stringValue, privacy: .public)' not found: \(context.debugDescription, privacy: .public)")
             } catch let DecodingError.valueNotFound(value, context) {
-                Self.logger.error("Value '\(value, privacy: .public)' not found: \(context.debugDescription, privacy: .public)")
+                logger.error("Value '\(value, privacy: .public)' not found: \(context.debugDescription, privacy: .public)")
             } catch let DecodingError.typeMismatch(type, context) {
-                Self.logger.error("Type '\(type, privacy: .public)' mismatch: \(context.debugDescription, privacy: .public)")
+                logger.error("Type '\(type, privacy: .public)' mismatch: \(context.debugDescription, privacy: .public)")
             } catch {
-                Self.logger.error("\(error.localizedDescription, privacy: .public)")
+                logger.error("\(error.localizedDescription, privacy: .public)")
             }
             fatalError("JSON Decoding Error for \(url)")
         }

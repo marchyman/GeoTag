@@ -1,16 +1,9 @@
-//
-//  SearchPlace.swift
-//  SMap
-//
-//  Created by Marco S Hyman on 3/20/24.
-//
-
 import MapKit
 import SwiftUI
 
 // MARK: SearchPlace
 // SearchPlace is an MKPlacemark less extraneous data, i.e. data not
-// needed for this app. A SearchPlace is Codeable, Equatable, and Hashable
+// needed for this package. A SearchPlace is Codeable, Equatable, and Hashable
 
 struct SearchPlace: Identifiable, Codable {
     var name: String
