@@ -46,6 +46,8 @@ allPins:
 
 ## Public items
 
+- Locatable
+
 - MapAndSearchData
   - MapAndSearchData.showOtherPins
     Enable/Disable view of other pins
