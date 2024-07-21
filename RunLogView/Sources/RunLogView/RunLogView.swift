@@ -4,23 +4,38 @@ import SwiftUI
 public struct RunLogView: View {
     @State private var logEntries: [String] = []
     @State private var fetchingLog = false
+    @State private var copyLog = true
 
     public init() {}
 
     public var body: some View {
         VStack {
             List {
-                Button {
-                    Task {
-                        fetchingLog = true
-                        logEntries = await getLogEntries()
-                        fetchingLog = false
+                HStack {
+                    Button {
+                        Task {
+                            fetchingLog = true
+                            logEntries = await getLogEntries()
+                            fetchingLog = false
+                            copyLog = true
+                        }
+                    } label: {
+                        Text("Refresh list")
+                            .padding(.horizontal)
                     }
-                } label: {
-                    Text("Refresh list")
+                    .disabled(fetchingLog)
+                    Button {
+                        let pb = NSPasteboard.general
+                        pb.declareTypes([.string], owner: self)
+                        pb.setString(logEntries.reduce("") { $0 + $1 + "\n" },
+                                     forType: .string)
+                        copyLog = false
+                    } label: {
+                        Text("\(copyLog ? "Copy" : "Copied!")")
+                            .padding(.horizontal)
+                    }
+                    .disabled(!copyLog || logEntries.isEmpty)
                 }
-                .padding()
-                .disabled(fetchingLog)
 
                 ForEach(logEntries, id: \.self) { entry in
                     Text(entry)
