@@ -49,7 +49,6 @@ struct GeoTagApp: App {
                 .frame(width: 700, height: 500)
                 .environment(state)
         }
-        .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         .commandsRemoved()
 
@@ -67,7 +66,7 @@ struct GeoTagApp: App {
 
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
-    static var showRunLog = "Show Run Log"
+    static var showRunLog = "GeoTag Run/Debug Log"
 }
 
 // Text field focus. When non-nil a text field has focus.  Used to enable

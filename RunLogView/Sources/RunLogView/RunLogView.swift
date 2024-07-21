@@ -9,22 +9,23 @@ public struct RunLogView: View {
 
     public var body: some View {
         VStack {
-            Button {
-                Task {
-                    fetchingLog = true
-                    logEntries = await getLogEntries()
-                    fetchingLog = false
+            List {
+                Button {
+                    Task {
+                        fetchingLog = true
+                        logEntries = await getLogEntries()
+                        fetchingLog = false
+                    }
+                } label: {
+                    Text("Refresh list")
                 }
-            } label: {
-                Text("Refresh list")
-            }
-            .padding()
-            .disabled(fetchingLog)
+                .padding()
+                .disabled(fetchingLog)
 
-            List(logEntries, id: \.self) { entry in
-                Text(entry)
+                ForEach(logEntries, id: \.self) { entry in
+                    Text(entry)
+                }
             }
-            .padding()
         }
         .task {
             fetchingLog = true
