@@ -19,7 +19,7 @@ extension AppState {
                        textfield: Bool = false) -> Bool {
         guard !textfield else { return false }
         let pb = NSPasteboard.general
-        if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
+        if let pasteVal = pb.string(forType: .string),
            ImageModel.decodeStringRep(value: pasteVal) != nil,
            context != nil || tvm.mostSelected != nil {
             return false
@@ -38,7 +38,7 @@ extension AppState {
                 tvm.select(context: context)
             }
             let pb = NSPasteboard.general
-            if let pasteVal = pb.string(forType: NSPasteboard.PasteboardType.string),
+            if let pasteVal = pb.string(forType: .string),
                let locn = ImageModel.decodeStringRep(value: pasteVal) {
                 undoManager.beginUndoGrouping()
                 for image in tvm.selected {
