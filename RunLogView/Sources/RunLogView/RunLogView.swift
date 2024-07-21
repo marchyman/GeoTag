@@ -1,40 +1,42 @@
-//
-//  RunLogView.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 4/15/24.
-//
-
 import OSLog
 import SwiftUI
 
 public struct RunLogView: View {
     @State private var logEntries: [String] = []
+    @State private var fetchingLog = false
 
     public init() {}
 
     public var body: some View {
         VStack {
             Button {
-                logEntries = getLogEntries()
+                Task {
+                    fetchingLog = true
+                    logEntries = await getLogEntries()
+                    fetchingLog = false
+                }
             } label: {
                 Text("Refresh list")
             }
             .padding()
+            .disabled(fetchingLog)
 
             List(logEntries, id: \.self) { entry in
                 Text(entry)
             }
             .padding()
         }
-        .onAppear {
-            logEntries = getLogEntries()
+        .task {
+            fetchingLog = true
+            logEntries = await getLogEntries()
+            fetchingLog = false
         }
     }
 }
 
 extension RunLogView {
-    private func getLogEntries() -> [String] {
+
+    nonisolated private func getLogEntries() async -> [String] {
         var loggedMessages: [String] = []
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "HH:mm:ss.SSS"
@@ -57,6 +59,7 @@ extension RunLogView {
     }
 
 }
+
 #Preview {
     RunLogView()
 }
