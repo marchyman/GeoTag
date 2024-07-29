@@ -13,26 +13,26 @@ import SwiftUI
 
 public struct SplitHView<Left: View, Right: View>: View {
     @Binding var percent: Double
-    @ViewBuilder var left: () -> Left
-    @ViewBuilder var right: () -> Right
+    var left: Left
+    var right: Right
 
     public init(percent: Binding<Double>,
-                @ViewBuilder left: @escaping () -> Left,
-                @ViewBuilder right: @escaping () -> Right) {
+                @ViewBuilder left: () -> Left,
+                @ViewBuilder right: () -> Right) {
         self._percent = percent
-        self.left = left
-        self.right = right
+        self.left = left()
+        self.right = right()
     }
 
     public var body: some View {
         GeometryReader { geometry in
             HStack {
-                left()
+                left
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 SplitHDividerView(percent: $percent, width: geometry.size.width)
 
-                right()
+                right
                     .frame(width: geometry.size.width * percent)
                     .frame(maxHeight: .infinity)
             }

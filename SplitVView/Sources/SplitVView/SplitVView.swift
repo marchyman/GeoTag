@@ -13,26 +13,26 @@ import SwiftUI
 
 public struct SplitVView<Top: View, Bottom: View>: View {
     @Binding var percent: Double
-    @ViewBuilder var top: () -> Top
-    @ViewBuilder var bottom: () -> Bottom
+    var top: Top
+    var bottom: Bottom
 
     public init(percent: Binding<Double>,
-                @ViewBuilder top: @escaping () -> Top,
-                @ViewBuilder bottom: @escaping () -> Bottom) {
+                @ViewBuilder top: () -> Top,
+                @ViewBuilder bottom: () -> Bottom) {
         self._percent = percent
-        self.top = top
-        self.bottom = bottom
+        self.top = top()
+        self.bottom = bottom()
     }
 
     public var body: some View {
         GeometryReader { geometry in
             VStack {
-                top()
+                top
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 SplitVDividerView(percent: $percent, height: geometry.size.height)
 
-                bottom()
+                bottom
                     .frame(height: geometry.size.height * percent)
                     .frame(maxWidth: .infinity)
             }
