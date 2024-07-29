@@ -64,12 +64,18 @@ extension RunLogView {
                                         .filter { $0.subsystem == subsystem }
             for entry in myEntries {
                 let formattedTime = timeFormatter.string(from: entry.date)
-                let formatedEntry = "\(formattedTime):  \(entry.category)  \(entry.composedMessage)"
+                let formatedEntry = """
+                    \(formattedTime):  \(entry.category) \
+                    \(entry.composedMessage)
+                    """
                 loggedMessages.append(formatedEntry)
             }
         } catch {
             let formattedTime = timeFormatter.string(from: Date.now)
-            loggedMessages.append("\(formattedTime): failed to access log store: \(error.localizedDescription)")
+            loggedMessages.append("""
+                \(formattedTime): failed to access log store: \
+                \(error.localizedDescription)
+                """)
         }
         return loggedMessages
     }
