@@ -112,8 +112,9 @@ extension MapAndSearchData {
     func otherPins(mainPin: Locatable?,
                    allPins: [Locatable]) -> [OtherPins] {
         if showOtherPins && !allPins.isEmpty {
-            let activePins = allPins.filter { $0.location != nil }
-            let convertedPins = activePins.map { OtherPins(location: $0.location!) }
+            let convertedPins =
+                allPins.filter { $0.location != nil }
+                       .map { OtherPins(location: $0.location!) }
             if let mainLocation = mainPin?.location {
                 // filter out items with the same location as mainPin
                 return convertedPins.filter { $0.location != mainLocation }
