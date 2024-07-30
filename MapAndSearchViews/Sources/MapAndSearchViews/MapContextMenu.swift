@@ -9,12 +9,15 @@ struct MapContextMenu: View {
     var body: some View {
         Group {
             MapStylePicker(mapStyleName: $mapStyleName)
+
             Picker("Pin view options…", selection: $masData.showOtherPins) {
                 Text("Show pins for all selected items").tag(true)
                 Text("Show pin for most selected item").tag(false)
             }
             .pickerStyle(.menu)
+
             Divider()
+
             Button("Save map location") {
                 if let camera {
                     masData.initialMapLatitude = camera.centerCoordinate.latitude
