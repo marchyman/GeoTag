@@ -83,7 +83,7 @@ extension MapAndSearchData {
             return .blue
         }
         set {
-            withMutation(keyPath: \.trackColorKey) {
+            withMutation(keyPath: \.trackColor) {
                 do {
                     let savedColor = NSColor(newValue)
                     let data = try NSKeyedArchiver.archivedData(
