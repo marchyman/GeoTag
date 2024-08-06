@@ -32,9 +32,11 @@ extension AppState {
         let currentElevation = image.elevation
         let currentDocumentEdited = isDocumentEdited
         undoManager.registerUndo(withTarget: self) { target in
-            target.update(image, location: currentLocation,
-                          elevation: currentElevation,
-                          documentEdited: currentDocumentEdited)
+            Task { @MainActor in
+                target.update(image, location: currentLocation,
+                              elevation: currentElevation,
+                              documentEdited: currentDocumentEdited)
+            }
         }
         image.location = location
         image.elevation = elevation
@@ -56,8 +58,10 @@ extension AppState {
         let currentDateTimeCreated = image.dateTimeCreated
         let currentDocumentEdited = isDocumentEdited
         undoManager.registerUndo(withTarget: self) { target in
-            target.update(image, timestamp: currentDateTimeCreated,
-                          documentEdited: currentDocumentEdited)
+            Task { @MainActor in
+                target.update(image, timestamp: currentDateTimeCreated,
+                              documentEdited: currentDocumentEdited)
+            }
         }
         image.dateTimeCreated = timestamp
         isDocumentEdited = documentEdited
