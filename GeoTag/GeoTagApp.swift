@@ -5,6 +5,7 @@
 //  Created by Marco S Hyman on 12/9/22.
 //
 
+import AdjustTimeZoneView
 import RunLogView
 import SwiftUI
 
@@ -36,7 +37,7 @@ struct GeoTagApp: App {
         }
 
         Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
-            AdjustTimezoneView()
+            AdjustTimezoneView(timeZone: $state.timeZone)
                 .frame(width: 500.0, height: 570.0)
                 .environment(state)
         }

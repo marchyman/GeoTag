@@ -7,12 +7,16 @@
 
 import SwiftUI
 
-struct AdjustTimezoneView: View {
-    @Environment(AppState.self) var state
+public struct AdjustTimezoneView: View {
+    @Binding var timeZone: TimeZone?
     @State private var currentZone: TimeZoneName = .zero
     @State private var selectedZone: TimeZoneName = .zero
 
-    var body: some View {
+    public init(timeZone: Binding<TimeZone?>) {
+        self._timeZone = timeZone
+    }
+
+    public var body: some View {
         VStack {
             Text("Specify Camera Time Zone")
                 .font(.largeTitle)
@@ -77,7 +81,7 @@ struct AdjustTimezoneView: View {
                 Button("Change") {
                     if currentZone != selectedZone {
                         currentZone = selectedZone
-                        state.timeZone = selectedZone.timeZone
+                        timeZone = selectedZone.timeZone
                     }
                     NSApplication.shared.keyWindow?.close()
                 }
@@ -86,14 +90,14 @@ struct AdjustTimezoneView: View {
             .padding()
         }
         .onAppear {
-            currentZone = TimeZoneName.timeZoneCase(zone: state.timeZone)
+            currentZone = TimeZoneName.timeZoneCase(zone: timeZone)
             selectedZone = currentZone
         }
     }
 }
 
 #Preview {
-    AdjustTimezoneView()
-        .environment(AppState())
+    @Previewable @State var timeZone: TimeZone?
+    AdjustTimezoneView(timeZone: $timeZone)
         .frame(height: 570)
 }
