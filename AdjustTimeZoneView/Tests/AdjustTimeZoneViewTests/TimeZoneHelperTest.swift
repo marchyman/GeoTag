@@ -6,7 +6,7 @@
 
 import Foundation
 import Testing
-@testable import GeoTag
+@testable import AdjustTimeZoneView
 
 struct TimeZoneHelperTest {
 

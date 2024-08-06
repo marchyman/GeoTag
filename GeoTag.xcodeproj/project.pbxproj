@@ -26,14 +26,13 @@
 		493E5F462A5BA46200B29DCF /* AreYouSure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493E5F452A5BA46200B29DCF /* AreYouSure.swift */; };
 		493F286D2BBF38CB002C8A44 /* GeoTagUI05Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F286C2BBF38CB002C8A44 /* GeoTagUI05Tests.swift */; };
 		494FED0A29563B8D005FFC23 /* PasteboardCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */; };
+		4950FF5F2C62C414000415AD /* AdjustTimeZoneView in Frameworks */ = {isa = PBXBuildFile; productRef = 4950FF5E2C62C414000415AD /* AdjustTimeZoneView */; };
 		4952EF0B2A5F2D0200277508 /* LatLonSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4952EF0A2A5F2D0200277508 /* LatLonSectionView.swift */; };
 		4953B7CC2954DE9F00B6B3B7 /* ContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */; };
 		4953B7D02954FC0800B6B3B7 /* NewItemCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */; };
 		495AFFF52C2F32BD002D516F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 495AFFF42C2F32BD002D516F /* PrivacyInfo.xcprivacy */; };
 		495F2F63295EB1A5002A8A88 /* TableViewSelections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */; };
 		49630F0E2980BC00009FB418 /* ToolbarCommandGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49630F0D2980BC00009FB418 /* ToolbarCommandGroup.swift */; };
-		4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */; };
-		496FA4532C3DD25800EFDD12 /* TimeZoneHelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496FA4522C3DD25800EFDD12 /* TimeZoneHelperTest.swift */; };
 		4984CF8E2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */; };
 		4984CF902BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */; };
 		49895D072BCDA8C80093D11B /* AppStateLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49895D062BCDA8C80093D11B /* AppStateLogger.swift */; };
@@ -78,7 +77,6 @@
 		49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */; };
 		49BC9EBA2BCCB88800C46C05 /* ImageModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */; };
 		49BC9EBC2BCCD11C00C46C05 /* ImageModelTimestamps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */; };
-		49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD6C922966589E00905B43 /* TimeZoneHelper.swift */; };
 		49BDF98F2C41DBF20040B287 /* RunLogView in Resources */ = {isa = PBXBuildFile; fileRef = 49BDF98E2C41DBF20040B287 /* RunLogView */; };
 		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
 		49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */ = {isa = PBXBuildFile; productRef = 49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */; };
@@ -125,6 +123,7 @@
 		493E5F452A5BA46200B29DCF /* AreYouSure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreYouSure.swift; sourceTree = "<group>"; };
 		493F286C2BBF38CB002C8A44 /* GeoTagUI05Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI05Tests.swift; sourceTree = "<group>"; };
 		494FED0929563B8D005FFC23 /* PasteboardCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardCommandGroup.swift; sourceTree = "<group>"; };
+		4950FF5D2C62C402000415AD /* AdjustTimeZoneView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AdjustTimeZoneView; sourceTree = "<group>"; };
 		4952EF0A2A5F2D0200277508 /* LatLonSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatLonSectionView.swift; sourceTree = "<group>"; };
 		4953B7CB2954DE9F00B6B3B7 /* ContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuView.swift; sourceTree = "<group>"; };
 		4953B7CF2954FC0800B6B3B7 /* NewItemCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemCommandGroup.swift; sourceTree = "<group>"; };
@@ -132,8 +131,6 @@
 		495AFFF62C2F33EC002D516F /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		495F2F62295EB1A5002A8A88 /* TableViewSelections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewSelections.swift; sourceTree = "<group>"; };
 		49630F0D2980BC00009FB418 /* ToolbarCommandGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarCommandGroup.swift; sourceTree = "<group>"; };
-		4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustTimezoneView.swift; sourceTree = "<group>"; };
-		496FA4522C3DD25800EFDD12 /* TimeZoneHelperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelperTest.swift; sourceTree = "<group>"; };
 		4984CF8B2BB4BECC0008DDF8 /* GeoTagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4984CF8D2BB4BECD0008DDF8 /* GeoTagUI00Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI00Tests.swift; sourceTree = "<group>"; };
 		4984CF8F2BB4BECD0008DDF8 /* GeoTagUI01LaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI01LaunchTests.swift; sourceTree = "<group>"; };
@@ -183,7 +180,6 @@
 		49BA29AF29625D7400B26F03 /* LocnFromTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocnFromTrack.swift; sourceTree = "<group>"; };
 		49BC9EB92BCCB88800C46C05 /* ImageModelMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelMetadata.swift; sourceTree = "<group>"; };
 		49BC9EBB2BCCD11C00C46C05 /* ImageModelTimestamps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModelTimestamps.swift; sourceTree = "<group>"; };
-		49BD6C922966589E00905B43 /* TimeZoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneHelper.swift; sourceTree = "<group>"; };
 		49BDF98E2C41DBF20040B287 /* RunLogView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RunLogView; sourceTree = "<group>"; };
 		49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI04MapTests.swift; sourceTree = "<group>"; };
 		49E16D1D2C3C9E49003EF130 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -206,6 +202,7 @@
 				4901463C2C4B448B00BC63E1 /* MapAndSearchViews in Frameworks */,
 				498D9FEB2C41E6A000E9F664 /* RunLogView in Frameworks */,
 				49AD2BC22C408455003A810F /* SplitVView in Frameworks */,
+				4950FF5F2C62C414000415AD /* AdjustTimeZoneView in Frameworks */,
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
 				49AD2BC02C408455003A810F /* SplitHView in Frameworks */,
 				49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */,
@@ -222,15 +219,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */ = {
-			isa = PBXGroup;
-			children = (
-				4969ACA02963CC8500BBC219 /* AdjustTimezoneView.swift */,
-				49BD6C922966589E00905B43 /* TimeZoneHelper.swift */,
-			);
-			name = "Adjust Time Zone Group";
-			sourceTree = "<group>";
-		};
 		4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */ = {
 			isa = PBXGroup;
 			children = (
@@ -329,6 +317,7 @@
 				4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */,
 				49E16D1E2C3C9E49003EF130 /* GeoTagTests */,
 				49B039552944429E003B7C53 /* Products */,
+				4950FF5D2C62C402000415AD /* AdjustTimeZoneView */,
 				49ABF7932C4082ED00DF6AC3 /* SplitVView */,
 				49ABF7922C40828600DF6AC3 /* SplitHView */,
 				49BDF98E2C41DBF20040B287 /* RunLogView */,
@@ -352,7 +341,6 @@
 			isa = PBXGroup;
 			children = (
 				498A735A294EC5F800C62B14 /* App Group */,
-				4969AC9E2963CC1000BBC219 /* Adjust Time Zone Group */,
 				49FFC5BF2984F0EE00501D08 /* Menu Commands Group */,
 				49FFC5C02984F11C00501D08 /* Menu Actions Group */,
 				498A735C294EC7BC00C62B14 /* Image Model Group */,
@@ -388,7 +376,6 @@
 		49E16D1E2C3C9E49003EF130 /* GeoTagTests */ = {
 			isa = PBXGroup;
 			children = (
-				496FA4522C3DD25800EFDD12 /* TimeZoneHelperTest.swift */,
 			);
 			path = GeoTagTests;
 			sourceTree = "<group>";
@@ -468,6 +455,7 @@
 				498D9FEA2C41E6A000E9F664 /* RunLogView */,
 				49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */,
 				4901463B2C4B448B00BC63E1 /* MapAndSearchViews */,
+				4950FF5E2C62C414000415AD /* AdjustTimeZoneView */,
 			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
@@ -659,7 +647,6 @@
 				49901CED2A5B71EB00C28CAD /* AppState.swift in Sources */,
 				49A729B22953E7AA00DF1AAF /* ImageMapView.swift in Sources */,
 				49BA29B029625D7400B26F03 /* LocnFromTrack.swift in Sources */,
-				4969ACA12963CC8500BBC219 /* AdjustTimezoneView.swift in Sources */,
 				492175792949743E00A5EA83 /* OpenAction.swift in Sources */,
 				49B9EDE129493F4000574D18 /* Coords.swift in Sources */,
 				49BC9EBC2BCCD11C00C46C05 /* ImageModelTimestamps.swift in Sources */,
@@ -677,7 +664,6 @@
 				498AE5B3294AD5D00063B1C1 /* Exiftool.swift in Sources */,
 				49B448232A5F298D002939C5 /* DateTimeSectionView.swift in Sources */,
 				4915D334296A72A900B09AC9 /* UndoRedoCommandGroup.swift in Sources */,
-				49BD6C932966589E00905B43 /* TimeZoneHelper.swift in Sources */,
 				49B039582944429E003B7C53 /* GeoTagApp.swift in Sources */,
 				49A99FBC296F6D5900392EEA /* PathView.swift in Sources */,
 			);
@@ -687,7 +673,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				496FA4532C3DD25800EFDD12 /* TimeZoneHelperTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1027,6 +1012,10 @@
 		4901463B2C4B448B00BC63E1 /* MapAndSearchViews */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MapAndSearchViews;
+		};
+		4950FF5E2C62C414000415AD /* AdjustTimeZoneView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AdjustTimeZoneView;
 		};
 		498D9FEA2C41E6A000E9F664 /* RunLogView */ = {
 			isa = XCSwiftPackageProductDependency;
