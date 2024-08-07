@@ -315,7 +315,6 @@
 				49A1326E294BFB9300F1B393 /* ExifTool */,
 				49B039562944429E003B7C53 /* GeoTag */,
 				4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */,
-				49E16D1E2C3C9E49003EF130 /* GeoTagTests */,
 				49B039552944429E003B7C53 /* Products */,
 				4950FF5D2C62C402000415AD /* AdjustTimeZoneView */,
 				49ABF7932C4082ED00DF6AC3 /* SplitVView */,
@@ -371,13 +370,6 @@
 				49B0396829444855003B7C53 /* MapKit.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		49E16D1E2C3C9E49003EF130 /* GeoTagTests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = GeoTagTests;
 			sourceTree = "<group>";
 		};
 		49FFC5BF2984F0EE00501D08 /* Menu Commands Group */ = {

@@ -49,9 +49,7 @@ struct PathView: NSViewRepresentable {
     func updateNSView(_ nsView: NSPathControl, context: Context) { }
 }
 
-struct PathView_Previews: PreviewProvider {
-    @State static var url: URL?
-    static var previews: some View {
-        PathView(url: $url)
-    }
+#Preview {
+    @Previewable @State var url: URL?
+    PathView(url: $url)
 }
