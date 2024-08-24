@@ -53,14 +53,25 @@ extension AppState {
         await withTaskGroup(of: (Coords, Double?)?.self) { group in
             for image in images {
                 group.addTask { [self] in
+                    var found: [(Coords, Double?)] = []
+
+                    // search ALL known tracklogs for the timestamp of the
+                    // given image.
+
                     if let convertedDate = dateFormatter.date(from: image.timeStamp) {
                         for track in await gpxTracks {
                             if let locn = await track.search(imageTime: convertedDate.timeIntervalSince1970) {
-                                return locn
+                                found.append(locn)
                             }
                         }
                     }
-                    return nil
+
+                    // return the last entry found. If the entry was in multiple
+                    // tracklogs the last entry will be the entry closest to
+                    // timestamp of the image because the gpxTracks array is
+                    // assumed to be sorted by timestamp.
+
+                    return found.last
                 }
 
                 for await locn in group {

@@ -61,6 +61,11 @@ extension AppState {
                     self.updateTracks(trackLog: track)
                     self.gpxGoodFileNames.append(path)
                     self.gpxTracks.append(track)
+
+                    // need to sort gpxTracks by timestamp for search to
+                    // work correctly
+
+                    self.gpxTracks.sort { $0.firstTimestamp < $1.firstTimestamp }
                 } else {
                     self.gpxBadFileNames.append(path)
                 }

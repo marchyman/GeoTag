@@ -33,6 +33,10 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 ### Bug Fixes
 
+- If multiple GPX track logs contained timestamps within 6 hours of an image
+  timestamp the image might have been assigned an incorrect location when
+  the "Locn from track" function was used.
+
 ### See the file named *History* for earlier changes and bug fixes
 
 ---
