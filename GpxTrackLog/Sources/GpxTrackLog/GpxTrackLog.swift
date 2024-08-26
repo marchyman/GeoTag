@@ -15,6 +15,18 @@ public struct GpxTrackLog: Sendable {
         let gpxFile = try Gpx(contentsOf: url)
         tracks = try gpxFile.parse()
     }
+
+    // return the timestamp of the first point in the first segment of the
+    // first track or the timestamp of the distant past.
+    public var firstTimestamp: TimeInterval {
+        if let timeInterval = tracks.first?
+                                    .segments.first?
+                                    .points.first?
+                                    .timeFromEpoch {
+            return timeInterval
+        }
+        return Date.now.timeIntervalSince(Date.distantPast)
+    }
 }
 
 // Definitions of the elements that make up a track.
