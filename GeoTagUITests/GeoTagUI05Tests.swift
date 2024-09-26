@@ -13,7 +13,7 @@ final class GeoTagUI05Tests: XCTestCase {
     private var testImageFolder = ""
 
     @MainActor
-    override func setUp() {
+    func localSetup() {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launch()
@@ -71,6 +71,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test0DuplicateImage() {
+        localSetup()
         openTestFile()
         XCTAssertTrue(app.staticTexts["IMG_7158.CR2*"]
             .waitForExistence(timeout: 2))
@@ -91,6 +92,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test1MapClick() {
+        localSetup()
         openTestFile()
         let row = app.outlineRows.firstMatch
         XCTAssertTrue(row.staticTexts["IMG_7158.CR2*"]
@@ -148,6 +150,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test2TableMenu() {
+        localSetup()
         openTestFile(folder: true)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
         app.sheets.buttons.firstMatch.click()
@@ -228,6 +231,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test3Search() {
+        localSetup()
         openTestFile(folder: true)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
         app.sheets.buttons.firstMatch.click()
@@ -264,6 +268,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test4TimeZone() {
+        localSetup()
         // show the change time zone window
         let tzItem = app.menuItems["Specify Time Zone…"]
         XCTAssert(tzItem.exists)

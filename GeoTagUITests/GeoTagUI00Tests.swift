@@ -11,10 +11,20 @@ final class GeoTagUI00Tests: XCTestCase {
 
     private var app: XCUIApplication!
 
-    @MainActor
     override func setUp() {
         continueAfterFailure = false
 
+    }
+
+    override func tearDown() {
+        // Put teardown code here. This method is called after the
+        // invocation of each test method in the class.
+        super.tearDown()
+        app = nil
+    }
+
+    @MainActor
+    func localSetup() {
         app = XCUIApplication()
         app.launchEnvironment = ["UITESTS": "1"]
         app.launch()
@@ -27,13 +37,6 @@ final class GeoTagUI00Tests: XCTestCase {
         takeScreenshot(name: "InitialLaunch")
         sheet.buttons.firstMatch.click()
         takeScreenshot(name: "Launch")
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the
-        // invocation of each test method in the class.
-        super.tearDown()
-        app = nil
     }
 
     @MainActor
@@ -53,6 +56,7 @@ final class GeoTagUI00Tests: XCTestCase {
     // the appropriate menu items appear.
     @MainActor
     func test0Startup() {
+        localSetup()
         let window = app.windows["main"]
         XCTAssert(window.exists)
         print(window.debugDescription)
@@ -92,6 +96,7 @@ final class GeoTagUI00Tests: XCTestCase {
     // when the app is launched in future tests.
     @MainActor
     func test1SetNoBackup() {
+        localSetup()
         app.menuItems["Settings…"].click()
         XCTAssert(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
         app.checkBoxes["Disable image backups"].click()
