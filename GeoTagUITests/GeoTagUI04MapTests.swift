@@ -139,18 +139,21 @@ final class GeoTagUI04MapTests: XCTestCase {
         // show search results
         let searchText = app.textFields[" Search location"]
         searchText.click()
-        let table = app.tables.firstMatch
-        XCTAssertTrue(table.exists)
+        let searchResults = app.outlines.element(boundBy: 1)
+        XCTAssert(searchResults.waitForExistence(timeout: 1))
+        XCTAssertTrue(searchResults.exists)
 
         // make them go away
         app.buttons["Cancel"].click()
         sleep(1)
-        XCTAssertFalse(table.exists)
+        XCTAssert(!searchResults.exists)
 
         // show them again and select the result from test 0.
+
         searchText.click()
-        let oldResult = table.tableRows.element(boundBy: 3)
-                            .staticTexts.firstMatch
+        let oldResult = searchResults
+            .outlineRows.element(boundBy: 3)
+            .staticTexts.firstMatch
         XCTAssertTrue(oldResult.exists)
         oldResult.click()
         XCTAssertTrue(loc.waitForExistence(timeout: 2))
@@ -158,24 +161,24 @@ final class GeoTagUI04MapTests: XCTestCase {
 
         XCTAssert(oldLocValue != newLocValue)
 
-        // the table should be gone
-        XCTAssertFalse(table.exists)
+        XCTAssert(!searchResults.exists)
+        print(searchResults.debugDescription)
 
         // start a search and cancel with escape key
         searchText.click()
-        XCTAssertTrue(table.exists)
+        XCTAssert(searchResults.exists)
         searchText.typeText("a.skjdhf")
         searchText.typeKey(.escape, modifierFlags: [])
-        XCTAssertFalse(table.exists)
+        XCTAssert(!searchResults.exists)
 
         // start a search and cancel
         searchText.click()
-        XCTAssertTrue(table.exists)
+        XCTAssert(searchResults.exists)
         searchText.typeText("a.skjdhf")
         searchText.typeKey("a", modifierFlags: [.command])
         searchText.typeKey(.delete, modifierFlags: [])
         app.buttons["Close"].click()
-        XCTAssertFalse(table.exists)
+        XCTAssert(!searchResults.exists)
     }
 
     // Clear saved locations and verify
