@@ -216,11 +216,9 @@ final class GeoTagUI04MapTests: XCTestCase {
         searchText.click()
         searchText.typeText("Chicago")
         searchText.typeKey(.return, modifierFlags: [])
-        let searchResult = app
-                            .tables.firstMatch
-                            .tableRows.element(boundBy: 2)
-                            .staticTexts.firstMatch
-        XCTAssertTrue(searchResult.waitForExistence(timeout: 1))
+        let searchResults = app.outlines.element(boundBy: 1)
+        XCTAssert(searchResults.waitForExistence(timeout: 1))
+        let searchResult = searchResults.staticTexts.firstMatch
         searchResult.click()
         let loc = app.windows.firstMatch
                     .groups.firstMatch
@@ -256,11 +254,9 @@ final class GeoTagUI04MapTests: XCTestCase {
         searchText.click()
         searchText.typeText("oakland, ca")
         searchText.typeKey(.return, modifierFlags: [])
-        let searchResult = app
-                            .tables.firstMatch
-                            .tableRows.element(boundBy: 2)
-                            .staticTexts.firstMatch
-        XCTAssertTrue(searchResult.waitForExistence(timeout: 1))
+        let searchResults = app.outlines.element(boundBy: 1)
+        XCTAssert(searchResults.waitForExistence(timeout: 1))
+        let searchResult = searchResults.staticTexts.firstMatch
         searchResult.click()
         let loc = app.windows.firstMatch
                     .groups.firstMatch
