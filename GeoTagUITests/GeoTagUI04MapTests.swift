@@ -76,23 +76,29 @@ final class GeoTagUI04MapTests: XCTestCase {
         XCTAssertTrue(app.images["Search"].exists)
         XCTAssertTrue(app.buttons["Close"].exists)
 
+        // Click in the search window and verify search results are
+        // currently empty (only the header staticTexts exists).
+
         searchText.click()
-        // Verify the table of search results is empty.
-        let table = app.tables.firstMatch
-        let searchResult = table
-                            .tableRows
-                            .element(boundBy: 2)
-                            .staticTexts
-                            .firstMatch
-        XCTAssertFalse(searchResult.exists)
+        let searchResults = app.outlines.element(boundBy: 1)
+        XCTAssert(searchResults.waitForExistence(timeout: 1))
+        XCTAssert(searchResults.staticTexts.count == 1)
+
+        // Search and verify at least one result was found
 
         searchText.typeText("New York City")
         searchText.typeKey(.return, modifierFlags: [])
-        // Verify there is a search response.  It might even be New York, NY.
-        XCTAssertTrue(searchResult.waitForExistence(timeout: 1))
-        let firstSearchResult = searchResult.value as? String
-        XCTAssert(firstSearchResult != nil)
-        searchResult.click()
+        sleep(1)
+        XCTAssert(searchResults.staticTexts.count > 1)
+
+        // Save the first result as a string. Click on the result.
+
+        let firstResult = searchResults.staticTexts.firstMatch
+        let firstResultString = firstResult.value as? String
+        XCTAssert(firstResultString != nil)
+        print(firstResultString!)
+        firstResult.click()
+
         let loc = app.windows.firstMatch
                     .groups.firstMatch
                     .splitGroups.firstMatch
@@ -105,13 +111,14 @@ final class GeoTagUI04MapTests: XCTestCase {
         XCTAssert(firstSearchLoc != nil)
 
         // Now search for another location and verify the map moved as
-        // evidended by a different "loc"
+        // evidenced by a different "loc"
 
         searchText.click()
         searchText.typeText("Oakland, CA")
         searchText.typeKey(.return, modifierFlags: [])
-        XCTAssertTrue(searchResult.waitForExistence(timeout: 1))
-        searchResult.click()
+        sleep(1)
+        XCTAssert(searchResults.staticTexts.count > 1)
+        searchResults.staticTexts.firstMatch.click()
         XCTAssertTrue(loc.waitForExistence(timeout: 2))
         let newLoc = loc.value as? String
         XCTAssert(firstSearchLoc != newLoc)
