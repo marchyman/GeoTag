@@ -23,13 +23,8 @@ final class GeoTagUI04MapTests: XCTestCase {
 
     private var app: XCUIApplication!
 
-    @MainActor
     override func setUpWithError() throws {
         continueAfterFailure = false
-
-        app = XCUIApplication()
-        app.launchEnvironment = ["MAPTEST": "1"]
-        app.launch()
     }
 
     override func tearDownWithError() throws {
@@ -37,6 +32,13 @@ final class GeoTagUI04MapTests: XCTestCase {
         // invocation of each test method in the class.
         try super.tearDownWithError()
         app = nil
+    }
+
+    @MainActor
+    func localSetup() {
+        app = XCUIApplication()
+        app.launchEnvironment = ["MAPTEST": "1"]
+        app.launch()
     }
 
     @MainActor
@@ -55,6 +57,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     // search
     @MainActor
     func test0MapSearch() {
+        localSetup()
         let map = app.maps.firstMatch
         XCTAssertTrue(map.exists)
         let searchText = app.textFields[" Search location"]
@@ -117,6 +120,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     // Search picking previous results
     @MainActor
     func test1MapSearch() {
+        localSetup()
         // save the current map location
         let loc = app.windows.firstMatch
                     .groups.firstMatch
@@ -170,6 +174,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     // Clear saved locations and verify
     @MainActor
     func test2MapSearch() {
+        localSetup()
         let searchText = app.textFields[" Search location"]
         XCTAssertTrue(searchText.exists)
         searchText.click()
@@ -184,6 +189,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     // Map context menu
     @MainActor
     func test3MapContextMenu() {
+        localSetup()
         let map = app.maps.firstMatch
         map.rightClick()
         let menu = app.windows.menus.firstMatch
@@ -224,6 +230,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     // more map context menu.
     @MainActor
     func test4MapContextMenu() {
+        localSetup()
         // verify the state is correct, i.e. things changed above were
         // sticky (how can I check that the zoom level was saved?)
         XCTAssertTrue(app.buttons["ModeButton3D"].exists)
