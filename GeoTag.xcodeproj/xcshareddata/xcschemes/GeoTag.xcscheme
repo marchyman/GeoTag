@@ -53,6 +53,11 @@
             value = "$(SRCROOT)/SaveBackup/"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "GpxPath"
+            value = "$(SRCROOT)/TestData/"
+            isEnabled = "YES">
+         </EnvironmentVariable>
       </EnvironmentVariables>
       <Testables>
          <TestableReference
@@ -63,6 +68,17 @@
                BlueprintIdentifier = "4984CF8A2BB4BECC0008DDF8"
                BuildableName = "GeoTagUITests.xctest"
                BlueprintName = "GeoTagUITests"
+               ReferencedContainer = "container:GeoTag.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "49E16D1C2C3C9E49003EF130"
+               BuildableName = "GeoTagTests.xctest"
+               BlueprintName = "GeoTagTests"
                ReferencedContainer = "container:GeoTag.xcodeproj">
             </BuildableReference>
          </TestableReference>

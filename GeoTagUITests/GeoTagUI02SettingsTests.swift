@@ -11,6 +11,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
 
     private var app: XCUIApplication!
 
+    @MainActor
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -31,6 +32,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         app = nil
     }
 
+    @MainActor
     func takeScreenshot(name: String) {
         let screenshot = app.windows.firstMatch.screenshot()
 
@@ -43,10 +45,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         add(attachment)
     }
 
-    func testSetBackup() {
-
-    }
-
+    @MainActor
     func test0SettingsOpened() throws {
         app.menuItems["Settings…"].click()
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
@@ -98,6 +97,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
     }
 
     // swiftlint: disable cyclomatic_complexity
+    @MainActor
     func test1ChangeSettings() {
         app.typeKey(",", modifierFlags: .command)
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
@@ -163,6 +163,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         // swiftlint: enable cyclomatic_complexity
     }
 
+    @MainActor
     func test2ValidateSettings() {
         app.typeKey(",", modifierFlags: .command)
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
@@ -203,6 +204,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         settings.buttons["Close"].click()
     }
 
+    @MainActor
     func test3NormalSettings() {
         app.typeKey(",", modifierFlags: .command)
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))

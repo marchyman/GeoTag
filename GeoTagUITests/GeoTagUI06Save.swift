@@ -14,6 +14,7 @@ final class GeoTagUI06Save: XCTestCase {
     private var saveImageFolder = ""
     private var saveBackupFolder = ""
 
+    @MainActor
     override func setUp() {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -60,6 +61,7 @@ final class GeoTagUI06Save: XCTestCase {
     ]
     // swiftlint: enable large_tuple
 
+    @MainActor
     func test0Save() {
         openImages()
         openTrack()
@@ -77,6 +79,7 @@ final class GeoTagUI06Save: XCTestCase {
     }
 
     // helper functions for test 4
+    @MainActor
     func openImages() {
         app.typeKey("o", modifierFlags: [.command])
         app.typeKey("g", modifierFlags: [.shift, .command])
@@ -90,6 +93,7 @@ final class GeoTagUI06Save: XCTestCase {
         }
     }
 
+    @MainActor
     func openTrack() {
         // open the track file from the test folder
         app.typeKey("o", modifierFlags: [.command])
@@ -102,12 +106,14 @@ final class GeoTagUI06Save: XCTestCase {
         app.sheets.buttons.firstMatch.click()
     }
 
+    @MainActor
     func applyTrackLocations() {
         // select the images and apply the changes
         app.typeKey("a", modifierFlags: [.command])
         app.typeKey("l", modifierFlags: [.command])
     }
 
+    @MainActor
     func adjustImageTime() {
         // modify the time of one of the images.
         let row = app.outlineRows.element(boundBy: 3)
@@ -132,6 +138,7 @@ final class GeoTagUI06Save: XCTestCase {
         app.buttons["Toggle Inspector"].firstMatch.click()
     }
 
+    @MainActor
     func adjustImageLocation() {
         // modify the location of the PNG file
         let row = app.outlineRows.element(boundBy: 4)
@@ -163,6 +170,8 @@ final class GeoTagUI06Save: XCTestCase {
         lon.typeKey(.return, modifierFlags: [])
         app.buttons["Toggle Inspector"].firstMatch.click()
     }
+
+    @MainActor
     func verifyResults() {
         for ix in 0 ..< results.count {
             // all elements have a name
@@ -186,6 +195,7 @@ final class GeoTagUI06Save: XCTestCase {
         }
     }
 
+    @MainActor
     func saveWithBadBackupFolder() {
         app.typeKey("s", modifierFlags: [.command])
         XCTAssert(app.sheets.firstMatch.waitForExistence(timeout: 1))
@@ -193,6 +203,7 @@ final class GeoTagUI06Save: XCTestCase {
         app.sheets.firstMatch.buttons["Dismiss"].click()
     }
 
+    @MainActor
     func setBackupFolder() {
         app.typeKey(",", modifierFlags: [.command])
         let settings = app.windows.firstMatch
