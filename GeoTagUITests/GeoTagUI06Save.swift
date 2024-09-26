@@ -14,9 +14,19 @@ final class GeoTagUI06Save: XCTestCase {
     private var saveImageFolder = ""
     private var saveBackupFolder = ""
 
-    @MainActor
     override func setUp() {
         continueAfterFailure = false
+    }
+
+    override func tearDown() {
+        // Put teardown code here. This method is called after the
+        // invocation of each test method in the class.
+        super.tearDown()
+        app = nil
+    }
+
+    @MainActor
+    func localSetup() {
         app = XCUIApplication()
         // force the first save to fail
         app.launchEnvironment = ["BACKUP": NSTemporaryDirectory()]
@@ -40,13 +50,6 @@ final class GeoTagUI06Save: XCTestCase {
         }
     }
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the
-        // invocation of each test method in the class.
-        super.tearDown()
-        app = nil
-    }
-
     // save tests.  This test modifies items in the source tree.  There
     // should be no changes pending allowing a git reset --hard to reset
     // the source tree after testing.
@@ -62,7 +65,8 @@ final class GeoTagUI06Save: XCTestCase {
     // swiftlint: enable large_tuple
 
     @MainActor
-    func test0Save() {
+    func testSave() {
+        localSetup()
         openImages()
         openTrack()
         applyTrackLocations()
@@ -213,6 +217,8 @@ final class GeoTagUI06Save: XCTestCase {
         app.typeText(saveBackupFolder)
         app.typeKey(.enter, modifierFlags: [])
         app.typeKey(.enter, modifierFlags: [])
+        // It may take a second for the alert to show
+        sleep(1)
         if app.sheets.firstMatch.exists {
             // get rid of Delete Old Backup alert
             app.sheets.firstMatch.buttons["Delete"].click()
