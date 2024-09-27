@@ -48,7 +48,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.97';
+$VERSION = '3.02';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -6552,7 +6552,7 @@ my %userDefined = (
     PROCESS_PROC => \&ProcessKeys,
     WRITE_PROC => \&WriteKeys,
     CHECK_PROC => \&CheckQTValue,
-    VARS => { LONG_TAGS => 7 },
+    VARS => { LONG_TAGS => 8 },
     WRITABLE => 1,
     # (not PREFERRED when writing)
     GROUPS => { 1 => 'Keys' },
@@ -6606,6 +6606,8 @@ my %userDefined = (
         PrintConv => '$val * 1e6 . " microseconds"',
         PrintConvInv => '$val =~ s/ .*//; $val * 1e-6',
     },
+  # 'camera.focal_length.35mm_equivalent' - not top level (written to Keys in video track)
+  # 'camera.lens_model'                   - not top level (written to Keys in video track)
     'location.ISO6709' => {
         Name => 'GPSCoordinates',
         Groups => { 2 => 'Location' },
@@ -6668,7 +6670,12 @@ my %userDefined = (
 #
     'com.apple.photos.captureMode' => 'CaptureMode',
     'com.android.version' => 'AndroidVersion',
-    'com.android.capture.fps' => 'AndroidCaptureFPS',
+    'com.android.capture.fps' => { Name  => 'AndroidCaptureFPS', Writable => 'float' },
+    'com.android.manufacturer' => 'AndroidMake',
+    'com.android.model' => 'AndroidModel',
+    'com.xiaomi.preview_video_cover' => { Name => 'XiaomiPreviewVideoCover', Writable => 'int32s' },
+    'xiaomi.exifInfo.videoinfo' => 'XiaomiExifInfo',
+    'com.xiaomi.hdr10' => { Name => 'XiaomiHDR10', Writable => 'int32s' },
 #
 # also seen
 #
@@ -8992,12 +8999,20 @@ sub HandleItemInfo($)
                 if ($$item{Extents} and @{$$item{Extents}}) {
                     $len += $$_[2] foreach @{$$item{Extents}};
                 }
-                $et->VPrint(0, "$$et{INDENT}Item $id) '${type}' ($len bytes)\n");
+                my $enc = $$item{ContentEncoding} ? ", $$item{ContentEncoding} encoded" : '';
+                $et->VPrint(0, "$$et{INDENT}Item $id) '${type}' ($len bytes$enc)\n");
             }
             # get ExifTool name for this item
             my $name = { Exif => 'EXIF', 'application/rdf+xml' => 'XMP', jpeg => 'PreviewImage' }->{$type} || '';
             my ($warn, $extent);
-            $warn = "Can't currently decode encoded $type metadata" if $$item{ContentEncoding};
+            if ($$item{ContentEncoding}) {
+                if ($$item{ContentEncoding} ne 'deflate') {
+                    # (other possible values are 'gzip' and 'compress', but I don't have samples of these)
+                    $warn = "Can't currently decode $$item{ContentEncoding} encoded $type metadata";
+                } elsif (not eval { require Compress::Zlib }) {
+                    $warn = "Install Compress::Zlib to decode deflated $type metadata";
+                }
+            }
             $warn = "Can't currently decode protected $type metadata" if $$item{ProtectionIndex};
             $warn = "Can't currently extract $type with construction method $$item{ConstructionMethod}" if $$item{ConstructionMethod};
             $et->WarnOnce($warn) if $warn and $name;
@@ -9057,6 +9072,22 @@ sub HandleItemInfo($)
             next unless defined $buff;
             $buff = $val . $buff if length $val;
             next unless length $buff;   # ignore empty directories
+            if ($$item{ContentEncoding}) {
+                my ($v2, $stat);
+                my $inflate = Compress::Zlib::inflateInit();
+                $inflate and ($v2, $stat) = $inflate->inflate($buff);
+                if ($inflate and $stat == Compress::Zlib::Z_STREAM_END()) {
+                    $buff = $v2;
+                    my $len = length $buff;
+                    $et->VPrint(0, "$$et{INDENT}Inflated Item $id) '${type}' ($len bytes)\n");
+                    $et->VerboseDump(\$buff);
+                } else {
+                    $warn = "Error inflating $name metadata";
+                    $et->WarnOnce($warn);
+                    $et->VPrint(0, "$$et{INDENT}    [not extracted]  ($warn)\n") if $verbose > 2;
+                    next;
+                }
+            }
             my ($start, $subTable, $proc);
             my $pos = $$item{Extents}[0][1] + $base;
             if ($name eq 'EXIF' and length $buff >= 4) {
@@ -9460,7 +9491,7 @@ sub ProcessKeys($$$)
             $$newInfo{KeysID} = $tag;  # save original ID for use in family 7 group name
             AddTagToTable($itemList, $id, $newInfo);
             $msg or $msg = '';
-            $out and print $out "$$et{INDENT}Added ItemList Tag $id = ($ns) $tag$msg\n";
+            $out and print $out "$$et{INDENT}Added ItemList Tag $id = ($ns) $full$msg\n";
         }
         $pos += $len;
         ++$index;
@@ -9497,7 +9528,7 @@ sub ProcessMOV($$;$)
     my $dirID = $$dirInfo{DirID} || '';
     my $charsetQuickTime = $et->Options('CharsetQuickTime');
     my ($buff, $tag, $size, $track, $isUserData, %triplet, $doDefaultLang, $index);
-    my ($dirEnd, $unkOpt, %saveOptions, $atomCount, $warnStr);
+    my ($dirEnd, $unkOpt, %saveOptions, $atomCount, $warnStr, $trailer);
 
     my $topLevel = not $$et{InQuickTime};
     $$et{InQuickTime} = 1;
@@ -9526,6 +9557,17 @@ sub ProcessMOV($$;$)
         $tagTablePtr = GetTagTable('Image::ExifTool::QuickTime::Main');
     }
     ($size, $tag) = unpack('Na4', $buff);
+    my $fast = $$et{OPTIONS}{FastScan} || 0;
+    # check for Insta360 trailer
+    if ($topLevel and not $fast) {
+        my $pos = $raf->Tell();
+        if ($raf->Seek(-40, 2) and $raf->Read($buff, 40) == 40 and
+            substr($buff, 8) eq '8db42d694ccc418790edff439fe026bf')
+        {
+            $trailer = [ 'Insta360', $raf->Tell() - unpack('V',$buff) ];
+        }
+        $raf->Seek($pos,0) or return 0;
+    }
     if ($dataPt) {
         $verbose and $et->VerboseDir($$dirInfo{DirName});
     } else {
@@ -9564,7 +9606,6 @@ sub ProcessMOV($$;$)
         # have XMP take priority except for HEIC
         $$et{PRIORITY_DIR} = 'XMP' unless $fileType and $fileType eq 'HEIC';
     }
-    my $fast = $$et{OPTIONS}{FastScan} || 0;
     $$raf{NoBuffer} = 1 if $fast;   # disable buffering in FastScan mode
 
     my $ee = $$et{OPTIONS}{ExtractEmbedded};
@@ -9617,6 +9658,8 @@ sub ProcessMOV($$;$)
                 } elsif (not $et->Options('LargeFileSupport')) {
                     $warnStr = 'End of processing at large atom (LargeFileSupport not enabled)';
                     last;
+                } elsif ($et->Options('LargeFileSupport') eq '2') {
+                    $et->WarnOnce('Processing large atom (LargeFileSupport is 2)');
                 }
             }
             $size = $hi * 4294967296 + $lo - 16;
@@ -9711,7 +9754,7 @@ sub ProcessMOV($$;$)
         if ($size > 0x2000000) {    # start to get worried above 32 MiB
             # check for RIFF trailer (written by Auto-Vox dashcam)
             if ($buff =~ /^(gpsa|gps0|gsen|gsea)...\0/s) { # (yet seen only gpsa as first record)
-                $et->VPrint(0, "Found RIFF trailer");
+                $et->VPrint(0, sprintf("Found RIFF trailer at offset 0x%x",$lastPos));
                 if ($et->Options('ExtractEmbedded')) {
                     $raf->Seek(-8, 1) or last;  # seek back to start of trailer
                     my $tbl = GetTagTable('Image::ExifTool::QuickTime::Stream');
@@ -9719,6 +9762,11 @@ sub ProcessMOV($$;$)
                 } else {
                     EEWarn($et);
                 }
+                last;
+            } elsif ($buff eq 'CCCCCCCC') {
+                $et->VPrint(0, sprintf("Found Kenwood trailer at offset 0x%x",$lastPos));
+                my $tbl = GetTagTable('Image::ExifTool::QuickTime::Stream');
+                ProcessKenwoodTrailer($et, { RAF => $raf }, $tbl);
                 last;
             }
             $ignore = 1;
@@ -10098,6 +10146,10 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
         $dataPos += $size + 8;  # point to start of next atom data
         last if $dirEnd and $dataPos >= $dirEnd; # (note: ignores last value if 0 bytes)
         $lastPos = $raf->Tell() + $dirBase;
+        if ($trailer and $lastPos >= $$trailer[1]) {
+            $et->Warn(sprintf('%s trailer at offset 0x%x', @$trailer), 1);
+            last;
+        }
         $raf->Read($buff, 8) == 8 or last;
         $lastTag = $tag if $$tagTablePtr{$tag} and $tag ne 'free'; # (Insta360 sometimes puts free block before trailer)
         ($size, $tag) = unpack('Na4', $buff);
@@ -10106,14 +10158,10 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
     if ($warnStr) {
         # assume this is an unknown trailer if it comes immediately after
         # mdat or moov and has a tag name we don't recognize
-        if (($lastTag eq 'mdat' or $lastTag eq 'moov') and (not $$tagTablePtr{$tag} or
-            ref $$tagTablePtr{$tag} eq 'HASH' and $$tagTablePtr{$tag}{Unknown}))
+        if (($lastTag eq 'mdat' or $lastTag eq 'moov') and
+            (not $$tagTablePtr{$tag} or ref $$tagTablePtr{$tag} eq 'HASH' and $$tagTablePtr{$tag}{Unknown}))
         {
-            if ($size == 0x1000000 - 8 and $tag =~ /^(\x94\xc0\x7e\0|\0\x02\0\0)/) {
-                $et->Warn(sprintf('Insta360 trailer at offset 0x%x', $lastPos), 1);
-            } else {
-                $et->Warn('Unknown trailer with '.lcfirst($warnStr));
-            }
+            $et->Warn('Unknown trailer with '.lcfirst($warnStr));
         } else {
             $et->Warn($warnStr);
         }
@@ -10140,7 +10188,10 @@ QTLang: foreach $tag (@{$$et{QTLang}}) {
             for ($i=0, $key=$name; $$infoHash{$key}; ++$i, $key="$name ($i)") {
                 next QTLang if $et->GetGroup($key, 0) eq 'QuickTime';
             }
-            $et->FoundTag($tagInfo, $$et{VALUE}{$tag});
+            $key = $et->FoundTag($tagInfo, $$et{VALUE}{$tag});
+            # copy extra tag information (groups, etc) to the synthetic tag
+            $$et{TAG_EXTRA}{$key} = $$et{TAG_EXTRA}{$tag};
+            $et->VPrint(0, "(synthesized default-language tag for QuickTime:$$tagInfo{Name})");
         }
         delete $$et{QTLang};
     }

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #------------------------------------------------------------------------------
 # File:         exiftool
 #
@@ -11,7 +11,7 @@ use strict;
 use warnings;
 require 5.004;
 
-my $version = '12.87';
+my $version = '12.97';
 
 # add our 'lib' directory to the include list BEFORE 'use Image::ExifTool'
 my $exePath;
@@ -51,7 +51,7 @@ sub CleanXML($);
 sub EncodeXML($);
 sub FormatXML($$$);
 sub EscapeJSON($;$);
-sub FormatJSON($$$);
+sub FormatJSON($$$;$);
 sub PrintCSV();
 sub AddGroups($$$$);
 sub ConvertBinary($);
@@ -231,10 +231,6 @@ my $stayOpen = 0;
 
 my $rtnValApp = 0;  # app return value (0=success)
 my $curTitle = '';  # current window title
-
-# lookup for O/S names which may use a backslash as a directory separator
-# (ref File::Spec of PathTools-3.2701)
-my %hasBackslash = ( MSWin32 => 1, os2 => 1, dos => 1, NetWare => 1, symbian => 1, cygwin => 1 );
 
 # lookup for O/S names which use CR/LF newlines
 my $isCRLF = { MSWin32 => 1, os2 => 1, dos => 1 }->{$^O};
@@ -1615,7 +1611,7 @@ if ($argFormat) {
 }
 
 # change to forward slashes if necessary in all filenames (like CleanFilename)
-if ($hasBackslash{$^O}) {
+if (Image::ExifTool::IsPC()) {
     tr/\\/\// foreach @files;
 }
 
@@ -2310,8 +2306,8 @@ sub GetImageInfo($$)
         # output using print format file (-p) option
         my ($type, $doc, $grp, $lastDoc, $cache);
         $fileTrailer = '';
-        # repeat for each sub-document if necessary
-        if ($$et{DOC_COUNT}) {
+        # repeat for each embedded document if necessary (only if -ee used)
+        if ($et->Options('ExtractEmbedded')) {
             # (cache tag keys if there are sub-documents)
             $lastDoc = $$et{DOC_COUNT} and $cache = { };
         } else {
@@ -2371,7 +2367,7 @@ sub GetImageInfo($$)
         my $errs = $et->GetInfo('Warning', 'Error');
         PrintErrors($et, $errs, $file) and EFile($file);
     } elsif (not $disableOutput) {
-        my ($tag, $line, %noDups, %csvInfo, $bra, $ket, $sep);
+        my ($tag, $line, %noDups, %csvInfo, $bra, $ket, $sep, $quote);
         if ($fp) {
             # print file header (only once)
             if ($fileHeader) {
@@ -2414,6 +2410,7 @@ sub GetImageInfo($$)
             } elsif ($json) {
                 # set delimiters for JSON or PHP output
                 ($bra, $ket, $sep) = $json == 1 ? ('{','}',':') : ('Array(',')',' =>');
+                $quote = 1 if $$et{OPTIONS}{StructFormat} and $$et{OPTIONS}{StructFormat} eq 'JSONQ';
                 print $fp ",\n" if $comma;
                 print $fp qq($bra\n  "SourceFile"$sep ), EscapeJSON(MyConvertFileName($et,$file),1);
                 $comma = 1;
@@ -2707,7 +2704,7 @@ TAG:    foreach $tag (@foundTags) {
                         }
                     }
                 }
-                FormatJSON($fp, $val, $ind);
+                FormatJSON($fp, $val, $ind, $quote);
                 $comma = 1;
                 next;
             }
@@ -3499,17 +3496,17 @@ sub EscapeJSON($;$)
 
 #------------------------------------------------------------------------------
 # Print JSON or PHP value
-# Inputs: 0) file reference, 1) value, 2) indentation
-sub FormatJSON($$$)
+# Inputs: 0) file reference, 1) value, 2) indentation, 3) true to quote numbers
+sub FormatJSON($$$;$)
 {
     local $_;
-    my ($fp, $val, $ind) = @_;
+    my ($fp, $val, $ind, $quote) = @_;
     my $comma;
     if (not ref $val) {
-        print $fp EscapeJSON($val);
+        print $fp EscapeJSON($val, $quote);
     } elsif (ref $val eq 'ARRAY') {
         if ($joinLists and not ref $$val[0]) {
-            print $fp EscapeJSON(join $listSep, @$val);
+            print $fp EscapeJSON(join($listSep, @$val), $quote);
         } else {
             my ($bra, $ket) = $json == 1 ? ('[',']') : ('Array(',')');
             print $fp $bra;
@@ -3773,7 +3770,7 @@ sub DoSetFromFile($$$)
 # Returns: nothing, but changes filename if necessary
 sub CleanFilename($)
 {
-    $_[0] =~ tr/\\/\// if $hasBackslash{$^O};
+    $_[0] =~ tr/\\/\// if Image::ExifTool::IsPC();
 }
 
 #------------------------------------------------------------------------------
@@ -4096,7 +4093,7 @@ sub AbsPath($)
         $path = eval { Cwd::abs_path($file) };
         # make the delimiters and case consistent
         # (abs_path is very inconsistent about what it returns in Windows)
-        if (defined $path and $hasBackslash{$^O}) {
+        if (defined $path and Image::ExifTool::IsPC()) {
             $path =~ tr/\\/\//;
             $path = lc $path;
         }
@@ -4304,17 +4301,20 @@ sub Num2Alpha($)
 sub NextUnusedFilename($;$)
 {
     my ($fmt, $okfile) = @_;
-    return $fmt unless $fmt =~ /%[-+]?\d*\.?\d*[lun]?[cC]/;
+    return $fmt unless $fmt =~ /%[-+]?\d*[.:]?\d*[lun]?[cC]/;
     my %sep = ( '-' => '-', '+' => '_' );
     my ($copy, $alpha) = (0, 'a');
+    my $lastFile;
     for (;;) {
         my ($filename, $pos) = ('', 0);
-        while ($fmt =~ /(%([-+]?)(\d*)(\.?)(\d*)([lun]?)([cC]))/g) {
+        while ($fmt =~ /(%([-+]?)(\d*)([.:]?)(\d*)([lun]?)([cC]))/g) {
             $filename .= substr($fmt, $pos, pos($fmt) - $pos - length($1));
             $pos = pos($fmt);
             my ($sign, $wid, $dec, $wid2, $mod, $tok) = ($2, $3 || 0, $4, $5 || 0, $6, $7);
             my $seq;
             if ($tok eq 'C') {
+                # increment sequence number for %C on collision if ':' is used
+                $sign eq '-' ? ++$seqFileDir : ++$seqFileNum if $copy and $dec eq ':';
                 $seq = $wid + ($sign eq '-' ? $seqFileDir : $seqFileNum) - 1;
                 $wid = $wid2;
             } else {
@@ -4343,6 +4343,8 @@ sub NextUnusedFilename($;$)
             my ($fn, $ok) = (AbsPath($filename), AbsPath($okfile));
             return $okfile if defined $fn and defined $ok and $fn eq $ok;
         }
+        return $filename if defined $lastFile and $lastFile eq $filename;
+        $lastFile = $filename;
         ++$copy;
         ++$alpha;
     }
@@ -4352,46 +4354,21 @@ sub NextUnusedFilename($;$)
 # Create directory for specified file
 # Inputs: 0) complete file name including path
 # Returns: true if a directory was created
-my $k32CreateDir;
 sub CreateDirectory($)
 {
     my $file = shift;
-    my ($dir, $created);
-    ($dir = $file) =~ s/[^\/]*$//;  # remove filename from path specification
-    if ($dir and not $mt->IsDirectory($dir)) {
-        my @parts = split /\//, $dir;
-        $dir = '';
-        foreach (@parts) {
-            $dir .= $_;
-            if (length $dir and not $mt->IsDirectory($dir) and
-                # don't try to create a network drive root directory
-                not ($hasBackslash{$^O} and $dir =~ m{^//[^/]*$}))
-            {
-                my $success;
-                # create directory since it doesn't exist
-                my $d2 = $dir; # (must make a copy in case EncodeFileName recodes it)
-                if ($mt->EncodeFileName($d2)) {
-                    # handle Windows Unicode directory names
-                    unless (eval { require Win32::API }) {
-                        Error('Install Win32::API to create directories with Unicode names');
-                        return 0;
-                    }
-                    unless ($k32CreateDir) {
-                        $k32CreateDir = Win32::API->new('KERNEL32', 'CreateDirectoryW', 'PP', 'I');
-                    }
-                    $success = $k32CreateDir->Call($d2, 0) if $k32CreateDir;
-                } else {
-                    $success = mkdir($d2, 0777);
-                }
-                $success or Error("Error creating directory $dir\n"), return 0;
-                $verbose and print $vout "Created directory $dir\n";
-                $created = 1;
-            }
-            $dir .= '/';
+    my $err = $mt->CreateDirectory($file);
+    if (defined $err) {
+        $err and Error("$err\n"), return 0;
+        if ($verbose) {
+            my $dir;
+            ($dir = $file) =~ s(/[^/]*$)();
+            print $vout "Created directory $dir\n";
         }
-        ++$countNewDir if $created;
+        ++$countNewDir;
+        return 1;
     }
-    return $created;
+    return 0;
 }
 
 #------------------------------------------------------------------------------
@@ -4666,6 +4643,10 @@ sub PrintErrors($$$)
     }
     return $$info{Error};
 }
+
+#=====================================================================================
+# NOTE: Be sure to update windows_exiftool.txt with any changes to this documentation!
+#vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
 __END__
 
@@ -5198,16 +5179,14 @@ B<-struct> option for details.
 E<quot>'-I<DSTTAG>E<lt>I<SRCTAG>'E<quot>) is not the same as interpolating
 its value inside a string (ie. E<quot>'-I<DSTTAG>E<lt>$I<SRCTAG>'E<quot>)
 for source tags which are list-type tags,
-L<shortcut tags|Image::ExifTool::Shortcuts>, tag names containing wildcards,
-or UserParam variables.  When copying directly, the values of each matching
-source tag are copied individually to the destination tag (as if they were
-separate assignments).  However, when interpolated inside a string, list
-items and the values of shortcut tags are concatenated (with a separator set
-by the B<-sep> option), and wildcards are not allowed.  Also, UserParam
-variables are available only when interpolated in a string.  Another
-difference is that a minor warning is generated if a tag doesn't exist when
-interpolating its value in a string (with C<$>), but isn't when copying the
-tag directly.
+L<shortcut tags|Image::ExifTool::Shortcuts>, or tag names containing
+wildcards.  When copying directly, the values of each matching source tag
+are copied individually to the destination tag (as if they were separate
+assignments).  However, when interpolated inside a string, list items and
+the values of shortcut tags are concatenated (with a separator set by the
+B<-sep> option), and wildcards are not allowed.Another difference is that a
+minor warning is generated if a tag doesn't exist when interpolating its
+value in a string (with C<$>), but isn't when copying the tag directly.
 
 Finally, the behaviour is different when a destination tag or group of
 C<All> is used.  When copying directly, a destination group and/or tag name
@@ -5683,7 +5662,7 @@ with this command:
 
 produces output like this:
 
-    -- Generated by ExifTool 12.87 --
+    -- Generated by ExifTool 12.97 --
     File: a.jpg - 2003:10:31 15:44:19
     (f/5.6, 1/60s, ISO 100)
     File: b.jpg - 2006:05:23 11:57:38
@@ -5925,7 +5904,13 @@ A leading '-' causes the number to be reset at the start of each new
 directory (in the original directory structure if the files are being
 moved), and '+' has no effect.  The number before the decimal place gives
 the starting index, the number after the decimal place gives the field
-width.  The following examples show the output filenames when used with the
+width.  To preserve synchronization with the processed file number, by
+default the copy number is not incremented to avoid file name collisions, so
+any existing same-named file will cause an error.  However using a colon
+instead of a decimal point causes the number to be incremented to avoid
+collisions with existing files.
+
+The following examples show the output filenames when used with the
 command C<exiftool rose.jpg star.jpg jet.jpg ...>:
 
     -w %C%f.txt       # 0rose.txt, 1star.txt, 2jet.txt
@@ -6124,7 +6109,9 @@ B<-if> and B<-fileOrder> options for details.
 =item B<-fileOrder>[I<NUM>] [-]I<TAG>
 
 Set file processing order according to the sorted value of the specified
-I<TAG>.  For example, to process files in order of date:
+I<TAG>.  Without this option, files are processed in the order returned by
+the system, which is commonly by file name, but this is filesystem
+dependent.  For example, to process files in order of date:
 
     exiftool -fileOrder DateTimeOriginal DIR
 

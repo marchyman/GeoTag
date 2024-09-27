@@ -19,7 +19,6 @@ use Image::ExifTool::Fixup;
 
 sub AssembleRational($$@);
 sub LastInList($);
-sub CreateDirectory($$);
 sub NextFreeTagKey($$);
 sub RemoveNewValueHash($$$);
 sub RemoveNewValuesForGroup($$);
@@ -2085,9 +2084,10 @@ sub SetFileName($$;$$$)
         return 1;
     }
     # create directory for new file if necessary
-    my $result;
-    if (($result = $self->CreateDirectory($newName)) != 0) {
-        if ($result < 0) {
+    my $err = $self->CreateDirectory($newName);
+    if (defined $err) {
+        if ($err) {
+            $self->Warn($err) unless $err =~ /^Error creating/;
             $self->Warn("Error creating directory for '${newName}'");
             return -1;
         }
@@ -2835,7 +2835,10 @@ sub GetAllGroups($;$)
     $family == 3 and return('Doc#', 'Main');
     $family == 4 and return('Copy#');
     $family == 5 and return('[too many possibilities to list]');
-    $family == 6 and return(@Image::ExifTool::Exif::formatName[1..$#Image::ExifTool::Exif::formatName]);
+    if ($family == 6) {
+        my $fn = \%Image::ExifTool::Exif::formatNumber;
+        return(sort { $$fn{$a} <=> $$fn{$b} } keys %$fn);
+    }
     $family == 8 and return('File#');
 
     LoadAllTables();    # first load all our tables
@@ -3552,55 +3555,6 @@ sub IsRawType($)
 }
 
 #------------------------------------------------------------------------------
-# Create directory for specified file
-# Inputs: 0) ExifTool ref, 1) complete file name including path
-# Returns: 1 = directory created, 0 = nothing done, -1 = error
-my $k32CreateDir;
-sub CreateDirectory($$)
-{
-    local $_;
-    my ($self, $file) = @_;
-    my $rtnVal = 0;
-    my $enc = $$self{OPTIONS}{CharsetFileName};
-    my $dir;
-    ($dir = $file) =~ s/[^\/]*$//;  # remove filename from path specification
-    # recode as UTF-8 if necessary
-    if ($dir and not $self->IsDirectory($dir)) {
-        my @parts = split /\//, $dir;
-        $dir = '';
-        foreach (@parts) {
-            $dir .= $_;
-            if (length $dir and not $self->IsDirectory($dir)) {
-                # create directory since it doesn't exist
-                my $d2 = $dir; # (must make a copy in case EncodeFileName recodes it)
-                if ($self->EncodeFileName($d2)) {
-                    # handle Windows Unicode directory names
-                    unless (eval { require Win32::API }) {
-                        $self->Warn('Install Win32::API to create directories with Unicode names');
-                        return -1;
-                    }
-                    unless ($k32CreateDir) {
-                        return -1 if defined $k32CreateDir;
-                        $k32CreateDir = Win32::API->new('KERNEL32', 'CreateDirectoryW', 'PP', 'I');
-                        unless ($k32CreateDir) {
-                            $self->Warn('Error calling Win32::API::CreateDirectoryW');
-                            $k32CreateDir = 0;
-                            return -1;
-                        }
-                    }
-                    $k32CreateDir->Call($d2, 0) or return -1;
-                } else {
-                    mkdir($d2, 0777) or return -1;
-                }
-                $rtnVal = 1;
-            }
-            $dir .= '/';
-        }
-    }
-    return $rtnVal;
-}
-
-#------------------------------------------------------------------------------
 # Copy file attributes from one file to another
 # Inputs: 0) ExifTool ref, 1) source file name, 2) destination file name
 # Notes: eventually add support for extended attributes?
@@ -3844,7 +3798,6 @@ sub GetGeolocateTags($$;$)
         'iptc'          => [ qw(City Province-State Country-PrimaryLocationCode Country-PrimaryLocationName) ],
         'gps'           => [ qw(GPSLatitude GPSLongitude GPSLatitudeRef GPSLongitudeRef) ],
         'xmp-exif'      => [ qw(GPSLatitude GPSLongitude) ],
-        'keys'          => [ 'GPSCoordinates', 'LocationName' ],
         'itemlist'      => [ 'GPSCoordinates' ],
         'userdata'      => [ 'GPSCoordinates' ],
         # more general groups not in this lookup: XMP and QuickTime 
@@ -3855,12 +3808,16 @@ sub GetGeolocateTags($$;$)
         $tagGroups{$grp} and push @tags, map("$grp:$_", @{$tagGroups{$grp}});
     }
     # set default XMP City tags if necessary
-    if (not $writeGPS and ($grps{xmp} or (not @tags and not $grps{quicktime}))) {
-        push @tags, qw(XMP:City XMP:State XMP:CountryCode XMP:Country Keys:LocationName);
+    if (not $writeGPS) {
+        push @tags, 'Keys:LocationName' if $grps{'keys'};
+        if  ($grps{xmp} or (not @tags and not $grps{quicktime})) {
+            push @tags, qw(XMP:City XMP:State XMP:CountryCode XMP:Country Keys:LocationName);
+        }
     }
     $writeGPS = 1 unless defined $writeGPS; # (delete both City and GPS)
+    push @tags, 'Keys:GPSCoordinates' if $writeGPS and $grps{'keys'};
     # set default QuickTime tag if necessary
-    my $didQT = grep /Coordinates$/, @tags;
+    my $didQT = grep /GPSCoordinates$/, @tags;
     if (($grps{quicktime} and not $didQT) or ($writeGPS and not @tags and not $grps{xmp})) {
         push @tags, 'QuickTime:GPSCoordinates';
     }

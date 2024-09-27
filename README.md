@@ -10,7 +10,7 @@ location data to the images when you save your changes.  ExifTool only modifies
 image metadata -- your image pixels are not touched.
 
 See <http://exiftool.org> for information about ExifTool.
-**ExifTool is built in to GeoTag.**
+**ExifTool is built-in to GeoTag.**
 
 GeoTag 5.2+ requires macOS Sonoma or later.  Use GeoTag 5.1 if running on
 macOS Ventura.  Those running earlier versions of macOS can use GeoTag
@@ -29,6 +29,7 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 - Pin view options now available in the Map context menu in addition to the
   View menu.
+- ExifTool version 12.97
 - Internal changes to meet Swift 6 strict concurrency requirements
 
 ### Bug Fixes

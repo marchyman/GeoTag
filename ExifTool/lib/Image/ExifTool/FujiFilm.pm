@@ -31,7 +31,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.95';
+$VERSION = '1.96';
 
 sub ProcessFujiDir($$$);
 sub ProcessFaceRec($$$);
@@ -1196,7 +1196,7 @@ my %faceCategories = (
         Name => 'RAFCompression',
         Condition => '$$valPt =~ /^\0\0\0/', # (JPEG header is in this location for some RAF versions)
         Format => 'int32u',
-        PrintConv => { 0 => 'None', 2 => 'Lossless', 3 => 'Lossy'  },
+        PrintConv => { 0 => 'Uncompressed', 2 => 'Lossless', 3 => 'Lossy'  },
     },
   # 0x70 - ? same as 0x68?
   # 0x74 - ? usually 0, but have seen 0x1700
@@ -1251,6 +1251,28 @@ my %faceCategories = (
         Count => 2,
         ValueConv => 'my @v=reverse split(" ",$val);"@v"', # reverse to show width first
         PrintConv => '$val=~tr/ /:/; $val',
+    },
+    0x117 => {
+        Name => 'RawZoomActive',
+        Format => 'int32u',
+        Count => 1,
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
+    },
+    0x118 => {
+        Name => 'RawZoomTopLeft',
+        Format => 'int16u',
+        Count => 2,
+        Notes => 'relative to RawCroppedImageSize',
+        ValueConv => 'my @v=reverse split(" ",$val);"@v"', # reverse to show width first
+        PrintConv => '$val=~tr/ /x/; $val',
+    },
+    0x119 => {
+        Name => 'RawZoomSize',
+        Format => 'int16u',
+        Count => 2,
+        Notes => 'relative to RawCroppedImageSize',
+        ValueConv => 'my @v=reverse split(" ",$val);"@v"', # reverse to show width first
+        PrintConv => '$val=~tr/ /x/; $val',
     },
     0x121 => [
         {

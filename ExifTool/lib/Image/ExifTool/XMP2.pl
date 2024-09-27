@@ -871,7 +871,7 @@ my %prismPublicationDate = (
     NOTES => q{
         Publishing Requirements for Industry Standard Metadata 3.0 namespace
         tags.  (see
-        L<https://www.w3.org/Submission/2020/SUBM-prism-20200910/prism-basic.html/>)
+        L<https://www.w3.org/Submission/2020/SUBM-prism-20200910/prism-basic.html>)
     },
     academicField   => { }, # (3.0)
     aggregateIssueNumber => { Writable => 'integer' }, # (3.0)
@@ -1935,6 +1935,7 @@ my %sACDSeeRegionStruct = (
     SpecialTypeID   => { List => 'Bag' },
     PortraitNote    => { },
     DisableAutoCreation => { List => 'Bag' },
+    DisableSuggestedAction => { List => 'Bag' }, #forum16147
     hdrp_makernote => {
         Name => 'HDRPMakerNote',
         # decoded data starts with the following bytes, but nothing yet is known about its contents:
