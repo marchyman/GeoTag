@@ -30,7 +30,7 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 - Pin view options now available in the Map context menu in addition to the
   View menu.
 - ExifTool version 12.97
-- Internal changes to meet Swift 6 strict concurrency requirements
+- Code structure changes
 
 ### Bug Fixes
 
