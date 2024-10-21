@@ -8,8 +8,6 @@
 import MapAndSearchViews
 import SwiftUI
 
-// swiftlint:disable line_length
-
 struct SettingsView: View {
     @Environment(AppState.self) var state
 
@@ -41,7 +39,14 @@ struct SettingsView: View {
                         Toggle("Disable image backups", isOn: $doNotBackup)
                             .labelsHidden()
                     }
-                    .help("GeoTag will not place a copy of updated files in your selected backup folder if this box is checked. If there are issues while updates are in progress it is possible that image files could be corrupted. Allowing GeoTag to make a backup before updates occur is recommended.")
+                    .help("""
+                        GeoTag will not place a copy of updated files in your \
+                        selected backup folder if this box is checked. If \
+                        there are issues while updates are in progress it \
+                        is possible that image files could be corrupted. \
+                        Allowing GeoTag to make a backup before updates \
+                        occur is recommended.
+                        """)
 
                     if doNotBackup {
                         Text("Enabling image backups is strongly recommended")
@@ -54,7 +59,11 @@ struct SettingsView: View {
                                 .frame(width: 280)
                         }
                         .padding(.bottom)
-                        .help("Click on the disclosure indicator to choose a folder where GeoTag will place copies of images before performing any updates.")
+                        .help("""
+                            Click on the disclosure indicator to choose a \
+                            folder where GeoTag will place copies of images \
+                            before performing any updates.
+                            """)
                     }
                 }
 
@@ -64,7 +73,11 @@ struct SettingsView: View {
                         .labelsHidden()
                 }
                 .padding([.bottom, .horizontal])
-                .help("Checking this box will result in creation of a sidecar (XMP) file for updated image files if one does not exist.  Updates are then written to the sidecar file.")
+                .help("""
+                    Checking this box will result in creation of a sidecar \
+                    (XMP) file for updated image files if one does not exist. \
+                    Updates are then written to the sidecar file.
+                    """)
 
                 // Coordinate display configuration
                 Picker("Choose a coordinate format:",
@@ -91,7 +104,10 @@ struct SettingsView: View {
                               value: $state.masData.trackWidth, format: .number)
                         .padding([.horizontal, .bottom])
                         .frame(maxWidth: 190)
-                        .help("Select the width of line used to display GPS tracks on the map. Use 0 for the system default width.")
+                        .help("""
+                            Select the width of line used to display GPS \
+                            tracks on the map. Use 0 for the system default width.
+                            """)
                 }
 
                 LabeledContent("Disable paired jpegs:") {
@@ -99,7 +115,11 @@ struct SettingsView: View {
                         .labelsHidden()
                 }
                 .padding([.bottom, .horizontal] )
-                .help("When this box is checked jpeg files that are part of a raw/jpeg pair can not not be updated.  The jpeg image name is displayed in the table using a gray color.")
+                .help("""
+                    When this box is checked jpeg files that are part of a \
+                    raw/jpeg pair can not not be updated.  The jpeg image \
+                    name is displayed in the table using a gray color.
+                    """)
 
                 // Image save option configuratio
                 Group {
@@ -109,7 +129,13 @@ struct SettingsView: View {
                             .labelsHidden()
                     }
                     .padding([.bottom, .horizontal])
-                    .help("Checking this box will set file modification time to be the same as the image creation date/time whenever GeoTag updates image metadata with location changes.  If the box is not checked file modification times will be controlled by the system.")
+                    .help("""
+                        Checking this box will set file modification time to \
+                        be the same as the image creation date/time whenever \
+                        GeoTag updates image metadata with location changes. \
+                        If the box is not checked file modification times \
+                        will be controlled by the system.
+                        """)
 
                     LabeledContent("Update GPS Date/Time:") {
                         Toggle("Update GPS Date/Time",
@@ -117,14 +143,27 @@ struct SettingsView: View {
                             .labelsHidden()
                     }
                     .padding([.bottom, .horizontal] )
-                    .help("GeoTag can set/update the GPS time and date stamps when updating locations.  These timestamps are the same as the image create date and time but relative to GMP/UTC, not the local time.  When setting this option it is important that the TimeZone (edit menu) is correct for the images being saved.  Please see the GeoTag help pages for more information on setting the time zone.")
+                    .help("""
+                        GeoTag can set/update the GPS time and date stamps \
+                        when updating locations.  These timestamps are the \
+                        same as the image create date and time but relative \
+                        to GMP/UTC, not the local time.  When setting this \
+                        option it is important that the TimeZone (edit menu) \
+                        is correct for the images being saved.  Please see \
+                        the GeoTag help pages for more information on setting \
+                        the time zone.
+                        """)
 
                     LabeledContent("Tag updated files:") {
                         Toggle("Tag updated files", isOn: $addTags)
                             .labelsHidden()
                     }
                     .padding(.horizontal)
-                    .help("If this option is enabled a finder tag will be added to updated images. The tag is alway added to the main image file even when a GPX sidecar file exists.")
+                    .help("""
+                        If this option is enabled a finder tag will be added \
+                        to updated images. The tag is alway added to the main \
+                        image file even when a GPX sidecar file exists.
+                        """)
 
                     if addTags {
                         TextField("With tag:", text: $finderTag)
@@ -135,7 +174,11 @@ struct SettingsView: View {
                                     finderTag = "GeoTag"
                                 }
                             }
-                            .help("This tag will be added to files when Tag updated files is checked.  If the tag is empty \"GeoTag\" will be used.")
+                            .help("""
+                                This tag will be added to files when Tag \
+                                updated files is checked. If the tag is empty \
+                                \"GeoTag\" will be used.
+                                """)
                     }
                 }
 
@@ -152,8 +195,6 @@ struct SettingsView: View {
         }
     }
 }
-
-// swiftlint:enable line_length
 
 #Preview {
     SettingsView()

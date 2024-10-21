@@ -17,9 +17,10 @@ extension AppState {
     // return true if the undo menu option should be disabled.
 
     var undoDisabled: Bool {
-        // swiftlint: disable line_length
-        Self.logger.notice("canUndo: \(self.undoManager.canUndo, privacy: .public), \(self.undoManager.levelsOfUndo, privacy: .public) levels")
-        // swiftlint: enable line_length
+        Self.logger.notice("""
+            canUndo: \(self.undoManager.canUndo, privacy: .public), \
+            \(self.undoManager.levelsOfUndo, privacy: .public) levels
+            """)
         return false // !undoManager.canUndo
     }
 

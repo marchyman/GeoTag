@@ -20,7 +20,6 @@ struct RemoveBackupsAlert: ViewModifier {
                 Button("Cancel", role: .cancel) { }
                     .keyboardShortcut(.defaultAction)
             } message: {
-                // swiftlint:disable line_length
                 Text("""
                      Your current backup/save folder
 
@@ -28,11 +27,12 @@ struct RemoveBackupsAlert: ViewModifier {
 
                      is using \(state.folderSize / 1_000_000) MB to store backup files.
 
-                     \(state.oldFiles.count) files using \(state.deletedSize / 1_000_000) MB of storage were placed in the folder more than 7 days ago.
+                     \(state.oldFiles.count) files using \
+                     \(state.deletedSize / 1_000_000) MB of storage were \
+                     placed in the folder more than 7 days ago.
 
                      Would you like to remove those \(state.oldFiles.count) backup files?
                      """)
-                // swiftlint:enable line_length
             }
     }
 }

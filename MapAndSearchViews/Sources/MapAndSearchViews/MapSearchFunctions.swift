@@ -53,7 +53,6 @@ extension MapAndSearchData {
 
     // fetch saved Places from file in application support dir
     // this is only done when the class is initialized
-    // swiftlint: disable line_length
 
     func fetchPlaces() -> [SearchPlace] {
         let url = appSupportURL()
@@ -66,11 +65,20 @@ extension MapAndSearchData {
             } catch let DecodingError.dataCorrupted(context) {
                 logger.error("corrupted \(context.debugDescription, privacy: .public)")
             } catch let DecodingError.keyNotFound(key, context) {
-                logger.error("Key '\(key.stringValue, privacy: .public)' not found: \(context.debugDescription, privacy: .public)")
+                logger.error("""
+                    Key '\(key.stringValue, privacy: .public)' not found: \
+                    \(context.debugDescription, privacy: .public)
+                    """)
             } catch let DecodingError.valueNotFound(value, context) {
-                logger.error("Value '\(value, privacy: .public)' not found: \(context.debugDescription, privacy: .public)")
+                logger.error("""
+                    Value '\(value, privacy: .public)' not found: \
+                    \(context.debugDescription, privacy: .public)
+                    """)
             } catch let DecodingError.typeMismatch(type, context) {
-                logger.error("Type '\(type, privacy: .public)' mismatch: \(context.debugDescription, privacy: .public)")
+                logger.error("""
+                    Type '\(type, privacy: .public)' mismatch: \
+                    \(context.debugDescription, privacy: .public)
+                    """)
             } catch {
                 logger.error("\(error.localizedDescription, privacy: .public)")
             }
@@ -78,7 +86,6 @@ extension MapAndSearchData {
         }
         return []
     }
-    // swiftlint: enable line_length
 
     // Encode and write searchPlaces.  Only one write can be active at a
     // time. Writes while a write is pending will be thrown away.
