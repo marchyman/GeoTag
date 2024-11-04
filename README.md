@@ -21,15 +21,15 @@ version 4.15.
 There is a map pin location issue when running on early versions of macOS
 Sonoma. If you see a pin placed above the point you clicked/tapped you are
 seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
-14.4.1). It is not a problem in the current version of Sonoma.
+14.4.1). It is not a problem in the versions of Sonoma or in Sequoia.
 
-## GeoTag WIP
+## GeoTag 5.4
 
 ### Updates
 
 - Pin view options now available in the Map context menu in addition to the
   View menu.
-- ExifTool version 12.97
+- ExifTool version 13.01
 - Code structure changes
 
 ### Bug Fixes
