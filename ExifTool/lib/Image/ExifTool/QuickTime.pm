@@ -48,7 +48,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '3.02';
+$VERSION = '3.04';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -901,6 +901,7 @@ my %userDefined = (
         Writable => 1,
     },
     # '35AX'? - seen "AT" (Yada RoadCam Pro 4K dashcam)
+    cust => 'CustomInfo', # 70mai A810
 );
 
 # stuff seen in 'skip' atom (70mai Pro Plus+ MP4 videos)
@@ -935,6 +936,7 @@ my %userDefined = (
     2 => {
         Name => 'CompatibleBrands',
         Format => 'undef[$size-8]',
+        List => 1, # (for documentation only)
         # ignore any entry with a null, and return others as a list
         ValueConv => 'my @a=($val=~/.{4}/sg); @a=grep(!/\0/,@a); \@a',
     },
@@ -2551,7 +2553,7 @@ my %userDefined = (
     TTID => { Name => 'TomTomID', ValueConv => 'unpack("x4H*",$val)' },
     TTVI => { Name => 'TomTomVI', Format => 'int32u', Unknown => 1 }, # seen: "0 1 61 508 508"
     # TTVD seen: "normal 720p 60fps 60fps 16/9 wide 1x"
-    TTVD => { Name => 'TomTomVD', ValueConv => 'my @a = ($val =~ /[\x20-\x7f]+/g); "@a"' },
+    TTVD => { Name => 'TomTomVD', ValueConv => 'my @a = ($val =~ /[\x20-\x7f]+/g); "@a"', List => 1 },
 );
 
 # User-specific media data atoms (ref 11)
@@ -3350,6 +3352,7 @@ my %userDefined = (
         PrintConv => '"Track $val"',
     },
     # cdep (Structural Dependency QT tag?)
+    # fall - ? int32u, seen: 2
 );
 
 # track aperture mode dimensions atoms
@@ -6743,6 +6746,13 @@ my %userDefined = (
         Avoid => 1,
         %iso8601Date,
     },
+    # (mdta)com.apple.quicktime.scene-illuminance
+    'scene-illuminance' => {
+        Name => 'SceneIlluminance',
+        Notes => 'milli-lux',
+        ValueConv => 'unpack("N", $val)',
+        Writable => 0, # (don't make this writable because it is found in timed metadata)
+    },
 #
 # seen in Apple ProRes RAW file
 #
@@ -7392,6 +7402,7 @@ my %userDefined = (
     # alac - 28 bytes
     # adrm - AAX DRM atom? 148 bytes
     # aabd - AAX unknown 17kB (contains 'aavd' strings)
+    # dapa - ? 203 bytes
 );
 
 # AMR decode config box (ref 3)
@@ -9151,7 +9162,7 @@ sub HandleItemInfo($)
             $et->ProcessDirectory(\%dirInfo, $subTable, $proc);
             delete $$et{DOC_NUM};
         }
-        $raf->Seek($curPos, 0);     # seek back to original position
+        $raf->Seek($curPos, 0) or $et->Warn('Seek error'), last;     # seek back to original position
         pop @{$$et{PATH}};
     }
     # process the item properties now that we should know their associations and document numbers
@@ -9577,7 +9588,7 @@ sub ProcessMOV($$;$)
         if ($tag eq 'ftyp' and $size >= 12) {
             # read ftyp atom to see what type of file this is
             if ($raf->Read($buff, $size-8) == $size-8) {
-                $raf->Seek(-($size-8), 1);
+                $raf->Seek(-($size-8), 1) or $et->Warn('Seek error'), return 0;
                 my $type = substr($buff, 0, 4);
                 $$et{save_ftyp} = $type;
                 # see if we know the extension for this file type
@@ -9629,7 +9640,7 @@ sub ProcessMOV($$;$)
                     # a zero size isn't legal for contained atoms, but Canon uses it to
                     # terminate the CNTH atom (eg. CanonEOS100D.mov), so tolerate it here
                     my $pos = $raf->Tell() - 4;
-                    $raf->Seek(0,2);
+                    $raf->Seek(0,2) or $et->Warn('Seek error'), return 0;
                     my $str = $$dirInfo{DirName} . ' with ' . ($raf->Tell() - $pos) . ' bytes';
                     $et->VPrint(0,"$$et{INDENT}\[Terminator found in $str remaining]");
                 } else {
@@ -9638,7 +9649,7 @@ sub ProcessMOV($$;$)
                     if ($$tagTablePtr{"$tag-size"}) {
                         my $pos = $raf->Tell();
                         unless ($fast) {
-                            $raf->Seek(0, 2);
+                            $raf->Seek(0, 2) or $et->Warn('Seek error'), return 0;
                             $et->HandleTag($tagTablePtr, "$tag-size", $raf->Tell() - $pos);
                         }
                         $et->HandleTag($tagTablePtr, "$tag-offset", $pos) if $$tagTablePtr{"$tag-offset"};

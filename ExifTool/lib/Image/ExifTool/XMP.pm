@@ -50,7 +50,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.66';
+$VERSION = '3.67';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -2016,6 +2016,7 @@ my %sPantryItem = (
         Writable => 'integer',
         List => 'Seq',
         AutoSplit => 1,
+        Notes => 'deprecated',
     },
     OECF => {
         Name => 'Opto-ElectricConvFactor',
@@ -2267,7 +2268,7 @@ my %sPantryItem = (
             3 => 'Distant',
         },
     },
-    ImageUniqueID   => { },
+    ImageUniqueID   => { Avoid => 1, Notes => 'moved to exifEX namespace in 2024 spec' },
     GPSVersionID    => { Groups => { 2 => 'Location' } },
     GPSLatitude     => { Groups => { 2 => 'Location' }, %latConv },
     GPSLongitude    => { Groups => { 2 => 'Location' }, %longConv },
@@ -2509,6 +2510,15 @@ my %sPantryItem = (
             Values =>   { List => 'Seq', Writable => 'rational' },
         },
     },
+    # new in Exif 3.0
+    ImageUniqueID   => { },
+    ImageTitle      => { },
+    ImageEditor     => { },
+    Photographer    => { Groups => { 2 => 'Author' } },
+    CameraFirmware  => { Groups => { 2 => 'Camera' } },
+    RAWDevelopingSoftware   => { },
+    ImageEditingSoftware    => { },
+    MetadataEditingSoftware => { },
 );
 
 # Auxiliary namespace properties (aux) - not fully documented (ref PH)
@@ -3777,8 +3787,13 @@ sub ParseXMPElement($$$;$$$$)
 
         # extract property attributes
         my ($parseResource, %attrs, @attrs);
-        while ($attrs =~ m/(\S+?)\s*=\s*(['"])(.*?)\2/sg) {
-            my ($attr, $val) = ($1, $3);
+# this hangs Perl (v5.18.4) for a specific capture string [patched in ExifTool 12.98]
+#        while ($attrs =~ m/(\S+?)\s*=\s*(['"])(.*?)\2/sg) {
+        while ($attrs =~ /(\S+?)\s*=\s*(['"])/g) {
+            my ($attr, $quote) = ($1, $2);
+            my $p0 = pos($attrs);
+            last unless $attrs =~ /$quote/g;
+            my $val = substr($attrs, $p0, pos($attrs)-$p0-1);
             # handle namespace prefixes (defined by xmlns:PREFIX, or used with PREFIX:tag)
             if ($attr =~ /(.*?):/) {
                 if ($1 eq 'xmlns') {

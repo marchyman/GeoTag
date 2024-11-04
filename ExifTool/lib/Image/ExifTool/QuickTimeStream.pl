@@ -109,7 +109,7 @@ my %insvLimit = (
         The tags below are extracted from timed metadata in QuickTime and other
         formats of video files when the ExtractEmbedded option is used.  Although
         most of these tags are combined into the single table below, ExifTool
-        currently reads 77 different formats of timed GPS metadata from video files.
+        currently reads 78 different formats of timed GPS metadata from video files.
     },
     VARS => { NO_ID => 1 },
     GPSLatitude  => { PrintConv => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "N")', RawConv => '$$self{FoundGPSLatitude} = 1; $val' },
@@ -591,8 +591,8 @@ my %insvLimit = (
     GROUPS => { 2 => 'Location' },
     FIRST_ENTRY => 0,
     NOTES => q{
-        Tags extracted from the tx3g sbtl timed metadata of Yuneec drones, and
-        subtitle text in some other videos.
+        Tags extracted from the tx3g sbtl timed metadata of Yuneec and Autel drones,
+        and subtitle text in some other videos.
     },
     Lat => {
         Name => 'GPSLatitude',
@@ -619,6 +619,32 @@ my %insvLimit = (
         PrintConv => '$self->ConvertDateTime($val)',
     },
     Text => { Groups => { 2 => 'Other' } },
+    # the following tags are extracted from Autel Evo II drone videos
+    GPSDateTime  => {
+        Groups => { 2 => 'Time' },
+        Description => 'GPS Date/Time',
+        PrintConv => '$self->ConvertDateTime($val)',
+    },
+    HomeLat => {
+        Name => 'GPSHomeLatitude',
+        RawConv => '$$self{FoundGPSLatitude} = 1; $val',
+        PrintConv => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "N")',
+    },
+    HomeLon => {
+        Name => 'GPSHomeLongitude',
+        PrintConv => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "E")',
+    },
+    ISO => { },
+    SHUTTER => {
+        Name => 'ExposureTime',
+        ValueConv => '1 / $val',
+        PrintConv => 'Image::ExifTool::Exif::PrintExposureTime($val)',
+    },
+    'F-NUM' => {
+        Name => 'FNumber',
+        PrintConv => 'Image::ExifTool::Exif::PrintFNumber($val)',
+    },
+    EV => 'ExposureCompensation',
 );
 
 %Image::ExifTool::QuickTime::INSV_MakerNotes = (
@@ -2163,9 +2189,26 @@ ATCRec: for ($recPos = 0x30; $recPos + 52 < $dirLen; $recPos += 52) {
             push(@xtra, $1 => $2), next;
         }
 
+    } elsif ($$dataPt =~ m/^.{30}A.{20}VV/) {
+    
+        $debug and $et->FoundTag(GPSType => 17);
+        # 70mai A810 dashcam (note: no timestamps in the samples I have)
+        #  0000: 00 00 40 00 66 72 65 65 47 50 53 20 ed 01 00 00 [..@.freeGPS ....]
+        #  0010: 03 00 ed 01 00 00 00 0f 00 00 70 08 00 00 41 66 [..........p...Af]
+        #  0020: 13 7d 1e 3c 11 dc 03 5d 01 00 00 01 00 00 00 23 [.}.<...].......#]
+        #  0030: 00 00 00 56 56 00 00 00 00 00 00 00 00 00 00 00 [...VV...........]
+        #  0040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 [................]
+        SetByteOrder('II');
+        SetGPSDateTime($et, $tagTbl, $$dirInfo{SampleTime});
+        $lat = Get32s($dataPt, 31) / 1e5;
+        $lon = Get32s($dataPt, 35) / 1e5;
+        $spd = Get32s($dataPt, 43);  # (seems to be km/h but not confirmed)
+        # offset 475 - int16u=N string[N] - some sort of settings?:
+        # eg. "\x15\x00{pA:V,rA:V,sF:0,tF:2}"
+
     } else {
 
-        $debug and $et->FoundTag(GPSType => 17);
+        $debug and $et->FoundTag(GPSType => 18);
         # (look for binary GPS as stored by Nextbase 512G, ref PH)
         #  0000: 00 00 80 00 66 72 65 65 47 50 53 20 78 01 00 00 [....freeGPS x...]
         #  0010: 78 2e 78 78 00 00 00 00 00 00 00 00 00 00 00 00 [x.xx............]
@@ -2344,7 +2387,7 @@ sub ParseTag($$$)
 }
 
 #------------------------------------------------------------------------------
-# Process Yuneec 'tx3g' sbtl metadata (ref PH)
+# Process Yuneec 'tx3g' and Autel sbtl metadata (ref PH)
 # Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) tag table ref
 # Returns: 1 on success
 sub Process_tx3g($$$)
@@ -2352,13 +2395,49 @@ sub Process_tx3g($$$)
     my ($et, $dirInfo, $tagTablePtr) = @_;
     my $dataPt = $$dirInfo{DataPt};
     return 0 if length $$dataPt < 2;
-    pos($$dataPt) = 2;  # skip 2-byte length word
     $et->VerboseDir('tx3g', undef, length($$dataPt)-2);
-    $et->HandleTag($tagTablePtr, 'Text', substr($$dataPt, 2));
-    if ($$dataPt =~ /^..\w{3} (\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2}:\d{2}) ?([-+])(\d{2}):?(\d{2})$/s) {
+    my $text = substr($$dataPt, 2); # remove 2-byte length word
+    $et->HandleTag($tagTablePtr, 'Text', $text);
+    if ($text =~ /^HOME\(/) {
+        # --- sample text from Autel Evo II drone ---
+        # HOME(W: 109.318642, N: 40.769371) 2023-09-12 10:28:07
+        # GPS(W: 109.339287, N: 40.768574, 2371.76m) 
+        # HDR ISO:100 SHUTTER:1000 EV:-0.7 F-NUM:1.8 
+        # F.PRY (1.0\xc2\xb0, -3.7\xc2\xb0, -59.0\xc2\xb0), G.PRY (-51.1\xc2\xb0, 0.0\xc2\xb0, -58.9\xc2\xb0)
+        my $line;
+        foreach $line (split /\x0a/, $text) {
+            if ($line =~ /^HOME\(([EW]):\s*(\d+\.\d+),\s*([NS]):\s*(\d+\.\d+)\)\s*(.*)/) {
+                my ($lon, $lat, $time) = ($2, $4, $5);
+                $lon = -$lon if $1 eq 'W';
+                $lat = -$lat if $3 eq 'S';
+                $time =~ tr/-/:/; # (likely local time zone, but not confirmed)
+                $et->HandleTag($tagTablePtr, GPSDateTime => $time);
+                $et->HandleTag($tagTablePtr, HomeLat     => $lat);
+                $et->HandleTag($tagTablePtr, HomeLon     => $lon);
+            } elsif ($line =~ /^GPS\(([EW]):\s*(\d+\.\d+),\s*([NS]):\s*(\d+\.\d+),\s*(.*)m/) {
+                my ($lon, $lat, $alt) = ($2, $4, $5);
+                $lon = -$lon if $1 eq 'W';
+                $lat = -$lat if $3 eq 'S';
+                $et->HandleTag($tagTablePtr, Lat  => $lat);
+                $et->HandleTag($tagTablePtr, Lon  => $lon);
+                $et->HandleTag($tagTablePtr, Alt  => $alt);
+            } elsif ($line =~ /^F\.PRY\s*\((-?[\d.]+)\xc2\xb0,\s*(-?[\d.]+)\xc2\xb0,\s*(-?[\d.]+)\xc2\xb0/) {
+                $et->HandleTag($tagTablePtr, Yaw   => $1);
+                $et->HandleTag($tagTablePtr, Pitch => $2);
+                $et->HandleTag($tagTablePtr, Roll  => $3);
+                if ($line =~ /G\.PRY\s*\((-?[\d.]+)\xc2\xb0,\s*(-?[\d.]+)\xc2\xb0,\s*(-?[\d.]+)\xc2\xb0/) {
+                    $et->HandleTag($tagTablePtr, GimYaw   => $1);
+                    $et->HandleTag($tagTablePtr, GimPitch => $2);
+                    $et->HandleTag($tagTablePtr, GimRoll  => $3);
+                }
+            } else {
+                $et->HandleTag($tagTablePtr, $1, $2) while $line =~ /([-\w]+):([^:]*[^:\s])(\s|$)/sg;
+            }
+        }
+    } elsif ($text =~ /^\w{3} (\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2}:\d{2}) ?([-+])(\d{2}):?(\d{2})$/s) {
         $et->HandleTag($tagTablePtr, 'DateTime', "$1:$2:$3 $4$5$6:$7");
     } else {
-        $et->HandleTag($tagTablePtr, $1, $2) while $$dataPt =~ /(\w+):([^:]*[^:\s])(\s|$)/sg;
+        $et->HandleTag($tagTablePtr, $1, $2) while $text =~ /(\w+):([^:]*[^:\s])(\s|$)/sg;
     }
     return 1;
 }
