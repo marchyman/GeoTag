@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4901463C2C4B448B00BC63E1 /* MapAndSearchViews in Frameworks */ = {isa = PBXBuildFile; productRef = 4901463B2C4B448B00BC63E1 /* MapAndSearchViews */; };
+		492D66512CD949BF00F333DE /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492D66502CD949BF00F333DE /* Empty.swift */; };
 		493394BB2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493394BA2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift */; };
 		493F286D2BBF38CB002C8A44 /* GeoTagUI05Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F286C2BBF38CB002C8A44 /* GeoTagUI05Tests.swift */; };
 		4950FF5F2C62C414000415AD /* AdjustTimeZoneView in Frameworks */ = {isa = PBXBuildFile; productRef = 4950FF5E2C62C414000415AD /* AdjustTimeZoneView */; };
@@ -46,6 +47,7 @@
 		490114B5297117FD00193BD3 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		4904E57A2C4B3FA10001C035 /* MapAndSearchViews */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MapAndSearchViews; sourceTree = "<group>"; };
 		492AF41C2C41F9E700942583 /* GpxTrackLog */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = GpxTrackLog; sourceTree = "<group>"; };
+		492D66502CD949BF00F333DE /* Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
 		493394BA2BB8BFEE007D05F6 /* GeoTagUI03OpenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI03OpenTests.swift; sourceTree = "<group>"; };
 		493F286C2BBF38CB002C8A44 /* GeoTagUI05Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI05Tests.swift; sourceTree = "<group>"; };
 		4950FF5D2C62C402000415AD /* AdjustTimeZoneView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AdjustTimeZoneView; sourceTree = "<group>"; };
@@ -115,6 +117,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		492D664F2CD9498200F333DE /* GeoTagTests */ = {
+			isa = PBXGroup;
+			children = (
+				492D66502CD949BF00F333DE /* Empty.swift */,
+			);
+			path = GeoTagTests;
+			sourceTree = "<group>";
+		};
 		4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */ = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +150,7 @@
 				49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */,
 				49A1326E294BFB9300F1B393 /* ExifTool */,
 				49767F932C79492900837AA3 /* GeoTag */,
+				492D664F2CD9498200F333DE /* GeoTagTests */,
 				4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */,
 				49B039552944429E003B7C53 /* Products */,
 				4950FF5D2C62C402000415AD /* AdjustTimeZoneView */,
@@ -258,6 +269,7 @@
 					};
 					49E16D1C2C3C9E49003EF130 = {
 						CreatedOnToolsVersion = 16.0;
+						LastSwiftMigration = 1610;
 						TestTargetID = 49B039532944429E003B7C53;
 					};
 				};
@@ -375,6 +387,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				492D66512CD949BF00F333DE /* Empty.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -630,6 +643,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A3UXBEBE8Z;
@@ -643,6 +657,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GeoTag.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GeoTag";
 			};
@@ -652,6 +667,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A3UXBEBE8Z;
