@@ -32,7 +32,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.25';
+$VERSION = '1.26';
 
 # program map table "stream_type" lookup (ref 6/1/9)
 my %streamType = (
@@ -82,7 +82,7 @@ my %streamType = (
     0x86 => 'DTS-HD Audio',
     0x87 => 'E-AC-3 Audio',
     0x8a => 'DTS Audio',
-    0x90 => 'PGS Audio', #https://www.avsforum.com/threads/bass-eq-for-filtered-movies.2995212/page-399
+    0x90 => 'Presentation Graphic Stream (subtitle)', #https://en.wikipedia.org/wiki/Program-specific_information
     0x91 => 'A52b/AC-3 Audio',
     0x92 => 'DVD_SPU vls Subtitle',
     0x94 => 'SDDS Audio',
@@ -328,6 +328,14 @@ sub ParsePID($$$$$)
                 $more = 1;  # read past unknown 0x15 packets if ExtractEmbedded > 2
             }
         }
+# still have a lot of questions about how to decode this...
+# (see https://exiftool.org/forum/index.php?topic=16486 and ../testpics/gps_video/forum16486.ts)
+#    } elsif ($type == 6) {
+#        my @a = unpack('x17x2NNx2nx2nx2nx2Cx2a4x2a5x2Nx2Nx2nx2Nx2Nx2Nx2nx2nx2Nx2nx2n', $$dataPt . "        ");
+#        my $hi = shift @a;
+#        $a[0] = Image::ExifTool::ConvertUnixTime(($a[0] + $hi * 4294967296) * 1e-6, undef, 6);
+#        print "@a\n";
+#        $more = 1;
     } elsif ($type < 0) {
         if ($$dataPt =~ /^(.{164})?(.{24})A[NS][EW]/s) {
             # (Blueskysea B4K, Novatek NT96670)
