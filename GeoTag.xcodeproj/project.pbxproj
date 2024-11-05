@@ -21,7 +21,6 @@
 		49AD2BC02C408455003A810F /* SplitHView in Frameworks */ = {isa = PBXBuildFile; productRef = 49AD2BBF2C408455003A810F /* SplitHView */; };
 		49AD2BC22C408455003A810F /* SplitVView in Frameworks */ = {isa = PBXBuildFile; productRef = 49AD2BC12C408455003A810F /* SplitVView */; };
 		49B0396929444855003B7C53 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B0396829444855003B7C53 /* MapKit.framework */; };
-		49BDF98F2C41DBF20040B287 /* RunLogView in Resources */ = {isa = PBXBuildFile; fileRef = 49BDF98E2C41DBF20040B287 /* RunLogView */; };
 		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
 		49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */ = {isa = PBXBuildFile; productRef = 49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */; };
 /* End PBXBuildFile section */
@@ -307,7 +306,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				49A1326F294BFB9300F1B393 /* ExifTool in Resources */,
-				49BDF98F2C41DBF20040B287 /* RunLogView in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
