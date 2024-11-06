@@ -31,14 +31,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // quit the app when all windows are closed
 
-    func applicationShouldTerminateAfterLastWindowClosed(_ theApplication: NSApplication) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(
+        _ theApplication: NSApplication
+    ) -> Bool {
         return true
     }
 
     // Check if there are changes that haven't been saved before allowing
     // the app to quit.
 
-    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+    func applicationShouldTerminate(_ sender: NSApplication)
+        -> NSApplication.TerminateReply
+    {
         if let state {
             if state.saveInProgress {
                 state.addSheet(type: .savingUpdatesSheet)
@@ -46,9 +50,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             if state.isDocumentEdited
-               && state.tvm.images.contains(where: { $0.changed }) {
-                state.confirmationMessage =
-                    "If you quit GeoTag before saving changes the changes will be lost.  Are you sure you want to quit?"
+                && state.tvm.images.contains(where: { $0.changed })
+            {
+                state.confirmationMessage = """
+                    If you quit GeoTag before saving changes the changes \
+                    will be lost.  Are you sure you want to quit?
+                    """
                 state.confirmationAction = terminateIgnoringEdits
                 state.presentConfirmation = true
                 return .terminateCancel
@@ -73,10 +80,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if environ["APP_SANDBOX_CONTAINER_ID"] != nil {
             // we're sandboxed -- blow away the sandbox document directory
             let fileManager = FileManager.default
-            if let docDir = try? fileManager.url(for: .documentDirectory,
-                                                 in: .userDomainMask,
-                                                 appropriateFor: nil,
-                                                 create: false) {
+            if let docDir = try? fileManager.url(
+                for: .documentDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: false)
+            {
                 try? fileManager.removeItem(at: docDir)
             }
         }

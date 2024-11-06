@@ -6,8 +6,8 @@
 //
 
 import GpxTrackLog
-import SwiftUI
 import MapKit
+import SwiftUI
 
 // functions that handle location changes for both the map and images
 
@@ -16,22 +16,27 @@ extension AppState {
     // Update an image with a location.
     // Elevation is optional and is only provided when matching track logs
 
-    func update(_ image: ImageModel, location: Coords?,
-                elevation: Double? = nil, documentEdited: Bool = true) {
+    func update(
+        _ image: ImageModel, location: Coords?,
+        elevation: Double? = nil, documentEdited: Bool = true
+    ) {
         if undoManager.isUndoing {
-            Self.logger.notice("""
+            Self.logger.notice(
+                """
                 Undo in progress: \(image.name, privacy: .public): \
                 \(image.location.debugDescription, privacy: .public) -> \
                 \(location.debugDescription, privacy: .public)
                 """)
         } else if undoManager.isRedoing {
-            Self.logger.notice("""
+            Self.logger.notice(
+                """
                 Redo in progress: \(image.name, privacy: .public): \
                 \(image.location.debugDescription, privacy: .public) -> \
                 \(location.debugDescription, privacy: .public)
                 """)
         } else {
-            Self.logger.notice("""
+            Self.logger.notice(
+                """
                 undoManager registration: \(image.name, privacy: .public): \
                 \(image.location.debugDescription, privacy: .public) -> \
                 \(location.debugDescription, privacy: .public)
@@ -43,9 +48,10 @@ extension AppState {
         let currentDocumentEdited = isDocumentEdited
         undoManager.registerUndo(withTarget: self) { target in
             Task { @MainActor in
-                target.update(image, location: currentLocation,
-                              elevation: currentElevation,
-                              documentEdited: currentDocumentEdited)
+                target.update(
+                    image, location: currentLocation,
+                    elevation: currentElevation,
+                    documentEdited: currentDocumentEdited)
             }
         }
         image.location = location
@@ -63,14 +69,17 @@ extension AppState {
     // Update an image with a new timestamp.  Image is identifid by its ID.
     // timestamp is in the string format used by Exiftool
 
-    func update(_ image: ImageModel, timestamp: String?,
-                documentEdited: Bool = true) {
+    func update(
+        _ image: ImageModel, timestamp: String?,
+        documentEdited: Bool = true
+    ) {
         let currentDateTimeCreated = image.dateTimeCreated
         let currentDocumentEdited = isDocumentEdited
         undoManager.registerUndo(withTarget: self) { target in
             Task { @MainActor in
-                target.update(image, timestamp: currentDateTimeCreated,
-                              documentEdited: currentDocumentEdited)
+                target.update(
+                    image, timestamp: currentDateTimeCreated,
+                    documentEdited: currentDocumentEdited)
             }
         }
         image.dateTimeCreated = timestamp
@@ -80,12 +89,13 @@ extension AppState {
     // Add track overlays to the map.  This is not undoable.
 
     func updateTracks(trackLog: GpxTrackLog) {
-        guard trackLog.tracks.count > 0 else { return}
+        guard trackLog.tracks.count > 0 else { return }
         for track in trackLog.tracks {
             for segment in track.segments {
                 let trackCoords = segment.points.map {
-                    CLLocationCoordinate2D(latitude: $0.lat,
-                                           longitude: $0.lon)
+                    CLLocationCoordinate2D(
+                        latitude: $0.lat,
+                        longitude: $0.lon)
                 }
                 if !trackCoords.isEmpty {
                     masData.add(coords: trackCoords)

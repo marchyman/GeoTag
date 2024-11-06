@@ -8,12 +8,15 @@
 import OSLog
 
 extension AppState {
-    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                               category: "AppState")
+    static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: "AppState")
     private static let signposter = OSSignposter(logger: logger)
 
-    func withInterval<T>(_ desc: StaticString,
-                         around task: () throws -> T) rethrows -> T {
+    func withInterval<T>(
+        _ desc: StaticString,
+        around task: () throws -> T
+    ) rethrows -> T {
         try Self.signposter.withIntervalSignpost(desc) {
             try task()
         }

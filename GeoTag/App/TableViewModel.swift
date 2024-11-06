@@ -5,8 +5,8 @@
 //  Created by Marco S Hyman on 7/9/23.
 //
 
-import SwiftUI
 import OSLog
+import SwiftUI
 
 // MARK: State variables used primarily to control the table of images
 
@@ -27,7 +27,8 @@ final class TableViewModel {
     // No setter is defined
     subscript(id: ImageModel.ID?) -> ImageModel {
         if let index = images.firstIndex(where: { $0.id == id }) {
-            Self.logger.notice("get \(self.images[index].name, privacy: .public)")
+            Self.logger.notice(
+                "get \(self.images[index].name, privacy: .public)")
             return images[index]
         }
 
@@ -68,8 +69,9 @@ extension TableViewModel {
 
 extension TableViewModel {
 
-    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
-                                       category: "TableView")
+    private static let logger = Logger(
+        subsystem: "org.snafu.GeoTag",
+        category: "TableView")
     private static let signposter = OSSignposter(logger: logger)
 
     func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
@@ -82,15 +84,21 @@ extension TableViewModel {
         Self.signposter.endInterval(desc, interval)
     }
 
-    func withInterval<T>(_ desc: StaticString,
-                         around task: () throws -> T) rethrows -> T {
+    func withInterval<T>(
+        _ desc: StaticString,
+        around task: () throws -> T
+    ) rethrows -> T {
         try Self.signposter.withIntervalSignpost(desc) {
             try task()
         }
     }
-    func withInterval<T>(_ image: ImageModel,
-                         around task: () throws -> T) rethrows -> T {
-        try Self.signposter.withIntervalSignpost("Render", "image \(image.name)") {
+    func withInterval<T>(
+        _ image: ImageModel,
+        around task: () throws -> T
+    ) rethrows -> T {
+        try Self.signposter.withIntervalSignpost(
+            "Render", "image \(image.name)"
+        ) {
             try task()
         }
     }
@@ -106,7 +114,8 @@ extension String {
         guard !pattern.isEmpty else { return true }
         var remainder = pattern[...]
         for char in self
-            where char.lowercased() == remainder[remainder.startIndex].lowercased() {
+        where char.lowercased() == remainder[remainder.startIndex].lowercased()
+        {
             remainder.removeFirst()
             if remainder.isEmpty { return true }
         }

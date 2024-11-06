@@ -160,16 +160,19 @@ extension AppState {
         let sheetMessage: String?
     }
 
-    func addSheet(type: SheetType, error: Error? = nil, message: String? = nil) {
+    func addSheet(type: SheetType, error: Error? = nil, message: String? = nil)
+    {
         if sheetType == nil {
             sheetType = type
             sheetError = error
             sheetMessage = message
         } else {
             // create a SheetInfo and add it to the stack of pending sheets
-            sheetStack.append(SheetInfo(sheetType: type,
-                                        sheetError: error,
-                                        sheetMessage: message))
+            sheetStack.append(
+                SheetInfo(
+                    sheetType: type,
+                    sheetError: error,
+                    sheetMessage: message))
         }
     }
 
