@@ -12,8 +12,10 @@ import SwiftUI
 /// manage GeoTag's use of exiftool
 
 struct Exiftool {
-    @AppStorage(AppSettings.updateFileModificationTimesKey) var updateFileModificationTimes = false
-    @AppStorage(AppSettings.updateGPSTimestampsKey) var updateGPSTimestamps = false
+    @AppStorage(AppSettings.updateFileModificationTimesKey)
+    var updateFileModificationTimes = false
+    @AppStorage(AppSettings.updateGPSTimestampsKey) var updateGPSTimestamps =
+        false
 
     // singleton instance of this class
     static let helper = Exiftool()
@@ -37,13 +39,16 @@ struct Exiftool {
         "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
         "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", "PNG",
         "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
-        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP" ]
+        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP"
+    ]
 
     // Build the url needed to access to the embedded version of ExifTool
 
     private init() {
-        if let exiftoolUrl = Bundle.main.url(forResource: "ExifTool",
-                                             withExtension: nil) {
+        if let exiftoolUrl = Bundle.main.url(
+            forResource: "ExifTool",
+            withExtension: nil)
+        {
             url = exiftoolUrl.appendingPathComponent("exiftool")
         } else {
             fatalError("The Application Bundle is corrupt.")
@@ -52,8 +57,9 @@ struct Exiftool {
 }
 
 extension Exiftool {
-    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                               category: "ExifTool")
+    static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: "ExifTool")
 
 }
 
@@ -75,9 +81,9 @@ extension Exiftool {
         var eleRefArg = "-GPSaltitudeRef="
 
         // ExifTool GSPDateTime arg storage
-        var gpsDArg = "-GPSDateStamp="      // for non XMP files
-        var gpsTArg = "-GPSTimeStamp="      // for non XMP files
-        var gpsDTArg = "-GPSDateTime="      // for XMP files
+        var gpsDArg = "-GPSDateStamp="  // for non XMP files
+        var gpsTArg = "-GPSTimeStamp="  // for non XMP files
+        var gpsDTArg = "-GPSDateTime="  // for XMP files
 
         var usingSidecar = false
 
@@ -110,18 +116,21 @@ extension Exiftool {
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = pipe
         exiftool.executableURL = url
-        exiftool.arguments = ["-q",
-                              "-m",
-                              "-overwrite_original_in_place",
-                              latArg, latRefArg,
-                              lonArg, lonRefArg,
-                              eleArg, eleRefArg]
+        exiftool.arguments = [
+            "-q",
+            "-m",
+            "-overwrite_original_in_place",
+            latArg, latRefArg,
+            lonArg, lonRefArg,
+            eleArg, eleRefArg
+        ]
         if updateFileModificationTimes {
             exiftool.arguments! += ["-FileModifyDate<DateTimeOriginal"]
         }
 
         if updateGPSTimestamps,
-           let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone) {
+            let gpsTimestamp = gpsTimestamp(for: sandbox.image, in: timeZone)
+        {
 
             // args vary depending upon saving to an image file or a GPX file
             if usingSidecar {
@@ -136,13 +145,16 @@ extension Exiftool {
         }
 
         // add args to update date/time if changed
-        if sandbox.image.dateTimeCreated != sandbox.image.originalDateTimeCreated {
-            let dtoArg = "-DateTimeOriginal=" + (sandbox.image.dateTimeCreated ?? "")
+        if sandbox.image.dateTimeCreated
+            != sandbox.image.originalDateTimeCreated
+        {
+            let dtoArg =
+                "-DateTimeOriginal=" + (sandbox.image.dateTimeCreated ?? "")
             let cdArg = "-CreateDate=" + (sandbox.image.dateTimeCreated ?? "")
             exiftool.arguments! += [dtoArg, cdArg]
         }
         exiftool.arguments! += ["-GPSStatus=", path]
-//        dump(exiftool.arguments!)
+        //        dump(exiftool.arguments!)
         try exiftool.run()
         exiftool.waitUntilExit()
         logFrom(pipe: pipe)
@@ -155,8 +167,10 @@ extension Exiftool {
     // update GPS timestamp fields.  Return nil if there is
     // no timestamp or formatting failed.
 
-    func gpsTimestamp(for image: ImageModel,
-                      in timeZone: TimeZone?) -> String? {
+    func gpsTimestamp(
+        for image: ImageModel,
+        in timeZone: TimeZone?
+    ) -> String? {
         if let dateTime = image.dateTimeCreated {
             dateFormatter.dateFormat = ImageModel.dateFormat
             dateFormatter.timeZone = timeZone
@@ -180,7 +194,9 @@ extension Exiftool {
         exiftool.standardOutput = pipe
         exiftool.standardError = err
         exiftool.executableURL = url
-        exiftool.arguments = [ "-m", "-q", "-S", "-fast3", "-FileType", file.path]
+        exiftool.arguments = [
+            "-m", "-q", "-S", "-fast3", "-FileType", file.path
+        ]
         do {
             try exiftool.run()
             exiftool.waitUntilExit()
@@ -188,16 +204,21 @@ extension Exiftool {
             if exiftool.terminationStatus == 0 {
                 let data = pipe.fileHandleForReading.availableData
                 if data.count > 0,
-                   let str = String(data: data, encoding: String.Encoding.utf8) {
-                    let trimmed = str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-                    let strParts = trimmed.components(separatedBy: CharacterSet.whitespaces)
+                    let str = String(data: data, encoding: String.Encoding.utf8)
+                {
+                    let trimmed = str.trimmingCharacters(
+                        in: CharacterSet.whitespacesAndNewlines)
+                    let strParts = trimmed.components(
+                        separatedBy: CharacterSet.whitespaces)
                     if let fileType = strParts.last {
                         return writableTypes.contains(fileType)
                     }
                 }
             }
         } catch {
-            Self.logger.error("fileTypeIsWritable: \(error.localizedDescription, privacy: .public)")
+            Self.logger.error(
+                "fileTypeIsWritable: \(error.localizedDescription, privacy: .public)"
+            )
         }
         return false
     }
@@ -210,13 +231,16 @@ extension Exiftool {
         exiftool.standardOutput = FileHandle.nullDevice
         exiftool.standardError = err
         exiftool.executableURL = url
-        exiftool.arguments = [ "-tagsfromfile",
-                               sandbox.imageURL.path,
-                               sandbox.sidecarURL.path ]
+        exiftool.arguments = [
+            "-tagsfromfile",
+            sandbox.imageURL.path,
+            sandbox.sidecarURL.path
+        ]
         do {
             try exiftool.run()
         } catch {
-            Self.logger.error("makeSidecar: \(error.localizedDescription, privacy: .public)")
+            Self.logger.error(
+                "makeSidecar: \(error.localizedDescription, privacy: .public)")
         }
         exiftool.waitUntilExit()
         logFrom(pipe: err)
@@ -230,23 +254,28 @@ extension Exiftool {
     // files.  ExifTool is used for that purpose.
     // swiftlint:disable large_tuple
     // swiftlint:disable cyclomatic_complexity
-    func metadataFrom(xmp: URL) -> (dto: String,
-                                    valid: Bool,
-                                    location: Coords,
-                                    elevation: Double?) {
+    func metadataFrom(xmp: URL) -> (
+        dto: String,
+        valid: Bool,
+        location: Coords,
+        elevation: Double?
+    ) {
         let exiftool = Process()
         let pipe = Pipe()
         let err = Pipe()
         exiftool.standardOutput = pipe
         exiftool.standardError = err
         exiftool.executableURL = url
-        exiftool.arguments = [ "-args", "-c", "%.15f", "-createdate",
-                               "-gpsstatus", "-gpslatitude", "-gpslongitude",
-                               "-gpsaltitude", xmp.path ]
+        exiftool.arguments = [
+            "-args", "-c", "%.15f", "-createdate",
+            "-gpsstatus", "-gpslatitude", "-gpslongitude",
+            "-gpsaltitude", xmp.path
+        ]
         do {
             try exiftool.run()
         } catch {
-            Self.logger.error("metadataFrom: \(error.localizedDescription, privacy: .public)")
+            Self.logger.error(
+                "metadataFrom: \(error.localizedDescription, privacy: .public)")
         }
         exiftool.waitUntilExit()
         logFrom(pipe: err)
@@ -259,7 +288,8 @@ extension Exiftool {
         if exiftool.terminationStatus == 0 {
             let data = pipe.fileHandleForReading.availableData
             if data.count > 0,
-               let str = String(data: data, encoding: String.Encoding.utf8) {
+                let str = String(data: data, encoding: String.Encoding.utf8)
+            {
                 var gpsStatus = true
                 var gpsLat = false
                 var gpsLon = false
@@ -281,7 +311,8 @@ extension Exiftool {
                     case "-GPSLatitude":
                         let parts = value.split(separator: " ")
                         if let latValue = Double(parts[0]),
-                           parts.count == 2 {
+                            parts.count == 2
+                        {
                             location.latitude = latValue
                             if parts[1] == "S" {
                                 location.latitude = -location.latitude
@@ -291,7 +322,8 @@ extension Exiftool {
                     case "-GPSLongitude":
                         let parts = value.split(separator: " ")
                         if let lonValue = Double(parts[0]),
-                           parts.count == 2 {
+                            parts.count == 2
+                        {
                             location.longitude = lonValue
                             if parts[1] == "W" {
                                 location.longitude = -location.longitude
@@ -301,7 +333,8 @@ extension Exiftool {
                     case "-GPSAltitude":
                         let parts = value.split(separator: " ")
                         if let eleValue = Double(parts[0]),
-                           parts.count == 2 {
+                            parts.count == 2
+                        {
                             elevation = parts[1] == "1" ? eleValue : -eleValue
                         }
 
@@ -321,7 +354,8 @@ extension Exiftool {
     private func logFrom(pipe: Pipe) {
         let data = pipe.fileHandleForReading.availableData
         if data.count > 0,
-           let string = String(data: data, encoding: String.Encoding.utf8) {
+            let string = String(data: data, encoding: String.Encoding.utf8)
+        {
             Self.logger.warning("stderr: \(string, privacy: .public)")
         }
     }

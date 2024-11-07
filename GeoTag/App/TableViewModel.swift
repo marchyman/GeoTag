@@ -114,8 +114,7 @@ extension String {
         guard !pattern.isEmpty else { return true }
         var remainder = pattern[...]
         for char in self
-        where char.lowercased() == remainder[remainder.startIndex].lowercased()
-        {
+        where char.lowercased() == remainder[remainder.startIndex].lowercased() {
             remainder.removeFirst()
             if remainder.isEmpty { return true }
         }

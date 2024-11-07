@@ -160,8 +160,7 @@ extension AppState {
         let sheetMessage: String?
     }
 
-    func addSheet(type: SheetType, error: Error? = nil, message: String? = nil)
-    {
+    func addSheet(type: SheetType, error: Error? = nil, message: String? = nil) {
         if sheetType == nil {
             sheetType = type
             sheetError = error

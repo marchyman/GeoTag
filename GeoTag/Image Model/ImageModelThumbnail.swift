@@ -25,7 +25,8 @@ extension ImageModel {
 
         // build an image of an appropriate size
         var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
-        guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
+        guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil)
+        else {
             return Image(systemName: "photo")
         }
 
@@ -41,18 +42,23 @@ extension ImageModel {
         ]
         var checkSize = true
         repeat {
-            if let imgPreview = CGImageSourceCreateThumbnailAtIndex(imgRef, 0, imgOpts as NSDictionary) {
+            if let imgPreview = CGImageSourceCreateThumbnailAtIndex(
+                imgRef, 0, imgOpts as NSDictionary)
+            {
                 // Create an NSImage from the preview
                 let imgHeight = CGFloat(imgPreview.height)
                 let imgWidth = CGFloat(imgPreview.width)
-                if imgOpts[ImageModel.createThumbnailFromImageAlways] == nil &&
-                    imgHeight < maxDimension && imgWidth < maxDimension {
+                if imgOpts[ImageModel.createThumbnailFromImageAlways] == nil
+                    && imgHeight < maxDimension && imgWidth < maxDimension
+                {
                     // thumbnail too small.   Build a larger thumbnail
                     imgOpts[ImageModel.createThumbnailFromImageIfAbsent] = nil
-                    imgOpts[ImageModel.createThumbnailFromImageAlways] = kCFBooleanTrue
+                    imgOpts[ImageModel.createThumbnailFromImageAlways] =
+                        kCFBooleanTrue
                     continue
                 }
-                let imgRect = NSRect(x: 0.0, y: 0.0, width: imgWidth, height: imgHeight)
+                let imgRect = NSRect(
+                    x: 0.0, y: 0.0, width: imgWidth, height: imgHeight)
                 image = NSImage(size: imgRect.size)
                 image.lockFocus()
                 if let currentContext = NSGraphicsContext.current {
@@ -70,8 +76,12 @@ extension ImageModel {
 // CFString to String casts for Image constants
 
 extension ImageModel {
-    static let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
-    static let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
-    static let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
-    static let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
+    static let createThumbnailWithTransform =
+        kCGImageSourceCreateThumbnailWithTransform as String
+    static let createThumbnailFromImageAlways =
+        kCGImageSourceCreateThumbnailFromImageAlways as String
+    static let createThumbnailFromImageIfAbsent =
+        kCGImageSourceCreateThumbnailFromImageIfAbsent as String
+    static let thumbnailMaxPixelSize =
+        kCGImageSourceThumbnailMaxPixelSize as String
 }

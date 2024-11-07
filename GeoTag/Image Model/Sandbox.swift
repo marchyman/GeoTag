@@ -14,8 +14,8 @@ import SwiftUI
 
 struct Sandbox {
     let image: ImageModel
-    let imageURL: URL               // symbolic link in sandbox
-    let sidecarURL: URL             // symbolic link in sandbox
+    let imageURL: URL  // symbolic link in sandbox
+    let sidecarURL: URL  // symbolic link in sandbox
     let xmpPresenter: XmpPresenter
 
     init(_ image: ImageModel) throws {
@@ -23,23 +23,29 @@ struct Sandbox {
         // create a folder with a unique id in the sandbox
         let fileManager = FileManager.default
         let uuid = UUID().uuidString
-        let docDir = try fileManager.url(for: .documentDirectory,
-                                         in: .userDomainMask,
-                                         appropriateFor: nil,
-                                         create: true)
+        let docDir = try fileManager.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true)
         let imageDir = docDir.appendingPathComponent(uuid, isDirectory: true)
-        try fileManager.createDirectory(at: imageDir,
-                                        withIntermediateDirectories: true)
+        try fileManager.createDirectory(
+            at: imageDir,
+            withIntermediateDirectories: true)
 
         // create a symbolic link to the image in the folder
-        self.imageURL = imageDir.appendingPathComponent(image.fileURL.lastPathComponent)
-        try fileManager.createSymbolicLink(at: imageURL,
-                                           withDestinationURL: image.fileURL)
+        self.imageURL = imageDir.appendingPathComponent(
+            image.fileURL.lastPathComponent)
+        try fileManager.createSymbolicLink(
+            at: imageURL,
+            withDestinationURL: image.fileURL)
 
         // create a symbolic link to the sidecar file in the folder
-        self.sidecarURL = imageDir.appendingPathComponent(image.sidecarURL.lastPathComponent)
-        try fileManager.createSymbolicLink(at: sidecarURL,
-                                           withDestinationURL: image.sidecarURL)
+        self.sidecarURL = imageDir.appendingPathComponent(
+            image.sidecarURL.lastPathComponent)
+        try fileManager.createSymbolicLink(
+            at: sidecarURL,
+            withDestinationURL: image.sidecarURL)
 
         // create an NSFilePresenter for the symbolic links
         xmpPresenter = XmpPresenter(for: imageURL)
@@ -58,7 +64,8 @@ extension Sandbox {
     private func backupName(for name: String, in backupFolder: URL) -> URL {
         let fileManager = FileManager.default
         var fileNumber = 1
-        var saveFileURL = backupFolder.appendingPathComponent(name, isDirectory: false)
+        var saveFileURL = backupFolder.appendingPathComponent(
+            name, isDirectory: false)
 
         // enable access to backupFolder
         _ = backupFolder.startAccessingSecurityScopedResource()
@@ -71,7 +78,8 @@ extension Sandbox {
             let nameDot = newName.lastIndex(of: ".") ?? newName.endIndex
             newName.insert(contentsOf: "-\(fileNumber)", at: nameDot)
             fileNumber += 1
-            saveFileURL = backupFolder.appendingPathComponent(newName, isDirectory: false)
+            saveFileURL = backupFolder.appendingPathComponent(
+                newName, isDirectory: false)
         }
         return saveFileURL
     }
