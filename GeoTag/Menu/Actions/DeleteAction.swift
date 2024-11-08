@@ -15,8 +15,10 @@ extension AppState {
     // should the delete action be disabled for a specific item or for
     // all selected items
 
-    func deleteDisabled(context: ImageModel? = nil,
-                        textfield: Bool = false) -> Bool {
+    func deleteDisabled(
+        context: ImageModel? = nil,
+        textfield: Bool = false
+    ) -> Bool {
         if textfield {
             return false
         }
@@ -30,8 +32,10 @@ extension AppState {
     // limited to the field.  Otherwise delete location info from the image
     // in the given context or all selected images when the context is nil.
 
-    func deleteAction(context: ImageModel? = nil,
-                      textfield: Bool = false) {
+    func deleteAction(
+        context: ImageModel? = nil,
+        textfield: Bool = false
+    ) {
         if textfield {
             NSApp.sendAction(#selector(NSText.delete(_:)), to: nil, from: nil)
         } else {

@@ -19,7 +19,7 @@ struct ToolbarCommands: Commands {
             Section {
                 Button {
                     @AppStorage(AppSettings.hideInvalidImagesKey)
-                        var hideInvalidImages = false
+                    var hideInvalidImages = false
 
                     hideInvalidImages.toggle()
                 } label: {

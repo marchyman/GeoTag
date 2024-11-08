@@ -16,11 +16,11 @@ struct UndoRedoCommands: Commands {
         CommandGroup(replacing: .undoRedo) {
             Button(state.undoManager.undoMenuItemTitle) { state.undoAction() }
                 .keyboardShortcut("z")
-                 .disabled(state.undoDisabled)
+                .disabled(state.undoDisabled)
 
             Button(state.undoManager.redoMenuItemTitle) { state.redoAction() }
                 .keyboardShortcut("z", modifiers: [.shift, .command])
-                 .disabled(state.redoDisabled)
+                .disabled(state.redoDisabled)
         }
     }
 }

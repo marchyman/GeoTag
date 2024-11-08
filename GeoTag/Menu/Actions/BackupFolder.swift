@@ -15,9 +15,10 @@ extension AppState {
         @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
         var staleBookmark = false
 
-        let url = try? URL(resolvingBookmarkData: savedBookmark,
-                           options: [.withoutUI, .withSecurityScope],
-                           bookmarkDataIsStale: &staleBookmark)
+        let url = try? URL(
+            resolvingBookmarkData: savedBookmark,
+            options: [.withoutUI, .withSecurityScope],
+            bookmarkDataIsStale: &staleBookmark)
         if let url {
             if staleBookmark {
                 savedBookmark = getBookmark(from: url)
@@ -35,9 +36,14 @@ extension AppState {
         do {
             try bookmark = url.bookmarkData(options: .withSecurityScope)
         } catch {
-            addSheet(type: .unexpectedErrorSheet,
-                     error: error,
-                     message: "Error creating security scoped bookmark for backup location \(url.path)")
+            addSheet(
+                type: .unexpectedErrorSheet,
+                error: error,
+                message: """
+                    Error creating security scoped bookmark for backup \
+                    location \(url.path)
+                    """
+            )
         }
         return bookmark
     }
@@ -52,20 +58,28 @@ extension AppState {
 
     func checkBackupFolder(_ url: URL?) {
         guard let url else { return }
-        let propertyKeys: Set = [URLResourceKey
-                                    .totalFileSizeKey,
-                                    .addedToDirectoryDateKey]
+        let propertyKeys: Set = [
+            URLResourceKey
+                .totalFileSizeKey,
+            .addedToDirectoryDateKey
+        ]
         let fileManager = FileManager.default
         _ = url.startAccessingSecurityScopedResource()
         defer { url.stopAccessingSecurityScopedResource() }
-        guard let urlEnumerator =
-                fileManager.enumerator(at: url,
-                                       includingPropertiesForKeys: Array(propertyKeys),
-                                       options: [.skipsHiddenFiles],
-                                       errorHandler: nil) else { return }
-        guard let sevenDaysAgo =
-                Calendar.current.date(byAdding: .day, value: -7,
-                                      to: Date()) else { return }
+        guard
+            let urlEnumerator =
+                fileManager.enumerator(
+                    at: url,
+                    includingPropertiesForKeys: Array(propertyKeys),
+                    options: [.skipsHiddenFiles],
+                    errorHandler: nil)
+        else { return }
+        guard
+            let sevenDaysAgo =
+                Calendar.current.date(
+                    byAdding: .day, value: -7,
+                    to: Date())
+        else { return }
 
         // starting state
         oldFiles = []
@@ -79,7 +93,8 @@ extension AppState {
                 let resources =
                     try? fileUrl.resourceValues(forKeys: propertyKeys),
                 let fileSize = resources.totalFileSize,
-                let fileDate = resources.addedToDirectoryDate else { break }
+                let fileDate = resources.addedToDirectoryDate
+            else { break }
             folderSize += fileSize
             if fileDate < sevenDaysAgo {
                 oldFiles.append(fileUrl)
@@ -101,7 +116,8 @@ extension AppState {
                 do {
                     try fileManager.removeItem(at: url)
                 } catch {
-                    await Self.logger.error("""
+                    await Self.logger.error(
+                        """
                         Failed to remove \(url, privacy: .public): \
                         \(error.localizedDescription, privacy: .public)")
                         """)

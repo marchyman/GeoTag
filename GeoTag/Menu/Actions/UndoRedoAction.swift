@@ -17,18 +17,19 @@ extension AppState {
     // return true if the undo menu option should be disabled.
 
     var undoDisabled: Bool {
-        Self.logger.notice("""
+        Self.logger.notice(
+            """
             canUndo: \(self.undoManager.canUndo, privacy: .public), \
             \(self.undoManager.levelsOfUndo, privacy: .public) levels
             """)
-        return false // !undoManager.canUndo
+        return false  // !undoManager.canUndo
     }
 
     // return true if the redo menu option should be disabled.
 
     var redoDisabled: Bool {
         Self.logger.notice("canRedo: \(self.undoManager.canRedo, privacy: .public)")
-        return false // !undoManager.canRedo
+        return false  // !undoManager.canRedo
     }
 
     func undoAction() {

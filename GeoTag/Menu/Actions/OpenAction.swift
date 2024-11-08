@@ -35,7 +35,7 @@ extension AppState {
         // check for duplicates of URLs already open for processing
         // if any are found notify the user
 
-        let processedURLs = Set(tvm.images.map {$0.fileURL })
+        let processedURLs = Set(tvm.images.map { $0.fileURL })
         let duplicateURLs = imageURLs.filter { processedURLs.contains($0) }
         let uniqueURLs: [URL]
         if duplicateURLs.isEmpty {
@@ -44,7 +44,7 @@ extension AppState {
             addSheet(type: .duplicateImageSheet)
             // remove the duplicates from the images to process
             uniqueURLs = imageURLs.filter { !duplicateURLs.contains($0) }
-                                  .uniqued()
+                .uniqued()
         }
 
         await images(for: uniqueURLs)
@@ -78,19 +78,18 @@ extension AppState {
 
     // process all urls in a task group, one task per url.  Skip
     // gpx urls for now
-    nonisolated private
-    func images(for imageURLs: [URL]) async {
+    nonisolated private func images(for imageURLs: [URL]) async {
         await withTaskGroup(of: ImageModel?.self) { group in
-            for url in imageURLs {
-                guard url.pathExtension.lowercased() != "gpx" else { continue }
+            for url in imageURLs where url.pathExtension.lowercased() != "gpx" {
                 group.addTask {
                     do {
                         return try ImageModel(imageURL: url)
                     } catch {
                         await MainActor.run {
-                            self.addSheet(type: .unexpectedErrorSheet,
-                                          error: error,
-                                          message: "Failed to open file \(url.path)")
+                            self.addSheet(
+                                type: .unexpectedErrorSheet,
+                                error: error,
+                                message: "Failed to open file \(url.path)")
                         }
                         return nil
                     }
@@ -105,11 +104,12 @@ extension AppState {
     }
 
     // process gpx track files
-    nonisolated private
-    func tracks(for gpxURLs: [URL]) async -> [(String, GpxTrackLog?)] {
+    nonisolated private func tracks(for gpxURLs: [URL]) async
+        -> [(String, GpxTrackLog?)]
+    {
         var tracks: [(String, GpxTrackLog?)] = []
 
-        await withTaskGroup(of: (String, GpxTrackLog?).self ) { group in
+        await withTaskGroup(of: (String, GpxTrackLog?).self) { group in
             for url in gpxURLs {
                 group.addTask {
                     do {
@@ -138,11 +138,14 @@ extension AppState {
     private func urlsIn(folder url: URL) -> [URL] {
         var foundURLs = [URL]()
         let fileManager = FileManager.default
-        guard let urlEnumerator =
-                fileManager.enumerator(at: url,
-                                       includingPropertiesForKeys: [.isDirectoryKey],
-                                       options: [.skipsHiddenFiles],
-                                       errorHandler: nil) else { return []}
+        guard
+            let urlEnumerator =
+                fileManager.enumerator(
+                    at: url,
+                    includingPropertiesForKeys: [.isDirectoryKey],
+                    options: [.skipsHiddenFiles],
+                    errorHandler: nil)
+        else { return [] }
         while let fileUrl = urlEnumerator.nextObject() as? URL {
             if !isFolder(fileUrl) {
                 foundURLs.append(fileUrl)
@@ -174,24 +177,27 @@ extension AppState {
                 return pathExtension == "jpg" || pathExtension == "jpeg"
             }
             .map {
-                URLBase( url: $0.fileURL,
-                         base: $0.fileURL.deletingPathExtension().path)
+                URLBase(
+                    url: $0.fileURL,
+                    base: $0.fileURL.deletingPathExtension().path)
             }
         let rawBase =
             tvm.images.filter {
                 let pathExtension = $0.fileURL.pathExtension.lowercased()
-                return pathExtension != xmpExtension &&
-                       pathExtension != "jpg" &&
-                       pathExtension != "jpeg"
+                return pathExtension != xmpExtension && pathExtension != "jpg"
+                    && pathExtension != "jpeg"
             }
             .map {
-                URLBase(url: $0.fileURL,
-                        base: $0.fileURL.deletingPathExtension().path)
+                URLBase(
+                    url: $0.fileURL,
+                    base: $0.fileURL.deletingPathExtension().path)
             }
 
         for jpeg in jpegBase {
             if let raw = rawBase.first(where: { $0.base == jpeg.base }) {
-                Self.logger.notice("Pairing \(jpeg.url, privacy: .public) <> \(raw.url, privacy: .public)")
+                Self.logger.notice(
+                    "Pairing \(jpeg.url, privacy: .public) <> \(raw.url, privacy: .public)"
+                )
                 tvm[jpeg.url].pairedID = raw.url
                 tvm[raw.url].pairedID = jpeg.url
                 // disable the jpeg version if requested

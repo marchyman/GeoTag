@@ -61,8 +61,9 @@ extension AppState {
         }
     }
 
-    nonisolated private
-    func saveImageFiles(images: [ImageModel]) async -> [ImageModel.ID: String] {
+    nonisolated private func saveImageFiles(images: [ImageModel]) async
+        -> [ImageModel.ID: String]
+    {
         @AppStorage(AppSettings.addTagsKey) var addTags = false
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
         @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
@@ -105,8 +106,9 @@ extension AppState {
                     } catch {
                         errorDescription = error.localizedDescription
                     }
-                    return SaveStatus(image: image,
-                                      error: errorDescription)
+                    return SaveStatus(
+                        image: image,
+                        error: errorDescription)
                 }
             }
 
@@ -119,8 +121,9 @@ extension AppState {
                     image.originalLocation = image.location
                     image.originalElevation = image.elevation
                 } else {
-                    localSaveIssues.updateValue(status.error!,
-                                                forKey: status.image.id)
+                    localSaveIssues.updateValue(
+                        status.error!,
+                        forKey: status.image.id)
                 }
             }
         }

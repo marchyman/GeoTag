@@ -40,8 +40,7 @@ extension AppState {
         }
     }
 
-    nonisolated private
-    func updateImageLocations(for images: [ImageModel]) async {
+    nonisolated private func updateImageLocations(for images: [ImageModel]) async {
         // image timestamps must be converted to seconds from the epoch
         // to match track logs.  Prepare a dateformatter to handle the
         // conversion.
@@ -60,7 +59,9 @@ extension AppState {
 
                     if let convertedDate = dateFormatter.date(from: image.timeStamp) {
                         for track in await gpxTracks {
-                            if let locn = await track.search(imageTime: convertedDate.timeIntervalSince1970) {
+                            if let locn = await track.search(
+                                imageTime: convertedDate.timeIntervalSince1970)
+                            {
                                 found.append(locn)
                             }
                         }
@@ -77,8 +78,7 @@ extension AppState {
                 for await locn in group {
                     if let locn {
                         await MainActor.run {
-                            update(image, location: locn.0,
-                                   elevation: locn.1)
+                            update(image, location: locn.0, elevation: locn.1)
                         }
                     }
                 }
