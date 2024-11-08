@@ -17,22 +17,23 @@ struct RemoveBackupsAlert: ViewModifier {
                 Button("Delete", role: .destructive) {
                     state.remove(filesToRemove: state.oldFiles)
                 }
-                Button("Cancel", role: .cancel) { }
+                Button("Cancel", role: .cancel) {}
                     .keyboardShortcut(.defaultAction)
             } message: {
-                Text("""
-                     Your current backup/save folder
+                Text(
+                    """
+                    Your current backup/save folder
 
-                         \(state.backupURL != nil ? state.backupURL!.path : "unknown")
+                        \(state.backupURL != nil ? state.backupURL!.path : "unknown")
 
-                     is using \(state.folderSize / 1_000_000) MB to store backup files.
+                    is using \(state.folderSize / 1_000_000) MB to store backup files.
 
-                     \(state.oldFiles.count) files using \
-                     \(state.deletedSize / 1_000_000) MB of storage were \
-                     placed in the folder more than 7 days ago.
+                    \(state.oldFiles.count) files using \
+                    \(state.deletedSize / 1_000_000) MB of storage were \
+                    placed in the folder more than 7 days ago.
 
-                     Would you like to remove those \(state.oldFiles.count) backup files?
-                     """)
+                    Would you like to remove those \(state.oldFiles.count) backup files?
+                    """)
             }
     }
 }

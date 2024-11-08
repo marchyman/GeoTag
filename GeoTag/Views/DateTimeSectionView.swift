@@ -17,21 +17,28 @@ struct DateTimeSectionView: View {
 
     var body: some View {
         VStack {
-            DatePicker("Old Date/Time", selection: $oldDate,
-                       displayedComponents: .init(rawValue: 1234521450295224572))
+            DatePicker(
+                "Old Date/Time", selection: $oldDate,
+                displayedComponents: .init(rawValue: 1_234_521_450_295_224_572)
+            )
             .disabled(true)
             .padding([.horizontal, .bottom])
 
-            DatePicker("New Date/Time", selection: $newDate,
-                       displayedComponents: .init(rawValue: 1234521450295224572))
+            DatePicker(
+                "New Date/Time", selection: $newDate,
+                displayedComponents: .init(rawValue: 1_234_521_450_295_224_572)
+            )
             .accessibilityValue("newDatePicker")
             .focused($isFocused)
             .padding([.horizontal, .bottom])
-            .help("If one image is selected it is set to this value. " +
-                  "If multiple images are selected the difference between " +
-                  "the original date/time and the updated value is " +
-                  "applied to each image.")
-
+            .help(
+                """
+                If one image is selected it is set to this value. \
+                If multiple images are selected the difference between \
+                the original date/time and the updated value is \
+                applied to each image.
+                """
+            )
         }
         .onChange(of: newDate) {
             if oldDate != newDate {
@@ -66,8 +73,9 @@ struct DateTimeSectionView: View {
         for image in state.tvm.selected {
             var updatedDate: Date
             if let originalDate = image.timestamp(for: state.timeZone) {
-                updatedDate = Date(timeInterval: adjustment,
-                                   since: originalDate)
+                updatedDate = Date(
+                    timeInterval: adjustment,
+                    since: originalDate)
             } else {
                 updatedDate = newDate
             }
@@ -80,11 +88,12 @@ struct DateTimeSectionView: View {
 }
 
 #Preview {
-    let image = ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
-                           validImage: true,
-                           dateTimeCreated: "2022:12:12 11:22:33",
-                           latitude: 33.123,
-                           longitude: 123.456)
+    let image = ImageModel(
+        imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
+        validImage: true,
+        dateTimeCreated: "2022:12:12 11:22:33",
+        latitude: 33.123,
+        longitude: 123.456)
     return DateTimeSectionView(image: image)
         .environment(AppState())
 }

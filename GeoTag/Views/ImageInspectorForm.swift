@@ -30,11 +30,12 @@ struct ImageInspectorForm: View {
 }
 
 #Preview {
-    let image = ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
-                           validImage: true,
-                           dateTimeCreated: "2022:12:12 11:22:33",
-                           latitude: 33.123,
-                           longitude: 123.456)
+    let image = ImageModel(
+        imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
+        validImage: true,
+        dateTimeCreated: "2022:12:12 11:22:33",
+        latitude: 33.123,
+        longitude: 123.456)
     return ImageInspectorForm(image: image)
         .environment(AppState())
 }
