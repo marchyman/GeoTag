@@ -23,8 +23,10 @@ struct PathView: NSViewRepresentable {
             backupURL = sender.clickedPathItem?.url
         }
 
-        @objc func pathControl(_ pathControl: NSPathControl,
-                               willDisplay openPanel: NSOpenPanel) {
+        @objc func pathControl(
+            _ pathControl: NSPathControl,
+            willDisplay openPanel: NSOpenPanel
+        ) {
             openPanel.canCreateDirectories = true
         }
     }
@@ -46,7 +48,7 @@ struct PathView: NSViewRepresentable {
         return pathControl
     }
 
-    func updateNSView(_ nsView: NSPathControl, context: Context) { }
+    func updateNSView(_ nsView: NSPathControl, context: Context) {}
 }
 
 #Preview {
