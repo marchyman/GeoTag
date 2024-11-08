@@ -209,7 +209,6 @@
 				49B039512944429E003B7C53 /* Frameworks */,
 				49B039522944429E003B7C53 /* Resources */,
 				49B03966294444C9003B7C53 /* ShellScript */,
-				49F52A4C29AAACED0037CAC7 /* Run swiftlint */,
 			);
 			buildRules = (
 			);
@@ -337,25 +336,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/bash\n\n# This script automatically sets the version and short version string of\n# an Xcode project from the Git repository containing the project.\n#\n# To use this script in Xcode, add the script's path to a \"Run Script\" build\n# phase for your application target.\n\nset -o errexit\nset -o nounset\n\n# First, check for git in $PATH\nhash git 2>/dev/null || { echo >&2 \"Git required, not in path.  Aborting build number update script.\"; exit 0; }\n\n# Run Script build phases that operate on product files of the target that defines them should use the value of this\n# build setting [TARGET_BUILD_DIR].\nINFO_PLIST=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n\n# Build version (closest-tag-or-branch \"-\" commits-since-tag \"-\" short-hash dirty-flag)\n# Bundle version starts with the total number of commits\nBUILD_VERSION=$(git describe --tags --always --dirty=+)\nBUNDLE_VERSION=$(git rev-list --count HEAD)\n\n# Use the latest tag for short version (expected tag format \"vn[.n[.n]]\")\n# or if there are no tags, we make up version 0.0.<commit count>\nLATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG=\"HEAD\"\nif [ $LATEST_TAG = \"HEAD\" ]; then\n    SHORT_VERSION=\"0.0.$BUNDLE_VERSION\"\nelse\n    COMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..HEAD)\n    SHORT_VERSION=${LATEST_TAG##v}\n    if [ ${COMMIT_COUNT_SINCE_TAG} -ne \"0\" ]; then\n        SHORT_VERSION=\"${SHORT_VERSION}.${COMMIT_COUNT_SINCE_TAG}\"\n    fi\nfi\n\n# Append a \".1\" to the bundle version if the working dir is dirty\nif [ -n \"$(git status --porcelain)\" ]; then\n    BUNDLE_VERSION=\"${BUNDLE_VERSION}.1\"\nfi\n\n# For debugging:\necho \"BUILD VERSION: $BUILD_VERSION\"\necho \"LATEST_TAG: $LATEST_TAG\"\necho \"SHORT VERSION: $SHORT_VERSION\"\necho \"BUNDLE_VERSION: $BUNDLE_VERSION\"\n\n/usr/libexec/PlistBuddy -c \"Add :CFBundleBuildVersion string $BUILD_VERSION\" \"$INFO_PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :CFBundleBuildVersion $BUILD_VERSION\" \"$INFO_PLIST\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $SHORT_VERSION\" \"$INFO_PLIST\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUNDLE_VERSION\" \"$INFO_PLIST\"\n";
-		};
-		49F52A4C29AAACED0037CAC7 /* Run swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
