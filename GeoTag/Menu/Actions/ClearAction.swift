@@ -11,7 +11,7 @@ import Foundation
 
 extension AppState {
 
-    // return true if the Clear Image List meny item should be disabled
+    // return true if the Clear Image List menu item should be disabled
 
     var clearDisabled: Bool {
         tvm.images.isEmpty || isDocumentEdited
