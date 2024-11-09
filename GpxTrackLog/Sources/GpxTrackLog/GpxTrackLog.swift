@@ -20,9 +20,10 @@ public struct GpxTrackLog: Sendable {
     // first track or the timestamp of the distant past.
     public var firstTimestamp: TimeInterval {
         if let timeInterval = tracks.first?
-                                    .segments.first?
-                                    .points.first?
-                                    .timeFromEpoch {
+            .segments.first?
+            .points.first?
+            .timeFromEpoch
+        {
             return timeInterval
         }
         return Date.now.timeIntervalSince(Date.distantPast)
@@ -63,13 +64,13 @@ private class Gpx: NSObject {
 
     // parser states
     enum ParseState {
-        case none           // starting state
-        case trk            // <trk> seen
-        case trkSeg         // <trkseg> seen
-        case trkPt          // <trkpt> seen
-        case time(String)   // <time> inside of a <trkpt>
-        case ele            // <ele> inside of a <trkpt>
-        case error          // bad GPX file
+        case none  // starting state
+        case trk  // <trk> seen
+        case trkSeg  // <trkseg> seen
+        case trkPt  // <trkpt> seen
+        case time(String)  // <time> inside of a <trkpt>
+        case ele  // <ele> inside of a <trkpt>
+        case error  // bad GPX file
     }
 
     /// date formater for track point timestamps.
@@ -148,9 +149,7 @@ extension Gpx {
         get { return tracks.last?.segments.last?.points.last }
         set {
             let trackIx = tracks.count - 1
-            if newValue == nil ||
-                tracks.isEmpty ||
-                tracks[trackIx].segments.isEmpty {
+            if newValue == nil || tracks.isEmpty || tracks[trackIx].segments.isEmpty {
                 parseState = .error
             } else {
                 let segmentIx = tracks[trackIx].segments.count - 1
@@ -167,11 +166,13 @@ extension Gpx: XMLParserDelegate {
     // process the start of an element according to the current state.
     // Most elements are ignored
 
-    func parser(_ parser: XMLParser,
-                didStartElement elementName: String,
-                namespaceURI: String?,
-                qualifiedName qName: String?,
-                attributes attributeDict: [String: String] = [:]) {
+    func parser(
+        _ parser: XMLParser,
+        didStartElement elementName: String,
+        namespaceURI: String?,
+        qualifiedName qName: String?,
+        attributes attributeDict: [String: String] = [:]
+    ) {
         switch parseState {
         case .none:
             // ignore everything until the trk element
@@ -206,12 +207,14 @@ extension Gpx: XMLParserDelegate {
             case "trkpt":
                 if lastSegment != nil {
                     if let latString = attributeDict["lat"],
-                       let lat = Double(latString),
-                       let lonString = attributeDict["lon"],
-                       let lon = Double(lonString) {
-                        lastPoint = GpxTrackLog.Point(lat: lat, lon: lon,
-                                                      ele: nil,
-                                                      timeFromEpoch: 0)
+                        let lat = Double(latString),
+                        let lonString = attributeDict["lon"],
+                        let lon = Double(lonString)
+                    {
+                        lastPoint = GpxTrackLog.Point(
+                            lat: lat, lon: lon,
+                            ele: nil,
+                            timeFromEpoch: 0)
                         parseState = .trkPt
                     } else {
                         parseState = .error
@@ -243,10 +246,12 @@ extension Gpx: XMLParserDelegate {
 
     // at the end of the elements we care about wind back the state
 
-    func parser(_ parser: XMLParser,
-                didEndElement elementName: String,
-                namespaceURI: String?,
-                qualifiedName qName: String?) {
+    func parser(
+        _ parser: XMLParser,
+        didEndElement elementName: String,
+        namespaceURI: String?,
+        qualifiedName qName: String?
+    ) {
         switch elementName {
         case "ele":
             if case .ele = parseState {
@@ -259,10 +264,12 @@ extension Gpx: XMLParserDelegate {
             // .time parseState to process.  Otherwise ignore.
             if case .time(let timestamp) = parseState {
                 // convert the parsed timestamp to a date.
-                let trimmedTime = timestamp
-                    .replacingOccurrences(of: "\\.\\d+",
-                                          with: "",
-                                          options: .regularExpression)
+                let trimmedTime =
+                    timestamp
+                    .replacingOccurrences(
+                        of: "\\.\\d+",
+                        with: "",
+                        options: .regularExpression)
                 let convertedTime = Gpx.pointTimeFormat.date(from: trimmedTime)
 
                 // find the latest point and update its timeFromEpoch
@@ -313,8 +320,10 @@ extension Gpx: XMLParserDelegate {
     // program only cares about characters for the time element and
     // the ele element
 
-    func parser(_ parser: XMLParser,
-                foundCharacters string: String) {
+    func parser(
+        _ parser: XMLParser,
+        foundCharacters string: String
+    ) {
         switch parseState {
         case .ele:
             // find the latest point
@@ -323,7 +332,8 @@ extension Gpx: XMLParserDelegate {
                 let segmentIx = tracks[trackIx].segments.count - 1
                 if !tracks[trackIx].segments[segmentIx].points.isEmpty {
                     let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
-                    tracks[trackIx].segments[segmentIx].points[pointIx].ele = Double(string)
+                    tracks[trackIx].segments[segmentIx].points[pointIx].ele = Double(
+                        string)
                     return
                 }
                 parseState = .error

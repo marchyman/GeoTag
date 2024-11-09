@@ -6,6 +6,7 @@
 
 import Foundation
 import Testing
+
 @testable import GpxTrackLog
 
 struct GpxTests {
@@ -22,8 +23,9 @@ struct GpxTests {
             print("\(tracks) tracks, \(segments) segments, \(points) points")
             return
         }
-        try #require(Bool(false),
-                     "GpxPath must be set in the run time environment")
+        try #require(
+            Bool(false),
+            "GpxPath must be set in the run time environment")
     }
 
     @Test func gpxParseNoTrack() async throws {
@@ -34,8 +36,9 @@ struct GpxTests {
             }
             return
         }
-        try #require(Bool(false),
-                     "GpxPath must be set in the run time environment")
+        try #require(
+            Bool(false),
+            "GpxPath must be set in the run time environment")
     }
 
     @Test func gpxParseBadTrack() async throws {
@@ -46,7 +49,8 @@ struct GpxTests {
             }
             return
         }
-        try #require(Bool(false),
-                     "GpxPath must be set in the run time environment")
+        try #require(
+            Bool(false),
+            "GpxPath must be set in the run time environment")
     }
 }
