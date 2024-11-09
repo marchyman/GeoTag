@@ -16,9 +16,11 @@ public struct SplitHView<Left: View, Right: View>: View {
     var left: Left
     var right: Right
 
-    public init(percent: Binding<Double>,
-                @ViewBuilder left: () -> Left,
-                @ViewBuilder right: () -> Right) {
+    public init(
+        percent: Binding<Double>,
+        @ViewBuilder left: () -> Left,
+        @ViewBuilder right: () -> Right
+    ) {
         self._percent = percent
         self.left = left()
         self.right = right()
@@ -73,11 +75,14 @@ struct SplitHDividerView: View {
     }
 
     var drag: some Gesture {
-        DragGesture(minimumDistance: 5,
-                    coordinateSpace: CoordinateSpace.global)
-            .onChanged { val in
-                percent = max(minPercent,
-                              min(1 - val.location.x / width, maxPercent))
-            }
+        DragGesture(
+            minimumDistance: 5,
+            coordinateSpace: CoordinateSpace.global
+        )
+        .onChanged { val in
+            percent = max(
+                minPercent,
+                min(1 - val.location.x / width, maxPercent))
+        }
     }
 }
