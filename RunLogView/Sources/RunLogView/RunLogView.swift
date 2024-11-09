@@ -27,8 +27,9 @@ public struct RunLogView: View {
                     Button {
                         let pb = NSPasteboard.general
                         pb.declareTypes([.string], owner: self)
-                        pb.setString(logEntries.reduce("") { $0 + $1 + "\n" },
-                                     forType: .string)
+                        pb.setString(
+                            logEntries.reduce("") { $0 + $1 + "\n" },
+                            forType: .string)
                         copyLog = false
                     } label: {
                         Text("\(copyLog ? "Copy" : "Copied!")")
@@ -60,8 +61,8 @@ extension RunLogView {
             let subsystem = Bundle.main.bundleIdentifier!
             let logStore = try OSLogStore(scope: .currentProcessIdentifier)
             let myEntries = try logStore.getEntries()
-                                        .compactMap { $0 as? OSLogEntryLog }
-                                        .filter { $0.subsystem == subsystem }
+                .compactMap { $0 as? OSLogEntryLog }
+                .filter { $0.subsystem == subsystem }
             for entry in myEntries {
                 let formattedTime = timeFormatter.string(from: entry.date)
                 let formatedEntry = """
@@ -72,7 +73,8 @@ extension RunLogView {
             }
         } catch {
             let formattedTime = timeFormatter.string(from: Date.now)
-            loggedMessages.append("""
+            loggedMessages.append(
+                """
                 \(formattedTime): failed to access log store: \
                 \(error.localizedDescription)
                 """)
