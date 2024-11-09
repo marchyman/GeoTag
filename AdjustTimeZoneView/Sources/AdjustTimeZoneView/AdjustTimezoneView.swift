@@ -22,23 +22,25 @@ public struct AdjustTimezoneView: View {
                 .font(.largeTitle)
                 .padding(.top)
 
-            Text("""
-                 When matching images to a GPS track log GeoTag assumes
-                 the time zone of image timestamps to be the same as the
-                 local-to-this-computer time zone. If the camera was set to
-                 the local time in some other time tone or the time zone has
-                 changed since you took the pictures select the appropriate
-                 value here before matching image timestamps to a track log.
+            Text(
+                """
+                When matching images to a GPS track log GeoTag assumes
+                the time zone of image timestamps to be the same as the
+                local-to-this-computer time zone. If the camera was set to
+                the local time in some other time tone or the time zone has
+                changed since you took the pictures select the appropriate
+                value here before matching image timestamps to a track log.
 
-                 The time zone is also used to calculate the GPS Date/Time
-                 value when saving images (if enabled in GeoTag settings).
-                 GPS Date/Time is always saved using GMT/UTC. The time
-                 zone of the image timestamp is required to calculate the
-                 proper value.  When no Time Zone is specified the
-                 local-to-this-computer Time Zone is used.
-                 """)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding()
+                The time zone is also used to calculate the GPS Date/Time
+                value when saving images (if enabled in GeoTag settings).
+                GPS Date/Time is always saved using GMT/UTC. The time
+                zone of the image timestamp is required to calculate the
+                proper value.  When no Time Zone is specified the
+                local-to-this-computer Time Zone is used.
+                """
+            )
+            .fixedSize(horizontal: false, vertical: true)
+            .padding()
 
             Divider()
 
@@ -53,9 +55,11 @@ public struct AdjustTimezoneView: View {
                 .padding(.bottom)
 
                 LabeledContent("Desired Camera Time Zone:") {
-                    VStack( alignment: .leading) {
-                        Picker("Desired Camera Time Zone",
-                               selection: $selectedZone) {
+                    VStack(alignment: .leading) {
+                        Picker(
+                            "Desired Camera Time Zone",
+                            selection: $selectedZone
+                        ) {
                             ForEach(TimeZoneName.allCases) { zone in
                                 Text(zone.rawValue)
                             }

@@ -15,15 +15,15 @@ import Foundation
 
 enum TimeZoneName: String, Identifiable, CaseIterable {
     case minus12 = "-12", minus11 = "-11", minus10 = "-10",
-         minus930 = "-9:30", minus9 = "-9", minus8 = "-8", minus7 = "-7",
-         minus6 = "-6", minus5 = "-5", minus4 = "-4", minus330 = "-3:30",
-         minus3 = "-3", minus2 = "-2", minus1 = "-1", zero = "±0",
-         plus1 = "+1", plus2 = "+2", plus3 = "+3", plus330 = "+3:30",
-         plus4 = "+4", plus430 = "+4:30", plus5 = "+5", plus530 = "+5:30",
-         plus545 = "+5:45", plus6 = "+6", plus630 = "+6:30", plus7 = "+7",
-         plus8 = "+8", plus845 = "+8:45", plus9 = "+9", plus930 = "+9:30",
-         plus10 = "+10", plus130 = "+10:30", plus11 = "+11", plus12 = "+12",
-         plus1245 = "+12:45", plus13 = "+13", plus14 = "+14"
+        minus930 = "-9:30", minus9 = "-9", minus8 = "-8", minus7 = "-7",
+        minus6 = "-6", minus5 = "-5", minus4 = "-4", minus330 = "-3:30",
+        minus3 = "-3", minus2 = "-2", minus1 = "-1", zero = "±0",
+        plus1 = "+1", plus2 = "+2", plus3 = "+3", plus330 = "+3:30",
+        plus4 = "+4", plus430 = "+4:30", plus5 = "+5", plus530 = "+5:30",
+        plus545 = "+5:45", plus6 = "+6", plus630 = "+6:30", plus7 = "+7",
+        plus8 = "+8", plus845 = "+8:45", plus9 = "+9", plus930 = "+9:30",
+        plus10 = "+10", plus130 = "+10:30", plus11 = "+11", plus12 = "+12",
+        plus1245 = "+12:45", plus13 = "+13", plus14 = "+14"
 
     var id: Self { self }
 
@@ -46,7 +46,8 @@ enum TimeZoneName: String, Identifiable, CaseIterable {
             let parts = rawValue.split(separator: ":")
             if parts.count == 2 {
                 if let hours = Int(parts[0]),
-                   let minutes = Int(parts[1]) {
+                    let minutes = Int(parts[1])
+                {
                     seconds = hours * 60 * 60
                     if hours < 0 {
                         seconds -= minutes * 60
