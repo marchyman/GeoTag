@@ -1,4 +1,5 @@
 import XCTest
+
 @testable import MapAndSearchViews
 
 final class MapAndSearchViewsTests: XCTestCase {

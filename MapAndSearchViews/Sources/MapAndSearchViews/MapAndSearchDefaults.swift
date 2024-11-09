@@ -8,15 +8,17 @@ extension MapAndSearchData {
         get {
             access(keyPath: \.initialMapLatitude)
             if let val = UserDefaults
-                .standard.object(forKey: initialMapLatitudeKey) as? Double {
+                .standard.object(forKey: initialMapLatitudeKey) as? Double
+            {
                 return val
             }
             return 37.7244
         }
         set {
             withMutation(keyPath: \.initialMapLatitude) {
-                UserDefaults.standard.set(newValue,
-                                          forKey: initialMapLatitudeKey)
+                UserDefaults.standard.set(
+                    newValue,
+                    forKey: initialMapLatitudeKey)
             }
         }
     }
@@ -26,15 +28,17 @@ extension MapAndSearchData {
         get {
             access(keyPath: \.initialMapLongitude)
             if let val = UserDefaults
-                .standard.object(forKey: initialMapLongitudeKey) as? Double {
+                .standard.object(forKey: initialMapLongitudeKey) as? Double
+            {
                 return val
             }
             return -122.4381
         }
         set {
             withMutation(keyPath: \.initialMapLongitude) {
-                UserDefaults.standard.set(newValue,
-                                          forKey: initialMapLongitudeKey)
+                UserDefaults.standard.set(
+                    newValue,
+                    forKey: initialMapLongitudeKey)
             }
         }
     }
@@ -44,15 +48,17 @@ extension MapAndSearchData {
         get {
             access(keyPath: \.initialMapDistance)
             if let val = UserDefaults
-                .standard.object(forKey: initialMapDistanceKey) as? Double {
+                .standard.object(forKey: initialMapDistanceKey) as? Double
+            {
                 return val
             }
             return 50_000.0
         }
         set {
             withMutation(keyPath: \.initialMapDistance) {
-                UserDefaults.standard.set(newValue,
-                                          forKey: initialMapDistanceKey)
+                UserDefaults.standard.set(
+                    newValue,
+                    forKey: initialMapDistanceKey)
             }
         }
     }
@@ -61,8 +67,8 @@ extension MapAndSearchData {
     var savedMapStyle: String {
         get {
             access(keyPath: \.savedMapStyle)
-            return UserDefaults.standard.string(forKey: savedMapStyleKey) ??
-                MapStyleName.standard.rawValue
+            return UserDefaults.standard.string(forKey: savedMapStyleKey)
+                ?? MapStyleName.standard.rawValue
         }
         set {
             withMutation(keyPath: \.savedMapStyle) {
@@ -76,11 +82,14 @@ extension MapAndSearchData {
         get {
             access(keyPath: \.trackColor)
             if let val = UserDefaults
-                .standard.object(forKey: trackColorKey) as? Data {
+                .standard.object(forKey: trackColorKey) as? Data
+            {
                 do {
-                    let color = try NSKeyedUnarchiver
-                        .unarchivedObject(ofClass: NSColor.self,
-                                          from: val) ?? .systemBlue
+                    let color =
+                        try NSKeyedUnarchiver
+                        .unarchivedObject(
+                            ofClass: NSColor.self,
+                            from: val) ?? .systemBlue
                     return Color(color)
                 } catch {
                     logger.error("\(#function) cannot decode track color")
@@ -98,7 +107,9 @@ extension MapAndSearchData {
                         requiringSecureCoding: false)
                     UserDefaults.standard.set(data, forKey: trackColorKey)
                 } catch {
-                    logger.error("\(#function) cannot save track color \(newValue, privacy: .public)")
+                    logger.error(
+                        "\(#function) cannot save track color \(newValue, privacy: .public)"
+                    )
                     logger.error("\(error.localizedDescription, privacy: .public)")
                 }
             }

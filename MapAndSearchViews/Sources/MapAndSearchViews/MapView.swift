@@ -17,26 +17,34 @@ struct MapView: View {
         MapReader { mapProxy in
             Map(position: $masData.cameraPosition) {
                 if let coords = mainPin?.location {
-                    Annotation("main pin",
-                                coordinate: coords,
-                                anchor: .bottom) {
+                    Annotation(
+                        "main pin",
+                        coordinate: coords,
+                        anchor: .bottom
+                    ) {
                         Image(.pin)
                     }
-                   .annotationTitles(.hidden)
+                    .annotationTitles(.hidden)
                 }
-                ForEach(masData.otherPins(mainPin: mainPin,
-                                          allPins: allPins)) { pin in
-                    Annotation("other pin",
-                               coordinate: pin.location,
-                               anchor: .bottom) {
+                ForEach(
+                    masData.otherPins(
+                        mainPin: mainPin,
+                        allPins: allPins)
+                ) { pin in
+                    Annotation(
+                        "other pin",
+                        coordinate: pin.location,
+                        anchor: .bottom
+                    ) {
                         Image(.otherPin)
                     }
-                   .annotationTitles(.hidden)
+                    .annotationTitles(.hidden)
                 }
                 ForEach(masData.tracks) { track in
                     MapPolyline(coordinates: track.coords)
-                        .stroke(masData.trackColor,
-                                lineWidth: masData.trackWidth)
+                        .stroke(
+                            masData.trackColor,
+                            lineWidth: masData.trackWidth)
                 }
             }
             .mapStyle(mapStyleName.mapStyle())
@@ -47,9 +55,10 @@ struct MapView: View {
                 MapZoomStepper()
             }
             .contextMenu {
-                MapContextMenu(masData: masData,
-                               camera: camera,
-                               mapStyleName: $mapStyleName)
+                MapContextMenu(
+                    masData: masData,
+                    camera: camera,
+                    mapStyleName: $mapStyleName)
             }
             .gesture(zoomOut)
             .onTapGesture(count: 2) { position in
@@ -74,30 +83,32 @@ struct MapView: View {
                 masData.savedMapStyle = mapStyleName.rawValue
             }
             .onChange(of: masData.searchResult) {
-                 if let searchResult = masData.searchResult {
-                     if !allPins.isEmpty {
-                         // zoom in to better show pin when necessary
-                         if masData.cameraDistance > zoomDistance {
-                             masData.cameraDistance = zoomDistance
-                         }
-                         updatePins(searchResult.coordinate.coord2D)
-                     } else {
-                         masData.setCameraPosition(to: searchResult.coordinate.coord2D)
-                     }
-                     masData.searchText = ""
-                 }
-             }
-             .onChange(of: mainPin?.location) {
-                 masData.recenterMap(coords: mainPin?.location)
-             }
-             .onAppear {
+                if let searchResult = masData.searchResult {
+                    if !allPins.isEmpty {
+                        // zoom in to better show pin when necessary
+                        if masData.cameraDistance > zoomDistance {
+                            masData.cameraDistance = zoomDistance
+                        }
+                        updatePins(searchResult.coordinate.coord2D)
+                    } else {
+                        masData.setCameraPosition(to: searchResult.coordinate.coord2D)
+                    }
+                    masData.searchText = ""
+                }
+            }
+            .onChange(of: mainPin?.location) {
+                masData.recenterMap(coords: mainPin?.location)
+            }
+            .onAppear {
                 let center = CLLocationCoordinate2D(
                     latitude: masData.initialMapLatitude,
                     longitude: masData.initialMapLongitude)
                 masData.cameraDistance = masData.initialMapDistance
                 masData.cameraPosition =
-                    .camera(.init(centerCoordinate: center,
-                                  distance: masData.cameraDistance))
+                    .camera(
+                        .init(
+                            centerCoordinate: center,
+                            distance: masData.cameraDistance))
                 mapStyleName = .init(rawValue: masData.savedMapStyle) ?? .standard
             }
         }
@@ -111,12 +122,16 @@ extension MapView {
     // Zoom in or out by a factor of two
     private func zoom(around coords: CLLocationCoordinate2D, out: Bool = false) {
         if let camera {
-            let distance = out ? camera.distance * 2
-                               : camera.distance / 2
+            let distance =
+                out
+                ? camera.distance * 2
+                : camera.distance / 2
             withAnimation(.easeInOut) {
                 masData.cameraPosition =
-                    .camera(.init(centerCoordinate: coords,
-                                  distance: distance))
+                    .camera(
+                        .init(
+                            centerCoordinate: coords,
+                            distance: distance))
             }
         }
     }

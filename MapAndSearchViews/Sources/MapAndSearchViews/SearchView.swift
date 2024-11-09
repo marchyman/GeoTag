@@ -30,10 +30,12 @@ struct SearchView: View {
                             .bold()
                     }
                     .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets.init(top: 0,
-                                                   leading: leadingInset,
-                                                   bottom: 0,
-                                                   trailing: 0))
+                    .listRowInsets(
+                        EdgeInsets.init(
+                            top: 0,
+                            leading: leadingInset,
+                            bottom: 0,
+                            trailing: 0))
                 } header: {
                     Text("Current search response:")
                         .font(.subheadline)
@@ -45,10 +47,12 @@ struct SearchView: View {
                         Text(item.name)
                     }
                     .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets.init(top: 0,
-                                                   leading: leadingInset,
-                                                   bottom: 0,
-                                                   trailing: 0))
+                    .listRowInsets(
+                        EdgeInsets.init(
+                            top: 0,
+                            leading: leadingInset,
+                            bottom: 0,
+                            trailing: 0))
                     Button {
                         masData.clearPlaces()
                     } label: {
@@ -112,6 +116,7 @@ struct SearchView: View {
 
 #Preview {
     @FocusState var mapFocus: MapAndSearchView.MapFocus?
-    return SearchView(mapFocus: $mapFocus,
-                      masData: MapAndSearchData())
+    return SearchView(
+        mapFocus: $mapFocus,
+        masData: MapAndSearchData())
 }
