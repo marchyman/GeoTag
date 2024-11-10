@@ -1,3 +1,6 @@
+disabled_rules:
+  - opening_brace
+
 included:
 
 excluded:
@@ -7,7 +10,7 @@ excluded:
 cyclomatic_complexity:
   ignores_case_statements: true
 
-function_body_length: 75
+function_body_length: 100
 
 identifier_name:
   min_length: 2

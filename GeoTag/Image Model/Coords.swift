@@ -153,6 +153,8 @@ extension String {
         return try? validateCoord(range: 0 ... 180, reference: Coords.lonRef)
     }
 
+    // swiftlint:disable cyclomatic_complexity
+
     /// Convert a string assumed to contain a coordinate to a double
     /// value representing the coordinate.
     ///
@@ -173,7 +175,6 @@ extension String {
     func validateCoord(range: ClosedRange<UInt>, reference: [String]) throws
         -> Double
     {
-        // swiftlint:disable:previous cyclomatic_complexity
         var invert = false
         let maxParts = 3  // maximum numeric parts to a coordinate
         let delims = ["°", "'", "\""]
@@ -226,6 +227,8 @@ extension String {
         }
         return coordinate
     }
+    // swiftlint:enable cyclomatic_complexity
+
 }
 
 // Coordinate (degree/minutes/seconds) conversions
