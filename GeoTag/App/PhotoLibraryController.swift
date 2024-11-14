@@ -53,22 +53,28 @@ extension PhotoLibrary {
 }
 
 extension PhotoLibrary {
-    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                               category: "PhotoLibrary")
+    static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: "PhotoLibrary")
 }
 
 // functions to build a LibraryEntry and add it to the array of
 // selected photos
 extension PhotoLibrary {
     @MainActor
-    func addPhotos(from selection: [PhotosPickerItem],
-                   to tvm: TableViewModel) async {
+    func addPhotos(
+        from selection: [PhotosPickerItem],
+        to tvm: TableViewModel
+    ) async {
         for item in selection {
             let itemId = Self.fakeURL(itemId: item.itemIdentifier)
-            guard !tvm.images.contains(where: {$0.id == itemId }) else { continue }
+            guard !tvm.images.contains(where: { $0.id == itemId }) else {
+                continue
+            }
             let libraryEntry =
-                await LibraryEntry(item: item,
-                                   asset: getAssets(for: item.itemIdentifier ))
+                await LibraryEntry(
+                    item: item,
+                    asset: getAssets(for: item.itemIdentifier))
             let image = ImageModel(libraryEntry: libraryEntry)
             tvm.images.append(image)
         }
@@ -78,7 +84,8 @@ extension PhotoLibrary {
         // Data -> NSImage -> Image dance needed to get proper orientation of
         // HEIC images.
         if let data = try? await item.loadTransferable(type: Data.self),
-           let nsImage = NSImage(data: data) {
+            let nsImage = NSImage(data: data)
+        {
             return Image(nsImage: nsImage)
         }
         return nil
@@ -86,8 +93,9 @@ extension PhotoLibrary {
 
     func getAssets(for itemId: String?) async -> PHAsset? {
         if let itemId {
-            let result = PHAsset.fetchAssets(withLocalIdentifiers: [itemId],
-                                             options: nil)
+            let result = PHAsset.fetchAssets(
+                withLocalIdentifiers: [itemId],
+                options: nil)
             if let asset = result.firstObject {
                 return asset
             }
@@ -97,9 +105,11 @@ extension PhotoLibrary {
 }
 
 extension PhotoLibrary {
-    func saveChanges(for index: Int,
-                     of images: [ImageModel],
-                     in timeZone: TimeZone?) {
+    func saveChanges(
+        for index: Int,
+        of images: [ImageModel],
+        in timeZone: TimeZone?
+    ) {
         guard index >= 0 && index < images.count else { return }
         if let asset = images[index].asset {
             Task {
@@ -107,14 +117,19 @@ extension PhotoLibrary {
                 let image = images[index]
                 do {
                     try await library.performChanges { [self] in
-                        let assetChangeReqeust = PHAssetChangeRequest(for: asset)
-                        if image.location != image.originalLocation ||
-                           image.elevation != image.originalElevation {
+                        let assetChangeReqeust = PHAssetChangeRequest(
+                            for: asset)
+                        if image.location != image.originalLocation
+                            || image.elevation != image.originalElevation
+                        {
                             assetChangeReqeust.location =
                                 newLocation(from: image, in: timeZone)
                         }
-                        if image.dateTimeCreated != image.originalDateTimeCreated {
-                            assetChangeReqeust.creationDate = image.timestamp(for: nil)
+                        if image.dateTimeCreated
+                            != image.originalDateTimeCreated
+                        {
+                            assetChangeReqeust.creationDate = image.timestamp(
+                                for: nil)
                         }
                     }
                     // get the current asset and update the image
@@ -124,30 +139,35 @@ extension PhotoLibrary {
                         images[index].loadLibraryMetadata(asset: newAsset)
                     }
                 } catch {
-                    Self.logger.error("saveChanges: \(error.localizedDescription, privacy: .public)")
+                    Self.logger.error(
+                        "saveChanges: \(error.localizedDescription, privacy: .public)"
+                    )
                 }
             }
         }
     }
 
-    private func newLocation(from image: ImageModel,
-                             in timeZone: TimeZone?) -> CLLocation? {
+    private func newLocation(
+        from image: ImageModel,
+        in timeZone: TimeZone?
+    ) -> CLLocation? {
         if let coords = image.location {
             let altitude: Double
             let verticalAccuracy: Double
             if let elevation = image.elevation {
                 altitude = elevation
-                verticalAccuracy = 20   // a number picked out of the air
+                verticalAccuracy = 20  // a number picked out of the air
             } else {
                 altitude = 0
                 verticalAccuracy = 0
             }
             let timeStamp = image.gmtTimeStamp(timeZone)
-            return CLLocation(coordinate: coords,
-                              altitude: altitude,
-                              horizontalAccuracy: 10,
-                              verticalAccuracy: verticalAccuracy,
-                              timestamp: timeStamp)
+            return CLLocation(
+                coordinate: coords,
+                altitude: altitude,
+                horizontalAccuracy: 10,
+                verticalAccuracy: verticalAccuracy,
+                timestamp: timeStamp)
         }
         return nil
     }

@@ -14,7 +14,7 @@ public final class MapAndSearchData {
     public var showOtherPins: Bool = false
 
     // tracks shown on map
-    var tracks: [MapTrack] = [] // tracks shown on map
+    var tracks: [MapTrack] = []  // tracks shown on map
 
     // search related data
     var searchResult: SearchPlace?
@@ -27,14 +27,15 @@ public final class MapAndSearchData {
     var writing = false
 
     @ObservationIgnored
-    let showLocation: Bool      // set when performing some XCUITests
+    let showLocation: Bool  // set when performing some XCUITests
     @ObservationIgnored
-    let logger: Logger          // package logging
+    let logger: Logger  // package logging
 
     public init() {
         showLocation = ProcessInfo.processInfo.environment["MAPTEST"] != nil
-        logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                        category: "MapAndSearchViews")
+        logger = Logger(
+            subsystem: Bundle.main.bundleIdentifier!,
+            category: "MapAndSearchViews")
         logger.notice("MapAndSearchData created")
         Task {
             searchPlaces = fetchPlaces()
@@ -68,8 +69,10 @@ extension MapAndSearchData {
 
     // change the map camera position
     func setCameraPosition(to coords: CLLocationCoordinate2D) {
-        cameraPosition = .camera(.init(centerCoordinate: coords,
-                                       distance: cameraDistance))
+        cameraPosition = .camera(
+            .init(
+                centerCoordinate: coords,
+                distance: cameraDistance))
     }
 
     // recenter the map if the given location is not in the current
@@ -89,10 +92,10 @@ extension MapAndSearchData {
     // if known. Used when showLocation is set for XCUITests
     var centerLocation: String {
         if let camera = cameraPosition.camera {
-            return  """
-                    Lat: \(camera.centerCoordinate.latitude)
-                    Lon: \(camera.centerCoordinate.longitude)
-                    """
+            return """
+                Lat: \(camera.centerCoordinate.latitude)
+                Lon: \(camera.centerCoordinate.longitude)
+                """
         } else {
             return "Unknown center"
         }
@@ -105,16 +108,18 @@ extension MapAndSearchData {
         let location: CLLocationCoordinate2D
     }
 
-   // Return an array of "other" pins where "other" excludes
-   // the main pin. This is controlled by the "showOtherPins" flag
-   // controlled by the user.
+    // Return an array of "other" pins where "other" excludes
+    // the main pin. This is controlled by the "showOtherPins" flag
+    // controlled by the user.
 
-    func otherPins(mainPin: Locatable?,
-                   allPins: [Locatable]) -> [OtherPins] {
+    func otherPins(
+        mainPin: Locatable?,
+        allPins: [Locatable]
+    ) -> [OtherPins] {
         if showOtherPins && !allPins.isEmpty {
             let convertedPins =
                 allPins.filter { $0.location != nil }
-                       .map { OtherPins(location: $0.location!) }
+                .map { OtherPins(location: $0.location!) }
             if let mainLocation = mainPin?.location {
                 // filter out items with the same location as mainPin
                 return convertedPins.filter { $0.location != mainLocation }

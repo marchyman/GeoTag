@@ -16,9 +16,11 @@ public struct SplitVView<Top: View, Bottom: View>: View {
     var top: Top
     var bottom: Bottom
 
-    public init(percent: Binding<Double>,
-                @ViewBuilder top: () -> Top,
-                @ViewBuilder bottom: () -> Bottom) {
+    public init(
+        percent: Binding<Double>,
+        @ViewBuilder top: () -> Top,
+        @ViewBuilder bottom: () -> Bottom
+    ) {
         self._percent = percent
         self.top = top()
         self.bottom = bottom()
@@ -73,11 +75,14 @@ struct SplitVDividerView: View {
     }
 
     var drag: some Gesture {
-        DragGesture(minimumDistance: 5,
-                    coordinateSpace: CoordinateSpace.global)
-            .onChanged { val in
-                percent = max(minPercent,
-                              min(1 - val.location.y / height, maxPercent))
-            }
+        DragGesture(
+            minimumDistance: 5,
+            coordinateSpace: CoordinateSpace.global
+        )
+        .onChanged { val in
+            percent = max(
+                minPercent,
+                min(1 - val.location.y / height, maxPercent))
+        }
     }
 }

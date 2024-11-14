@@ -5,8 +5,8 @@
 //  Created by Marco S Hyman on 4/27/19.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 import SwiftUI
 
 // MARK: Coords -- another name for CLLocationCoordinate2D
@@ -17,11 +17,12 @@ typealias Coords = CLLocationCoordinate2D
 // Equatable Coords
 // The MapAndSearchViews package now provides this extension
 #if false
-extension Coords: @retroactive Equatable {
-    static public func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    extension Coords: @retroactive Equatable {
+        static public func == (lhs: Self, rhs: Self) -> Bool {
+            return lhs.latitude == rhs.latitude
+                && lhs.longitude == rhs.longitude
+        }
     }
-}
 #endif
 
 // define Coordinate latitude and longitude references
@@ -36,7 +37,7 @@ extension Coords {
 // Add coord formating given a format style
 extension Coords {
     func formatted<S: FormatStyle>(_ style: S) -> S.FormatOutput
-        where S.FormatInput == Self {
+    where S.FormatInput == Self {
         style.format(self)
     }
 }
@@ -103,25 +104,30 @@ extension FormatStyle where Self == LongitudeStyle {
 
 // MARK: convert a coordinate to a string using the desired format
 
-private func coordToString(for coord: Double?,
-                           ref: [String]) -> String {
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+private func coordToString(
+    for coord: Double?,
+    ref: [String]
+) -> String {
+    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat =
+        .deg
 
     if let coord {
         switch coordFormat {
         case .deg:
             return String(format: "% 2.6f", coord)
         case .degMin:
-            return String(format: "%d° %.6f' %@",
-                          Int(abs(coord)),
-                          coord.minutes,
-                          coord >= 0 ? ref[0] : ref[1])
+            return String(
+                format: "%d° %.6f' %@",
+                Int(abs(coord)),
+                coord.minutes,
+                coord >= 0 ? ref[0] : ref[1])
         case .degMinSec:
-            return String(format: "%d° %d' %.2f\" %@",
-                          Int(abs(coord)),
-                          Int(abs(coord.minutes)),
-                          coord.seconds,
-                          coord >= 0 ? ref[0] : ref[1])
+            return String(
+                format: "%d° %d' %.2f\" %@",
+                Int(abs(coord)),
+                Int(abs(coord.minutes)),
+                coord.seconds,
+                coord >= 0 ? ref[0] : ref[1])
         }
     }
     return ""
@@ -140,12 +146,14 @@ extension String {
     // latitude and longitude validation
 
     func validateLatitude() -> Double? {
-        return try? validateCoord(range: 0...90, reference: Coords.latRef)
+        return try? validateCoord(range: 0 ... 90, reference: Coords.latRef)
     }
 
     func validateLongitude() -> Double? {
-        return try? validateCoord(range: 0...180, reference: Coords.lonRef)
+        return try? validateCoord(range: 0 ... 180, reference: Coords.lonRef)
     }
+
+    // swiftlint:disable cyclomatic_complexity
 
     /// Convert a string assumed to contain a coordinate to a double
     /// value representing the coordinate.
@@ -164,18 +172,19 @@ extension String {
     /// are used.  Degree (°), Minute ('), and Second (") marks are optional
     /// and ignored if found at the end of a value.
 
-    func validateCoord(range: ClosedRange<UInt>, reference: [String]) throws -> Double {
-        // swiftlint:disable:previous cyclomatic_complexity
+    func validateCoord(range: ClosedRange<UInt>, reference: [String]) throws
+        -> Double
+    {
         var invert = false
-        let maxParts = 3            // maximum numeric parts to a coordinate
-        let delims = [ "°", "'", "\""]
+        let maxParts = 3  // maximum numeric parts to a coordinate
+        let delims = ["°", "'", "\""]
         var subStrings = self.split(separator: " ")
 
         // See if the last part of the input string matches one of the
         // given reference values.
         if let ref = subStrings.last?.uppercased() {
             for validRef in reference where validRef.uppercased() == ref {
-                if  ref == "S" || ref == "W" {
+                if ref == "S" || ref == "W" {
                     invert = true
                 }
                 subStrings.removeLast()
@@ -184,11 +193,11 @@ extension String {
         }
 
         // There sould be from 1...maxParts substrings to process
-        guard (1...maxParts).contains(subStrings.count) else {
+        guard (1 ... maxParts).contains(subStrings.count) else {
             throw CoordFormatError.formatError("Too many substrings")
         }
 
-        var dms = [0.0, 0.0, 0.0]   // degrees, minutes, seconds
+        var dms = [0.0, 0.0, 0.0]  // degrees, minutes, seconds
         var index = 0
         for str in subStrings {
             var digits: Substring
@@ -203,7 +212,7 @@ extension String {
                     if !range.contains(Int(val).magnitude) {
                         throw CoordFormatError.formatError("Value out of range")
                     }
-                } else if !(0..<60).contains(Int(val)) {
+                } else if !(0 ..< 60).contains(Int(val)) {
                     throw CoordFormatError.formatError("Value out of range")
                 }
                 dms[index] = val
@@ -212,12 +221,14 @@ extension String {
             }
             index += 1
         }
-        var coordinate = dms[0] + (dms[1]/60) + (dms[2]/60/60)
+        var coordinate = dms[0] + (dms[1] / 60) + (dms[2] / 60 / 60)
         if invert {
             coordinate = -coordinate
         }
         return coordinate
     }
+    // swiftlint:enable cyclomatic_complexity
+
 }
 
 // Coordinate (degree/minutes/seconds) conversions
@@ -227,15 +238,16 @@ extension Double {
     // part as the number of minutes, truncating the whole number of degrees.
     // dd.ddddd => mm.ddddd
     var minutes: Self {
-        return abs((self*3600).truncatingRemainder(dividingBy: 3600) / 60)
+        return abs((self * 3600).truncatingRemainder(dividingBy: 3600) / 60)
     }
 
     // assuming the value is some number of degrees return the fractional
     // part as the number of seconds, truncating the whole number of degrees
     // and minutes.  dd.ddddd => ss.ddddd
     var seconds: Self {
-        return abs((self*3600)
-            .truncatingRemainder(dividingBy: 3600)
-            .truncatingRemainder(dividingBy: 60))
+        return abs(
+            (self * 3600)
+                .truncatingRemainder(dividingBy: 3600)
+                .truncatingRemainder(dividingBy: 60))
     }
 }

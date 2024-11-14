@@ -40,10 +40,11 @@ extension MapAndSearchData {
         let fileManager = FileManager.default
         do {
             let supportDir =
-                try fileManager.url(for: .applicationSupportDirectory,
-                                    in: .userDomainMask,
-                                    appropriateFor: nil,
-                                    create: true)
+                try fileManager.url(
+                    for: .applicationSupportDirectory,
+                    in: .userDomainMask,
+                    appropriateFor: nil,
+                    create: true)
             let placesURL = supportDir.appendingPathComponent(name)
             return placesURL
         } catch {
@@ -59,23 +60,27 @@ extension MapAndSearchData {
         if let places = try? Data(contentsOf: url) {
             do {
                 let decoder = JSONDecoder()
-                let decoded = try decoder.decode([SearchPlace].self,
-                                                 from: places)
+                let decoded = try decoder.decode(
+                    [SearchPlace].self,
+                    from: places)
                 return decoded
             } catch let DecodingError.dataCorrupted(context) {
                 logger.error("corrupted \(context.debugDescription, privacy: .public)")
             } catch let DecodingError.keyNotFound(key, context) {
-                logger.error("""
+                logger.error(
+                    """
                     Key '\(key.stringValue, privacy: .public)' not found: \
                     \(context.debugDescription, privacy: .public)
                     """)
             } catch let DecodingError.valueNotFound(value, context) {
-                logger.error("""
+                logger.error(
+                    """
                     Value '\(value, privacy: .public)' not found: \
                     \(context.debugDescription, privacy: .public)
                     """)
             } catch let DecodingError.typeMismatch(type, context) {
-                logger.error("""
+                logger.error(
+                    """
                     Type '\(type, privacy: .public)' mismatch: \
                     \(context.debugDescription, privacy: .public)
                     """)

@@ -19,8 +19,10 @@ struct SaveItemCommands: Commands {
                 .disabled(state.saveDisabled())
 
             Button("Discard changes") {
-                state.confirmationMessage =
-                    "Discarding all changes is not undoable.  Are you sure this is what you want to do?"
+                state.confirmationMessage = """
+                    Discarding all changes is not undoable.  \
+                    Are you sure this is what you want to do?
+                    """
                 state.confirmationAction = state.discardChangesAction
                 state.presentConfirmation = true
             }

@@ -46,7 +46,7 @@ struct ContextMenuView: View {
             Button("Show In Finder") { state.showInFinderAction(context: context) }
                 .disabled(state.showInFinderDisabled(context: context))
 
-            Button("Locn From Track") { state.locnFromTrackAction(context: context ) }
+            Button("Locn From Track") { state.locnFromTrackAction(context: context) }
                 .disabled(state.locnFromTrackDisabled(context: context))
         }
 

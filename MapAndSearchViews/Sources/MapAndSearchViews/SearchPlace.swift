@@ -13,15 +13,18 @@ struct SearchPlace: Identifiable, Codable {
     init(from item: MKMapItem) {
         self.name = item.name ?? "unknown"
         if let locality = item.placemark.locality,
-           locality != item.name {
+            locality != item.name
+        {
             self.name += ", \(locality)"
         }
         if let area = item.placemark.administrativeArea,
-           area != item.name {
+            area != item.name
+        {
             self.name += ", \(area)"
         }
         if let country = item.placemark.country,
-           country != "United States" {
+            country != "United States"
+        {
             self.name += ", \(country)"
         }
         self.coordinate = .init(item.placemark.coordinate)
@@ -62,14 +65,16 @@ struct Coordinate: Codable, Hashable {
 
 extension CLLocationCoordinate2D {
     init(_ coordinate: Coordinate) {
-        self = .init(latitude: coordinate.latitude,
-                     longitude: coordinate.longitude)
+        self = .init(
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude)
     }
 }
 
 extension Coordinate {
     init(_ coordinate: CLLocationCoordinate2D) {
-        self = .init(latitude: coordinate.latitude,
-                     longitude: coordinate.longitude)
+        self = .init(
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude)
     }
 }

@@ -5,8 +5,8 @@
 //  Created by Marco S Hyman on 7/12/23.
 //
 
-import SwiftUI
 import CoreLocation
+import SwiftUI
 
 struct LatLonSectionView: View {
     var image: ImageModel
@@ -16,7 +16,8 @@ struct LatLonSectionView: View {
     @State private var latitude: Double?
     @State private var longitude: Double?
 
-    @AppStorage(AppSettings.coordFormatKey) var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.coordFormatKey)
+    var coordFormat: AppSettings.CoordFormat = .deg
 
     // notice the bogus "focused" value given to .focusedValue. I need a non
     // empty string to enable cut/copy/paste/select all and this was an
@@ -78,9 +79,10 @@ struct LatLonSectionView: View {
 
     private func validateLocation() -> Bool {
         if let latitude,
-           let longitude,
-           (0...90).contains(latitude.magnitude),
-           (0...180).contains(longitude.magnitude) {
+            let longitude,
+            (0 ... 90).contains(latitude.magnitude),
+            (0 ... 180).contains(longitude.magnitude)
+        {
             return true
         }
         return false
@@ -93,8 +95,9 @@ struct LatLonSectionView: View {
         // function won't be called if lat/lon are nil.
         // guard used to convert to non-optional values
         guard let latitude, let longitude else { return }
-        let newLocation = Coords(latitude: latitude,
-                                 longitude: longitude)
+        let newLocation = Coords(
+            latitude: latitude,
+            longitude: longitude)
 
         state.undoManager.beginUndoGrouping()
         for image in state.tvm.selected where image.location != newLocation {
@@ -106,11 +109,12 @@ struct LatLonSectionView: View {
 }
 
 #Preview {
-    let image = ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
-                           validImage: true,
-                           dateTimeCreated: "2022:12:12 11:22:33",
-                           latitude: 33.123,
-                           longitude: 123.456)
+    let image = ImageModel(
+        imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
+        validImage: true,
+        dateTimeCreated: "2022:12:12 11:22:33",
+        latitude: 33.123,
+        longitude: 123.456)
     return LatLonSectionView(image: image)
         .environment(AppState())
 }

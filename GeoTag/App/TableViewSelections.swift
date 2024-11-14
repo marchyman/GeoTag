@@ -27,8 +27,9 @@ extension TableViewModel {
         } else {
             // If the image that was the "most" selected is in the proposed
             // selection set don't pick another
-            if mostSelected == nil ||
-               !selected.contains(where: { $0 == mostSelected }) {
+            if mostSelected == nil
+                || !selected.contains(where: { $0 == mostSelected })
+            {
                 mostSelected = selected.first
             }
         }

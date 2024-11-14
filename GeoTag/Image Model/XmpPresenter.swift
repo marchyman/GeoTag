@@ -26,7 +26,8 @@ final class XmpPresenter: NSObject, NSFilePresenter {
 
     init(for imageURL: URL) {
         primaryPresentedItemURL = imageURL
-        presentedItemURL = imageURL
+        presentedItemURL =
+            imageURL
             .deletingPathExtension()
             .appendingPathExtension(xmpExtension)
     }
@@ -40,9 +41,11 @@ extension XmpPresenter {
         var data: Data?
         var error: NSError?
         let coordinator = NSFileCoordinator.init(filePresenter: self)
-        coordinator.coordinate(readingItemAt: presentedItemURL!,
-                               options: [],
-                               error: &error) { url in
+        coordinator.coordinate(
+            readingItemAt: presentedItemURL!,
+            options: [],
+            error: &error
+        ) { url in
             data = try? Data(contentsOf: url)
         }
         return data

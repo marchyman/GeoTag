@@ -6,8 +6,8 @@
 //
 
 import MapAndSearchViews
-import SwiftUI
 import SplitVView
+import SwiftUI
 
 struct ImageMapView: View {
     @AppStorage(AppSettings.splitVImageMapKey) var percent: Double = 0.60
@@ -17,9 +17,11 @@ struct ImageMapView: View {
         SplitVView(percent: $percent) {
             ImageView()
         } bottom: {
-            MapAndSearchView(masData: state.masData,
-                             mainPin: state.tvm.mostSelected,
-                             allPins: state.tvm.selected) { coords in
+            MapAndSearchView(
+                masData: state.masData,
+                mainPin: state.tvm.mostSelected,
+                allPins: state.tvm.selected
+            ) { coords in
                 if !state.tvm.selected.isEmpty {
                     state.undoManager.beginUndoGrouping()
                     for image in state.tvm.selected {

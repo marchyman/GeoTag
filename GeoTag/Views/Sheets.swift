@@ -56,9 +56,14 @@ struct GpxLoadView: View {
                     .font(.title)
                 List(state.gpxGoodFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
-                Text("The above GPX file(s) have been processed and will show as tracks on the map.")
-                    .lineLimit(nil)
-                    .padding()
+                Text(
+                    """
+                    The above GPX file(s) have been processed and will \
+                    show as tracks on the map.
+                    """
+                )
+                .lineLimit(nil)
+                .padding()
             }
             if state.gpxBadFileNames.count > 0 {
                 Text("GPX Files NOT Loaded")
@@ -68,11 +73,15 @@ struct GpxLoadView: View {
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
                     .padding()
-                Text("Either no tracks could be found or the GPX file was corrupted " +
-                     "such that it could not be properly processed. Any track log " +
-                     "information in the file has been ignored.")
-                    .lineLimit(nil)
-                    .padding([.leading, .bottom, .trailing])
+                Text(
+                    """
+                    Either no tracks could be found or the GPX file was \
+                    corrupted such that it could not be properly processed. \
+                    Any track log information in the file has been ignored.
+                    """
+                )
+                .lineLimit(nil)
+                .padding([.leading, .bottom, .trailing])
             }
         }
         .onDisappear {
@@ -80,8 +89,9 @@ struct GpxLoadView: View {
             state.gpxGoodFileNames = []
             state.gpxBadFileNames = []
         }
-        .frame(minWidth: sheetWidth, maxWidth: sheetWidth,
-               minHeight: sheetMinHeight)
+        .frame(
+            minWidth: sheetWidth, maxWidth: sheetWidth,
+            minHeight: sheetMinHeight)
     }
 }
 
@@ -91,10 +101,14 @@ struct DuplicateImageView: View {
             Text("One or more files not opened")
                 .font(.title)
                 .padding()
-            Text("One or more files were not opened. Unopened files were " +
-                 "duplicates of files previously opened for editing.")
-                .lineLimit(nil)
-                .padding(.bottom, 40)
+            Text(
+                """
+                One or more files were not opened. Unopened files were \
+                duplicates of files previously opened for editing.
+                """
+            )
+            .lineLimit(nil)
+            .padding(.bottom, 40)
         }
         .frame(maxWidth: 400, minHeight: 100)
     }
@@ -107,12 +121,16 @@ struct NoBackupFolderView: View {
             Text("Image backup folder can not be found")
                 .font(.title)
                 .padding()
-            Text("Image backups are enabled but no backup folder is " +
-                 "specified or the specified folder can no longer be found. " +
-                 "Please open the program settings window (⌘ ,) and select " +
-                 "a folder for image backups.")
-                .lineLimit(nil)
-                .padding(.bottom, 40)
+            Text(
+                """
+                Image backups are enabled but no backup folder is \
+                specified or the specified folder can no longer be found. \
+                Please open the program settings window (⌘ ,) and select \
+                a folder for image backups.
+                """
+            )
+            .lineLimit(nil)
+            .padding(.bottom, 40)
         }
         .frame(maxWidth: 400, minHeight: 200)
     }
@@ -124,10 +142,14 @@ struct SavingUpdatesView: View {
             Text("Save in progress")
                 .font(.title)
                 .padding()
-            Text("Image updates are still being processed.  Please wait " +
-                 "for the updates to complete before quiting GeoTag.")
-                .lineLimit(nil)
-                .padding(.bottom, 40)
+            Text(
+                """
+                Image updates are still being processed.  Please wait \
+                for the updates to complete before quiting GeoTag.
+                """
+            )
+            .lineLimit(nil)
+            .padding(.bottom, 40)
         }
         .frame(maxWidth: 400, minHeight: 100)
     }

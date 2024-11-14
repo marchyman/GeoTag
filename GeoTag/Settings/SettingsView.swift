@@ -12,19 +12,22 @@ struct SettingsView: View {
     @Environment(AppState.self) var state
 
     // values stored in AppStorage
-    @AppStorage(AppSettings.addTagsKey) var addTags = false
+    @AppStorage(AppSettings.addTagsKey)
+    var addTags = false
     @AppStorage(AppSettings.coordFormatKey)
-        var coordFormat: AppSettings.CoordFormat = .deg
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(AppSettings.doNotBackupKey)
+    var doNotBackup = false
     @AppStorage(AppSettings.createSidecarFilesKey)
-        var createSidecarFiles = false
+    var createSidecarFiles = false
     @AppStorage(AppSettings.disablePairedJpegsKey)
-        var disablePairedJpegs = false
+    var disablePairedJpegs = false
     @AppStorage(AppSettings.updateFileModificationTimesKey)
-        var updateFileModificationTimes = false
+    var updateFileModificationTimes = false
     @AppStorage(AppSettings.updateGPSTimestampsKey)
-        var updateGPSTimestamps = false
-    @AppStorage(AppSettings.finderTagKey) var finderTag = "GeoTag"
+    var updateGPSTimestamps = false
+    @AppStorage(AppSettings.finderTagKey)
+    var finderTag = "GeoTag"
 
     var body: some View {
         @Bindable var state = state
@@ -39,7 +42,8 @@ struct SettingsView: View {
                         Toggle("Disable image backups", isOn: $doNotBackup)
                             .labelsHidden()
                     }
-                    .help("""
+                    .help(
+                        """
                         GeoTag will not place a copy of updated files in your \
                         selected backup folder if this box is checked. If \
                         there are issues while updates are in progress it \
@@ -59,7 +63,8 @@ struct SettingsView: View {
                                 .frame(width: 280)
                         }
                         .padding(.bottom)
-                        .help("""
+                        .help(
+                            """
                             Click on the disclosure indicator to choose a \
                             folder where GeoTag will place copies of images \
                             before performing any updates.
@@ -73,15 +78,18 @@ struct SettingsView: View {
                         .labelsHidden()
                 }
                 .padding([.bottom, .horizontal])
-                .help("""
+                .help(
+                    """
                     Checking this box will result in creation of a sidecar \
                     (XMP) file for updated image files if one does not exist. \
                     Updates are then written to the sidecar file.
                     """)
 
                 // Coordinate display configuration
-                Picker("Choose a coordinate format:",
-                       selection: $coordFormat) {
+                Picker(
+                    "Choose a coordinate format:",
+                    selection: $coordFormat
+                ) {
                     Text("dd.dddddd")
                         .tag(AppSettings.CoordFormat.deg)
                     Text("dd° mm.mmmmmm'")
@@ -90,32 +98,38 @@ struct SettingsView: View {
                         .tag(AppSettings.CoordFormat.degMinSec)
                 }
                 .pickerStyle(.inline)
-                .padding([.bottom, .horizontal] )
+                .padding([.bottom, .horizontal])
                 .help("Select a format for latitude and longitude display")
 
                 // Track log display configuration
                 Group {
-                    ColorPicker("GPS Track Color:",
-                                selection: $state.masData.trackColor)
-                        .padding(.horizontal)
-                        .help("Select the color used to display GPS tracks on the map.")
+                    ColorPicker(
+                        "GPS Track Color:",
+                        selection: $state.masData.trackColor
+                    )
+                    .padding(.horizontal)
+                    .help("Select the color used to display GPS tracks on the map.")
 
-                    TextField("GPS Track width:",
-                              value: $state.masData.trackWidth, format: .number)
-                        .padding([.horizontal, .bottom])
-                        .frame(maxWidth: 190)
-                        .help("""
-                            Select the width of line used to display GPS \
-                            tracks on the map. Use 0 for the system default width.
-                            """)
+                    TextField(
+                        "GPS Track width:",
+                        value: $state.masData.trackWidth, format: .number
+                    )
+                    .padding([.horizontal, .bottom])
+                    .frame(maxWidth: 190)
+                    .help(
+                        """
+                        Select the width of line used to display GPS \
+                        tracks on the map. Use 0 for the system default width.
+                        """)
                 }
 
                 LabeledContent("Disable paired jpegs:") {
                     Toggle("Disable paired jpegs", isOn: $disablePairedJpegs)
                         .labelsHidden()
                 }
-                .padding([.bottom, .horizontal] )
-                .help("""
+                .padding([.bottom, .horizontal])
+                .help(
+                    """
                     When this box is checked jpeg files that are part of a \
                     raw/jpeg pair can not not be updated.  The jpeg image \
                     name is displayed in the table using a gray color.
@@ -124,12 +138,15 @@ struct SettingsView: View {
                 // Image save option configuratio
                 Group {
                     LabeledContent("Set File Modification Times:") {
-                        Toggle("Set File Modification Time",
-                               isOn: $updateFileModificationTimes)
-                            .labelsHidden()
+                        Toggle(
+                            "Set File Modification Time",
+                            isOn: $updateFileModificationTimes
+                        )
+                        .labelsHidden()
                     }
                     .padding([.bottom, .horizontal])
-                    .help("""
+                    .help(
+                        """
                         Checking this box will set file modification time to \
                         be the same as the image creation date/time whenever \
                         GeoTag updates image metadata with location changes. \
@@ -138,12 +155,15 @@ struct SettingsView: View {
                         """)
 
                     LabeledContent("Update GPS Date/Time:") {
-                        Toggle("Update GPS Date/Time",
-                               isOn: $updateGPSTimestamps)
-                            .labelsHidden()
+                        Toggle(
+                            "Update GPS Date/Time",
+                            isOn: $updateGPSTimestamps
+                        )
+                        .labelsHidden()
                     }
-                    .padding([.bottom, .horizontal] )
-                    .help("""
+                    .padding([.bottom, .horizontal])
+                    .help(
+                        """
                         GeoTag can set/update the GPS time and date stamps \
                         when updating locations.  These timestamps are the \
                         same as the image create date and time but relative \
@@ -159,7 +179,8 @@ struct SettingsView: View {
                             .labelsHidden()
                     }
                     .padding(.horizontal)
-                    .help("""
+                    .help(
+                        """
                         If this option is enabled a finder tag will be added \
                         to updated images. The tag is alway added to the main \
                         image file even when a GPX sidecar file exists.
@@ -174,7 +195,8 @@ struct SettingsView: View {
                                     finderTag = "GeoTag"
                                 }
                             }
-                            .help("""
+                            .help(
+                                """
                                 This tag will be added to files when Tag \
                                 updated files is checked. If the tag is empty \
                                 \"GeoTag\" will be used.

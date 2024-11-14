@@ -5,16 +5,16 @@
 //  Created by Marco S Hyman on 12/13/22.
 //
 
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct ImageTableView: View {
     @Bindable var tvm: TableViewModel
 
     @AppStorage(AppSettings.imageTableConfigKey)
-        private var columnCustomization: TableColumnCustomization<ImageModel>
+    private var columnCustomization: TableColumnCustomization<ImageModel>
     @AppStorage(AppSettings.coordFormatKey)
-        var coordFormat: AppSettings.CoordFormat = .deg
+    var coordFormat: AppSettings.CoordFormat = .deg
     @AppStorage(AppSettings.hideInvalidImagesKey) var hideInvalidImages = false
 
     // table view column width limits
@@ -43,10 +43,12 @@ struct ImageTableView: View {
         let _ = coordFormat
         // swiftlint:enable redundant_discardable_let
 
-        Table(of: ImageModel.self,
-              selection: $tvm.selection,
-              sortOrder: $tvm.sortOrder,
-              columnCustomization: $columnCustomization) {
+        Table(
+            of: ImageModel.self,
+            selection: $tvm.selection,
+            sortOrder: $tvm.sortOrder,
+            columnCustomization: $columnCustomization
+        ) {
 
             TableColumn("Name", value: \.name) { image in
                 NameView(image: image, isSelected: image == mostSelected)
@@ -85,11 +87,17 @@ struct ImageTableView: View {
         .onChange(of: tvm.sortOrder) {
             tvm.images.sort(using: tvm.sortOrder)
         }
-        .searchable(text: $searchFor, isPresented: $isSearching,
-                    placement: .automatic, prompt: "Image name")
-        .background(Button("",
-                           action: { isSearching = true })
-                        .keyboardShortcut("f").hidden())
+        .searchable(
+            text: $searchFor, isPresented: $isSearching,
+            placement: .automatic, prompt: "Image name"
+        )
+        .background(
+            Button(
+                "",
+                action: { isSearching = true }
+            )
+            .keyboardShortcut("f").hidden()
+        )
         .onChange(of: searchFor) {
             if searchFor.isEmpty {
                 tvm.clearSearch()
@@ -109,9 +117,11 @@ struct NameView: View {
     var body: some View {
         Text(image.name)
             .fontWeight(isSelected ? .semibold : .regular)
-            .foregroundColor(isSelected
-                             ? .mostSelected
-                             : image.isValid ? .primary : .secondary)
+            .foregroundColor(
+                isSelected
+                    ? .mostSelected
+                    : image.isValid ? .primary : .secondary
+            )
             .help("Full path: \(image.fileURL.path())")
     }
 }
@@ -127,7 +137,7 @@ struct TimestampView: View {
 struct LatitudeView: View {
     let image: ImageModel
     @AppStorage(AppSettings.coordFormatKey)
-        var coordFormat: AppSettings.CoordFormat = .deg
+    var coordFormat: AppSettings.CoordFormat = .deg
 
     var body: some View {
         Text(image.formattedLatitude)
@@ -138,7 +148,7 @@ struct LatitudeView: View {
 struct LongitudeView: View {
     let image: ImageModel
     @AppStorage(AppSettings.coordFormatKey)
-        var coordFormat: AppSettings.CoordFormat = .deg
+    var coordFormat: AppSettings.CoordFormat = .deg
 
     var body: some View {
         Text(image.formattedLongitude)
@@ -149,21 +159,24 @@ struct LongitudeView: View {
 struct ImageTableView_Previews: PreviewProvider {
 
     static var images = [
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
-                   validImage: true,
-                   dateTimeCreated: "2022:12:12 11:22:33",
-                   latitude: 33.123,
-                   longitude: 123.456),
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image2.bad"),
-                   validImage: false,
-                   dateTimeCreated: "",
-                   latitude: nil,
-                   longitude: nil),
-        ImageModel(imageURL: URL(fileURLWithPath: "/test/path/to/image3.dng"),
-                   validImage: true,
-                   dateTimeCreated: "2022:12:13 14:15:16",
-                   latitude: 35.505,
-                   longitude: -123.456)
+        ImageModel(
+            imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
+            validImage: true,
+            dateTimeCreated: "2022:12:12 11:22:33",
+            latitude: 33.123,
+            longitude: 123.456),
+        ImageModel(
+            imageURL: URL(fileURLWithPath: "/test/path/to/image2.bad"),
+            validImage: false,
+            dateTimeCreated: "",
+            latitude: nil,
+            longitude: nil),
+        ImageModel(
+            imageURL: URL(fileURLWithPath: "/test/path/to/image3.dng"),
+            validImage: true,
+            dateTimeCreated: "2022:12:13 14:15:16",
+            latitude: 35.505,
+            longitude: -123.456)
     ]
 
     static var previews: some View {

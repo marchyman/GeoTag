@@ -86,9 +86,10 @@ final class ImageModel: Identifiable {
 
     // true if image location, elevation, or timestamp have changed
     var changed: Bool {
-        isValid && (dateTimeCreated != originalDateTimeCreated ||
-                    location != originalLocation ||
-                    elevation != originalElevation)
+        isValid
+            && (dateTimeCreated != originalDateTimeCreated
+                || location != originalLocation
+                || elevation != originalElevation)
     }
 
     // The thumbnail image displayed when and image is selected for editing
@@ -100,16 +101,19 @@ final class ImageModel: Identifiable {
     init(imageURL: URL, forPreview: Bool = false) throws {
         // Self.logger.trace("image \(imageURL) created")
         fileURL = imageURL
-        sidecarURL = fileURL.deletingPathExtension().appendingPathExtension(xmpExtension)
-        let hasSidecar = fileURL != sidecarURL &&
-                         FileManager.default.fileExists(atPath: sidecarURL.path)
+        sidecarURL = fileURL.deletingPathExtension()
+            .appendingPathExtension(xmpExtension)
+        let hasSidecar =
+            fileURL != sidecarURL
+            && FileManager.default.fileExists(atPath: sidecarURL.path)
         sidecarExists = hasSidecar
         xmpPresenter = XmpPresenter(for: fileURL)
         name = imageURL.lastPathComponent + (hasSidecar ? "*" : "")
 
         // shortcut initialization when creating an image for preview
         // or if the file type is not writable by Exiftool
-        guard !forPreview && Exiftool.helper.fileTypeIsWritable(for: fileURL) else {
+        guard !forPreview && Exiftool.helper.fileTypeIsWritable(for: fileURL)
+        else {
             return
         }
 
@@ -166,8 +170,9 @@ extension ImageModel {
     func validCoords(latitude: Double, longitude: Double) -> Coords? {
         var coords: Coords?
 
-        if (0...90).contains(latitude.magnitude) &&
-            (0...180).contains(longitude.magnitude) {
+        if (0 ... 90).contains(latitude.magnitude)
+            && (0 ... 180).contains(longitude.magnitude)
+        {
             coords = Coords(latitude: latitude, longitude: longitude)
         }
         return coords
@@ -180,11 +185,13 @@ extension ImageModel {
 extension ImageModel {
 
     // create a model for SwiftUI preview
-    convenience init(imageURL: URL,
-                     validImage: Bool,
-                     dateTimeCreated: String,
-                     latitude: Double?,
-                     longitude: Double?) {
+    convenience init(
+        imageURL: URL,
+        validImage: Bool,
+        dateTimeCreated: String,
+        latitude: Double?,
+        longitude: Double?
+    ) {
         do {
             try self.init(imageURL: imageURL, forPreview: true)
         } catch {
@@ -209,8 +216,9 @@ extension ImageModel {
 }
 
 extension ImageModel {
-    private static let logger = Logger(subsystem: "org.snafu.GeoTag",
-                                       category: "ImageModel")
+    private static let logger = Logger(
+        subsystem: "org.snafu.GeoTag",
+        category: "ImageModel")
 }
 
 // MARK: ImageModel instances are compared and hashed on id

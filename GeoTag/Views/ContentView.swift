@@ -5,9 +5,9 @@
 //  Created by Marco S Hyman on 12/9/22.
 //
 
+import SplitHView
 import SwiftUI
 import UniformTypeIdentifiers
-import SplitHView
 
 /// Window look and feel values
 let windowBorderColor = Color.gray
@@ -43,7 +43,7 @@ struct ContentView: View {
                 state.addSheet(type: .noBackupFolderSheet)
             }
         }
-        .dropDestination(for: URL.self) {items, _ in
+        .dropDestination(for: URL.self) { items, _ in
             let state = state
             Task {
                 await state.prepareForEdit(inputURLs: items)
@@ -59,20 +59,23 @@ struct ContentView: View {
         .sheet(item: $state.sheetType, onDismiss: sheetDismissed) { sheet in
             sheet
         }
-        .areYouSure()                       // confirmations
-        .removeBackupsAlert()               // Alert: Remove Old Backup files
+        .areYouSure()  // confirmations
+        .removeBackupsAlert()  // Alert: Remove Old Backup files
         .inspector(isPresented: $state.inspectorPresented) {
             ImageInspectorView()
                 .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
         }
-        .fileImporter(isPresented: $state.importFiles,
-                      allowedContentTypes: importTypes(),
-                      allowsMultipleSelection: true) { result in
+        .fileImporter(
+            isPresented: $state.importFiles,
+            allowedContentTypes: importTypes(),
+            allowsMultipleSelection: true
+        ) { result in
             switch result {
             case .success(let files):
                 importFiles(files)
             case .failure(let error):
-                AppState.logger.error("file import: \(error.localizedDescription, privacy: .public)")
+                AppState.logger.error(
+                    "file import: \(error.localizedDescription, privacy: .public)")
             }
         }
         .toolbar {

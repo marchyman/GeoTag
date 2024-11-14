@@ -17,9 +17,11 @@ struct PhotoPickerView: View {
     var body: some View {
         Group {
             if photoLibrary.enabled {
-                PhotosPicker(selection: $pickerItems,
-                             matching: .images,
-                             photoLibrary: .shared()) {
+                PhotosPicker(
+                    selection: $pickerItems,
+                    matching: .images,
+                    photoLibrary: .shared()
+                ) {
                     Label("Photo Library", systemImage: "photo")
                         .imageScale(.large)
                 }

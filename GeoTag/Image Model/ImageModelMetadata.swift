@@ -13,7 +13,8 @@ extension ImageModel {
 
     // extract metadata from Image file
     func loadImageMetadata() throws -> Bool {
-        guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
+        guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil)
+        else {
             enum ImageError: Error {
                 case cgSourceError
             }
@@ -23,14 +24,19 @@ extension ImageModel {
         // grab the image properties and extract height and width
         // if there are no image properties there is nothing to do.
 
-        guard let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil) as NSDictionary? else {
+        guard
+            let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil)
+                as NSDictionary?
+        else {
             return false
         }
 
         // extract image date/time created
 
-        if let exifData = imgProps[ImageModel.exifDictionary] as? [String: AnyObject],
-           let dto = exifData[ImageModel.exifDateTimeOriginal] as? String {
+        if let exifData = imgProps[ImageModel.exifDictionary]
+            as? [String: AnyObject],
+            let dto = exifData[ImageModel.exifDateTimeOriginal] as? String
+        {
             dateTimeCreated = dto
             originalDateTimeCreated = dto
         }
@@ -39,7 +45,9 @@ extension ImageModel {
         // been retrieved
 
         if location == nil,
-           let gpsData = imgProps[ImageModel.GPSDictionary] as? [String: AnyObject] {
+            let gpsData = imgProps[ImageModel.GPSDictionary]
+                as? [String: AnyObject]
+        {
 
             // some Leica write GPS tags with a status tag of "V" (void) when no
             // GPS info is available.   If a status tag exists and its value
@@ -51,15 +59,18 @@ extension ImageModel {
                 }
             }
             if let lat = gpsData[ImageModel.GPSLatitude] as? Double,
-               let latRef = gpsData[ImageModel.GPSLatitudeRef] as? String,
-               let lon = gpsData[ImageModel.GPSLongitude] as? Double,
-               let lonRef = gpsData[ImageModel.GPSLongitudeRef] as? String {
-                location = validCoords(latitude: latRef == "N" ? lat : -lat,
-                                       longitude: lonRef == "E" ? lon : -lon)
+                let latRef = gpsData[ImageModel.GPSLatitudeRef] as? String,
+                let lon = gpsData[ImageModel.GPSLongitude] as? Double,
+                let lonRef = gpsData[ImageModel.GPSLongitudeRef] as? String
+            {
+                location = validCoords(
+                    latitude: latRef == "N" ? lat : -lat,
+                    longitude: lonRef == "E" ? lon : -lon)
                 originalLocation = location
             }
             if let alt = gpsData[ImageModel.GPSAltitude] as? Double,
-               let altRef = gpsData[ImageModel.GPSAltitudeRef] as? Int {
+                let altRef = gpsData[ImageModel.GPSAltitudeRef] as? Int
+            {
                 elevation = altRef == 0 ? alt : -alt
                 originalElevation = elevation
             }
@@ -84,7 +95,9 @@ extension ImageModel {
                 .appendingPathComponent("tmpfile.xmp")
 
             NSFileCoordinator.addFilePresenter(sandbox.xmpPresenter)
-            defer { NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter) }
+            defer {
+                NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter)
+            }
 
             if let data = sandbox.xmpPresenter.readData() {
                 try? data.write(to: tmpfileURL)
@@ -130,7 +143,8 @@ extension ImageModel {
 
 extension ImageModel {
     static let exifDictionary = kCGImagePropertyExifDictionary as String
-    static let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
+    static let exifDateTimeOriginal =
+        kCGImagePropertyExifDateTimeOriginal as String
     static let GPSDictionary = kCGImagePropertyGPSDictionary as String
     static let GPSStatus = kCGImagePropertyGPSStatus as String
     static let GPSLatitude = kCGImagePropertyGPSLatitude as String
