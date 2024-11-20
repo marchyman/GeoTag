@@ -92,11 +92,13 @@ struct ImageTableView: View {
             placement: .automatic, prompt: "Image name"
         )
         .background(
+            // cmd-f for search
             Button(
                 "",
                 action: { isSearching = true }
             )
             .keyboardShortcut("f").hidden()
+            .disabled(tvm.images.isEmpty)
         )
         .onChange(of: searchFor) {
             if searchFor.isEmpty {
