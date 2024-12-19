@@ -23,6 +23,12 @@ Sonoma. If you see a pin placed above the point you clicked/tapped you are
 seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 14.4.1). It is not a problem in the latest versions of Sonoma or in Sequoia.
 
+## WIP
+
+### Bug Fixes
+
+- GPX file waypoint parsing bug fix from bhostetler18
+
 ## GeoTag 5.4
 
 ### Updates
