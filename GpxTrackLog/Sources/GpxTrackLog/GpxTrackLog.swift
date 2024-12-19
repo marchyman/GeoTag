@@ -65,6 +65,7 @@ private class Gpx: NSObject {
     // parser states
     enum ParseState {
         case none  // starting state
+        case ignored(String)  // ignored element
         case trk  // <trk> seen
         case trkSeg  // <trkseg> seen
         case trkPt  // <trkpt> seen
@@ -174,11 +175,13 @@ extension Gpx: XMLParserDelegate {
         attributes attributeDict: [String: String] = [:]
     ) {
         switch parseState {
-        case .none:
+        case .none, .ignored(_):
             // ignore everything until the trk element
             if elementName == "trk" {
                 lastTrack = GpxTrackLog.Track()
                 parseState = .trk
+            } else {
+                parseState = .ignored(elementName)
             }
         case .trk:
             switch elementName {
@@ -252,6 +255,13 @@ extension Gpx: XMLParserDelegate {
         namespaceURI: String?,
         qualifiedName qName: String?
     ) {
+        if case let .ignored(currentElement) = parseState {
+            if elementName == currentElement {
+                parseState = .none
+            }
+            return
+        }
+
         switch elementName {
         case "ele":
             if case .ele = parseState {
