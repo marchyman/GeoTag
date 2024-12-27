@@ -175,7 +175,7 @@ extension Gpx: XMLParserDelegate {
         attributes attributeDict: [String: String] = [:]
     ) {
         switch parseState {
-        case .none, .ignored(_):
+        case .none, .ignored:
             // ignore everything until the trk element
             if elementName == "trk" {
                 lastTrack = GpxTrackLog.Track()
