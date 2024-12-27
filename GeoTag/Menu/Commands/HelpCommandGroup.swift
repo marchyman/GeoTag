@@ -14,17 +14,11 @@ struct HelpCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .help) {
-            Button("GeoTag 5 Help…") {
-                let helpPagePath = "https://www.snafu.org/GeoTag/GeoTag5Help/"
-                let helpPage = URL(string: helpPagePath)!
-                NSWorkspace.shared.open(helpPage)
-            }
+            Link("GeoTag 5 Help…",
+                destination: URL(string: "https://www.snafu.org/GeoTag/GeoTag5Help/")!)
             Divider()
-            Button("Report a bug…") {
-                let bugReportPath = "https://github.com/marchyman/GeoTag/issues"
-                let bugReportPage = URL(string: bugReportPath)!
-                NSWorkspace.shared.open(bugReportPage)
-            }
+            Link("Report a bug…",
+                 destination: URL(string: "https://github.com/marchyman/GeoTag/issues")!)
             Button("Show log…") {
                 state.showLogWindow.toggle()
             }
