@@ -140,6 +140,7 @@ final class ImageModel: Identifiable {
             isValid = true
             let assetResources = PHAssetResource.assetResources(for: asset)
             name = assetResources.first?.originalFilename ?? "unknown"
+            Self.logger.info("Photo Lib Image: \(self.name)")
             loadLibraryMetadata(asset: libraryEntry.asset)
         } else {
             isValid = false
