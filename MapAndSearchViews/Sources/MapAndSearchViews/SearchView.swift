@@ -90,6 +90,8 @@ struct SearchView: View {
             return .handled
         }
         .task(id: masData.searchText) {
+            // debounce search input
+            do { try await Task.sleep(for: .milliseconds(300)) } catch { return }
             if masData.searchText.isEmpty {
                 searchResponse = []
             } else if mapFocus.wrappedValue != nil {
