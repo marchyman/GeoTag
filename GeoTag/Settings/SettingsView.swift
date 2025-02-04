@@ -135,7 +135,7 @@ struct SettingsView: View {
                     name is displayed in the table using a gray color.
                     """)
 
-                // Image save option configuratio
+                // Image save option configuration
                 Group {
                     LabeledContent("Set File Modification Times:") {
                         Toggle(
