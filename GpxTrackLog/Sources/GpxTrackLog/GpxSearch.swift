@@ -13,10 +13,17 @@ extension GpxTrackLog {
     /// Search for the last point in the track log with a timestamp <= the
     /// timestamp of a given image.
     ///
-    /// - Parameter imageTime: the  time from epoch of an image whose coords are desired
+    /// - Parameter imageTime:    the time from epoch of an image whose
+    ///                           coords are desired
+    /// - Parameter extendTime:   number of minutes beyond the ends of
+    ///                           track logs that can match an image timestamp.
+    ///                           Default is 2 hours
     ///
 
-    public func search(imageTime: TimeInterval) async
+    public func search(
+        imageTime: TimeInterval,
+        extendedTime: Double = 120.0
+    ) async
         -> (CLLocationCoordinate2D, Double?)?
     {
         var lastPoint: Point?
@@ -51,10 +58,9 @@ extension GpxTrackLog {
         if let last = lastPoint {
             // we have a point. But does it make sense, meaning is the point
             // for some location reported many days from the image timestamp?
-            // if the point timestamp isn't within +/- 21600 seconds of the
-            // image timestamp (6 hours) do not treat it as a match.
-            // 21600 is an arbitrary value picked out of thin air.
-            if (last.timeFromEpoch - imageTime).magnitude < 21600 {
+            // if the point timestamp isn't within extendedTime of the image
+            // timestamp do not treat it as a match.
+            if (last.timeFromEpoch - imageTime).magnitude < extendedTime * 60 {
                 return (
                     CLLocationCoordinate2D(
                         latitude: last.lat,
