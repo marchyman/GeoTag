@@ -25,6 +25,12 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 ## WIP
 
+### Updates
+
+- Make the number of minutes used to match images around track log endpoints 
+  a program setting that can be changed by the user. The setting used to be
+  fixed at 6 hours. The new default is 120 minutes.
+
 ### Bug Fixes
 
 - GPX file waypoint parsing bug fix from bhostetler18
