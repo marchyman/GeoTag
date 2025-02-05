@@ -21,6 +21,7 @@ enum AppSettings {
     static let createSidecarFilesKey = "CreateSidecarsFile"
     static let disablePairedJpegsKey = "DisablePairedJpegs"
     static let doNotBackupKey = "DoNotBackup"
+    static let extendTimestampKey = "ExtendTimestamp"
     static let finderTagKey = "FinderTag"
     static let hideInvalidImagesKey = "HideInvalidImages"
     static let imageTableConfigKey = "ImageTableConfig"

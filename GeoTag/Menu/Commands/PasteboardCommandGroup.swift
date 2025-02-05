@@ -54,6 +54,13 @@ struct PasteboardCommands: Commands {
                 Button("Show In Finder") { state.showInFinderAction() }
                     .disabled(state.showInFinderDisabled())
 
+                Button {
+                    state.changeExtendTimestampWindow.toggle()
+                } label: {
+                    ShowExtendTimestampView()
+                }
+                .keyboardShortcut("t")
+
                 Button("Locn From Track") { state.locnFromTrackAction() }
                     .keyboardShortcut("l")
                     .disabled(state.locnFromTrackDisabled())
@@ -70,5 +77,13 @@ struct PasteboardCommands: Commands {
     // textFieldFocused FocusedValue
     private func isFocused(_ textField: String?) -> Bool {
         return state.masData.searchBarActive || textField != nil
+    }
+}
+
+struct ShowExtendTimestampView: View {
+    @AppStorage(AppSettings.extendTimestampKey) var extendTimestamp = 120.0
+
+    var body: some View {
+        Text("Extend track timestamp (\(Int(extendTimestamp)) minutes)")
     }
 }
