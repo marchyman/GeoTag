@@ -13,7 +13,7 @@ import SwiftUI
 struct PasteboardCommands: Commands {
     var state: AppState
     @FocusedValue(\.textfieldFocused) var textfieldFocused
-    @AppStorage(AppSettings.extendTimestampKey) var extendTimestamp = 120.0
+    @AppStorage(AppSettings.extendedTimeKey) var extendedTime = 120.0
 
     var body: some Commands {
         CommandGroup(replacing: .pasteboard) {
@@ -56,7 +56,7 @@ struct PasteboardCommands: Commands {
                     .disabled(state.showInFinderDisabled())
 
                 Button("Locn From Track") {
-                    state.locnFromTrackAction(extendTimestamp: extendTimestamp) }
+                    state.locnFromTrackAction(extendedTime: extendedTime) }
                     .keyboardShortcut("l")
                     .disabled(state.locnFromTrackDisabled())
 

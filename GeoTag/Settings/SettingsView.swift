@@ -22,8 +22,8 @@ struct SettingsView: View {
     var createSidecarFiles = false
     @AppStorage(AppSettings.disablePairedJpegsKey)
     var disablePairedJpegs = false
-    @AppStorage(AppSettings.extendTimestampKey)
-    var extendTimestamp = 120.0
+    @AppStorage(AppSettings.extendedTimeKey)
+    var extendedTime = 120.0
     @AppStorage(AppSettings.updateFileModificationTimesKey)
     var updateFileModificationTimes = false
     @AppStorage(AppSettings.updateGPSTimestampsKey)
@@ -126,7 +126,7 @@ struct SettingsView: View {
 
                     TextField(
                         "Extend track timestamps:",
-                        value: $extendTimestamp, format: .number
+                        value: $extendedTime, format: .number
                     )
                     .padding([.horizontal, .bottom])
                     .frame(maxWidth: 190)

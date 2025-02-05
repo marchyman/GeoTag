@@ -22,7 +22,7 @@ extension AppState {
     }
 
     func locnFromTrackAction(context: ImageModel? = nil,
-                             extendTimestamp: Double) {
+                             extendedTime: Double) {
         if let context {
             tvm.select(context: context)
         }
@@ -35,7 +35,7 @@ extension AppState {
             applicationBusy = true
             undoManager.beginUndoGrouping()
             await updateImageLocations(for: selectedImages,
-                                       extendTimestamp: extendTimestamp)
+                                       extendedTime: extendedTime)
             undoManager.endUndoGrouping()
             undoManager.setActionName("locn from track")
             applicationBusy = false
@@ -44,7 +44,7 @@ extension AppState {
 
     nonisolated private func updateImageLocations(
         for images: [ImageModel],
-        extendTimestamp: Double) async {
+        extendedTime: Double) async {
         // image timestamps must be converted to seconds from the epoch
         // to match track logs.  Prepare a dateformatter to handle the
         // conversion.
@@ -65,7 +65,7 @@ extension AppState {
                         for track in await gpxTracks {
                             if let locn = await track.search(
                                 imageTime: convertedDate.timeIntervalSince1970,
-                                extendedTime: extendTimestamp)
+                                extendedTime: extendedTime)
                             {
                                 found.append(locn)
                             }

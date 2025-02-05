@@ -12,7 +12,7 @@ import SwiftUI
 struct ContextMenuView: View {
     @Environment(AppState.self) var state
     let context: ImageModel?
-    @AppStorage(AppSettings.extendTimestampKey) var extendTimestamp = 120.0
+    @AppStorage(AppSettings.extendedTimeKey) var extendedTime = 120.0
 
     var body: some View {
         Group {
@@ -49,7 +49,7 @@ struct ContextMenuView: View {
 
             Button("Locn From Track") {
                 state.locnFromTrackAction(context: context,
-                                          extendTimestamp: extendTimestamp)
+                                          extendedTime: extendedTime)
             }
             .disabled(state.locnFromTrackDisabled(context: context))
         }
