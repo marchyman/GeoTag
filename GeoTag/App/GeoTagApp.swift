@@ -46,8 +46,10 @@ struct GeoTagApp: App {
         .windowResizability(.contentSize)
         .commandsRemoved()
 
-        Window(GeoTagApp.extendTrackTimestampWindow, id: GeoTagApp.extendTrackTimestampWindow) {
-            ExtendTimestampView()
+        Window(GeoTagApp.extendTrackTimestampWindow,
+               id: GeoTagApp.extendTrackTimestampWindow) {
+            @AppStorage(AppSettings.extendTimestampKey) var extendTimestamp = 120.0
+            ExtendTimestampView(extendAmount: $extendTimestamp)
                 .frame(width: 500.0, height: 570.0)
                 .environment(state)
         }
