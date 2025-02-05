@@ -589,7 +589,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GeoTag/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022-2024 Marco S Hyman";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022-2025 Marco S Hyman";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Update Photo Timestamps and Location Coordinates";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -623,7 +623,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GeoTag/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022-2024 Marco S Hyman";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022-2025 Marco S Hyman";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Update Photo Timestamps and Location Coordinates";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
