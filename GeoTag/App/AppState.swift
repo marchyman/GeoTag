@@ -58,7 +58,6 @@ final class AppState {
 
     var removeOldFiles = false
     var changeTimeZoneWindow = false
-    var changeExtendTimestampWindow = false
     var showLogWindow = false
 
     // The folder containing backups is scanned at startup and the user

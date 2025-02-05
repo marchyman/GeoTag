@@ -21,7 +21,6 @@
 		49AD2BC02C408455003A810F /* SplitHView in Frameworks */ = {isa = PBXBuildFile; productRef = 49AD2BBF2C408455003A810F /* SplitHView */; };
 		49AD2BC22C408455003A810F /* SplitVView in Frameworks */ = {isa = PBXBuildFile; productRef = 49AD2BC12C408455003A810F /* SplitVView */; };
 		49B0396929444855003B7C53 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B0396829444855003B7C53 /* MapKit.framework */; };
-		49CC3E092D52EA7700CA26C1 /* ExtendTimestampView in Frameworks */ = {isa = PBXBuildFile; productRef = 49CC3E082D52EA7700CA26C1 /* ExtendTimestampView */; };
 		49D492862BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */; };
 		49EBDB182C41FBF400A5C1B3 /* GpxTrackLog in Frameworks */ = {isa = PBXBuildFile; productRef = 49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */; };
 /* End PBXBuildFile section */
@@ -66,7 +65,6 @@
 		49B0396829444855003B7C53 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		49BA29A42962296600B26F03 /* To Do */ = {isa = PBXFileReference; lastKnownFileType = text; path = "To Do"; sourceTree = "<group>"; };
 		49BDF98E2C41DBF20040B287 /* RunLogView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RunLogView; sourceTree = "<group>"; };
-		49CC3E072D52EA6500CA26C1 /* ExtendTimestampView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ExtendTimestampView; sourceTree = "<group>"; };
 		49D492852BBB4BAE0062B1BB /* GeoTagUI04MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoTagUI04MapTests.swift; sourceTree = "<group>"; };
 		49E16D1D2C3C9E49003EF130 /* GeoTagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoTagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49F52A4D29AAD45E0037CAC7 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
@@ -100,7 +98,6 @@
 			files = (
 				4901463C2C4B448B00BC63E1 /* MapAndSearchViews in Frameworks */,
 				498D9FEB2C41E6A000E9F664 /* RunLogView in Frameworks */,
-				49CC3E092D52EA7700CA26C1 /* ExtendTimestampView in Frameworks */,
 				49AD2BC22C408455003A810F /* SplitVView in Frameworks */,
 				4950FF5F2C62C414000415AD /* AdjustTimeZoneView in Frameworks */,
 				49B0396929444855003B7C53 /* MapKit.framework in Frameworks */,
@@ -156,7 +153,6 @@
 				4984CF8C2BB4BECD0008DDF8 /* GeoTagUITests */,
 				49B039552944429E003B7C53 /* Products */,
 				4950FF5D2C62C402000415AD /* AdjustTimeZoneView */,
-				49CC3E072D52EA6500CA26C1 /* ExtendTimestampView */,
 				49ABF7932C4082ED00DF6AC3 /* SplitVView */,
 				49ABF7922C40828600DF6AC3 /* SplitHView */,
 				49BDF98E2C41DBF20040B287 /* RunLogView */,
@@ -230,7 +226,6 @@
 				49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */,
 				4901463B2C4B448B00BC63E1 /* MapAndSearchViews */,
 				4950FF5E2C62C414000415AD /* AdjustTimeZoneView */,
-				49CC3E082D52EA7700CA26C1 /* ExtendTimestampView */,
 			);
 			productName = GeoTag;
 			productReference = 49B039542944429E003B7C53 /* GeoTag.app */;
@@ -749,10 +744,6 @@
 		49AD2BC12C408455003A810F /* SplitVView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SplitVView;
-		};
-		49CC3E082D52EA7700CA26C1 /* ExtendTimestampView */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ExtendTimestampView;
 		};
 		49EBDB172C41FBF400A5C1B3 /* GpxTrackLog */ = {
 			isa = XCSwiftPackageProductDependency;

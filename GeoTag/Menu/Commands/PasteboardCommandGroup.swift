@@ -13,6 +13,7 @@ import SwiftUI
 struct PasteboardCommands: Commands {
     var state: AppState
     @FocusedValue(\.textfieldFocused) var textfieldFocused
+    @AppStorage(AppSettings.extendTimestampKey) var extendTimestamp = 120.0
 
     var body: some Commands {
         CommandGroup(replacing: .pasteboard) {
@@ -54,14 +55,8 @@ struct PasteboardCommands: Commands {
                 Button("Show In Finder") { state.showInFinderAction() }
                     .disabled(state.showInFinderDisabled())
 
-                Button {
-                    state.changeExtendTimestampWindow.toggle()
-                } label: {
-                    ShowExtendTimestampView()
-                }
-                .keyboardShortcut("t")
-
-                Button("Locn From Track") { state.locnFromTrackAction() }
+                Button("Locn From Track") {
+                    state.locnFromTrackAction(extendTimestamp: extendTimestamp) }
                     .keyboardShortcut("l")
                     .disabled(state.locnFromTrackDisabled())
 
@@ -77,13 +72,5 @@ struct PasteboardCommands: Commands {
     // textFieldFocused FocusedValue
     private func isFocused(_ textField: String?) -> Bool {
         return state.masData.searchBarActive || textField != nil
-    }
-}
-
-struct ShowExtendTimestampView: View {
-    @AppStorage(AppSettings.extendTimestampKey) var extendTimestamp = 120.0
-
-    var body: some View {
-        Text("Extend track timestamp (\(Int(extendTimestamp)) minutes)")
     }
 }

@@ -46,17 +46,6 @@ struct GeoTagApp: App {
         .windowResizability(.contentSize)
         .commandsRemoved()
 
-        Window(GeoTagApp.extendTrackTimestampWindow,
-               id: GeoTagApp.extendTrackTimestampWindow) {
-            @AppStorage(AppSettings.extendTimestampKey) var extendTimestamp = 120.0
-            ExtendTimestampView(extendAmount: $extendTimestamp)
-                .frame(width: 500.0, height: 570.0)
-                .environment(state)
-        }
-        .windowStyle(.hiddenTitleBar)
-        .windowResizability(.contentSize)
-        .commandsRemoved()
-
         Window(GeoTagApp.showRunLog, id: GeoTagApp.showRunLog) {
             RunLogView()
                 .frame(width: 700, height: 500)
@@ -79,7 +68,6 @@ struct GeoTagApp: App {
 
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
-    static var extendTrackTimestampWindow = "Extend Track Timestamps"
     static var showRunLog = "GeoTag Run/Debug Log"
 }
 

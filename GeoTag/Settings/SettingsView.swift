@@ -22,6 +22,8 @@ struct SettingsView: View {
     var createSidecarFiles = false
     @AppStorage(AppSettings.disablePairedJpegsKey)
     var disablePairedJpegs = false
+    @AppStorage(AppSettings.extendTimestampKey)
+    var extendTimestamp = 120.0
     @AppStorage(AppSettings.updateFileModificationTimesKey)
     var updateFileModificationTimes = false
     @AppStorage(AppSettings.updateGPSTimestampsKey)
@@ -120,6 +122,22 @@ struct SettingsView: View {
                         """
                         Select the width of line used to display GPS \
                         tracks on the map. Use 0 for the system default width.
+                        """)
+
+                    TextField(
+                        "Extend track timestamps:",
+                        value: $extendTimestamp, format: .number
+                    )
+                    .padding([.horizontal, .bottom])
+                    .frame(maxWidth: 190)
+                    .help(
+                        """
+                        When matching image timestamps to a GPS track log \
+                        GeoTag will assign locations to images taken this many \
+                        minutes before and after the log endpoints. The first \
+                        or last location will be used as appropriate. Set this \
+                        value to zero to disable assigning locations to images \
+                        that are outside the range of the track log.
                         """)
                 }
 

@@ -53,9 +53,6 @@ struct ContentView: View {
         .onChange(of: state.changeTimeZoneWindow) {
             openWindow(id: GeoTagApp.adjustTimeZone)
         }
-        .onChange(of: state.changeExtendTimestampWindow) {
-            openWindow(id: GeoTagApp.extendTrackTimestampWindow)
-        }
         .onChange(of: state.showLogWindow) {
             openWindow(id: GeoTagApp.showRunLog)
         }

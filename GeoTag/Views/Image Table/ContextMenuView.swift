@@ -12,6 +12,7 @@ import SwiftUI
 struct ContextMenuView: View {
     @Environment(AppState.self) var state
     let context: ImageModel?
+    @AppStorage(AppSettings.extendTimestampKey) var extendTimestamp = 120.0
 
     var body: some View {
         Group {
@@ -46,8 +47,11 @@ struct ContextMenuView: View {
             Button("Show In Finder") { state.showInFinderAction(context: context) }
                 .disabled(state.showInFinderDisabled(context: context))
 
-            Button("Locn From Track") { state.locnFromTrackAction(context: context) }
-                .disabled(state.locnFromTrackDisabled(context: context))
+            Button("Locn From Track") {
+                state.locnFromTrackAction(context: context,
+                                          extendTimestamp: extendTimestamp)
+            }
+            .disabled(state.locnFromTrackDisabled(context: context))
         }
 
         Divider()
