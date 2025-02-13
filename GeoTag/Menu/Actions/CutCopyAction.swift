@@ -51,7 +51,7 @@ extension AppState {
             }
             if let image = tvm.mostSelected {
                 let pb = NSPasteboard.general
-                pb.declareTypes([.string], owner: self)
+                pb.clearContents()
                 pb.setString(image.stringRepresentation, forType: .string)
             }
         }

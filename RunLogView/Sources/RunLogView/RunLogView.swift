@@ -26,7 +26,7 @@ public struct RunLogView: View {
                     .disabled(fetchingLog)
                     Button {
                         let pb = NSPasteboard.general
-                        pb.declareTypes([.string], owner: self)
+                        pb.clearContents()
                         pb.setString(
                             logEntries.reduce("") { $0 + $1 + "\n" },
                             forType: .string)
