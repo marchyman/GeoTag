@@ -23,8 +23,7 @@ struct AreYouSure: ViewModifier {
             Button("Cancel", role: .cancel) {}
                 .keyboardShortcut(.defaultAction)
         } message: {
-            let message =
-                state.confirmationMessage != nil ? state.confirmationMessage! : ""
+            let message = state.confirmationMessage ?? ""
             Text(message)
         }
     }
