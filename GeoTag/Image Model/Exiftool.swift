@@ -1,8 +1,7 @@
 //
-//  Exiftool.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 7/15/16.
+// Copyright 2016 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 import MapKit

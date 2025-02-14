@@ -1,8 +1,7 @@
 //
-//  GeoTagUI00Tests.swift
-//  GeoTagUITests
-//
-//  Created by Marco S Hyman on 3/27/24.
+// Copyright 2019 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 import XCTest

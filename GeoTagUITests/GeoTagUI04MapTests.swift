@@ -1,8 +1,7 @@
 //
-//  GeoTagUI04MapTests.swift
-//  GeoTagUITests
-//
-//  Created by Marco S Hyman on 4/1/24.
+// Copyright 2024 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 /*

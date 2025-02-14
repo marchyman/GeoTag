@@ -1,8 +1,7 @@
 //
-//  ImageInspectorView.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 7/10/23.
+// Copyright 2023 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 import SwiftUI

@@ -1,8 +1,7 @@
 //
-//  NewItemCommandGroup.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 12/22/22.
+// Copyright 2022 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 import SwiftUI

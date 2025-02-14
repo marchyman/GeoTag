@@ -1,3 +1,9 @@
+//
+// Copyright 2024 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
+//
+
 // Names of the map styles supported by this package
 
 import MapKit

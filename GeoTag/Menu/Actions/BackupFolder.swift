@@ -1,9 +1,8 @@
 //
-//  BackupFolder.swift
-//  GeoTag
+// Copyright 2020 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
-//  Created by Marco S Hyman on 2/8/20.
-//  Copyright © 2020,2023 Marco S Hyman. All rights reserved.
 
 import SwiftUI
 

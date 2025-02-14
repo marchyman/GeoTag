@@ -1,8 +1,7 @@
 //
-//  XmpFile.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 4/13/19.
+// Copyright 2019 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 import Foundation

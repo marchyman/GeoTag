@@ -1,5 +1,7 @@
 //
-//  GpxTrackLog.swift
+// Copyright 2024 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 import Foundation

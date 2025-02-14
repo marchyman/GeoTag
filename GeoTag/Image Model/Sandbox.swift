@@ -1,8 +1,7 @@
 //
-//  Sandbox.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 3/16/23.
+// Copyright 2023 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 import SwiftUI

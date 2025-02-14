@@ -1,8 +1,7 @@
 //
-//  TimeZone.swift
-//  GeoTag
-//
-//  Created by Marco S Hyman on 1/4/23.
+// Copyright 2023 Marco S Hyman
+// See LICENSE file for info
+// https://www.snafu.org/
 //
 
 import Foundation
