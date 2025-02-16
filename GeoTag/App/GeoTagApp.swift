@@ -5,7 +5,6 @@
 //
 
 import AdjustTimeZoneView
-import ExtendTimestampView
 import RunLogView
 import SwiftUI
 
