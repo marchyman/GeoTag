@@ -7,6 +7,7 @@
 import SwiftUI
 
 // enum instead of struct as it is not intended to be instantiated.
+// Keys used to access values stored in user defaults
 
 enum AppSettings {
     enum CoordFormat: Int {

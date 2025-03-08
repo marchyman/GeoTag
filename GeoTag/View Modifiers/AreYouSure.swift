@@ -6,6 +6,8 @@
 
 import SwiftUI
 
+// modifier designed to add a confirmation dialog to any view that uses it.
+
 struct AreYouSure: ViewModifier {
     @Environment(AppState.self) var state
 
