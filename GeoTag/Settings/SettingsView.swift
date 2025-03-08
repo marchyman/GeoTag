@@ -61,7 +61,7 @@ struct SettingsView: View {
                         LabeledContent("Backup folder:") {
                             PathView(url: $state.backupURL)
                                 .accessibilityValue("backupPath")
-                                .frame(width: 280)
+                                .frame(width: 320)
                         }
                         .padding(.bottom)
                         .help(
@@ -115,7 +115,7 @@ struct SettingsView: View {
                         "GPS Track width:",
                         value: $state.masData.trackWidth, format: .number
                     )
-                    .padding([.horizontal, .bottom])
+                    .padding(.horizontal)
                     .frame(maxWidth: 190)
                     .help(
                         """
@@ -123,13 +123,15 @@ struct SettingsView: View {
                         tracks on the map. Use 0 for the system default width.
                         """)
 
-                    TextField(
-                        "Extend track timestamps:",
-                        value: $extendedTime, format: .number
-                    )
-                    .padding([.horizontal, .bottom])
-                    .frame(maxWidth: 190)
-                    .help(
+                    LabeledContent("Extend track timestamps:") {
+                        TextField(
+                            "Extend track timestamps:",
+                            value: $extendedTime, format: .number
+                        )
+                        .labelsHidden()
+                        .padding(.bottom)
+                        .frame(maxWidth: 50)
+                        .help(
                         """
                         When matching image timestamps to a GPS track log \
                         GeoTag will assign locations to images taken this many \
@@ -138,6 +140,7 @@ struct SettingsView: View {
                         value to zero to disable assigning locations to images \
                         that are outside the range of the track log.
                         """)
+                    }
                 }
 
                 LabeledContent("Disable paired jpegs:") {
@@ -237,5 +240,6 @@ struct SettingsView: View {
 
 #Preview {
     SettingsView()
+        .frame(width: 600.0, height: 590.0, alignment: .top)
         .environment(AppState())
 }
