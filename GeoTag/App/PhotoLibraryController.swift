@@ -115,14 +115,14 @@ extension PhotoLibrary {
                 let library = PHPhotoLibrary.shared()
                 let image = images[index]
                 do {
-                    try await library.performChanges { [self] in
+                    try await library.performChanges {
                         let assetChangeReqeust = PHAssetChangeRequest(
                             for: asset)
                         if image.location != image.originalLocation
                             || image.elevation != image.originalElevation
                         {
                             assetChangeReqeust.location =
-                                newLocation(from: image, in: timeZone)
+                                image.fullLocation(timeZone)
                         }
                         if image.dateTimeCreated
                             != image.originalDateTimeCreated
@@ -144,30 +144,5 @@ extension PhotoLibrary {
                 }
             }
         }
-    }
-
-    private func newLocation(
-        from image: ImageModel,
-        in timeZone: TimeZone?
-    ) -> CLLocation? {
-        if let coords = image.location {
-            let altitude: Double
-            let verticalAccuracy: Double
-            if let elevation = image.elevation {
-                altitude = elevation
-                verticalAccuracy = 20  // a number picked out of the air
-            } else {
-                altitude = 0
-                verticalAccuracy = 0
-            }
-            let timeStamp = image.gmtTimeStamp(timeZone)
-            return CLLocation(
-                coordinate: coords,
-                altitude: altitude,
-                horizontalAccuracy: 10,
-                verticalAccuracy: verticalAccuracy,
-                timestamp: timeStamp)
-        }
-        return nil
     }
 }
