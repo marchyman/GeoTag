@@ -78,6 +78,10 @@ extension Exiftool {
         var lonRefArg = "-GPSLongitudeRef="
         var eleArg = "-GPSaltitude="
         var eleRefArg = "-GPSaltitudeRef="
+        var cityArg = "-city="
+        var stateArg = "-state="
+        var countryArg = "-country="
+        var countryCodeArg = "-countryCode="
 
         // ExifTool GSPDateTime arg storage
         var gpsDArg = "-GPSDateStamp="  // for non XMP files
@@ -101,6 +105,10 @@ extension Exiftool {
                     eleRefArg += "1"
                 }
             }
+            cityArg += sandbox.image.city ?? ""
+            stateArg += sandbox.image.state ?? ""
+            countryArg += sandbox.image.country ?? ""
+            countryCodeArg += sandbox.image.countryCode ?? ""
         }
 
         // path to image (or XMP) file to update.
@@ -121,7 +129,9 @@ extension Exiftool {
             "-overwrite_original_in_place",
             latArg, latRefArg,
             lonArg, lonRefArg,
-            eleArg, eleRefArg
+            eleArg, eleRefArg,
+            cityArg, stateArg,
+            countryArg, countryCodeArg
         ]
         if updateFileModificationTimes {
             exiftool.arguments! += ["-FileModifyDate<DateTimeOriginal"]
