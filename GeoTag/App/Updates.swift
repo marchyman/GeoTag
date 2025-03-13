@@ -4,6 +4,7 @@
 // https://www.snafu.org/
 //
 
+import CoreLocation
 import GpxTrackLog
 import MapKit
 import SwiftUI
@@ -55,14 +56,40 @@ extension AppState {
         }
         image.location = location
         image.elevation = elevation
+        reverseGeocode(image)
         if let pairedID = image.pairedID {
             let pairedImage = tvm[pairedID]
             if pairedImage.isValid {
                 pairedImage.location = location
                 pairedImage.elevation = elevation
+                reverseGeocode(pairedImage)
             }
         }
         isDocumentEdited = documentEdited
+    }
+
+    // Revese geocode an image's location and update the
+    // city/state/county/countyCode
+
+    private func reverseGeocode(_ image: ImageModel) {
+        if let location = image.location {
+            Task {
+                let geoCoder = CLGeocoder()
+                let placeMarks =
+                    try? await geoCoder.reverseGeocodeLocation(image.fullLocation(timeZone)!)
+                if let placeMark = placeMarks?.first {
+                    image.city = placeMark.locality
+                    image.state = placeMark.administrativeArea
+                    image.country = placeMark.country
+                    image.countryCode = placeMark.isoCountryCode
+                }
+            }
+        } else {
+            image.city = nil
+            image.state = nil
+            image.country = nil
+            image.countryCode = nil
+        }
     }
 
     // Update an image with a new timestamp.  Image is identifid by its ID.

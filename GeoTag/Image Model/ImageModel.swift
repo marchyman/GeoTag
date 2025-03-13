@@ -59,6 +59,12 @@ final class ImageModel: Identifiable {
         return value
     }
 
+    // IPTC Image location from reverse geocoding the above location
+    var city: String?
+    var state: String?
+    var country: String?
+    var countryCode: String?
+
     // the Photo picker item and Photos asset if the image came from a
     // Photo Library
     var pickerItem: PhotosPickerItem?
@@ -82,6 +88,10 @@ final class ImageModel: Identifiable {
     var originalDateTimeCreated: String?
     var originalLocation: Coords?
     var originalElevation: Double?
+    var originalCity: String?
+    var originalState: String?
+    var originalCountry: String?
+    var originalCountryCode: String?
 
     // true if image location, elevation, or timestamp have changed
     var changed: Bool {
@@ -163,6 +173,10 @@ extension ImageModel {
         dateTimeCreated = originalDateTimeCreated
         location = originalLocation
         elevation = originalElevation
+        city = originalCity
+        state = originalState
+        country = originalCountry
+        countryCode = originalCountryCode
     }
 
     // an invalid location read from metadata (corrupted file) will crash
