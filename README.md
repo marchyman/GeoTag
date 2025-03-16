@@ -31,6 +31,9 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   a program setting that can be changed by the user. The setting used to be
   fixed at 6 hours. The new default is 120 minutes.
 
+- Update City, State, Country, and Country Code metadata whenever an image
+  location is changed.
+
 ### Bug Fixes
 
 - GPX file waypoint parsing bug fix from bhostetler18
