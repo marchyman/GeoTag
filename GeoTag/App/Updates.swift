@@ -72,11 +72,11 @@ extension AppState {
     // city/state/county/countyCode
 
     private func reverseGeocode(_ image: ImageModel) {
-        if let location = image.location {
+        if let fullLocation = image.fullLocation(timeZone) {
             Task {
                 let geoCoder = CLGeocoder()
                 let placeMarks =
-                    try? await geoCoder.reverseGeocodeLocation(image.fullLocation(timeZone)!)
+                    try? await geoCoder.reverseGeocodeLocation(fullLocation)
                 if let placeMark = placeMarks?.first {
                     image.city = placeMark.locality
                     image.state = placeMark.administrativeArea
