@@ -30,7 +30,7 @@ use strict;
 use vars qw($VERSION $AUTOLOAD);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.68';
+$VERSION = '1.70';
 
 sub ConvertTimecode($);
 sub ProcessSGLT($$$);
@@ -664,6 +664,10 @@ my %code2charset = (
         SubDirectory => { TagTable => 'Image::ExifTool::RIFF::Acidizer' },
     },
     guan => 'Guano', #forum14831
+    SEAL => {
+        Name => 'SEAL',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::SEAL' },
+    },
 );
 
 # the maker notes used by some digital cameras
@@ -1122,7 +1126,7 @@ my %code2charset = (
             Name => 'TextFormat',
             Condition => '$$self{RIFFStreamType} eq "txts"',
             Hidden => 1,
-            RawConv => '$self->Options("ExtractEmbedded") or $self->WarnOnce("Use ExtractEmbedded option to extract timed text",3); undef',
+            RawConv => '$self->Options("ExtractEmbedded") or $self->Warn("Use ExtractEmbedded option to extract timed text",3); undef',
         },
     ],
 );
@@ -1315,6 +1319,11 @@ my %code2charset = (
         Name => 'ImageWidth',
         Format => 'int16u',
         Priority => 0,
+        # add " (lossless)" to FileType since image has a VP8L (lossless) chunk
+        RawConv => q{
+            $self->OverrideFileType($$self{VALUE}{FileType} . ' (lossless)', undef, 'webp');
+            return $val;
+        },
         ValueConv => '($val & 0x3fff) + 1',
     },
     2 => {
@@ -1322,6 +1331,11 @@ my %code2charset = (
         Format => 'int32u',
         Priority => 0,
         ValueConv => '(($val >> 6) & 0x3fff) + 1',
+    },
+    4 => {
+        Name => 'AlphaIsUsed',
+        Mask => 0x10,
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
     },
 );
 
@@ -2049,7 +2063,7 @@ sub ProcessRIFF($$)
                     last;
                 }
                 if ($et->Options('LargeFileSupport') eq '2') {
-                    $et->WarnOnce('Processing large chunk (LargeFileSupport is 2)');
+                    $et->Warn('Processing large chunk (LargeFileSupport is 2)');
                 }
             }
             if ($validate) {
@@ -2120,7 +2134,8 @@ sub ProcessRIFF($$)
         my $tagInfo = $$tagTbl{$tag};
         # (in LIST_movi chunk: ##db = uncompressed DIB, ##dc = compressed DIB, ##wb = audio data)
         if ($tagInfo or (($verbose or $unknown) and $tag !~ /^(data|idx1|LIST_movi|RIFF|\d{2}(db|dc|wb))$/)) {
-            $raf->Read($buff, $len2) == $len2 or $err=1, next;
+            $raf->Read($buff, $len2) >= $len or $err=1, next;
+            length($buff) == $len2 or $et->Warn("No padding on odd-sized $tag chunk");
             if ($hash and $isImageData{$tag}) {
                 $hash->add($buff);
                 $et->VPrint(0, "$$et{INDENT}(ImageDataHash: '${tag}' chunk, $len2 bytes)\n");
@@ -2171,7 +2186,7 @@ sub ProcessRIFF($$)
                         last;
                     }
                     if ($et->Options('LargeFileSupport') eq '2') {
-                        $et->WarnOnce('Processing large chunk (LargeFileSupport is 2)');
+                        $et->Warn('Processing large chunk (LargeFileSupport is 2)');
                     }
                 }
                 if ($validate and $len2) {
@@ -2209,7 +2224,7 @@ including AVI videos, WAV audio files and WEBP images.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

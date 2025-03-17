@@ -16,7 +16,7 @@ use vars qw($VERSION);
 use Image::ExifTool::Exif;
 use Image::ExifTool::PLIST;
 
-$VERSION = '1.12';
+$VERSION = '1.15';
 
 sub ConvertPLIST($$);
 
@@ -99,7 +99,7 @@ sub ConvertPLIST($$);
             my @a = split ' ', $val;
             sprintf('%.2f - %.2f m', $a[0] <= $a[1] ? @a : reverse @a);
         },
-        PrintConvInv => '$val =~ s/ - //; $val =~ s/ ?m$//; $val',
+        PrintConvInv => '$val =~ s/ - / /; $val =~ s/ ?m$//; $val',
     },
     # 0x000d - int32s: 0,1,6,20,24,32,40 (SphereHealthAverageCurrent, ref 2)
     # 0x000e - int32s: 0,1,4,12 (Orientation? 0=landscape? 4=portrait? ref 1) (SphereMotionDataStatus, ref 2)
@@ -291,12 +291,12 @@ sub ConvertPLIST($$);
     # 0x0047 - (LeaderFollowerAutoFocusLeaderDepth, ref 2)
     # 0x0048 - (LeaderFollowerAutoFocusLeaderFocusMethod, ref 2)
     # 0x0049 - (LeaderFollowerAutoFocusLeaderConfidence, ref 2)
-    # 0x004A - (LeaderFollowerAutoFocusLeaderROIType, ref 2)
+    # 0x004a - (LeaderFollowerAutoFocusLeaderROIType, ref 2)
     # 0x004a - 2=back normal, 4=back wide angle, 5=front (ref PH)
-    # 0x004B - (ZeroShutterLagFailureReason, ref 2)
-    # 0x004C - (TimeOfFlightAssistedAutoFocusEstimatorMSPMeasuredDepth, ref 2)
-    # 0x004D - (TimeOfFlightAssistedAutoFocusEstimatorMSPSensorConfidence, ref 2)
-    # 0x004E - (Camera, ref 2)
+    # 0x004b - (ZeroShutterLagFailureReason, ref 2)
+    # 0x004c - (TimeOfFlightAssistedAutoFocusEstimatorMSPMeasuredDepth, ref 2)
+    # 0x004d - (TimeOfFlightAssistedAutoFocusEstimatorMSPSensorConfidence, ref 2)
+    # 0x004e - (Camera, ref 2)
     0x004e => {
         Name => 'Apple_0x004e',
         Unknown => 1,
@@ -307,7 +307,17 @@ sub ConvertPLIST($$);
         Name => 'Apple_0x004f',
         Unknown => 1,
         ValueConv => \&ConvertPLIST,
-    }
+    },
+    0x0054 => {
+        Name => 'Apple_0x0054',
+        Unknown => 1,
+        ValueConv => \&ConvertPLIST,
+    },
+    0x005a => {
+        Name => 'Apple_0x005a',
+        Unknown => 1,
+        ValueConv => \&ConvertPLIST,
+    },
 );
 
 # PLIST-format CMTime structure (ref PH)
@@ -358,7 +368,8 @@ Image::ExifTool::AddCompositeTags('Image::ExifTool::Apple');
 sub ConvertPLIST($$)
 {
     my ($val, $et) = @_;
-    my $dirInfo = { DataPt => \$val };
+    my $dirInfo = { DataPt => \$val, NoVerboseDir => 1 };
+    my $oldOrder = $et->GetByteOrder();
     require Image::ExifTool::PLIST;
     Image::ExifTool::PLIST::ProcessBinaryPLIST($et, $dirInfo);
     $val = $$dirInfo{Value};
@@ -366,6 +377,7 @@ sub ConvertPLIST($$)
         require 'Image/ExifTool/XMPStruct.pl';
         $val = Image::ExifTool::XMP::SerializeStruct($et, $val);
     }
+    $et->SetByteOrder($oldOrder);
     return $val;
 }
 
@@ -388,7 +400,7 @@ Apple maker notes in EXIF information.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

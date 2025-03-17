@@ -231,7 +231,7 @@ sub ProcessAIFF($$)
                     $et->Warn('End of processing at large chunk (LargeFileSupport not enabled)');
                     last;
                 } elsif ($et->Options('LargeFileSupport') eq '2') {
-                    $et->WarnOnce('Skipping large chunk (LargeFileSupport is 2)');
+                    $et->Warn('Skipping large chunk (LargeFileSupport is 2)');
                 }
             }
             if ($tagInfo) {
@@ -291,7 +291,7 @@ information from AIFF (Audio Interchange File Format) audio files.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -16,7 +16,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.41';
+$VERSION = '1.43';
 
 sub ProcessJpeg2000Box($$$);
 sub ProcessJUMD($$$);
@@ -631,6 +631,7 @@ my %j2cMarker = (
 %Image::ExifTool::Jpeg2000::ColorSpec = (
     PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
     WRITE_PROC => \&Image::ExifTool::WriteBinaryData, # (we don't actually call this)
+    CHECK_PROC => \&Image::ExifTool::CheckBinaryData,
     GROUPS => { 2 => 'Image' },
     FORMAT => 'int8s',
     WRITABLE => 1,
@@ -866,8 +867,8 @@ sub BrotliWarn($$;$)
 {
     my ($et, $type, $uncompress) = @_;
     my ($enc, $mod) = $uncompress ? qw(decoding Uncompress) : qw(encoding Compress);
-    $et->WarnOnce("Error $enc '${type}' brob box");
-    $et->WarnOnce("Try updating to IO::${mod}::Brotli 0.004 or later");
+    $et->Warn("Error $enc '${type}' brob box");
+    $et->Warn("Try updating to IO::${mod}::Brotli 0.004 or later");
 }
 
 #------------------------------------------------------------------------------
@@ -933,7 +934,7 @@ sub CreateNewBoxes($$)
                             $tag = 'brob';
                         }
                     } else {
-                        $et->WarnOnce('Install IO::Compress::Brotli to create Brotli-compressed metadata');
+                        $et->Warn('Install IO::Compress::Brotli to create Brotli-compressed metadata');
                     }
                 }
                 my $boxhdr = pack('N', length($newdir) + length($pad) + 8) . $tag;
@@ -1285,7 +1286,7 @@ sub ProcessJpeg2000Box($$$)
                                     ++$$et{CHANGED};
                                 }
                             } else {
-                                $et->WarnOnce('Install IO::Compress::Brotli to write Brotli-compressed metadata');
+                                $et->Warn('Install IO::Compress::Brotli to write Brotli-compressed metadata');
                             }
                         } elsif (not $compress and $boxID eq 'brob') {
                             # (in this case, ProcessBrotli has returned uncompressed data,
@@ -1338,7 +1339,7 @@ sub ProcessJpeg2000Box($$$)
             if (defined $val) {
                 my $key = $et->FoundTag($tagInfo, $val);
                 # save Rational value
-                $$et{RATIONAL}{$key} = $rational if defined $rational and defined $key;
+                $$et{TAG_EXTRA}{$key}{Rational} = $rational if defined $rational and defined $key;
             }
         } elsif ($outfile) {
             my $boxhdr = pack('N', $boxLen + 8) . $boxID;
@@ -1410,7 +1411,7 @@ sub ProcessBrotli($$$)
     }
     if (eval { require IO::Uncompress::Brotli }) {
         if ($isWriting and not eval { require IO::Compress::Brotli }) {
-            $et->WarnOnce('Install IO::Compress::Brotli to write Brotli-compressed metadata');
+            $et->Warn('Install IO::Compress::Brotli to write Brotli-compressed metadata');
             return undef;
         }
         my $compress = $et->Options('Compress');
@@ -1455,7 +1456,7 @@ sub ProcessBrotli($$$)
             return $type . $dat;
         }
     } else {
-        $et->WarnOnce('Install IO::Uncompress::Brotli to decode Brotli-compressed metadata');
+        $et->Warn('Install IO::Uncompress::Brotli to decode Brotli-compressed metadata');
         return undef if $isWriting;
     }
     return 1;
@@ -1670,7 +1671,7 @@ files.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

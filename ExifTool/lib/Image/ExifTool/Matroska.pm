@@ -15,7 +15,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.16';
+$VERSION = '1.18';
 
 sub HandleStruct($$;$$$$);
 
@@ -685,6 +685,14 @@ my %uidInfo = (
         Name => 'Projection',
         SubDirectory => { TagTable => 'Image::ExifTool::Matroska::Projection' },
     },
+#
+# other
+#
+    0x5345414c => { # ('SEAL' in hex)
+        Name => 'SEAL',
+        NotEBML => 1,   # don't process SubDirectory as EBML elements
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::SEAL' },
+    },
 );
 
 # Spherical video v2 projection tags (ref https://github.com/google/spatial-media/blob/master/docs/spherical-video-v2-rfc.md)
@@ -744,7 +752,11 @@ my %uidInfo = (
     SUBTITLE    => 'Subtitle',
     URL         => 'URL',       # nested
     SORT_WITH   => 'SortWith',  # nested
-    INSTRUMENTS => 'Instruments', # nested
+    INSTRUMENTS => {            # nested
+        Name => 'Instruments',
+        IsList => 1,
+        ValueConv => 'my @a = split /,\s?/, $val; \@a',
+    },
     EMAIL       => 'Email',     # nested
     ADDRESS     => 'Address',   # nested
     FAX         => 'FAX',       # nested
@@ -788,7 +800,11 @@ my %uidInfo = (
     CONTENT_TYPE => 'ContentType',
     SUBJECT     => 'Subject',
     DESCRIPTION => 'Description',
-    KEYWORDS    => 'Keywords',
+    KEYWORDS    => {
+        Name => 'Keywords',
+        IsList => 1,
+        ValueConv => 'my @a = split /,\s?/, $val; \@a',
+    },
     SUMMARY     => 'Summary',
     SYNOPSIS    => 'Synopsis',
     INITIAL_KEY => 'InitialKey',
@@ -1047,7 +1063,7 @@ sub ProcessMKV($$)
             $seekInfoOnly = 1;
         }
         if ($tagInfo) {
-            if ($$tagInfo{SubDirectory}) {
+            if ($$tagInfo{SubDirectory} and not $$tagInfo{NotEBML}) {
                 # stop processing at first cluster unless we are using -v -U or -ee
                 # or there are Tags after this
                 if ($$tagInfo{Name} eq 'Cluster' and $processAll < 2) {
@@ -1089,7 +1105,7 @@ sub ProcessMKV($$)
                 if ($more >= 0x80000000) {
                     last unless $et->Options('LargeFileSupport');
                     if ($et->Options('LargeFileSupport') eq '2') {
-                        $et->WarnOnce('Processing large block (LargeFileSupport is 2)');
+                        $et->Warn('Processing large block (LargeFileSupport is 2)');
                     }
                 }
                 $raf->Seek($more, 1) or last;
@@ -1211,7 +1227,7 @@ information from Matroska multimedia files (MKA, MKV, MKS and WEBM).
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

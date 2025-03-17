@@ -14,7 +14,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Import;
 
-$VERSION = '1.09';
+$VERSION = '1.10';
 
 sub ProcessJSON($$);
 sub ProcessTag($$$$%);
@@ -43,6 +43,10 @@ sub ProcessTag($$$$%);
     ON1_SettingsMetadataTimestamp   => { Groups => { 2 => 'Time' } },
     ON1_SettingsMetadataUsage       => { },
     ON1_SettingsMetadataVisibleToUser=>{ },
+    adjustmentsSettingsStatisticsLightMap => { # (in JSON of AAE files)
+        Name => 'AdjustmentsSettingsStatisticsLightMap',
+        ValueConv => 'Image::ExifTool::XMP::DecodeBase64($val)',
+    },
 );
 
 #------------------------------------------------------------------------------
@@ -183,7 +187,7 @@ information from JSON files.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

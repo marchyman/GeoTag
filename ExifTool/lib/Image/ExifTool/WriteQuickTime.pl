@@ -15,6 +15,8 @@ my %movMap = (
     QuickTime => 'ItemList',    # (default location for QuickTime tags)
     ItemList  => 'Meta',        # MOV-Movie-UserData-Meta-ItemList
     Keys      => 'Movie',       # MOV-Movie-Meta-Keys !! (hack due to different Meta location)
+    AudioKeys => 'Track',       # MOV-Movie-Track-Meta-Keys !!
+    VideoKeys => 'Track',       # MOV-Movie-Track-Meta-Keys !!
     Meta      => 'UserData',
     XMP       => 'UserData',    # MOV-Movie-UserData-XMP
     Microsoft => 'UserData',    # MOV-Movie-UserData-Microsoft
@@ -29,6 +31,8 @@ my %mp4Map = (
     QuickTime => 'ItemList',    # (default location for QuickTime tags)
     ItemList  => 'Meta',        # MOV-Movie-UserData-Meta-ItemList
     Keys      => 'Movie',       # MOV-Movie-Meta-Keys !! (hack due to different Meta location)
+    AudioKeys => 'Track',       # MOV-Movie-Track-Meta-Keys !!
+    VideoKeys => 'Track',       # MOV-Movie-Track-Meta-Keys !!
     Meta      => 'UserData',
     UserData  => 'Movie',       # MOV-Movie-UserData
     Microsoft => 'UserData',    # MOV-Movie-UserData-Microsoft
@@ -339,7 +343,7 @@ sub FormatQTValue($$;$$)
         $flags = 0x01;  # UTF8
         $$valPt = $et->Encode($$valPt, 'UTF8');
     }
-    defined $$valPt or $et->WarnOnce("Error converting value for $$tagInfo{Name}");
+    defined $$valPt or $et->Warn("Error converting value for $$tagInfo{Name}");
     return $flags;
 }
 
@@ -374,6 +378,9 @@ sub WriteNextbase($$$)
 # Write Meta Keys to add/delete entries as necessary ('mdta' handler) (ref PH)
 # Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) tag table ref
 # Returns: updated keys box data
+# Note: Residual entries may be left in the 'keys' directory when deleting tags
+#       with language codes because the language code(s) are not known until the
+#       corresponding ItemList entry(s) are processed
 sub WriteKeys($$$)
 {
     my ($et, $dirInfo, $tagTablePtr) = @_;
@@ -383,13 +390,14 @@ sub WriteKeys($$$)
     my $outfile = $$dirInfo{OutFile};
     my ($tag, %done, %remap, %info, %add, $i);
 
+    my $keysGrp = $avType{$$et{MediaType}} ? "$avType{$$et{MediaType}}Keys" : 'Keys';
     $dirLen < 8 and $et->Warn('Short Keys box'), $dirLen = 8, $$dataPt = "\0" x 8;
-    if ($$et{DEL_GROUP}{Keys}) {
+    if ($$et{DEL_GROUP}{$keysGrp}) {
         $dirLen = 8;    # delete all existing keys
         # deleted keys are identified by a zero entry in the Remap lookup
         my $n = Get32u($dataPt, 4);
         for ($i=1; $i<=$n; ++$i) { $remap{$i} = 0; }
-        $et->VPrint(0, "  [deleting $n Keys entr".($n==1 ? 'y' : 'ies')."]\n");
+        $et->VPrint(0, "  [deleting $n $keysGrp entr".($n==1 ? 'y' : 'ies')."]\n");
         ++$$et{CHANGED};
     }
     my $pos = 8;
@@ -425,7 +433,7 @@ sub WriteKeys($$$)
                     }
                     unless ($dontDelete) {
                         # delete this key
-                        $et->VPrint(1, "$$et{INDENT}\[deleting Keys entry $index '${tag}']\n");
+                        $et->VPrint(1, "$$et{INDENT}\[deleting $keysGrp entry $index '${tag}']\n");
                         $pos += $len;
                         $remap{$index++} = 0;
                         ++$$et{CHANGED};
@@ -455,7 +463,7 @@ sub WriteKeys($$$)
         # add new entry to 'keys' data
         my $val = $id =~ /^com\./ ? $id : "com.apple.quicktime.$id";
         $newData .= Set32u(8 + length($val)) . 'mdta' . $val;
-        $et->VPrint(1, "$$et{INDENT}\[adding Keys entry $newIndex '${id}']\n");
+        $et->VPrint(1, "$$et{INDENT}\[adding $keysGrp entry $newIndex '${id}']\n");
         $add{$newIndex++} = $tagInfo;
         ++$$et{CHANGED};
     }
@@ -470,7 +478,7 @@ sub WriteKeys($$$)
     #   Info  - Keys tag information, based on old index value
     #   Add   - Keys items deleted, based on old index value
     #   Num   - Number of items in edited Keys box
-    $$et{Keys} = { Remap => \%remap, Info => \%info, Add => \%add, Num => $num };
+    $$et{$keysGrp} = { Remap => \%remap, Info => \%info, Add => \%add, Num => $num };
 
     return $newData;    # return updated Keys box
 }
@@ -482,23 +490,26 @@ sub WriteKeys($$$)
 sub WriteItemInfo($$$)
 {
     my ($et, $dirInfo, $outfile) = @_;
-    my $boxPos = $$dirInfo{BoxPos};     # hash of [length,position] for each box
+    my $boxPos = $$dirInfo{BoxPos}; # hash of [position,length,irefVer(iref only)] for box in $outfile
     my $raf = $$et{RAF};
     my $items = $$et{ItemInfo};
-    my (%did, @mdatEdit, $name);
+    my (%did, @mdatEdit, $name, $tmap);
 
     return () unless $items and $raf;
 
     # extract information from EXIF/XMP metadata items
     my $primary = $$et{PrimaryItem};
     my $curPos = $raf->Tell();
+    my $lastID = 0;
     my $id;
     foreach $id (sort { $a <=> $b } keys %$items) {
+        $lastID = $id;
         $primary = $id unless defined $primary; # assume primary is lowest-number item if pitm missing
         my $item = $$items{$id};
         # only edit primary EXIF/XMP metadata
         next unless $$item{RefersTo} and $$item{RefersTo}{$primary};
         my $type = $$item{ContentType} || $$item{Type} || next;
+        $tmap = $id if $type eq 'tmap'; # save ID of primary 'tmap' item (tone-mapped image)
         # get ExifTool name for this item
         $name = { Exif => 'EXIF', 'application/rdf+xml' => 'XMP' }->{$type};
         next unless $name;  # only care about EXIF and XMP
@@ -548,11 +559,12 @@ sub WriteItemInfo($$$)
                 $buff = $v2;
                 $wasDeflated = 1;
             } else {
-                $et->WarnOnce("Error inflating $name metadata");
+                $et->Warn("Error inflating $name metadata");
                 next;
             }
         }
         my ($hdr, $subTable, $proc);
+        my $strt = 0;
         if ($name eq 'EXIF') {
             if (not length $buff) {
                 # create EXIF from scratch
@@ -562,6 +574,7 @@ sub WriteItemInfo($$$)
                 $hdr = '';
             } elsif (length($buff) >= 4 and length($buff) >= 4 + unpack('N',$buff)) {
                 $hdr = substr($buff, 0, 4 + unpack('N',$buff));
+                $strt = length $hdr;
             } else {
                 $et->Warn('Invalid Exif header');
                 next;
@@ -575,8 +588,8 @@ sub WriteItemInfo($$$)
         my %dirInfo = (
             DataPt   => \$buff,
             DataLen  => length $buff,
-            DirStart => length $hdr,
-            DirLen   => length($buff) - length $hdr,
+            DirStart => $strt,
+            DirLen   => length($buff) - $strt,
         );
         my $changed = $$et{CHANGED};
         my $newVal = $et->WriteDirectory(\%dirInfo, $subTable, $proc);
@@ -683,7 +696,7 @@ sub WriteItemInfo($$$)
                 # write compressed XMP if Compress option is set
                 if ($et->Options('Compress') and length $newVal) {
                     if (not eval { require Compress::Zlib }) {
-                        $et->WarnOnce('Install Compress::Zlib to write compressed metadata');
+                        $et->Warn('Install Compress::Zlib to write compressed metadata');
                     } else {
                         my $deflate = Compress::Zlib::deflateInit();
                         if ($deflate) {
@@ -700,8 +713,10 @@ sub WriteItemInfo($$$)
                 $type = "Exif\0";
                 $mime = '';
             }
-            my $id = 1;
-            ++$id while $$items{$id} or $usedID{$id};   # find next unused item ID
+            my $id = ++$lastID; # use next highest available ID (so ID's in iinf are in order)
+            #[retracted] # create new item information hash to save infe box in case we need it for sorting
+            #[retracted] my $item = $$items{$id} = { };
+            # add new infe entry to iinf box
             my $n = length($type) + length($mime) + length($enc) + 16;
             if ($id < 0x10000) {
                 $add{iinf} .= pack('Na4CCCCnn', $n, 'infe', 2, 0, 0, 1, $id, 0) . $type . $mime . $enc;
@@ -709,11 +724,14 @@ sub WriteItemInfo($$$)
                 $n += 2;
                 $add{iinf} .= pack('Na4CCCCNn', $n, 'infe', 3, 0, 0, 1, $id, 0) . $type . $mime . $enc;
             }
-            # add new cdsc to iref
+            #[retracted] $add{iinf} .= $$item{infe};
+            # add new cdsc to iref (also refer to primary 'tmap' if it exists)
             if ($irefVer) {
-                $add{iref} .= pack('Na4NnN', 18, 'cdsc', $id, 1, $primary);
+                my ($fmt, $siz, $num) = defined $tmap ? ('N', 22, 2) : ('', 18, 1);
+                $add{iref} .= pack('Na4NnN'.$fmt, $siz, 'cdsc', $id, $num, $primary, $tmap);
             } else {
-                $add{iref} .= pack('Na4nnn', 14, 'cdsc', $id, 1, $primary);
+                my ($fmt, $siz, $num) = defined $tmap ? ('n', 16, 2) : ('', 14, 1);
+                $add{iref} .= pack('Na4nnn'.$fmt, $siz, 'cdsc', $id, $num, $primary, $tmap);
             }
             # add new entry to iloc table (see ISO14496-12:2015 pg.79)
             my $ilocVer = Get8u($outfile, $$boxPos{iloc}[0] + 8);
@@ -778,8 +796,9 @@ sub WriteItemInfo($$$)
         my $added = 0;
         my $tag;
         foreach $tag (sort { $$boxPos{$a}[0] <=> $$boxPos{$b}[0] } keys %$boxPos) {
+            $$boxPos{$tag}[0] += $added;
             next unless $add{$tag};
-            my $pos = $$boxPos{$tag}[0] + $added;
+            my $pos = $$boxPos{$tag}[0];
             unless ($$boxPos{$tag}[1]) {
                 $tag eq 'iref' or $et->Error('Internal error adding iref box'), last;
                 # create new iref box
@@ -826,9 +845,34 @@ sub WriteItemInfo($$$)
             }
             # add new entries to this box (or add pitm after hdlr)
             substr($$outfile, $pos + $$boxPos{$tag}[1], 0) = $add{$tag};
+            $$boxPos{$tag}[1] += length $add{$tag};
             $added += length $add{$tag};    # positions are shifted by length of new entries
         }
     }
+    #[This sorting idea was retracted because just sorting 'iinf' wasn't sufficient to
+    # repair the problem where an out-of-order ID was added -- Apple Preview still
+    # ignores the gain-map image.  It looks like either or both 'iref' and 'iloc' must
+    # also be sorted by ID, although the spec doesn't mention this]
+    #[retracted] # sort infe entries in iinf box if necessary
+    #[retracted] if ($$et{ItemsNotSorted}) {
+    #[retracted]     if ($$boxPos{iinf}) {
+    #[retracted]         my $iinfVer = Get8u($outfile, $$boxPos{iinf}[0] + 8);
+    #[retracted]         my $off = $iinfVer == 0 ? 14 : 16;  # offset to first infe item
+    #[retracted]         my $sorted = '';    # sorted iinf payload
+    #[retracted]         $sorted .= $$items{$_}{infe} || '' foreach sort { $a <=> $b } keys %$items;
+    #[retracted]         if (length $sorted == $$boxPos{iinf}[1]-$off) {
+    #[retracted]             # replace with sorted infe entries
+    #[retracted]             substr($$outfile, $$boxPos{iinf}[0] + $off, length $sorted) = $sorted;
+    #[retracted]             $et->Warn('Item info entries are out of order. Fixed.');
+    #[retracted]             ++$$et{CHANGED};
+    #[retracted]         } else {
+    #[retracted]             $et->Warn('Error sorting item info entries');
+    #[retracted]         }
+    #[retracted]     } else {
+    #[retracted]         $et->Warn('Item info entries are out of order');
+    #[retracted]     }
+    #[retracted]     delete $$et{ItemsNotSorted};
+    #[retracted] }
     delete $$et{ItemInfo};
     return @mdatEdit ? \@mdatEdit : undef;
 }
@@ -847,7 +891,7 @@ sub WriteQuickTime($$$)
     $et or return 1;    # allow dummy access to autoload this package
     my ($mdat, @mdat, @mdatEdit, $edit, $track, $outBuff, $co, $term, $delCount);
     my (%langTags, $canCreate, $delGrp, %boxPos, %didDir, $writeLast, $err, $atomCount);
-    my ($tag, $lastTag, $lastPos, $errStr, $trailer, $buf2);
+    my ($tag, $lastTag, $lastPos, $errStr, $trailer, $buf2, $keysGrp, $keysPath, $itemIndex);
     my $outfile = $$dirInfo{OutFile} || return 0;
     my $raf = $$dirInfo{RAF};       # (will be null for lower-level atoms)
     my $dataPt = $$dirInfo{DataPt}; # (will be null for top-level atoms)
@@ -860,15 +904,10 @@ sub WriteQuickTime($$$)
     my $createKeys = 0;
     my ($rtnVal, $rtnErr) = $dataPt ? (undef, undef) : (1, 0);
 
-    # check for Insta360 trailer at top level
+    # check for trailer at end of file
     if ($raf) {
-        my $pos = $raf->Tell();
-        if ($raf->Seek(-40, 2) and $raf->Read($buf2, 40) == 40 and
-            substr($buf2, 8) eq '8db42d694ccc418790edff439fe026bf')
-        {
-            $trailer = [ 'Insta360', $raf->Tell() - unpack('V',$buf2) ];
-        }
-        $raf->Seek($pos, 0) or return 0;
+        $trailer = IdentifyTrailers($raf);
+        $trailer and not ref $trailer and $et->Error($trailer), return 1;
     }
     if ($dataPt) {
         $raf = File::RandomAccess->new($dataPt);
@@ -881,15 +920,26 @@ sub WriteQuickTime($$$)
 
     $raf->Seek($dirStart, 1) if $dirStart;  # skip header if it exists
 
+    if ($avType{$$et{MediaType}}) {
+        # (note: these won't be correct now if we haven't yet processed the Media box,
+        # but in this case they won't be needed until after we set them properly below)
+        ($keysGrp, $keysPath) = ("$avType{$$et{MediaType}}Keys", 'MOV-Movie-Track');
+    } else {
+        ($keysGrp, $keysPath) = ('Keys', 'MOV-Movie');
+    }
     my $curPath = join '-', @{$$et{PATH}};
     my ($dir, $writePath) = ($dirName, $dirName);
     $writePath = "$dir-$writePath" while defined($dir = $$et{DirMap}{$dir});
     # hack to create Keys directories if necessary (its containing Meta is in a different location)
-    if ($$addDirs{Keys} and $curPath =~ /^MOV-Movie(-Meta)?$/) {
+    if (($$addDirs{Keys} and $curPath =~ /^MOV-Movie(-Meta)?$/)) {
         $createKeys = 1;    # create new Keys directories
-    } elsif ($curPath eq 'MOV-Movie-Meta-ItemList') {
+    } elsif (($$addDirs{AudioKeys} or $$addDirs{VideoKeys}) and $curPath =~ /^MOV-Movie-Track(-Meta)?$/) {
+        $createKeys = -1;   # (must wait until MediaType is known)
+    } elsif (($curPath eq 'MOV-Movie-Meta-ItemList') or
+             ($curPath eq 'MOV-Movie-Track-Meta-ItemList' and $avType{$$et{MediaType}}))
+    {
         $createKeys = 2;    # create new Keys tags
-        my $keys = $$et{Keys};
+        my $keys = $$et{$keysGrp};
         if ($keys) {
             # add new tag entries for existing Keys tags, now that we know their ID's
             # - first make lookup to convert Keys tagInfo ref to index number
@@ -897,7 +947,7 @@ sub WriteQuickTime($$$)
             foreach $index (keys %{$$keys{Info}}) {
                 $keysInfo{$$keys{Info}{$index}} = $index if $$keys{Remap}{$index};
             }
-            my $keysTable = GetTagTable('Image::ExifTool::QuickTime::Keys');
+            my $keysTable = GetTagTable("Image::ExifTool::QuickTime::$keysGrp");
             my $newKeysTags = $et->GetNewTagInfoHash($keysTable);
             foreach (keys %$newKeysTags) {
                 my $tagInfo = $$newKeysTags{$_};
@@ -926,13 +976,31 @@ sub WriteQuickTime($$$)
     }
     if ($curPath eq $writePath or $createKeys) {
         $canCreate = 1;
-        $delGrp = $$et{DEL_GROUP}{$dirName};
+        # (must check the appropriate Keys delete flag if this is a Keys ItemList)
+        $delGrp = $$et{DEL_GROUP}{$createKeys ? $keysGrp : $dirName};
     }
     $atomCount = $$tagTablePtr{VARS}{ATOM_COUNT} if $$tagTablePtr{VARS};
 
     $tag = $lastTag = '';
+    $itemIndex = 0 if $dirName eq 'ItemPropertyContainer';
 
+    # read ahead to parse item property associations if this is 'iprp' ItemProperties
+    # (necessary to determine which properties belong to primary item in HEIC file)
+    if ($dirName eq 'ItemProperties') {
+        my $pos = $raf->Tell();
+        for (;;) {
+            $raf->Read($buf2, 8) == 8 or last;
+            my $size = Get32u(\$buf2, 0) - 8;    # (atom size without 8-byte header)
+            $tag = substr($buf2, 4, 4);
+            last if $size < 0;
+            $tag eq 'ipma' or $raf->Seek($size, 1), next;
+            ParseItemPropAssoc($buf2,$et) if $raf->Read($buf2,$size) == $size;
+            last;
+        }
+        $raf->Seek($pos);
+    }
     for (;;) {      # loop through all atoms at this level
+        ++$itemIndex if defined $itemIndex;
         $lastPos = $raf->Tell();
         # stop processing if we reached a known trailer
         if ($trailer and $lastPos >= $$trailer[1]) {
@@ -973,7 +1041,7 @@ sub WriteQuickTime($$$)
                     $et->Error('End of processing at large atom (LargeFileSupport not enabled)');
                     last;
                 } elsif ($et->Options('LargeFileSupport') eq '2') {
-                    $et->WarnOnce('Processing large atom (LargeFileSupport is 2)');
+                    $et->Warn('Processing large atom (LargeFileSupport is 2)');
                 }
             }
             $size = $hi * 4294967296 + $lo - 16;
@@ -1010,6 +1078,10 @@ sub WriteQuickTime($$$)
             $et->Error("Can't yet write compressed movie metadata");
             return $rtnVal;
         } elsif ($tag eq 'wide') {
+            if ($size) {
+                $et->Warn("Incorrect size for 'wide' atom ($size bytes)");
+                $raf->Seek($size, 1) or $et->Error('Truncated wide atom');
+            }
             next;   # drop 'wide' tag
         }
 
@@ -1044,12 +1116,12 @@ sub WriteQuickTime($$$)
                 last;
             }
         }
-        # save the handler type for this track
-        if ($tag eq 'hdlr' and length $buff >= 12) {
-            my $hdlr = substr($buff,8,4);
-            $$et{HandlerType} = $hdlr if $hdlr =~ /^(vide|soun)$/;
+        # save the handler type of the track media
+        if ($tag eq 'hdlr' and length $buff >= 12 and
+            @{$$et{PATH}} and $$et{PATH}[-1] eq 'Media')
+        {
+            $$et{MediaType} = substr($buff,8,4);
         }
-
         # if this atom stores offsets, save its location so we can fix up offsets later
         # (are there any other atoms that may store absolute file offsets?)
         if ($tag =~ /^(stco|co64|iloc|mfra|moof|sidx|saio|gps |CTBO|uuid)$/) {
@@ -1094,11 +1166,11 @@ sub WriteQuickTime($$$)
         &{$$tagInfo{WriteHook}}($buff,$et) if $tagInfo and $$tagInfo{WriteHook};
 
         # allow numerical tag ID's (ItemList entries defined by Keys)
-        if (not $tagInfo and $dirName eq 'ItemList' and $$et{Keys}) {
+        if (not $tagInfo and $dirName eq 'ItemList' and $$et{$keysGrp}) {
             $keysIndex = unpack('N', $tag);
-            my $newIndex = $$et{Keys}{Remap}{$keysIndex};
+            my $newIndex = $$et{$keysGrp}{Remap}{$keysIndex};
             if (defined $newIndex) {
-                $tagInfo = $$et{Keys}{Info}{$keysIndex};
+                $tagInfo = $$et{$keysGrp}{Info}{$keysIndex};
                 unless ($newIndex) {
                     if ($tagInfo) {
                         $et->VPrint(1,"    - Keys:$$tagInfo{Name}");
@@ -1129,7 +1201,37 @@ sub WriteQuickTime($$$)
                 next;
             }
         }
-        undef $tagInfo if $tagInfo and $$tagInfo{Unknown};
+        undef $tagInfo if $tagInfo and $$tagInfo{AddedUnknown};
+
+        # don't write this tag unless associated with the primary item
+        # (Note: This relies on iinf and dimg coming before iprp)
+        if (defined $itemIndex and $$et{ItemInfo}) {
+            my $items = $$et{ItemInfo};
+            my ($id, $prop, $isPrimary);
+            my $primary = $$et{PrimaryItem};
+            unless (defined $primary) {
+                ($primary) = sort { $a <=> $b } keys %{$$et{ItemInfo}} if $$et{ItemInfo};
+                $primary = 0 unless defined $primary;
+            }
+            my $pitem = $$items{$primary} || { };
+            $$pitem{RefersTo} or $$pitem{RefersTo} = { };
+ItemID2:    foreach $id (reverse sort { $a <=> $b } keys %$items) {
+                next unless $$items{$id}{Association};
+                my $item = $$items{$id};
+                foreach $prop (@{$$item{Association}}) {
+                    next unless $prop == $itemIndex;
+                    my $dont = $dontInherit{$tag} || 0;
+                    last unless $id == $primary or (not $dont and
+                        ($$item{RefersTo} and $$item{RefersTo}{$primary})) or
+                        # special case to assume this property belongs to the primary
+                        # image if it belongs to an item referred to by the primary
+                        ($dont != 1 and $$pitem{RefersTo}{$id});
+                    $isPrimary = 1;
+                    last ItemID2;
+                }
+            }
+            undef $tagInfo unless $isPrimary;
+        }
 
         if ($tagInfo and (not defined $$tagInfo{Writable} or $$tagInfo{Writable})) {
             my $subdir = $$tagInfo{SubDirectory};
@@ -1138,7 +1240,7 @@ sub WriteQuickTime($$$)
             if ($subdir) {  # process atoms in this container from a buffer in memory
 
                 if ($tag eq 'trak') {
-                    undef $$et{HandlerType};  # init handler type for this track
+                    $$et{MediaType} = '';  # init media type for this track
                     delete $$et{AssumedDataRef};
                 }
                 my $subName = $$subdir{DirName} || $$tagInfo{Name};
@@ -1170,6 +1272,7 @@ sub WriteQuickTime($$$)
                     OutFile  => $outfile,
                     NoRefTest=> 1,     # don't check directory references
                     WriteGroup => $$tagInfo{WriteGroup},
+                    Permanent => $$tagInfo{Permanent},
                     # initialize array to hold details about chunk offset table
                     # (each entry has 3-5 items: 0=atom type, 1=table offset, 2=table size,
                     #  3=optional base offset, 4=optional item ID)
@@ -1207,10 +1310,13 @@ sub WriteQuickTime($$$)
                     $$et{CHANGED} = $oldChanged;
                     undef $newData;
                 }
-                if ($tag eq 'trak' and $$et{AssumedDataRef}) {
-                    my $grp = $$et{CUR_WRITE_GROUP} || $dirName;
-                    $et->Error("Can't locate data reference to update offsets for $grp");
-                    delete $$et{AssumedDataRef};
+                if ($tag eq 'trak') {
+                    $$et{MediaType} = '';     # reset media type at end of track
+                    if ($$et{AssumedDataRef}) {
+                        my $grp = $$et{CUR_WRITE_GROUP} || $dirName;
+                        $et->Error("Can't locate data reference to update offsets for $grp");
+                        delete $$et{AssumedDataRef};
+                    }
                 }
                 $$et{CUR_WRITE_GROUP} = $oldWriteGroup;
                 SetByteOrder('MM');
@@ -1410,7 +1516,10 @@ sub WriteQuickTime($$$)
                             ++$$et{CHANGED};
                             my $grp = $et->GetGroup($langInfo, 1);
                             $et->VerboseValue("- $grp:$$langInfo{Name}", $val);
-                            next unless defined $newData and not $$didTag{$nvHash};
+                            unless (defined $newData and not $$didTag{$nvHash}) {
+                                # must not delete items from iprp because it will mess up the ordering
+                                next unless defined $itemIndex;
+                            }
                             $et->VerboseValue("+ $grp:$$langInfo{Name}", $newData);
                             # add back necessary header and encode as necessary
                             if (defined $lang) {
@@ -1439,7 +1548,7 @@ sub WriteQuickTime($$$)
                                 $newData = $et->Encode($newData, 'UTF8');
                             } elsif ($format and not $$tagInfo{Binary}) {
                                 # format new value for writing
-                                $newData = WriteValue($newData, $format);
+                                $newData = WriteValue($newData, $format, $$tagInfo{Count});
                             }
                         }
                         $$didTag{$nvHash} = 1;   # set flag so we don't add this tag again
@@ -1506,7 +1615,9 @@ sub WriteQuickTime($$$)
             }
             if ($msg) {
                 # (allow empty sample description for non-audio/video handler types, eg. 'url ', 'meta')
-                if ($$et{HandlerType}) {
+                # (also, incorrectly written 'mett' SampleEntry by Google phones,
+                #  see https://exiftool.org/forum/index.php?msg=91158)
+                if ($avType{$$et{MediaType}}) {
                     my $grp = $$et{CUR_WRITE_GROUP} || $parent;
                     $et->Error("$msg for $grp");
                     return $rtnErr;
@@ -1542,16 +1653,26 @@ sub WriteQuickTime($$$)
         if (($lastTag eq 'mdat' or $lastTag eq 'moov') and not $dataPt and (not $$tagTablePtr{$tag} or
             ref $$tagTablePtr{$tag} eq 'HASH' and $$tagTablePtr{$tag}{Unknown}))
         {
-            # identify other known trailers
+            # identify other known trailers from their first bytes
             $buf2 = '';
             $raf->Seek($lastPos,0) and $raf->Read($buf2,8);
+            my ($type, $len);
             if ($buf2 eq 'CCCCCCCC') {
-                $trailer = [ 'Kenwood', $lastPos ];
+                $type = 'Kenwood';
             } elsif ($buf2 =~ /^(gpsa|gps0|gsen|gsea)...\0/s) {
-                $trailer = [ 'RIFF', $lastPos ];
+                $type = 'RIFF';
             } else {
-                $trailer = [ 'Unknown', $lastPos ];
+                $type = 'Unknown';
             }
+            # determine length of this trailer
+            if ($trailer) {
+                $len = $$trailer[1] - $lastPos; # runs to start of next trailer
+            } else {
+                $raf->Seek(0, 2) or $et->Error('Seek error'), return $dataPt ? undef : 1;
+                $len = $raf->Tell() - $lastPos; # runs to end of file
+            }
+            # add to start of linked list of trailers
+            $trailer = [ $type, $lastPos, $len, $trailer ];
         } else {
             $et->Error($errStr);
             return $dataPt ? undef : 1;
@@ -1559,7 +1680,16 @@ sub WriteQuickTime($$$)
     }
     $et->VPrint(0, "  [deleting $delCount $dirName tag".($delCount==1 ? '' : 's')."]\n") if $delCount;
 
-    $createKeys &= ~0x01 unless $$addDirs{Keys};   # (Keys may have been written)
+    # can finally set necessary variables for creating Video/AudioKeys tags
+    if ($createKeys < 0) {
+        if ($avType{$$et{MediaType}}) {
+            $createKeys = 1;
+            ($keysGrp, $keysPath) = ("$avType{$$et{MediaType}}Keys", 'MOV-Movie-Track');
+        } else {
+            $canCreate = 0;
+        }
+    }
+    $createKeys &= ~0x01 unless $$addDirs{$keysGrp};   # (Keys may have been written)
 
     # add new directories/tags at this level if necessary
     if ($canCreate and (exists $$et{EDIT_DIRS}{$dirName} or $createKeys)) {
@@ -1570,13 +1700,13 @@ sub WriteQuickTime($$$)
         my ($tag, $index);
         # add Keys tags if necessary
         if ($createKeys) {
-            if ($curPath eq 'MOV-Movie') {
+            if ($curPath eq $keysPath) {
                 # add Meta for Keys if necessary
                 unless ($didDir{meta}) {
                     $$dirs{meta} = $Image::ExifTool::QuickTime::Movie{meta};
                     push @addTags, 'meta';
                 }
-            } elsif ($curPath eq 'MOV-Movie-Meta') {
+            } elsif ($curPath eq "$keysPath-Meta") {
                 # special case for Keys Meta -- reset directories and start again
                 undef @addTags;
                 $dirs = { };
@@ -1585,10 +1715,10 @@ sub WriteQuickTime($$$)
                     $$dirs{$_} = $Image::ExifTool::QuickTime::Meta{$_};
                     push @addTags, $_;
                 }
-            } elsif ($curPath eq 'MOV-Movie-Meta-ItemList' and $$et{Keys}) {
-                foreach $index (sort { $a <=> $b } keys %{$$et{Keys}{Add}}) {
+            } elsif ($curPath eq "$keysPath-Meta-ItemList" and $$et{$keysGrp}) {
+                foreach $index (sort { $a <=> $b } keys %{$$et{$keysGrp}{Add}}) {
                     my $id = Set32u($index);
-                    $$newTags{$id} = $$et{Keys}{Add}{$index};
+                    $$newTags{$id} = $$et{$keysGrp}{Add}{$index};
                     push @addTags, $id;
                 }
             } else {
@@ -1600,8 +1730,7 @@ sub WriteQuickTime($$$)
         foreach $tag (@addTags) {
             my $tagInfo = $$dirs{$tag} || $$newTags{$tag};
             next if defined $$tagInfo{CanCreate} and not $$tagInfo{CanCreate};
-            next if defined $$tagInfo{HandlerType} and
-                (not $$et{HandlerType} or $$et{HandlerType} ne $$tagInfo{HandlerType});
+            next if defined $$tagInfo{MediaType} and $$et{MediaType} ne $$tagInfo{MediaType};
             my $subdir = $$tagInfo{SubDirectory};
             unless ($subdir) {
                 my $nvHash = $et->GetNewValueHash($tagInfo);
@@ -1663,13 +1792,13 @@ sub WriteQuickTime($$$)
             }
             my $subName = $$subdir{DirName} || $$tagInfo{Name};
             # QuickTime hierarchy is complex, so check full directory path before adding
-            if ($createKeys and $curPath eq 'MOV-Movie' and $subName eq 'Meta') {
+            if ($createKeys and $curPath eq $keysPath and $subName eq 'Meta') {
                 $et->VPrint(0, "  Creating Meta with mdta Handler and Keys\n");
                 # init Meta box for Keys tags with mdta Handler and empty Keys+ItemList
                 $buf2 = "\0\0\0\x20hdlr\0\0\0\0\0\0\0\0mdta\0\0\0\0\0\0\0\0\0\0\0\0" .
                         "\0\0\0\x10keys\0\0\0\0\0\0\0\0" .
                         "\0\0\0\x08ilst";
-            } elsif ($createKeys and $curPath eq 'MOV-Movie-Meta') {
+            } elsif ($createKeys and $curPath eq "$keysPath-Meta") {
                 $buf2 = ($subName eq 'Keys' ? "\0\0\0\0\0\0\0\0" : '');
             } elsif ($subName eq 'Meta' and $$et{OPTIONS}{QuickTimeHandler}) {
                 $et->VPrint(0, "  Creating Meta with mdir Handler\n");
@@ -1718,8 +1847,8 @@ sub WriteQuickTime($$$)
                 }
             }
             # add only once (must delete _after_ call to WriteDirectory())
-            # (Keys is a special case, and will be removed after Meta is processed)
-            delete $$addDirs{$subName} unless $subName eq 'Keys';
+            # (Keys tags are a special case, and are handled separately)
+            delete $$addDirs{$subName} unless $createKeys;
         }
     }
     # write HEIC metadata after top-level 'meta' box has been processed if editing this information
@@ -1745,9 +1874,9 @@ sub WriteQuickTime($$$)
             # (could report a file if editing nothing when it contained an empty Meta atom)
             # ++$$et{CHANGED};
         }
-        if ($curPath eq 'MOV-Movie-Meta') {
-            delete $$addDirs{Keys}; # prevent creation of another Meta for Keys tags
-            delete $$et{Keys};
+        if ($curPath eq "$keysPath-Meta") {
+            delete $$addDirs{$keysGrp}; # prevent creation of another Meta for Keys tags
+            delete $$et{$keysGrp};
         }
     }
 
@@ -2005,21 +2134,35 @@ sub WriteQuickTime($$$)
     # write the stuff that must come last
     Write($outfile, $writeLast) or $rtnVal = 0 if $writeLast;
 
-    # copy trailer if necessary
-    if ($rtnVal and $trailer) {
-        # are we deleting the trailer?
+    # copy trailers if necessary
+    while ($rtnVal and $trailer) {
+        # are we deleting the trailers?
         my $nvTrail = $et->GetNewValueHash($Image::ExifTool::Extra{Trailer});
-        if ($$et{DEL_GROUP}{Trailer} or ($nvTrail and not ($$nvTrail{Value} and $$nvTrail{Value}[0]))) {
+        if ($$et{DEL_GROUP}{Trailer} or $$et{DEL_GROUP}{$$trailer[0]} or
+            ($nvTrail and not ($$nvTrail{Value} and $$nvTrail{Value}[0])))
+        {
             $et->Warn("Deleted $$trailer[0] trailer", 1);
-        } elsif ($raf->Seek($$trailer[1])) {
-            $et->Warn(sprintf('Copying %s trailer from offset 0x%x', @$trailer), 1);
-            while ($raf->Read($buf2, 65536)) {
-                Write($outfile, $buf2) or $rtnVal = 0, last;
-            }
-        } else {
-            $rtnVal = 0;
+            ++$$et{CHANGED};
+            $trailer = $$trailer[3];
+            next;
         }
-        $rtnVal or $et->Error("Error copying $$trailer[0] trailer");
+        $raf->Seek($$trailer[1], 0) or $rtnVal = 0, last;
+        if ($$trailer[0] eq 'MIE') {
+            require Image::ExifTool::MIE;
+            my %dirInfo = ( RAF => $raf, OutFile => $outfile );
+            my $result = Image::ExifTool::MIE::ProcessMIE($et, \%dirInfo);
+            $result > 0 or $et->Error('Error writing MIE trailer'), $rtnVal = 0, last;
+        } else {
+            $et->Warn(sprintf('Copying %s trailer from offset 0x%x (%d bytes)', @$trailer[0..2]), 1);
+            my $len = $$trailer[2];
+            while ($len) {
+                my $n = $len > 65536 ? 65536 : $len;
+                $raf->Read($buf2, $n) == $n and Write($outfile, $buf2) or $rtnVal = 0, last;
+                $len -= $n;
+            }
+            $rtnVal or $et->Error("Error copying $$trailer[0] trailer"), last;
+        }
+        $trailer = $$trailer[3];    # step to next trailer in linked list
     }
     return $rtnVal;
 }
@@ -2075,6 +2218,7 @@ sub WriteMOV($$)
     $raf->Seek(0,0);
 
     # write the file
+    $$et{MediaType} = '';
     $$dirInfo{Parent} = '';
     $$dirInfo{DirName} = 'MOV';
     $$dirInfo{ChunkOffset} = [ ]; # (just to be safe)
@@ -2100,7 +2244,7 @@ QuickTime-based file formats like MOV and MP4.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

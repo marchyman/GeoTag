@@ -17,6 +17,7 @@
 #               2022/06/21 - PH Added ability to read Google Takeout JSON files
 #               2024/04/23 - PH Added ability to read more OpenTracks GPS tags
 #               2024/08/28 - PH Added support for new Google Takeout JSON format
+#               2024/11/26 - PH Also write GPSMeasureMode and GPSDOP
 #
 # References:   1) http://www.topografix.com/GPX/1/1/
 #               2) http://www.gpsinformation.org/dale/nmea.htm#GSA
@@ -31,7 +32,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:Public);
 use Image::ExifTool::GPS;
 
-$VERSION = '1.79';
+$VERSION = '1.81';
 
 sub JITTER() { return 2 }       # maximum time jitter
 
@@ -90,12 +91,25 @@ my %fixInfoKeys = (
     orient => [ 'dir', 'pitch', 'roll' ],
     atemp  => [ 'atemp' ],
     err    => [ 'err' ],
+    dop    => [ 'hdop', 'vdop', 'pdop' ],
 );
 
-my %isOrient = ( dir => 1, pitch => 1, roll => 1 ); # test for orientation key
+# category for select keys
+my %keyCategory = (
+    dir => 'orient',
+    pitch => 'orient',
+    roll => 'orient',
+    hdop => 'dop',
+    pdop => 'dop',
+    vdop => 'dop',
+);
 
 # tags which may exist separately in some formats (eg. CSV)
-my %sepTags = ( dir => 1, pitch => 1, roll => 1, track => 1, speed => 1 );
+my %sepTags = (
+    dir => 1, pitch => 1, roll => 1, track => 1, speed => 1,
+    # (plus other tags we don't want to scan outwards for)
+    hdop => 1, pdop => 1, vdop => 1,
+);
 
 # conversion factors for GPSSpeed (standard EXIF units only)
 my %speedConv = (
@@ -348,8 +362,8 @@ sub LoadTrackLog($$;$)
                     my $tag = $xmlTag{lc $2};
                     if ($tag) {
                         $$fix{$tag} = $4;
-                        if ($isOrient{$tag}) {
-                            $$has{orient} = 1;
+                        if ($keyCategory{$tag}) {
+                            $$has{$keyCategory{$tag}} = 1;
                         } elsif ($tag eq 'alt') {
                             # validate altitude
                             undef $$fix{alt} if defined $$fix{alt} and $$fix{alt} !~ /^[+-]?\d+\.?\d*/;
@@ -394,8 +408,8 @@ sub LoadTrackLog($$;$)
                                 } else {
                                     $$fix{$tag} = $1;
                                 }
-                                if ($isOrient{$tag}) {
-                                    $$has{orient} = 1;
+                                if ($keyCategory{$tag}) {
+                                    $$has{$keyCategory{$tag}} = 1;
                                 } elsif ($tag eq 'alt') {
                                     # validate altitude
                                     undef $$fix{alt} if defined $$fix{alt} and $$fix{alt} !~ /^[+-]?\d+\.?\d*/;
@@ -562,8 +576,8 @@ DoneFix:    $isDate = 1;
             next;
         } elsif ($format eq 'JSON') {
             # Google Takeout JSON format
-            if (/"(latitudeE7|longitudeE7|latE7|lngE7|timestamp|startTime|point|durationMinutesOffsetFromStartTime)"\s*:\s*"?(.*?)"?,?\s*[\x0d\x0a]/) {
-                if ($1 eq 'timestamp') {
+            if (/"(latitudeE7|longitudeE7|latE7|lngE7|timestamp|startTime|point|durationMinutesOffsetFromStartTime|time)"\s*:\s*"?(.*?)"?,?\s*[\x0d\x0a]/) {
+                if ($1 eq 'timestamp' or $1 eq 'time') {
                     $time = GetTime($2);
                     goto DoneFix if $time and $$fix{lat} and $$fix{lon};
                 } elsif ($1 eq 'startTime') { # (new format)
@@ -1145,7 +1159,7 @@ sub SetGeoValues($$;$)
                 # loop through available fix information categories
                 # (pos, track, alt, orient)
                 my ($category, $key);
-Category:       foreach $category (qw{pos track alt orient atemp err}) {
+Category:       foreach $category (qw{pos track alt orient atemp err dop}) {
                     next unless $$has{$category};
                     my ($f, $p0b, $p1b, $f0b);
                     # loop through specific fix information keys
@@ -1303,6 +1317,25 @@ Category:       foreach $category (qw{pos track alt orient atemp err}) {
         if ($$has{err}) {
             @r = $et->SetNewValue(GPSHPositioningError => $$fix{err}, %opts);
         }
+        if ($$has{dop}) {
+            my ($dop, $mm);
+            if (defined $$fix{pdop}) {
+                $dop = $$fix{pdop};
+                $mm = 3;
+            } elsif (defined $$fix{hdop}) {
+                if (defined $$fix{vdop}) {
+                    $dop = sqrt($$fix{hdop} * $$fix{hdop} + $$fix{vdop} * $$fix{vdop});
+                    $mm = 3;
+                } else {
+                    $dop = $$fix{hdop};
+                    $mm = 2;
+                }
+            }
+            if (defined $dop) {
+                $et->SetNewValue(GPSMeasureMode => $mm, %opts);
+                $et->SetNewValue(GPSDOP => $dop, %opts);
+            }
+        }
         unless ($xmp) {
             my ($latRef, $lonRef);
             $latRef = ($$fix{lat} > 0 ? 'N' : 'S') if defined $$fix{lat};
@@ -1328,7 +1361,8 @@ Category:       foreach $category (qw{pos track alt orient atemp err}) {
                     GPSAltitude GPSAltitudeRef GPSDateStamp GPSTimeStamp GPSDateTime
                     GPSTrack GPSTrackRef GPSSpeed GPSSpeedRef GPSImgDirection
                     GPSImgDirectionRef GPSPitch GPSRoll CameraElevationAngle
-                    AmbientTemperature GPSHPositioningError GPSCoordinates))
+                    AmbientTemperature GPSHPositioningError GPSCoordinates
+                    GPSMeasureMode GPSDOP))
         {
             my @r = $et->SetNewValue($_, undef, %opts);
         }
@@ -1527,7 +1561,7 @@ user-defined tag GPSRoll, must be active.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

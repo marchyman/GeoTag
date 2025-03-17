@@ -34,6 +34,8 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 - Update City, State, Country, and Country Code metadata whenever an image
   location is changed.
 
+- exiftool version 13.25
+
 ### Bug Fixes
 
 - GPX file waypoint parsing bug fix from bhostetler18

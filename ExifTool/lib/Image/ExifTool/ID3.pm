@@ -18,7 +18,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.62';
+$VERSION = '1.63';
 
 sub ProcessID3v2($$$);
 sub ProcessPrivate($$$);
@@ -1169,7 +1169,7 @@ sub ProcessID3v2($$$)
             }
             $tagInfo = $et->GetTagInfo($otherTable, $id) if $otherTable;
             if ($tagInfo) {
-                $et->WarnOnce("Frame '${id}' is not valid for this ID3 version", 1);
+                $et->Warn("Frame '${id}' is not valid for this ID3 version", 1);
             } else {
                 next unless $verbose or $et->Options('Unknown');
                 $id =~ tr/-A-Za-z0-9_//dc;
@@ -1198,7 +1198,7 @@ sub ProcessID3v2($$$)
             }
         }
         if ($flags{Encrypt}) {
-            $et->WarnOnce('Encrypted frames currently not supported');
+            $et->Warn('Encrypted frames currently not supported');
             next;
         }
         # extract the value
@@ -1232,7 +1232,7 @@ sub ProcessID3v2($$$)
                     next;
                 }
             } else {
-                $et->WarnOnce('Install Compress::Zlib to decode compressed frames');
+                $et->Warn('Install Compress::Zlib to decode compressed frames');
                 next;
             }
         }
@@ -1278,9 +1278,9 @@ sub ProcessID3v2($$$)
             my $enc = unpack('C', $val);
             my ($tag, $url);
             if ($enc == 1 or $enc == 2) {
-                ($tag, $url) = ($tag =~ /^(.(?:..)*?)\0\0(.*)/s);
+                ($tag, $url) = ($val =~ /^(.(?:..)*?)\0\0(.*)/s);
             } else {
-                ($tag, $url) = ($tag =~ /^(..*?)\0(.*)/s);
+                ($tag, $url) = ($val =~ /^(..*?)\0(.*)/s);
             }
             unless (defined $tag and defined $url) {
                 $et->Warn("Invalid $id frame value");
@@ -1293,7 +1293,7 @@ sub ProcessID3v2($$$)
                 $tagInfo = $$tagTablePtr{$id} || AddTagToTable($tagTablePtr, $id, MakeTagName($tag));
             }
             $url =~ s/\0.*//s;
-            $val = $url;
+            $val = $et->Decode($url, 'Latin');
         } elsif ($id =~ /^W/) {
             $val =~ s/\0.*//s;  # truncate at null
         } elsif ($id =~ /^(COM|COMM|ULT|USLT)$/) {
@@ -1746,7 +1746,7 @@ other types of audio files.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

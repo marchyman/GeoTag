@@ -437,7 +437,7 @@ sub Process_marl($$$)
 {
     my ($et, $dirInfo, $tagTablePtr) = @_;
     my $dataPt = $$dirInfo{DataPt};
-    my $dataPos = $$dirInfo{DataPos} + $$dirInfo{Base};
+    my $dataPos = ($$dirInfo{DataPos} || 0) + ($$dirInfo{Base} || 0);
     my $dataLen = length $$dataPt;
     my $vals = $$et{GMVals}; # running values for each channel (0=TimeStamp)
     my $chan = $$et{GMChan}; # running channel number
@@ -531,7 +531,7 @@ metadata from videos written by some GM models such as Corvette and Camero.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

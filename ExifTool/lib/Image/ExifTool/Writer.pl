@@ -43,6 +43,7 @@ my %tiffMap = (
     PrintIM      => 'IFD0',
     IPTC         => 'IFD0',
     Photoshop    => 'IFD0',
+    SEAL         => 'IFD0',
     InteropIFD   => 'ExifIFD',
     MakerNotes   => 'ExifIFD',
     CanonVRD     => 'MakerNotes', # (so VRDOffset will get updated)
@@ -74,6 +75,7 @@ my %jpegMap = (
     Meta         => 'APP3',
     MetaIFD      => 'Meta',
     RMETA        => 'APP5',
+    SEAL         => ['APP8','APP9'], # (note: add 'IFD0' if this is a possibility)
     Ducky        => 'APP12',
     Photoshop    => 'APP13',
     Adobe        => 'APP14',
@@ -136,11 +138,12 @@ my %rawType = (
 # 2) any dependencies must be added to %excludeGroups
 my @delGroups = qw(
     Adobe AFCP APP0 APP1 APP2 APP3 APP4 APP5 APP6 APP7 APP8 APP9 APP10 APP11 APP12
-    APP13 APP14 APP15 CanonVRD CIFF Ducky EXIF ExifIFD File FlashPix FotoStation
-    GlobParamIFD GPS ICC_Profile IFD0 IFD1 Insta360 InteropIFD IPTC ItemList JFIF
-    Jpeg2000 JUMBF Keys MakerNotes Meta MetaIFD Microsoft MIE MPF Nextbase NikonApp
-    NikonCapture PDF PDF-update PhotoMechanic Photoshop PNG PNG-pHYs PrintIM
-    QuickTime RMETA RSRC SubIFD Trailer UserData XML XML-* XMP XMP-*
+    APP13 APP14 APP15 AudioKeys CanonVRD CIFF Ducky EXIF ExifIFD File FlashPix
+    FotoStation GlobParamIFD GPS ICC_Profile IFD0 IFD1 Insta360 InteropIFD IPTC
+    ItemList iTunes JFIF Jpeg2000 JUMBF Keys MakerNotes Meta MetaIFD Microsoft
+    MIE MPF Nextbase NikonApp NikonCapture PDF PDF-update PhotoMechanic
+    Photoshop PNG PNG-pHYs PrintIM QuickTime RMETA RSRC SEAL SubIFD Trailer
+    UserData VideoKeys Vivo XML XML-* XMP XMP-*
 );
 # family 2 group names that we can delete
 my @delGroup2 = qw(
@@ -152,6 +155,7 @@ my %delMore = (
     QuickTime => [ qw(ItemList UserData Keys) ],
     XMP => [ 'XMP-*' ],
     XML => [ 'XML-*' ],
+    SEAL => [ 'XMP-SEAL' ],
 );
 
 # family 0 groups where directories should never be deleted
@@ -1291,68 +1295,30 @@ sub SetNewValuesFromFile($$;@)
         # ! DON'T FORGET!!  Must consider each new   !
         # ! option to decide how it is handled here. !
         # +------------------------------------------+
+        foreach (qw(ByteUnit Charset CharsetEXIF CharsetFileName CharsetID3 CharsetIPTC
+                    CharsetPhotoshop Composite DateFormat Debug EncodeHangs Escape
+                    ExtendedXMP ExtractEmbedded FastScan Filter FixBase Geolocation
+                    GeolocAltNames GeolocFeature GeolocMinPop GeolocMaxDist
+                    GlobalTimeShift GPSQuadrant HexTagIDs IgnoreGroups IgnoreMinorErrors
+                    IgnoreTags ImageHashType KeepUTCTime Lang LargeFileSupport
+                    LigoGPSScale ListItem ListSep MDItemTags MissingTagValue NoPDFList
+                    NoWarning Password PrintConv QuickTimeUTC RequestTags SaveFormat
+                    SavePath ScanForXMP StructFormat SystemTags TimeZone Unknown UserParam
+                    Validate WindowsLongPath WindowsWideFile XAttrTags XMPAutoConv))
+        {
+            $srcExifTool->Options($_ => $$options{$_});
+        }
         $srcExifTool->Options(
             Binary          => 1,
-            ByteUnit        => $$options{ByteUnit},
-            Charset         => $$options{Charset},
-            CharsetEXIF     => $$options{CharsetEXIF},
-            CharsetFileName => $$options{CharsetFileName},
-            CharsetID3      => $$options{CharsetID3},
-            CharsetIPTC     => $$options{CharsetIPTC},
-            CharsetPhotoshop=> $$options{CharsetPhotoshop},
-            Composite       => $$options{Composite},
             CoordFormat     => $$options{CoordFormat} || '%d %d %.8f', # copy coordinates at high resolution unless otherwise specified
-            DateFormat      => $$options{DateFormat},
             Duplicates      => 1,
-            Escape          => $$options{Escape},
           # Exclude (set below)
-            ExtendedXMP     => $$options{ExtendedXMP},
-            ExtractEmbedded => $$options{ExtractEmbedded},
-            FastScan        => $$options{FastScan},
-            Filter          => $$options{Filter},
-            FixBase         => $$options{FixBase},
-            Geolocation     => $$options{Geolocation},
-            GeolocAltNames  => $$options{GeolocAltNames},
-            GeolocFeature   => $$options{GeolocFeature},
-            GeolocMinPop    => $$options{GeolocMinPop},
-            GeolocMaxDist   => $$options{GeolocMaxDist},
-            GlobalTimeShift => $$options{GlobalTimeShift},
-            HexTagIDs       => $$options{HexTagIDs},
-            IgnoreGroups    => $$options{IgnoreGroups},
-            IgnoreMinorErrors=>$$options{IgnoreMinorErrors},
-            IgnoreTags      => $$options{IgnoreTags},
-            ImageHashType   => $$options{ImageHashType},
-            Lang            => $$options{Lang},
-            LargeFileSupport=> $$options{LargeFileSupport},
             LimitLongValues => 10000000, # (10 MB)
             List            => 1,
-            ListItem        => $$options{ListItem},
-            ListSep         => $$options{ListSep},
             MakerNotes      => $$options{FastScan} && $$options{FastScan} > 1 ? undef : 1,
-            MDItemTags      => $$options{MDItemTags},
-            MissingTagValue => $$options{MissingTagValue},
-            NoPDFList       => $$options{NoPDFList},
-            NoWarning       => $$options{NoWarning},
-            Password        => $$options{Password},
-            PrintConv       => $$options{PrintConv},
-            QuickTimeUTC    => $$options{QuickTimeUTC},
-            RequestAll      => $$options{RequestAll} || 1, # (is this still necessary now that RequestTags are being set?)
-            RequestTags     => $$options{RequestTags},
-            SaveFormat      => $$options{SaveFormat},
-            SavePath        => $$options{SavePath},
-            ScanForXMP      => $$options{ScanForXMP},
+            RequestAll      => $$options{RequestAll} || 1, # (must request all because reqTags doesn't cover wildcards)
             StrictDate      => defined $$options{StrictDate} ? $$options{StrictDate} : 1,
             Struct          => $structOpt,
-            StructFormat    => $$options{StructFormat},
-            SystemTags      => $$options{SystemTags},
-            TimeZone        => $$options{TimeZone},
-            Unknown         => $$options{Unknown},
-            UserParam       => $$options{UserParam},
-            Validate        => $$options{Validate},
-            WindowsLongPath => $$options{WindowsLongPath},
-            WindowsWideFile => $$options{WindowsWideFile},
-            XAttrTags       => $$options{XAttrTags},
-            XMPAutoConv     => $$options{XMPAutoConv},
         );
         # reset Geolocation option if we aren't copying any geolocation tags
         if ($$options{Geolocation} and not grep /\bGeolocation/i, @setTags) {
@@ -1363,11 +1329,8 @@ sub SetNewValuesFromFile($$;@)
         $$srcExifTool{ALT_EXIFTOOL} = $$self{ALT_EXIFTOOL};
         foreach $tag (@setTags) {
             next if ref $tag;
-            if ($tag =~ /^-(.*)/) {
-                # avoid extracting tags that are excluded
-                push @exclude, $1;
-                next;
-            }
+            # avoid extracting tags that are excluded
+            $tag =~ /^-(.*)/ and push(@exclude, $1), next;
             # add specified tags to list of requested tags
             $_ = $tag;
             if (/(.+?)\s*(>|<)\s*(.+)/) {
@@ -1788,7 +1751,7 @@ GNV_TagInfo:    foreach $tagInfo (@tagInfoList) {
                 my $err = &$checkProc($self, $tagInfo, \$val);
                 if ($err or not defined $val) {
                     $err or $err = 'Error generating raw value';
-                    $self->WarnOnce("$err for $$tagInfo{Name}");
+                    $self->Warn("$err for $$tagInfo{Name}");
                     @$vals = ();
                     last;
                 }
@@ -1808,7 +1771,7 @@ GNV_TagInfo:    foreach $tagInfo (@tagInfoList) {
                 # an empty warning ("\n") ignores tag with no error
                 if ($evalWarning ne "\n") {
                     my $err = CleanWarning() . " in $$tagInfo{Name} (RawConvInv)";
-                    $self->WarnOnce($err);
+                    $self->Warn($err);
                 }
                 @$vals = ();
                 last;
@@ -1992,8 +1955,8 @@ sub SetFileModifyDate($$;$$$)
     }
     my ($aTime, $mTime, $cTime);
     if ($tag eq 'FileCreateDate') {
-        eval { require Win32::API } or $self->WarnOnce("Install Win32::API to set $tag"), return -1;
-        eval { require Win32API::File } or $self->WarnOnce("Install Win32API::File to set $tag"), return -1;
+        eval { require Win32::API } or $self->Warn("Install Win32::API to set $tag"), return -1;
+        eval { require Win32API::File } or $self->Warn("Install Win32API::File to set $tag"), return -1;
         $cTime = $val;
     } else {
         $aTime = $mTime = $val;
@@ -2190,7 +2153,7 @@ sub SetSystemTags($$)
             $self->VerboseValue('+ FilePermissions', $perm);
             $result = 1;
         } else {
-            $self->WarnOnce('Error setting FilePermissions');
+            $self->Warn('Error setting FilePermissions');
             $result = -1;
         }
     }
@@ -2204,7 +2167,7 @@ sub SetSystemTags($$)
             $self->VerboseValue('+ FileGroupID', $gid) if $gid >= 0;
             $result = 1;
         } else {
-            $self->WarnOnce('Error setting FileGroup/UserID');
+            $self->Warn('Error setting FileGroup/UserID');
             $result = -1 unless $result;
         }
     }
@@ -2220,7 +2183,7 @@ sub SetSystemTags($$)
             $result = $res if $res == 1 or not $result;
             last;
         } elsif ($tag ne 'FileCreateDate') {
-            $self->WarnOnce('Can only set MDItem tags on MacOS');
+            $self->Warn('Can only set MDItem tags on MacOS');
             last;
         }
     }
@@ -2233,7 +2196,7 @@ sub SetSystemTags($$)
         } elsif (ref $file) {
             $self->Warn('Writing ZoneIdentifer requires a file name');
         } elsif (defined $self->GetNewValue('ZoneIdentifier', \$zhash)) {
-            $self->Warn('ZoneIndentifier may only be delted');
+            $self->Warn('ZoneIndentifier may only be deleted');
         } elsif (not eval { require Win32API::File }) {
             $self->Warn('Install Win32API::File to write ZoneIdentifier');
         } else {
@@ -2377,9 +2340,13 @@ sub WriteInfo($$;$$)
         } elsif (UNIVERSAL::isa($inRef,'File::RandomAccess')) {
             $inRef->Seek(0);
             $raf = $inRef;
-        } elsif ($] >= 5.006 and (eval { require Encode; Encode::is_utf8($$inRef) } or $@)) {
+        } elsif ($] >= 5.006 and ($$self{OPTIONS}{EncodeHangs} or
+            eval { require Encode; Encode::is_utf8($$inRef) } or $@))
+        {
+            local $SIG{'__WARN__'} = \&SetWarning;
             # convert image data from UTF-8 to character stream if necessary
-            my $buff = $@ ? pack('C*',unpack($] < 5.010000 ? 'U0C*' : 'C0C*',$$inRef)) : Encode::encode('utf8',$$inRef);
+            my $buff = ($$self{OPTIONS}{EncodeHangs} or $@) ? pack('C*', unpack($] < 5.010000 ?
+                       'U0C*' : 'C0C*', $$inRef)) : Encode::encode('utf8', $$inRef);
             if (defined $outfile) {
                 $inRef = \$buff;
             } else {
@@ -2857,7 +2824,10 @@ sub GetAllGroups($;$)
 
     my %allGroups;
     # add family 1 groups not in tables
-    $family == 1 and map { $allGroups{$_} = 1 } qw(Garmin);
+    no warnings; # (avoid "possible attempt to put comments in qw()")
+    $family == 1 and map { $allGroups{$_} = 1 } qw(Garmin AudioItemList AudioUserData
+        VideoItemList VideoUserData Track#Keys Track#ItemList Track#UserData);
+    use warnings;
     # loop through all tag tables and get all group names
     while (@tableNames) {
         my $table = GetTagTable(pop @tableNames);
@@ -2886,7 +2856,7 @@ sub GetAllGroups($;$)
         }
     }
     delete $allGroups{'*'};     # (not a real group)
-    return sort keys %allGroups;
+    return sort { lc $a cmp lc $b } keys %allGroups;
 }
 
 #------------------------------------------------------------------------------
@@ -2904,7 +2874,7 @@ sub GetNewGroups($)
 # Returns: List of group names (sorted alphabetically)
 sub GetDeleteGroups()
 {
-    return sort @delGroups, @delGroup2;
+    return sort { lc $a cmp lc $b } @delGroups, @delGroup2;
 }
 
 #------------------------------------------------------------------------------
@@ -2952,10 +2922,15 @@ sub Sanitize($$)
     $$valPt = $$$valPt if ref $$valPt eq 'SCALAR';
     # make sure the Perl UTF-8 flag is OFF for the value if perl 5.6 or greater
     # (otherwise our byte manipulations get corrupted!!)
-    if ($] >= 5.006 and (eval { require Encode; Encode::is_utf8($$valPt) } or $@)) {
+    # NOTE: Don't use Encode on Windows becase "require Encode" on Windows hangs if cwd is a long path name!!
+    if ($] >= 5.006 and ($$self{OPTIONS}{EncodeHangs} or
+        eval { require Encode; Encode::is_utf8($$valPt) } or $@))
+    {
+        # (SIG handling was added in 10.39.  Not sure why, but I've added this to other similar code for 13.02)
         local $SIG{'__WARN__'} = \&SetWarning;
         # repack by hand if Encode isn't available
-        $$valPt = $@ ? pack('C*',unpack($] < 5.010000 ? 'U0C*' : 'C0C*',$$valPt)) : Encode::encode('utf8',$$valPt);
+        $$valPt = ($$self{OPTIONS}{EncodeHangs} or $@) ? pack('C*', unpack($] < 5.010000 ?
+                   'U0C*' : 'C0C*', $$valPt)) : Encode::encode('utf8', $$valPt);
     }
     # un-escape value if necessary
     if ($$self{OPTIONS}{Escape}) {
@@ -3013,7 +2988,7 @@ Conv: for (;;) {
                 $err2 = eval $$tagInfo{WriteCheck};
                 $@ and warn($@), $err2 = 'Error evaluating WriteCheck';
             }
-            unless ($err2) {
+            unless (defined $err2) {
                 my $table = $$tagInfo{Table};
                 if ($table and $$table{CHECK_PROC} and not $$tagInfo{RawConvInv}) {
                     my $checkProc = $$table{CHECK_PROC};
@@ -3296,7 +3271,7 @@ sub InsertTagValues($$;$$$$)
                     my @matches = grep /^$tag(\s|$)/i, @$foundTags;
                     @matches = $self->GroupMatches($group, \@matches) if defined $group;
                     foreach (@matches) {
-                        my $doc = $$ex{$_} ? $$ex{$_}{G3} || 0 : 0;
+                        my $doc = $$ex{$_}{G3} || 0;
                         if (defined $$cacheTag[$doc]) {
                             next unless $$cacheTag[$doc] =~ / \((\d+)\)$/;
                             my $cur = $1;
@@ -3365,7 +3340,8 @@ sub InsertTagValues($$;$$$$)
                 } elsif ($tag eq 'self') {
                     $val = $et; # ("$self{var}" or "$file1:self{var}" in string)
                 } else {
-                    # get the tag value
+                    # get the tag value (note: this direct access allows excluded tags
+                    # to be accessed if the case is correct and a group name is not used)
                     $val = $et->GetValue($tag, $type);
                     unless (defined $val) {
                         # check for tag name with different case
@@ -4286,9 +4262,11 @@ sub WriteDirectory($$$;$)
         if ($permanentDir{$grp0} and not ($$dirInfo{TagInfo} and $$dirInfo{TagInfo}{Deletable})) {
             undef $delFlag;
         }
-        # (never delete an entire QuickTime group)
         if ($delFlag) {
-            if (($grp0 =~ /^(MakerNotes)$/ or $grp1 =~ /^(IFD0|ExifIFD|MakerNotes)$/) and
+            if ($$dirInfo{Permanent}) {
+                $self->Warn("Not deleting permanent $dirName directory");
+                undef $grp1;
+            } elsif (($grp0 =~ /^(MakerNotes)$/ or $grp1 =~ /^(IFD0|ExifIFD|MakerNotes)$/) and
                 $self->IsRawType() and
                 # allow non-permanent MakerNote directories to be deleted (ie. NikonCapture)
                 (not $$dirInfo{TagInfo} or not defined $$dirInfo{TagInfo}{Permanent} or
@@ -4296,7 +4274,7 @@ sub WriteDirectory($$$;$)
                 # allow MakerNotes to be deleted from ExifIFD of CR3 file
                 not ($self->IsRawType() == 2 and $parent eq 'ExifIFD'))
             {
-                $self->WarnOnce("Can't delete $1 from $$self{FileType}",1);
+                $self->Warn("Can't delete $1 from $$self{FileType}",1);
                 undef $grp1;
             } elsif (not $blockExifTypes{$$self{FILE_TYPE}}) {
                 # restrict delete logic to prevent entire tiff image from being killed
@@ -5023,7 +5001,7 @@ my $strptimeLib; # strptime library name if available
 sub InverseDateTime($$;$$)
 {
     my ($self, $val, $tzFlag, $dateOnly) = @_;
-    my ($rtnVal, $tz);
+    my ($rtnVal, $tz, $fs);
     my $fmt = $$self{OPTIONS}{DateFormat};
     # strip off timezone first if it exists
     if (not $fmt and $val =~ s/([-+])(\d{1,2}):?(\d{2})\s*(DST)?$//i) {
@@ -5049,8 +5027,17 @@ sub InverseDateTime($$;$$)
                 $strptimeLib = '';
             }
         }
-        # handle factional seconds (%f), but only at the end of the string
-        my $fs = ($fmt =~ s/%f$// and $val =~ s/(\.\d+)\s*$//) ? $1 : '';
+        # handle fractional seconds (%f) and time zone (%z)
+        ($fs, $tz) = ('', '');
+        if ($fmt =~ /%(f|:?z)/) {
+            if ($fmt =~ s/(.*[^%])%f/$1/) {
+                $fs = $2 if $val =~ s/(.*)(\.\d+)/$1/;  # (take last .### as fractional seconds)
+            }
+            if ($fmt =~ s/(.*[^%])%(:?)z/$1/) {
+                my $colon = $2;
+                $tz = "$2:$3" if $val =~ s/(.*)([-+]\d{2})$colon(\d{2})/$1/;
+            }
+        }
         my ($lib, $wrn, @a);
 TryLib: for ($lib=$strptimeLib; ; $lib='') {
             # handle %s format ourself (not supported in Fedora, see forum15032)
@@ -5059,7 +5046,6 @@ TryLib: for ($lib=$strptimeLib; ; $lib='') {
                 last;
             }
             if (not $lib) {
-                last unless $$self{OPTIONS}{StrictDate};
                 warn $wrn || "Install POSIX::strptime or Time::Piece for inverse date/time conversions\n";
                 return undef;
             } elsif ($lib eq 'POSIX::strptime') {
@@ -5095,7 +5081,7 @@ TryLib: for ($lib=$strptimeLib; ; $lib='') {
                     $a[$i] = "0$a[$i]"; # pad to 2 digits if necessary
                 }
             }
-            $val = join(':', @a[5,4,3]) . ' ' . join(':', @a[2,1,0]) . $fs;
+            $val = join(':', @a[5,4,3]) . ' ' . join(':', @a[2,1,0]) . $fs . $tz;
             last;
         }
     }
@@ -5107,7 +5093,9 @@ TryLib: for ($lib=$strptimeLib; ; $lib='') {
             my $ss = $a[4];             # get SS
             push @a, '00' while @a < 5; # add MM, SS if not given
             # get sub-seconds if they exist (must be after SS, and have leading ".")
-            my $fs = (@a > 5 and $val =~ /(\.\d+)\s*$/) ? $1 : '';
+            unless ($fmt) {
+                $fs = (@a > 5 and $val =~ /(\.\d+)\s*$/) ? $1 : '';
+            }
             # add/remove timezone if necessary
             if ($tzFlag) {
                 if (not $tz) {
@@ -5247,7 +5235,7 @@ sub Set64u(@)
 {
     my $val = $_[0];
     my $hi = int($val / 4294967296);
-    my $lo = Set32u($val - $hi * 4294967296);
+    my $lo = Set32u($val - $hi * 4294967296); # NOTE: subject to round-off errors!
     $hi = Set32u($hi);
     $val = GetByteOrder() eq 'MM' ? $hi . $lo : $lo . $hi;
     $_[1] and substr(${$_[1]}, $_[2], length($val)) = $val;
@@ -6040,7 +6028,7 @@ sub WriteJPEG($$)
             Write($outfile, $hdr, $s, $segData) or $err = 1;
             my ($buff, $endPos, $trailInfo);
             my $delPreview = $$self{DEL_PREVIEW};
-            $trailInfo = IdentifyTrailer($raf) unless $$delGroup{Trailer};
+            $trailInfo = $self->IdentifyTrailer($raf) unless $$delGroup{Trailer};
             my $nvTrail = $self->GetNewValueHash($Image::ExifTool::Extra{Trailer});
             unless ($oldOutfile or $delPreview or $trailInfo or $$delGroup{Trailer} or $nvTrail or
                 $$self{HiddenData})
@@ -6121,7 +6109,7 @@ sub WriteJPEG($$)
                 my $tbuf = '';
                 $raf->Seek(-length($buff), 1);  # seek back to just after EOI
                 $$trailInfo{OutFile} = \$tbuf;  # rewrite the trailer
-                $$trailInfo{ScanForAFCP} = 1;   # scan if necessary
+                $$trailInfo{ScanForTrailer} = 1;# scan if necessary
                 $self->ProcessTrailers($trailInfo) or undef $trailInfo;
             }
             if (not $oldOutfile) {
@@ -6460,7 +6448,7 @@ sub WriteJPEG($$)
                                 # warn of subsequent XMP blocks specifying a different
                                 # HasExtendedXMP (have never seen this)
                                 if ($goodGuid and $goodGuid ne $2) {
-                                    $self->WarnOnce('Multiple XMP segments specifying different extended XMP GUID');
+                                    $self->Warn('Multiple XMP segments specifying different extended XMP GUID');
                                 }
                                 $goodGuid = $2; # GUID for the standard extended XMP
                             }
@@ -6608,7 +6596,7 @@ sub WriteJPEG($$)
                         undef $$segDataPt;
                         next Marker;
                     } elsif (defined $chunkNum) {
-                        $self->WarnOnce('Invalid or extraneous ICC_Profile chunk(s)');
+                        $self->Warn('Invalid or extraneous ICC_Profile chunk(s)');
                         # fall through to preserve this extra profile...
                     }
                 } elsif ($$segDataPt =~ /^FPXR\0/) {
@@ -6650,6 +6638,11 @@ sub WriteJPEG($$)
                 if ($$segDataPt =~ /^RMETA\0/) {
                     $segType = 'Ricoh RMETA';
                     $$delGroup{RMETA} and $del = 1;
+                }
+            } elsif ($marker == 0xe8 or $marker == 0xe9) { # APP8/9 (SEAL)
+                if ($$segDataPt =~ /^SEAL\0/) {
+                    $segType = 'SEAL';
+                    $$delGroup{SEAL} and $del = 1;
                 }
             } elsif ($marker == 0xeb) {         # APP10 (JUMBF)
                 if ($$segDataPt =~ /^JP/) {
@@ -7001,7 +6994,7 @@ sub SetFileTime($$;$$$$)
                 $mtime = $m unless defined $mtime;
                 $success = eval { utime($atime, $mtime, $file) } if defined $atime and defined $mtime;
             }
-            $self->Warn('Error opening file for update') unless $success;
+            $self->Warn('Error updating file time') unless $success;
             return $success;
         }
         $saveFile = $file;
@@ -7010,14 +7003,14 @@ sub SetFileTime($$;$$$$)
     # on Windows, try to work around incorrect file times when daylight saving time is in effect
     if ($^O eq 'MSWin32') {
         if (not eval { require Win32::API }) {
-            $self->WarnOnce('Install Win32::API for proper handling of Windows file times');
+            $self->Warn('Install Win32::API for proper handling of Windows file times');
         } elsif (not eval { require Win32API::File }) {
-            $self->WarnOnce('Install Win32API::File for proper handling of Windows file times');
+            $self->Warn('Install Win32API::File for proper handling of Windows file times');
         } else {
             # get Win32 handle, needed for SetFileTime
             my $win32Handle = eval { Win32API::File::GetOsFHandle($file) };
             unless ($win32Handle) {
-                $self->Warn('Win32API::File::GetOsFHandle returned invalid handle');
+                $self->Warn('Win32API::File GetOsFHandle returned invalid handle');
                 return 0;
             }
             # convert Unix seconds to FILETIME structs
@@ -7035,13 +7028,13 @@ sub SetFileTime($$;$$$$)
                 return 0 if defined $k32SetFileTime;
                 $k32SetFileTime = Win32::API->new('KERNEL32', 'SetFileTime', 'NPPP', 'I');
                 unless ($k32SetFileTime) {
-                    $self->Warn('Error calling Win32::API::SetFileTime');
+                    $self->Warn('Error loading Win32::API SetFileTime');
                     $k32SetFileTime = 0;
                     return 0;
                 }
             }
             unless ($k32SetFileTime->Call($win32Handle, $ctime, $atime, $mtime)) {
-                $self->Warn('Win32::API::SetFileTime returned ' . Win32::GetLastError());
+                $self->Warn('Win32::API SetFileTime returned ' . Win32::GetLastError());
                 return 0;
             }
             return 1;
@@ -7390,7 +7383,7 @@ used routines.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

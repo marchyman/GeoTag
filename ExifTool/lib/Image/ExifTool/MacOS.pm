@@ -12,7 +12,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.13';
+$VERSION = '1.14';
 
 sub MDItemLocalTime($);
 sub ProcessATTR($$$);
@@ -394,6 +394,7 @@ sub SetMacOSTags($$$)
             if ($val =~ /[-+Z]/) {
                 my $time = Image::ExifTool::GetUnixTime($val, 1);
                 $val = Image::ExifTool::ConvertUnixTime($time, 1) if $time;
+                $val =~ s/[-+].*//; # remove time zone
             }
             $val =~ s{(\d{4}):(\d{2}):(\d{2})}{$2/$3/$1};   # reformat for setfile
             $cmd = "/usr/bin/setfile -d '${val}' '${f}'";
@@ -736,7 +737,7 @@ Writable tags use "xattr", "setfile" or "osascript" for writing.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

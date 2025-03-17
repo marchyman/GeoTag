@@ -714,7 +714,6 @@ sub RestoreStruct($;$)
     my $fileOrder = $$et{FILE_ORDER};
     my $tagExtra = $$et{TAG_EXTRA};
     foreach $key (keys %{$$et{TAG_INFO}}) {
-        $$tagExtra{$key} or next;
         my $structProps = $$tagExtra{$key}{Struct} or next;
         delete $$tagExtra{$key}{Struct};    # (don't re-use)
         my $tagInfo = $$et{TAG_INFO}{$key}; # tagInfo for flattened tag
@@ -880,7 +879,7 @@ sub RestoreStruct($;$)
             }
             # preserve original flattened tags if requested
             if ($keepFlat) {
-                my $extra = $$tagExtra{$key} or next;
+                my $extra = $$tagExtra{$key};
                 # restore list behaviour of this flattened tag
                 if ($$extra{NoList}) {
                     $$valueHash{$key} = $$extra{NoList};
@@ -945,7 +944,7 @@ information.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

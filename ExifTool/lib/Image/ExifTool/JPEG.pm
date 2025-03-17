@@ -11,7 +11,7 @@ use strict;
 use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 
-$VERSION = '1.36';
+$VERSION = '1.39';
 
 sub ProcessOcad($$$);
 sub ProcessJPEG_HDR($$$);
@@ -88,6 +88,11 @@ sub ProcessJPEG_HDR($$$);
         Condition => '$$valPt =~ /^....IJPEG\0/s',
         SubDirectory => { TagTable => 'Image::ExifTool::InfiRay::Version' },
       }, {
+        Name => 'UniformResourceName',
+        Groups => { 1 => 'APP2' },
+        Condition => '$$valPt =~ /^urn:/',
+        Notes => 'used in Apple HDR images',
+      }, {
         Name => 'PreviewImage',
         Condition => '$$valPt =~ /^(|QVGA\0|BGTH)\xff\xd8\xff\xdb/',
         Notes => 'Samsung APP2 preview image', # (Samsung/GoPro="", BenQ="QVGA\0", Digilife="BGTH")
@@ -129,6 +134,10 @@ sub ProcessJPEG_HDR($$$);
         Name => 'FPXR', # (non-standard location written by some HP models)
         Condition => '$$valPt =~ /^FPXR\0/',
         SubDirectory => { TagTable => 'Image::ExifTool::FlashPix::Main' },
+      }, {
+        Name => 'QualcommDualCamera',
+        Condition => '$$valPt =~ /^Qualcomm Dual Camera Attributes/',
+        SubDirectory => { TagTable => 'Image::ExifTool::Qualcomm::DualCamera' },
       }, {
         Name => 'InfiRayFactory',
         Condition => '$$self{HasIJPEG}"',
@@ -197,7 +206,7 @@ sub ProcessJPEG_HDR($$$);
         Groups => { 0 => 'APP6', 1 => 'DJI' },
         Notes => 'DJI Thermal Analysis Tool record',
         ValueConv => 'substr($val,7)',
-      # also seen Motorola APP6 "MMIMETA\0", with sub-types: AL3A,ALED,MMI0,MOTD,QC3A
+      # also seen Motorola APP6 "MMIMETA\0", with sub-types: AL3A,ALED,MMI0,MOTD,QC3A,LMB1
     }],
     APP7 => [{
         Name => 'Pentax',
@@ -228,6 +237,10 @@ sub ProcessJPEG_HDR($$$);
         Name => 'InfiRayIsothermal',
         Condition => '$$self{HasIJPEG}',
         SubDirectory => { TagTable => 'Image::ExifTool::InfiRay::Isothermal' },
+      }, {
+        Name => 'SEAL',
+        Condition => '$$valPt =~ /^SEAL\0/',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::SEAL' },
     }],
     APP9 => [{
         Name => 'MediaJukebox',
@@ -237,17 +250,31 @@ sub ProcessJPEG_HDR($$$);
         Name => 'InfiRaySensor',
         Condition => '$$self{HasIJPEG}',
         SubDirectory => { TagTable => 'Image::ExifTool::InfiRay::Sensor' },
+      }, {
+        Name => 'SEAL',
+        Condition => '$$valPt =~ /^SEAL\0/',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::SEAL' },
     }],
-    APP10 => {
+    APP10 => [{
         Name => 'Comment',
         Condition => '$$valPt =~ /^UNICODE\0/',
         Notes => 'PhotoStudio Unicode comment',
-    },
+      }, {
+        Name => 'HDRGainCurve', #PH (NC)
+        Condition => '$$valPt =~ /^AROT\0\0.{4}/s',
+        Groups => { 1 => 'APP10', 2 => 'Image' },
+        ValueConv => q{
+            my $n = unpack('x6N', $val);
+            return '<truncated AROT data>' if length($val)-6 < $n * 4;
+            my $str = join ' ', unpack("x10V$n", $val);
+            return \$str;
+        },
+    }],
     APP11 => [{
         Name => 'JPEG-HDR',
         Condition => '$$valPt =~ /^HDR_RI /',
         SubDirectory => { TagTable => 'Image::ExifTool::JPEG::HDR' },
-    },{
+      }, {
         Name => 'JUMBF',
         Condition => '$$valPt =~ /^JP/',
         SubDirectory => { TagTable => 'Image::ExifTool::Jpeg2000::Main' },
@@ -324,6 +351,16 @@ sub ProcessJPEG_HDR($$$);
         Name => 'Samsung',
         Condition => '$$valPt =~ /QDIOBS$/',
         SubDirectory => { TagTable => 'Image::ExifTool::Samsung::Trailer' },
+      }, {
+        Name => 'Vivo',
+        Condition => '$$valPt =~ /^(streamdata|vivo\{")/',
+        SubDirectory => { TagTable => 'Image::ExifTool::Trailer::Vivo' },
+      }, {
+        Name => 'OnePlus',
+        SubDirectory => { TagTable => 'Image::ExifTool::Trailer::OnePlus' },
+      }, {
+        Name => 'Google',
+        SubDirectory => { TagTable => 'Image::ExifTool::Trailer::Google' },
       }, {
         Name => 'EmbeddedVideo',
         Notes => 'extracted only when ExtractEmbedded option is used',
@@ -768,7 +805,7 @@ segments are included in the Image::ExifTool module itself.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

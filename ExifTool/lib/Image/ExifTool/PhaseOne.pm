@@ -450,7 +450,7 @@ sub WritePhaseOne($$$)
 
     return undef if $dirLen < 12;
     unless ($$tagTablePtr{VARS} and $$tagTablePtr{VARS}{ENTRY_SIZE}) {
-        $et->WarnOnce("No ENTRY_SIZE for $$tagTablePtr{TABLE_NAME}");
+        $et->Warn("No ENTRY_SIZE for $$tagTablePtr{TABLE_NAME}");
         return undef;
     }
     my $entrySize = $$tagTablePtr{VARS}{ENTRY_SIZE};
@@ -591,7 +591,7 @@ sub ProcessPhaseOne($$$)
 
     return 0 if $dirLen < 12;
     unless ($$tagTablePtr{VARS} and $$tagTablePtr{VARS}{ENTRY_SIZE}) {
-        $et->WarnOnce("No ENTRY_SIZE for $$tagTablePtr{TABLE_NAME}");
+        $et->Warn("No ENTRY_SIZE for $$tagTablePtr{TABLE_NAME}");
         return undef;
     }
     my $entrySize = $$tagTablePtr{VARS}{ENTRY_SIZE};
@@ -632,7 +632,7 @@ sub ProcessPhaseOne($$$)
             $formatSize = Get32u($dataPt, $entry+4);
             $formatStr = $formatName[$formatSize];
             unless ($formatStr) {
-                $et->WarnOnce("Unrecognized $ifdType format size $formatSize",1);
+                $et->Warn("Unrecognized $ifdType format size $formatSize",1);
                 $formatSize = 1;
                 $formatStr = 'undef';
             }
@@ -726,7 +726,7 @@ One maker notes.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

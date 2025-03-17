@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.58';
+$VERSION = '3.62';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -74,15 +74,21 @@ my %tweakOrder = (
     DJI     => 'Casio',
     FLIR    => 'DJI',
     FujiFilm => 'FLIR',
+    GoPro   => 'GE',
     Kodak   => 'JVC',
     Leaf    => 'Kodak',
-    Minolta => 'Leaf',
+    Lytro   => 'Leaf',
+    Minolta => 'Lytro',
     Motorola => 'Minolta',
     Nikon   => 'Motorola',
-    NikonCustom => 'Nikon',
-    NikonCapture => 'NikonCustom',
-    Nintendo => 'NikonCapture',
+    NikonCapture => 'Nikon',
+    NikonCustom => 'NikonCapture',
+    NikonSettings => 'NikonCustom',
+    Nintendo => 'NikonSettings',
+    Panasonic => 'Olympus',
     Pentax  => 'Panasonic',
+    Ricoh   => 'Reconyx',
+    Samsung => 'Ricoh',
     SonyIDC => 'Sony',
     Unknown => 'SonyIDC',
     DNG     => 'Unknown',
@@ -91,8 +97,9 @@ my %tweakOrder = (
     ID3     => 'PostScript',
     MinoltaRaw => 'KyoceraRaw',
     KyoceraRaw => 'CanonRaw',
+    MinoltaRaw => 'KyoceraRaw',
+    PanasonicRaw => 'MinoltaRaw',
     SigmaRaw => 'PanasonicRaw',
-    Lytro   => 'SigmaRaw',
     PhotoMechanic => 'FotoStation',
     Microsoft     => 'PhotoMechanic',
     GIMP    => 'Microsoft',
@@ -100,6 +107,8 @@ my %tweakOrder = (
     MWG     => 'Shortcuts',
     'FujiFilm::RAF' => 'FujiFilm::RAFHeader',
     'FujiFilm::RAFData' => 'FujiFilm::RAF',
+    'QuickTime::AudioKeys' => 'QuickTime::Keys',
+    'QuickTime::VideoKeys' => 'QuickTime::AudioKeys',
 );
 
 # list of all recognized Format strings
@@ -437,15 +446,16 @@ appropriate table in the config file (see
 L<example.config|../config.html#PREF> in the full distribution for an
 example).  Note that some tags with the same name but different ID's may
 exist in the same location, but the family 7 group names may be used to
-differentiate these.  ExifTool currently writes only top-level metadata in
-QuickTime-based files; it extracts other track-specific and timed metadata,
-but can not yet edit tags in these locations (with the exception of
-track-level date/time tags).
+differentiate these.
 
-Beware that the Keys tags are actually stored inside the ItemList in the
-file, so deleting the ItemList group as a block (ie. C<-ItemList:all=>) also
-deletes Keys tags.  Instead, to preserve Keys tags the ItemList tags may be
-deleted individually with C<-QuickTime:ItemList:all=>.
+ExifTool currently writes
+L<ItemList|Image::ExifTool::TagNames/QuickTime ItemList Tags> and
+L<UserData|Image::ExifTool::TagNames/QuickTime UserData Tags> only as
+top-level metadata, but select Keys tags are may be written to the audio or
+video track.  See the
+L<AudioKeys|Image::ExifTool::TagNames/QuickTime AudioKeys Tags> and
+L<VideoKeys|Image::ExifTool::TagNames/QuickTime VideoKeys Tags> tags for
+more information.
 
 Alternate language tags may be accessed for
 L<ItemList|Image::ExifTool::TagNames/QuickTime ItemList Tags> and
@@ -457,8 +467,8 @@ L<UserData|Image::ExifTool::TagNames/QuickTime UserData Tags> tags support a
 language code, but without a country code.  If no language code is specified
 when writing, the default language is written and alternate languages for
 the tag are deleted.  Use the "und" language code to write the default
-language without deleting alternate languages.  Note that "eng" is treated
-as a default language when reading, but not when writing.
+language without deleting alternate languages.  Note that when reading,
+"eng" is also treated as the default language if there is no country code.
 
 According to the specification, integer-format QuickTime date/time tags
 should be stored as UTC.  Unfortunately, digital cameras often store local
@@ -688,7 +698,7 @@ L<Image::ExifTool::BuildTagLookup|Image::ExifTool::BuildTagLookup>.
 
 ~head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -866,10 +876,16 @@ sub new
         }
         $noID = 1 if $isXMP or $short =~ /^(Shortcuts|ASF.*)$/ or $$vars{NO_ID};
         $hexID = $$vars{HEX_ID};
+        if ($$table{WRITE_PROC} and $$table{WRITE_PROC} eq \&Image::ExifTool::WriteBinaryData
+            and not $$table{CHECK_PROC})
+        {
+            warn("Binary table $tableName doesn't have a CHECK_PROC\n");
+        }
         my $processBinaryData = ($$table{PROCESS_PROC} and (
             $$table{PROCESS_PROC} eq \&Image::ExifTool::ProcessBinaryData or
             $$table{PROCESS_PROC} eq \&Image::ExifTool::Nikon::ProcessNikonEncrypted or
-            $$table{PROCESS_PROC} eq \&Image::ExifTool::Sony::ProcessEnciphered));
+            $$table{PROCESS_PROC} eq \&Image::ExifTool::Sony::ProcessEnciphered) or
+            $$table{VARS} and $$table{VARS}{IS_BINARY});
         if ($$vars{ID_LABEL} or $processBinaryData) {
             my $s = $$table{FORMAT} ? Image::ExifTool::FormatSize($$table{FORMAT}) || 1 : 1;
             $binaryTable = 1;
@@ -1003,6 +1019,9 @@ TagID:  foreach $tagID (@keys) {
                 if ($writable and not ($$table{WRITE_PROC} or $tableName =~ /Shortcuts/ or $writable eq '2')) {
                     undef $writable;
                 }
+                #if ($writable and $$tagInfo{Unknown} and $$table{GROUPS}{0} ne 'MakerNotes') {
+                #    warn "Warning: Writable Unknown tag - $short $name\n",
+                #}
                 # validate some characteristics of obvious date/time tags
                 my @g = $et->GetGroup($tagInfo);
                 if ($$tagInfo{List} and $g[2] eq 'Time' and $writable and not $$tagInfo{Protected} and
@@ -1248,7 +1267,7 @@ TagID:  foreach $tagID (@keys) {
                                     }
                                 } elsif ($$tagInfo{PrintString} or not /^[+-]?(?=\d|\.\d)\d*(\.\d*)?$/) {
                                     # translate unprintable values
-                                    if ($index =~ s/([\x00-\x1f\x80-\xff])/sprintf("\\x%.2x",ord $1)/eg) {
+                                    if ($index =~ s/([\x00-\x1f\x7f-\xff])/sprintf("\\x%.2x",ord $1)/eg) {
                                         $index = qq{"$index"};
                                     } else {
                                         $index = qq{'${index}'};
@@ -1331,7 +1350,7 @@ TagID:  foreach $tagID (@keys) {
                         $writable = 'yes' if $tw and $writable eq '1' or $writable eq '2';
                         $writable = '-' . ($tw ? $writable : '');
                         $writable .= '!' if $tw and ($$tagInfo{Protected} || 0) & 0x01;
-                        $writable .= '+' if $$tagInfo{List};
+                        $writable .= '+' if $$tagInfo{List} or $$tagInfo{IsList};
                         if (defined $$tagInfo{Permanent}) {
                             $writable .= '^' unless $$tagInfo{Permanent};
                         } elsif (defined $$table{PERMANENT}) {
@@ -1389,7 +1408,7 @@ TagID:  foreach $tagID (@keys) {
                     }
                     $writable = "=struct" if $struct;
                     $writable .= '_' if defined $$tagInfo{Flat};
-                    $writable .= '+' if $$tagInfo{List};
+                    $writable .= '+' if $$tagInfo{List} or $$tagInfo{IsList};
                     $writable .= ':' if $$tagInfo{Mandatory};
                     if (defined $$tagInfo{Permanent}) {
                         $writable .= '^' unless $$tagInfo{Permanent};
@@ -1557,7 +1576,7 @@ TagID:  foreach $tagID (@keys) {
                     $writable = 'string';
                 }
             }
-            $writable .= '+' if $$tagInfo{List};
+            $writable .= '+' if $$tagInfo{List} or $$tagInfo{IsList};
             push @vals, "($$tagInfo{Notes})" if $$tagInfo{Notes};
             # handle PrintConv lookups in Structure elements
             my $printConv = $$tagInfo{PrintConv};
@@ -1774,9 +1793,10 @@ sub NumbersFirst($$)
         $rtnVal = $numbersFirst;
     } else {
         my ($a2, $b2) = ($a, $b);
-        # expand numbers to 3 digits (with restrictions to avoid messing up ascii-hex tags)
-        $a2 =~ s/(\d+)/sprintf("%.3d",$1)/eg if $a2 =~ /^(APP|DMC-\w+ )?[.0-9 ]*$/ and length($a2)<16;
-        $b2 =~ s/(\d+)/sprintf("%.3d",$1)/eg if $b2 =~ /^(APP|DMC-\w+ )?[.0-9 ]*$/ and length($b2)<16;
+        # expand numbers to 3 digits (with restrictions to avoid messing up
+        # ascii-hex tags -- Nikon LensID's are 23 characters long)
+        $a2 =~ s/(\d+)/sprintf("%.3d",$1)/eg if $a2 =~ /^(APP|DMC-\w+ |dvtm_.*|(IDB|SHB)-)?[.0-9 ]*$/ and length($a2)<23;
+        $b2 =~ s/(\d+)/sprintf("%.3d",$1)/eg if $b2 =~ /^(APP|DMC-\w+ |dvtm_.*|(IDB|SHB)-)?[.0-9 ]*$/ and length($b2)<23;
         $caseInsensitive and $rtnVal = (lc($a2) cmp lc($b2));
         $rtnVal or $rtnVal = ($a2 cmp $b2);
     }
@@ -2802,7 +2822,7 @@ Returned list of writable pseudo tags.
 
 =head1 AUTHOR
 
-Copyright 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
