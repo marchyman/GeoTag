@@ -20,26 +20,37 @@ extension AppState {
         _ image: ImageModel, location: Coords?,
         elevation: Double? = nil, documentEdited: Bool = true
     ) {
+        func logFormat(_ location: Coords?, elevation: Double?) -> String {
+            var formatted = "none"
+            if let location {
+                formatted = "\(location.latitude), \(location.longitude)"
+                if let elevation {
+                    formatted += "\(elevation)"
+                }
+            }
+            return formatted
+        }
+
         if undoManager.isUndoing {
             Self.logger.notice(
                 """
-                Undo in progress: \(image.name, privacy: .public): \
-                \(image.location.debugDescription, privacy: .public) -> \
-                \(location.debugDescription, privacy: .public)
+                Undo in progress: \(image.name, privacy: .public)
+                  \(logFormat(image.location, elevation: image.elevation)) -> \
+                \(logFormat(location, elevation: elevation))
                 """)
         } else if undoManager.isRedoing {
             Self.logger.notice(
                 """
-                Redo in progress: \(image.name, privacy: .public): \
-                \(image.location.debugDescription, privacy: .public) -> \
-                \(location.debugDescription, privacy: .public)
+                Redo in progress: \(image.name, privacy: .public)
+                  \(logFormat(image.location, elevation: image.elevation)) -> \
+                \(logFormat(location, elevation: elevation))
                 """)
         } else {
             Self.logger.notice(
                 """
-                undoManager registration: \(image.name, privacy: .public): \
-                \(image.location.debugDescription, privacy: .public) -> \
-                \(location.debugDescription, privacy: .public)
+                undoManager registration: \(image.name, privacy: .public)
+                  \(logFormat(image.location, elevation: image.elevation)) -> \
+                \(logFormat(location, elevation: elevation))
                 """)
         }
 
@@ -78,6 +89,14 @@ extension AppState {
                 let placeMarks =
                     try? await geoCoder.reverseGeocodeLocation(fullLocation)
                 if let placeMark = placeMarks?.first {
+                    Self.logger.info("""
+                        Placemark:
+                          \(placeMark.subLocality ?? "unknown sub locality", privacy: .public)
+                          \(placeMark.locality ?? "unknown locality", privacy: .public)
+                          \(placeMark.administrativeArea ?? "unknown administrative area", privacy: .public)
+                          \(placeMark.country ?? "unknown country", privacy: .public)
+                          \(placeMark.isoCountryCode ?? "unknown country code", privacy: .public)
+                        """)
                     image.city = placeMark.locality
                     image.state = placeMark.administrativeArea
                     image.country = placeMark.country
