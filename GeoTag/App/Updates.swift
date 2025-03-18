@@ -11,6 +11,28 @@ import SwiftUI
 
 // functions that handle location changes for both the map and images
 
+// first an extension to undoManage stolen from Matt Massicotte
+// https://github.com/mattmassicotte/MainOffender/blob/main/Sources/MainOffender/UndoManager%2BMainActor.swift
+// to get around @MainActor requirements of the calling function that are
+// not met by the registerUndo callback.
+
+extension UndoManager {
+	@MainActor
+	public func registerMainActorUndo<TargetType>(
+		withTarget target: TargetType,
+		handler: @escaping @MainActor (TargetType) -> Void
+	)
+	where TargetType: AnyObject {
+		registerUndo(withTarget: target, handler: { handlerTarget in
+			nonisolated(unsafe) let mainTarget = handlerTarget
+
+			MainActor.assumeIsolated {
+				handler(mainTarget)
+			}
+		})
+	}
+}
+
 extension AppState {
 
     // Update an image with a location.
@@ -46,13 +68,10 @@ extension AppState {
         let currentLocation = image.location
         let currentElevation = image.elevation
         let currentDocumentEdited = isDocumentEdited
-        undoManager.registerUndo(withTarget: self) { target in
-            Task { @MainActor in
-                target.update(
-                    image, location: currentLocation,
-                    elevation: currentElevation,
-                    documentEdited: currentDocumentEdited)
-            }
+        undoManager.registerMainActorUndo(withTarget: self) { target in
+            target.update(image, location: currentLocation,
+                          elevation: currentElevation,
+                          documentEdited: currentDocumentEdited)
         }
         image.location = location
         image.elevation = elevation
@@ -109,12 +128,9 @@ extension AppState {
     ) {
         let currentDateTimeCreated = image.dateTimeCreated
         let currentDocumentEdited = isDocumentEdited
-        undoManager.registerUndo(withTarget: self) { target in
-            Task { @MainActor in
-                target.update(
-                    image, timestamp: currentDateTimeCreated,
-                    documentEdited: currentDocumentEdited)
-            }
+        undoManager.registerMainActorUndo(withTarget: self) { target in
+            target.update(image, timestamp: currentDateTimeCreated,
+                          documentEdited: currentDocumentEdited)
         }
         image.dateTimeCreated = timestamp
         isDocumentEdited = documentEdited

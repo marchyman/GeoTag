@@ -38,6 +38,7 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 ### Bug Fixes
 
+- undo/redo is again working
 - GPX file waypoint parsing bug fix from bhostetler18
 
 ## GeoTag 5.4
