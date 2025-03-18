@@ -23,7 +23,7 @@ Sonoma. If you see a pin placed above the point you clicked/tapped you are
 seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 14.4.1). It is not a problem in the latest versions of Sonoma or in Sequoia.
 
-## WIP
+## GeoTag 5.5
 
 ### Updates
 
@@ -39,22 +39,23 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 ### Bug Fixes
 
 - undo/redo is again working
-- GPX file waypoint parsing bug fix from bhostetler18
+-GeoTag  GPX file waypoint parsing bug fix from bhostetler18
 
-## GeoTag 5.4
+### Known issues
 
-### Updates
-
-- Pin view options now available in the Map context menu in addition to the
-  View menu.
-- ExifTool version 13.01
-- Code structure changes
-
-### Bug Fixes
-
-- If multiple GPX track logs contained timestamps within 6 hours of an image
-  timestamp the image might have been assigned an incorrect location when
-  the "Locn from track" function was used.
+- undo/redo menu items are always enabled, even when there are no undo or
+  redo actions that could be performed. The menu titles are also not updated
+  for the action to be performed.
+- There is a short delay between clicking on the map and a map pin being
+  placed.
+- When showing pins for all selected locations the red (most selected) pin
+  may be hidden by the pin of another location near by unless the zoom level
+  is such that both locations are slightly separated on the map.
+- when changing the selection to an image that has a location some of the pin
+  may off the map view.  In an extreme case only the point of the pin is on
+  the map and can not be seen. If you do not see a pin when you expect to
+  zoom out slightly.
+- paste sometimes not enabled after cut. Can not reproduce on demand.
 
 ### See the file named *History* for earlier changes and bug fixes
 
