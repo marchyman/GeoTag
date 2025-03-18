@@ -31,28 +31,17 @@ extension AppState {
             return formatted
         }
 
-        if undoManager.isUndoing {
-            Self.logger.notice(
-                """
-                Undo in progress: \(image.name, privacy: .public)
+        Self.logger.notice(
+            """
+            \(self.undoManager.isUndoing
+                ? "Undo in Progress: "
+                : self.undoManager.isRedoing
+                    ? "Redo in Progress: "
+                    : "Registration: ") \(image.name, privacy: .public)
                   \(logFormat(image.location, elevation: image.elevation)) -> \
                 \(logFormat(location, elevation: elevation))
-                """)
-        } else if undoManager.isRedoing {
-            Self.logger.notice(
-                """
-                Redo in progress: \(image.name, privacy: .public)
-                  \(logFormat(image.location, elevation: image.elevation)) -> \
-                \(logFormat(location, elevation: elevation))
-                """)
-        } else {
-            Self.logger.notice(
-                """
-                undoManager registration: \(image.name, privacy: .public)
-                  \(logFormat(image.location, elevation: image.elevation)) -> \
-                \(logFormat(location, elevation: elevation))
-                """)
-        }
+            """
+        )
 
         let currentLocation = image.location
         let currentElevation = image.elevation
