@@ -58,7 +58,6 @@ final class GeoTagUI00Tests: XCTestCase {
         localSetup()
         let window = app.windows["main"]
         XCTAssert(window.exists)
-        print(window.debugDescription)
         XCTAssertEqual(window.descendants(matching: .tableColumn).count, 4)
         XCTAssertEqual(window.descendants(matching: .image).count, 4)
         XCTAssert(window.descendants(matching: .map).element.exists)
@@ -77,7 +76,7 @@ final class GeoTagUI00Tests: XCTestCase {
         app.buttons["Photo Library"].firstMatch.click()
         sleep(1)
         takeScreenshot(name: "Photo Library")
-        app.typeKey(.escape, modifierFlags: [])
+        app.buttons["Cancel"].click()
 
         let menubar = app.menuBars.element
         XCTAssert(menubar.exists)

@@ -77,6 +77,9 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["GPS Track width:"].exists)
         XCTAssertTrue(app.textFields.element(boundBy: 0).exists)
 
+        XCTAssertTrue(app.staticTexts["Extend track timestamps:"].exists)
+        XCTAssertTrue(app.textFields.element(boundBy: 1).exists)
+
         XCTAssertTrue(app.staticTexts["Disable paired jpegs:"].exists)
         XCTAssertTrue(app.checkBoxes["Disable paired jpegs"].exists)
 
@@ -93,7 +96,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
                 app.checkBoxes["Tag updated files"].click()
             }
         }
-        XCTAssertTrue(app.textFields.element(boundBy: 1).exists)
+        XCTAssertTrue(app.textFields.element(boundBy: 2).exists)
 
         XCTAssertTrue(app.buttons["Close"].exists)
         app.buttons["Close"].click()
@@ -158,7 +161,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         }
         let textField1 = settings
             .descendants(matching: .textField)
-            .element(boundBy: 1)
+            .element(boundBy: 2)
         textField1.doubleClick()
         textField1.typeKey(.delete, modifierFlags: [])
         textField1.typeText("TestTag")
