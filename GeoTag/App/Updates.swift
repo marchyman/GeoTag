@@ -93,10 +93,7 @@ extension AppState {
     private func reverseGeocode(_ image: ImageModel) {
         if let fullLocation = image.fullLocation(timeZone) {
             Task {
-                let geoCoder = CLGeocoder()
-                let placeMarks =
-                    try? await geoCoder.reverseGeocodeLocation(fullLocation)
-                if let placeMark = placeMarks?.first {
+                if let placeMark = try? await ReverseLocationFinder.shared.get(fullLocation) {
                     Self.logger.info("""
                         Placemark:
                           \(placeMark.subLocality ?? "unknown sub locality", privacy: .public)
