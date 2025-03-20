@@ -78,10 +78,10 @@ extension Exiftool {
         var lonRefArg = "-GPSLongitudeRef="
         var eleArg = "-GPSaltitude="
         var eleRefArg = "-GPSaltitudeRef="
-        var cityArg = "-city="
-        var stateArg = "-state="
-        var countryArg = "-country="
-        var countryCodeArg = "-countryCode="
+        var cityArg = "-xmp:city="
+        var stateArg = "-xmp:state="
+        var countryArg = "-xmp:country="
+        var countryCodeArg = "-xmp:countryCode="
 
         // ExifTool GSPDateTime arg storage
         var gpsDArg = "-GPSDateStamp="  // for non XMP files
