@@ -1,4 +1,5 @@
 import CoreLocation
+import OSLog
 
 // return a CLLocation for the image based upon its coordinates and elevation
 
@@ -30,6 +31,9 @@ extension ImageModel {
 
 actor ReverseLocationFinder {
     private var activeTask: Task<CLPlacemark?, Error>?
+    private let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: "ReverseLocationFinder")
 
     // Only 1 shared instance
 
@@ -39,15 +43,33 @@ actor ReverseLocationFinder {
     func get(_ location: CLLocation) async throws -> CLPlacemark? {
         while let task = activeTask {
             // wait until the current task ends
-            _ = try? await task.value
+            if let placemark = try? await task.value {
+                // if we happen to be requesting a placemark for the same
+                // coordinates there is no need to do another reverse lookup
+                if placemark.location?.coordinate == location.coordinate {
+                    logger.info("Duplicate placemark")
+                    return placemark
+                }
+            }
         }
 
         // Creat a task to fetch reverse location
         let task = Task<CLPlacemark?, Error> {
             let geoCoder = CLGeocoder()
-            let placeMarks = try? await geoCoder.reverseGeocodeLocation(location)
+            let placemarks = try? await geoCoder.reverseGeocodeLocation(location)
             activeTask = nil
-            return placeMarks?.first
+            if let placemark = placemarks?.first {
+                logger.info("""
+                    Placemark:
+                      \(placemark.subLocality ?? "unknown sub locality", privacy: .public)
+                      \(placemark.locality ?? "unknown locality", privacy: .public)
+                      \(placemark.administrativeArea ?? "unknown administrative area", privacy: .public)
+                      \(placemark.country ?? "unknown country", privacy: .public)
+                      \(placemark.isoCountryCode ?? "unknown country code", privacy: .public)
+                    """)
+                return placemark
+            }
+            return nil
         }
 
         // save it as the active task and wait for the result

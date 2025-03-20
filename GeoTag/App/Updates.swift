@@ -94,14 +94,6 @@ extension AppState {
         if let fullLocation = image.fullLocation(timeZone) {
             Task {
                 if let placeMark = try? await ReverseLocationFinder.shared.get(fullLocation) {
-                    Self.logger.info("""
-                        Placemark:
-                          \(placeMark.subLocality ?? "unknown sub locality", privacy: .public)
-                          \(placeMark.locality ?? "unknown locality", privacy: .public)
-                          \(placeMark.administrativeArea ?? "unknown administrative area", privacy: .public)
-                          \(placeMark.country ?? "unknown country", privacy: .public)
-                          \(placeMark.isoCountryCode ?? "unknown country code", privacy: .public)
-                        """)
                     image.city = placeMark.locality
                     image.state = placeMark.administrativeArea
                     image.country = placeMark.country
