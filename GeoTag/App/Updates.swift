@@ -60,7 +60,8 @@ extension AppState {
                 : self.undoManager.isRedoing
                     ? "Redo in Progress: "
                     : "Registration: ") \(image.name, privacy: .public)
-                  \(logFormat(image.location, elevation: image.elevation), privacy: .public) -> \
+                  \(logFormat(image.location,
+                              elevation: image.elevation), privacy: .public) -> \
             \(logFormat(location, elevation: elevation), privacy: .public)
             """
         )
@@ -75,7 +76,11 @@ extension AppState {
         }
         image.location = location
         image.elevation = elevation
-        reverseGeocode(image)
+        // don't bother reverse geocoding items from the users
+        // photo library
+        if image.pickerItem == nil {
+            reverseGeocode(image)
+        }
         if let pairedID = image.pairedID {
             let pairedImage = tvm[pairedID]
             if pairedImage.isValid {
