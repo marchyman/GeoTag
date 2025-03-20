@@ -47,7 +47,7 @@ extension AppState {
             if let location {
                 formatted = "\(location.latitude), \(location.longitude)"
                 if let elevation {
-                    formatted += "\(elevation)"
+                    formatted += ", \(elevation)"
                 }
             }
             return formatted
