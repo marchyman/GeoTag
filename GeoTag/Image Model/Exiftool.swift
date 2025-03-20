@@ -163,7 +163,7 @@ extension Exiftool {
             exiftool.arguments! += [dtoArg, cdArg]
         }
         exiftool.arguments! += ["-GPSStatus=", path]
-        //        dump(exiftool.arguments!)
+        Self.logger.info("\(exiftool.arguments!, privacy: .public)")
         try exiftool.run()
         exiftool.waitUntilExit()
         logFrom(pipe: pipe)

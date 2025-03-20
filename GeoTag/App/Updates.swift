@@ -60,8 +60,8 @@ extension AppState {
                 : self.undoManager.isRedoing
                     ? "Redo in Progress: "
                     : "Registration: ") \(image.name, privacy: .public)
-                  \(logFormat(image.location, elevation: image.elevation)) -> \
-                \(logFormat(location, elevation: elevation))
+                  \(logFormat(image.location, elevation: image.elevation), privacy: .public) -> \
+            \(logFormat(location, elevation: elevation), privacy: .public)
             """
         )
 
