@@ -38,8 +38,9 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 ### Bug Fixes
 
+- (5.5.3) Fix state not updating in HEIC files.
 - undo/redo is again working
--GeoTag  GPX file waypoint parsing bug fix from bhostetler18
+- GeoTag  GPX file waypoint parsing bug fix from bhostetler18
 
 ### Known issues
 
