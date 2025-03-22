@@ -1,0 +1,54 @@
+#! /usr/bin/osascript
+
+on run argv
+	tell application "Finder"
+		set volumeName to item 1 of argv
+		tell disk (volumeName as string)
+			open
+
+			-- Window position and size calculations
+			set theXOrigin to 400
+			set theYOrigin to 100
+			set theWidth to 800
+			set theHeight to 600
+
+			set theBottomRightX to (theXOrigin + theWidth)
+			set theBottomRightY to (theYOrigin + theHeight)
+
+			-- Window layout
+			tell container window
+				set current view to icon view
+				set toolbar visible to false
+				set statusbar visible to false
+				set the bounds to {theXOrigin, theYOrigin, theBottomRightX, theBottomRightY}
+				set statusbar visible to false
+				-- REPOSITION_HIDDEN_FILES_CLAUSE
+			end tell
+
+			-- Icon view options
+			set opts to the icon view options of container window
+			tell opts
+				set icon size to 128
+				set text size to 12
+				set arrangement to not arranged
+			end tell
+			set background picture of opts to file ".background:background.png"
+
+			set file_list to every file
+			repeat with i in file_list
+				if the name of i is "Applications" then
+					set the position of i to {600, 144}
+				else if the name of i ends with ".app" then
+					set the position of i to {200, 144}
+				else if the name of i is "Readme.txt" then
+					set the position of i to {300, 400}
+				else if the name of i is "Version.txt" then
+					set the position of i to {500, 400}
+				end if
+			end repeat
+			update without registering applications
+			delay 4
+			-- eject
+		end tell
+	end tell
+end run

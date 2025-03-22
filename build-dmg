@@ -55,7 +55,7 @@ cp README.md ${DIR}/Readme.txt
 echo ${BUILD_VERSION} > ${DIR}/Version.txt
 
 # make it look pretty
-osascript dmg-pretty.scpt ${NAME}
+./pretty-dmg ${NAME}
 
 # use a custom icon on the mounted volume
 cp -a VolumeIcon.icns ${DIR}/.VolumeIcon.icns
