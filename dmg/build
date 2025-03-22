@@ -17,7 +17,7 @@
 # then entering the profile name and the "Notarizing" password stored in
 # the keychain.
 
-set -ex
+set -e
 
 if [ $(basename "$PWD") != "dmg" ]; then
     echo "- must be run from the dmg folder"
