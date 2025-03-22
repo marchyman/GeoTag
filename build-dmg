@@ -10,7 +10,7 @@
 # 4) Run this script to create a notarized READ ONLY DMG
 #
 # Script changed to use notarytool in place of altool.  Notarytool
-# Sstore credentials named "notary-snafu.org" were created using this command:
+# store credentials named "notary-snafu.org" were created using this command:
 #   xcrun notarytool store-credentials \
 #       --apple-id "marc+developer@snafu.org" \
 #       --team-id "A3UXBEBE8Z"
@@ -54,12 +54,21 @@ cp -R ~/Desktop/GeoTag.app ${DIR}
 cp README.md ${DIR}/Readme.txt
 echo ${BUILD_VERSION} > ${DIR}/Version.txt
 
-# make it look pretty and eject the dmg
+# make it look pretty
 osascript dmg-pretty.scpt ${NAME}
+
+# use a custom icon on the mounted volume
+cp -a VolumeIcon.icns ${DIR}/.VolumeIcon.icns
+xattr -wx com.apple.FinderInfo \
+    "00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00" ${DIR}
+
+# unmount the volume
+hdiutil eject "/Volumes/${NAME}"
 
 # convert the DNG to format UDZ0 and clean up
 rm -f ${DMG}
-hdiutil convert ${WORK} -format UDZO -o ${DMG}
+hdiutil convert ${WORK} -ov -format UDZO -imagekey zlib-level=9 -o ${DMG}
 rm -rf ${WORK}
 
 # codesign the dmg
