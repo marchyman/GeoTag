@@ -19,6 +19,11 @@
 
 set -ex
 
+if [ $(basename "$PWD") != "dmg" ]; then
+    echo "- must be run from the dmg folder"
+    exit 1
+fi
+
 BUILD_VERSION=$(git describe --tags --always --dirty=+)
 LATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG="HEAD"
 if [ $LATEST_TAG = "HEAD" ]; then
@@ -51,11 +56,11 @@ cp background.png ${BG_DIR}
 # Add the files and Applications link
 ln -s /Applications ${DIR}
 cp -R ~/Desktop/GeoTag.app ${DIR}
-cp README.md ${DIR}/Readme.txt
+cp ../README.md ${DIR}/Readme.txt
 echo ${BUILD_VERSION} > ${DIR}/Version.txt
 
 # make it look pretty
-./pretty-dmg ${NAME}
+./pretty ${NAME}
 
 # use a custom icon on the mounted volume
 cp -a VolumeIcon.icns ${DIR}/.VolumeIcon.icns
@@ -70,6 +75,14 @@ hdiutil eject "/Volumes/${NAME}"
 rm -f ${DMG}
 hdiutil convert ${WORK} -ov -format UDZO -imagekey zlib-level=9 -o ${DMG}
 rm -rf ${WORK}
+
+# if the app fileicon (brew install fileicon) is installed use it to
+# create a custom icon for the dmg
+
+fileicon=$(which fileicon)
+if [ -x "$fileicon" ]; then
+    $fileicon set ${DMG} dmg-icon.png
+fi
 
 # codesign the dmg
 # use `security find-identity -p codesigning` to find the appropriate ID
