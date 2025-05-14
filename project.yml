@@ -137,6 +137,21 @@ targets:
         showEnvVars: NO
         basedOnDependencyAnalysis: NO
 
+  GeoTagTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: 14.0
+    dependencies:
+      - target: GeoTag
+    sources:
+      - GeoTagTests
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      CODE_SIGN_IDENTITY: "-"
+      CODE_SIGN_STYLE: Manual
+      PRODUCT_NAME: $(TARGET_NAME)
+      PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagTests
+
   GeoTagUITests:
     type: bundle.ui-testing
     platform: macOS
@@ -147,18 +162,32 @@ targets:
       - GeoTagUITests
     settings:
       GENERATE_INFOPLIST_FILE: YES
-      TEST_TARGET_NAME: GeoTag
+      CODE_SIGN_IDENTITY: "-"
+      CODE_SIGN_STYLE: Manual
+      PRODUCT_NAME: $(TARGET_NAME)
       PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagUITests
 
-schemes:
-  GeoTag:
-    build:
-      targets:
-        GeoTag: all
-  GeoTagUITests:
-    build:
-      targets:
-        GeoTagUITests: all
+# schemes:
+#   GeoTag:
+#     build:
+#       targets:
+#         GeoTag: all
+#     run:
+#       config: Debug
+#       # environmentVariables:
+#       #   VARIABLE: VALUE
+#     test:
+#       config: Debug
+#       gatherCoverageData: YES
+#       # environmentVariables:
+#       #   VARIABLE: VALUE
+#     profile:
+#       config: Release
+#     analyze:
+#       config: Debug
+#     archive:
+#       config: Release
+#       revealArchiveInOrganizer: YES
 
 packages:
   AdjustTimeZoneView:
