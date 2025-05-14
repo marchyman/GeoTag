@@ -1,0 +1,176 @@
+name: GeoTag
+
+settings:
+  base:
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    CODE_SIGN_IDENTITY: Apple Development
+    CODE_SIGN_STYLE: Automatic
+    DEAD_CODE_STRIPPING: YES
+    DEVELOPMENT_TEAM: A3UXBEBE8Z
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    PRODUCT_NAME: GeoTag
+    SWIFT_EMIT_LOC_STRINGS: YES
+    SWIFT_STRICT_CONCURRENCY: YES
+    SWIFT_VERSION: 6.1
+    # the following are replaced in the target Info.plists by a post
+    # build script. They are needed (?) to build the plist that the
+    # script then modifies.
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 1.0
+  configs:
+    debug:
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG $(inherited)
+    release:
+      VALIDATE_PRODUCT:  YES
+
+targets:
+  GeoTag:
+    type: application
+    platform: macOS
+    deploymentTarget: 14.0
+    dependencies:
+      - package: AdjustTimeZoneView
+      - package: GpxTrackLog
+      - package: MapAndSearchViews
+      - package: RunLogView
+      - package: SplitHView
+      - package: SplitVView
+    sources:
+      - GeoTag
+      - path: ExifTool
+        type: folder
+    entitlements:
+      path: GeoTag/GeoTag.entitlements
+      properties:
+        com.apple.security.app-sandbox: YES
+        com.apple.security.files.user-selected.read-write: YES
+        com.apple.security.personal-information.photos-library: YES
+    info:
+      path: GeoTag/Info.plist
+      properties:
+        CFBundleDisplayName: $(TARGET_NAME)
+        LSApplicationCategoryType: public.app-category.photography
+        NSHumanReadableCopyright: Copyright 2022-2025 Marco S Hyman
+        ITSAppUsesNonExemptEncryption: NO
+        NSPhotoLibraryUsageDescription: Update Photo Timestamps and Location Coordinates
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Image Files
+            CFBundleTypeRole: Editor
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.avci
+              - public.heic
+              - public.heif
+              - public.jpeg
+              - public.jpeg-2000
+              - public.mpo-image
+              - public.pbm
+              - public.png
+              - public.pvr
+              - public.radiance
+              - public.tiff
+              - com.adobe.photoshop-image
+              - com.adobe.raw-image
+              - com.apple.atx
+              - com.apple.icns
+              - com.canon.cr2-raw-image
+              - com.canon.crw-raw-image
+              - com.canon.tif-raw-image
+              - com.dxo.raw-image
+              - com.epson.raw-image
+              - com.fuji.raw-image
+              - com.hasselblad.3fr-raw-image
+              - com.hasselblad.fff-raw-image
+              - com.ilm.openexr-image
+              - com.kodak.raw-image
+              - com.konicaminolta.raw-image
+              - com.leafamerica.raw-image
+              - com.leica.raw-image
+              - com.leica.rwl-raw-image
+              - com.microsoft.bmp
+              - com.microsoft.cur
+              - com.microsoft.ico
+              - com.nikon.nrw-raw-image
+              - com.nikon.raw-image
+              - com.olympus.or-raw-image
+              - com.olympus.raw-image
+              - com.olympus.sr-raw-image
+              - com.panasonic.raw-image
+              - com.panasonic.rw2-raw-image
+              - com.pentax.raw-image
+              - com.phaseone.raw-image
+              - com.samsung.raw-image
+              - com.sgi.sgi-image
+              - com.sony.arw-raw-image
+              - com.sony.raw-image
+              - com.sony.sr2-raw-image
+              - com.truevision.tga-image
+              - comp.compuserve.gif
+              - org.khronos.astc
+              - org.khronos.ktx
+          - CFBundleTypeName: GPX files
+            CFBundleTypeRole: Editor
+            LSHandlerRank: Alternate
+            CFBundleTypeExtensions:
+              - gpx
+          - CFBundleTypeName: Sidecar files
+            CFBundleTypeRole: Editor
+            LSHandlerRank: none
+            NSIsRelatedItemType: YES
+            CFBundleTypeExtensions:
+              - xmp
+
+    settings:
+      base:
+        ENABLE_PREVIEWS: YES
+        GENERATE_INFOPLIST_FILE: NO
+        PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTag
+    postBuildScripts:
+      - path: .buildversion.sh
+        name: Build Version
+        showEnvVars: NO
+        basedOnDependencyAnalysis: NO
+      - path: .swiftlint.sh
+        name: Swift Lint
+        showEnvVars: NO
+        basedOnDependencyAnalysis: NO
+
+  GeoTagUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    deploymentTarget: 14.0
+    dependencies:
+      - target: GeoTag
+    sources:
+      - GeoTagUITests
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      TEST_TARGET_NAME: GeoTag
+      PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagUITests
+
+schemes:
+  GeoTag:
+    build:
+      targets:
+        GeoTag: all
+  GeoTagUITests:
+    build:
+      targets:
+        GeoTagUITests: all
+
+packages:
+  AdjustTimeZoneView:
+    path: AdjustTimeZoneView
+  GpxTrackLog:
+    path: GpxTrackLog
+  MapAndSearchViews:
+    path: MapAndSearchViews
+  RunLogView:
+    path: RunLogView
+  SplitHView:
+    path: SplitHView
+  SplitVView:
+    path: SplitVView
+
