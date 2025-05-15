@@ -51,7 +51,8 @@ final class GeoTagUI06Save: XCTestCase {
 
     // save tests.  This test modifies items in the source tree.  There
     // should be no changes pending allowing a git reset --hard to reset
-    // the source tree after testing.
+    // the source tree after testing. If using jj the command
+    // `jj restore SaveData` will restore the modified files.
 
     // swiftlint: disable large_tuple
     let results: [(String, String, String, String)] = [
