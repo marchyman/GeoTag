@@ -113,7 +113,9 @@ a pop up menu by right clicking on an entry in the list.
 ### Build Instructions for developers
 
 * Get current sources from github -- https://github.com/marchyman/GeoTag
-* Open the project in Xcode
+* GeoTag uses a project.yml file and [xcodegen](https://github.com/yonaskolb/XcodeGen)
+  to generate the GeoTag.xcodeproj bundle. Install and run `xcodegen`.
+* Open the generated project in Xcode
 * ⌘R will build and run, ⌘B to build only
 
 Send all comments, bugs, requests, etc. to <marc@snafu.org>
