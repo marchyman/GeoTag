@@ -147,10 +147,9 @@ targets:
       - GeoTagTests
     settings:
       GENERATE_INFOPLIST_FILE: YES
-      CODE_SIGN_IDENTITY: "-"
-      CODE_SIGN_STYLE: Manual
       PRODUCT_NAME: $(TARGET_NAME)
       PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagTests
+    schemes: none
 
   GeoTagUITests:
     type: bundle.ui-testing
@@ -162,32 +161,37 @@ targets:
       - GeoTagUITests
     settings:
       GENERATE_INFOPLIST_FILE: YES
-      CODE_SIGN_IDENTITY: "-"
-      CODE_SIGN_STYLE: Manual
       PRODUCT_NAME: $(TARGET_NAME)
       PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagUITests
+    schemes: none
 
-# schemes:
-#   GeoTag:
-#     build:
-#       targets:
-#         GeoTag: all
-#     run:
-#       config: Debug
-#       # environmentVariables:
-#       #   VARIABLE: VALUE
-#     test:
-#       config: Debug
-#       gatherCoverageData: YES
-#       # environmentVariables:
-#       #   VARIABLE: VALUE
-#     profile:
-#       config: Release
-#     analyze:
-#       config: Debug
-#     archive:
-#       config: Release
-#       revealArchiveInOrganizer: YES
+schemes:
+  GeoTag:
+    build:
+      targets:
+        GeoTag: all
+    run:
+      config: Debug
+      # environmentVariables:
+      #   VARIABLE: VALUE
+    test:
+      config: Debug
+      gatherCoverageData: YES
+      targets:
+        - name: GeoTagTests
+        - name: GeoTagUITests
+      environmentVariables:
+        ImagePath: $(SRCROOT)/TestData
+        SavePath: $(SRCROOT)/SaveData
+        BackupPath: $(SRCROOT)/SaveBackup
+        gpxPath: $(SRCROOT)/TestData
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: YES
 
 packages:
   AdjustTimeZoneView:
