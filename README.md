@@ -23,6 +23,14 @@ Sonoma. If you see a pin placed above the point you clicked/tapped you are
 seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 14.4.1). It is not a problem in the latest versions of Sonoma or in Sequoia.
 
+## WIP
+
+### Updates
+
+- Allow a larger Name column in the table. If the file name does not fit
+  in the given space truncate characters in the middle of the name instead
+  of the end allowing the file extension to be seen.
+
 ## GeoTag 5.5
 
 ### Updates

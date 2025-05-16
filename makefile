@@ -15,7 +15,6 @@ proj:
 	xcodegen
 
 # remove files created during the build process
-# do **not** use the -d option to git clean as it will blow away .jj files
+# do **not** use the -d option to git clean without excluding .jj
 clean:
-	git clean -fx
-	rm -rf Build DerivedData $(PROJECT).xcodeproj Index.noindex
+	git clean -dfx -e .jj

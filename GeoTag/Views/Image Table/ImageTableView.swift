@@ -18,7 +18,7 @@ struct ImageTableView: View {
 
     // table view column width limits
     let nameMinWidth = 100.0
-    let nameMaxWidth = 200.0
+    let nameMaxWidth = 300.0
     let timestampMinWidth = 130.0
     let timestampMaxWidth = 150.0
     let coordMinWidth = 120.0
@@ -123,6 +123,7 @@ struct NameView: View {
                     ? .mostSelected
                     : image.isValid ? .primary : .secondary
             )
+            .truncationMode(.middle)
             .help("Full path: \(image.fileURL.path())")
     }
 }
