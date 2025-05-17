@@ -208,6 +208,9 @@ extension String {
             if let val = Double(digits) {
                 // verify the number of degrees/min/sec is in the allowed range
                 if index == 0 {
+                    if invert && val < 0 {
+                        throw CoordFormatError.formatError("Negative coordinate with reference")
+                    }
                     if !range.contains(Int(val).magnitude) {
                         throw CoordFormatError.formatError("Value out of range")
                     }
@@ -221,6 +224,9 @@ extension String {
             index += 1
         }
         var coordinate = dms[0] + (dms[1] / 60) + (dms[2] / 60 / 60)
+        if coordinate > Double(range.upperBound) {
+            throw CoordFormatError.formatError("Value out of range")
+        }
         if invert {
             coordinate = -coordinate
         }
