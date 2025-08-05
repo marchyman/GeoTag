@@ -31,6 +31,11 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   in the given space truncate characters in the middle of the name instead
   of the end allowing the file extension to be seen.
 
+- Add a View menu option to select an alternate layout where the image
+  is below the table in the left pane instead of avbove the map in the
+  right pane. Current layout and pane divider locations are saved across
+  program execution.
+
 ## GeoTag 5.5
 
 ### Updates
