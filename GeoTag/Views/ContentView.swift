@@ -5,6 +5,7 @@
 //
 
 import SplitHView
+import SplitVView
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -15,23 +16,45 @@ struct ContentView: View {
     @Environment(AppState.self) var state
     @Environment(\.openWindow) var openWindow
 
+    @AppStorage(AppSettings.alternateLayoutKey) var alternateLayout = false
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
-    @AppStorage(AppSettings.splitHContentKey) var hPercent = 0.45
+    @AppStorage(AppSettings.splitHNormalKey) var hNormal = 0.45
+    @AppStorage(AppSettings.splitHAlternateKey) var hAlternate = 0.55
+    @AppStorage(AppSettings.splitVNormalKey) var vNormal = 0.60
+    @AppStorage(AppSettings.splitVAlternateKey) var vAlternate = 0.40
 
     @State private var removeOldFiles = false
 
     var body: some View {
         @Bindable var state = state
-        SplitHView(percent: $hPercent) {
-            ImageTableView(tvm: state.tvm)
-                .overlay {
-                    if state.applicationBusy {
-                        ProgressView("Processing files...")
+        SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
+            Group {
+                if alternateLayout {
+                    SplitVView(percent: $vAlternate) {
+                        ImageTableView(tvm: state.tvm)
+                    } bottom: {
+                        ImageView()
                     }
+                } else {
+                    ImageTableView(tvm: state.tvm)
                 }
+            }
+            .overlay {
+                if state.applicationBusy {
+                    ProgressView("Processing files...")
+                }
+            }
         } right: {
-            ImageMapView()
+            if alternateLayout {
+                MapView()
+            } else {
+                SplitVView(percent: $vNormal) {
+                    ImageView()
+                } bottom: {
+                    MapView()
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)

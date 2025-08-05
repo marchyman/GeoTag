@@ -27,6 +27,15 @@ struct ToolbarCommands: Commands {
                 .keyboardShortcut("d")
 
                 PinOptionView(masData: state.masData)
+
+                Button {
+                    @AppStorage(AppSettings.alternateLayoutKey)
+                    var alternateLayout = false
+
+                    alternateLayout.toggle()
+                } label: {
+                    AlternateLayoutOptionView()
+                }
             }
 
         }
@@ -50,5 +59,13 @@ struct PinOptionView: View {
             Text("Show pin for most selected item").tag(false)
         }
         .pickerStyle(.menu)
+    }
+}
+
+struct AlternateLayoutOptionView: View {
+    @AppStorage(AppSettings.alternateLayoutKey) var alternateLayout = false
+
+    var body: some View {
+        Text("\(alternateLayout ? "Normal" : "Alternate") Layout")
     }
 }
