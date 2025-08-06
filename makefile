@@ -17,6 +17,9 @@ proj:
 test:
 	xcodebuild -scheme GeoTag test | tee /tmp/GeoTag-test.log
 
+testGpxTrackLog:
+	xcodebuild -scheme GpxTrackLog test | tee /tmp/GpxTrackLog-test.log
+
 # remove files created during the build process
 # do **not** use the -d option to git clean without excluding .jj
 clean:
