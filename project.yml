@@ -194,7 +194,6 @@ schemes:
         ImagePath: $(SRCROOT)/TestData
         SavePath: $(SRCROOT)/SaveData
         BackupPath: $(SRCROOT)/SaveBackup
-        GpxPath: $(SRCROOT)/TestData
     profile:
       config: Release
     analyze:

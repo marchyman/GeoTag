@@ -11,6 +11,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "GpxTrackLog"),
-        .testTarget(name: "GpxTrackLogTests", dependencies: ["GpxTrackLog"])
+        .testTarget(name: "GpxTrackLogTests",
+                    dependencies: ["GpxTrackLog"],
+                    resources: [.copy("BadTrack.GPX"),
+                                .copy("NoTrack.GPX"),
+                                .copy("TestTrack.GPX")])
     ]
 )
