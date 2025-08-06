@@ -14,6 +14,9 @@ $(PROJECT).xcodeproj/project.pbxproj:	project.yml
 proj:
 	xcodegen
 
+test:
+	xcodebuild -scheme GeoTag test | tee /tmp/GeoTag-test.log
+
 # remove files created during the build process
 # do **not** use the -d option to git clean without excluding .jj
 clean:
