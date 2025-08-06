@@ -33,11 +33,15 @@ struct ContentView: View {
                 if alternateLayout {
                     SplitVView(percent: $vAlternate) {
                         ImageTableView(tvm: state.tvm)
+                            .accessibilityIdentifier("alternateTable")
                     } bottom: {
                         ImageView()
+                            .accessibilityIdentifier("alternateImage")
+
                     }
                 } else {
                     ImageTableView(tvm: state.tvm)
+                        .accessibilityIdentifier("normalTable")
                 }
             }
             .overlay {
@@ -48,11 +52,14 @@ struct ContentView: View {
         } right: {
             if alternateLayout {
                 MapView()
+                    .accessibilityIdentifier("alternateMap")
             } else {
                 SplitVView(percent: $vNormal) {
                     ImageView()
+                        .accessibilityIdentifier("normalImage")
                 } bottom: {
                     MapView()
+                        .accessibilityIdentifier("normalMap")
                 }
             }
         }
