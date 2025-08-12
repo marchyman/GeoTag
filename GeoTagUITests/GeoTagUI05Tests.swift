@@ -155,7 +155,7 @@ final class GeoTagUI05Tests: XCTestCase {
         app.sheets.buttons.firstMatch.click()
 
         // Check context menu when right clicking on table
-        let table = app.outlines.firstMatch
+        let table = app.outlines["normalTable"]
         table.rightClick()
         let menu = app.windows.firstMatch
             .groups.firstMatch
