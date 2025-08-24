@@ -2,7 +2,6 @@ PROJECT = GeoTag
 
 buildServer.json:	Build
 	xcode-build-server config -scheme "$(PROJECT)" -project $(PROJECT).xcodeproj
-	sed -i '~' "/\"build_root\"/s/: \"\(.*\)\"/: \"\1\/DerivedData\/$(PROJECT)\"/" buildServer.json
 
 Build:	$(PROJECT).xcodeproj/project.pbxproj
 	xcodebuild -scheme $(PROJECT)
@@ -15,13 +14,13 @@ proj:
 	xcodegen
 
 test:
-	xcodebuild -scheme GeoTag test | tee /tmp/GeoTag-test.log
+	xcodebuild -scheme GeoTag test | tee .test.out | xcbeautify
 
 testGpxTrackLog:
-	xcodebuild -scheme GpxTrackLog test | tee /tmp/GpxTrackLog-test.log
+	xcodebuild -scheme GpxTrackLog test | tee .test.out | xcbeautify
 
 # remove files created during the build process
 # do **not** use the -d option to git clean without excluding .jj
 clean:
 	jj status
-	git clean -dfx -e .jj
+	git clean -dfx -e .jj -e notes
