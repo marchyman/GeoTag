@@ -43,6 +43,8 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 - The delay between cliking on the map and appearance of a pin is gone.
 
+- Display the tool-tip for the "Extend track timestamps" setting.
+
 
 ### Known issues
 
