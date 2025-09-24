@@ -38,6 +38,29 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 - Changes needed for macOS 26.
 
+
+### Bug Fixes
+
+- The delay between cliking on the map and appearance of a pin is gone.
+
+
+### Known issues
+
+- undo/redo menu items are always enabled, even when there are no undo or
+  redo actions that could be performed. The menu titles are also not updated
+  for the action to be performed.
+- When showing pins for all selected locations the red (most selected) pin
+  may be hidden by the pin of another location near by unless the zoom level
+  is such that both locations are slightly separated on the map.
+- when changing the selection to an image that has a location some of the pin
+  may off the map view.  In an extreme case only the point of the pin is on
+  the map and can not be seen. If you do not see a pin when you expect to
+  zoom out slightly.
+- Double clicking to zoom in or option-double clicking to zoom out will
+  move the pins of selected items. Deselect all items or use a different
+  zoom method to workaround this issue.
+- paste sometimes not enabled after cut. Can not reproduce on demand.
+
 ## GeoTag 5.5
 
 ### Updates
@@ -55,26 +78,7 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 - (5.5.3) Fix state not updating in HEIC files.
 - undo/redo is again working
-- GeoTag  GPX file waypoint parsing bug fix from bhostetler18
-
-### Known issues
-
-- undo/redo menu items are always enabled, even when there are no undo or
-  redo actions that could be performed. The menu titles are also not updated
-  for the action to be performed.
-- There is a short delay between clicking on the map and a map pin being
-  placed.
-- When showing pins for all selected locations the red (most selected) pin
-  may be hidden by the pin of another location near by unless the zoom level
-  is such that both locations are slightly separated on the map.
-- when changing the selection to an image that has a location some of the pin
-  may off the map view.  In an extreme case only the point of the pin is on
-  the map and can not be seen. If you do not see a pin when you expect to
-  zoom out slightly.
-- Double clicking to zoom in or option-double clicking to zoom out will
-  move the pin of any selected items. Deselect all items or use a different
-  zoom method.
-- paste sometimes not enabled after cut. Can not reproduce on demand.
+- GeoTag GPX file waypoint parsing bug fix from bhostetler18
 
 ### See the file named *History* for earlier changes and bug fixes
 
