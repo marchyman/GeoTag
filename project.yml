@@ -134,6 +134,7 @@ targets:
 
     settings:
       base:
+        ENABLE_HARDENED_RUNTIME: YES
         ENABLE_PREVIEWS: YES
         GENERATE_INFOPLIST_FILE: NO
         PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTag
