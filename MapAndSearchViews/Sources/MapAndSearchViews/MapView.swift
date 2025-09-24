@@ -66,18 +66,12 @@ struct MapView: View {
                     camera: camera,
                     mapStyleName: $mapStyleName)
             }
-            .gesture(zoomOut)
-            .onTapGesture(count: 2) { position in
-                if let coords = mapProxy.convert(position, from: .local) {
-                    zoom(around: coords)
-                }
-            }
-            .onTapGesture { position in
+            .simultaneousGesture(SpatialTapGesture().onEnded { position in
                 mapFocus.wrappedValue = nil  // get rid of any search views
-                if let loc = mapProxy.convert(position, from: .local) {
+                if let loc = mapProxy.convert(position.location, from: .local) {
                     updatePins(loc)
                 }
-            }
+            })
             .onMapCameraChange(frequency: .onEnd) { context in
                 camera = context.camera
                 if let distance = camera?.distance {
@@ -116,37 +110,6 @@ struct MapView: View {
                             centerCoordinate: center,
                             distance: masData.cameraDistance))
                 mapStyleName = .init(rawValue: masData.savedMapStyle) ?? .standard
-            }
-        }
-    }
-}
-
-// Zoom
-
-extension MapView {
-
-    // Zoom in or out by a factor of two
-    private func zoom(around coords: CLLocationCoordinate2D, out: Bool = false) {
-        if let camera {
-            let distance =
-                out
-                ? camera.distance * 2
-                : camera.distance / 2
-            withAnimation(.easeInOut) {
-                masData.cameraPosition =
-                    .camera(
-                        .init(
-                            centerCoordinate: coords,
-                            distance: distance))
-            }
-        }
-    }
-
-    // option-double click gesture zooms out
-    var zoomOut: some Gesture {
-        TapGesture(count: 2).modifiers(.option).onEnded {
-            if let camera {
-                zoom(around: camera.centerCoordinate, out: true)
             }
         }
     }

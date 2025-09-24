@@ -36,6 +36,8 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   right pane. Current layout and pane divider locations are saved across
   program execution.
 
+- Changes needed for macOS 26.
+
 ## GeoTag 5.5
 
 ### Updates
@@ -69,6 +71,9 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   may off the map view.  In an extreme case only the point of the pin is on
   the map and can not be seen. If you do not see a pin when you expect to
   zoom out slightly.
+- Double clicking to zoom in or option-double clicking to zoom out will
+  move the pin of any selected items. Deselect all items or use a different
+  zoom method.
 - paste sometimes not enabled after cut. Can not reproduce on demand.
 
 ### See the file named *History* for earlier changes and bug fixes
