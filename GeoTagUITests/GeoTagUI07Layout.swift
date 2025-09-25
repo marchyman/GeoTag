@@ -170,7 +170,6 @@ final class GeoTagUI07Layout: XCTestCase {
             .groups.firstMatch
             .menus.firstMatch
         XCTAssert(menu.waitForExistence(timeout: 1))
-        print(menu.debugDescription)
         XCTAssert(menu.menuItems["Edit…"].exists)
         XCTAssert(menu.menuItems["Cut"].exists)
         XCTAssert(menu.menuItems["Copy"].exists)

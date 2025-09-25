@@ -95,7 +95,6 @@ final class GeoTagUI04MapTests: XCTestCase {
         let firstResult = searchResults.staticTexts.firstMatch
         let firstResultString = firstResult.value as? String
         XCTAssert(firstResultString != nil)
-        print(firstResultString!)
         firstResult.click()
 
         let loc = app.windows.firstMatch
@@ -161,7 +160,6 @@ final class GeoTagUI04MapTests: XCTestCase {
         XCTAssert(oldLocValue != newLocValue)
 
         XCTAssert(!searchResults.exists)
-        print(searchResults.debugDescription)
 
         // start a search and cancel with escape key
         searchText.click()
