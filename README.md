@@ -23,7 +23,7 @@ Sonoma. If you see a pin placed above the point you clicked/tapped you are
 seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 14.4.1). It is not a problem in the latest versions of Sonoma or in Sequoia.
 
-## WIP
+## GeoTag 5.6 (coming soon, still testing)
 
 ### Updates
 
@@ -77,27 +77,6 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   Mac running macOS Sequoia 15.7. Suggest using other methods of
   zooming the map.
 - paste sometimes not enabled after cut. Can not reproduce on demand.
-
-## GeoTag 5.5
-
-### Updates
-
-- Make the number of minutes used to match images around track log endpoints 
-  a program setting that can be changed by the user. The setting used to be
-  fixed at 6 hours. The new default is 120 minutes.
-
-- Update City, State, Country, and Country Code metadata whenever an image
-  location is changed.
-
-- exiftool version 13.25
-
-### Bug Fixes
-
-- (5.5.3) Fix state not updating in HEIC files.
-- undo/redo is again working
-- GeoTag GPX file waypoint parsing bug fix from bhostetler18
-
-### See the file named *History* for earlier changes and bug fixes
 
 ---
 
