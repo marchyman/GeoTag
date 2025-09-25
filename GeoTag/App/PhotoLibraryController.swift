@@ -44,9 +44,11 @@ extension PhotoLibrary {
 
 // Request authorization to access users photo library
 extension PhotoLibrary {
-    func requestAuth() {
+    func requestAuth(authStatusUpdated: @Sendable @escaping () -> Void) {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             self.enabled = status == .authorized
+            Self.logger.warning("Photo Library authorization: \(status.rawValue, privacy: .public)")
+            authStatusUpdated()
         }
     }
 }

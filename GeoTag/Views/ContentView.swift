@@ -92,6 +92,8 @@ struct ContentView: View {
         }
         .areYouSure()  // confirmations
         .removeBackupsAlert()  // Alert: Remove Old Backup files
+        .photoLibraryEnabledAlert()
+        .photoLibraryDisabledAlert()
         .inspector(isPresented: $state.inspectorPresented) {
             ImageInspectorView()
                 .inspectorColumnWidth(min: 300, ideal: 400, max: 500)

@@ -55,6 +55,10 @@ final class AppState {
     @ObservationIgnored
     var confirmationAction: (@MainActor () -> Void)?
 
+    // PhotoLibrary access presentation flags
+    var libraryEnabledMessage = false
+    var libraryDisabledMessage = false
+
     var removeOldFiles = false
     var changeTimeZoneWindow = false
     var showLogWindow = false
