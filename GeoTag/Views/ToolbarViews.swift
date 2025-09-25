@@ -27,7 +27,15 @@ struct PhotoPickerView: View {
                 .keyboardShortcut("i", modifiers: [.shift, .command])
             } else {
                 Button {
-                    photoLibrary.requestAuth()
+                    photoLibrary.requestAuth {
+                        Task { @MainActor in
+                            if photoLibrary.enabled {
+                                state.libraryEnabledMessage = true
+                            } else {
+                                state.libraryDisabledMessage = true
+                            }
+                        }
+                    }
                 } label: {
                     Label("Photo Library", systemImage: "photo")
                         .imageScale(.large)

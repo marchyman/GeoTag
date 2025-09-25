@@ -12,11 +12,13 @@ import SwiftUI
 
 struct WindowAccessor: NSViewRepresentable {
     @Binding var window: NSWindow?
+    var delegate: AppDelegate
 
     func makeNSView(context: Context) -> NSView {
         let view = NSView()
         Task { @MainActor in
             self.window = view.window
+            self.window?.delegate = delegate
         }
         return view
     }

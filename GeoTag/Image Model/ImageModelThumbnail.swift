@@ -48,23 +48,14 @@ extension ImageModel {
                 let imgHeight = CGFloat(imgPreview.height)
                 let imgWidth = CGFloat(imgPreview.width)
                 if imgOpts[ImageModel.createThumbnailFromImageAlways] == nil
-                    && imgHeight < maxDimension && imgWidth < maxDimension
-                {
+                    && imgHeight < maxDimension && imgWidth < maxDimension {
                     // thumbnail too small.   Build a larger thumbnail
                     imgOpts[ImageModel.createThumbnailFromImageIfAbsent] = nil
                     imgOpts[ImageModel.createThumbnailFromImageAlways] =
                         kCFBooleanTrue
                     continue
                 }
-                let imgRect = NSRect(
-                    x: 0.0, y: 0.0, width: imgWidth, height: imgHeight)
-                image = NSImage(size: imgRect.size)
-                image.lockFocus()
-                if let currentContext = NSGraphicsContext.current {
-                    let context = currentContext.cgContext
-                    context.draw(imgPreview, in: imgRect)
-                }
-                image.unlockFocus()
+                image = NSImage(cgImage: imgPreview, size: .zero)
             }
             checkSize = false
         } while checkSize

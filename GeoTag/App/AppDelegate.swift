@@ -9,7 +9,7 @@ import AppKit
 // open with..., unsaved changes upon termination, and other checks
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var state: AppState?
 
     // things that can not (yet?) be done in SwiftUI (or can be done but
@@ -88,5 +88,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 try? fileManager.removeItem(at: docDir)
             }
         }
+    }
+
+    // the only window delegate function GeoTag cares about
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        if let state {
+            if state.saveInProgress {
+                state.addSheet(type: .savingUpdatesSheet)
+                return false
+            }
+
+            if state.isDocumentEdited
+                && state.tvm.images.contains(where: { $0.changed })
+            {
+                state.confirmationMessage = """
+                    If you close the main GeoTag window before saving changes \
+                    the app will quit and pending changes will be lost. \
+                    Are you sure you want to close the window?
+                    """
+                state.confirmationAction = terminateIgnoringEdits
+                state.presentConfirmation = true
+                return false
+            }
+        }
+        return true
     }
 }

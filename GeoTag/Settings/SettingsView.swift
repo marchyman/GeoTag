@@ -131,7 +131,8 @@ struct SettingsView: View {
                         .labelsHidden()
                         .padding(.bottom)
                         .frame(maxWidth: 50)
-                        .help(
+                    }
+                    .help(
                         """
                         When matching image timestamps to a GPS track log \
                         GeoTag will assign locations to images taken this many \
@@ -140,7 +141,6 @@ struct SettingsView: View {
                         value to zero to disable assigning locations to images \
                         that are outside the range of the track log.
                         """)
-                    }
                 }
 
                 LabeledContent("Disable paired jpegs:") {

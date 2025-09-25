@@ -16,6 +16,7 @@ enum AppSettings {
         case degMinSec
     }
 
+    static let alternateLayoutKey = "AlternateLayout"
     static let addTagsKey = "AddTags"
     static let coordFormatKey = "CoordFormat"
     static let createSidecarFilesKey = "CreateSidecarsFile"
@@ -26,8 +27,10 @@ enum AppSettings {
     static let hideInvalidImagesKey = "HideInvalidImages"
     static let imageTableConfigKey = "ImageTableConfig"
     static let savedBookmarkKey = "SavedBookmark"
-    static let splitHContentKey = "SplitHContentPercent"
-    static let splitVImageMapKey = "SplitVImageMapPercent"
+    static let splitHNormalKey = "SplitHNormalPercent"
+    static let splitHAlternateKey = "SplitHAlternatePercent"
+    static let splitVNormalKey = "SplitVNormalPercent"
+    static let splitVAlternateKey = "SplitVAlternatePercent"
     static let updateFileModificationTimesKey = "UpdateFileModificationTimes"
     static let updateGPSTimestampsKey = "UpdateGPSTimestamps"
 

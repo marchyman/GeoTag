@@ -5,6 +5,7 @@
 //
 
 import SplitHView
+import SplitVView
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -15,30 +16,61 @@ struct ContentView: View {
     @Environment(AppState.self) var state
     @Environment(\.openWindow) var openWindow
 
+    @AppStorage(AppSettings.alternateLayoutKey) var alternateLayout = false
     @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
-    @AppStorage(AppSettings.splitHContentKey) var hPercent = 0.45
+    @AppStorage(AppSettings.splitHNormalKey) var hNormal = 0.45
+    @AppStorage(AppSettings.splitHAlternateKey) var hAlternate = 0.55
+    @AppStorage(AppSettings.splitVNormalKey) var vNormal = 0.60
+    @AppStorage(AppSettings.splitVAlternateKey) var vAlternate = 0.40
 
     @State private var removeOldFiles = false
 
     var body: some View {
         @Bindable var state = state
-        SplitHView(percent: $hPercent) {
-            ImageTableView(tvm: state.tvm)
-                .overlay {
-                    if state.applicationBusy {
-                        ProgressView("Processing files...")
+        SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
+            Group {
+                if alternateLayout {
+                    SplitVView(percent: $vAlternate) {
+                        ImageTableView(tvm: state.tvm)
+                            .accessibilityIdentifier("alternateTable")
+                    } bottom: {
+                        ImageView()
+                            .accessibilityIdentifier("alternateImage")
+
                     }
+                } else {
+                    ImageTableView(tvm: state.tvm)
+                        .accessibilityIdentifier("normalTable")
                 }
+            }
+            .overlay {
+                if state.applicationBusy {
+                    ProgressView("Processing files...")
+                }
+            }
         } right: {
-            ImageMapView()
+            if alternateLayout {
+                MapView()
+                    .accessibilityIdentifier("alternateMap")
+            } else {
+                SplitVView(percent: $vNormal) {
+                    ImageView()
+                        .accessibilityIdentifier("normalImage")
+                } bottom: {
+                    MapView()
+                        .accessibilityIdentifier("normalMap")
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
         .onAppear {
-            // check for a backupURL
-            if !doNotBackup && savedBookmark == Data() {
+            // check for a backupURL. Once when this window appears.
+            if !state.initialBackupURLCheck
+                    && !doNotBackup && savedBookmark == Data() {
+                state.initialBackupURLCheck = true
                 state.addSheet(type: .noBackupFolderSheet)
             }
         }
@@ -60,6 +92,8 @@ struct ContentView: View {
         }
         .areYouSure()  // confirmations
         .removeBackupsAlert()  // Alert: Remove Old Backup files
+        .photoLibraryEnabledAlert()
+        .photoLibraryDisabledAlert()
         .inspector(isPresented: $state.inspectorPresented) {
             ImageInspectorView()
                 .inspectorColumnWidth(min: 300, ideal: 400, max: 500)

@@ -55,6 +55,10 @@ final class AppState {
     @ObservationIgnored
     var confirmationAction: (@MainActor () -> Void)?
 
+    // PhotoLibrary access presentation flags
+    var libraryEnabledMessage = false
+    var libraryDisabledMessage = false
+
     var removeOldFiles = false
     var changeTimeZoneWindow = false
     var showLogWindow = false
@@ -98,6 +102,8 @@ final class AppState {
             }
         }
     }
+    @ObservationIgnored
+    var initialBackupURLCheck = false
 
     // URLs obtained from the open panel are security scoped.  Keep track of
     // them so we can  run stopSecurityScopedResource() when the files/folders

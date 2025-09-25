@@ -66,16 +66,17 @@ struct MapView: View {
                     camera: camera,
                     mapStyleName: $mapStyleName)
             }
+            .simultaneousGesture(SpatialTapGesture().onEnded { position in
+                mapFocus.wrappedValue = nil  // get rid of any search views
+                if let loc = mapProxy.convert(position.location, from: .local) {
+                    updatePins(loc)
+                }
+            })
+            // needed for macOS 16 and earlier
             .gesture(zoomOut)
             .onTapGesture(count: 2) { position in
                 if let coords = mapProxy.convert(position, from: .local) {
                     zoom(around: coords)
-                }
-            }
-            .onTapGesture { position in
-                mapFocus.wrappedValue = nil  // get rid of any search views
-                if let loc = mapProxy.convert(position, from: .local) {
-                    updatePins(loc)
                 }
             }
             .onMapCameraChange(frequency: .onEnd) { context in
@@ -121,7 +122,8 @@ struct MapView: View {
     }
 }
 
-// Zoom
+// Zoom in/out on double click/opt-double click for  macOS versions
+// prior to 26
 
 extension MapView {
 

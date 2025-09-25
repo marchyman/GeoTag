@@ -31,6 +31,53 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   in the given space truncate characters in the middle of the name instead
   of the end allowing the file extension to be seen.
 
+- Add a View menu option to select an alternate layout where the image
+  is below the table in the left pane instead of avbove the map in the
+  right pane. Current layout and pane divider locations are saved across
+  program execution.
+
+- Alert the user when access to the Photos Library is denied.
+
+- Changes needed for macOS 26.
+
+- ExifTool 13.37
+
+
+### Bug Fixes
+
+- The delay between cliking on the map and appearance of a pin is better.
+
+- Display the tool-tip for the "Extend track timestamps" setting.
+
+- Closing the window with changes pending and no backup folder selected
+  now quits the app instead of again reminding you that no backup folder
+  is selected.
+
+- Closing a window with pending changes does not close the window until
+  the user has a chance to answer the "do you really mean it?" message.
+  The app was closing the window then immediately re-opening it to
+  display the message.
+
+### Known issues
+
+- undo/redo menu items are always enabled, even when there are no undo or
+  redo actions that could be performed. The menu titles are also not updated
+  for the action to be performed.
+- When showing pins for all selected locations the red (most selected) pin
+  may be hidden by the pin of another location near by unless the zoom level
+  is such that both locations are slightly separated on the map.
+- when changing the selection to an image that has a location some of the pin
+  may off the map view.  In an extreme case only the point of the pin is on
+  the map and can not be seen. If you do not see a pin when you expect to
+  zoom out slightly.
+- Double clicking to zoom in or option-double clicking to zoom out will
+  move the pins of selected items. Deselect all items or use a different
+  zoom method to workaround this issue.
+- Double click to zoom in/out was hit or miss when tested on an intel
+  Mac running macOS Sequoia 15.7. Suggest using other methods of
+  zooming the map.
+- paste sometimes not enabled after cut. Can not reproduce on demand.
+
 ## GeoTag 5.5
 
 ### Updates
@@ -48,23 +95,7 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 - (5.5.3) Fix state not updating in HEIC files.
 - undo/redo is again working
-- GeoTag  GPX file waypoint parsing bug fix from bhostetler18
-
-### Known issues
-
-- undo/redo menu items are always enabled, even when there are no undo or
-  redo actions that could be performed. The menu titles are also not updated
-  for the action to be performed.
-- There is a short delay between clicking on the map and a map pin being
-  placed.
-- When showing pins for all selected locations the red (most selected) pin
-  may be hidden by the pin of another location near by unless the zoom level
-  is such that both locations are slightly separated on the map.
-- when changing the selection to an image that has a location some of the pin
-  may off the map view.  In an extreme case only the point of the pin is on
-  the map and can not be seen. If you do not see a pin when you expect to
-  zoom out slightly.
-- paste sometimes not enabled after cut. Can not reproduce on demand.
+- GeoTag GPX file waypoint parsing bug fix from bhostetler18
 
 ### See the file named *History* for earlier changes and bug fixes
 

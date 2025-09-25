@@ -37,7 +37,7 @@ actor ReverseLocationFinder {
 
     // Only 1 shared instance
 
-    static var shared: ReverseLocationFinder = .init()
+    static let shared: ReverseLocationFinder = .init()
     private init() {}
 
     func get(_ location: CLLocation) async throws -> CLPlacemark? {

@@ -1,7 +1,7 @@
 # GPX Track Log Processing
 
 This code was extracted from GeoTag and turned into a package for
-better program organications.  The package consists of two main functions,
+better program organization.  The package consists of two main functions,
 one function to parse GPX files for track logs and a second to search
 track logs for track points by timestamp.
 

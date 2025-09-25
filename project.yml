@@ -1,5 +1,12 @@
 name: GeoTag
 
+options:
+  fileTypes:
+    "icon":
+      file: true 
+  groupOrdering:
+    - order: [GeoTag, GeoTagTests, GeoTagUITests, Packages, Products]
+
 settings:
   base:
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
@@ -8,9 +15,12 @@ settings:
     CODE_SIGN_STYLE: Automatic
     DEAD_CODE_STRIPPING: YES
     DEVELOPMENT_TEAM: A3UXBEBE8Z
+    ENABLE_APP_SANDBOX: YES
+    ENABLE_OUTGOING_NETWORK_CONNECTIONS: YES;
     ENABLE_USER_SCRIPT_SANDBOXING: NO
     LOCALIZATION_PREFERS_STRING_CATALOGS: YES
     PRODUCT_NAME: GeoTag
+    STRING_CATALOG_GENERATE_SYMBOLS: YES
     SWIFT_EMIT_LOC_STRINGS: YES
     SWIFT_STRICT_CONCURRENCY: YES
     SWIFT_VERSION: 6.1
@@ -124,6 +134,7 @@ targets:
 
     settings:
       base:
+        ENABLE_HARDENED_RUNTIME: YES
         ENABLE_PREVIEWS: YES
         GENERATE_INFOPLIST_FILE: NO
         PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTag
@@ -184,7 +195,6 @@ schemes:
         ImagePath: $(SRCROOT)/TestData
         SavePath: $(SRCROOT)/SaveData
         BackupPath: $(SRCROOT)/SaveBackup
-        gpxPath: $(SRCROOT)/TestData
     profile:
       config: Release
     analyze:
