@@ -66,8 +66,8 @@ extension Exiftool {
 
     /// Use the embedded copy of exiftool to update the geolocation metadata
     /// in the file containing the passed image
-    /// - Parameter image: the image to update.  image contains the URL
-    ///     of the original file plus the assigned location.
+    /// - Parameter sandbox: the sandbox relative image to update. Contains the
+    ///                      URL of the original file plus the assigned location.
     /// - Parameter timeZone: time zone used to calculate the GPS timestamp
 
     func update(from sandbox: Sandbox, timeZone: TimeZone?) async throws {
@@ -193,7 +193,7 @@ extension Exiftool {
     }
 
     /// Check if exiftool supports writing to a type of file
-    /// - Parameter for: a URL of a file to check
+    /// - Parameter file: a URL of a file to check
     /// - Returns: true if exiftool can write to the file type of the URL
 
     func fileTypeIsWritable(for file: URL) -> Bool {

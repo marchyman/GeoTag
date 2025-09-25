@@ -53,7 +53,7 @@ extension AppState {
     /// 1) time machine is in use; and
     /// 2) the backup folder is being saved to time machine.
     ///
-    /// - Parameter _: The URL of the folder containing backups
+    /// - Parameter url: The URL of the folder containing backups
 
     func checkBackupFolder(_ url: URL?) {
         guard let url else { return }

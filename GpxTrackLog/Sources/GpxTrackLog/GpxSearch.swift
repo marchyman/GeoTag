@@ -14,7 +14,7 @@ extension GpxTrackLog {
     ///
     /// - Parameter imageTime:    the time from epoch of an image whose
     ///                           coords are desired
-    /// - Parameter extendTime:   number of minutes beyond the ends of
+    /// - Parameter extendedTime: number of minutes beyond the ends of
     ///                           track logs that can match an image timestamp.
     ///                           Default is 2 hours
     ///
