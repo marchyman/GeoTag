@@ -17,6 +17,9 @@ final class GeoTagUI05Tests: XCTestCase {
         app = XCUIApplication()
         app.launch()
 
+        // Wait for the app window
+        XCTAssert(app.windows["main"].waitForExistence(timeout: 5))
+
         // remove the "no backups sheet" sheet if it is present.
         let sheet = app.windows.sheets.element
         if sheet.exists {

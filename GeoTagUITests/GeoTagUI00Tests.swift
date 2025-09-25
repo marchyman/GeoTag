@@ -28,8 +28,12 @@ final class GeoTagUI00Tests: XCTestCase {
         app.launchEnvironment = ["UITESTS": "1"]
         app.launch()
 
-        // Now set up user defaults for testing.  The app should be showing
-        // a sheet saying no backup file exists.  Dismiss the sheet.
+        // Wait for the app window
+
+        XCTAssert(app.windows["main"].waitForExistence(timeout: 5))
+
+        // The app should be showing a sheet saying no backup file exists.
+        // Dismiss the sheet.
 
         let sheet = app.windows.sheets.element
         XCTAssert(sheet.waitForExistence(timeout: 2))
