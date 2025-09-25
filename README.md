@@ -36,7 +36,11 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   right pane. Current layout and pane divider locations are saved across
   program execution.
 
+- Alert the user when access to the Photos Library is denied.
+
 - Changes needed for macOS 26.
+
+- ExifTool 13.37
 
 
 ### Bug Fixes
@@ -69,6 +73,9 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 - Double clicking to zoom in or option-double clicking to zoom out will
   move the pins of selected items. Deselect all items or use a different
   zoom method to workaround this issue.
+- Double click to zoom in/out was hit or miss when tested on an intel
+  Mac running macOS Sequoia 15.7. Suggest using other methods of
+  zooming the map.
 - paste sometimes not enabled after cut. Can not reproduce on demand.
 
 ## GeoTag 5.5
