@@ -98,6 +98,8 @@ final class AppState {
             }
         }
     }
+    @ObservationIgnored
+    var initialBackupURLCheck = false
 
     // URLs obtained from the open panel are security scoped.  Keep track of
     // them so we can  run stopSecurityScopedResource() when the files/folders

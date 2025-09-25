@@ -67,8 +67,10 @@ struct ContentView: View {
         .border(windowBorderColor)
         .padding()
         .onAppear {
-            // check for a backupURL
-            if !doNotBackup && savedBookmark == Data() {
+            // check for a backupURL. Once when this window appears.
+            if !state.initialBackupURLCheck
+                    && !doNotBackup && savedBookmark == Data() {
+                state.initialBackupURLCheck = true
                 state.addSheet(type: .noBackupFolderSheet)
             }
         }
