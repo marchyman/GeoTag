@@ -20,7 +20,8 @@ struct GeoTagApp: App {
         Window("GeoTag Version Five", id: "main") {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
-                .background(WindowAccessor(window: $state.mainWindow))
+                .background(WindowAccessor(window: $state.mainWindow,
+                                           delegate: appDelegate))
                 .onAppear {
                     appDelegate.state = state
                 }

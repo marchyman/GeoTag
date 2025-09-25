@@ -41,13 +41,18 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 ### Bug Fixes
 
-- The delay between cliking on the map and appearance of a pin is gone.
+- The delay between cliking on the map and appearance of a pin is better.
 
 - Display the tool-tip for the "Extend track timestamps" setting.
 
 - Closing the window with changes pending and no backup folder selected
   now quits the app instead of again reminding you that no backup folder
   is selected.
+
+- Closing a window with pending changes does not close the window until
+  the user has a chance to answer the "do you really mean it?" message.
+  The app was closing the window then immediately re-opening it to
+  display the message.
 
 ### Known issues
 
