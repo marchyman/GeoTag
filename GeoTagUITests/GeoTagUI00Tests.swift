@@ -8,43 +8,13 @@ import XCTest
 
 final class GeoTagUI00Tests: XCTestCase {
 
-    private var app: XCUIApplication!
-
     override func setUp() {
         continueAfterFailure = false
-
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the
-        // invocation of each test method in the class.
-        super.tearDown()
-        app = nil
     }
 
     @MainActor
-    func localSetup() {
-        app = XCUIApplication()
-        app.launchEnvironment = ["UITESTS": "1"]
-        app.launch()
-
-        // Wait for the app window
-
-        XCTAssert(app.windows["main"].waitForExistence(timeout: 5))
-
-        // The app should be showing a sheet saying no backup file exists.
-        // Dismiss the sheet.
-
-        let sheet = app.windows.sheets.element
-        XCTAssert(sheet.waitForExistence(timeout: 2))
-        takeScreenshot(name: "InitialLaunch")
-        sheet.buttons.firstMatch.click()
-        takeScreenshot(name: "Launch")
-    }
-
-    @MainActor
-    func takeScreenshot(name: String) {
-        let screenshot = app.windows.firstMatch.screenshot()
+    func takeScreenshot(name: String, window: XCUIElement) {
+        let screenshot = window.screenshot()
 
         let attachment =
             XCTAttachment(uniformTypeIdentifier: "public.png",
@@ -59,32 +29,45 @@ final class GeoTagUI00Tests: XCTestCase {
     // the appropriate menu items appear.
     @MainActor
     func test0Startup() {
-        localSetup()
+        let app = XCUIApplication()
+        app.launchEnvironment = ["UITESTS": "1"]
+        app.launch()
+        sleep(2)
         let window = app.windows["main"]
-        XCTAssert(window.exists)
-        XCTAssertEqual(window.descendants(matching: .tableColumn).count, 4)
-        XCTAssertEqual(window.descendants(matching: .image).count, 4)
+        XCTAssert(window.waitForExistence(timeout: 5))
+
+        // first launch. Take a screenshot, dismiss the expected sheet,
+        // then take a second screenshot
+
+        let sheet = app.windows.sheets.element
+        XCTAssert(sheet.exists)
+        takeScreenshot(name: "InitialLaunch", window: window)
+        sheet.buttons.firstMatch.click()
+        takeScreenshot(name: "Launch", window: window)
+
+        XCTAssert(window.descendants(matching: .tableColumn).count == 4)
+        XCTAssert(window.descendants(matching: .image).count == 4)
         XCTAssert(window.descendants(matching: .map).element.exists)
         XCTAssert(window.descendants(matching: .toolbar).element.exists)
 
         XCTAssert(app.buttons["Toggle Inspector"].exists)
         app.buttons["Toggle Inspector"].firstMatch.click()
         XCTAssert(app.staticTexts["Please select an image"].waitForExistence(timeout: 2))
-        takeScreenshot(name: "Inspector")
+        takeScreenshot(name: "Inspector", window: window)
         app.buttons["Toggle Inspector"].firstMatch.click()
         XCTAssert(app.searchFields["Image name"].exists)
 
         // The photo picker does not show up as one of the apps XCUIElements.
-        // I can take a screenshot.
+        // Delay a second then take a screenshot.
         XCTAssert(app.buttons["Photo Library"].exists)
         app.buttons["Photo Library"].firstMatch.click()
         sleep(1)
-        takeScreenshot(name: "Photo Library")
+        takeScreenshot(name: "Photo Library", window: window)
         app.buttons["Cancel"].click()
 
         let menubar = app.menuBars.element
         XCTAssert(menubar.exists)
-        XCTAssertEqual(menubar.children(matching: .menuBarItem).count, 7)
+        XCTAssert(menubar.children(matching: .menuBarItem).count == 7)
         menuBarItem0(menubar.children(matching: .menuBarItem).element(boundBy: 0))
         menuBarItem1(menubar.children(matching: .menuBarItem).element(boundBy: 1))
         menuBarItem2(menubar.children(matching: .menuBarItem).element(boundBy: 2))
@@ -98,7 +81,15 @@ final class GeoTagUI00Tests: XCTestCase {
     // when the app is launched in future tests.
     @MainActor
     func test1SetNoBackup() {
-        localSetup()
+        let app = XCUIApplication()
+        app.launch()
+        let window = app.windows["main"]
+        XCTAssert(window.waitForExistence(timeout: 5))
+
+        let sheet = app.windows.sheets.element
+        XCTAssert(sheet.exists)
+        sheet.buttons.firstMatch.click()
+
         app.menuItems["Settings…"].click()
         XCTAssert(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
         app.checkBoxes["Disable image backups"].click()
@@ -115,7 +106,7 @@ final class GeoTagUI00Tests: XCTestCase {
     @MainActor
     func menuBarItem1(_ item: XCUIElement) {
         XCTAssert(item.exists)
-        XCTAssertEqual(item.title, "GeoTag")
+        XCTAssert(item.title == "GeoTag")
         XCTAssert(item.descendants(matching: .menuItem)["About GeoTag"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Settings…"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Quit GeoTag"].exists)
@@ -125,8 +116,8 @@ final class GeoTagUI00Tests: XCTestCase {
     @MainActor
     func menuBarItem2(_ item: XCUIElement) {
         XCTAssert(item.exists)
-        XCTAssertEqual(item.title, "File")
-        XCTAssertGreaterThan(item.descendants(matching: .menuItem).count, 6)
+        XCTAssert(item.title == "File")
+        XCTAssert(item.descendants(matching: .menuItem).count > 6)
         XCTAssert(item.descendants(matching: .menuItem)["Open…"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Close"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Save…"].exists)
@@ -139,8 +130,8 @@ final class GeoTagUI00Tests: XCTestCase {
     @MainActor
     func menuBarItem3(_ item: XCUIElement) {
         XCTAssert(item.exists)
-        XCTAssertEqual(item.title, "Edit")
-        XCTAssertGreaterThan(item.descendants(matching: .menuItem).count, 10)
+        XCTAssert(item.title == "Edit")
+        XCTAssert(item.descendants(matching: .menuItem).count > 10)
         XCTAssert(item.descendants(matching: .menuItem)["Undo"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Redo"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Cut"].exists)
@@ -157,7 +148,7 @@ final class GeoTagUI00Tests: XCTestCase {
     @MainActor
     func menuBarItem4(_ item: XCUIElement) {
         XCTAssert(item.exists)
-        XCTAssertEqual(item.title, "View")
+        XCTAssert(item.title == "View")
         XCTAssert(item.descendants(matching: .menuItem)["Hide Disabled Files"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Pin view options…"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Show pins for all selected items"].exists)
@@ -168,17 +159,16 @@ final class GeoTagUI00Tests: XCTestCase {
     @MainActor
     func menuBarItem5(_ item: XCUIElement) {
         XCTAssert(item.exists)
-        XCTAssertEqual(item.title, "Window")
+        XCTAssert(item.title == "Window")
     }
 
     // Help menu
     @MainActor
     func menuBarItem6(_ item: XCUIElement) {
         XCTAssert(item.exists)
-        XCTAssertEqual(item.title, "Help")
+        XCTAssert(item.title == "Help")
         XCTAssert(item.descendants(matching: .menuItem)["GeoTag 5 Help…"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Report a bug…"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Show log…"].exists)
     }
-
 }
