@@ -120,11 +120,6 @@ final class AppState {
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
         @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
-        // blow away settings when user interface testing
-        if ProcessInfo.processInfo.environment["UITESTS"] != nil {
-            AppSettings.resetSettings()
-        }
-
         // also for UI testing... assign a backup folder
         if let testBackup = ProcessInfo.processInfo.environment["BACKUP"] {
             let testURL = URL(fileURLWithPath: testBackup, isDirectory: true)

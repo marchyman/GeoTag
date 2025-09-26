@@ -23,6 +23,10 @@ struct GeoTagApp: App {
                 .background(WindowAccessor(window: $state.mainWindow,
                                            delegate: appDelegate))
                 .onAppear {
+                    // blow away settings when user interface testing
+                    if ProcessInfo.processInfo.environment["UITESTS"] != nil {
+                        AppSettings.resetSettings()
+                    }
                     appDelegate.state = state
                 }
                 .environment(state)
