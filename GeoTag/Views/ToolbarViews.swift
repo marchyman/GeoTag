@@ -49,6 +49,9 @@ struct PhotoPickerView: View {
                 await photoLibrary.addPhotos(from: selectedItems, to: state.tvm)
             }
         }
+        .onAppear {
+            AppState.logger.info("PhotoPickerView appeared")
+        }
     }
 }
 

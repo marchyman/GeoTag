@@ -5,6 +5,7 @@
 //
 
 import AppKit
+import OSLog
 
 // open with..., unsaved changes upon termination, and other checks
 
@@ -18,6 +19,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // no tabbing in GeoTag
         NSWindow.allowsAutomaticWindowTabbing = false
+        Logger(subsystem: Bundle.main.bundleIdentifier!,
+               category: "AppDelegate").info("applicationDidFinishLaunching")
     }
 
     // Process open with...

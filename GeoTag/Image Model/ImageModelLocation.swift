@@ -59,14 +59,14 @@ actor ReverseLocationFinder {
             let placemarks = try? await geoCoder.reverseGeocodeLocation(location)
             activeTask = nil
             if let placemark = placemarks?.first {
-                logger.info("""
-                    Placemark:
-                      \(placemark.subLocality ?? "unknown sub locality", privacy: .public)
-                      \(placemark.locality ?? "unknown locality", privacy: .public)
-                      \(placemark.administrativeArea ?? "unknown administrative area", privacy: .public)
-                      \(placemark.country ?? "unknown country", privacy: .public)
-                      \(placemark.isoCountryCode ?? "unknown country code", privacy: .public)
-                    """)
+                // logger.info("""
+                //     Placemark:
+                //       \(placemark.subLocality ?? "unknown sub locality", privacy: .public)
+                //       \(placemark.locality ?? "unknown locality", privacy: .public)
+                //       \(placemark.administrativeArea ?? "unknown administrative area", privacy: .public)
+                //       \(placemark.country ?? "unknown country", privacy: .public)
+                //       \(placemark.isoCountryCode ?? "unknown country code", privacy: .public)
+                //     """)
                 return placemark
             }
             return nil
