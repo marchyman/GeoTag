@@ -11,11 +11,12 @@ import SwiftUI
 
 // Access to the users photo library.
 
-final class PhotoLibrary: @unchecked Sendable {
+@MainActor
+final class PhotoLibrary {
     var enabled: Bool
 
     // force use of shared instance
-    @MainActor static var shared: PhotoLibrary = .init()
+    static var shared: PhotoLibrary = .init()
     private init() {
         enabled =
             PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized
@@ -25,18 +26,19 @@ final class PhotoLibrary: @unchecked Sendable {
 
 // A PhotoLibrary entry containing data needed to update images
 extension PhotoLibrary {
+    @MainActor
     struct LibraryEntry {
         let item: PhotosPickerItem
         var asset: PHAsset?
 
         // fake a URL from the item.itemIdentifier
 
-        var url: URL {
+        nonisolated var url: URL {
             PhotoLibrary.fakeURL(itemId: item.itemIdentifier)
         }
     }
 
-    static func fakeURL(itemId: String?) -> URL {
+    nonisolated static func fakeURL(itemId: String?) -> URL {
         let id = itemId ?? UUID().uuidString
         return URL(fileURLWithPath: id)
     }
@@ -46,9 +48,11 @@ extension PhotoLibrary {
 extension PhotoLibrary {
     func requestAuth(authStatusUpdated: @Sendable @escaping () -> Void) {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
-            self.enabled = status == .authorized
-            Self.logger.warning("Photo Library authorization: \(status.rawValue, privacy: .public)")
-            authStatusUpdated()
+            Task { @MainActor in
+                self.enabled = status == .authorized
+                Self.logger.warning("Photo Library authorization: \(status.rawValue, privacy: .public)")
+                authStatusUpdated()
+            }
         }
     }
 }
@@ -62,7 +66,6 @@ extension PhotoLibrary {
 // functions to build a LibraryEntry and add it to the array of
 // selected photos
 extension PhotoLibrary {
-    @MainActor
     func addPhotos(
         from selection: [PhotosPickerItem],
         to tvm: TableViewModel
