@@ -8,20 +8,21 @@ import XCTest
 
 final class GeoTagUI05Tests: XCTestCase {
 
-    private var app: XCUIApplication!
     private var testImageFolder = ""
 
-    @MainActor
-    func localSetup() {
+    override func setUp() {
         continueAfterFailure = false
-        app = XCUIApplication()
-        app.launch()
+    }
 
-        // Wait for the app window
-        XCTAssert(app.windows["main"].waitForExistence(timeout: 5))
+    @MainActor
+    func localSetup() -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launch()
+        let window = app.windows["main"]
+        XCTAssert(window.waitForExistence(timeout: 5))
 
         // remove the "no backups sheet" sheet if it is present.
-        let sheet = app.windows.sheets.element
+        let sheet = window.sheets.element
         if sheet.exists {
             sheet.buttons.firstMatch.click()
         }
@@ -35,17 +36,11 @@ final class GeoTagUI05Tests: XCTestCase {
         if app.menuItems["Hide Disabled Files"].exists {
             app.typeKey("d", modifierFlags: [.command])
         }
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the
-        // invocation of each test method in the class.
-        super.tearDown()
-        app = nil
+        return app
     }
 
     @MainActor
-    func openTestFile(folder: Bool = false) {
+    func openTestFile(_ app: XCUIApplication, folder: Bool = false) {
         app.typeKey("o", modifierFlags: [.command])
         app.typeKey("g", modifierFlags: [.shift, .command])
         app.typeText(testImageFolder)
@@ -57,7 +52,7 @@ final class GeoTagUI05Tests: XCTestCase {
     }
 
     @MainActor
-    func changeCoordFormat(_ fmt: Int) {
+    func changeCoordFormat(_ app: XCUIApplication, _ fmt: Int) {
         let format: [String] = [
             "dd.dddddd",
             "dd° mm.mmmmmm'",
@@ -73,19 +68,19 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test0DuplicateImage() {
-        localSetup()
-        openTestFile()
+        let app = localSetup()
+        openTestFile(app)
         XCTAssertTrue(app.staticTexts["IMG_7158.CR2*"]
             .waitForExistence(timeout: 2))
 
         // open again.  Should get a dup image sheet
-        openTestFile()
+        openTestFile(app)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
         app.sheets.buttons.firstMatch.click()
 
         // open the folder in which the file exists.  Should be a dup.
         // should also get a tracks loaded sheet.
-        openTestFile(folder: true)
+        openTestFile(app, folder: true)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
         app.sheets.buttons.firstMatch.click()
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
@@ -94,8 +89,8 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test1MapClick() {
-        localSetup()
-        openTestFile()
+        let app = localSetup()
+        openTestFile(app)
         let row = app.outlineRows.firstMatch
         XCTAssertTrue(row.staticTexts["IMG_7158.CR2*"]
             .waitForExistence(timeout: 2))
@@ -152,8 +147,8 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test2TableMenu() {
-        localSetup()
-        openTestFile(folder: true)
+        let app = localSetup()
+        openTestFile(app, folder: true)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
         app.sheets.buttons.firstMatch.click()
 
@@ -178,7 +173,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
         // assign locations and test the various coordinate formats
 
-        changeCoordFormat(0)
+        changeCoordFormat(app, 0)
         app.typeKey("a", modifierFlags: [.command])
         table.rightClick()
         menu.menuItems["Locn From Track"].click()
@@ -189,11 +184,11 @@ final class GeoTagUI05Tests: XCTestCase {
         XCTAssert(row.staticTexts[" 38.521077"].waitForExistence(timeout: 1))
         XCTAssert(row.staticTexts["-123.200344"].exists)
 
-        changeCoordFormat(1)
+        changeCoordFormat(app, 1)
         XCTAssert(row.staticTexts["38° 31.264616' N"].waitForExistence(timeout: 1))
         XCTAssert(row.staticTexts["123° 12.020668' W"].exists)
 
-        changeCoordFormat(2)
+        changeCoordFormat(app, 2)
         XCTAssert(row.staticTexts["38° 31' 15.88\" N"].waitForExistence(timeout: 1))
         XCTAssert(row.staticTexts["123° 12' 1.24\" W"].exists)
 
@@ -233,8 +228,8 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test3Search() {
-        localSetup()
-        openTestFile(folder: true)
+        let app = localSetup()
+        openTestFile(app, folder: true)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
         app.sheets.buttons.firstMatch.click()
 
@@ -270,7 +265,7 @@ final class GeoTagUI05Tests: XCTestCase {
 
     @MainActor
     func test4TimeZone() {
-        localSetup()
+        let app = localSetup()
         // show the change time zone window
         let tzItem = app.menuItems["Specify Time Zone…"]
         XCTAssert(tzItem.exists)

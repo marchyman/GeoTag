@@ -86,7 +86,7 @@ final class GeoTagUI00Tests: XCTestCase {
         let window = app.windows["main"]
         XCTAssert(window.waitForExistence(timeout: 5))
 
-        let sheet = app.windows.sheets.element
+        let sheet = window.sheets.element
         XCTAssert(sheet.exists)
         sheet.buttons.firstMatch.click()
 
