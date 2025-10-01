@@ -49,6 +49,9 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 - Display the tool-tip for the "Extend track timestamps" setting.
 
+- Clicking on a map search saved value a second and subsequent time will
+  recenter the map on the location if it isn't in view.
+
 - Closing the window with changes pending and no backup folder selected
   now quits the app instead of again reminding you that no backup folder
   is selected.

@@ -83,6 +83,7 @@ struct SearchView: View {
         .onChange(of: selection) {
             masData.saveResult(selection)
             mapFocus.wrappedValue = nil
+            selection = nil
         }
         .onChange(of: masData.pickFirst) {
             if !searchResponse.isEmpty {
