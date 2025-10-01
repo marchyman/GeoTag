@@ -8,6 +8,8 @@ import XCTest
 
 final class GeoTagUI05Tests: XCTestCase {
 
+    // various test values
+
     private var testImageFolder = ""
 
     override func setUp() {
@@ -222,12 +224,12 @@ final class GeoTagUI05Tests: XCTestCase {
         XCTAssert(newRow.staticTexts["38° 30' 0.00\" N"].exists)
     }
 
-    let allFileCount = 18
-    let jpgFileCount = 8
-    let fuzzyFileCount = 6
-
     @MainActor
     func test3Search() {
+        let allFileCount = 18
+        let jpgFileCount = 8
+        let fuzzyFileCount = 6
+
         let app = localSetup()
         openTestFile(app, folder: true)
         XCTAssertTrue(app.windows.sheets.element.waitForExistence(timeout: 2))
@@ -261,10 +263,10 @@ final class GeoTagUI05Tests: XCTestCase {
     // change time zone test.  NOTE: Assumes the local time zone isn't
     // GMT -4.  If it is the test should be changed
 
-    let newZone = "-4"
-
     @MainActor
     func test4TimeZone() {
+        let newZone = "-4"
+
         let app = localSetup()
         // show the change time zone window
         let tzItem = app.menuItems["Specify Time Zone…"]
