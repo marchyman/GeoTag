@@ -133,17 +133,12 @@
 * Launch GeoTag
   Verify the configuration and map location are as saved.
   Drag in the test images and track.  Assign locations from the track.
-  Select an image. Use cmd-i or click on the info button.
-
-
-  Verify the Change Date/Time popover appears.
-  Set a new date/time.
-  Verify the date/time changed
-  Select a range of images.
-  Double click on the timestamp of one of the selected images.
-  Adjust the time by one hour and click on the change button.
+  Select several images. Use cmd-i or click on the info button.
+  Verify the inspector opens on the right side of the window.
+  Adjust the time by one hour.
   Verify all of the selected images were adjusted by exactly one hour.
   Verify the timestamp is shown in a green font.
+  Close the inspector.
   Undo the change.
   Verify the times reverted to their original value and color.
   Select a range of images.
@@ -161,13 +156,11 @@
 
 * Launch GeoTag
   Open settings window and check the Disable paired jpeg option
+  Use View -> Show/Hide Disabled Files to show disabled files
   Drag in images that includes a raw/jpeg pair
   Verify the Jpeg is disabled
   Use View -> Show/Hide Disabled Files to show and hide the file
   Assign a location to one image.
-  Drag the pin on the map to change the location.
-  Verify pin center turns green when drag is enabled
-  Verify location is updated when drag ends.
   Usd Cmd-X to cut the location from the image.
   Select two other images and use Cmd-V
   Verify the image locations are updated.
@@ -182,13 +175,25 @@
   Quit GeoTag
 
 * Launch GeoTag.
-  Drag in a large number (> 1000) images.
+  Drag in a large number (> 1000) images. [photos/year/2024]
   Note the time it takes to load images
-   (20 seconds for 1200 images on my intel iMac)
+  - about 8-9 seconds for the table to start being populated,
+  - about 16-17 seconds for the load to complete
   Select an image.  Note the time it takes before the image
   thumbnail is displayed
-   (5 seconds on my intel iMac)
-  These long delays are a bug that are partly in my code and partly
-  in SwiftUI.
-  
-*
+  - Very quick for jpeg
+  - slightly longer for DNGs, but still fairly quick
+  Quit GeoTag
+
+* Launch GeoTag
+  Drag in TestData
+  Dismiss track log sheet
+  Select an image and verify the thumbnail loads
+  Use View -> Alternate layout
+  - Verify the thumbnail moved below the table of images
+  - Verify the right pane contains only the map and map search bar
+  Quit GeoTag
+
+Remove test configuration with
+defaults delete org.snafu.GeoTag
+
