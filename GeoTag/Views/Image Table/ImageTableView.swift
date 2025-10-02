@@ -144,6 +144,7 @@ struct LatitudeView: View {
     var body: some View {
         Text(image.formattedLatitude)
             .foregroundColor(image.locationTextColor)
+            .help(image.formattedElevation)
     }
 }
 
@@ -155,6 +156,7 @@ struct LongitudeView: View {
     var body: some View {
         Text(image.formattedLongitude)
             .foregroundColor(image.locationTextColor)
+            .help(image.formattedElevation)
     }
 }
 

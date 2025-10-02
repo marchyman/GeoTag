@@ -49,6 +49,9 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 - Display the tool-tip for the "Extend track timestamps" setting.
 
+- Restore display the elevation for a location when hovering over the
+  latitude or longitude.
+
 - Clicking on a map search saved value a second and subsequent time will
   recenter the map on the location if it isn't in view.
 
