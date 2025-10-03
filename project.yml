@@ -127,7 +127,7 @@ targets:
               - gpx
           - CFBundleTypeName: Sidecar files
             CFBundleTypeRole: Editor
-            LSHandlerRank: none
+            LSHandlerRank: None
             NSIsRelatedItemType: YES
             CFBundleTypeExtensions:
               - xmp
