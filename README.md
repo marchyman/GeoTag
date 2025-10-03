@@ -23,7 +23,7 @@ Sonoma. If you see a pin placed above the point you clicked/tapped you are
 seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 14.4.1). It is not a problem in the latest versions of Sonoma or in Sequoia.
 
-## GeoTag 5.6 (coming soon, still testing)
+## GeoTag 5.6
 
 ### Updates
 
@@ -36,14 +36,14 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   right pane. Current layout and pane divider locations are saved across
   program execution.
 
-- Alert the user when access to the Photos Library is denied.
-
 - Changes needed for macOS 26.
 
 - ExifTool 13.37
 
 
 ### Bug Fixes
+
+- Alert the user when access to the Photos Library is denied.
 
 - The delay between cliking on the map and appearance of a pin is better.
 
@@ -142,4 +142,4 @@ a pop up menu by right clicking on an entry in the list.
 * Open the generated project in Xcode
 * ⌘R will build and run, ⌘B to build only
 
-Send all comments, bugs, requests, etc. to <marc@snafu.org>
+Please report bugs, make requests, etc. [here](https://github.com/marchyman/GeoTag/issues)
