@@ -27,7 +27,11 @@ if [ $LATEST_TAG = "HEAD" ]; then
     SHORT_VERSION="0.0.$BUNDLE_VERSION"
 else
     COMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..HEAD)
-    SHORT_VERSION=${LATEST_TAG##v}.${COMMIT_COUNT_SINCE_TAG}
+    if [ $COMMIT_COUNT_SINCE_TAG -eq 0 ]; then
+        SHORT_VERSION=${LATEST_TAG##v}
+    else
+        SHORT_VERSION=${LATEST_TAG##v}.${COMMIT_COUNT_SINCE_TAG}
+    fi
 fi
 
 # Append a ".1" to the bundle version if the working dir is dirty
