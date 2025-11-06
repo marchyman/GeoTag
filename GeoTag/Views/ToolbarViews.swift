@@ -12,7 +12,6 @@ struct PhotoPickerView: View {
     var photoLibrary = PhotoLibrary.shared
 
     @State private var pickerItems: [PhotosPickerItem] = []
-    @State private var enabled = false
 
     var body: some View {
         Group {
@@ -50,11 +49,7 @@ struct PhotoPickerView: View {
                 await photoLibrary.addPhotos(from: selectedItems, to: state.tvm)
             }
         }
-        .onChange(of: photoLibrary.enabled) {
-            enabled = photoLibrary.enabled
-        }
         .onAppear {
-            enabled = photoLibrary.enabled
             AppState.logger.info("PhotoPickerView appeared")
         }
     }
