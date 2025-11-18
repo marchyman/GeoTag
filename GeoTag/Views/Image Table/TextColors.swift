@@ -9,6 +9,7 @@ import SwiftUI
 extension Color {
     static let changed = Color(nsColor: .systemGreen)
     static let mostSelected = Color(nsColor: .systemYellow)
+    static let noMetadata = Color(nsColor: .systemOrange)
 }
 
 extension ImageModel {

@@ -23,6 +23,16 @@ Sonoma. If you see a pin placed above the point you clicked/tapped you are
 seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 14.4.1). It is not a problem in the latest versions of Sonoma or in Sequoia.
 
+## WIP
+
+### Updates
+
+- show image names in orange when it appears to be a valid image format
+  but there is no existing metadata or the metadata can not be read. This
+  is the case with Fujifilm Compressed Raw files, for example. If the
+  image can not be previewed it is a format that can not be decoded.
+  Otherwise it is an image with no metadata.
+
 ## GeoTag 5.6
 
 ### Updates

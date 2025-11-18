@@ -10,24 +10,31 @@ import Photos
 
 extension ImageModel {
 
+    // errors thown when extracting metadata
+
+    enum ImageError: Error {
+        case cgSourceError
+        case noMetadataError
+    }
+
     // extract metadata from Image file
     func loadImageMetadata() throws -> Bool {
         guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil)
         else {
-            enum ImageError: Error {
-                case cgSourceError
-            }
             throw ImageError.cgSourceError
         }
 
         // grab the image properties and extract height and width
-        // if there are no image properties there is nothing to do.
+        // if there are no properties throw an error stating so.
 
         guard
             let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil)
                 as NSDictionary?
         else {
             return false
+        }
+        if imgProps.count == 0 {
+            throw ImageError.noMetadataError
         }
 
         // extract image date/time created

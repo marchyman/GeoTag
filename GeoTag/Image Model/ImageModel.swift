@@ -81,7 +81,10 @@ final class ImageModel: Identifiable {
     var pairedID: URL?
 
     // is this an image file or something else?
+    // no metadata is set when image properties can not be read or
+    // do not exist.
     var isValid = false
+    var noMetadata = false
 
     // when image data is modified the original data is kept to restore
     // should the user decide to change their mind
@@ -126,9 +129,15 @@ final class ImageModel: Identifiable {
             return
         }
 
-        // Load image metadata if we can.  If not mark it as not a valid image
-        // even though Exitool wouldn't have problems writing the file.
-        isValid = try loadImageMetadata()
+        // Load image metadata. If not an image file note that the image
+        // is inValid.  If the image is valid but there is no metadata or the
+        // metadata can't be read note that, too.
+        do {
+            isValid = try loadImageMetadata()
+        } catch ImageError.noMetadataError {
+            isValid = true
+            noMetadata = true
+        }
 
         // If a sidecar file exists read metadata from it as sidecar files
         // take precidence.

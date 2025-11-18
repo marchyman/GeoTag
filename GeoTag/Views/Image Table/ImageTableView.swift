@@ -121,7 +121,11 @@ struct NameView: View {
             .foregroundColor(
                 isSelected
                     ? .mostSelected
-                    : image.isValid ? .primary : .secondary
+                    : image.isValid
+                        ? image.noMetadata
+                            ? .noMetadata
+                            : .primary
+                        : .secondary
             )
             .truncationMode(.middle)
             .help("Full path: \(image.fileURL.path())")
