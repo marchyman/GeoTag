@@ -28,7 +28,13 @@ public final class MapAndSearchData {
     var searchText: String = ""
     var pickFirst = false
     @ObservationIgnored
-    public var searchBarActive = false
+    public var searchBarActive = false {
+        didSet {
+            if searchBarActive != oldValue {
+                logger.debug("SearchBarActive: \(self.searchBarActive, privacy: .public)")
+            }
+        }
+    }
     @ObservationIgnored
     var writing = false
 
