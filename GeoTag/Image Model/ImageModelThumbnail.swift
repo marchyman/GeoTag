@@ -42,8 +42,7 @@ extension ImageModel {
         var checkSize = true
         repeat {
             if let imgPreview = CGImageSourceCreateThumbnailAtIndex(
-                imgRef, 0, imgOpts as NSDictionary)
-            {
+                imgRef, 0, imgOpts as NSDictionary) {
                 // Create an NSImage from the preview
                 let imgHeight = CGFloat(imgPreview.height)
                 let imgWidth = CGFloat(imgPreview.width)
@@ -56,6 +55,9 @@ extension ImageModel {
                     continue
                 }
                 image = NSImage(cgImage: imgPreview, size: .zero)
+            } else {
+                // could not create a preview
+                return Image(systemName: "photo.badge.exclamationmark")
             }
             checkSize = false
         } while checkSize
