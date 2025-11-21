@@ -27,7 +27,6 @@ public final class MapAndSearchData {
     var searchPlaces: [SearchPlace] = []
     var searchText: String = ""
     var pickFirst = false
-    @ObservationIgnored
     public var searchBarActive = false {
         didSet {
             if searchBarActive != oldValue {

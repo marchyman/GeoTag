@@ -51,6 +51,15 @@ struct PasteboardCommands: Commands {
             Divider()
 
             Group {
+                Button("Find") {
+                    state.masData.searchBarActive = true
+                }
+                .keyboardShortcut("f")
+            }
+
+            Divider()
+
+            Group {
                 Button("Show In Finder") { state.showInFinderAction() }
                     .disabled(state.showInFinderDisabled())
 

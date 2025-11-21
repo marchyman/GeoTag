@@ -68,6 +68,11 @@ public struct MapAndSearchView: View {
                     .opacity(masData.showLocation ? 1.0 : 0)
             }
         }
+        .onChange(of: masData.searchBarActive) {
+            if masData.searchBarActive && mapFocus != .search {
+                mapFocus = .search
+            }
+        }
     }
 }
 

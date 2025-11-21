@@ -33,6 +33,9 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   image can not be previewed it is a format that can not be decoded.
   Otherwise it is an image with no metadata.
 
+- Add a find command (shortcut ⌘F) to the edit menu. The command will
+  select the map search field.
+
 ## GeoTag 5.6
 
 ### Updates

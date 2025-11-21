@@ -139,6 +139,7 @@ final class GeoTagUI00Tests: XCTestCase {
         XCTAssert(item.descendants(matching: .menuItem)["Paste"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Delete"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Select All"].exists)
+        XCTAssert(item.descendants(matching: .menuItem)["Find"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Show In Finder"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Locn From Track"].exists)
         XCTAssert(item.descendants(matching: .menuItem)["Specify Time Zone…"].exists)
