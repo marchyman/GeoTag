@@ -14,8 +14,7 @@ extension MapAndSearchData {
         get {
             access(keyPath: \.initialMapLatitude)
             if let val = UserDefaults
-                .standard.object(forKey: initialMapLatitudeKey) as? Double
-            {
+                .standard.object(forKey: initialMapLatitudeKey) as? Double {
                 return val
             }
             return 37.7244
@@ -34,8 +33,7 @@ extension MapAndSearchData {
         get {
             access(keyPath: \.initialMapLongitude)
             if let val = UserDefaults
-                .standard.object(forKey: initialMapLongitudeKey) as? Double
-            {
+                .standard.object(forKey: initialMapLongitudeKey) as? Double {
                 return val
             }
             return -122.4381
@@ -54,8 +52,7 @@ extension MapAndSearchData {
         get {
             access(keyPath: \.initialMapDistance)
             if let val = UserDefaults
-                .standard.object(forKey: initialMapDistanceKey) as? Double
-            {
+                .standard.object(forKey: initialMapDistanceKey) as? Double {
                 return val
             }
             return 50_000.0
@@ -88,8 +85,7 @@ extension MapAndSearchData {
         get {
             access(keyPath: \.trackColor)
             if let val = UserDefaults
-                .standard.object(forKey: trackColorKey) as? Data
-            {
+                .standard.object(forKey: trackColorKey) as? Data {
                 do {
                     let color =
                         try NSKeyedUnarchiver
