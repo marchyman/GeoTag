@@ -203,7 +203,6 @@ extension AppState {
                 if disablePairedJpegs {
                     tvm[jpeg.url].isValid = false
                 }
-                break
             }
         }
     }

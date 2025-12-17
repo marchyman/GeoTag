@@ -36,6 +36,11 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 - Add a find command (shortcut ⌘F) to the edit menu. The command will
   select the map search field.
 
+### Bug Fixes
+
+- Only the first raw-jpg pair was processed when the Disable paired jpegs
+  option was set. All pairs are now properly processed.
+
 ## GeoTag 5.6
 
 ### Updates
