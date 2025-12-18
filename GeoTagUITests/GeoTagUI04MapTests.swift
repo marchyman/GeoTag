@@ -18,30 +18,21 @@
 
 import XCTest
 
+@MainActor
 final class GeoTagUI04MapTests: XCTestCase {
 
-    private var app: XCUIApplication!
-
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the
-        // invocation of each test method in the class.
-        try super.tearDownWithError()
-        app = nil
-    }
-
-    @MainActor
-    func localSetup() {
-        app = XCUIApplication()
-        app.launchEnvironment = ["MAPTEST": "1"]
+    func localSetup() -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchEnvironment = ["UITESTS": "1", "MAPTEST": "1"]
         app.launch()
+        // get rid of the no backup folder selected sheet
+        let sheet = app.windows.sheets.element
+        XCTAssert(sheet.exists)
+        sheet.buttons.firstMatch.click()
+        return app
     }
 
-    @MainActor
-    func takeScreenshot(name: String) {
+    func takeScreenshot(_ app: XCUIApplication, name: String) {
         let screenshot = app.windows.firstMatch.screenshot()
 
         let attachment =
@@ -54,15 +45,14 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // search
-    @MainActor
     func test0MapSearch() {
-        localSetup()
+        let app = localSetup()
         let map = app.maps.firstMatch
         XCTAssertTrue(map.exists)
         let searchText = app.textFields[" Search location"]
         XCTAssertTrue(searchText.exists)
         searchText.click()
-        takeScreenshot(name: "MapSearch")
+        takeScreenshot(app, name: "MapSearch")
         XCTAssertTrue(app.buttons["Cancel"].exists)
         // If the "Clear list" button is hidden there are no saved
         // searched.  If present click the button so the tests start with
@@ -123,9 +113,8 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // Search picking previous results
-    @MainActor
     func test1MapSearch() {
-        localSetup()
+        let app = localSetup()
         // save the current map location
         let loc = app.windows.firstMatch
                     .groups.firstMatch
@@ -179,9 +168,8 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // Clear saved locations and verify
-    @MainActor
     func test2MapSearch() {
-        localSetup()
+        let app = localSetup()
         let searchText = app.textFields[" Search location"]
         XCTAssertTrue(searchText.exists)
         searchText.click()
@@ -194,9 +182,8 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // Map context menu
-    @MainActor
     func test3MapContextMenu() {
-        localSetup()
+        let app = localSetup()
         let map = app.maps.firstMatch
         map.rightClick()
         let menu = app.windows.menus.firstMatch
@@ -233,9 +220,8 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // more map context menu.
-    @MainActor
     func test4MapContextMenu() {
-        localSetup()
+        let app = localSetup()
         // verify the state is correct, i.e. things changed above were
         // sticky (how can I check that the zoom level was saved?)
         XCTAssertTrue(app.buttons["ModeButton3D"].exists)
