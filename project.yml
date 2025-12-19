@@ -51,12 +51,6 @@ targets:
       - GeoTag
       - path: ExifTool
         type: folder
-    entitlements:
-      path: GeoTag/GeoTag.entitlements
-      properties:
-        com.apple.security.app-sandbox: YES
-        com.apple.security.files.user-selected.read-write: YES
-        com.apple.security.personal-information.photos-library: YES
     info:
       path: GeoTag/Info.plist
       properties:
@@ -134,8 +128,11 @@ targets:
 
     settings:
       base:
+        ENABLE_APP_SANDBOX: YES
         ENABLE_HARDENED_RUNTIME: YES
         ENABLE_PREVIEWS: YES
+        ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY: YES
+        ENABLE_USER_SELECTED_FILES: readwrite
         GENERATE_INFOPLIST_FILE: NO
         PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTag
     postBuildScripts:
