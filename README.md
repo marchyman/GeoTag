@@ -41,6 +41,14 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 - Only the first raw-jpg pair was processed when the Disable paired jpegs
   option was set. All pairs are now properly processed.
 
+### Known Issues
+
+- Developer issue: User Interface testing is broken.  Sometimes the tests
+  pass. Sometimes they crash at startup.  Sometimes the main window
+  never opens.  I believe this is an XCUITest issue, probably triggered
+  by something GeoTag or the GeoTag tests do. Otherwise I'd expect
+  to see others complaining of the problem.
+
 ## GeoTag 5.6
 
 ### Updates
