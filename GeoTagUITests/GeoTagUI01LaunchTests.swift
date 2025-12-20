@@ -8,20 +8,15 @@ import XCTest
 
 final class GeoTagUI01LaunchTests: XCTestCase {
 
-    private var app: XCUIApplication!
-
-    override func setUp() {
+    override func setUpWithError() throws {
         continueAfterFailure = false
-    }
-
-    override func tearDown() {
     }
 
     // launch with a value in the environment that will cause a backup
     // folder to be created.
 
     @MainActor
-    func testBackupFolder() {
+    func testBackupFolder() throws {
         let app = XCUIApplication()
         app.launchEnvironment = ["BACKUP": NSTemporaryDirectory()]
         app.launch()

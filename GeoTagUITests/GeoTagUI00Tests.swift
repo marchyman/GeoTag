@@ -8,7 +8,7 @@ import XCTest
 
 final class GeoTagUI00Tests: XCTestCase {
 
-    override func setUp() {
+    override func setUpWithError() throws {
         continueAfterFailure = false
     }
 
@@ -25,16 +25,25 @@ final class GeoTagUI00Tests: XCTestCase {
         add(attachment)
     }
 
-    // test that app contains the normal elements at initial launch and that
-    // the appropriate menu items appear.
+    // launch the app with an environment value for testing. Wait for
+    // the main window to appear then return the app value
+
     @MainActor
-    func test0Startup() {
+    func launch() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchEnvironment = ["UITESTS": "1"]
         app.launch()
-        sleep(2)
         let window = app.windows["main"]
-        XCTAssert(window.waitForExistence(timeout: 5))
+        XCTAssert(window.waitForExistence(timeout: 3))
+        return app
+    }
+
+    // test that app contains the normal elements at initial launch and that
+    // the appropriate menu items appear.
+    @MainActor
+    func test0Startup() throws {
+        let app = launch()
+        let window = app.windows["main"]
 
         // first launch. Take a screenshot, dismiss the expected sheet,
         // then take a second screenshot
@@ -80,12 +89,9 @@ final class GeoTagUI00Tests: XCTestCase {
     // set the "no backup" flag in Settings to get rid of the warning sheet
     // when the app is launched in future tests.
     @MainActor
-    func test1SetNoBackup() {
-        let app = XCUIApplication()
-        app.launch()
+    func test1SetNoBackup() throws {
+        let app = launch()
         let window = app.windows["main"]
-        XCTAssert(window.waitForExistence(timeout: 5))
-
         let sheet = window.sheets.element
         XCTAssert(sheet.exists)
         sheet.buttons.firstMatch.click()
