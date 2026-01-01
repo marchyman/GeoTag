@@ -6,23 +6,13 @@
 
 import XCTest
 
+@MainActor
 final class GeoTagUI02SettingsTests: XCTestCase {
 
     private var app: XCUIApplication!
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         continueAfterFailure = false
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the
-        // invocation of each test method in the class.
-        try super.tearDownWithError()
-        app = nil
-    }
-
-    @MainActor
-    func localSetup() {
         app = XCUIApplication()
 
         app.launch()
@@ -34,7 +24,13 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         }
     }
 
-    @MainActor
+    override func tearDown() async throws {
+        // Put teardown code here. This method is called after the
+        // invocation of each test method in the class.
+        try await super.tearDown()
+        app = nil
+    }
+
     func takeScreenshot(name: String) {
         let screenshot = app.windows.firstMatch.screenshot()
 
@@ -47,9 +43,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         add(attachment)
     }
 
-    @MainActor
     func test0SettingsOpened() throws {
-        localSetup()
         app.menuItems["Settings…"].click()
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
 
@@ -103,9 +97,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
     }
 
     // swiftlint: disable cyclomatic_complexity
-    @MainActor
     func test1ChangeSettings() {
-        localSetup()
         app.typeKey(",", modifierFlags: .command)
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
         let settings = app.windows["GeoTag Settings"]
@@ -170,9 +162,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         // swiftlint: enable cyclomatic_complexity
     }
 
-    @MainActor
     func test2ValidateSettings() {
-        localSetup()
         app.typeKey(",", modifierFlags: .command)
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
         let settings = app.windows["GeoTag Settings"]
@@ -212,9 +202,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         settings.buttons["Close"].click()
     }
 
-    @MainActor
     func test3NormalSettings() {
-        localSetup()
         app.typeKey(",", modifierFlags: .command)
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
         let settings = app.windows["GeoTag Settings"]

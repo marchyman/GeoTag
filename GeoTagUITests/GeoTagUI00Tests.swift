@@ -6,13 +6,13 @@
 
 import XCTest
 
+@MainActor
 final class GeoTagUI00Tests: XCTestCase {
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         continueAfterFailure = false
     }
 
-    @MainActor
     func takeScreenshot(name: String, window: XCUIElement) {
         let screenshot = window.screenshot()
 
@@ -28,7 +28,6 @@ final class GeoTagUI00Tests: XCTestCase {
     // launch the app with an environment value for testing. Wait for
     // the main window to appear then return the app value
 
-    @MainActor
     func launch() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchEnvironment = ["UITESTS": "1"]
@@ -40,7 +39,6 @@ final class GeoTagUI00Tests: XCTestCase {
 
     // test that app contains the normal elements at initial launch and that
     // the appropriate menu items appear.
-    @MainActor
     func test0Startup() throws {
         let app = launch()
         let window = app.windows["main"]
@@ -88,7 +86,6 @@ final class GeoTagUI00Tests: XCTestCase {
 
     // set the "no backup" flag in Settings to get rid of the warning sheet
     // when the app is launched in future tests.
-    @MainActor
     func test1SetNoBackup() throws {
         let app = launch()
         let window = app.windows["main"]
@@ -103,13 +100,11 @@ final class GeoTagUI00Tests: XCTestCase {
     }
 
     // Apple menu
-    @MainActor
     func menuBarItem0(_ item: XCUIElement) {
         XCTAssert(item.exists)
     }
 
     // GeoTag menu
-    @MainActor
     func menuBarItem1(_ item: XCUIElement) {
         XCTAssert(item.exists)
         XCTAssert(item.title == "GeoTag")
@@ -119,7 +114,6 @@ final class GeoTagUI00Tests: XCTestCase {
     }
 
     // File menu
-    @MainActor
     func menuBarItem2(_ item: XCUIElement) {
         XCTAssert(item.exists)
         XCTAssert(item.title == "File")
@@ -133,7 +127,6 @@ final class GeoTagUI00Tests: XCTestCase {
     }
 
     // Edit menu
-    @MainActor
     func menuBarItem3(_ item: XCUIElement) {
         XCTAssert(item.exists)
         XCTAssert(item.title == "Edit")
@@ -152,7 +145,6 @@ final class GeoTagUI00Tests: XCTestCase {
     }
 
     // View menu
-    @MainActor
     func menuBarItem4(_ item: XCUIElement) {
         XCTAssert(item.exists)
         XCTAssert(item.title == "View")
@@ -163,14 +155,12 @@ final class GeoTagUI00Tests: XCTestCase {
     }
 
     // Window menu
-    @MainActor
     func menuBarItem5(_ item: XCUIElement) {
         XCTAssert(item.exists)
         XCTAssert(item.title == "Window")
     }
 
     // Help menu
-    @MainActor
     func menuBarItem6(_ item: XCUIElement) {
         XCTAssert(item.exists)
         XCTAssert(item.title == "Help")
