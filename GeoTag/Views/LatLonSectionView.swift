@@ -33,6 +33,7 @@ struct LatLonSectionView: View {
                     .focused($isFocused)
                     .focusedValue(\.textfieldFocused, "focused")
             }
+            .labeledContentStyle(.inline)
 
             LabeledContent("Longitude:") {
                 TextField("Longitude", value: $longitude, format: .longitude)
@@ -41,6 +42,27 @@ struct LatLonSectionView: View {
                     .padding()
                     .focused($isFocused)
                     .focusedValue(\.textfieldFocused, "focused")
+            }
+            .labeledContentStyle(.inline)
+
+            LabeledContent("City:") {
+                Text(image.city ?? "?")
+                    .frame(width: 200, alignment: .leading)
+            }
+
+            LabeledContent("State:") {
+                Text(image.state ?? "?")
+                    .frame(width: 200, alignment: .leading)
+            }
+
+            LabeledContent("Country:") {
+                Text(image.country ?? "?")
+                    .frame(width: 200, alignment: .leading)
+            }
+
+            LabeledContent("Country Code:") {
+                Text(image.countryCode ?? "?")
+                    .frame(width: 200, alignment: .leading)
             }
         }
         .textFieldStyle(.roundedBorder)
@@ -107,6 +129,21 @@ struct LatLonSectionView: View {
     }
 }
 
+// I want my labels in line with the text field.
+
+struct InlineLabeledContentStyle: LabeledContentStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+            configuration.content
+        }
+    }
+}
+
+extension LabeledContentStyle where Self == InlineLabeledContentStyle {
+    static var inline: InlineLabeledContentStyle { InlineLabeledContentStyle() }
+}
+
 #Preview {
     let image = ImageModel(
         imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
@@ -116,4 +153,5 @@ struct LatLonSectionView: View {
         longitude: 123.456)
     return LatLonSectionView(image: image)
         .environment(AppState())
+        .frame(width: 500, height: 700)
 }

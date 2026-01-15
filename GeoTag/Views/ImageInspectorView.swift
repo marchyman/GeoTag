@@ -26,4 +26,5 @@ struct ImageInspectorView: View {
 
 #Preview {
     ImageInspectorView()
+        .environment(AppState())
 }
