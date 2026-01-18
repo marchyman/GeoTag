@@ -33,7 +33,6 @@ struct LatLonSectionView: View {
                     .focused($isFocused)
                     .focusedValue(\.textfieldFocused, "focused")
             }
-            .labeledContentStyle(.inline)
 
             LabeledContent("Longitude:") {
                 TextField("Longitude", value: $longitude, format: .longitude)
@@ -43,7 +42,6 @@ struct LatLonSectionView: View {
                     .focused($isFocused)
                     .focusedValue(\.textfieldFocused, "focused")
             }
-            .labeledContentStyle(.inline)
 
             LabeledContent("City:") {
                 Text(image.city ?? "?")
@@ -151,7 +149,11 @@ extension LabeledContentStyle where Self == InlineLabeledContentStyle {
         dateTimeCreated: "2022:12:12 11:22:33",
         latitude: 33.123,
         longitude: 123.456)
-    return LatLonSectionView(image: image)
-        .environment(AppState())
-        .frame(width: 500, height: 700)
+    return Form {
+        Section("Location") {
+            LatLonSectionView(image: image)
+        }
+    }
+    .environment(AppState())
+    .frame(width: 500, height: 700)
 }
