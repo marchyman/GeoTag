@@ -88,7 +88,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '4.97';
+$VERSION = '5.01';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -492,6 +492,7 @@ $VERSION = '4.97';
    '368.12' => 'Sigma 18-35mm f/1.8 DC HSM | A', #50
    '368.13' => 'Sigma 24-105mm f/4 DG OS HSM | A', #forum3833
    '368.14' => 'Sigma 18-300mm f/3.5-6.3 DC Macro OS HSM | C', #forum15280 (014)
+   '368.15' => 'Sigma 24mm F1.4 DG HSM | A', #50 (015)
     # Note: LensType 488 (0x1e8) is reported as 232 (0xe8) in 7D CameraSettings
     488 => 'Canon EF-S 15-85mm f/3.5-5.6 IS USM', #PH
     489 => 'Canon EF 70-300mm f/4-5.6L IS USM', #Gerald Kapounek
@@ -562,6 +563,7 @@ $VERSION = '4.97';
     4160 => 'Canon EF-S 35mm f/2.8 Macro IS STM', #42
     4208 => 'Sigma 56mm f/1.4 DC DN | C or other Sigma Lens', #forum10603
     4208.1 => 'Sigma 30mm F1.4 DC DN | C', #github#83 (016)
+    4976 => 'Sigma 16-300mm F3.5-6.7 DC OS | C (025)', #50
     6512 => 'Sigma 12mm F1.4 DC | C', #github#352 (025)
     # (Nano USM lenses - 0x90xx)
     36910 => 'Canon EF 70-300mm f/4-5.6 IS II USM', #42
@@ -642,6 +644,7 @@ $VERSION = '4.97';
    '61182.63' => 'Canon RF 24mm F1.4 L VCM', #42
    '61182.64' => 'Canon RF 20mm F1.4 L VCM', #42
    '61182.65' => 'Canon RF 85mm F1.4 L VCM', #github350
+   '61182.66' => 'Canon RF 45mm F1.2 STM', #42
     65535 => 'n/a',
 );
 
@@ -1008,10 +1011,11 @@ $VERSION = '4.97';
     0x80000487 => 'EOS R8', #42
     0x80000491 => 'PowerShot V10', #25
     0x80000495 => 'EOS R1', #PH
-    0x80000496 => 'R5 Mark II', #forum16406
+    0x80000496 => 'EOS R5 Mark II', #forum16406
     0x80000497 => 'PowerShot V1', #PH
     0x80000498 => 'EOS R100', #25
     0x80000516 => 'EOS R50 V', #42
+    0x80000518 => 'EOS R6 Mark III', #42
     0x80000520 => 'EOS D2000C', #IB
     0x80000560 => 'EOS D6000C', #PH (guess)
 );
@@ -1419,6 +1423,11 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
             Name => 'CanonCameraInfoR6m2',
             Condition => '$$self{Model} =~ /\bEOS (R6m2|R8|R50)$/',
             SubDirectory => { TagTable => 'Image::ExifTool::Canon::CameraInfoR6m2' },
+        },
+        {
+            Name => 'CanonCameraInfoR6m3',
+            Condition => '$$self{Model} =~ /\bEOS R6 Mark III$/',
+            SubDirectory => { TagTable => 'Image::ExifTool::Canon::CameraInfoR6m3' },
         },
         {
             Name => 'CanonCameraInfoG5XII',
@@ -1995,12 +2004,12 @@ my %offOn = ( 0 => 'Off', 1 => 'On' );
             SubDirectory => { TagTable => 'Image::ExifTool::Canon::ColorData10' },
         },
         {   # (int16u[3973]) - R3 ref IB
-            Condition => '$count == 3973 or $count == 3778',
+            Condition => '($count == 3973 or $count == 3778) and $$valPt !~ /^\x41\0/',
             Name => 'ColorData11',
             SubDirectory => { TagTable => 'Image::ExifTool::Canon::ColorData11' },
         },
-        {   # (int16u[4528]) - R1/R5mkII ref forum16406
-            Condition => '$count == 4528',
+        {   # (int16u[4528]) - R1/R5mkII (4528) ref forum16406, R50V (3778) ref PH
+            Condition => '$count == 4528 or $count == 3778',
             Name => 'ColorData12',
             SubDirectory => { TagTable => 'Image::ExifTool::Canon::ColorData12' },
         },
@@ -4791,6 +4800,22 @@ my %ciMaxFocal = (
     },
 );
 
+%Image::ExifTool::Canon::CameraInfoR6m3 = (
+    %binaryDataAttrs,
+    FIRST_ENTRY => 0,
+    PRIORITY => 0,
+    GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
+    NOTES => 'CameraInfo tags for the EOS R6 Mark II.',
+    0x086d => { #forum17745
+        Name => 'ShutterCount',
+        Format => 'int32u',
+        # (upper 2 bytes are currently unknown for this tag in JPEG images --
+        #  we need samples ideally spanning the 65536 count)
+        RawConv => '$$self{PATH}[2] eq "UUID-Canon" ? $val : $val & 0xffff',
+        Notes => 'includes electronic + mechanical shutter',
+    },
+);
+
 # ref https://exiftool.org/forum/index.php?topic=15356.0
 %Image::ExifTool::Canon::CameraInfoG5XII = (
     %binaryDataAttrs,
@@ -7052,6 +7077,7 @@ my %ciMaxFocal = (
             326 => 'Canon RF 24mm F1.4 L VCM', #42
             327 => 'Canon RF 20mm F1.4 L VCM', #42
             328 => 'Canon RF 85mm F1.4 L VCM', #42/github350
+            330 => 'Canon RF 45mm F1.2 STM', #42
             # Note: add new RF lenses to %canonLensTypes with ID 61182
         },
     },
@@ -8321,8 +8347,8 @@ my %ciMaxFocal = (
         RawConv => '$$self{ColorDataVersion} = $val',
         PrintConv => {
             16 => '16 (M50)',
-            17 => '17 (EOS R)',     # (and PowerShot SX740HS)
-            18 => '18 (EOS RP/250D)',    # (and PowerShot SX70HS)
+            17 => '17 (R)',         # (and PowerShot SX740HS)
+            18 => '18 (RP/250D)',   # (and PowerShot SX70HS)
             19 => '19 (90D/850D/M6mkII/M200)',# (and PowerShot G7XmkIII)
         },
     },
@@ -8553,10 +8579,10 @@ my %ciMaxFocal = (
     },
 );
 
-# Color data (MakerNotes tag 0x4001, count=3973, ref IB)
+# Color data (MakerNotes tag 0x4001, count=3973/3778, ref IB)
 %Image::ExifTool::Canon::ColorData11 = (
     %binaryDataAttrs,
-    NOTES => 'These tags are used by the EOS R3, R7 and R6mkII',
+    NOTES => 'These tags are used by the EOS R3, R7, R50 and R6mkII',
     FORMAT => 'int16s',
     FIRST_ENTRY => 0,
     GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
@@ -8568,7 +8594,7 @@ my %ciMaxFocal = (
         RawConv => '$$self{ColorDataVersion} = $val',
         PrintConv => {
             34 => '34 (R3)', #IB
-            48 => '48 (R7, R10, R6 Mark II)', #IB
+            48 => '48 (R7/R10/R50/R6mkII)', #IB
         },
     },
     0x69 => { Name => 'WB_RGGBLevelsAsShot',     Format => 'int16s[4]' },
@@ -8673,10 +8699,10 @@ my %ciMaxFocal = (
     },
 );
 
-# Color data (MakerNotes tag 0x4001, count=4528, ref PH)
+# Color data (MakerNotes tag 0x4001, count=4528/3778, ref PH)
 %Image::ExifTool::Canon::ColorData12 = (
     %binaryDataAttrs,
-    NOTES => 'These tags are used by the EOS R1 and R5mkII',
+    NOTES => 'These tags are used by the EOS R1, R5mkII and R50V',
     FORMAT => 'int16s',
     FIRST_ENTRY => 0,
     GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
@@ -8687,7 +8713,8 @@ my %ciMaxFocal = (
         DataMember => 'ColorDataVersion',
         RawConv => '$$self{ColorDataVersion} = $val',
         PrintConv => {
-            64 => '64 (R1, R5 Mark II)',
+            64 => '64 (R1/R5mkII)',
+            65 => '65 (R50V)',
         },
     },
     0x69 => { Name => 'WB_RGGBLevelsAsShot',    Format => 'int16s[4]' }, # (NC)
@@ -8778,6 +8805,7 @@ my %ciMaxFocal = (
         Name => 'PerChannelBlackLevel',
         Format => 'int16u[4]',
     },
+    # 0x290 - PerChannelBlackLevel again
     0x294 => {
         Name => 'NormalWhiteLevel',
         Format => 'int16u',
@@ -9369,6 +9397,7 @@ my %filterConv = (
             0 => 'Initial Priority',
             1 => 'On Subject',
             2 => 'Switch Subject',
+            0x7fffffff => 'n/a',
         },
     },
     24 => { #forum16068  #KG extensions for 'left' and 'right'

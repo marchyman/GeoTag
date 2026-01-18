@@ -50,7 +50,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.74';
+$VERSION = '3.76';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -1865,6 +1865,8 @@ my %sPantryItem = (
             What             => { },
         },
     },
+    # more new stuff
+    PointColors => { List => 'Seq' },
 );
 
 # Tiff namespace properties (tiff)
@@ -4256,7 +4258,7 @@ sub ProcessXMP($$;$)
         # check leading BOM (may indicate double-encoded UTF)
         pos($$dataPt) = $dirStart;
         if ($$dataPt =~ /\G((\0\0)?\xfe\xff|\xff\xfe(\0\0)?|\xef\xbb\xbf)\0*<\0*\?\0*x\0*p\0*a\0*c\0*k\0*e\0*t/g) {
-            $double = $1 
+            $double = $1;
         } else {
             # handle UTF-16/32 XML
             pos($$dataPt) = $dirStart;
@@ -4436,7 +4438,7 @@ sub ProcessXMP($$;$)
             $buf2 = pack('C*', unpack("$fmt*",$buff));
         }
         if (Image::ExifTool::GetWarning()) {
-            $et->Warn('Superfluous BOM at start of XMP');
+            $et->Warn('Superfluous BOM at start of XMP') unless $$dirInfo{RAF};
             $dataPt = \$buff;   # use XMP with the BOM removed
         } else {
             $et->Warn('XMP is double UTF-encoded');
@@ -4487,13 +4489,16 @@ sub ProcessXMP($$;$)
         $begin = join "\0", split //, $begin;
         # must reset pos because it was killed by previous unsuccessful //g match
         pos($$dataPt) = $dirStart;
+        my $badEnc;
         if ($$dataPt =~ /\G(\0)?\Q$begin\E\0./sg) {
             # validate byte ordering by checking for U+FEFF character
             if ($1) {
                 # should be big-endian since we had a leading \0
-                $fmt = 'n' if $$dataPt =~ /\G\xfe\xff/g;
+                $fmt = 'n';
+                $badEnc = 1 unless $$dataPt =~ /\G\xfe\xff/g;
             } else {
-                $fmt = 'v' if $$dataPt =~ /\G\0\xff\xfe/g;
+                $fmt = 'v';
+                $badEnc = 1 unless $$dataPt =~ /\G\0\xff\xfe/g;
             }
         } else {
             # check for UTF-32 encoding (with three \0's between characters)
@@ -4503,12 +4508,14 @@ sub ProcessXMP($$;$)
                 $fmt = 0;   # set format to zero as indication we didn't find encoded XMP
             } elsif ($1) {
                 # should be big-endian
-                $fmt = 'N' if $$dataPt =~ /\G\0\0\xfe\xff/g;
+                $fmt = 'N';
+                $badEnc = 1 unless $$dataPt =~ /\G\0\0\xfe\xff/g;
             } else {
-                $fmt = 'V' if $$dataPt =~ /\G\0\0\0\xff\xfe\0\0/g;
+                $fmt = 'V';
+                $badEnc = 1 unless $$dataPt =~ /\G\0\0\0\xff\xfe\0\0/g;
             }
         }
-        defined $fmt or $et->Warn('XMP character encoding error');
+        $badEnc and $et->Warn('Invalid XMP encoding marker');
     }
     # warn if standard XMP is missing xpacket wrapper
     if ($$et{XMP_NO_XPACKET} and $$et{OPTIONS}{Validate} and

@@ -49,7 +49,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '3.21';
+$VERSION = '3.25';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -494,6 +494,7 @@ my %qtFlags = ( #12
     ispe => 1,  # primary item must have an ispe and pixi, so no need to inherit these
     pixi => 1,
     irot => 1,  # (tmap may have a different irot)
+    imir => 1,  # (ditto)
     pasp => 1,  # (NC)
     hvcC => 2,  # (hvcC is a property of hvc1 referred to by primary grid)
     colr => 2,  # (colr is a property of primary grid or hvc1 referred to by primary)
@@ -579,9 +580,27 @@ my %userDefined = (
             },
             Binary => 1,
         },{
+            Name => 'HighlightMarkers',
+            # (DJI Action 4, forum17700)
+            Notes => 'written by some DJI models',
+            Condition => '$$valPt =~ /^data.{4}hglg.{5}/s',
+            RawConv => q{
+                my $len = unpack 'x4N', $val;
+                return undef if $len < 13 or $len + 4 > length($val);
+                my $n = int(($len - 13) / 5);
+                my @a = map $_/1000, unpack "x17(xV)$n", $val;
+                return \@a;
+            },
+        },{
             Unknown => 1,
             Binary => 1,
         },
+        # DJI videos also have block of offset/size of various atoms, eg)
+        #        Atom name   ????        Offset      Size
+        #  0000: 63 6f 76 72 00 00 00 00 00 ed 6f da 00 0a 46 e0 [covr......o...F.]
+        #  0010: 73 6e 61 6c 00 00 00 00 00 f7 b6 d2 00 0a 46 e0 [snal..........F.]
+        #  0020: 68 67 6c 67 00 00 00 00 01 02 0a a2 00 00 00 21 [hglg...........!]
+        #  0030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 [................]
         # (also Samsung WB750 uncompressed thumbnail data starting with "SDIC\0")
     ],
     # fre1 - 4 bytes: "june" (Kodak PixPro SP360)
@@ -968,6 +987,25 @@ my %userDefined = (
             TagTable => 'Image::ExifTool::QuickTime::Stream',
             ProcessProc => \&ProcessInsta360,
         },
+    },
+    # Kandao tags (Kandao QooCam 3 Ultra)
+    kvar => {
+        Name => 'KVAR',
+        BlockExtract => 1,
+        Notes => q{
+            by default, data in this tag is parsed to extract some embedded metadata,
+            but it may also be extracted as a KVAR file via the "KVAR" tag or by setting
+            the API BlockExtract option
+        },
+        SubDirectory => { TagTable => 'Image::ExifTool::Kandao::Main' },
+    },
+    kfix => {
+        Name => 'KFIX',
+        SubDirectory => { TagTable => 'Image::ExifTool::Kandao::Main' },
+    },
+    kstb => { # (NC)
+        Name => 'KSTB',
+        SubDirectory => { TagTable => 'Image::ExifTool::Kandao::Main' },
     },
 );
 
@@ -2649,6 +2687,7 @@ my %userDefined = (
             ByteOrder => 'BigEndian',
         },
     },
+    # PREX - seen written by Sony ILCE-7M5 (apparently contains another video profile?)
 );
 
 # FPRF atom information (ref 11)
@@ -2815,6 +2854,7 @@ my %userDefined = (
    'xml ' => {
         Name => 'XML',
         Flags => [ 'Binary', 'Protected' ],
+        BlockExtract => 1,
         SubDirectory => {
             TagTable => 'Image::ExifTool::XMP::XML',
             IgnoreProp => { NonRealTimeMeta => 1 }, # ignore container for Sony 'nrtm'
@@ -2865,6 +2905,7 @@ my %userDefined = (
     },
     idat => {
         Name => 'MetaImageSize', #PH (NC)
+        Condition => '$$self{FileType} eq "HEIC"',
         Format => 'int16u',
         # (don't know what the first two numbers are for)
         PrintConv => '$val =~ s/^(\d+) (\d+) (\d+) (\d+)/${3}x$4/; $val',
@@ -2950,7 +2991,6 @@ my %userDefined = (
         Condition => '$$valPt =~ /^(prof|rICC)/',
         # (don't do this because Apple Preview won't display an HEIC with a 0-length profile)
         # Permanent => 0, # (in QuickTime, this writes a zero-length box instead of deleting)
-        Permanent => 1,
         SubDirectory => {
             TagTable => 'Image::ExifTool::ICC_Profile::Main',
             Start => 4,
@@ -2969,6 +3009,22 @@ my %userDefined = (
             1 => 'Rotate 270 CW',
             2 => 'Rotate 180',
             3 => 'Rotate 90 CW',
+        },
+    },
+    imir => { # (applied before rotation)
+        Name => 'Mirroring',
+        Format => 'int8u',
+        # yes, I realize this making this writable is useless without the ability to
+        # create/delete this box because it is the existence of this box that is
+        # significant.  (The people who wrote the specification succeeded in making
+        # this as complicated as possible because creating/deleting boxes from the
+        # item property container is a real pain in the ass!)
+        Writable => 'int8u',
+        Protected => 1,
+        PrintConv => {
+            0 => 'Vertical',
+            1 => 'Horizontal',
+            # (it would have been great if the specification allowed for a "no mirroring" value)
         },
     },
     ispe => {
@@ -3385,7 +3441,7 @@ my %userDefined = (
     ssrc => { Name => 'Non-primarySourceTrack', Format => 'int32u' }, #29
     sync => { Name => 'SyncronizedTrack',       Format => 'int32u' }, #29
     # hint - Original media for hint track (ref 29)
-    # cdep (Structural Dependency QT tag?)    
+    # cdep (Structural Dependency QT tag?)
 );
 
 # track aperture mode dimensions atoms
@@ -6602,7 +6658,7 @@ my %userDefined = (
         This directory contains a list of key names which are used to decode tags
         written by the "mdta" handler.  Also in this table are a few tags found in
         timed metadata that are not yet writable by ExifTool.  The prefix of
-        "com.apple.quicktime." has been removed from the TagID's below.  These tags
+        "com.apple.quicktime." has been removed from most TagID's below.  These tags
         support alternate languages in the same way as the
         L<ItemList|Image::ExifTool::TagNames/QuickTime ItemList Tags> tags.  Note
         that by default,
@@ -6696,14 +6752,17 @@ my %userDefined = (
     'encoder' => { }, # forum15418 (written by ffmpeg)
 #
 # the following tags aren't in the com.apple.quicktime namespace:
+# (Note: must add any non-'com' prefix to %fullKeysID in WriteQuickTime.pl
+#  to avoid adding the 'com.apple.quicktime' prefix when writing)
 #
     'com.android.version' => 'AndroidVersion',
     'com.android.capture.fps' => { Name  => 'AndroidCaptureFPS', Writable => 'float' },
     'com.android.manufacturer' => 'AndroidMake',
     'com.android.model' => 'AndroidModel',
     'com.xiaomi.preview_video_cover' => { Name => 'XiaomiPreviewVideoCover', Writable => 'int32s' },
-    'xiaomi.exifInfo.videoinfo' => 'XiaomiExifInfo',
     'com.xiaomi.hdr10' => { Name => 'XiaomiHDR10', Writable => 'int32s' },
+    'xiaomi.exifInfo.videoinfo' => 'XiaomiExifInfo',
+    'samsung.android.utc_offset' => { Name => 'AndroidTimeZone', Groups => { 2 => 'Time' } },
 #
 # also seen
 #
@@ -8987,13 +9046,13 @@ sub GetString($$)
 sub PrintableTagID($;$)
 {
     my $tag = $_[0];
-    my $n = ($tag =~ s/([\x00-\x1f\x7f-\xff])/'x'.unpack('H*',$1)/eg);
+    my $n = ($tag =~ s/([^-_a-zA-Z0-9])/'x'.unpack('H*',$1)/eg);
     if ($n and $_[1]) {
         if ($n > 2 and $_[1] & 0x01) {
             $tag = '0x' . unpack('H8', $_[0]);
             $tag =~ s/^0x0000/0x/;
         } elsif ($_[1] & 0x02) {
-            ($tag = $_[0]) =~ s/([\x00-\x1f\x7f-\xff])/'\\x'.unpack('H*',$1)/eg;
+            ($tag = $_[0]) =~ s/([^-_a-zA-Z0-9])/'\\x'.unpack('H*',$1)/eg;
         }
     }
     return $tag;
@@ -9756,6 +9815,7 @@ sub ProcessKeys($$$)
             $name = "Tag_$name" if length $name < 2;
             $newInfo = { Name => $name, Groups => { 1 => 'Keys' } };
             $msg = ' (Unknown)';
+            $et->VPrint(0, $$et{INDENT}, "[adding Keys:$tag]\n");
         }
         # substitute this tag in the ItemList table with the given index
         my $id = $$et{KeysCount} . '.' . $index;
@@ -10515,9 +10575,9 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
             $et->Warn($warnStr);
         }
     }
-    # tweak file type based on track content ("iso*" and "dash" ftyp only)
+    # tweak file type based on track content ("iso*" and "dash" ftyp only ["mp42" added in 13.39])
     if ($topLevel and $$et{FileType} and $$et{FileType} eq 'MP4' and
-        $$et{save_ftyp} and $$et{HasHandler} and $$et{save_ftyp} =~ /^(iso|dash)/ and
+        $$et{save_ftyp} and $$et{HasHandler} and $$et{save_ftyp} =~ /^(iso|dash|mp42)/ and
         $$et{HasHandler}{soun} and not $$et{HasHandler}{vide})
     {
         $et->OverrideFileType('M4A', 'audio/mp4');

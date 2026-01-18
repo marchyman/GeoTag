@@ -38,6 +38,8 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
 
 - Show City/State/Country/Country Code in the info pane.
 
+- Exiftool version 13.45
+
 ### Bug Fixes
 
 - Only the first raw-jpg pair was processed when the Disable paired jpegs
