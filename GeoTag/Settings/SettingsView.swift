@@ -37,10 +37,27 @@ struct SettingsView: View {
                 .font(.largeTitle)
                 .padding()
             Form {
-                // Image backup configuration
-                Section("Backup Files") {
+                Section("Backup File Location") {
+                    if doNotBackup {
+                        Text("Enabling image backups is strongly recommended")
+                            .font(.footnote)
+                            .padding(.horizontal)
+                            .frame(width: 320)
+                    } else {
+                        PathView(url: $state.backupURL)
+                            .accessibilityValue("backupPath")
+                            .frame(width: 320)
+                            .padding(.horizontal)
+                            .help(
+                            """
+                            Click on the disclosure indicator to choose a \
+                            folder where GeoTag will place copies of images \
+                            before performing any updates.
+                            """)
+                    }
+
                     Toggle("Disable image backups", isOn: $doNotBackup)
-                        .padding(.horizontal)
+                        .padding([.bottom, .horizontal])
                         .help(
                         """
                         GeoTag will not place a copy of updated files in your \
@@ -50,29 +67,12 @@ struct SettingsView: View {
                         Allowing GeoTag to make a backup before updates \
                         occur is recommended.
                         """)
-
-                    if doNotBackup {
-                        Text("Enabling image backups is strongly recommended")
-                            .font(.footnote)
-                            .padding([.bottom, .horizontal])
-                    } else {
-                        PathView(url: $state.backupURL)
-                            .accessibilityValue("backupPath")
-                            .frame(width: 320)
-                            .padding([.bottom, .horizontal])
-                            .help(
-                            """
-                            Click on the disclosure indicator to choose a \
-                            folder where GeoTag will place copies of images \
-                            before performing any updates.
-                            """)
-                    }
                 }
 
                 Section("Sidecar file support") {
                     // Create Sidecar (XMP) files
                     Toggle("Create Sidecar (XMP) files", isOn: $createSidecarFiles)
-                        .padding([.bottom, .horizontal])
+                        .padding()
                         .help(
                         """
                         Checking this box will result in creation of a sidecar \
@@ -94,76 +94,81 @@ struct SettingsView: View {
                         Text("dd° mm' ss.ss\"")
                             .tag(AppSettings.CoordFormat.degMinSec)
                     }
-                    .pickerStyle(.inline)
+                    .pickerStyle(.radioGroup)
                     .labelsHidden()
-                    .padding([.bottom, .horizontal])
+                    .padding()
                     .help("Select a format for latitude and longitude display")
                 }
 
                 // Track log display configuration
                 Section("Track Log Options") {
-                    ColorPicker(
-                        "Track Color:",
-                        selection: $state.masData.trackColor
-                    )
-                    .padding(.horizontal)
-                    .help("Select the color used to display GPS tracks on the map.")
+                    HStack {
+                        ColorPicker(
+                            "Track Color",
+                            selection: $state.masData.trackColor
+                        )
+                        .labelsHidden()
+                        .padding(.leading)
+                        .help("Select the color used to display GPS tracks on the map.")
+
+                        Text("Track color")
+                    }
 
                     VStack(alignment: .leading){
                         HStack {
-                            Text("Track Width")
-                                .padding(.horizontal)
                             TextField(
                                 "Track width:",
                                 value: $state.masData.trackWidth, format: .number
                             )
-                            .frame(maxWidth: 190)
+                            .frame(maxWidth: 48)
+                            .padding(.leading)
                             .help(
-                        """
-                        Select the width of line used to display GPS \
-                        tracks on the map. Use 0 for the system default width.
-                        """)
+                            """
+                            Select the width of line used to display GPS \
+                            tracks on the map. Use 0 for the system default width.
+                            """)
+
+                            Text("Track Width")
                         }
 
                         HStack {
-                            Text("Extend timestamps")
-                                .padding(.horizontal)
                             TextField(
                                 "Extend track timestamps:",
                                 value: $extendedTime, format: .number
                             )
-                            .padding(.bottom)
-                            .frame(maxWidth: 50)
+                            .frame(maxWidth: 48)
+                            .padding(.leading)
                             .help(
-                        """
-                        When matching image timestamps to a GPS track log \
-                        GeoTag will assign locations to images taken this many \
-                        minutes before and after the log endpoints. The first \
-                        or last location will be used as appropriate. Set this \
-                        value to zero to disable assigning locations to images \
-                        that are outside the range of the track log.
-                        """)
+                            """
+                            When matching image timestamps to a GPS track log \
+                            GeoTag will assign locations to images taken this \
+                            many minutes before and after the log endpoints. \
+                            The first or last location will be used as \
+                            appropriate. Set this value to zero to disable \
+                            assigning locations to images \
+                            that are outside the range of the track log.
+                            """)
+
+                            Text("Extend timestamps")
                         }
                     }
                 }
 
                 Section("Miscellaneous") {
                     Toggle("Disable paired jpegs", isOn: $disablePairedJpegs)
-                        .padding([.bottom, .horizontal])
+                        .padding()
                         .help(
-                    """
-                    When this box is checked jpeg files that are part of a \
-                    raw/jpeg pair can not not be updated.  The jpeg image \
-                    name is displayed in the table using a gray color.
-                    """)
+                        """
+                        When this box is checked jpeg files that are part of a \
+                        raw/jpeg pair can not not be updated.  The jpeg image \
+                        name is displayed in the table using a gray color.
+                        """)
 
                     // Image save option configuration
-                    Toggle(
-                        "Set File Modification Time",
-                        isOn: $updateFileModificationTimes
-                    )
-                    .padding([.bottom, .horizontal])
-                    .help(
+                    Toggle("Set File Modification Time",
+                        isOn: $updateFileModificationTimes)
+                        .padding([.bottom, .horizontal])
+                        .help(
                         """
                         Checking this box will set file modification time to \
                         be the same as the image creation date/time whenever \
@@ -172,12 +177,10 @@ struct SettingsView: View {
                         will be controlled by the system.
                         """)
 
-                    Toggle(
-                        "Update GPS Date/Time",
-                        isOn: $updateGPSTimestamps
-                    )
-                    .padding([.bottom, .horizontal])
-                    .help(
+                    Toggle("Update GPS Date/Time",
+                        isOn: $updateGPSTimestamps )
+                        .padding([.bottom, .horizontal])
+                        .help(
                         """
                         GeoTag can set/update the GPS time and date stamps \
                         when updating locations.  These timestamps are the \
@@ -199,20 +202,24 @@ struct SettingsView: View {
                         """)
 
                     if addTags {
-                        TextField("With tag:", text: $finderTag)
-                            .frame(maxWidth: 250)
-                            .padding(.horizontal)
-                            .onSubmit {
-                                if finderTag.isEmpty {
-                                    finderTag = "GeoTag"
+                        HStack {
+                            Text("with tag")
+                                .padding(.leading, 38)
+                            TextField("With tag:", text: $finderTag)
+                                .frame(maxWidth: 200)
+                                .padding(.horizontal)
+                                .onSubmit {
+                                    if finderTag.isEmpty {
+                                        finderTag = "GeoTag"
+                                    }
                                 }
-                            }
-                            .help(
+                                .help(
                                 """
                                 This tag will be added to files when Tag \
                                 updated files is checked. If the tag is empty \
                                 \"GeoTag\" will be used.
                                 """)
+                        }
                     }
                 }
             }

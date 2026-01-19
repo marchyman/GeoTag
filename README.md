@@ -12,9 +12,10 @@ image metadata -- your image pixels are not touched.
 See <http://exiftool.org> for information about ExifTool.
 **ExifTool is built-in to GeoTag.**
 
-GeoTag 5.2+ requires macOS Sonoma or later.  Use GeoTag 5.1 if running on
-macOS Ventura.  Those running earlier versions of macOS can use GeoTag
-version 4.15.
+- GeoTag 5.7+ requires macOS 15 (Sequoia) or later.
+- GeoTag 5.2 thru 5.6 requires macOS 14 (Sonoma) or later.
+- Use GeoTag 5.1 if running on macOS Ventura.
+- Those running earlier versions of macOS can use GeoTag version 4.15.
 
 **NOTE**:
 
@@ -37,6 +38,8 @@ seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   select the map search field.
 
 - Show City/State/Country/Country Code in the info pane.
+
+- Settings window re-design
 
 - Exiftool version 13.45
 
