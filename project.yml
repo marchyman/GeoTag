@@ -1,11 +1,13 @@
 name: GeoTag
 
 options:
+  deploymentTarget:
+    macOS: "15.0"
+  groupOrdering:
+    - order: [GeoTag, GeoTagTests, GeoTagUITests, Packages, Products]
   fileTypes:
     "icon":
       file: true 
-  groupOrdering:
-    - order: [GeoTag, GeoTagTests, GeoTagUITests, Packages, Products]
 
 settings:
   base:
@@ -39,7 +41,6 @@ targets:
   GeoTag:
     type: application
     platform: macOS
-    deploymentTarget: 14.0
     dependencies:
       - package: AdjustTimeZoneView
       - package: GpxTrackLog
@@ -148,7 +149,6 @@ targets:
   GeoTagTests:
     type: bundle.unit-test
     platform: macOS
-    deploymentTarget: 14.0
     dependencies:
       - target: GeoTag
     sources:
@@ -162,7 +162,6 @@ targets:
   GeoTagUITests:
     type: bundle.ui-testing
     platform: macOS
-    deploymentTarget: 14.0
     dependencies:
       - target: GeoTag
     sources:

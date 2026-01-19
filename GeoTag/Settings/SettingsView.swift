@@ -38,12 +38,10 @@ struct SettingsView: View {
                 .padding()
             Form {
                 // Image backup configuration
-                Group {
-                    LabeledContent("Disable Image Backups:") {
-                        Toggle("Disable image backups", isOn: $doNotBackup)
-                            .labelsHidden()
-                    }
-                    .help(
+                Section("Backup Files") {
+                    Toggle("Disable image backups", isOn: $doNotBackup)
+                        .padding(.horizontal)
+                        .help(
                         """
                         GeoTag will not place a copy of updated files in your \
                         selected backup folder if this box is checked. If \
@@ -56,15 +54,13 @@ struct SettingsView: View {
                     if doNotBackup {
                         Text("Enabling image backups is strongly recommended")
                             .font(.footnote)
-                            .padding(.bottom)
+                            .padding([.bottom, .horizontal])
                     } else {
-                        LabeledContent("Backup folder:") {
-                            PathView(url: $state.backupURL)
-                                .accessibilityValue("backupPath")
-                                .frame(width: 320)
-                        }
-                        .padding(.bottom)
-                        .help(
+                        PathView(url: $state.backupURL)
+                            .accessibilityValue("backupPath")
+                            .frame(width: 320)
+                            .padding([.bottom, .horizontal])
+                            .help(
                             """
                             Click on the disclosure indicator to choose a \
                             folder where GeoTag will place copies of images \
@@ -73,66 +69,72 @@ struct SettingsView: View {
                     }
                 }
 
-                // Create Sidecar (XMP) files
-                LabeledContent("Create Sidecar (XMP) files:") {
+                Section("Sidecar file support") {
+                    // Create Sidecar (XMP) files
                     Toggle("Create Sidecar (XMP) files", isOn: $createSidecarFiles)
-                        .labelsHidden()
+                        .padding([.bottom, .horizontal])
+                        .help(
+                        """
+                        Checking this box will result in creation of a sidecar \
+                        (XMP) file for updated image files if one does not exist. \
+                        Updates are then written to the sidecar file.
+                        """)
                 }
-                .padding([.bottom, .horizontal])
-                .help(
-                    """
-                    Checking this box will result in creation of a sidecar \
-                    (XMP) file for updated image files if one does not exist. \
-                    Updates are then written to the sidecar file.
-                    """)
 
                 // Coordinate display configuration
-                Picker(
-                    "Choose a coordinate format:",
-                    selection: $coordFormat
-                ) {
-                    Text("dd.dddddd")
-                        .tag(AppSettings.CoordFormat.deg)
-                    Text("dd° mm.mmmmmm'")
-                        .tag(AppSettings.CoordFormat.degMin)
-                    Text("dd° mm' ss.ss\"")
-                        .tag(AppSettings.CoordFormat.degMinSec)
+                Section("Coordinate format") {
+                    Picker(
+                        "Choose a coordinate format:",
+                        selection: $coordFormat
+                    ) {
+                        Text("dd.dddddd")
+                            .tag(AppSettings.CoordFormat.deg)
+                        Text("dd° mm.mmmmmm'")
+                            .tag(AppSettings.CoordFormat.degMin)
+                        Text("dd° mm' ss.ss\"")
+                            .tag(AppSettings.CoordFormat.degMinSec)
+                    }
+                    .pickerStyle(.inline)
+                    .labelsHidden()
+                    .padding([.bottom, .horizontal])
+                    .help("Select a format for latitude and longitude display")
                 }
-                .pickerStyle(.inline)
-                .padding([.bottom, .horizontal])
-                .help("Select a format for latitude and longitude display")
 
                 // Track log display configuration
-                Group {
+                Section("Track Log Options") {
                     ColorPicker(
-                        "GPS Track Color:",
+                        "Track Color:",
                         selection: $state.masData.trackColor
                     )
                     .padding(.horizontal)
                     .help("Select the color used to display GPS tracks on the map.")
 
-                    TextField(
-                        "GPS Track width:",
-                        value: $state.masData.trackWidth, format: .number
-                    )
-                    .padding(.horizontal)
-                    .frame(maxWidth: 190)
-                    .help(
+                    VStack(alignment: .leading){
+                        HStack {
+                            Text("Track Width")
+                                .padding(.horizontal)
+                            TextField(
+                                "Track width:",
+                                value: $state.masData.trackWidth, format: .number
+                            )
+                            .frame(maxWidth: 190)
+                            .help(
                         """
                         Select the width of line used to display GPS \
                         tracks on the map. Use 0 for the system default width.
                         """)
+                        }
 
-                    LabeledContent("Extend track timestamps:") {
-                        TextField(
-                            "Extend track timestamps:",
-                            value: $extendedTime, format: .number
-                        )
-                        .labelsHidden()
-                        .padding(.bottom)
-                        .frame(maxWidth: 50)
-                    }
-                    .help(
+                        HStack {
+                            Text("Extend timestamps")
+                                .padding(.horizontal)
+                            TextField(
+                                "Extend track timestamps:",
+                                value: $extendedTime, format: .number
+                            )
+                            .padding(.bottom)
+                            .frame(maxWidth: 50)
+                            .help(
                         """
                         When matching image timestamps to a GPS track log \
                         GeoTag will assign locations to images taken this many \
@@ -141,29 +143,25 @@ struct SettingsView: View {
                         value to zero to disable assigning locations to images \
                         that are outside the range of the track log.
                         """)
+                        }
+                    }
                 }
 
-                LabeledContent("Disable paired jpegs:") {
+                Section("Miscellaneous") {
                     Toggle("Disable paired jpegs", isOn: $disablePairedJpegs)
-                        .labelsHidden()
-                }
-                .padding([.bottom, .horizontal])
-                .help(
+                        .padding([.bottom, .horizontal])
+                        .help(
                     """
                     When this box is checked jpeg files that are part of a \
                     raw/jpeg pair can not not be updated.  The jpeg image \
                     name is displayed in the table using a gray color.
                     """)
 
-                // Image save option configuration
-                Group {
-                    LabeledContent("Set File Modification Times:") {
-                        Toggle(
-                            "Set File Modification Time",
-                            isOn: $updateFileModificationTimes
-                        )
-                        .labelsHidden()
-                    }
+                    // Image save option configuration
+                    Toggle(
+                        "Set File Modification Time",
+                        isOn: $updateFileModificationTimes
+                    )
                     .padding([.bottom, .horizontal])
                     .help(
                         """
@@ -174,13 +172,10 @@ struct SettingsView: View {
                         will be controlled by the system.
                         """)
 
-                    LabeledContent("Update GPS Date/Time:") {
-                        Toggle(
-                            "Update GPS Date/Time",
-                            isOn: $updateGPSTimestamps
-                        )
-                        .labelsHidden()
-                    }
+                    Toggle(
+                        "Update GPS Date/Time",
+                        isOn: $updateGPSTimestamps
+                    )
                     .padding([.bottom, .horizontal])
                     .help(
                         """
@@ -194,12 +189,9 @@ struct SettingsView: View {
                         the time zone.
                         """)
 
-                    LabeledContent("Tag updated files:") {
-                        Toggle("Tag updated files", isOn: $addTags)
-                            .labelsHidden()
-                    }
-                    .padding(.horizontal)
-                    .help(
+                    Toggle("Tag updated files", isOn: $addTags)
+                        .padding(.horizontal)
+                        .help(
                         """
                         If this option is enabled a finder tag will be added \
                         to updated images. The tag is alway added to the main \
@@ -223,23 +215,23 @@ struct SettingsView: View {
                                 """)
                     }
                 }
-
-                Spacer()
-                HStack {
-                    Spacer()
-                    Button("Close") {
-                        NSApplication.shared.keyWindow?.close()
-                    }
-                    .keyboardShortcut(.defaultAction)
-                }
-                .padding()
             }
+            .formStyle(SettingsFormStyle())
+
+            Spacer()
+            HStack {
+                Spacer()
+                Button("Close") {
+                    NSApplication.shared.keyWindow?.close()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+            .padding()
         }
     }
 }
 
 #Preview {
     SettingsView()
-        .frame(width: 600.0, height: 590.0, alignment: .top)
         .environment(AppState())
 }
