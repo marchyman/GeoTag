@@ -35,9 +35,11 @@ struct ImageInspectorForm: View {
         dateTimeCreated: "2022:12:12 11:22:33",
         latitude: 33.123,
         longitude: 123.456)
-    ImageInspectorForm(image: image)
-        .padding()
-        .frame(minWidth: 300, idealWidth: 400, maxWidth: 500,
-               minHeight: 800, alignment: .top)
+    Text("Inspector")
+        .inspector(isPresented: .constant(true)) {
+            ImageInspectorForm(image: image)
+                .inspectorColumnWidth(400)
+        }
+        .frame(width: 600, height: 800)
         .environment(AppState())
 }
