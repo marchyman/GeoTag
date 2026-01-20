@@ -39,14 +39,14 @@ final class GeoTagUI00Tests: XCTestCase {
 
     // test that app contains the normal elements at initial launch and that
     // the appropriate menu items appear.
-    func test0Startup() throws {
+    func test0Startup() {
         let app = launch()
-        let window = app.windows["main"]
 
         // first launch. Take a screenshot, dismiss the expected sheet,
         // then take a second screenshot
 
-        let sheet = app.windows.sheets.element
+        let window = app.windows["main"]
+        let sheet = window.sheets.element
         XCTAssert(sheet.exists)
         takeScreenshot(name: "InitialLaunch", window: window)
         sheet.buttons.firstMatch.click()

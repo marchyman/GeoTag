@@ -26,8 +26,10 @@ final class GeoTagUI04MapTests: XCTestCase {
         app.launchEnvironment["UITESTS"] = "1"
         app.launchEnvironment["MAPTEST"] = "1"
         app.launch()
+        let window = app.windows["main"]
+        XCTAssert(window.waitForExistence(timeout: 3))
         // get rid of the no backup folder selected sheet
-        let sheet = app.windows.sheets.element
+        let sheet = window.sheets.element
         if sheet.exists {
             sheet.buttons.firstMatch.click()
         }

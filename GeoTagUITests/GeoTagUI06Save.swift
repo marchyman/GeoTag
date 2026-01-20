@@ -30,9 +30,11 @@ final class GeoTagUI06Save: XCTestCase {
         // force the first save to fail
         app.launchEnvironment["BACKUP"] = NSTemporaryDirectory()
         app.launch()
+        let window = app.windows["main"]
+        XCTAssert(window.waitForExistence(timeout: 3))
 
         // remove the "no backups sheet" sheet if it is present.
-        let sheet = app.windows.sheets.element
+        let sheet = window.sheets.element
         if sheet.exists {
             sheet.buttons.firstMatch.click()
         }

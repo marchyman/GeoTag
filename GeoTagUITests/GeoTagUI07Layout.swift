@@ -39,9 +39,11 @@ final class GeoTagUI07Layout: XCTestCase {
         app = XCUIApplication()
         app.launchEnvironment["UITESTS"] = "1"
         app.launch()
+        let window = app.windows["main"]
+        XCTAssert(window.waitForExistence(timeout: 3))
 
         // remove the "no backups sheet" sheet if it is present.
-        let sheet = app.windows.sheets.element
+        let sheet = window.sheets.element
         if sheet.exists {
             sheet.buttons.firstMatch.click()
         }
