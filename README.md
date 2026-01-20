@@ -16,11 +16,13 @@ See <http://exiftool.org> for information about ExifTool.
 
 - GeoTag 5.7+ requires macOS 15 (Sequoia) or later.
 - GeoTag 5.2 thru 5.6 requires macOS 14 (Sonoma) or later.
-  ![warning] 
+
+  [!WARNING] 
   There is a map pin location issue when running on early versions of macOS
   Sonoma. If you see a pin placed above the point you clicked/tapped you are
   seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
   14.4.1). It is not a problem in the latest versions of Sonoma or in Sequoia.
+
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
 
