@@ -41,8 +41,7 @@ extension ImageModel {
 
         if let exifData = imgProps[ImageModel.exifDictionary]
             as? [String: AnyObject],
-            let dto = exifData[ImageModel.exifDateTimeOriginal] as? String
-        {
+            let dto = exifData[ImageModel.exifDateTimeOriginal] as? String {
             dateTimeCreated = dto
             originalDateTimeCreated = dto
         }
@@ -52,8 +51,7 @@ extension ImageModel {
 
         if location == nil,
             let gpsData = imgProps[ImageModel.GPSDictionary]
-                as? [String: AnyObject]
-        {
+            as? [String: AnyObject] {
 
             // some Leica write GPS tags with a status tag of "V" (void) when no
             // GPS info is available.   If a status tag exists and its value
@@ -65,21 +63,28 @@ extension ImageModel {
                 }
             }
             if let lat = gpsData[ImageModel.GPSLatitude] as? Double,
-                let latRef = gpsData[ImageModel.GPSLatitudeRef] as? String,
-                let lon = gpsData[ImageModel.GPSLongitude] as? Double,
-                let lonRef = gpsData[ImageModel.GPSLongitudeRef] as? String
-            {
+               let latRef = gpsData[ImageModel.GPSLatitudeRef] as? String,
+               let lon = gpsData[ImageModel.GPSLongitude] as? Double,
+               let lonRef = gpsData[ImageModel.GPSLongitudeRef] as? String {
                 location = validCoords(
                     latitude: latRef == "N" ? lat : -lat,
                     longitude: lonRef == "E" ? lon : -lon)
                 originalLocation = location
             }
             if let alt = gpsData[ImageModel.GPSAltitude] as? Double,
-                let altRef = gpsData[ImageModel.GPSAltitudeRef] as? Int
-            {
+               let altRef = gpsData[ImageModel.GPSAltitudeRef] as? Int {
                 elevation = altRef == 0 ? alt : -alt
                 originalElevation = elevation
             }
+
+            // grab IPTC info for city/state/country
+            if let iptcInfo = imgProps[ImageModel.IPTCDictionary] as? [String: AnyObject] {
+                city = iptcInfo[ImageModel.IPTCCity] as? String
+                state = iptcInfo[ImageModel.IPTCState] as? String
+                country = iptcInfo[ImageModel.IPTCCountry] as? String
+                countryCode = iptcInfo[ImageModel.IPTCCountryCode] as? String
+            }
+
         }
         return true
     }
@@ -159,4 +164,9 @@ extension ImageModel {
     static let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
     static let GPSAltitude = kCGImagePropertyGPSAltitude as String
     static let GPSAltitudeRef = kCGImagePropertyGPSAltitudeRef as String
+    static let IPTCDictionary = kCGImagePropertyIPTCDictionary as String
+    static let IPTCCity = kCGImagePropertyIPTCCity as String
+    static let IPTCState = kCGImagePropertyIPTCProvinceState as String
+    static let IPTCCountry = kCGImagePropertyIPTCCountryPrimaryLocationName as String
+    static let IPTCCountryCode = kCGImagePropertyIPTCCountryPrimaryLocationCode as String
 }
