@@ -260,15 +260,22 @@ extension Exiftool {
     // - Returns: (dto: String, lat: Double, latRef: String, lon: Double, lonRef: String)
     //
     // Apple's ImageIO functions can not extract metadata from XMP sidecar
-    // files.  ExifTool is used for that purpose.
-    // swiftlint:disable large_tuple
+    // files.  ExifTool is used for that purpose. XmpMetadata contains the
+    // data that may be returned from the file.
+
+    struct XmpMetadata {
+        let dto: String
+        let validGPS: Bool
+        let location: Coords
+        let elevation: Double?
+        let city: String?
+        let state: String?
+        let country: String?
+        let countryCode: String?
+    }
+
     // swiftlint:disable cyclomatic_complexity
-    func metadataFrom(xmp: URL) -> (
-        dto: String,
-        valid: Bool,
-        location: Coords,
-        elevation: Double?
-    ) {
+    func metadataFrom(xmp: URL) -> XmpMetadata {
         let exiftool = Process()
         let pipe = Pipe()
         let err = Pipe()
@@ -278,7 +285,8 @@ extension Exiftool {
         exiftool.arguments = [
             "-args", "-c", "%.15f", "-createdate",
             "-gpsstatus", "-gpslatitude", "-gpslongitude",
-            "-gpsaltitude", xmp.path
+            "-gpsaltitude", "-xmp:city", "-xmp:state",
+            "-xmp:country", "-xmp:countryCode", xmp.path
         ]
         do {
             try exiftool.run()
@@ -293,6 +301,10 @@ extension Exiftool {
         var location = Coords()
         var elevation: Double?
         var validGPS = false
+        var city: String?
+        var state: String?
+        var country: String?
+        var countryCode: String?
 
         if exiftool.terminationStatus == 0 {
             let data = pipe.fileHandleForReading.availableData
@@ -320,7 +332,7 @@ extension Exiftool {
                     case "-GPSLatitude":
                         let parts = value.split(separator: " ")
                         if let latValue = Double(parts[0]),
-                            parts.count == 2
+                           parts.count == 2
                         {
                             location.latitude = latValue
                             if parts[1] == "S" {
@@ -331,7 +343,7 @@ extension Exiftool {
                     case "-GPSLongitude":
                         let parts = value.split(separator: " ")
                         if let lonValue = Double(parts[0]),
-                            parts.count == 2
+                           parts.count == 2
                         {
                             location.longitude = lonValue
                             if parts[1] == "W" {
@@ -342,11 +354,18 @@ extension Exiftool {
                     case "-GPSAltitude":
                         let parts = value.split(separator: " ")
                         if let eleValue = Double(parts[0]),
-                            parts.count == 2
+                           parts.count == 2
                         {
                             elevation = parts[1] == "1" ? eleValue : -eleValue
                         }
-
+                    case "-City":
+                        city = String(value)
+                    case "-State":
+                        state = String(value)
+                    case "-Country":
+                        country = String(value)
+                    case "-CountryCode":
+                        countryCode = String(value)
                     default:
                         break
                     }
@@ -355,10 +374,11 @@ extension Exiftool {
                 validGPS = gpsStatus && gpsLat && gpsLon
             }
         }
-        return (createDate, validGPS, location, elevation)
+        return XmpMetadata(dto: createDate, validGPS: validGPS,
+            location: location, elevation: elevation, city: city, state: state,
+            country: country, countryCode: countryCode)
     }
     // swiftlint:enable cyclomatic_complexity
-    // swiftlint:enable large_tuple
 
     private func logFrom(pipe: Pipe) {
         let data = pipe.fileHandleForReading.availableData

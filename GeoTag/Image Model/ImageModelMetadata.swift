@@ -77,12 +77,16 @@ extension ImageModel {
                 originalElevation = elevation
             }
 
-            // grab IPTC info for city/state/country
+            // grab IPTC info for city/state/country/countryCode
             if let iptcInfo = imgProps[ImageModel.IPTCDictionary] as? [String: AnyObject] {
                 city = iptcInfo[ImageModel.IPTCCity] as? String
+                originalCity = city
                 state = iptcInfo[ImageModel.IPTCState] as? String
+                originalState = state
                 country = iptcInfo[ImageModel.IPTCCountry] as? String
+                originalCountry = country
                 countryCode = iptcInfo[ImageModel.IPTCCountryCode] as? String
+                originalCountryCode = countryCode
             }
 
         }
@@ -119,11 +123,19 @@ extension ImageModel {
                 dateTimeCreated = results.dto
                 originalDateTimeCreated = results.dto
             }
-            if results.valid {
+            if results.validGPS {
                 location = results.location
                 originalLocation = location
                 elevation = results.elevation
                 originalElevation = elevation
+                city = results.city
+                originalCity = city
+                state = results.state
+                originalState = state
+                country = results.country
+                originalCountry = country
+                countryCode = results.countryCode
+                originalCountryCode = countryCode
             }
         }
     }
