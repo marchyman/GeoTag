@@ -37,7 +37,7 @@ final class GeoTagUI07Layout: XCTestCase {
     @MainActor
     func localSetup() {
         app = XCUIApplication()
-        app.launchEnvironment = ["UITESTS": "1"]
+        app.launchEnvironment["UITESTS"] = "1"
         app.launch()
 
         // remove the "no backups sheet" sheet if it is present.

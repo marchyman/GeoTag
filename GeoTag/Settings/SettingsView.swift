@@ -117,7 +117,7 @@ struct SettingsView: View {
                     VStack(alignment: .leading){
                         HStack {
                             TextField(
-                                "Track width:",
+                                "Track width",
                                 value: $state.masData.trackWidth, format: .number
                             )
                             .frame(maxWidth: 48)
@@ -128,12 +128,12 @@ struct SettingsView: View {
                             tracks on the map. Use 0 for the system default width.
                             """)
 
-                            Text("Track Width")
+                            Text("Track width")
                         }
 
                         HStack {
                             TextField(
-                                "Extend track timestamps:",
+                                "Extend track timestamps",
                                 value: $extendedTime, format: .number
                             )
                             .frame(maxWidth: 48)

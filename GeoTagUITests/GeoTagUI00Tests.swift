@@ -30,7 +30,7 @@ final class GeoTagUI00Tests: XCTestCase {
 
     func launch() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchEnvironment = ["UITESTS": "1"]
+        app.launchEnvironment["UITESTS"] = "1"
         app.launch()
         let window = app.windows["main"]
         XCTAssert(window.waitForExistence(timeout: 3))

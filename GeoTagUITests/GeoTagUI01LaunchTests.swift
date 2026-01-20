@@ -18,7 +18,7 @@ final class GeoTagUI01LaunchTests: XCTestCase {
 
     func testBackupFolder() throws {
         let app = XCUIApplication()
-        app.launchEnvironment = ["BACKUP": NSTemporaryDirectory()]
+        app.launchEnvironment["BACKUP"] = NSTemporaryDirectory()
         app.launch()
         app.terminate()
     }

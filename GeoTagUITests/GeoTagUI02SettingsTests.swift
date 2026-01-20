@@ -47,7 +47,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         app.menuItems["Settings…"].click()
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
 
-        XCTAssertTrue(app.staticTexts["Disable Image Backups:"].exists)
+        XCTAssertTrue(app.staticTexts["Backup File Location"].exists)
         XCTAssertTrue(app.checkBoxes["Disable image backups"].exists)
         if let value = app.checkBoxes["Disable image backups"].value as? Int? {
             if value == 1 {
@@ -57,33 +57,27 @@ final class GeoTagUI02SettingsTests: XCTestCase {
         }
         takeScreenshot(name: "Settings")
 
-        XCTAssertTrue(app.staticTexts["Create Sidecar (XMP) files:"].exists)
+        XCTAssertTrue(app.staticTexts["Sidecar file support"].exists)
         XCTAssertTrue(app.checkBoxes["Create Sidecar (XMP) files"].exists)
 
-        XCTAssertTrue(app.staticTexts["Choose a coordinate format:"].exists)
+        XCTAssertTrue(app.staticTexts["Coordinate format"].exists)
         XCTAssertTrue(app.radioButtons["dd.dddddd"].exists)
         XCTAssertTrue(app.radioButtons["dd° mm.mmmmmm'"].exists)
         XCTAssertTrue(app.radioButtons["dd° mm' ss.ss\""].exists)
 
-        XCTAssertTrue(app.staticTexts["GPS Track Color:"].exists)
+        XCTAssertTrue(app.staticTexts["Track Log Options"].exists)
         XCTAssertTrue(app.colorWells.firstMatch.exists)
 
-        XCTAssertTrue(app.staticTexts["GPS Track width:"].exists)
+        XCTAssertTrue(app.staticTexts["Track width"].exists)
         XCTAssertTrue(app.textFields.element(boundBy: 0).exists)
 
-        XCTAssertTrue(app.staticTexts["Extend track timestamps:"].exists)
+        XCTAssertTrue(app.staticTexts["Extend timestamps"].exists)
         XCTAssertTrue(app.textFields.element(boundBy: 1).exists)
 
-        XCTAssertTrue(app.staticTexts["Disable paired jpegs:"].exists)
+        XCTAssertTrue(app.staticTexts["Miscellaneous"].exists)
         XCTAssertTrue(app.checkBoxes["Disable paired jpegs"].exists)
-
-        XCTAssertTrue(app.staticTexts["Set File Modification Times:"].exists)
         XCTAssertTrue(app.checkBoxes["Set File Modification Time"].exists)
-
-        XCTAssertTrue(app.staticTexts["Update GPS Date/Time:"].exists)
         XCTAssertTrue(app.checkBoxes["Update GPS Date/Time"].exists)
-
-        XCTAssertTrue(app.staticTexts["Tag updated files:"].exists)
         XCTAssertTrue(app.checkBoxes["Tag updated files"].exists)
         if let value = app.checkBoxes["Tag updated files"].value as? Int? {
             if value == 0 {

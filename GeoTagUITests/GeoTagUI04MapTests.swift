@@ -23,7 +23,8 @@ final class GeoTagUI04MapTests: XCTestCase {
 
     func localSetup() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchEnvironment = ["UITESTS": "1", "MAPTEST": "1"]
+        app.launchEnvironment["UITESTS"] = "1"
+        app.launchEnvironment["MAPTEST"] = "1"
         app.launch()
         // get rid of the no backup folder selected sheet
         let sheet = app.windows.sheets.element

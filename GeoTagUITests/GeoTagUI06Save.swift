@@ -28,7 +28,7 @@ final class GeoTagUI06Save: XCTestCase {
     func localSetup() {
         app = XCUIApplication()
         // force the first save to fail
-        app.launchEnvironment = ["BACKUP": NSTemporaryDirectory()]
+        app.launchEnvironment["BACKUP"] = NSTemporaryDirectory()
         app.launch()
 
         // remove the "no backups sheet" sheet if it is present.
