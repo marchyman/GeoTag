@@ -4,8 +4,8 @@
 
 set -e
 
-for file; do
-    convert -resize 70%x70% "${file}" \
+for file in *.png; do
+    magick -resize 70%x70% "${file}" \
         -gravity center \
         -background "rgb(210,210,210)" \
         -extent 2560x1600 \
