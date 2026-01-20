@@ -91,7 +91,7 @@ final class GeoTagUI02SettingsTests: XCTestCase {
     }
 
     // swiftlint: disable cyclomatic_complexity
-    func test1ChangeSettings() {
+    func test1ChangeSettings() async {
         app.typeKey(",", modifierFlags: .command)
         XCTAssertTrue(app.windows["GeoTag Settings"].waitForExistence(timeout: 2))
         let settings = app.windows["GeoTag Settings"]

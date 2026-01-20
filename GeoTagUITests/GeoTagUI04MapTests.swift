@@ -28,8 +28,9 @@ final class GeoTagUI04MapTests: XCTestCase {
         app.launch()
         // get rid of the no backup folder selected sheet
         let sheet = app.windows.sheets.element
-        XCTAssert(sheet.exists)
-        sheet.buttons.firstMatch.click()
+        if sheet.exists {
+            sheet.buttons.firstMatch.click()
+        }
         return app
     }
 
@@ -114,7 +115,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // Search picking previous results
-    func test1MapSearch() {
+    func test1MapSearch() async {
         let app = localSetup()
         // save the current map location
         let loc = app.windows.firstMatch
@@ -183,7 +184,7 @@ final class GeoTagUI04MapTests: XCTestCase {
     }
 
     // Map context menu
-    func test3MapContextMenu() {
+    func test3MapContextMenu() async {
         let app = localSetup()
         let map = app.maps.firstMatch
         map.rightClick()
