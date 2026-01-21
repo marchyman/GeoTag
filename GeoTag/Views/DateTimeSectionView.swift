@@ -27,7 +27,6 @@ struct DateTimeSectionView: View {
                 "New Date/Time", selection: $newDate,
                 displayedComponents: .init(rawValue: 1_234_521_450_295_224_572)
             )
-            .accessibilityValue("newDatePicker")
             .focused($isFocused)
             .padding([.horizontal, .bottom])
             .help(

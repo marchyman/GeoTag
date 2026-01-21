@@ -120,12 +120,6 @@ final class AppState {
         @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
         @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
 
-        // also for UI testing... assign a backup folder
-        if let testBackup = ProcessInfo.processInfo.environment["BACKUP"] {
-            let testURL = URL(fileURLWithPath: testBackup, isDirectory: true)
-            savedBookmark = getBookmark(from: testURL)
-        }
-
         if !doNotBackup {
             backupURL = getBackupURL()
         }

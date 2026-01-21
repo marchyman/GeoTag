@@ -45,7 +45,6 @@ struct SettingsView: View {
                             .frame(width: 320)
                     } else {
                         PathView(url: $state.backupURL)
-                            .accessibilityValue("backupPath")
                             .frame(width: 320)
                             .padding(.horizontal)
                             .help(

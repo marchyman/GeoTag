@@ -57,15 +57,6 @@ public struct MapAndSearchView: View {
                     )
                     .opacity((mapFocus == .search || mapFocus == .searchList) ? 1.0 : 0)
 
-                // show map center coords -- only used by XCUITesting
-                Text(masData.centerLocation)
-                    .padding()
-                    .background(.thickMaterial)
-                    .frame(
-                        maxWidth: .infinity, maxHeight: .infinity,
-                        alignment: .topTrailing
-                    )
-                    .opacity(masData.showLocation ? 1.0 : 0)
             }
         }
         .onChange(of: masData.searchBarActive) {

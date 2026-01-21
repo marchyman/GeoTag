@@ -38,12 +38,9 @@ public final class MapAndSearchData {
     var writing = false
 
     @ObservationIgnored
-    let showLocation: Bool  // set when performing some XCUITests
-    @ObservationIgnored
     let logger: Logger  // package logging
 
     public init() {
-        showLocation = ProcessInfo.processInfo.environment["MAPTEST"] != nil
         logger = Logger(
             subsystem: Bundle.main.bundleIdentifier!,
             category: "MapAndSearchViews")

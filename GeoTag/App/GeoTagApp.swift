@@ -24,10 +24,6 @@ struct GeoTagApp: App {
                                            delegate: appDelegate))
                 .onAppear {
                     AppState.logger.info("ContentView() onAppear")
-                    // blow away settings when user interface testing
-                    if ProcessInfo.processInfo.environment["UITESTS"] != nil {
-                        AppSettings.resetSettings()
-                    }
                     appDelegate.state = state
                 }
                 .environment(state)
