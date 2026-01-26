@@ -57,7 +57,7 @@ targets:
       properties:
         CFBundleDisplayName: $(TARGET_NAME)
         LSApplicationCategoryType: public.app-category.photography
-        NSHumanReadableCopyright: Copyright 2022-2025 Marco S Hyman
+        NSHumanReadableCopyright: Copyright 2022-2026 Marco S Hyman
         ITSAppUsesNonExemptEncryption: NO
         NSPhotoLibraryUsageDescription: Update Photo Timestamps and Location Coordinates
         CFBundleDocumentTypes:
