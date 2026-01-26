@@ -26,7 +26,7 @@ See <http://exiftool.org> for information about ExifTool.
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
 
-## WIP
+## GeoTag Version 5.7
 
 ### Updates
 
@@ -57,47 +57,6 @@ See <http://exiftool.org> for information about ExifTool.
   never opens.  I believe this is an XCUITest issue, probably triggered
   by something GeoTag or the GeoTag tests do. Otherwise I'd expect
   to see others complaining of the problem.
-
-## GeoTag 5.6
-
-### Updates
-
-- Allow a larger Name column in the table. If the file name does not fit
-  in the given space truncate characters in the middle of the name instead
-  of the end allowing the file extension to be seen.
-
-- Add a View menu option to select an alternate layout where the image
-  is below the table in the left pane instead of avbove the map in the
-  right pane. Current layout and pane divider locations are saved across
-  program execution.
-
-- Changes needed for macOS 26.
-
-- ExifTool 13.37
-
-
-### Bug Fixes
-
-- Alert the user when access to the Photos Library is denied.
-
-- The delay between cliking on the map and appearance of a pin is better.
-
-- Display the tool-tip for the "Extend track timestamps" setting.
-
-- Restore display the elevation for a location when hovering over the
-  latitude or longitude.
-
-- Clicking on a map search saved value a second and subsequent time will
-  recenter the map on the location if it isn't in view.
-
-- Closing the window with changes pending and no backup folder selected
-  now quits the app instead of again reminding you that no backup folder
-  is selected.
-
-- Closing a window with pending changes does not close the window until
-  the user has a chance to answer the "do you really mean it?" message.
-  The app was closing the window then immediately re-opening it to
-  display the message.
 
 ### Known issues
 
