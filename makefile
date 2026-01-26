@@ -14,7 +14,7 @@ proj:
 	xcodegen
 
 test:
-	xcodebuild -scheme GeoTag test | tee .test.out | xcbeautify
+	xcodebuild -scheme GeoTag test | xcbeautify | tee .test.out
 
 testGpxTrackLog:
 	xcodebuild -scheme GpxTrackLog test | tee .test.out | xcbeautify
