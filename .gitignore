@@ -1,0 +1,17 @@
+*~
+.DS_Store
+.test.out
+
+notes
+buildServer.json
+Info.plist
+*.entitlements
+
+Build/
+DerivedData/
+SaveBackup/
+Index.noindex/
+xcuserdata/
+*.xcodeproj/
+*.xcworkspace/
+*.trace/
