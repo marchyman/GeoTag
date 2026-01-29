@@ -44,6 +44,7 @@ targets:
     platform: macOS
     dependencies:
       - package: UDF
+      - package: Coords
     sources:
       - Supporting Files/AppIcon.icon
       - Supporting Files/Assets.xcassets
@@ -185,6 +186,8 @@ packages:
   UDF:
     url: git://snafu.org/UDF
     branch: main
+  Coords:
+    path: Coords
   # AdjustTimeZoneView:
   #   path: AdjustTimeZoneView
   # GpxTrackLog:
