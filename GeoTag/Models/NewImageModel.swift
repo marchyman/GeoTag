@@ -3,8 +3,10 @@
 
 struct NewImageModel: Identifiable {
     let id: Int
+    let source: ImageSource
 
-    init() {
+    init(from source: ImageSource ) {
         id = NewImageModel.nextId()
+        self.source = source
     }
 }
