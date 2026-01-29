@@ -8,6 +8,7 @@ options:
   fileTypes:
     "icon":
       file: true 
+  defaultSourceDirectoryType: syncedFolder
 
 settings:
   base:
@@ -42,18 +43,17 @@ targets:
     type: application
     platform: macOS
     dependencies:
-      - package: AdjustTimeZoneView
-      - package: GpxTrackLog
-      - package: MapAndSearchViews
-      - package: RunLogView
-      - package: SplitHView
-      - package: SplitVView
+      - package: UDF
     sources:
+      - Supporting Files/AppIcon.icon
+      - Supporting Files/Assets.xcassets
+      - Supporting Files/Credits.rtf
+      - Supporting Files/PrivacyInfo.xcprivacy
       - GeoTag
-      - path: ExifTool
-        type: folder
+      # - path: ExifTool
+      #   type: folder
     info:
-      path: GeoTag/Info.plist
+      path: Generated/Info.plist
       properties:
         CFBundleDisplayName: $(TARGET_NAME)
         LSApplicationCategoryType: public.app-category.photography
@@ -182,16 +182,19 @@ schemes:
       revealArchiveInOrganizer: YES
 
 packages:
-  AdjustTimeZoneView:
-    path: AdjustTimeZoneView
-  GpxTrackLog:
-    path: GpxTrackLog
-  MapAndSearchViews:
-    path: MapAndSearchViews
-  RunLogView:
-    path: RunLogView
-  SplitHView:
-    path: SplitHView
-  SplitVView:
-    path: SplitVView
+  UDF:
+    url: git://snafu.org/UDF
+    branch: main
+  # AdjustTimeZoneView:
+  #   path: AdjustTimeZoneView
+  # GpxTrackLog:
+  #   path: GpxTrackLog
+  # MapAndSearchViews:
+  #   path: MapAndSearchViews
+  # RunLogView:
+  #   path: RunLogView
+  # SplitHView:
+  #   path: SplitHView
+  # SplitVView:
+  #   path: SplitVView
 

@@ -1,0 +1,25 @@
+disabled_rules:
+  - opening_brace
+
+included:
+
+excluded:
+  - Build
+  - DerivedData
+
+cyclomatic_complexity:
+  ignores_case_statements: true
+
+function_body_length: 100
+
+identifier_name:
+  min_length: 2
+  max_length:
+    warning: 40
+    error: 60
+  excluded:
+    - id
+    - ok
+    - ix
+    - pb
+    - tz
