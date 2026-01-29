@@ -4,15 +4,8 @@ import SwiftUI
 // Keys used to access values stored in user defaults
 
 enum AppSettings {
-    enum CoordFormat: Int {
-        case deg
-        case degMin
-        case degMinSec
-    }
-
     static let alternateLayoutKey = "AlternateLayout"
     static let addTagsKey = "AddTags"
-    static let coordFormatKey = "CoordFormat"
     static let createSidecarFilesKey = "CreateSidecarsFile"
     static let disablePairedJpegsKey = "DisablePairedJpegs"
     static let doNotBackupKey = "DoNotBackup"
