@@ -45,6 +45,7 @@ targets:
     dependencies:
       - package: UDF
       - package: Coords
+      - package: Exiftool
     sources:
       - Supporting Files/AppIcon.icon
       - Supporting Files/Assets.xcassets
@@ -188,6 +189,8 @@ packages:
     branch: main
   Coords:
     path: Coords
+  Exiftool:
+    path: Exiftool
   # AdjustTimeZoneView:
   #   path: AdjustTimeZoneView
   # GpxTrackLog:

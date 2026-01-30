@@ -1,5 +1,6 @@
 // import MapAndSearchViews
 import Coords
+import Exiftool
 // import MapKit
 import OSLog
 import PhotosUI

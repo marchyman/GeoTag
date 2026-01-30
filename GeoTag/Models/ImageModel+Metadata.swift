@@ -1,3 +1,4 @@
+import Exiftool
 import Photos
 
 // MARK: Grab image metadata
@@ -98,40 +99,40 @@ extension ImageModel {
     // does not collide.
 
     mutating func loadXmpMetadata() {
-        if let sandbox = try? Sandbox(self) {
-            let tmpfileURL = sandbox.sidecarURL
-                .deletingLastPathComponent()
-                .appendingPathComponent("tmpfile.xmp")
-
-            NSFileCoordinator.addFilePresenter(sandbox.xmpPresenter)
-            defer {
-                NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter)
-            }
-
-            if let data = sandbox.xmpPresenter.readData() {
-                try? data.write(to: tmpfileURL)
-            }
-            let results = Exiftool.helper.metadataFrom(xmp: tmpfileURL)
-
-            if results.dto != "" {
-                dateTimeCreated = results.dto
-                originalDateTimeCreated = results.dto
-            }
-            if results.validGPS {
-                location = results.location
-                originalLocation = location
-                elevation = results.elevation
-                originalElevation = elevation
-                city = results.city
-                originalCity = city
-                state = results.state
-                originalState = state
-                country = results.country
-                originalCountry = country
-                countryCode = results.countryCode
-                originalCountryCode = countryCode
-            }
-        }
+        // if let sandbox = try? Sandbox(self) {
+        //     let tmpfileURL = sandbox.sidecarURL
+        //         .deletingLastPathComponent()
+        //         .appendingPathComponent("tmpfile.xmp")
+        //
+        //     NSFileCoordinator.addFilePresenter(sandbox.xmpPresenter)
+        //     defer {
+        //         NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter)
+        //     }
+        //
+        //     if let data = sandbox.xmpPresenter.readData() {
+        //         try? data.write(to: tmpfileURL)
+        //     }
+        //     let results = Exiftool.helper.metadataFrom(xmp: tmpfileURL)
+        //
+        //     if results.dto != "" {
+        //         dateTimeCreated = results.dto
+        //         originalDateTimeCreated = results.dto
+        //     }
+        //     if results.validGPS {
+        //         location = results.location
+        //         originalLocation = location
+        //         elevation = results.elevation
+        //         originalElevation = elevation
+        //         city = results.city
+        //         originalCity = city
+        //         state = results.state
+        //         originalState = state
+        //         country = results.country
+        //         originalCountry = country
+        //         countryCode = results.countryCode
+        //         originalCountryCode = countryCode
+        //     }
+        // }
     }
 
     // extract metadata from a PHAsset obtained from the photo library

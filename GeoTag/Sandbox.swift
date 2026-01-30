@@ -4,6 +4,7 @@
 // https://www.snafu.org/
 //
 
+import Exiftool
 import SwiftUI
 
 // The image model with additional URLs that reference the files relative
@@ -89,7 +90,7 @@ extension Sandbox {
         if !image.sidecarExists {
             // create a sidecar file for this image.
             image.sidecarExists = true
-            Exiftool.helper.makeSidecar(from: self)
+            // Exiftool.helper.makeSidecar(from: self)
         }
     }
 
@@ -148,7 +149,7 @@ extension Sandbox {
     func saveChanges(timeZone: TimeZone?) async throws {
         NSFileCoordinator.addFilePresenter(xmpPresenter)
         defer { NSFileCoordinator.removeFilePresenter(xmpPresenter) }
-        try await Exiftool.helper.update(from: self, timeZone: timeZone)
+        // try await Exiftool.helper.update(from: self, timeZone: timeZone)
     }
 
     // add a Finder tag to the image file
