@@ -20,6 +20,9 @@ let package = Package(
                 resources: [.copy("ExifTool")]),
         .testTarget(name: "ExiftoolTests",
                     dependencies: ["Exiftool"],
-                    resources: [.copy("testdata")])
+                    resources: [.copy("nowrite.typ"),
+                                .copy("262M1559.DNG"),
+                                .copy("262M1559.xmp"),
+                                .copy("IMG_5418.HEIC")])
     ]
 )

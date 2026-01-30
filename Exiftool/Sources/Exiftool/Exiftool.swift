@@ -14,20 +14,6 @@ public struct Exiftool: Sendable {
     // URL of the embedded version of ExifTool
     var url: URL
 
-    // File Type codes for the file types that exiftool can write
-    //
-    // Last updated to match ExifTool version 12.30
-    let writableTypes: Set = [
-        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
-        "CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
-        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
-        "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
-        "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
-        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", "PNG",
-        "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
-        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP"
-    ]
-
     let dateFormatter = DateFormatter()
 
     // Build the url needed to access to the embedded version of ExifTool
@@ -45,10 +31,8 @@ public struct Exiftool: Sendable {
 }
 
 extension Exiftool {
-    static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: "ExifTool")
-
+    static let id = Bundle.main.bundleIdentifier ?? "ExiftoolTest"
+    static let logger = Logger(subsystem: id, category: "ExifTool")
 }
 
 extension Exiftool {
@@ -64,6 +48,52 @@ extension Exiftool {
             return string
         }
         return nil
+    }
+}
+
+extension Exiftool {
+
+    // File Type codes for the file types that exiftool can write
+    //
+    // Last updated to match ExifTool version 12.30
+
+    static private let writableTypes: Set = [
+        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
+        "CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
+        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
+        "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
+        "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
+        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", "PNG",
+        "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
+        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP"
+    ]
+
+    // Check if exiftool supports writing to a type of file
+    // - Parameter file: a URL of a file to check
+    // - Returns: true if exiftool can write to the file type of the URL
+
+    public func fileTypeIsWritable(for file: URL) -> Bool {
+        let args = [
+            "-m", "-q", "-S", "-fast3", "-FileType", file.path
+        ]
+        do {
+            let data = try run(args)
+            if data.count > 0,
+                let str = String(data: data,
+                                 encoding: String.Encoding.utf8) {
+                let trimmed = str.trimmingCharacters(
+                    in: CharacterSet.whitespacesAndNewlines)
+                let strparts = trimmed.components(
+                    separatedBy: CharacterSet.whitespaces)
+                if let filetype = strparts.last {
+                    return Exiftool.writableTypes.contains(filetype)
+                }
+            }
+        } catch {
+            Self.logger.error(
+                "\(#function): \(error.localizedDescription, privacy: .public)")
+        }
+        return false
     }
 }
 
@@ -184,45 +214,6 @@ extension Exiftool {
         return nil
     }
 
-    // Check if exiftool supports writing to a type of file
-    // - Parameter file: a URL of a file to check
-    // - Returns: true if exiftool can write to the file type of the URL
-
-    public func fileTypeIsWritable(for file: URL) -> Bool {
-        let exiftool = Process()
-        let pipe = Pipe()
-        let err = Pipe()
-        exiftool.standardOutput = pipe
-        exiftool.standardError = err
-        exiftool.executableURL = url
-        exiftool.arguments = [
-            "-m", "-q", "-S", "-fast3", "-FileType", file.path
-        ]
-        do {
-            try exiftool.run()
-            exiftool.waitUntilExit()
-            logFrom(pipe: err)
-            if exiftool.terminationStatus == 0 {
-                let data = pipe.fileHandleForReading.availableData
-                if data.count > 0,
-                    let str = String(data: data, encoding: String.Encoding.utf8)
-                {
-                    let trimmed = str.trimmingCharacters(
-                        in: CharacterSet.whitespacesAndNewlines)
-                    let strParts = trimmed.components(
-                        separatedBy: CharacterSet.whitespaces)
-                    if let fileType = strParts.last {
-                        return writableTypes.contains(fileType)
-                    }
-                }
-            }
-        } catch {
-            Self.logger.error(
-                "fileTypeIsWritable: \(error.localizedDescription, privacy: .public)"
-            )
-        }
-        return false
-    }
 
     // create a sidecar file from an image file
 
