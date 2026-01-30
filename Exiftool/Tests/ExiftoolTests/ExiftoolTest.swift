@@ -7,6 +7,7 @@ import Testing
 
 struct ExiftoolTests {
     @Test func exiftootTest() async throws {
-        // test here
+        let version = try #require(try Exiftool.helper.version())
+        print("Using Exiftool version: \(version)")
     }
 }

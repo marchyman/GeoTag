@@ -4,11 +4,6 @@ import OSLog
 import SwiftUI
 
 public struct Exiftool: Sendable {
-    @AppStorage(Exiftool.updateFileModificationTimesKey)
-    var updateFileModificationTimes = false
-    @AppStorage(Exiftool.updateGPSTimestampsKey)
-    var updateGPSTimestamps = false
-
     // singleton instance of this class
     public static let helper = Exiftool()
 
@@ -38,7 +33,7 @@ public struct Exiftool: Sendable {
     // Build the url needed to access to the embedded version of ExifTool
 
     private init() {
-        if let exiftoolUrl = Bundle.main.url(
+        if let exiftoolUrl = Bundle.module.url(
             forResource: "ExifTool",
             withExtension: nil)
         {
@@ -54,6 +49,22 @@ extension Exiftool {
         subsystem: Bundle.main.bundleIdentifier!,
         category: "ExifTool")
 
+}
+
+extension Exiftool {
+
+    // Run the embedded exiftool to get its version. Used
+    // when testing to verify the embedded program can be
+    // accessed
+
+    public func version() throws -> String? {
+        let data = try run(["-ver"])
+        if data.count > 0,
+            let string = String(data: data, encoding: String.Encoding.utf8) {
+            return string
+        }
+        return nil
+    }
 }
 
 extension Exiftool {
@@ -104,59 +115,56 @@ extension Exiftool {
             countryCodeArg += exifData.countryCode ?? ""
         }
 
-        // path to image (or XMP) file to update.
-        let path = image.path
-        let exiftool = Process()
-        let pipe = Pipe()
-        exiftool.standardOutput = FileHandle.nullDevice
-        exiftool.standardError = pipe
-        exiftool.executableURL = url
-        exiftool.arguments = [
-            "-q",
-            "-m",
-            "-overwrite_original_in_place",
+        // build exiftool arguments array
+        var args = [
+            "-q", "-m", "-overwrite_original_in_place",
             latArg, latRefArg,
             lonArg, lonRefArg,
             eleArg, eleRefArg,
             cityArg, stateArg,
             countryArg, countryCodeArg
         ]
+
+        // user option to update file modify time
+        @AppStorage(Exiftool.updateFileModificationTimesKey)
+        var updateFileModificationTimes = false
         if updateFileModificationTimes {
-            exiftool.arguments! += ["-FileModifyDate<DateTimeOriginal"]
+            args += ["-filemodifydate<datetimeoriginal"]
         }
+
+        // user option to update GPS timestamp
+        @AppStorage(Exiftool.updateGPSTimestampsKey)
+        var updateGPSTimestamps = false
 
         if updateGPSTimestamps,
             let gpsTimestamp = gpsTimestamp(for: exifData.dateTimeCreated,
-                                            in: timeZone)
-        {
+                                            in: timeZone) {
 
-            // args vary depending upon saving to an image file or a GPX file
+            // args vary depending upon saving to an image file or a gpx file
             if usingSidecar {
                 gpsDTArg += gpsTimestamp
-                exiftool.arguments?.append(gpsDTArg)
+                args += [gpsDTArg]
             } else {
-                let dtArgs = gpsTimestamp.split(separator: " ")
-                gpsDArg += dtArgs[0]
-                gpsTArg += dtArgs[1]
-                exiftool.arguments? += [gpsDArg, gpsTArg]
+                let dtargs = gpsTimestamp.split(separator: " ")
+                gpsDArg += dtargs[0]
+                gpsTArg += dtargs[1]
+                args += [gpsDArg, gpsTArg]
             }
         }
 
         // add args to update date/time if present
         if let dateTimeCreated = exifData.dateTimeCreated {
-            let dtoArg =
-                "-DateTimeOriginal=" + dateTimeCreated
-            let cdArg = "-CreateDate=" + dateTimeCreated
-            exiftool.arguments! += [dtoArg, cdArg]
+            let dtoArg = "-datetimeoriginal=" + dateTimeCreated
+            let cdArg = "-createdate=" + dateTimeCreated
+            args += [dtoArg, cdArg]
         }
-        exiftool.arguments! += ["-GPSStatus=", path]
-        Self.logger.info("\(exiftool.arguments!, privacy: .public)")
-        try exiftool.run()
-        exiftool.waitUntilExit()
-        logFrom(pipe: pipe)
-        if exiftool.terminationStatus != 0 {
-            throw ExiftoolError.runFailed(code: Int(exiftool.terminationStatus))
-        }
+        args += ["-gpsstatus=", image.path]
+    #if DEBUG
+        Self.logger.info("\(args, privacy: .public)")
+    #endif
+
+        // ignore returned data
+        let _ = try run(args)
     }
 
     // convert the dateTimeCreated string to a string with time zone to
@@ -340,11 +348,37 @@ extension Exiftool {
     }
     // swiftlint:enable cyclomatic_complexity
 
+}
+
+extension Exiftool {
+
+    // Common code to call Exiftool with given arguments
+    // returns any data read; might be zero sized
+
+    func run(_ args: [String]) throws -> Data {
+        let exiftool = Process()
+        let pipe = Pipe()
+        let err = Pipe()
+        exiftool.standardOutput = pipe
+        exiftool.standardError = err
+        exiftool.executableURL = url
+        exiftool.arguments = args
+        try exiftool.run()
+        exiftool.waitUntilExit()
+        logFrom(pipe: err)
+        let status = Int(exiftool.terminationStatus)
+        if exiftool.terminationStatus != 0 {
+            throw ExiftoolError.runFailed(code: status)
+        }
+        return pipe.fileHandleForReading.availableData
+    }
+
+    // Write log data from a pipe
+
     private func logFrom(pipe: Pipe) {
         let data = pipe.fileHandleForReading.availableData
         if data.count > 0,
-            let string = String(data: data, encoding: String.Encoding.utf8)
-        {
+            let string = String(data: data, encoding: String.Encoding.utf8) {
             Self.logger.warning("stderr: \(string, privacy: .public)")
         }
     }
