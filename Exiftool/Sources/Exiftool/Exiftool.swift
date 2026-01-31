@@ -329,6 +329,7 @@ extension Exiftool {
 // returns any data read; might be zero sized
 
 extension Exiftool {
+    @discardableResult
     func run(_ args: [String]) throws -> Data {
         let exiftool = Process()
         let pipe = Pipe()
