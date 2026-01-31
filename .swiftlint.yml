@@ -6,6 +6,7 @@ included:
 excluded:
   - Build
   - DerivedData
+  - .build
 
 cyclomatic_complexity:
   ignores_case_statements: true
