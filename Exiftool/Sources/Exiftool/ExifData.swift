@@ -18,7 +18,6 @@ public struct ExifData {
     public var countryCode: String?
 }
 
-
 extension ExifData {
     // Date format used by exiftool
     public static let dateFormat = "yyyy:MM:dd HH:mm:ss"
@@ -26,3 +25,5 @@ extension ExifData {
     // Extension use by sidecar files
     public static let xmpExtension = "xmp"
 }
+
+extension ExifData: Equatable {}

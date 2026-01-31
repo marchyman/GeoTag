@@ -1,5 +1,4 @@
 import Coords
-import MapKit
 import OSLog
 import SwiftUI
 
@@ -30,17 +29,18 @@ public struct Exiftool: Sendable {
     }
 }
 
+// Define a logger for the package
+
 extension Exiftool {
     static let id = Bundle.main.bundleIdentifier ?? "ExiftoolTest"
     static let logger = Logger(subsystem: id, category: "ExifTool")
 }
 
+// Run the embedded exiftool to get its version. Used
+// when testing to verify the embedded program can be
+// accessed
+
 extension Exiftool {
-
-    // Run the embedded exiftool to get its version. Used
-    // when testing to verify the embedded program can be
-    // accessed
-
     public func version() throws -> String? {
         let data = try run(["-ver"])
         if data.count > 0,
@@ -51,10 +51,10 @@ extension Exiftool {
     }
 }
 
-extension Exiftool {
+// known file types as reported by exiftool. These are the types
+// that core graphics can read (usually) and exiftool can write.
 
-    // File Type codes for the file types that exiftool can write
-    //
+extension Exiftool {
     // Last updated to match ExifTool version 12.30
 
     static private let writableTypes: Set = [
@@ -68,9 +68,7 @@ extension Exiftool {
         "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP"
     ]
 
-    // Check if exiftool supports writing to a type of file
-    // - Parameter file: a URL of a file to check
-    // - Returns: true if exiftool can write to the file type of the URL
+    // Return true if the given URL is a known file type.
 
     public func fileTypeIsWritable(for file: URL) -> Bool {
         let args = [
@@ -95,6 +93,114 @@ extension Exiftool {
         }
         return false
     }
+}
+
+// Use exiftool to create a sidecar file from an image file.
+// The sidecar file will be in the same location as the image
+// file.
+
+extension Exiftool {
+    public func makeSidecar(from imageURL: URL) {
+        let sidecarURL = imageURL.deletingPathExtension()
+            .appendingPathExtension(ExifData.xmpExtension)
+        let args = [
+            "-tagsfromfile", imageURL.path, sidecarURL.path
+        ]
+        do {
+            // ignore any returned output
+            try run(args)
+        } catch {
+            Self.logger.error(
+                "\(#function): \(error.localizedDescription, privacy: .public)")
+        }
+    }
+}
+
+// use exiftool to read the contents of a sidecar file and extract
+// the metadata needed to create and return an ExifData struct.
+// Uses as Apple's ImageIO functions can not extract metadata from XMP
+// sidecar files.
+
+extension Exiftool {
+
+    // swiftlint:disable cyclomatic_complexity
+    public func metadata(from xmp: URL) -> ExifData {
+        let args = [
+            "-args", "-c", "%.15f", "-createdate",
+            "-gpsstatus", "-gpslatitude", "-gpslongitude",
+            "-gpsaltitude", "-xmp:city", "-xmp:state",
+            "-xmp:country", "-xmp:countrycode", xmp.path
+        ]
+        var exifData = ExifData()
+        exifData.location = Coords()
+
+        do {
+            let data = try run(args)
+            if data.count > 0,
+                let str = String(data: data,
+                                 encoding: String.Encoding.utf8) {
+                var gpsStatus = true
+                let strings = str.split(separator: "\n")
+                for entry in strings {
+                    let key = entry.prefix { $0 != "=" }
+                    var value = entry.dropFirst(key.count)
+                    if !value.isEmpty {
+                        value = value.dropFirst(1)
+                    }
+                    switch key {
+                    case "-CreateDate":
+                        // get rid of any trailing parts of a second
+                        exifData.dateTimeCreated = String(value.split(separator: ".")[0])
+                    case "-GPSStatus":
+                        if value.hasSuffix("Void") {
+                            gpsStatus = false
+                            exifData.location = nil
+                            exifData.elevation = nil
+                        }
+                    case "-GPSLatitude":
+                        let parts = value.split(separator: " ")
+                        if var latValue = Double(parts[0]),
+                           parts.count == 2, gpsStatus {
+                            if parts[1] == "S" {
+                                latValue = -latValue
+                            }
+                            exifData.location?.latitude = latValue
+                        }
+                    case "-GPSLongitude":
+                        let parts = value.split(separator: " ")
+                        if var lonValue = Double(parts[0]),
+                           parts.count == 2, gpsStatus {
+                            if parts[1] == "W" {
+                                lonValue = -lonValue
+                            }
+                            exifData.location?.longitude = lonValue
+                        }
+                    case "-GPSAltitude":
+                        let parts = value.split(separator: " ")
+                        if let eleValue = Double(parts[0]),
+                           parts.count == 2, gpsStatus {
+                            exifData.elevation = parts[1] == "1" ? eleValue : -eleValue
+                        }
+                    case "-City":
+                        exifData.city = String(value)
+                    case "-State":
+                        exifData.state = String(value)
+                    case "-Country":
+                        exifData.country = String(value)
+                    case "-CountryCode":
+                        exifData.countryCode = String(value)
+                    default:
+                        break
+                    }
+                }
+            }
+        } catch {
+            Self.logger.error(
+                "metadataFrom: \(error.localizedDescription, privacy: .public)")
+        }
+        return exifData
+    }
+    // swiftlint:enable cyclomatic_complexity
 }
 
 extension Exiftool {
@@ -193,8 +299,7 @@ extension Exiftool {
         Self.logger.info("\(args, privacy: .public)")
     #endif
 
-        // ignore returned data
-        let _ = try run(args)
+        try run(args)
     }
 
     // convert the dateTimeCreated string to a string with time zone to
@@ -213,139 +318,12 @@ extension Exiftool {
         }
         return nil
     }
-
-
-    // create a sidecar file from an image file
-
-    public func makeSidecar(from imageURL: URL) {
-        let sidecarURL = imageURL.deletingPathExtension()
-            .appendingPathExtension(ExifData.xmpExtension)
-        let exiftool = Process()
-        let err = Pipe()
-        exiftool.standardOutput = FileHandle.nullDevice
-        exiftool.standardError = err
-        exiftool.executableURL = url
-        exiftool.arguments = [
-            "-tagsfromfile",
-            imageURL.path,
-            sidecarURL.path
-        ]
-        do {
-            try exiftool.run()
-        } catch {
-            Self.logger.error(
-                "makeSidecar: \(error.localizedDescription, privacy: .public)")
-        }
-        exiftool.waitUntilExit()
-        logFrom(pipe: err)
-    }
-
-    // return selected metadate from a file
-    // - Parameter xmp: URL of XMP file
-    // - Returns: ExifData structure containing the data read
-    //
-    // Apple's ImageIO functions can not extract metadata from XMP sidecar
-    // files.  ExifTool is used for that purpose. XmpMetadata contains the
-    // data that may be returned from the file.
-
-    // swiftlint:disable cyclomatic_complexity
-    public func metadataFrom(xmp: URL) -> ExifData {
-        let exiftool = Process()
-        let pipe = Pipe()
-        let err = Pipe()
-        exiftool.standardOutput = pipe
-        exiftool.standardError = err
-        exiftool.executableURL = url
-        exiftool.arguments = [
-            "-args", "-c", "%.15f", "-createdate",
-            "-gpsstatus", "-gpslatitude", "-gpslongitude",
-            "-gpsaltitude", "-xmp:city", "-xmp:state",
-            "-xmp:country", "-xmp:countryCode", xmp.path
-        ]
-        do {
-            try exiftool.run()
-        } catch {
-            Self.logger.error(
-                "metadataFrom: \(error.localizedDescription, privacy: .public)")
-        }
-        exiftool.waitUntilExit()
-        logFrom(pipe: err)
-
-        var exifData = ExifData()
-        exifData.location = CLLocationCoordinate2D()
-
-        if exiftool.terminationStatus == 0 {
-            let data = pipe.fileHandleForReading.availableData
-            if data.count > 0,
-                let str = String(data: data,
-                                 encoding: String.Encoding.utf8) {
-                var gpsStatus = true
-                let strings = str.split(separator: "\n")
-                for entry in strings {
-                    let key = entry.prefix { $0 != "=" }
-                    var value = entry.dropFirst(key.count)
-                    if !value.isEmpty {
-                        value = value.dropFirst(1)
-                    }
-                    switch key {
-                    case "-CreateDate":
-                        // get rid of any trailing parts of a second
-                        exifData.dateTimeCreated = String(value.split(separator: ".")[0])
-                    case "-GPSStatus":
-                        if value.hasSuffix("Void") {
-                            gpsStatus = false
-                            exifData.location = nil
-                            exifData.elevation = nil
-                        }
-                    case "-GPSLatitude":
-                        let parts = value.split(separator: " ")
-                        if var latValue = Double(parts[0]),
-                           parts.count == 2, gpsStatus {
-                            if parts[1] == "S" {
-                                latValue = -latValue
-                            }
-                            exifData.location?.latitude = latValue
-                        }
-                    case "-GPSLongitude":
-                        let parts = value.split(separator: " ")
-                        if var lonValue = Double(parts[0]),
-                           parts.count == 2, gpsStatus {
-                            if parts[1] == "W" {
-                                lonValue = -lonValue
-                            }
-                            exifData.location?.longitude = lonValue
-                        }
-                    case "-GPSAltitude":
-                        let parts = value.split(separator: " ")
-                        if let eleValue = Double(parts[0]),
-                           parts.count == 2, gpsStatus {
-                            exifData.elevation = parts[1] == "1" ? eleValue : -eleValue
-                        }
-                    case "-City":
-                        exifData.city = String(value)
-                    case "-State":
-                        exifData.state = String(value)
-                    case "-Country":
-                        exifData.country = String(value)
-                    case "-CountryCode":
-                        exifData.countryCode = String(value)
-                    default:
-                        break
-                    }
-                }
-            }
-        }
-        return exifData
-    }
-    // swiftlint:enable cyclomatic_complexity
-
 }
 
+// Common code to call Exiftool with given arguments
+// returns any data read; might be zero sized
+
 extension Exiftool {
-
-    // Common code to call Exiftool with given arguments
-    // returns any data read; might be zero sized
-
     func run(_ args: [String]) throws -> Data {
         let exiftool = Process()
         let pipe = Pipe()

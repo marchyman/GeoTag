@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "Exiftool", targets: ["Exiftool"])
     ],
     dependencies: [
-        .package(name: "Coords", path: "../Coords"),
+        .package(name: "Coords", path: "../Coords")
     ],
     targets: [
         .target(name: "Exiftool",
