@@ -87,6 +87,39 @@ struct ExiftoolTests {
     @Test func verifySidecar() async throws {
         // setup
         let testImage = try #require(
+            Bundle.module.url(forResource: "IMG_5654",
+                              withExtension: "HEIC")
+        )
+        let testFolder = try makeTestFolder(andCopy: testImage)
+        defer {
+            try? FileManager.default.removeItem(at: testFolder)
+        }
+        let name = testImage.lastPathComponent
+        let copy = testFolder.appending(component: name)
+        Exiftool.helper.makeSidecar(from: copy)
+        let sidecar = copy.deletingPathExtension()
+            .appendingPathExtension(ExifData.xmpExtension)
+        #expect(FileManager.default.fileExists(atPath: sidecar.path))
+
+        // Extract needed data from the created sidecar file
+
+        let metadata = Exiftool.helper.metadata(from: sidecar)
+        #expect(metadata.dateTimeCreated == "2025:12:03 16:25:49")
+        #expect(metadata.location?.latitude == 37.51878611116667)
+        #expect(metadata.location?.longitude == -122.34516111116666)
+        #expect(metadata.elevation == nil)
+        #expect(metadata.city == nil)
+        #expect(metadata.state == nil)
+        #expect(metadata.country == nil)
+        #expect(metadata.countryCode == nil)
+    }
+
+    // Verify the data from the created sidecar is the same as
+    // a known good sidecar file.
+
+    @Test func verifySidecarSame() async throws {
+        // setup
+        let testImage = try #require(
             Bundle.module.url(forResource: "262M1559",
                               withExtension: "DNG")
         )

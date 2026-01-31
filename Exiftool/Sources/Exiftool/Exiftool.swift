@@ -132,7 +132,6 @@ extension Exiftool {
             "-xmp:country", "-xmp:countrycode", xmp.path
         ]
         var exifData = ExifData()
-        exifData.location = Coords()
 
         do {
             let data = try run(args)
@@ -164,6 +163,9 @@ extension Exiftool {
                             if parts[1] == "S" {
                                 latValue = -latValue
                             }
+                            if exifData.location == nil {
+                                exifData.location = Coords()
+                            }
                             exifData.location?.latitude = latValue
                         }
                     case "-GPSLongitude":
@@ -172,6 +174,9 @@ extension Exiftool {
                            parts.count == 2, gpsStatus {
                             if parts[1] == "W" {
                                 lonValue = -lonValue
+                            }
+                            if exifData.location == nil {
+                                exifData.location = Coords()
                             }
                             exifData.location?.longitude = lonValue
                         }
