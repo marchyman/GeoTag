@@ -1,5 +1,6 @@
 // Exiftool package tests
 
+import Metadata
 import SwiftUI
 import Testing
 
@@ -78,7 +79,7 @@ struct ExiftoolTests {
         let copy = testFolder.appending(component: name)
         Exiftool.helper.makeSidecar(from: copy)
         let sidecar = copy.deletingPathExtension()
-            .appendingPathExtension(ExifData.xmpExtension)
+            .appendingPathExtension(Metadata.xmpExtension)
         #expect(FileManager.default.fileExists(atPath: sidecar.path))
     }
 
@@ -98,7 +99,7 @@ struct ExiftoolTests {
         let copy = testFolder.appending(component: name)
         Exiftool.helper.makeSidecar(from: copy)
         let sidecar = copy.deletingPathExtension()
-            .appendingPathExtension(ExifData.xmpExtension)
+            .appendingPathExtension(Metadata.xmpExtension)
         #expect(FileManager.default.fileExists(atPath: sidecar.path))
 
         // Extract needed data from the created sidecar file
@@ -131,7 +132,7 @@ struct ExiftoolTests {
         let copy = testFolder.appending(component: name)
         Exiftool.helper.makeSidecar(from: copy)
         let sidecar = copy.deletingPathExtension()
-            .appendingPathExtension(ExifData.xmpExtension)
+            .appendingPathExtension(Metadata.xmpExtension)
         #expect(FileManager.default.fileExists(atPath: sidecar.path))
 
         // Extract needed data from the created sidecar file

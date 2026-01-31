@@ -29,8 +29,7 @@ extension ImageModel {
             var coords: Coords
 
             if let latitude = String(components[0]).validateLatitude(),
-                let longitude = String(components[1]).validateLongitude()
-            {
+                let longitude = String(components[1]).validateLongitude() {
                 coords = Coords(latitude: latitude, longitude: longitude)
                 if components.count == 3 {
                     let eleVal = components[2].trimmingCharacters(

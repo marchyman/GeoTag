@@ -46,14 +46,13 @@ targets:
       - package: UDF
       - package: Coords
       - package: Exiftool
+      - package: Metadata
     sources:
       - Supporting Files/AppIcon.icon
       - Supporting Files/Assets.xcassets
       - Supporting Files/Credits.rtf
       - Supporting Files/PrivacyInfo.xcprivacy
       - GeoTag
-      # - path: ExifTool
-      #   type: folder
     info:
       path: Generated/Info.plist
       properties:
@@ -191,6 +190,8 @@ packages:
     path: Coords
   Exiftool:
     path: Exiftool
+  Metadata:
+    path: Metadata
   # AdjustTimeZoneView:
   #   path: AdjustTimeZoneView
   # GpxTrackLog:

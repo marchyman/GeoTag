@@ -1,4 +1,5 @@
 import Coords
+import Metadata
 import OSLog
 import SwiftUI
 
@@ -102,7 +103,7 @@ extension Exiftool {
 extension Exiftool {
     public func makeSidecar(from imageURL: URL) {
         let sidecarURL = imageURL.deletingPathExtension()
-            .appendingPathExtension(ExifData.xmpExtension)
+            .appendingPathExtension(Metadata.xmpExtension)
         let args = [
             "-tagsfromfile", imageURL.path, sidecarURL.path
         ]
@@ -117,21 +118,21 @@ extension Exiftool {
 }
 
 // use exiftool to read the contents of a sidecar file and extract
-// the metadata needed to create and return an ExifData struct.
+// the metadata needed to create and return an Metadata struct.
 // Uses as Apple's ImageIO functions can not extract metadata from XMP
 // sidecar files.
 
 extension Exiftool {
 
     // swiftlint:disable cyclomatic_complexity
-    public func metadata(from xmp: URL) -> ExifData {
+    public func metadata(from xmp: URL) -> Metadata {
         let args = [
             "-args", "-c", "%.15f", "-createdate",
             "-gpsstatus", "-gpslatitude", "-gpslongitude",
             "-gpsaltitude", "-xmp:city", "-xmp:state",
             "-xmp:country", "-xmp:countrycode", xmp.path
         ]
-        var exifData = ExifData()
+        var metadata = Metadata(source: .xmp(xmp))
 
         do {
             let data = try run(args)
@@ -149,12 +150,12 @@ extension Exiftool {
                     switch key {
                     case "-CreateDate":
                         // get rid of any trailing parts of a second
-                        exifData.dateTimeCreated = String(value.split(separator: ".")[0])
+                        metadata.dateTimeCreated = String(value.split(separator: ".")[0])
                     case "-GPSStatus":
                         if value.hasSuffix("Void") {
                             gpsStatus = false
-                            exifData.location = nil
-                            exifData.elevation = nil
+                            metadata.location = nil
+                            metadata.elevation = nil
                         }
                     case "-GPSLatitude":
                         let parts = value.split(separator: " ")
@@ -163,10 +164,10 @@ extension Exiftool {
                             if parts[1] == "S" {
                                 latValue = -latValue
                             }
-                            if exifData.location == nil {
-                                exifData.location = Coords()
+                            if metadata.location == nil {
+                                metadata.location = Coords()
                             }
-                            exifData.location?.latitude = latValue
+                            metadata.location?.latitude = latValue
                         }
                     case "-GPSLongitude":
                         let parts = value.split(separator: " ")
@@ -175,25 +176,25 @@ extension Exiftool {
                             if parts[1] == "W" {
                                 lonValue = -lonValue
                             }
-                            if exifData.location == nil {
-                                exifData.location = Coords()
+                            if metadata.location == nil {
+                                metadata.location = Coords()
                             }
-                            exifData.location?.longitude = lonValue
+                            metadata.location?.longitude = lonValue
                         }
                     case "-GPSAltitude":
                         let parts = value.split(separator: " ")
                         if let eleValue = Double(parts[0]),
                            parts.count == 2, gpsStatus {
-                            exifData.elevation = parts[1] == "1" ? eleValue : -eleValue
+                            metadata.elevation = parts[1] == "1" ? eleValue : -eleValue
                         }
                     case "-City":
-                        exifData.city = String(value)
+                        metadata.city = String(value)
                     case "-State":
-                        exifData.state = String(value)
+                        metadata.state = String(value)
                     case "-Country":
-                        exifData.country = String(value)
+                        metadata.country = String(value)
                     case "-CountryCode":
-                        exifData.countryCode = String(value)
+                        metadata.countryCode = String(value)
                     default:
                         break
                     }
@@ -203,7 +204,7 @@ extension Exiftool {
             Self.logger.error(
                 "metadataFrom: \(error.localizedDescription, privacy: .public)")
         }
-        return exifData
+        return metadata
     }
     // swiftlint:enable cyclomatic_complexity
 }
@@ -214,7 +215,7 @@ extension Exiftool {
     // in the file containing the passed image
 
     public func update(image: URL,
-                       from exifData: ExifData,
+                       from metadata: Metadata,
                        timeZone: TimeZone?) async throws {
         // ExifTool argument names
         var latArg = "-GPSLatitude="
@@ -233,15 +234,15 @@ extension Exiftool {
         var gpsTArg = "-GPSTimeStamp="  // for non XMP files
         var gpsDTArg = "-GPSDateTime="  // for XMP files
 
-        let usingSidecar = image.pathExtension.lowercased() == ExifData.xmpExtension
+        let usingSidecar = image.pathExtension.lowercased() == Metadata.xmpExtension
 
         // Build ExifTool latitude, longitude, and elevation argument values
-        if let location = exifData.location {
+        if let location = metadata.location {
             latArg += "\(location.latitude)"
             latRefArg += "\(location.latitude)"
             lonArg += "\(location.longitude)"
             lonRefArg += "\(location.longitude)"
-            if let ele = exifData.elevation {
+            if let ele = metadata.elevation {
                 if ele >= 0 {
                     eleArg += "\(ele)"
                     eleRefArg += "0"
@@ -250,10 +251,10 @@ extension Exiftool {
                     eleRefArg += "1"
                 }
             }
-            cityArg += exifData.city ?? ""
-            stateArg += exifData.state ?? ""
-            countryArg += exifData.country ?? ""
-            countryCodeArg += exifData.countryCode ?? ""
+            cityArg += metadata.city ?? ""
+            stateArg += metadata.state ?? ""
+            countryArg += metadata.country ?? ""
+            countryCodeArg += metadata.countryCode ?? ""
         }
 
         // build exiftool arguments array
@@ -278,7 +279,7 @@ extension Exiftool {
         var updateGPSTimestamps = false
 
         if updateGPSTimestamps,
-            let gpsTimestamp = gpsTimestamp(for: exifData.dateTimeCreated,
+            let gpsTimestamp = gpsTimestamp(for: metadata.dateTimeCreated,
                                             in: timeZone) {
 
             // args vary depending upon saving to an image file or a gpx file
@@ -294,7 +295,7 @@ extension Exiftool {
         }
 
         // add args to update date/time if present
-        if let dateTimeCreated = exifData.dateTimeCreated {
+        if let dateTimeCreated = metadata.dateTimeCreated {
             let dtoArg = "-datetimeoriginal=" + dateTimeCreated
             let cdArg = "-createdate=" + dateTimeCreated
             args += [dtoArg, cdArg]
@@ -314,7 +315,7 @@ extension Exiftool {
     func gpsTimestamp(for dateTime: String?,
                       in timeZone: TimeZone?) -> String? {
         if let dateTime {
-            dateFormatter.dateFormat = ExifData.dateFormat
+            dateFormatter.dateFormat = Metadata.dateFormat
             dateFormatter.timeZone = timeZone
             if let date = dateFormatter.date(from: dateTime) {
                 dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)

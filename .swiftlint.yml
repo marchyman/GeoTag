@@ -4,8 +4,6 @@ disabled_rules:
 included:
 
 excluded:
-  - Build
-  - DerivedData
   - .build
 
 cyclomatic_complexity:

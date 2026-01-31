@@ -14,77 +14,77 @@ extension ImageModel {
 
     // extract metadata from Image file
     mutating func loadImageMetadata() throws -> Bool {
-        guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil)
-        else {
-            throw ImageError.cgSourceError
-        }
-
-        // grab the image properties and extract height and width
-        // if there are no properties throw an error stating so.
-
-        guard
-            let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil)
-                as NSDictionary?
-        else {
-            return false
-        }
-        if imgProps.count == 0 {
-            throw ImageError.noMetadataError
-        }
-
-        // extract image date/time created
-
-        if let exifData = imgProps[ImageModel.exifDictionary]
-            as? [String: AnyObject],
-            let dto = exifData[ImageModel.exifDateTimeOriginal] as? String {
-            dateTimeCreated = dto
-            originalDateTimeCreated = dto
-        }
-
-        // extract image existing gps info unless a location has already
-        // been retrieved
-
-        if location == nil,
-            let gpsData = imgProps[ImageModel.GPSDictionary]
-            as? [String: AnyObject] {
-
-            // some Leica write GPS tags with a status tag of "V" (void) when no
-            // GPS info is available.   If a status tag exists and its value
-            // is "V" ignore the GPS data.
-
-            if let status = gpsData[ImageModel.GPSStatus] as? String {
-                if status == "V" {
-                    return true
-                }
-            }
-            if let lat = gpsData[ImageModel.GPSLatitude] as? Double,
-               let latRef = gpsData[ImageModel.GPSLatitudeRef] as? String,
-               let lon = gpsData[ImageModel.GPSLongitude] as? Double,
-               let lonRef = gpsData[ImageModel.GPSLongitudeRef] as? String {
-                location = validCoords(
-                    latitude: latRef == "N" ? lat : -lat,
-                    longitude: lonRef == "E" ? lon : -lon)
-                originalLocation = location
-            }
-            if let alt = gpsData[ImageModel.GPSAltitude] as? Double,
-               let altRef = gpsData[ImageModel.GPSAltitudeRef] as? Int {
-                elevation = altRef == 0 ? alt : -alt
-                originalElevation = elevation
-            }
-
-            // grab IPTC info for city/state/country/countryCode
-            if let iptcInfo = imgProps[ImageModel.IPTCDictionary] as? [String: AnyObject] {
-                city = iptcInfo[ImageModel.IPTCCity] as? String
-                originalCity = city
-                state = iptcInfo[ImageModel.IPTCState] as? String
-                originalState = state
-                country = iptcInfo[ImageModel.IPTCCountry] as? String
-                originalCountry = country
-                countryCode = iptcInfo[ImageModel.IPTCCountryCode] as? String
-                originalCountryCode = countryCode
-            }
-
-        }
+    //     guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil)
+    //     else {
+    //         throw ImageError.cgSourceError
+    //     }
+    //
+    //     // grab the image properties and extract height and width
+    //     // if there are no properties throw an error stating so.
+    //
+    //     guard
+    //         let imgProps = CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil)
+    //             as NSDictionary?
+    //     else {
+    //         return false
+    //     }
+    //     if imgProps.count == 0 {
+    //         throw ImageError.noMetadataError
+    //     }
+    //
+    //     // extract image date/time created
+    //
+    //     if let exifData = imgProps[ImageModel.exifDictionary]
+    //         as? [String: AnyObject],
+    //         let dto = exifData[ImageModel.exifDateTimeOriginal] as? String {
+    //         dateTimeCreated = dto
+    //         originalDateTimeCreated = dto
+    //     }
+    //
+    //     // extract image existing gps info unless a location has already
+    //     // been retrieved
+    //
+    //     if location == nil,
+    //         let gpsData = imgProps[ImageModel.GPSDictionary]
+    //         as? [String: AnyObject] {
+    //
+    //         // some Leica write GPS tags with a status tag of "V" (void) when no
+    //         // GPS info is available.   If a status tag exists and its value
+    //         // is "V" ignore the GPS data.
+    //
+    //         if let status = gpsData[ImageModel.GPSStatus] as? String {
+    //             if status == "V" {
+    //                 return true
+    //             }
+    //         }
+    //         if let lat = gpsData[ImageModel.GPSLatitude] as? Double,
+    //            let latRef = gpsData[ImageModel.GPSLatitudeRef] as? String,
+    //            let lon = gpsData[ImageModel.GPSLongitude] as? Double,
+    //            let lonRef = gpsData[ImageModel.GPSLongitudeRef] as? String {
+    //             location = validCoords(
+    //                 latitude: latRef == "N" ? lat : -lat,
+    //                 longitude: lonRef == "E" ? lon : -lon)
+    //             originalLocation = location
+    //         }
+    //         if let alt = gpsData[ImageModel.GPSAltitude] as? Double,
+    //            let altRef = gpsData[ImageModel.GPSAltitudeRef] as? Int {
+    //             elevation = altRef == 0 ? alt : -alt
+    //             originalElevation = elevation
+    //         }
+    //
+    //         // grab IPTC info for city/state/country/countryCode
+    //         if let iptcInfo = imgProps[ImageModel.IPTCDictionary] as? [String: AnyObject] {
+    //             city = iptcInfo[ImageModel.IPTCCity] as? String
+    //             originalCity = city
+    //             state = iptcInfo[ImageModel.IPTCState] as? String
+    //             originalState = state
+    //             country = iptcInfo[ImageModel.IPTCCountry] as? String
+    //             originalCountry = country
+    //             countryCode = iptcInfo[ImageModel.IPTCCountryCode] as? String
+    //             originalCountryCode = countryCode
+    //         }
+    //
+    //     }
         return true
     }
 
