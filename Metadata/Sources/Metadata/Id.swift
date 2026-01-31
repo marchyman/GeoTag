@@ -1,9 +1,8 @@
 // A concurrency safe source of monotonically increasing identifiers
-// for NewImageModels
 
 import Synchronization
 
-extension NewImageModel {
+extension Metadata {
     private static let idMutex = Mutex(0)
 
     static func nextId() -> Int {
@@ -13,3 +12,4 @@ extension NewImageModel {
         }
     }
 }
+

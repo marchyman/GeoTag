@@ -1,15 +1,12 @@
-// Tests for NewImageModel
-
 import Testing
+@testable import Metadata
 
-@testable import GeoTag
 
-struct NewImageModelTests {
+struct MetadataIdTests {
     @Test func simpleIdTest() async throws {
-        let id1 = NewImageModel.nextId()
-        #expect(id1 == 1)
-        let id2 = NewImageModel.nextId()
-        #expect(id2 == 2)
+        let id1 = Metadata.nextId()
+        let id2 = Metadata.nextId()
+        #expect(id2 != id1)
     }
 
     @Test func concurentIdTest() async throws {
@@ -21,7 +18,7 @@ struct NewImageModelTests {
         await withTaskGroup(of: Int.self) { group in
             for _ in low...high {
                 group.addTask {
-                    return NewImageModel.nextId()
+                    return Metadata.nextId()
                 }
             }
             for await id in group {

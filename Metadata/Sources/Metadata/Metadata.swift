@@ -5,6 +5,7 @@
 // - Image files using core graphics
 // - Sidecare files using Exiftool
 // - Photos library using the Photos framework
+// - A copy of another Metadata
 //
 // Exiftool is used to update metadata sourced from image and sidecar files.
 
@@ -17,18 +18,26 @@ import Foundation
 import PhotosUI
 import SwiftUI
 
+
+public enum MetadataSource: Sendable {
+    case image(URL)
+    case xmp(URL)
+    case photos(PhotosPickerItem, PHAsset)
+    case copy
+}
+
+// Metadata source is Equatable
+
+extension MetadataSource: Equatable {}
+
+// Metadata structure:
 // Note: when dateTimeCreated is nil in data passed to Exiftool
 // the resulting metadata in the image or xmp file will not be changed.
 // There is no way to delete that metadata from an image file.
 // It can only be changed to some other value.
 
-public enum MetadataSource {
-    case image(URL)
-    case xmp(URL)
-    case photos(PhotosPickerItem, PHAsset)
-}
-
-public struct Metadata {
+public struct Metadata: Identifiable {
+    public let id: Int
     public let source: MetadataSource
 
     public var dateTimeCreated: String?
@@ -39,8 +48,28 @@ public struct Metadata {
     public var country: String?
     public var countryCode: String?
 
+    // Create a new Metadata entry with a unique id. Set the
+    // source to the given value but leave the data fields nil
+
     public init(source: MetadataSource) {
+        id = Metadata.nextId()
         self.source = source
+    }
+
+    // Create a new Metadata entry with a unique id. Set the
+    // source to `.copy` and intialize data fields from `copy`.
+
+    public init(copy: Metadata) {
+        id = Metadata.nextId()
+        source = .copy
+ 
+        dateTimeCreated = copy.dateTimeCreated
+        location = copy.location
+        elevation = copy.elevation
+        city = copy.city
+        state = copy.state
+        country = copy.country
+        countryCode = copy.countryCode
     }
 }
 
