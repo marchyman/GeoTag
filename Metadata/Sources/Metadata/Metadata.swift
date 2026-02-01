@@ -75,15 +75,38 @@ public struct Metadata: Identifiable {
     }
 }
 
+// Metadata date handling
+
 extension Metadata {
-    // Date format for timestamps
     public static let dateFormat = "yyyy:MM:dd HH:mm:ss"
 
-    // Extension use by sidecar files
+    // dateTimeCreated as a string, empty when nil
+    var timestamp: String {
+        dateTimeCreated ?? ""
+    }
+
+    // dateTimeCreated as a date relative to the given timeZone.
+    // timeZone defaults to the current time zone.
+    func date(timeZone: TimeZone? = nil) -> Date {
+        if let dateTimeCreated {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = Self.dateFormat
+            dateFormatter.timeZone = timeZone
+            if let date =  dateFormatter.date(from: dateTimeCreated) {
+                return date
+            }
+        }
+        return Date.now
+    }
+}
+
+// Extension use by sidecar files
+
+extension Metadata {
     public static let xmpExtension = "xmp"
 }
 
-// Metadata source is not included when comparing this type
+// Metadata id and source are not included when comparing this type
 
 extension Metadata: Equatable {
     static public func == (lhs: Self, rhs: Self) -> Bool {
