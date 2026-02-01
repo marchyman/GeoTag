@@ -27,6 +27,8 @@ public enum MetadataSource: Sendable {
 }
 
 // Metadata source is Equatable
+// Add the special case where it is only desired to compare
+// on case without associated values
 
 extension MetadataSource: Equatable {}
 
@@ -59,7 +61,7 @@ public struct Metadata: Identifiable {
     // Create a new Metadata entry with a unique id. Set the
     // source to `.copy` and intialize data fields from `copy`.
 
-    public init(copy: Metadata) {
+    public init(copying copy: Metadata) {
         id = Metadata.nextId()
         source = .copy
  

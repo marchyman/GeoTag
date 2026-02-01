@@ -1,3 +1,4 @@
+import Coords
 import Foundation
 import PhotosUI
 import SwiftUI
@@ -38,6 +39,36 @@ struct MetadataTests {
         #expect(metadata.state == nil)
         #expect(metadata.country == nil)
         #expect(metadata.countryCode == nil)
+    }
+
+    // Copy an existing Metadata
+
+    @Test func copy() async throws {
+        var metadata = Metadata(source: .image(imageURL))
+
+        // supply test metadata
+        metadata.dateTimeCreated = "2025:02:02 11:06:03"
+        metadata.location = Coords(latitude: 37.087691,
+                                   longitude: -122.088502)
+        metadata.elevation = nil
+        metadata.city = "Ben Lomond"
+        metadata.state = "CA"
+        metadata.country = "United States"
+        metadata.countryCode = "US"
+
+        let copy = Metadata(copying: metadata)
+
+        #expect(metadata.id != copy.id)
+        #expect(metadata.source == .image(imageURL))
+        #expect(copy.source == .copy)
+
+        #expect(metadata.dateTimeCreated == copy.dateTimeCreated)
+        #expect(metadata.location == copy.location)
+        #expect(metadata.elevation == copy.elevation)
+        #expect(metadata.city == copy.city)
+        #expect(metadata.state == copy.state)
+        #expect(metadata.country == copy.country)
+        #expect(metadata.countryCode == copy.countryCode)
     }
 }
 
