@@ -32,7 +32,21 @@ extension Coords {
     static public let lonRef = ["E", "W"]
 }
 
-// MARK: Coord output formatting for latitude and longitude
+// an invalid location read from metadata (corrupted file) will crash
+// the program. Validate the arguments and return an initialized
+// Coords only when the data is good.
+
+extension Coords {
+    public static func ifValid(latitude: Double, longitude: Double) -> Coords? {
+        var coords: Coords?
+
+        if (0 ... 90).contains(latitude.magnitude)
+            && (0 ... 180).contains(longitude.magnitude) {
+            coords = Coords(latitude: latitude, longitude: longitude)
+        }
+        return coords
+    }
+}
 
 // Add coord formating given a format style
 extension Coords {
