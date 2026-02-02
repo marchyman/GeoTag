@@ -21,9 +21,9 @@ struct MetadataTests {
         #expect(metadata.id != 0)
         #expect(metadata.source == source)
         switch metadata.source {
-        case .image (let url):
+        case let .image(url):
             #expect(url == imageURL)
-        case .xmp (let url):
+        case let .xmp(url):
             #expect(url == sidecarURL)
         case .photos:
             // not sure if there is anything I can test here
@@ -71,4 +71,3 @@ struct MetadataTests {
         #expect(metadata.countryCode == copy.countryCode)
     }
 }
-

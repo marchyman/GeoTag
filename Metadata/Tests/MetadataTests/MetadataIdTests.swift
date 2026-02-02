@@ -1,7 +1,6 @@
 import Testing
 @testable import Metadata
 
-
 struct MetadataIdTests {
     @Test func simpleIdTest() async throws {
         let id1 = Metadata.nextId()

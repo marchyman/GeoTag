@@ -6,7 +6,7 @@ let package = Package(
     name: "Metadata",
     platforms: [.macOS(.v15)],
     products: [
-        .library(name: "Metadata", targets: ["Metadata"]),
+        .library(name: "Metadata", targets: ["Metadata"])
     ],
     dependencies: [
         .package(name: "Coords", path: "../Coords")
@@ -21,6 +21,6 @@ let package = Package(
         .testTarget(
             name: "MetadataTests",
             dependencies: ["Metadata"]
-        ),
+        )
     ]
 )

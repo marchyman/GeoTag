@@ -18,7 +18,6 @@ import Foundation
 import PhotosUI
 import SwiftUI
 
-
 public enum MetadataSource: Sendable {
     case image(URL)
     case xmp(URL)
@@ -64,7 +63,7 @@ public struct Metadata: Identifiable {
     public init(copying copy: Metadata) {
         id = Metadata.nextId()
         source = .copy
- 
+
         dateTimeCreated = copy.dateTimeCreated
         location = copy.location
         elevation = copy.elevation

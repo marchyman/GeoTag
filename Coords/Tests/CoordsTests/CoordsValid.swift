@@ -19,7 +19,7 @@ struct CoordsValidTests {
         Args(90, -180),
         Args(-90, 0),
         Args(-90, 180),
-        Args(-90, -180),
+        Args(-90, -180)
     ])
     func goodCoordsTest(args: Args) async throws {
         let coords = try #require(Coords.ifValid(latitude: args.lat,
@@ -32,7 +32,7 @@ struct CoordsValidTests {
         Args(90.001, 0),
         Args(-90.001, 0),
         Args(0, 180.001),
-        Args(0, -180.001),
+        Args(0, -180.001)
     ])
     func badCoordsTest(args: Args) async throws {
         #expect(Coords.ifValid(latitude: args.lat,
