@@ -19,10 +19,7 @@ let package = Package(
                     .product(name: "Metadata", package: "Metadata")
                 ]),
         .testTarget(name: "ImagetoolTests",
-                    dependencies: ["Imagetool"])
-                    // resources: [.copy("nowrite.typ"),
-                    //             .copy("262M1559.DNG"),
-                    //             .copy("262M1559.xmp"),
-                    //             .copy("IMG_5654.HEIC")])
+                    dependencies: ["Imagetool"],
+                    resources: [.copy("nometadata.RAF")])
     ]
 )

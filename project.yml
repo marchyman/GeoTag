@@ -46,6 +46,7 @@ targets:
       - package: UDF
       - package: Coords
       - package: Exiftool
+      - package: Imagetool
       - package: Metadata
     sources:
       - Supporting Files/AppIcon.icon
@@ -192,6 +193,8 @@ packages:
     path: Exiftool
   Metadata:
     path: Metadata
+  Imagetool:
+    path: Imagetool
   # AdjustTimeZoneView:
   #   path: AdjustTimeZoneView
   # GpxTrackLog:

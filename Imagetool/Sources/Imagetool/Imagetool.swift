@@ -1,17 +1,19 @@
+import Coords
 import Foundation
+import ImageIO
 import Metadata
 
 struct Imagetool {
-    enum ImageError {
+    enum ImageError: Error {
         case cgSourceError
         case noMetadataError
     }
 
-    func metadata(from imageURL: URL) throws -> Metadata {
+    public static func metadata(from imageURL: URL) throws -> Metadata {
         var metadata = Metadata(source: .image(imageURL))
 
         // create an image reference for the given URL
-        guard let imgRef = CGImageSourceCreateWithURL(fileURL as CFURL, nil)
+        guard let imgRef = CGImageSourceCreateWithURL(imageURL as CFURL, nil)
         else {
             throw ImageError.cgSourceError
         }
@@ -22,7 +24,7 @@ struct Imagetool {
             CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil)
                 as NSDictionary?
         else {
-            return false
+            return metadata
         }
         if imgProps.count == 0 {
             throw ImageError.noMetadataError
@@ -36,11 +38,9 @@ struct Imagetool {
             metadata.dateTimeCreated = dto
         }
 
-        // extract image existing gps info unless a location has already
-        // been retrieved
+        // extract gps info when present
 
-        if location == nil,
-            let gpsData = imgProps[Imagetool.GPSDictionary]
+        if let gpsData = imgProps[Imagetool.GPSDictionary]
             as? [String: AnyObject] {
 
             // some Leica camera write GPS tags with a status tag of "V" (void)
