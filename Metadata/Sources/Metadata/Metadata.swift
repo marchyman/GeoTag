@@ -79,14 +79,22 @@ public struct Metadata: Identifiable {
 extension Metadata {
     public static let dateFormat = "yyyy:MM:dd HH:mm:ss"
 
+    // Create a timestamp in Metadata date format
+    public static func timestamp(from date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = Self.dateFormat
+        return dateFormatter.string(from: date)
+    }
+
     // dateTimeCreated as a string, empty when nil
-    var timestamp: String {
+    public var timestamp: String {
         dateTimeCreated ?? ""
     }
 
+
     // dateTimeCreated as a date relative to the given timeZone.
     // timeZone defaults to the current time zone.
-    func date(timeZone: TimeZone? = nil) -> Date {
+    public func date(timeZone: TimeZone? = nil) -> Date {
         if let dateTimeCreated {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = Self.dateFormat

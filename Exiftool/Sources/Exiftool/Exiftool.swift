@@ -132,6 +132,7 @@ extension Exiftool {
             "-gpsaltitude", "-xmp:city", "-xmp:state",
             "-xmp:country", "-xmp:countrycode", xmp.path
         ]
+
         var metadata = Metadata(source: .xmp(xmp))
 
         do {
@@ -140,7 +141,11 @@ extension Exiftool {
                 let str = String(data: data,
                                  encoding: String.Encoding.utf8) {
                 var gpsStatus = true
+                var lat: Double?
+                var lon: Double?
+                var ele: Double?
                 let strings = str.split(separator: "\n")
+
                 for entry in strings {
                     let key = entry.prefix { $0 != "=" }
                     var value = entry.dropFirst(key.count)
@@ -154,38 +159,30 @@ extension Exiftool {
                     case "-GPSStatus":
                         if value.hasSuffix("Void") {
                             gpsStatus = false
-                            metadata.location = nil
-                            metadata.elevation = nil
                         }
                     case "-GPSLatitude":
                         let parts = value.split(separator: " ")
                         if var latValue = Double(parts[0]),
-                           parts.count == 2, gpsStatus {
+                           parts.count == 2 {
                             if parts[1] == "S" {
                                 latValue = -latValue
                             }
-                            if metadata.location == nil {
-                                metadata.location = Coords()
-                            }
-                            metadata.location?.latitude = latValue
+                            lat = latValue
                         }
                     case "-GPSLongitude":
                         let parts = value.split(separator: " ")
                         if var lonValue = Double(parts[0]),
-                           parts.count == 2, gpsStatus {
+                           parts.count == 2 {
                             if parts[1] == "W" {
                                 lonValue = -lonValue
                             }
-                            if metadata.location == nil {
-                                metadata.location = Coords()
-                            }
-                            metadata.location?.longitude = lonValue
+                            lon = lonValue
                         }
                     case "-GPSAltitude":
                         let parts = value.split(separator: " ")
                         if let eleValue = Double(parts[0]),
-                           parts.count == 2, gpsStatus {
-                            metadata.elevation = parts[1] == "1" ? eleValue : -eleValue
+                           parts.count == 2 {
+                            ele = parts[1] == "1" ? eleValue : -eleValue
                         }
                     case "-City":
                         metadata.city = String(value)
@@ -199,10 +196,16 @@ extension Exiftool {
                         break
                     }
                 }
+                if gpsStatus, let lat, let lon {
+                    metadata.location =
+                        Coords.ifValid(latitude: lat,
+                                       longitude: lon)
+                    metadata.elevation = ele
+                }
             }
         } catch {
             Self.logger.error(
-                "metadataFrom: \(error.localizedDescription, privacy: .public)")
+                "\(#function): \(error.localizedDescription, privacy: .public)")
         }
         return metadata
     }
@@ -212,7 +215,7 @@ extension Exiftool {
 extension Exiftool {
 
     // Use the embedded copy of exiftool to update the geolocation metadata
-    // in the file containing the passed image
+    // in the file referenced by the given URL
 
     public func update(image: URL,
                        from metadata: Metadata,

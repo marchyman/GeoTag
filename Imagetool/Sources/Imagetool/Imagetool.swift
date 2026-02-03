@@ -2,20 +2,18 @@ import Coords
 import Foundation
 import ImageIO
 import Metadata
+import OSLog
 
 struct Imagetool {
-    enum ImageError: Error {
-        case cgSourceError
-        case noMetadataError
-    }
-
-    public static func metadata(from imageURL: URL) throws -> Metadata {
+    public static func metadata(from imageURL: URL) -> Metadata {
         var metadata = Metadata(source: .image(imageURL))
 
         // create an image reference for the given URL
         guard let imgRef = CGImageSourceCreateWithURL(imageURL as CFURL, nil)
         else {
-            throw ImageError.cgSourceError
+            Self.logger.error(
+                "\(#function): failed to create CGImageSource from URL \(imageURL.path)")
+            return metadata
         }
 
         // grab image properties as an NSDictionary
@@ -27,7 +25,9 @@ struct Imagetool {
             return metadata
         }
         if imgProps.count == 0 {
-            throw ImageError.noMetadataError
+            Self.logger.error(
+                "\(#function): failed to copy properties from URL \(imageURL.path)")
+            return metadata
         }
 
         // extract image date/time created
@@ -77,6 +77,12 @@ struct Imagetool {
     }
 }
 
+// Define a logger for the package
+
+extension Imagetool {
+    static let id = Bundle.main.bundleIdentifier ?? "ImagetoolTest"
+    static let logger = Logger(subsystem: id, category: "ImageTool")
+}
 // CFString to (NS)*String casts for Image Property constants
 
 extension Imagetool {

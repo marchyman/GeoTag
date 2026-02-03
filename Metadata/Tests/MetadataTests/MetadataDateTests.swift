@@ -39,4 +39,12 @@ struct MetadataDateTests {
         let referenceDate = Date(timeIntervalSinceReferenceDate: interval)
         #expect(metadata.date() == referenceDate)
     }
+
+    @Test func createTimestampFromDate() async throws {
+        let timezoneOffset = TimeZone.current.secondsFromGMT()
+        let interval = TimeInterval(-timezoneOffset)
+        let date = Date(timeIntervalSinceReferenceDate: interval)
+        let timestamp = Metadata.timestamp(from: date)
+        #expect(timestamp == "2001:01:01 00:00:00")
+    }
 }

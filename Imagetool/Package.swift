@@ -20,6 +20,13 @@ let package = Package(
                 ]),
         .testTarget(name: "ImagetoolTests",
                     dependencies: ["Imagetool"],
-                    resources: [.copy("nometadata.RAF")])
+                    resources: [
+                        .copy("nometadata.RAF"),
+                        .copy("nolocation.jpg"),
+                        .copy("location.jpg"),
+                        .copy("status.DNG"),
+                        .copy("noelevation.jpg"),
+                        .copy("alldata.jpg")
+                    ])
     ]
 )
