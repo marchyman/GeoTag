@@ -37,8 +37,7 @@ extension MetadataSource: Equatable {}
 // There is no way to delete that metadata from an image file.
 // It can only be changed to some other value.
 
-public struct Metadata: Identifiable {
-    public let id: Int
+public struct Metadata {
     public let source: MetadataSource
 
     public var dateTimeCreated: String?
@@ -49,11 +48,10 @@ public struct Metadata: Identifiable {
     public var country: String?
     public var countryCode: String?
 
-    // Create a new Metadata entry with a unique id. Set the
-    // source to the given value but leave the data fields nil
+    // Create a new Metadata entry. Set the source to the given
+    // value but leave the data fields nil
 
     public init(source: MetadataSource) {
-        id = Metadata.nextId()
         self.source = source
     }
 
@@ -61,7 +59,6 @@ public struct Metadata: Identifiable {
     // source to `.copy` and intialize data fields from `copy`.
 
     public init(copying copy: Metadata) {
-        id = Metadata.nextId()
         source = .copy
 
         dateTimeCreated = copy.dateTimeCreated

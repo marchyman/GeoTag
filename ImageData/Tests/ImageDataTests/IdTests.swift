@@ -1,10 +1,10 @@
 import Testing
-@testable import Metadata
+@testable import ImageData
 
-struct MetadataIdTests {
+struct ImageDataIdTests {
     @Test func simpleIdTest() async throws {
-        let id1 = Metadata.nextId()
-        let id2 = Metadata.nextId()
+        let id1 = ImageData.nextId()
+        let id2 = ImageData.nextId()
         #expect(id2 != id1)
     }
 
@@ -17,7 +17,7 @@ struct MetadataIdTests {
         await withTaskGroup(of: Int.self) { group in
             for _ in low...high {
                 group.addTask {
-                    return Metadata.nextId()
+                    return ImageData.nextId()
                 }
             }
             for await id in group {

@@ -18,7 +18,6 @@ struct MetadataTests {
     ])
     func createFromSource(source: MetadataSource) async throws {
         let metadata = Metadata(source: source)
-        #expect(metadata.id != 0)
         #expect(metadata.source == source)
         switch metadata.source {
         case let .image(url):
@@ -58,7 +57,6 @@ struct MetadataTests {
 
         let copy = Metadata(copying: metadata)
 
-        #expect(metadata.id != copy.id)
         #expect(metadata.source == .image(imageURL))
         #expect(copy.source == .copy)
 

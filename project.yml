@@ -46,6 +46,7 @@ targets:
       - package: UDF
       - package: Coords
       - package: Exiftool
+      - package: ImageData
       - package: Imagetool
       - package: Metadata
     sources:
@@ -195,6 +196,8 @@ packages:
     path: Metadata
   Imagetool:
     path: Imagetool
+  ImageData:
+    path: ImageData
   # AdjustTimeZoneView:
   #   path: AdjustTimeZoneView
   # GpxTrackLog:

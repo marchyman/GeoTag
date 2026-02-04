@@ -2,7 +2,7 @@
 
 import Synchronization
 
-extension Metadata {
+extension ImageData {
     private static let idMutex = Mutex(0)
 
     static func nextId() -> Int {

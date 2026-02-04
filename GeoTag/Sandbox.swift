@@ -147,8 +147,8 @@ extension Sandbox {
     // use exiftool to save metadata changes to the image file
 
     func saveChanges(timeZone: TimeZone?) async throws {
-        NSFileCoordinator.addFilePresenter(xmpPresenter)
-        defer { NSFileCoordinator.removeFilePresenter(xmpPresenter) }
+        // NSFileCoordinator.addFilePresenter(xmpPresenter)
+        // defer { NSFileCoordinator.removeFilePresenter(xmpPresenter) }
         // try await Exiftool.helper.update(from: self, timeZone: timeZone)
     }
 
