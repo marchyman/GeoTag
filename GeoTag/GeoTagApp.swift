@@ -5,9 +5,10 @@ import UDF
 
 @main
 struct GeoTagApp: App {
-    // @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @State private var store = Store(initialState: GeoTagState(),
                                      reduce: GeoTagReducer())
+    @State private var mainWindow: NSWindow?
 
     let windowWidth = 1000.0
     let windowHeight = 700.0
@@ -15,14 +16,16 @@ struct GeoTagApp: App {
     var body: some Scene {
         Window("GeoTag Version Six", id: "main") {
             ContentView()
+                .background(WindowAccessor(window: $mainWindow))
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
-                // .background(WindowAccessor(window: $state.mainWindow,
-                //                            delegate: appDelegate))
-                // .onAppear {
-                //     AppState.logger.info("ContentView() onAppear")
-                //     appDelegate.state = state
-                // }
+                .onAppear {
+                    appDelegate.store = store
+                }
+                .onChange(of: mainWindow) {
+                    store.send(.mainWindowChange(mainWindow))
+                }
                 .environment(store)
+
         }
         // .commands {
         //     NewItemCommands(state: state)
@@ -33,7 +36,7 @@ struct GeoTagApp: App {
         //     HelpCommands(state: state)
         // }
 
-        // Window(GeoTagApp.adjustTimeZone, id: GeoTagApp.adjustTimeZone) {
+        // Window(GeoTagApp.adjustTimeZone, id: Self.adjustTimeZone) {
         //     AdjustTimezoneView(timeZone: $state.timeZone)
         //         .frame(width: 500.0, height: 570.0)
         //         .environment(state)
@@ -42,7 +45,7 @@ struct GeoTagApp: App {
         // .windowResizability(.contentSize)
         // .commandsRemoved()
         //
-        // Window(GeoTagApp.showRunLog, id: GeoTagApp.showRunLog) {
+        // Window(GeoTagApp.showRunLog, id: Self.showRunLog) {
         //     RunLogView()
         //         .frame(width: 700, height: 500)
         //         .environment(state)
