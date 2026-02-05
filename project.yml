@@ -50,6 +50,8 @@ targets:
       - package: Imagetool
       - package: Metadata
       - package: Phototool
+      - package: SplitHView
+      - package: SplitVView
     sources:
       - Supporting Files/AppIcon.icon
       - Supporting Files/Assets.xcassets
@@ -209,8 +211,8 @@ packages:
   #   path: MapAndSearchViews
   # RunLogView:
   #   path: RunLogView
-  # SplitHView:
-  #   path: SplitHView
-  # SplitVView:
-  #   path: SplitVView
+  SplitHView:
+    path: SplitHView
+  SplitVView:
+    path: SplitVView
 

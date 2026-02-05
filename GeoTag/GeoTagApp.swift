@@ -1,11 +1,13 @@
 // import AdjustTimeZoneView
 // import RunLogView
 import SwiftUI
+import UDF
 
 @main
 struct GeoTagApp: App {
     // @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    // @State var state = AppState()
+    @State private var store = Store(initialState: GeoTagState(),
+                                     reduce: GeoTagReducer())
 
     let windowWidth = 1000.0
     let windowHeight = 700.0
@@ -20,7 +22,7 @@ struct GeoTagApp: App {
                 //     AppState.logger.info("ContentView() onAppear")
                 //     appDelegate.state = state
                 // }
-                // .environment(state)
+                .environment(store)
         }
         // .commands {
         //     NewItemCommands(state: state)

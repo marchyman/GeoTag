@@ -3,29 +3,58 @@
 // https://www.snafu.org/
 //
 
+import SplitHView
+import SplitVView
 import SwiftUI
+import UDF
 import UniformTypeIdentifiers
 
 /// Window look and feel values
 let windowBorderColor = Color.gray
 
 struct ContentView: View {
-    // @Environment(AppState.self) var state
+    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
     // @Environment(\.openWindow) var openWindow
     //
-    // @AppStorage(AppSettings.alternateLayoutKey) var alternateLayout = false
+    @AppStorage(Self.alternateLayoutKey) var alternateLayout = false
     // @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
     // @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
-    // @AppStorage(AppSettings.splitHNormalKey) var hNormal = 0.45
-    // @AppStorage(AppSettings.splitHAlternateKey) var hAlternate = 0.55
-    // @AppStorage(AppSettings.splitVNormalKey) var vNormal = 0.60
-    // @AppStorage(AppSettings.splitVAlternateKey) var vAlternate = 0.40
+    @AppStorage(Self.splitHNormalKey) var hNormal = 0.45
+    @AppStorage(Self.splitHAlternateKey) var hAlternate = 0.55
+    @AppStorage(Self.splitVNormalKey) var vNormal = 0.60
+    @AppStorage(Self.splitVAlternateKey) var vAlternate = 0.40
     //
     // @State private var removeOldFiles = false
 
     var body: some View {
-        Text("GeoTag")
-
+        SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
+            Group {
+                if alternateLayout {
+                    SplitVView(percent: $vAlternate) {
+                        Text("ImageTableView(tvm: state.tvm)")
+                    } bottom: {
+                        Text("ImageView()")
+                    }
+                } else {
+                    Text("ImageTableView(tvm: state.tvm)")
+                }
+            }
+            // .overlay {
+            //     if state.applicationBusy {
+            //         ProgressView("Processing files...")
+            //     }
+            // }
+        } right: {
+            if alternateLayout {
+                Text("MapView()")
+            } else {
+                SplitVView(percent: $vNormal) {
+                    Text("ImageView()")
+                } bottom: {
+                    Text("MapView()")
+                }
+            }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
@@ -112,7 +141,18 @@ struct ContentView: View {
     // }
 }
 
+// AppSettings keys used to determine ContentView layout
+
+extension ContentView {
+    static let alternateLayoutKey = "AlternateLayout"
+    static let splitHNormalKey = "SplitHNormalPercent"
+    static let splitHAlternateKey = "SplitHAlternatePercent"
+    static let splitVNormalKey = "SplitVNormalPercent"
+    static let splitVAlternateKey = "SplitVAlternatePercent"
+}
+
 #Preview {
     ContentView()
-        // .environment(AppState())
+        .environment(Store(initialState: GeoTagState(),
+                           reduce: GeoTagReducer()))
 }
