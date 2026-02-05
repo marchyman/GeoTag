@@ -1,14 +1,8 @@
-//
-// Copyright 2024 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 import SwiftUI
 
 // A vertical view with two children separated by a dragable divider.
-// The divider is stored as a percentage of the window height for the
-// reserved for the bottom side of the view.
+// The divider is stored as a percentage of the window height reserved
+// for the bottom portion of the view.
 
 public struct SplitVView<Top: View, Bottom: View>: View {
     @Binding var percent: Double

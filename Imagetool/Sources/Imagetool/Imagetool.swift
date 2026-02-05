@@ -32,45 +32,45 @@ struct Imagetool {
 
         // extract image date/time created
 
-        if let exifData = imgProps[Imagetool.exifDictionary]
+        if let exifData = imgProps[Self.exifDictionary]
             as? [String: AnyObject],
-            let dto = exifData[Imagetool.exifDateTimeOriginal] as? String {
+            let dto = exifData[Self.exifDateTimeOriginal] as? String {
             metadata.dateTimeCreated = dto
         }
 
         // extract gps info when present
 
-        if let gpsData = imgProps[Imagetool.GPSDictionary]
+        if let gpsData = imgProps[Self.GPSDictionary]
             as? [String: AnyObject] {
 
             // some Leica camera write GPS tags with a status tag of "V" (void)
             // when no GPS info is available. If a status tag exists and its
             // value is "V" ignore the GPS data.
 
-            if let status = gpsData[Imagetool.GPSStatus] as? String {
+            if let status = gpsData[Self.GPSStatus] as? String {
                 if status == "V" {
                     return metadata
                 }
             }
-            if let lat = gpsData[Imagetool.GPSLatitude] as? Double,
-               let latRef = gpsData[Imagetool.GPSLatitudeRef] as? String,
-               let lon = gpsData[Imagetool.GPSLongitude] as? Double,
-               let lonRef = gpsData[Imagetool.GPSLongitudeRef] as? String {
+            if let lat = gpsData[Self.GPSLatitude] as? Double,
+               let latRef = gpsData[Self.GPSLatitudeRef] as? String,
+               let lon = gpsData[Self.GPSLongitude] as? Double,
+               let lonRef = gpsData[Self.GPSLongitudeRef] as? String {
                 metadata.location = Coords.ifValid(
                     latitude: latRef == "N" ? lat : -lat,
                     longitude: lonRef == "E" ? lon : -lon)
             }
-            if let alt = gpsData[Imagetool.GPSAltitude] as? Double,
-               let altRef = gpsData[Imagetool.GPSAltitudeRef] as? Int {
+            if let alt = gpsData[Self.GPSAltitude] as? Double,
+               let altRef = gpsData[Self.GPSAltitudeRef] as? Int {
                 metadata.elevation = altRef == 0 ? alt : -alt
             }
 
             // grab IPTC info for city/state/country/countryCode
-            if let iptcInfo = imgProps[Imagetool.IPTCDictionary] as? [String: AnyObject] {
-                metadata.city = iptcInfo[Imagetool.IPTCCity] as? String
-                metadata.state = iptcInfo[Imagetool.IPTCState] as? String
-                metadata.country = iptcInfo[Imagetool.IPTCCountry] as? String
-                metadata.countryCode = iptcInfo[Imagetool.IPTCCountryCode] as? String
+            if let iptcInfo = imgProps[Self.IPTCDictionary] as? [String: AnyObject] {
+                metadata.city = iptcInfo[Self.IPTCCity] as? String
+                metadata.state = iptcInfo[Self.IPTCState] as? String
+                metadata.country = iptcInfo[Self.IPTCCountry] as? String
+                metadata.countryCode = iptcInfo[Self.IPTCCountryCode] as? String
             }
         }
         return metadata

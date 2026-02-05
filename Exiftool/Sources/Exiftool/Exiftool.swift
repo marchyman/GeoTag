@@ -85,7 +85,7 @@ extension Exiftool {
                 let strparts = trimmed.components(
                     separatedBy: CharacterSet.whitespaces)
                 if let filetype = strparts.last {
-                    return Exiftool.writableTypes.contains(filetype)
+                    return Self.writableTypes.contains(filetype)
                 }
             }
         } catch {
@@ -271,14 +271,14 @@ extension Exiftool {
         ]
 
         // user option to update file modify time
-        @AppStorage(Exiftool.updateFileModificationTimesKey)
+        @AppStorage(Self.updateFileModificationTimesKey)
         var updateFileModificationTimes = false
         if updateFileModificationTimes {
             args += ["-filemodifydate<datetimeoriginal"]
         }
 
         // user option to update GPS timestamp
-        @AppStorage(Exiftool.updateGPSTimestampsKey)
+        @AppStorage(Self.updateGPSTimestampsKey)
         var updateGPSTimestamps = false
 
         if updateGPSTimestamps,
