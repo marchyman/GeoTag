@@ -11,17 +11,12 @@
 
 import Coords
 import Foundation
-
-// interesting note: both PhotosUI and SwiftUI must be imported
-// or PhotosPickerItem isn't seen
-
-import PhotosUI
-import SwiftUI
+import Photos
 
 public enum MetadataSource: Sendable {
     case image(URL)
     case xmp(URL)
-    case photos(PhotosPickerItem, PHAsset)
+    case photos(PHAsset)
     case copy
 }
 
@@ -87,7 +82,6 @@ extension Metadata {
     public var timestamp: String {
         dateTimeCreated ?? ""
     }
-
 
     // dateTimeCreated as a date relative to the given timeZone.
     // timeZone defaults to the current time zone.

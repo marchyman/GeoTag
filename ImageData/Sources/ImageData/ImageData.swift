@@ -32,3 +32,5 @@ public struct ImageData: Identifiable {
         }
     }
 }
+
+extension ImageData: Equatable {}

@@ -1,9 +1,3 @@
-//
-// Copyright 2022 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 // import AdjustTimeZoneView
 // import RunLogView
 import SwiftUI
@@ -17,7 +11,7 @@ struct GeoTagApp: App {
     let windowHeight = 700.0
 
     var body: some Scene {
-        Window("GeoTag Version Five", id: "main") {
+        Window("GeoTag Version Six", id: "main") {
             ContentView()
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 // .background(WindowAccessor(window: $state.mainWindow,

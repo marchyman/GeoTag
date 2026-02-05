@@ -49,6 +49,7 @@ targets:
       - package: ImageData
       - package: Imagetool
       - package: Metadata
+      - package: Phototool
     sources:
       - Supporting Files/AppIcon.icon
       - Supporting Files/Assets.xcassets
@@ -198,6 +199,8 @@ packages:
     path: Imagetool
   ImageData:
     path: ImageData
+  Phototool:
+    path: Phototool
   # AdjustTimeZoneView:
   #   path: AdjustTimeZoneView
   # GpxTrackLog:
