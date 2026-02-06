@@ -31,9 +31,9 @@ extension ImageModel {
 
 actor ReverseLocationFinder {
     private var activeTask: Task<CLPlacemark?, Error>?
-    private let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: "ReverseLocationFinder")
+    private let logger =
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
+               category: "ReverseLocationFinder")
 
     // Only 1 shared instance
 

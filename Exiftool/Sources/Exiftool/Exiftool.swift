@@ -33,8 +33,9 @@ public struct Exiftool: Sendable {
 // Define a logger for the package
 
 extension Exiftool {
-    static let id = Bundle.main.bundleIdentifier ?? "ExiftoolTest"
-    static let logger = Logger(subsystem: id, category: "ExifTool")
+    static let logger =
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "ExiftoolTest",
+               category: "ExifTool")
 }
 
 // Run the embedded exiftool to get its version. Used

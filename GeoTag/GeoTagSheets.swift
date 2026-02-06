@@ -5,7 +5,7 @@ extension GeoTagState {
         let sheetError: Error?
         let sheetMessage: String?
 
-        static func ==(lhs: SheetInfo, rhs: SheetInfo) -> Bool {
+        static func == (lhs: SheetInfo, rhs: SheetInfo) -> Bool {
             return lhs.sheetType == rhs.sheetType
                 && lhs.sheetMessage == rhs.sheetMessage
         }
@@ -42,4 +42,3 @@ extension GeoTagState {
     //     }
     // }
 }
-

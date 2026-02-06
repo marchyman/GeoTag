@@ -26,7 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         logger.info("\(#function)")
         if let store {
             if store.saveInProgress || store.isDocumentEdited {
-                store.send(.quitRequested) 
+                store.send(.quitRequested)
                 return .terminateCancel
             }
         }

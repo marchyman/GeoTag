@@ -54,9 +54,9 @@ extension PhotoLibrary {
 }
 
 extension PhotoLibrary {
-    static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: "PhotoLibrary")
+    static let logger =
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
+               category: "PhotoLibrary")
 }
 
 // functions to build a LibraryEntry and add it to the array of

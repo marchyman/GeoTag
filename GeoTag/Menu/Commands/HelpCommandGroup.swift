@@ -19,4 +19,3 @@ struct HelpCommands: Commands {
         }
     }
 }
-

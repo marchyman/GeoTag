@@ -217,9 +217,9 @@ extension ImageModel {
 }
 
 extension ImageModel {
-    private static let logger = Logger(
-        subsystem: "org.snafu.GeoTag",
-        category: "ImageModel")
+    private static let logger =
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
+               category: "ImageModel")
 }
 
 // MARK: ImageModel instances are compared and hashed on id

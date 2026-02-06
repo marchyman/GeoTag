@@ -30,13 +30,15 @@ extension GeoTagEvent: CustomStringConvertible {
 }
 
 struct GeoTagReducer: Reducer {
-    let logger = Logger(subsystem: "org.snafu", category: "reducer")
+    let logger =
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
+               category: "reducer")
 
     func reduce(_ state: GeoTagState,
                 _ event: GeoTagEvent) -> GeoTagState {
         var newState = state
         newState.version &+= 1
-        logger.info("reduce \(event)")
+        logger.debug("reduce \(event)")
 
         switch event {
         case let .mainWindowChange(window):

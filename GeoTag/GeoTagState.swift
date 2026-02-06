@@ -39,7 +39,7 @@ struct GeoTagState {
 // compare versions to determine if two instances are the same.
 
 extension GeoTagState: Equatable {
-    static func ==(lhs: GeoTagState, rhs: GeoTagState) -> Bool {
+    static func == (lhs: GeoTagState, rhs: GeoTagState) -> Bool {
         return lhs.version == rhs.version
     }
 }
