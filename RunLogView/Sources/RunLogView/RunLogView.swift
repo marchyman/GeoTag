@@ -40,6 +40,7 @@ public struct RunLogView: View {
 
                 ForEach(logEntries, id: \.self) { entry in
                     Text(entry)
+                    .font(Font.system(size: 13).monospaced())
                 }
             }
         }
@@ -65,7 +66,7 @@ extension RunLogView {
             for entry in myEntries {
                 let formattedTime = timeFormatter.string(from: entry.date)
                 let formatedEntry = """
-                    \(formattedTime):  \(entry.category) \
+                    \(formattedTime):  \(entry.category) | \
                     \(entry.composedMessage)
                     """
                 loggedMessages.append(formatedEntry)

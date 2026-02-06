@@ -38,7 +38,7 @@ struct GeoTagReducer: Reducer {
                 _ event: GeoTagEvent) -> GeoTagState {
         var newState = state
         newState.version &+= 1
-        logger.debug("reduce \(event)")
+        logger.debug("event: \(event)")
 
         switch event {
         case let .mainWindowChange(window):
