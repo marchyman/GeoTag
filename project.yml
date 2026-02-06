@@ -50,6 +50,7 @@ targets:
       - package: Imagetool
       - package: Metadata
       - package: Phototool
+      - package: RunLogView
       - package: SplitHView
       - package: SplitVView
     sources:
@@ -209,8 +210,8 @@ packages:
   #   path: GpxTrackLog
   # MapAndSearchViews:
   #   path: MapAndSearchViews
-  # RunLogView:
-  #   path: RunLogView
+  RunLogView:
+    path: RunLogView
   SplitHView:
     path: SplitHView
   SplitVView:

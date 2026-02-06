@@ -1,5 +1,5 @@
 // import AdjustTimeZoneView
-// import RunLogView
+import RunLogView
 import SwiftUI
 import UDF
 
@@ -9,6 +9,9 @@ struct GeoTagApp: App {
     @State private var store = Store(initialState: GeoTagState(),
                                      reduce: GeoTagReducer())
     @State private var mainWindow: NSWindow?
+
+    @AppStorage(Self.doNotBackupKey) var doNotBackup = false
+    @AppStorage(Self.savedBookmarkKey) var savedBookmark = Data()
 
     let windowWidth = 1000.0
     let windowHeight = 700.0
@@ -20,6 +23,9 @@ struct GeoTagApp: App {
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .onAppear {
                     appDelegate.store = store
+                    if !doNotBackup && savedBookmark == Data() {
+                        store.send(.initialBackupCheck)
+                    }
                 }
                 .onChange(of: mainWindow) {
                     store.send(.mainWindowChange(mainWindow))
@@ -27,14 +33,14 @@ struct GeoTagApp: App {
                 .environment(store)
 
         }
-        // .commands {
+        .commands {
         //     NewItemCommands(state: state)
         //     SaveItemCommands(state: state)
         //     UndoRedoCommands(state: state)
         //     PasteboardCommands(state: state)
         //     ToolbarCommands(state: state)
-        //     HelpCommands(state: state)
-        // }
+            HelpCommands(store: store)
+        }
 
         // Window(GeoTagApp.adjustTimeZone, id: Self.adjustTimeZone) {
         //     AdjustTimezoneView(timeZone: $state.timeZone)
@@ -45,13 +51,12 @@ struct GeoTagApp: App {
         // .windowResizability(.contentSize)
         // .commandsRemoved()
         //
-        // Window(GeoTagApp.showRunLog, id: Self.showRunLog) {
-        //     RunLogView()
-        //         .frame(width: 700, height: 500)
-        //         .environment(state)
-        // }
-        // .windowResizability(.contentSize)
-        // .commandsRemoved()
+        Window(Self.showRunLog, id: Self.showRunLog) {
+            RunLogView()
+                .frame(width: 700, height: 500)
+        }
+        .windowResizability(.contentSize)
+        .commandsRemoved()
         //
         // Settings {
         //     SettingsView()
@@ -67,6 +72,13 @@ struct GeoTagApp: App {
 extension GeoTagApp {
     static var adjustTimeZone = "Change Time Zone"
     static var showRunLog = "GeoTag Run/Debug Log"
+}
+
+// AppSettings keys
+
+extension GeoTagApp {
+    static let doNotBackupKey = "DoNotBackup"
+    static let savedBookmarkKey = "SavedBookmark"
 }
 
 // Text field focus. When non-nil a text field has focus.  Used to enable

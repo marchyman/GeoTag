@@ -5,11 +5,13 @@ import OSLog
 // GeoTag application state
 
 struct GeoTagState {
+    var version = 1
     var imageData: [ImageData] = []
     var saveInProgress = false
 
     @ObservationIgnored
     var mainWindow: NSWindow?
+    var showLogWindow = false
 
     // confirmation required properties
     // A confirmation may required optional data or an action
@@ -32,23 +34,13 @@ struct GeoTagState {
     var gpxBadFileNames: [String] = []
 }
 
-// Compare GeoTagState only on items that could effect a View
-// In particular ignore any items marked @ObservationIgnored
+// GeoTagState is only updated in the reducer.  Every pass through
+// the reducer the version property is updated. It is sufficient to
+// compare versions to determine if two instances are the same.
 
 extension GeoTagState: Equatable {
     static func ==(lhs: GeoTagState, rhs: GeoTagState) -> Bool {
-        if lhs.imageData == rhs.imageData,
-           lhs.saveInProgress == rhs.saveInProgress,
-           lhs.presentConfirmation == rhs.presentConfirmation,
-           lhs.confirmationMessage == rhs.confirmationMessage,
-           lhs.sheetType == rhs.sheetType,
-           lhs.sheetStack == rhs.sheetStack,
-           lhs.sheetMessage == rhs.sheetMessage,
-           lhs.gpxGoodFileNames == rhs.gpxGoodFileNames,
-           lhs.gpxBadFileNames == rhs.gpxBadFileNames {
-            return true
-        }
-        return false
+        return lhs.version == rhs.version
     }
 }
 

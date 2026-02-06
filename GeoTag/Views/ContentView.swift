@@ -1,8 +1,3 @@
-//
-// Copyright 2022 Marco S Hyman
-// https://www.snafu.org/
-//
-
 import SplitHView
 import SplitVView
 import SwiftUI
@@ -14,17 +9,16 @@ let windowBorderColor = Color.gray
 
 struct ContentView: View {
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
-    // @Environment(\.openWindow) var openWindow
-    //
+    @Environment(\.openWindow) var openWindow
+
     @AppStorage(Self.alternateLayoutKey) var alternateLayout = false
-    // @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    // @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
     @AppStorage(Self.splitHNormalKey) var hNormal = 0.45
     @AppStorage(Self.splitHAlternateKey) var hAlternate = 0.55
     @AppStorage(Self.splitVNormalKey) var vNormal = 0.60
     @AppStorage(Self.splitVAlternateKey) var vAlternate = 0.40
-    //
+
     // @State private var removeOldFiles = false
+    @State private var sheetType: SheetType?
 
     var body: some View {
         SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
@@ -58,14 +52,6 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
-        // .onAppear {
-        //     // check for a backupURL. Once when this window appears.
-        //     if !state.initialBackupURLCheck
-        //             && !doNotBackup && savedBookmark == Data() {
-        //         state.initialBackupURLCheck = true
-        //         state.addSheet(type: .noBackupFolderSheet)
-        //     }
-        // }
         // .dropDestination(for: URL.self) { items, _ in
         //     let state = state
         //     Task {
@@ -76,12 +62,15 @@ struct ContentView: View {
         // .onChange(of: state.changeTimeZoneWindow) {
         //     openWindow(id: GeoTagApp.adjustTimeZone)
         // }
-        // .onChange(of: state.showLogWindow) {
-        //     openWindow(id: GeoTagApp.showRunLog)
-        // }
-        // .sheet(item: $state.sheetType, onDismiss: sheetDismissed) { sheet in
-        //     sheet
-        // }
+        .onChange(of: store.showLogWindow) {
+            openWindow(id: GeoTagApp.showRunLog)
+        }
+        .onChange(of: store.sheetType) {
+                sheetType = store.sheetType
+        }
+        .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in
+            sheet
+        }
         // .areYouSure()  // confirmations
         // .removeBackupsAlert()  // Alert: Remove Old Backup files
         // .photoLibraryEnabledAlert()
@@ -111,17 +100,9 @@ struct ContentView: View {
 
     // when a sheet is dismissed check if there are more sheets to display
 
-    // private func sheetDismissed() {
-    //     if state.sheetStack.isEmpty {
-    //         state.sheetMessage = nil
-    //         state.sheetError = nil
-    //     } else {
-    //         let sheetInfo = state.sheetStack.removeFirst()
-    //         state.sheetMessage = sheetInfo.sheetMessage
-    //         state.sheetError = sheetInfo.sheetError
-    //         state.sheetType = sheetInfo.sheetType
-    //     }
-    // }
+    private func sheetDismissed() {
+        store.send(.sheetDismissed)
+    }
 
     // the UTTypes that can be imported into this app.
 
