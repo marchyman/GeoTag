@@ -18,7 +18,7 @@ struct GeoTagState {
     var presentConfirmation = false
     var confirmationMessage: String?
     @ObservationIgnored
-    var confirmationAction: (@MainActor () -> Void)?
+    var confirmationEvent: GeoTagEvent?
 
     // various actions can cause a sheet to be presented.  A stack of sheets
     // is supported so important notifications are not lost

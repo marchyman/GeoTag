@@ -12,6 +12,8 @@ enum GeoTagEvent: Equatable {
     case badGpxFile(String)
     case gpxLoadViewClosed
     case toggleLogWindow
+    case terminateRequest
+    case discardRequest
 }
 
 extension GeoTagEvent: CustomStringConvertible {
@@ -25,6 +27,8 @@ extension GeoTagEvent: CustomStringConvertible {
         case .goodGpxFile: "goodGpxFile"
         case .badGpxFile: "badGpxFile"
         case .toggleLogWindow: "toggleLogWindow"
+        case .terminateRequest: "terminateRequest"
+        case .discardRequest: "discardRequest"
         }
     }
 }
@@ -66,6 +70,12 @@ struct GeoTagReducer: Reducer {
             newState.gpxBadFileNames = []
         case .toggleLogWindow:
             newState.showLogWindow.toggle()
+        case .terminateRequest:
+            newState.isDocumentEdited = false
+            NSApp.terminate(nil)
+        case .discardRequest:
+            break
+
         }
 
         return newState
@@ -82,12 +92,12 @@ extension GeoTagReducer {
         }
 
         if state.isDocumentEdited {
-            // state.confirmationMessage = """
-            //         If you quit GeoTag before saving changes the changes \
-            //         will be lost.  Are you sure you want to quit?
-            //         """
-            // state.confirmationAction = terminateIgnoringEdits
-            // state.presentConfirmation = true
+            state.confirmationMessage = """
+                If you quit GeoTag before saving changes the changes \
+                will be lost.  Are you sure you want to quit?
+                """
+            state.confirmationEvent = .terminateRequest
+            state.presentConfirmation.toggle()
         }
     }
 }

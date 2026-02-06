@@ -28,6 +28,7 @@ struct GeoTagApp: App {
                     }
                 }
                 .onChange(of: mainWindow) {
+                    mainWindow?.delegate = appDelegate
                     store.send(.mainWindowChange(mainWindow))
                 }
                 .environment(store)

@@ -71,7 +71,7 @@ struct ContentView: View {
         .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in
             sheet
         }
-        // .areYouSure()  // confirmations
+        .areYouSure()  // confirmations
         // .removeBackupsAlert()  // Alert: Remove Old Backup files
         // .photoLibraryEnabledAlert()
         // .photoLibraryDisabledAlert()
