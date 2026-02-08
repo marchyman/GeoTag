@@ -25,12 +25,12 @@ struct ContentView: View {
             Group {
                 if alternateLayout {
                     SplitVView(percent: $vAlternate) {
-                        Text("ImageTableView(tvm: state.tvm)")
+                        ImageTableView()
                     } bottom: {
                         Text("ImageView()")
                     }
                 } else {
-                    Text("ImageTableView(tvm: state.tvm)")
+                    ImageTableView()
                 }
             }
             // .overlay {

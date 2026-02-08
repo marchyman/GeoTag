@@ -9,6 +9,9 @@ struct GeoTagState {
     var imageData: [ImageData] = []
     var saveInProgress = false
 
+    public var mostSelected: ImageData.ID?
+    public var selection: Set<ImageData.ID>?
+
     @ObservationIgnored
     var mainWindow: NSWindow?
     var showLogWindow = false

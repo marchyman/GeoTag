@@ -66,6 +66,27 @@ public struct Metadata {
     }
 }
 
+// Metadata location and elevation formatting
+
+extension Metadata {
+    public var formattedLatitude: String {
+        location?.formatted(.latitude) ?? ""
+    }
+    public var formattedLongitude: String {
+        location?.formatted(.longitude) ?? ""
+    }
+    public var formattedElevation: String {
+        var value = "Elevation: "
+        if let elevation {
+            value += String(format: "% 4.2f", elevation)
+            value += " meters"
+        } else {
+            value += "Unknown"
+        }
+        return value
+    }
+}
+
 // Metadata date handling
 
 extension Metadata {

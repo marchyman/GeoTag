@@ -74,8 +74,8 @@ struct GeoTagReducer: Reducer {
             newState.isDocumentEdited = false
             NSApp.terminate(nil)
         case .discardRequest:
+            // TODO
             break
-
         }
 
         return newState

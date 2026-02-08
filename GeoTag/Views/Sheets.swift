@@ -228,23 +228,27 @@ extension View {
 // MARK: Previews
 
 #Preview("GpxLoadView") {
-    var store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    // swiftlint:disable:next redundant_discardable_let
     let _ = store.send(.goodGpxFile("Good/File/Name"))
     SheetType.gpxFileNameSheet
         .environment(store)
 }
 
 #Preview("GpxLoadView (bad)") {
-    var store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    // swiftlint:disable:next redundant_discardable_let
     let _ = store.send(.badGpxFile("Bad/File/Name"))
     SheetType.gpxFileNameSheet
         .environment(store)
 }
 
 #Preview("GpxLoadView (both)") {
-    var store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    // swiftlint:disable redundant_discardable_let
     let _ = store.send(.goodGpxFile("Good/File/Name"))
     let _ = store.send(.badGpxFile("Bad/File/Name"))
+    // swiftlint:enable redundant_discardable_let
     SheetType.gpxFileNameSheet
         .environment(store)
 }
