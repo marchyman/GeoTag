@@ -15,9 +15,10 @@ enum GeoTagEvent: Equatable {
     case toggleLogWindow
     case terminateRequest
     case discardRequest
-    case searchFor(String)
-    case clearSearch
-    case sortImages([KeyPathComparator<ImageData>])
+    case searchForChanged(String)
+    case searchForCleared
+    case sortOrderChanged([KeyPathComparator<ImageData>])
+    case selectionChanged(Set<ImageData.ID>)
 }
 
 extension GeoTagEvent: CustomStringConvertible {
@@ -33,9 +34,10 @@ extension GeoTagEvent: CustomStringConvertible {
         case .toggleLogWindow: "toggleLogWindow"
         case .terminateRequest: "terminateRequest"
         case .discardRequest: "discardRequest"
-        case .searchFor: "searchFor"
-        case .clearSearch: "clearSearch"
-        case .sortImages: "sortImages"
+        case .searchForChanged: "searchForChanged"
+        case .searchForCleared: "clearSearchCleared"
+        case .sortOrderChanged: "sortOrderChanged"
+        case .selectionChanged: "selectionChanged"
         }
     }
 }
@@ -83,23 +85,48 @@ struct GeoTagReducer: Reducer {
         case .discardRequest:
             // TODO
             break
-        case let .searchFor(name):
+        case let .searchForChanged(name):
             logger.info("Search for \(name, privacy: .public)")
             newState.searchImages = newState.imageData.filter {
                 $0.updatable && $0.name.fuzzy(name)
             }
-        case .clearSearch:
+        case .searchForCleared:
             logger.info("Clearing search")
             newState.searchImages = []
-        case let .sortImages(comparator):
+        case let .sortOrderChanged(comparator):
             newState.imageData.sort(using: comparator)
             newState.searchImages.sort(using: comparator)
+        case let .selectionChanged(selection):
+            selectionChanged(&newState, selection: selection)
         }
 
         return newState
     }
 }
 
+extension GeoTagReducer {
+
+    func selectionChanged(_ state: inout GeoTagState,
+                          selection: Set<ImageData.ID>) {
+        // filter out items that are not updatable
+        state.selection = selection.filter { state[$0].updatable }
+
+        // Handle the case where nothing is selected.  Otherwise pick an
+        // id as being the "most selected".
+        if state.selection.isEmpty {
+            state.mostSelected = nil
+        } else if state.selection.count == 1 {
+            state.mostSelected = state.selection.first
+        } else {
+            // If the image that was the "most" selected is in the proposed
+            // selection set don't pick another
+            if state.mostSelected == nil ||
+                !state.selection.contains(where: { $0 == state.mostSelected }) {
+                state.mostSelected = state.selection.first
+            }
+        }
+    }
+}
 // Quit (or last window close) requested when there was a save
 // in progress or there are unsaved changes.
 

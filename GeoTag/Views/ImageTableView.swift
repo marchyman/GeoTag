@@ -75,8 +75,13 @@ struct ImageTableView: View {
         // .contextMenu {
         //     ContextMenuView(context: nil)
         // }
+        .onChange(of: selection) {
+            store.send(.selectionChanged(selection)) {
+                selection = store.selection
+            }
+        }
         .onChange(of: sortOrder) {
-            store.send(.sortImages(sortOrder))
+            store.send(.sortOrderChanged(sortOrder))
         }
         .searchable(
             text: $searchFor, isPresented: $isSearching,
@@ -92,12 +97,12 @@ struct ImageTableView: View {
             .disabled(store.imageData.isEmpty)
         )
         .onSubmit(of: .search) {
-            store.send(.searchFor(searchFor))
+            store.send(.searchForChanged(searchFor))
             isSearching = false
         }
         .onChange(of: searchFor) {
             if searchFor.isEmpty {
-                store.send(.clearSearch)
+                store.send(.searchForCleared)
             }
         }
     }

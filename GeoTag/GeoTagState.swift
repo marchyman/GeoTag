@@ -23,8 +23,8 @@ struct GeoTagState {
     var saveInProgress = false
 
     public var searchImages: [ImageData] = []
+    public var selection: Set<ImageData.ID> = []
     public var mostSelected: ImageData.ID?
-    public var selection: Set<ImageData.ID>?
 
     @ObservationIgnored
     var mainWindow: NSWindow?
