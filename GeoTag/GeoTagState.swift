@@ -7,8 +7,22 @@ import OSLog
 struct GeoTagState {
     var version = 1
     var imageData: [ImageData] = []
+
+    // individual images are accessed by ID. No setter is defined.
+    subscript(id: ImageData.ID?) -> ImageData {
+        if let index = imageData.firstIndex(where: { $0.id == id }) {
+            return imageData[index]
+        }
+
+        // A view may hold on to an ID that is no longer in the table
+        // If it tries to access the image associated with that id
+        // return a fake image
+        return ImageData()
+    }
+
     var saveInProgress = false
 
+    public var searchImages: [ImageData] = []
     public var mostSelected: ImageData.ID?
     public var selection: Set<ImageData.ID>?
 

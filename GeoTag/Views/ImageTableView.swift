@@ -26,11 +26,11 @@ struct ImageTableView: View {
     @State private var sortOrder = [KeyPathComparator(\ImageData.name)]
 
     var filteredImages: [ImageData] {
-        return // store.searchImages.isEmpty
-            hideInvalidImages
+        return store.searchImages.isEmpty
+            ? hideInvalidImages
                 ? store.imageData.filter { $0.updatable }
                 : store.imageData
-            // : store.searchImages
+            : store.searchImages
     }
 
     var body: some View {
@@ -78,28 +78,28 @@ struct ImageTableView: View {
         // .onChange(of: store.sortOrder) {
         //     store.images.sort(using: store.sortOrder)
         // }
-        // .searchable(
-        //     text: $searchFor, isPresented: $isSearching,
-        //     placement: .automatic, prompt: "Image name"
-        // )
-        // .background(
-        //     // cmd-f for search
-        //     Button(
-        //         "",
-        //         action: { isSearching = true }
-        //     )
-        //     .keyboardShortcut("f").hidden()
-        //     .disabled(store.images.isEmpty)
-        // )
-        // .onChange(of: searchFor) {
-        //     if searchFor.isEmpty {
-        //         store.clearSearch()
-        //     }
-        // }
-        // .onSubmit(of: .search) {
-        //     store.search(for: searchFor)
-        //     isSearching = false
-        // }
+        .searchable(
+            text: $searchFor, isPresented: $isSearching,
+            placement: .automatic, prompt: "Image name"
+        )
+        .background(
+            // cmd-f for search
+            Button(
+                "",
+                action: { isSearching = true }
+            )
+            .keyboardShortcut("f").hidden()
+            .disabled(store.imageData.isEmpty)
+        )
+        .onSubmit(of: .search) {
+            store.send(.searchFor(searchFor))
+            isSearching = false
+        }
+        .onChange(of: searchFor) {
+            if searchFor.isEmpty {
+                store.send(.clearSearch)
+            }
+        }
     }
 }
 

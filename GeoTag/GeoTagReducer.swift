@@ -14,6 +14,8 @@ enum GeoTagEvent: Equatable {
     case toggleLogWindow
     case terminateRequest
     case discardRequest
+    case searchFor(String)
+    case clearSearch
 }
 
 extension GeoTagEvent: CustomStringConvertible {
@@ -29,6 +31,8 @@ extension GeoTagEvent: CustomStringConvertible {
         case .toggleLogWindow: "toggleLogWindow"
         case .terminateRequest: "terminateRequest"
         case .discardRequest: "discardRequest"
+        case .searchFor: "searchFor"
+        case .clearSearch: "clearSearch"
         }
     }
 }
@@ -76,6 +80,14 @@ struct GeoTagReducer: Reducer {
         case .discardRequest:
             // TODO
             break
+        case let .searchFor(name):
+            logger.info("Search for \(name, privacy: .public)")
+            newState.searchImages = newState.imageData.filter {
+                $0.updatable && $0.name.fuzzy(name)
+            }
+        case .clearSearch:
+            logger.info("Clearing search")
+            newState.searchImages = []
         }
 
         return newState
@@ -99,5 +111,22 @@ extension GeoTagReducer {
             state.confirmationEvent = .terminateRequest
             state.presentConfirmation.toggle()
         }
+    }
+}
+
+// a simple, fast enough search. Return true if the string characters match
+// "pattern" characters in the given order ignoring case.
+
+extension String {
+    func fuzzy(_ pattern: String) -> Bool {
+        // an empty pattern matches anything
+        guard !pattern.isEmpty else { return true }
+        var remainder = pattern[...]
+        for char in self
+        where char.lowercased() == remainder[remainder.startIndex].lowercased() {
+            remainder.removeFirst()
+            if remainder.isEmpty { return true }
+        }
+        return false
     }
 }

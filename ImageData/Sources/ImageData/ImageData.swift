@@ -1,5 +1,6 @@
 import Coords
 import Exiftool
+import Foundation
 import Metadata
 
 public struct ImageData: Identifiable {
@@ -30,6 +31,16 @@ public struct ImageData: Identifiable {
         default:
             break
         }
+    }
+
+    // fake data synthesized to allow lookup of images by an ID
+    // that no longer exists.
+
+    public init() {
+        let fakeURL = URL(string: "file:///unknown.img")!
+        let fakeName = "unknown.img"
+        let metadata = Metadata(source: .image(fakeURL))
+        self.init(metadata: metadata, name: fakeName)
     }
 }
 
