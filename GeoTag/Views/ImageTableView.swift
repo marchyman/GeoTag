@@ -34,13 +34,10 @@ struct ImageTableView: View {
     }
 
     var body: some View {
-        Table(
-            of: ImageData.self,
-            selection: $selection,
-            sortOrder: $sortOrder,
-            columnCustomization: $columnCustomization
-        ) {
-
+        Table(of: ImageData.self,
+              selection: $selection,
+              sortOrder: $sortOrder,
+              columnCustomization: $columnCustomization) {
             TableColumn("Name", value: \.name) { image in
                 NameView(image: image, isSelected: image.id == store.mostSelected)
             }
@@ -83,18 +80,13 @@ struct ImageTableView: View {
         .onChange(of: sortOrder) {
             store.send(.sortOrderChanged(sortOrder))
         }
-        .searchable(
-            text: $searchFor, isPresented: $isSearching,
-            placement: .automatic, prompt: "Image name"
-        )
+        .searchable(text: $searchFor, isPresented: $isSearching,
+                    placement: .automatic, prompt: "Image name")
         .background(
             // cmd-f for search
-            Button(
-                "",
-                action: { isSearching = true }
-            )
-            .keyboardShortcut("f").hidden()
-            .disabled(store.imageData.isEmpty)
+            Button("", action: { isSearching = true })
+                .keyboardShortcut("f").hidden()
+                .disabled(store.imageData.isEmpty)
         )
         .onSubmit(of: .search) {
             store.send(.searchForChanged(searchFor))
@@ -108,11 +100,15 @@ struct ImageTableView: View {
     }
 }
 
+// ImageTableView AppStorage keys
+
 extension ImageTableView {
     static let imageTableConfigKey = "ImageTableConfig"
     static let coordFormatKey = "CoordFormat"
     static let hideInvalidImagesKey = "HideInvalidImages"
 }
+
+// ImageTableView column views
 
 struct NameView: View {
     let image: ImageData
@@ -129,7 +125,7 @@ struct NameView: View {
                         : .secondary
             )
             .truncationMode(.middle)
-            // .help("Full path: \(image.metadata(let fileURL.path())")
+            .help("Full path: \(image.fullPath)")
     }
 }
 

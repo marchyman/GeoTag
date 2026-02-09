@@ -1,3 +1,4 @@
+import OSLog
 import SplitHView
 import SplitVView
 import SwiftUI
@@ -19,6 +20,7 @@ struct ContentView: View {
 
     // @State private var removeOldFiles = false
     @State private var sheetType: SheetType?
+    @State private var importFiles = false
 
     var body: some View {
         SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
@@ -79,19 +81,23 @@ struct ContentView: View {
         //     ImageInspectorView()
         //         .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
         // }
-        // .fileImporter(
-        //     isPresented: $state.importFiles,
-        //     allowedContentTypes: importTypes(),
-        //     allowsMultipleSelection: true
-        // ) { result in
-        //     switch result {
-        //     case .success(let files):
-        //         importFiles(files)
-        //     case .failure(let error):
-        //         AppState.logger.error(
-        //             "file import: \(error.localizedDescription, privacy: .public)")
-        //     }
-        // }
+        .onChange(of: store.importFiles) {
+            importFiles.toggle()
+        }
+        .fileImporter(
+            isPresented: $importFiles,
+            allowedContentTypes: importTypes(),
+            allowsMultipleSelection: true
+        ) { result in
+            switch result {
+            case let .success(files):
+                store.send(.openFiles(files))
+            case let .failure(error):
+                Logger(subsystem: Bundle.main.bundleIdentifier!,
+                       category: "ContentView").error(
+                    "file import: \(error.localizedDescription, privacy: .public)")
+            }
+        }
         // .toolbar {
         //     PhotoPickerView()
         //     InspectorButtonView()

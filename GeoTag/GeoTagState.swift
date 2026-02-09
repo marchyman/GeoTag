@@ -21,6 +21,7 @@ struct GeoTagState {
     }
 
     var saveInProgress = false
+    var importFiles = false
 
     public var searchImages: [ImageData] = []
     public var selection: Set<ImageData.ID> = []

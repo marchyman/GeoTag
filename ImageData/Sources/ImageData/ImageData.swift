@@ -2,6 +2,7 @@ import Coords
 import Exiftool
 import Foundation
 import Metadata
+import OSLog
 import SwiftUI
 
 public struct ImageData: Identifiable {
@@ -45,11 +46,35 @@ public struct ImageData: Identifiable {
     }
 }
 
+extension ImageData {
+    static let id = Bundle.main.bundleIdentifier ?? "ImageData"
+    static let logger = Logger(subsystem: id, category: "ImageData")
+}
+
 extension ImageData: Equatable {}
 
 extension ImageData: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+// The full path to the image for display only. A fake path is created
+// for images in a Photos library.
+
+extension ImageData {
+    public var fullPath: String {
+        switch metadata.source {
+        case let .image(url):
+            return url.path
+        case let .xmp(url):
+            return url.path
+        case .photos:
+            return "photos://\(name)"
+        case .copy:
+            Self.logger.error("Requested fullPath of metadata copy")
+            return "unknown"
+        }
     }
 }
 
