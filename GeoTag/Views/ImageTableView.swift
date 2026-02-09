@@ -116,15 +116,13 @@ struct NameView: View {
     var body: some View {
         Text(image.name)
             .fontWeight(isSelected ? .semibold : .regular)
-            // .foregroundColor(
-            //     isSelected
-            //         ? .mostSelected
-            //         : image.isValid
-            //             ? image.noMetadata
-            //                 ? .noMetadata
-            //                 : .primary
-            //             : .secondary
-            // )
+            .foregroundColor(
+                isSelected
+                    ? .mostSelected
+                    : image.updatable
+                        ? .primary
+                        : .secondary
+            )
             .truncationMode(.middle)
             // .help("Full path: \(image.metadata(let fileURL.path())")
     }
@@ -135,7 +133,7 @@ struct TimestampView: View {
 
     var body: some View {
         Text(image.metadata.timestamp)
-            // .foregroundColor(image.timestampTextColor)
+            .foregroundColor(image.timestampTextColor)
     }
 }
 struct LatitudeView: View {
@@ -145,7 +143,7 @@ struct LatitudeView: View {
 
     var body: some View {
         Text(image.metadata.formattedLatitude)
-            // .foregroundColor(image.locationTextColor)
+            .foregroundColor(image.locationTextColor)
             .help(image.metadata.formattedElevation)
     }
 }
@@ -157,7 +155,7 @@ struct LongitudeView: View {
 
     var body: some View {
         Text(image.metadata.formattedLongitude)
-            // .foregroundColor(image.locationTextColor)
+            .foregroundColor(image.locationTextColor)
             .help(image.metadata.formattedElevation)
     }
 }
