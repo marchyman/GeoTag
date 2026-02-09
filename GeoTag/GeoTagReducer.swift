@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import ImageData
 import OSLog
 import UDF
 
@@ -16,6 +17,7 @@ enum GeoTagEvent: Equatable {
     case discardRequest
     case searchFor(String)
     case clearSearch
+    case sortImages([KeyPathComparator<ImageData>])
 }
 
 extension GeoTagEvent: CustomStringConvertible {
@@ -33,6 +35,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .discardRequest: "discardRequest"
         case .searchFor: "searchFor"
         case .clearSearch: "clearSearch"
+        case .sortImages: "sortImages"
         }
     }
 }
@@ -88,6 +91,9 @@ struct GeoTagReducer: Reducer {
         case .clearSearch:
             logger.info("Clearing search")
             newState.searchImages = []
+        case let .sortImages(comparator):
+            newState.imageData.sort(using: comparator)
+            newState.searchImages.sort(using: comparator)
         }
 
         return newState

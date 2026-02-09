@@ -75,9 +75,9 @@ struct ImageTableView: View {
         // .contextMenu {
         //     ContextMenuView(context: nil)
         // }
-        // .onChange(of: store.sortOrder) {
-        //     store.images.sort(using: store.sortOrder)
-        // }
+        .onChange(of: sortOrder) {
+            store.send(.sortImages(sortOrder))
+        }
         .searchable(
             text: $searchFor, isPresented: $isSearching,
             placement: .automatic, prompt: "Image name"
