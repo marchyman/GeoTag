@@ -20,12 +20,18 @@ struct GeoTagState {
         return ImageData()
     }
 
+    var applicationBusy = false
     var saveInProgress = false
     var importFiles = false
 
-    public var searchImages: [ImageData] = []
-    public var selection: Set<ImageData.ID> = []
-    public var mostSelected: ImageData.ID?
+    var searchImages: [ImageData] = []
+    var selection: Set<ImageData.ID> = []
+    var mostSelected: ImageData.ID?
+
+    // keep track of security scoped URLs so they may be released when the
+    // table of images is cleared.
+
+    var scopedURLs: [URL] = []
 
     @ObservationIgnored
     var mainWindow: NSWindow?
@@ -43,7 +49,7 @@ struct GeoTagState {
     var sheetType: SheetType?
     var sheetStack: [SheetInfo] = []
     @ObservationIgnored
-    var sheetError: Error?
+    var sheetError: String?
     var sheetMessage: String?
     // var saveIssues = [ImageModel.ID: String]()
 

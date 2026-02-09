@@ -5,7 +5,7 @@ import Metadata
 import OSLog
 import SwiftUI
 
-public struct ImageData: Identifiable {
+public struct ImageData: Identifiable, Sendable {
     public let id: Int
     public let name: String
     public var metadata: Metadata

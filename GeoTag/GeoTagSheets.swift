@@ -2,7 +2,7 @@ extension GeoTagState {
 
     struct SheetInfo: Equatable {
         let sheetType: SheetType
-        let sheetError: Error?
+        let sheetError: String?
         let sheetMessage: String?
 
         static func == (lhs: SheetInfo, rhs: SheetInfo) -> Bool {
@@ -11,7 +11,7 @@ extension GeoTagState {
         }
     }
 
-    mutating func addSheet(type: SheetType, error: Error? = nil, message: String? = nil) {
+    mutating func addSheet(type: SheetType, error: String? = nil, message: String? = nil) {
         if sheetType == nil {
             sheetType = type
             sheetError = error

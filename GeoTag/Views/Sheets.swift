@@ -187,8 +187,8 @@ struct UnexpectedErrorView: View {
                 Text(message)
                     .padding()
             }
-            if let error = store.sheetError {
-                Text(error.localizedDescription)
+            if let errorDescription = store.sheetError {
+                Text(errorDescription)
                     .padding()
             }
         }

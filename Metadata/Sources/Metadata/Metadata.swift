@@ -32,7 +32,7 @@ extension MetadataSource: Equatable {}
 // There is no way to delete that metadata from an image file.
 // It can only be changed to some other value.
 
-public struct Metadata {
+public struct Metadata: Sendable {
     public let source: MetadataSource
 
     public var dateTimeCreated: String?

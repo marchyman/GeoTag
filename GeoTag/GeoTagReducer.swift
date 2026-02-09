@@ -4,49 +4,59 @@ import ImageData
 import OSLog
 import UDF
 
+// events that trigger a change of state
+
 enum GeoTagEvent: Equatable {
-    case mainWindowChange(NSWindow?)
-    case quitRequested
-    case initialBackupCheck
-    case sheetDismissed
-    case goodGpxFile(String)
+    case addImage(ImageData)
     case badGpxFile(String)
-    case gpxLoadViewClosed
-    case toggleLogWindow
-    case terminateRequest
+    case catchUnexpectedError(String?, String?)
     case discardRequest
-    case searchForChanged(String)
-    case searchForCleared
-    case sortOrderChanged([KeyPathComparator<ImageData>])
-    case selectionChanged(Set<ImageData.ID>)
+    case goodGpxFile(String)
+    case gpxLoadViewClosed
+    case initialBackupCheck
+    case mainWindowChange(NSWindow?)
     case openCommand
     case openFiles([URL])
+    case quitRequested
+    case searchForChanged(String)
+    case searchForCleared
+    case selectionChanged(Set<ImageData.ID>)
+    case sheetDismissed
+    case sortOrderChanged([KeyPathComparator<ImageData>])
+    case terminateRequest
+    case toggleLogWindow
 }
+
+// A description for each state
 
 extension GeoTagEvent: CustomStringConvertible {
     var description: String {
         switch self {
-        case .mainWindowChange: "mainWindowChange"
-        case .quitRequested: "quitRequested"
-        case .initialBackupCheck: "initialBackupCheck"
-        case .sheetDismissed: "sheetDismissed"
-        case .gpxLoadViewClosed: "gpxLoadViewClosed"
-        case .goodGpxFile: "goodGpxFile"
+        case .addImage: "addImage"
         case .badGpxFile: "badGpxFile"
-        case .toggleLogWindow: "toggleLogWindow"
-        case .terminateRequest: "terminateRequest"
+        case .catchUnexpectedError: "catchUnexpectedError"
         case .discardRequest: "discardRequest"
-        case .searchForChanged: "searchForChanged"
-        case .searchForCleared: "clearSearchCleared"
-        case .sortOrderChanged: "sortOrderChanged"
-        case .selectionChanged: "selectionChanged"
+        case .goodGpxFile: "goodGpxFile"
+        case .gpxLoadViewClosed: "gpxLoadViewClosed"
+        case .initialBackupCheck: "initialBackupCheck"
+        case .mainWindowChange: "mainWindowChange"
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
+        case .quitRequested: "quitRequested"
+        case .searchForChanged: "searchForChanged"
+        case .searchForCleared: "clearSearchCleared"
+        case .selectionChanged: "selectionChanged"
+        case .sheetDismissed: "sheetDismissed"
+        case .sortOrderChanged: "sortOrderChanged"
+        case .terminateRequest: "terminateRequest"
+        case .toggleLogWindow: "toggleLogWindow"
         }
     }
 }
 
-struct GeoTagReducer: Reducer {
+// Update state changes given an event
+
+struct GeoTagReducer: Reducer, Sendable {
     let logger =
         Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
                category: "reducer")
@@ -106,6 +116,12 @@ struct GeoTagReducer: Reducer {
             newState.importFiles.toggle()
         case let .openFiles(urls):
             openFiles(&newState, urls: urls)
+        case let .addImage(imageData):
+            newState.imageData.append(imageData)
+        case let .catchUnexpectedError(error, message):
+            newState.addSheet(type: .unexpectedErrorSheet,
+                              error: error,
+                              message: message)
         }
 
         return newState
