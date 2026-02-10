@@ -131,18 +131,7 @@ struct ContentView: View {
         await withTaskGroup(of: ImageData?.self) { group in
             for url in urls where url.pathExtension.lowercased() != "gpx" {
                 group.addTask {
-                    do {
-                        // create imagedata entry here
-                        let imageData = ImageData()
-                        return imageData
-                    } catch {
-                        await MainActor.run {
-                            store.send(.catchUnexpectedError(
-                                error.localizedDescription,
-                                "Failed to open file \(url.path)"))
-                        }
-                        return nil
-                    }
+                    return ImageData(from: url)
                 }
             }
             for await imageData in group.compactMap({$0}) {

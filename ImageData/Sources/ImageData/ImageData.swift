@@ -1,6 +1,7 @@
 import Coords
 import Exiftool
 import Foundation
+import Imagetool
 import Metadata
 import OSLog
 import SwiftUI
@@ -19,6 +20,8 @@ public struct ImageData: Identifiable, Sendable {
         original != nil
     }
 
+    // init given a Metadata and a String name.
+
     public init(metadata: Metadata, name: String) {
         id = ImageData.nextId()
         self.name = name
@@ -33,6 +36,26 @@ public struct ImageData: Identifiable, Sendable {
         default:
             break
         }
+    }
+
+    // init given a URL. A URL to the image or, if present, a sidecar
+    // file url will be used to create a Metadata initialized from
+    // the data in the image then initialize an ImageData with
+    // metadata and name.
+
+    public init(from url: URL) {
+        let sidecarURL = url.deletingPathExtension()
+            .appendingPathExtension(xmpExtension)
+        let hasSidecar = url != sidecarURL &&
+            FileManager.default.fileExists(atPath: sidecarURL.path)
+        let name = url.lastPathComponent + (hasSidecar ? "*" : "")
+        var metadata: Metadata
+        if hasSidecar {
+            metadata = Exiftool.helper.metadata(from: sidecarURL)
+        } else {
+            metadata = Imagetool.metadata(from: url)
+        }
+        self.init(metadata: metadata, name: name)
     }
 
     // fake data synthesized to allow lookup of images by an ID

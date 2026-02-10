@@ -4,7 +4,7 @@ import ImageIO
 import Metadata
 import OSLog
 
-struct Imagetool {
+public struct Imagetool {
     public static func metadata(from imageURL: URL) -> Metadata {
         var metadata = Metadata(source: .image(imageURL))
 
