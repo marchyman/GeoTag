@@ -1,3 +1,4 @@
+import ImageData
 import OSLog
 import SplitHView
 import SplitVView
@@ -91,7 +92,13 @@ struct ContentView: View {
         ) { result in
             switch result {
             case let .success(files):
-                store.send(.openFiles(files))
+                store.send(.openFiles(files)) {
+                    if let urls = store.uniqueURLs {
+                        Task {
+                            await images(for: urls)
+                        }
+                    }
+                }
             case let .failure(error):
                 Logger(subsystem: Bundle.main.bundleIdentifier!,
                        category: "ContentView").error(
@@ -120,12 +127,31 @@ struct ContentView: View {
         return types
     }
 
-    // private func importFiles(_ urls: [URL]) {
-    //     Task {
-    //         state.startSecurityScoping(urls: urls)
-    //         await state.prepareForEdit(inputURLs: urls)
-    //     }
-    // }
+    nonisolated private func images(for urls: [URL]) async {
+        await withTaskGroup(of: ImageData?.self) { group in
+            for url in urls where url.pathExtension.lowercased() != "gpx" {
+                group.addTask {
+                    do {
+                        // create imagedata entry here
+                        let imageData = ImageData()
+                        return imageData
+                    } catch {
+                        await MainActor.run {
+                            store.send(.catchUnexpectedError(
+                                error.localizedDescription,
+                                "Failed to open file \(url.path)"))
+                        }
+                        return nil
+                    }
+                }
+            }
+            for await imageData in group.compactMap({$0}) {
+                await MainActor.run {
+                    store.send(.addImage(imageData))
+                }
+            }
+        }
+    }
 }
 
 // AppSettings keys used to determine ContentView layout

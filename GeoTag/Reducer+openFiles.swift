@@ -4,7 +4,7 @@ import SwiftUI
 import UDF
 
 // initiate processing of the given array of URLs. Get the full list
-// of unique urls and then process each in a background task.
+// of unique urls and save it for the next step.
 
 extension GeoTagReducer {
     func openFiles(_ state: inout GeoTagState, urls: [URL]) {
@@ -24,17 +24,11 @@ extension GeoTagReducer {
         // check for duplicates of URLs already known
         let processed = Set(state.imageData.map { $0.fullPath })
         let duplicates = imageURLs.filter { processed.contains($0.path) }
-        let uniques: [URL]
         if duplicates.isEmpty {
-            uniques = imageURLs.uniqued()
+            state.uniqueURLs = imageURLs.uniqued()
         } else {
             state.addSheet(type: .duplicateImageSheet)
-            uniques = imageURLs.filter { !duplicates.contains($0) }.uniqued()
-        }
-
-        Task {
-            await images(for: uniques)
-            // TODO
+            state.uniqueURLs = imageURLs.filter { !duplicates.contains($0) }.uniqued()
         }
     }
 
@@ -63,33 +57,6 @@ extension GeoTagReducer {
             }
         }
         return foundURLs
-    }
-
-    // process images in a task group, one task per image, skipping gpx urls
-    nonisolated private
-    func images(for imageURLs: [URL]) async {
-        await withTaskGroup(of: ImageData?.self) { group in
-            for url in imageURLs where url.pathExtension.lowercased() != "gpx" {
-                group.addTask {
-                    do {
-                        // create imagedata entry here
-                        return nil
-                    } catch {
-                        await MainActor.run {
-                            // store.send(.catchUnexpectedError(
-                            //     error.localizedDescription,
-                            //     "Failed to open file \(url.path)"))
-                        }
-                        return nil
-                    }
-                }
-            }
-            for await imageData in group.compactMap({$0}) {
-                await MainActor.run {
-                    // store.send(.addImage(imageData))
-                }
-            }
-        }
     }
 }
 

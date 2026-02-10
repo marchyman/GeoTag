@@ -33,6 +33,13 @@ struct GeoTagState {
 
     var scopedURLs: [URL] = []
 
+    // URLs are opened in multiple steps.  Step one is to create an array
+    // of unique URLs to open from the file/folder URLs selected
+    // by the user.  The second step is to create ImageData from
+    // each image URL.  The final step is to handle any gpx related
+    // URLs.
+    var uniqueURLs: [URL]?
+
     @ObservationIgnored
     var mainWindow: NSWindow?
     var showLogWindow = false
