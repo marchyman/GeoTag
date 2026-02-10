@@ -28,7 +28,7 @@ struct Sandbox {
                                            withDestinationURL: sidecar)
 
         // create an NSFilePresenter for the symbolic links
-        xmpPresenter = XmpPresenter(for: url)
+        xmpPresenter = XmpPresenter(for: imgURL, sidecar: xmpURL)
     }
 
     // enum BackupError: Error {

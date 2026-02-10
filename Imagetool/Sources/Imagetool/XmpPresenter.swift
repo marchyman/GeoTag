@@ -17,12 +17,9 @@ final class XmpPresenter: NSObject, NSFilePresenter {
         return OperationQueue.main
     }
 
-    init(for imageURL: URL) {
+    init(for imageURL: URL, sidecar: URL) {
         primaryPresentedItemURL = imageURL
-        presentedItemURL =
-            imageURL
-            .deletingPathExtension()
-            .appendingPathExtension(xmpExtension)
+        presentedItemURL = sidecar
     }
 }
 

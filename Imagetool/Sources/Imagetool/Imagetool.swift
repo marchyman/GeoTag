@@ -1,4 +1,5 @@
 import Coords
+import Exiftool
 import Foundation
 import ImageIO
 import Metadata
@@ -87,9 +88,19 @@ public struct Imagetool {
     // does not collide.
 
     public static func metadata(from imageURL: URL, xmp: URL) -> Metadata {
-        var metadata = Metadata(source: .xmp(xmp))
+        let metadata: Metadata
 
-        // TODO
+        if let sandbox = try? Sandbox(for: imageURL, sidecar: xmp) {
+            NSFileCoordinator.addFilePresenter(sandbox.xmpPresenter)
+            defer {
+                NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter)
+            }
+            metadata = Exiftool.helper.metadata(from: sandbox.xmpURL)
+        } else {
+            logger.error("\(#function): Can't create sandbox for \(imageURL.path, privacy: .public)")
+            metadata = Metadata(source: .xmp(xmp))
+        }
+
         return metadata
     }
 
