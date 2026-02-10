@@ -75,6 +75,24 @@ public struct Imagetool {
         }
         return metadata
     }
+
+    // Extract metadata from sidecar file.  Exiftool can not read the
+    // xmp file for an image file unless explicitly opened or in a folder
+    // that was explicitly opened even when Using the XMP file presenter
+    // and NSFileCoordination.
+    //
+    // (Temporary?) solution: make a copy of an exising XMP file inside the
+    // sandbox and pass the copy to exiftool.  Every file in the sandbox
+    // is placed in a unique folder: using "tmpfile.xmp" as the name does
+    // does not collide.
+
+    public static func metadata(from imageURL: URL, xmp: URL) -> Metadata {
+        var metadata = Metadata(source: .xmp(xmp))
+
+        // TODO
+        return metadata
+    }
+
 }
 
 // Define a logger for the package
@@ -83,6 +101,7 @@ extension Imagetool {
     static let id = Bundle.main.bundleIdentifier ?? "ImagetoolTest"
     static let logger = Logger(subsystem: id, category: "ImageTool")
 }
+
 // CFString to (NS)*String casts for Image Property constants
 
 extension Imagetool {

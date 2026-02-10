@@ -11,6 +11,7 @@ let package = Package(
     dependencies: [
         .package(name: "Coords", path: "../Coords"),
         .package(name: "Exiftool", path: "../Exiftool"),
+        .package(name: "Imagetool", path: "../Imagetool"),
         .package(name: "Metadata", path: "../Metadata")
     ],
     targets: [
@@ -19,6 +20,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Coords", package: "Coords"),
                 .product(name: "Exiftool", package: "Exiftool"),
+                .product(name: "Imagetool", package: "Imagetool"),
                 .product(name: "Metadata", package: "Metadata")
             ]
         ),

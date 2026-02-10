@@ -127,6 +127,9 @@ struct ContentView: View {
         return types
     }
 
+    // Create ImageData entries for imported images and add them
+    // to the table.
+
     nonisolated private func images(for urls: [URL]) async {
         await withTaskGroup(of: ImageData?.self) { group in
             for url in urls where url.pathExtension.lowercased() != "gpx" {

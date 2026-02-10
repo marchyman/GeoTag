@@ -49,9 +49,10 @@ public struct ImageData: Identifiable, Sendable {
         let hasSidecar = url != sidecarURL &&
             FileManager.default.fileExists(atPath: sidecarURL.path)
         let name = url.lastPathComponent + (hasSidecar ? "*" : "")
+
         var metadata: Metadata
         if hasSidecar {
-            metadata = Exiftool.helper.metadata(from: sidecarURL)
+            metadata = Imagetool.metadata(from: url, xmp: sidecarURL)
         } else {
             metadata = Imagetool.metadata(from: url)
         }

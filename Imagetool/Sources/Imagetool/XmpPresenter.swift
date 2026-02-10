@@ -2,7 +2,7 @@ import Foundation
 
 /// file extension used for sidecar files
 
-let xmpExtension = "xmp"
+public let xmpExtension = "xmp"
 
 /// Class used to access xmp sidecar files as related files to the image
 /// file being updated in a sandboxed environment.
