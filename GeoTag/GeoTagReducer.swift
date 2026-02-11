@@ -8,6 +8,7 @@ import UDF
 
 enum GeoTagEvent: Equatable {
     case addImage(ImageData)
+    case backupFolderSizeCheck
     case badGpxFile(String)
     case catchUnexpectedError(String?, String?)
     case discardRequest
@@ -18,6 +19,7 @@ enum GeoTagEvent: Equatable {
     case openCommand
     case openFiles([URL])
     case quitRequested
+    case removeOldFiles
     case searchForChanged(String)
     case searchForCleared
     case selectionChanged(Set<ImageData.ID>)
@@ -33,6 +35,7 @@ extension GeoTagEvent: CustomStringConvertible {
     var description: String {
         switch self {
         case .addImage: "addImage"
+        case .backupFolderSizeCheck: "backupFolderSizeCheck"
         case .badGpxFile: "badGpxFile"
         case .catchUnexpectedError: "catchUnexpectedError"
         case .discardRequest: "discardRequest"
@@ -43,6 +46,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
         case .quitRequested: "quitRequested"
+        case .removeOldFiles: "removeOldFiles"
         case .searchForChanged: "searchForChanged"
         case .searchForCleared: "clearSearchCleared"
         case .selectionChanged: "selectionChanged"
@@ -70,6 +74,9 @@ struct GeoTagReducer: Reducer, Sendable {
         switch event {
         case let .addImage(imageData):
             newState.imageData.append(imageData)
+
+        case .backupFolderSizeCheck:
+            checkBackupFolderSize(&newState)
 
         case let .badGpxFile(filename):
             newState.gpxBadFileNames.append(filename)
@@ -101,6 +108,11 @@ struct GeoTagReducer: Reducer, Sendable {
 
         case let .openFiles(urls):
             openFiles(&newState, urls: urls)
+
+        case .removeOldFiles:
+            removeFiles(filesToRemove: newState.oldFiles,
+                        from: newState.backupURL)
+            newState.oldFiles = []
 
         case .sheetDismissed:
             if newState.sheetStack.isEmpty {

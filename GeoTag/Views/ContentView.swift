@@ -78,7 +78,7 @@ struct ContentView: View {
             sheet
         }
         .areYouSure()  // confirmations
-        // .removeBackupsAlert()  // Alert: Remove Old Backup files
+        .removeBackupsAlert()  // Alert: Remove Old Backup files
         // .photoLibraryEnabledAlert()
         // .photoLibraryDisabledAlert()
         // .inspector(isPresented: $state.inspectorPresented) {

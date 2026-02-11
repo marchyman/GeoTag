@@ -23,8 +23,12 @@ struct GeoTagApp: App {
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .onAppear {
                     appDelegate.store = store
-                    if !doNotBackup && savedBookmark == Data() {
-                        store.send(.initialBackupCheck)
+                    if !doNotBackup {
+                        if savedBookmark == Data() {
+                            store.send(.initialBackupCheck)
+                        } else {
+                            store.send(.backupFolderSizeCheck)
+                        }
                     }
                 }
                 .onChange(of: mainWindow) {
@@ -51,7 +55,7 @@ struct GeoTagApp: App {
         // .windowStyle(.hiddenTitleBar)
         // .windowResizability(.contentSize)
         // .commandsRemoved()
-        //
+
         Window(Self.showRunLog, id: Self.showRunLog) {
             RunLogView()
                 .frame(width: 700, height: 500)
