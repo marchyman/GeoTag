@@ -55,13 +55,16 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .border(windowBorderColor)
         .padding()
-        // .dropDestination(for: URL.self) { items, _ in
-        //     let state = state
-        //     Task {
-        //         await state.prepareForEdit(inputURLs: items)
-        //     }
-        //     return true
-        // }
+        .dropDestination(for: URL.self) { items, _ in
+            store.send(.openFiles(items)) {
+                if let urls = store.uniqueURLs {
+                    Task {
+                        await images(for: urls)
+                    }
+                }
+            }
+            return true
+        }
         // .onChange(of: state.changeTimeZoneWindow) {
         //     openWindow(id: GeoTagApp.adjustTimeZone)
         // }

@@ -26,7 +26,7 @@ struct SandboxTests {
         let xmp = try #require(
             Bundle.module.url(forResource: "262M1559",
                               withExtension: "xmp"))
- 
+
         let sandbox = try Sandbox(for: url, sidecar: xmp)
         let contents =
             try FileManager.default.contentsOfDirectory(at: sandbox.imgDir,
@@ -44,4 +44,3 @@ struct SandboxTests {
         sandbox.removeSandboxFolder()
     }
 }
-

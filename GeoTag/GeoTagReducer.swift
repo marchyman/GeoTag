@@ -85,7 +85,7 @@ struct GeoTagReducer: Reducer, Sendable {
 
         case let .goodGpxFile(filename):
             newState.gpxGoodFileNames.append(filename)
- 
+
         case .gpxLoadViewClosed:
             newState.gpxGoodFileNames = []
             newState.gpxBadFileNames = []
