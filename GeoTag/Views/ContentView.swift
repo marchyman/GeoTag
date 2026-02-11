@@ -65,9 +65,9 @@ struct ContentView: View {
             }
             return true
         }
-        // .onChange(of: state.changeTimeZoneWindow) {
-        //     openWindow(id: GeoTagApp.adjustTimeZone)
-        // }
+        .onChange(of: store.showTimeZoneWindow) {
+            openWindow(id: GeoTagApp.adjustTimeZone)
+        }
         .onChange(of: store.showLogWindow) {
             openWindow(id: GeoTagApp.showRunLog)
         }

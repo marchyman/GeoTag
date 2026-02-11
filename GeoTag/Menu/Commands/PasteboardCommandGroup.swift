@@ -1,9 +1,28 @@
 // import MapAndSearchViews
-// import SwiftUI
-//
-// // Replace the pasteboard commands group
-//
-// struct PasteboardCommands: Commands {
+import SwiftUI
+import UDF
+
+// Replace the pasteboard commands group
+
+struct PasteboardCommands: Commands {
+    var store: Store<GeoTagState, GeoTagEvent>
+
+    var body: some Commands {
+         CommandGroup(replacing: .pasteboard) {
+            Group {
+                Button("Show In Finder") { store.send(.showInFinder) }
+                    // .disabled(state.showInFinderDisabled())
+
+                // Button("Locn From Track") {
+                //     state.locnFromTrackAction(extendedTime: extendedTime) }
+                //     .keyboardShortcut("l")
+                    // .disabled(state.locnFromTrackDisabled())
+
+                Button("Specify Time Zone…") { store.send(.changeTimeZone) }
+                }
+            }
+        }
+    }
 //     var state: AppState
 //     @FocusedValue(\.textfieldFocused) var textfieldFocused
 //     @AppStorage(AppSettings.extendedTimeKey) var extendedTime = 120.0

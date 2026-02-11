@@ -12,11 +12,12 @@ enum GeoTagEvent: Equatable {
     case backupURLChanged(URL?)
     case badGpxFile(String)
     case catchUnexpectedError(String?, String?)
+    case changeTimeZone
     case discardRequest
     case goodGpxFile(String)
     case gpxLoadViewClosed
     case initBackupURL
-    case initialBackupCheck
+    case initialBackupNotice
     case mainWindowChange(NSWindow?)
     case openCommand
     case openFiles([URL])
@@ -26,8 +27,10 @@ enum GeoTagEvent: Equatable {
     case searchForCleared
     case selectionChanged(Set<ImageData.ID>)
     case sheetDismissed
+    case showInFinder
     case sortOrderChanged([KeyPathComparator<ImageData>])
     case terminateRequest
+    case timeZoneChanged(TimeZone)
     case toggleLogWindow
 }
 
@@ -41,11 +44,12 @@ extension GeoTagEvent: CustomStringConvertible {
         case .backupURLChanged: "backupURLChanged"
         case .badGpxFile: "badGpxFile"
         case .catchUnexpectedError: "catchUnexpectedError"
+        case .changeTimeZone: "changeTimeZone"
         case .discardRequest: "discardRequest"
         case .goodGpxFile: "goodGpxFile"
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
         case .initBackupURL: "initBackupURL"
-        case .initialBackupCheck: "initialBackupCheck"
+        case .initialBackupNotice: "initialBackupCheck"
         case .mainWindowChange: "mainWindowChange"
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
@@ -55,8 +59,10 @@ extension GeoTagEvent: CustomStringConvertible {
         case .searchForCleared: "clearSearchCleared"
         case .selectionChanged: "selectionChanged"
         case .sheetDismissed: "sheetDismissed"
+        case .showInFinder: "showInFinder"
         case .sortOrderChanged: "sortOrderChanged"
         case .terminateRequest: "terminateRequest"
+        case .timeZoneChanged: "timeZoneChanged"
         case .toggleLogWindow: "toggleLogWindow"
         }
     }
@@ -93,6 +99,9 @@ struct GeoTagReducer: Reducer, Sendable {
                               error: error,
                               message: message)
 
+        case .changeTimeZone:
+            newState.showTimeZoneWindow.toggle()
+
         case .discardRequest:
             // TODO
             break
@@ -107,7 +116,7 @@ struct GeoTagReducer: Reducer, Sendable {
         case .initBackupURL:
             getBackupURL(&newState)
 
-        case .initialBackupCheck:
+        case .initialBackupNotice:
             newState.addSheet(type: .noBackupFolderSheet)
 
         case let .mainWindowChange(window):
@@ -151,6 +160,10 @@ struct GeoTagReducer: Reducer, Sendable {
         case let .selectionChanged(selection):
             selectionChanged(&newState, selection: selection)
 
+        case .showInFinder:
+            // TODO
+            break
+
         case let .sortOrderChanged(comparator):
             newState.imageData.sort(using: comparator)
             newState.searchImages.sort(using: comparator)
@@ -158,6 +171,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .terminateRequest:
             newState.isDocumentEdited = false
             NSApp.terminate(nil)
+
+        case let .timeZoneChanged(newTimeZone):
+            newState.timeZone = newTimeZone
 
         case .toggleLogWindow:
             newState.showLogWindow.toggle()

@@ -44,6 +44,8 @@ struct GeoTagState {
     @ObservationIgnored
     var mainWindow: NSWindow?
     var showLogWindow = false
+    var showTimeZoneWindow = false
+    var timeZone = TimeZone.current
 
     // confirmation required properties
     // A confirmation may required optional data or an action

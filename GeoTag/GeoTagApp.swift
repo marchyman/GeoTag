@@ -25,7 +25,7 @@ struct GeoTagApp: App {
                     appDelegate.store = store
                     if !doNotBackup {
                         if savedBookmark == Data() {
-                            store.send(.initialBackupCheck)
+                            store.send(.initialBackupNotice)
                         } else {
                             store.send(.initBackupURL) {
                                 if store.backupURL != nil {
@@ -46,19 +46,19 @@ struct GeoTagApp: App {
             NewItemCommands(store: store)
         //     SaveItemCommands(state: state)
         //     UndoRedoCommands(state: state)
-        //     PasteboardCommands(state: state)
+            PasteboardCommands(store: store)
         //     ToolbarCommands(state: state)
             HelpCommands(store: store)
         }
 
-        // Window(GeoTagApp.adjustTimeZone, id: Self.adjustTimeZone) {
-        //     AdjustTimezoneView(timeZone: $state.timeZone)
-        //         .frame(width: 500.0, height: 570.0)
-        //         .environment(state)
-        // }
-        // .windowStyle(.hiddenTitleBar)
-        // .windowResizability(.contentSize)
-        // .commandsRemoved()
+        Window(Self.adjustTimeZone, id: Self.adjustTimeZone) {
+            AdjustTimezoneView()
+                .frame(width: 500.0, height: 570.0)
+                .environment(store)
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .commandsRemoved()
 
         Window(Self.showRunLog, id: Self.showRunLog) {
             RunLogView()
