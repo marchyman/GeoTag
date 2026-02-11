@@ -10,7 +10,6 @@ struct RemoveBackupsAlert: ViewModifier {
             .alert("Delete old backup files?", isPresented: $removeBackups) {
                 Button("Delete", role: .destructive) {
                     store.send(.removeOldFiles)
-                    // state.remove(filesToRemove: state.oldFiles)
                 }
                 Button("Cancel", role: .cancel) {}
                     .keyboardShortcut(.defaultAction)
@@ -30,7 +29,7 @@ struct RemoveBackupsAlert: ViewModifier {
                     """)
             }
         .onChange(of: store.oldFiles) {
-            removeBackups.toggle()
+            removeBackups = !store.oldFiles.isEmpty
         }
         .task {
             removeBackups = !store.oldFiles.isEmpty

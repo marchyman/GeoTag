@@ -211,7 +211,9 @@ struct SettingsView: View {
             .padding()
         }
         .onChange(of: backupURL) {
-            store.send(.backupURLChanged(backupURL))
+            if backupURL != store.backupURL {
+                store.send(.backupURLChanged(backupURL))
+            }
         }
         .task {
             backupURL = store.backupURL
