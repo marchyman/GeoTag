@@ -5,7 +5,12 @@ import ImageIO
 import Metadata
 import OSLog
 
+// image metadata input and output functions
+
 public struct Imagetool {
+
+    // read metadata from an image referenced by URL using ImageIO functions
+
     public static func metadata(from imageURL: URL) -> Metadata {
         var metadata = Metadata(source: .image(imageURL))
 
@@ -82,10 +87,9 @@ public struct Imagetool {
     // that was explicitly opened even when Using the XMP file presenter
     // and NSFileCoordination.
     //
-    // (Temporary?) solution: make a copy of an exising XMP file inside the
-    // sandbox and pass the copy to exiftool.  Every file in the sandbox
-    // is placed in a unique folder: using "tmpfile.xmp" as the name does
-    // does not collide.
+    // Therefore create a folder in the sandbox containing symbolic
+    // links to the files elsewhere on disk. Point exiftool at the
+    // sandbox link.
 
     public static func metadata(from imageURL: URL, xmp: URL) -> Metadata {
         let metadata: Metadata
@@ -94,10 +98,11 @@ public struct Imagetool {
             NSFileCoordinator.addFilePresenter(sandbox.xmpPresenter)
             defer {
                 NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter)
+                sandbox.removeSandboxFolder()
             }
             metadata = Exiftool.helper.metadata(from: sandbox.xmpURL)
         } else {
-            logger.error("\(#function): Can't create sandbox for \(imageURL.path, privacy: .public)")
+            Self.logger.error("\(#function): Can't create sandbox for \(imageURL.path, privacy: .public)")
             metadata = Metadata(source: .xmp(xmp))
         }
 

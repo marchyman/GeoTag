@@ -68,12 +68,40 @@ struct GeoTagReducer: Reducer, Sendable {
         logger.debug("event: \(event)")
 
         switch event {
-        case let .mainWindowChange(window):
-            newState.mainWindow = window
-        case .quitRequested:
-            quitRequested(&newState)
+        case let .addImage(imageData):
+            newState.imageData.append(imageData)
+
+        case let .badGpxFile(filename):
+            newState.gpxBadFileNames.append(filename)
+
+        case let .catchUnexpectedError(error, message):
+            newState.addSheet(type: .unexpectedErrorSheet,
+                              error: error,
+                              message: message)
+
+        case .discardRequest:
+            // TODO
+            break
+
+        case let .goodGpxFile(filename):
+            newState.gpxGoodFileNames.append(filename)
+ 
+        case .gpxLoadViewClosed:
+            newState.gpxGoodFileNames = []
+            newState.gpxBadFileNames = []
+
         case .initialBackupCheck:
             newState.addSheet(type: .noBackupFolderSheet)
+
+        case let .mainWindowChange(window):
+            newState.mainWindow = window
+
+        case .openCommand:
+            newState.importFiles.toggle()
+
+        case let .openFiles(urls):
+            openFiles(&newState, urls: urls)
+
         case .sheetDismissed:
             if newState.sheetStack.isEmpty {
                 newState.sheetMessage = nil
@@ -84,44 +112,34 @@ struct GeoTagReducer: Reducer, Sendable {
                 newState.sheetError = sheetInfo.sheetError
                 newState.sheetType = sheetInfo.sheetType
             }
-        case let .goodGpxFile(filename):
-            newState.gpxGoodFileNames.append(filename)
-        case let .badGpxFile(filename):
-            newState.gpxBadFileNames.append(filename)
-        case .gpxLoadViewClosed:
-            newState.gpxGoodFileNames = []
-            newState.gpxBadFileNames = []
-        case .toggleLogWindow:
-            newState.showLogWindow.toggle()
-        case .terminateRequest:
-            newState.isDocumentEdited = false
-            NSApp.terminate(nil)
-        case .discardRequest:
-            // TODO
-            break
+
+        case .quitRequested:
+            quitRequested(&newState)
+
         case let .searchForChanged(name):
             logger.info("Search for \(name, privacy: .public)")
             newState.searchImages = newState.imageData.filter {
                 $0.updatable && $0.name.fuzzy(name)
             }
+
         case .searchForCleared:
             logger.info("Clearing search")
             newState.searchImages = []
+
+        case let .selectionChanged(selection):
+            selectionChanged(&newState, selection: selection)
+
         case let .sortOrderChanged(comparator):
             newState.imageData.sort(using: comparator)
             newState.searchImages.sort(using: comparator)
-        case let .selectionChanged(selection):
-            selectionChanged(&newState, selection: selection)
-        case .openCommand:
-            newState.importFiles.toggle()
-        case let .openFiles(urls):
-            openFiles(&newState, urls: urls)
-        case let .addImage(imageData):
-            newState.imageData.append(imageData)
-        case let .catchUnexpectedError(error, message):
-            newState.addSheet(type: .unexpectedErrorSheet,
-                              error: error,
-                              message: message)
+
+        case .terminateRequest:
+            newState.isDocumentEdited = false
+            NSApp.terminate(nil)
+
+        case .toggleLogWindow:
+            newState.showLogWindow.toggle()
+
         }
 
         return newState

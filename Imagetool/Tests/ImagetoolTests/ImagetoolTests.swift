@@ -95,4 +95,21 @@ struct ImagetoolTests {
         #expect(metadata.country == "United States")
         #expect(metadata.countryCode == "US")
     }
+
+    @Test func imageWithXmp() async throws {
+        let url = try #require(
+            Bundle.module.url(forResource: "262M1559",
+                              withExtension: "DNG"))
+        let xmp = try #require(
+            Bundle.module.url(forResource: "262M1559",
+                              withExtension: "xmp"))
+        let metadata = Imagetool.metadata(from: url, xmp: xmp)
+        #expect(metadata.dateTimeCreated == "2019:03:11 11:47:20")
+        #expect(metadata.location == nil)
+        #expect(metadata.elevation == nil)
+        #expect(metadata.city == nil)
+        #expect(metadata.state == nil)
+        #expect(metadata.country == nil)
+        #expect(metadata.countryCode == nil)
+    }
 }

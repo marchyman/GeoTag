@@ -6,6 +6,7 @@ import SwiftUI
 // is explicitly allowed by the user.
 
 struct Sandbox {
+    let imgDir: URL
     let imgURL: URL
     let xmpURL: URL
     let xmpPresenter: XmpPresenter
@@ -13,8 +14,8 @@ struct Sandbox {
     init(for url: URL, sidecar: URL) throws {
         let fileManager = FileManager.default
         let uuid = UUID().uuidString
-        let imgDir = URL.documentsDirectory
-                        .appendingPathComponent(uuid, isDirectory: true)
+        imgDir = URL.documentsDirectory
+                    .appendingPathComponent(uuid, isDirectory: true)
         try fileManager.createDirectory(at: imgDir,
                                         withIntermediateDirectories: true)
 
@@ -36,6 +37,17 @@ struct Sandbox {
     // }
 }
 
+// Function to remove a sandbox's imgDir
+
+extension Sandbox {
+    public func removeSandboxFolder() {
+        do {
+            try FileManager.default.removeItem(at: imgDir)
+        } catch {
+            Imagetool.logger.error("\(#function): \(error.localizedDescription, privacy: .public)")
+        }
+    }
+}
 // extension Sandbox {
 //
 //     // Modify name for backup file. Add a suffix to the name until no file
