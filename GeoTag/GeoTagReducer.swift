@@ -9,11 +9,13 @@ import UDF
 enum GeoTagEvent: Equatable {
     case addImage(ImageData)
     case backupFolderSizeCheck
+    case backupURLChanged(URL?)
     case badGpxFile(String)
     case catchUnexpectedError(String?, String?)
     case discardRequest
     case goodGpxFile(String)
     case gpxLoadViewClosed
+    case initBackupURL
     case initialBackupCheck
     case mainWindowChange(NSWindow?)
     case openCommand
@@ -36,11 +38,13 @@ extension GeoTagEvent: CustomStringConvertible {
         switch self {
         case .addImage: "addImage"
         case .backupFolderSizeCheck: "backupFolderSizeCheck"
+        case .backupURLChanged: "backupURLChanged"
         case .badGpxFile: "badGpxFile"
         case .catchUnexpectedError: "catchUnexpectedError"
         case .discardRequest: "discardRequest"
         case .goodGpxFile: "goodGpxFile"
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
+        case .initBackupURL: "initBackupURL"
         case .initialBackupCheck: "initialBackupCheck"
         case .mainWindowChange: "mainWindowChange"
         case .openCommand: "openCommand"
@@ -78,6 +82,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .backupFolderSizeCheck:
             checkBackupFolderSize(&newState)
 
+        case let .backupURLChanged(backupURL):
+            newBackupFolder(&newState, url: backupURL)
+
         case let .badGpxFile(filename):
             newState.gpxBadFileNames.append(filename)
 
@@ -96,6 +103,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .gpxLoadViewClosed:
             newState.gpxGoodFileNames = []
             newState.gpxBadFileNames = []
+
+        case .initBackupURL:
+            getBackupURL(&newState)
 
         case .initialBackupCheck:
             newState.addSheet(type: .noBackupFolderSheet)

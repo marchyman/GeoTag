@@ -1,6 +1,23 @@
 import Foundation
+import SwiftUI
 
 extension GeoTagReducer {
+    func getBackupURL(_ state: inout GeoTagState) {
+        @AppStorage(GeoTagApp.savedBookmarkKey) var savedBookmark = Data()
+        var staleBookmark = false
+
+        let url = try? URL(
+            resolvingBookmarkData: savedBookmark,
+            options: [.withoutUI, .withSecurityScope],
+            bookmarkDataIsStale: &staleBookmark)
+        if let url {
+            if staleBookmark {
+                newBackupFolder(&state, url: url)
+            }
+        }
+        state.backupURL = url
+    }
+
     func checkBackupFolderSize(_ state: inout GeoTagState) {
         guard let url = state.backupURL else { return }
 
@@ -63,5 +80,27 @@ extension GeoTagReducer {
             }
         }
 
+    }
+
+    func newBackupFolder(_ state: inout GeoTagState, url: URL?) {
+        @AppStorage(GeoTagApp.savedBookmarkKey) var savedBookmark = Data()
+        state.backupURL = url
+        if let url {
+            do {
+                try savedBookmark = url.bookmarkData(options: .withSecurityScope)
+                checkBackupFolderSize(&state)
+           } catch {
+                state.addSheet(
+                    type: .unexpectedErrorSheet,
+                    error: error.localizedDescription,
+                    message: """
+                        Error creating security scoped bookmark for backup \
+                        location \(url.path)
+                        """
+                )
+            }
+        } else {
+            savedBookmark = Data()
+        }
     }
 }

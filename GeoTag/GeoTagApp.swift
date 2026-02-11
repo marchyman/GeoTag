@@ -27,7 +27,11 @@ struct GeoTagApp: App {
                         if savedBookmark == Data() {
                             store.send(.initialBackupCheck)
                         } else {
-                            store.send(.backupFolderSizeCheck)
+                            store.send(.initBackupURL) {
+                                if store.backupURL != nil {
+                                    store.send(.backupFolderSizeCheck)
+                                }
+                            }
                         }
                     }
                 }
@@ -62,12 +66,12 @@ struct GeoTagApp: App {
         }
         .windowResizability(.contentSize)
         .commandsRemoved()
-        //
-        // Settings {
-        //     SettingsView()
-        //         .environment(state)
-        // }
-        // .windowResizability(.contentSize)
+
+        Settings {
+            SettingsView()
+                .environment(store)
+        }
+        .windowResizability(.contentSize)
 
     }
 }
