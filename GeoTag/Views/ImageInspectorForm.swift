@@ -10,18 +10,17 @@ struct ImageInspectorForm: View {
         """
 
     var body: some View {
-        Text("ImageInspectorForm here")
-        // Form {
-        //     Section("Date and Time") {
-        //         DateTimeSectionView(image: image)
-        //     }
-        //     Section("Location") {
-        //         LatLonSectionView(image: image)
-        //     }
-        //     Section("Notice") {
-        //         Text(notice)
-        //     }
-        // }
+        Form {
+            Section("Date and Time") {
+                DateTimeSectionView(image: image)
+            }
+            Section("Location") {
+                LatLonSectionView(image: image)
+            }
+            Section("Notice") {
+                Text(notice)
+            }
+        }
     }
 }
 

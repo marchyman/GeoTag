@@ -78,42 +78,42 @@ extension FormatStyle where Self == CoordsLongitudeStyle {
 
 // MARK: Latitude format used with TextFields
 
-struct LatitudeStyle: ParseableFormatStyle {
-    var parseStrategy: LatitudeStrategy = .init()
+public struct LatitudeStyle: ParseableFormatStyle {
+    public var parseStrategy: LatitudeStrategy = .init()
 
     public func format(_ value: Double?) -> String {
         return coordToString(for: value, ref: Coords.latRef)
     }
 }
 
-struct LatitudeStrategy: ParseStrategy {
+public struct LatitudeStrategy: ParseStrategy {
     public func parse(_ value: String) throws -> Double? {
         return value.validateLatitude()
     }
 }
 
 extension FormatStyle where Self == LatitudeStyle {
-    static var latitude: LatitudeStyle { .init() }
+    public static var latitude: LatitudeStyle { .init() }
 }
 
 // MARK: Longitude format used with TextFields
 
-struct LongitudeStyle: ParseableFormatStyle {
-    var parseStrategy: LongitudeStrategy = .init()
+public struct LongitudeStyle: ParseableFormatStyle {
+    public var parseStrategy: LongitudeStrategy = .init()
 
     public func format(_ value: Double?) -> String {
         return coordToString(for: value, ref: Coords.lonRef)
     }
 }
 
-struct LongitudeStrategy: ParseStrategy {
+public struct LongitudeStrategy: ParseStrategy {
     public func parse(_ value: String) throws -> Double? {
         return value.validateLongitude()
     }
 }
 
 extension FormatStyle where Self == LongitudeStyle {
-    static var longitude: LongitudeStyle { .init() }
+    public static var longitude: LongitudeStyle { .init() }
 }
 
 // MARK: convert a coordinate to a string using the desired format
