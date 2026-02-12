@@ -58,6 +58,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .initialBackupNotice:
             newState.addSheet(type: .noBackupFolderSheet)
 
+        case let .locationChanged(coords):
+            update(&newState, coords: coords)
+
         case let .mainWindowChange(window):
             newState.mainWindow = window
 

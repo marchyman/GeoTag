@@ -66,7 +66,10 @@ struct LatLonSectionView: View {
         }
         .onSubmit {
             if validateLocation() {
-                // updateLocation()
+                if let latitude, let longitude {
+                    store.send(.locationChanged(Coords(latitude: latitude,
+                                                       longitude: longitude)))
+                }
                 isFocused = false
             }
         }
@@ -102,25 +105,6 @@ struct LatLonSectionView: View {
         }
         return false
     }
-
-    // update all selected images with the location specified by the
-    // state variables.
-
-    // private func updateLocation() {
-    //     // function won't be called if lat/lon are nil.
-    //     // guard used to convert to non-optional values
-    //     guard let latitude, let longitude else { return }
-    //     let newLocation = Coords(
-    //         latitude: latitude,
-    //         longitude: longitude)
-    //
-    //     state.undoManager.beginUndoGrouping()
-    //     for image in state.tvm.selected where image.location != newLocation {
-    //         state.update(image, location: newLocation)
-    //     }
-    //     state.undoManager.endUndoGrouping()
-    //     state.undoManager.setActionName("modify location")
-    // }
 }
 
 // I want my labels in line with the text field.

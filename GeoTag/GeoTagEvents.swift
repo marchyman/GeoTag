@@ -1,4 +1,5 @@
 import AppKit
+import Coords
 import Foundation
 import GpxTrackLog
 import ImageData
@@ -18,6 +19,7 @@ enum GeoTagEvent: Equatable {
     case gpxLoadViewClosed
     case initBackupURL
     case initialBackupNotice
+    case locationChanged(Coords)
     case mainWindowChange(NSWindow?)
     case openCommand
     case openFiles([URL])
@@ -53,6 +55,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
         case .initBackupURL: "initBackupURL"
         case .initialBackupNotice: "initialBackupCheck"
+        case .locationChanged: "locationChanged"
         case .mainWindowChange: "mainWindowChange"
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
