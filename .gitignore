@@ -6,6 +6,7 @@ notes
 buildServer.json
 Info.plist
 *.entitlements
+.swiftpm/
 
 .build/
 Build/
