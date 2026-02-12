@@ -4,71 +4,7 @@ import ImageData
 import OSLog
 import UDF
 
-// events that trigger a change of state
-
-enum GeoTagEvent: Equatable {
-    case addImage(ImageData)
-    case backupFolderSizeCheck
-    case backupURLChanged(URL?)
-    case badGpxFile(String)
-    case catchUnexpectedError(String?, String?)
-    case changeTimeZone
-    case discardRequest
-    case goodGpxFile(String)
-    case gpxLoadViewClosed
-    case initBackupURL
-    case initialBackupNotice
-    case mainWindowChange(NSWindow?)
-    case openCommand
-    case openFiles([URL])
-    case quitRequested
-    case removeOldFiles
-    case searchForChanged(String)
-    case searchForCleared
-    case selectionChanged(Set<ImageData.ID>)
-    case sheetDismissed
-    case showInFinder
-    case sortOrderChanged([KeyPathComparator<ImageData>])
-    case terminateRequest
-    case timeZoneChanged(TimeZone)
-    case toggleLogWindow
-}
-
-// A description for each state
-
-extension GeoTagEvent: CustomStringConvertible {
-    var description: String {
-        switch self {
-        case .addImage: "addImage"
-        case .backupFolderSizeCheck: "backupFolderSizeCheck"
-        case .backupURLChanged: "backupURLChanged"
-        case .badGpxFile: "badGpxFile"
-        case .catchUnexpectedError: "catchUnexpectedError"
-        case .changeTimeZone: "changeTimeZone"
-        case .discardRequest: "discardRequest"
-        case .goodGpxFile: "goodGpxFile"
-        case .gpxLoadViewClosed: "gpxLoadViewClosed"
-        case .initBackupURL: "initBackupURL"
-        case .initialBackupNotice: "initialBackupCheck"
-        case .mainWindowChange: "mainWindowChange"
-        case .openCommand: "openCommand"
-        case .openFiles: "openFiles"
-        case .quitRequested: "quitRequested"
-        case .removeOldFiles: "removeOldFiles"
-        case .searchForChanged: "searchForChanged"
-        case .searchForCleared: "clearSearchCleared"
-        case .selectionChanged: "selectionChanged"
-        case .sheetDismissed: "sheetDismissed"
-        case .showInFinder: "showInFinder"
-        case .sortOrderChanged: "sortOrderChanged"
-        case .terminateRequest: "terminateRequest"
-        case .timeZoneChanged: "timeZoneChanged"
-        case .toggleLogWindow: "toggleLogWindow"
-        }
-    }
-}
-
-// Update state changes given an event
+// Update state given an event
 
 struct GeoTagReducer: Reducer, Sendable {
     let logger =
@@ -128,6 +64,12 @@ struct GeoTagReducer: Reducer, Sendable {
         case let .openFiles(urls):
             openFiles(&newState, urls: urls)
 
+        case .quitRequested:
+            quitRequested(&newState)
+
+        case let .readTrackLog(path, tracklog):
+            addTrackLog(&newState, path, tracklog)
+
         case .removeOldFiles:
             removeFiles(filesToRemove: newState.oldFiles,
                         from: newState.backupURL)
@@ -143,9 +85,6 @@ struct GeoTagReducer: Reducer, Sendable {
                 newState.sheetError = sheetInfo.sheetError
                 newState.sheetType = sheetInfo.sheetType
             }
-
-        case .quitRequested:
-            quitRequested(&newState)
 
         case let .searchForChanged(name):
             logger.info("Search for \(name, privacy: .public)")

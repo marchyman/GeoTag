@@ -1,3 +1,4 @@
+import GpxTrackLog
 import ImageData
 import OSLog
 import SplitHView
@@ -60,6 +61,7 @@ struct ContentView: View {
                 if let urls = store.uniqueURLs {
                     Task {
                         await images(for: urls)
+                        await tracks(for: urls)
                     }
                 }
             }
@@ -99,6 +101,7 @@ struct ContentView: View {
                     if let urls = store.uniqueURLs {
                         Task {
                             await images(for: urls)
+                            await tracks(for: urls)
                         }
                     }
                 }
@@ -144,6 +147,30 @@ struct ContentView: View {
                 await MainActor.run {
                     store.send(.addImage(imageData))
                 }
+            }
+        }
+        // TODO: link paired images
+        // TODO: sort images in current sort order
+    }
+
+    nonisolated private func tracks(for urls: [URL]) async {
+        let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
+        guard !gpxURLs.isEmpty else { return }
+        var tracks: [(String, GpxTrackLog?)] = []
+
+        await withTaskGroup(of: (String, GpxTrackLog?).self) { group in
+            for url in gpxURLs {
+                group.addTask {
+                    do {
+                        let trackLog = try GpxTrackLog(contentsOf: url)
+                        return (url.path, trackLog)
+                    } catch {
+                        return (url.path, nil)
+                    }
+                }
+            }
+            for await (path, trackLog) in group {
+                store.send(.readTrackLog(path, tracklog?))
             }
         }
     }
