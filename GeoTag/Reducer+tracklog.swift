@@ -8,7 +8,7 @@ extension GeoTagReducer {
             state.gpxGoodFileNames.append(path)
             state.gpxTracks.append(tracklog)
             if !state.gpxTracks.isEmpty {
-                state.gpxTracks.sort { $0.firstTimeStamp < $1.firstTimeStamp }
+                state.gpxTracks.sort { $0.firstTimestamp < $1.firstTimestamp }
             }
         } else {
             state.gpxBadFileNames.append(path)

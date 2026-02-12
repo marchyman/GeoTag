@@ -2,7 +2,7 @@ name: GeoTag
 
 options:
   deploymentTarget:
-    macOS: "15.0"
+    macOS: "26.0"
   groupOrdering:
     - order: [GeoTag, GeoTagTests, Packages, Products]
   fileTypes:

@@ -144,19 +144,16 @@ struct ContentView: View {
                 }
             }
             for await imageData in group.compactMap({$0}) {
-                await MainActor.run {
-                    store.send(.addImage(imageData))
-                }
+                await store.send(.addImage(imageData))
             }
         }
         // TODO: link paired images
-        // TODO: sort images in current sort order
+        await store.send(.sortUsingCurrentComparator)
     }
 
     nonisolated private func tracks(for urls: [URL]) async {
         let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
         guard !gpxURLs.isEmpty else { return }
-        var tracks: [(String, GpxTrackLog?)] = []
 
         await withTaskGroup(of: (String, GpxTrackLog?).self) { group in
             for url in gpxURLs {
@@ -169,10 +166,11 @@ struct ContentView: View {
                     }
                 }
             }
-            for await (path, trackLog) in group {
-                store.send(.readTrackLog(path, tracklog?))
+            for await (path, tracklog) in group {
+                await store.send(.readTrackLog(path, tracklog))
             }
         }
+        await store.send(.finishedAddingTracks)
     }
 }
 

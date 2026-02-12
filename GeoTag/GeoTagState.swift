@@ -30,6 +30,8 @@ struct GeoTagState {
     var selection: Set<ImageData.ID> = []
     var mostSelected: ImageData.ID?
 
+    var sortOrder = [KeyPathComparator(\ImageData.name)]
+
     // keep track of security scoped URLs so they may be released when the
     // table of images is cleared.
 

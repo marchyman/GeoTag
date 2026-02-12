@@ -78,7 +78,9 @@ struct ImageTableView: View {
             }
         }
         .onChange(of: sortOrder) {
-            store.send(.sortOrderChanged(sortOrder))
+            if sortOrder != store.sortOrder {
+                store.send(.sortOrderChanged(sortOrder))
+                }
         }
         .searchable(text: $searchFor, isPresented: $isSearching,
                     placement: .automatic, prompt: "Image name")
@@ -96,6 +98,9 @@ struct ImageTableView: View {
             if searchFor.isEmpty {
                 store.send(.searchForCleared)
             }
+        }
+        .onAppear {
+            sortOrder = store.sortOrder
         }
     }
 }

@@ -42,6 +42,9 @@ struct GeoTagReducer: Reducer, Sendable {
             // TODO
             break
 
+        case .finishedAddingTracks:
+            newState.addSheet(type: .gpxFileNameSheet)
+
         case let .goodGpxFile(filename):
             newState.gpxGoodFileNames.append(filename)
 
@@ -68,7 +71,7 @@ struct GeoTagReducer: Reducer, Sendable {
             quitRequested(&newState)
 
         case let .readTrackLog(path, tracklog):
-            addTrackLog(&newState, path, tracklog)
+            addTrackLog(&newState, path: path, tracklog: tracklog)
 
         case .removeOldFiles:
             removeFiles(filesToRemove: newState.oldFiles,
@@ -103,7 +106,12 @@ struct GeoTagReducer: Reducer, Sendable {
             // TODO
             break
 
+        case .sortUsingCurrentComparator:
+            newState.imageData.sort(using: newState.sortOrder)
+            newState.searchImages.sort(using: newState.sortOrder)
+
         case let .sortOrderChanged(comparator):
+            newState.sortOrder = comparator
             newState.imageData.sort(using: comparator)
             newState.searchImages.sort(using: comparator)
 

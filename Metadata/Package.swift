@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "Metadata",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v26)],
     products: [
         .library(name: "Metadata", targets: ["Metadata"])
     ],

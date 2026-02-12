@@ -13,6 +13,7 @@ enum GeoTagEvent: Equatable {
     case catchUnexpectedError(String?, String?)
     case changeTimeZone
     case discardRequest
+    case finishedAddingTracks
     case goodGpxFile(String)
     case gpxLoadViewClosed
     case initBackupURL
@@ -29,6 +30,7 @@ enum GeoTagEvent: Equatable {
     case sheetDismissed
     case showInFinder
     case sortOrderChanged([KeyPathComparator<ImageData>])
+    case sortUsingCurrentComparator
     case terminateRequest
     case timeZoneChanged(TimeZone)
     case toggleLogWindow
@@ -46,6 +48,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .catchUnexpectedError: "catchUnexpectedError"
         case .changeTimeZone: "changeTimeZone"
         case .discardRequest: "discardRequest"
+        case .finishedAddingTracks: "finishedAddingTracks"
         case .goodGpxFile: "goodGpxFile"
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
         case .initBackupURL: "initBackupURL"
@@ -62,6 +65,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .sheetDismissed: "sheetDismissed"
         case .showInFinder: "showInFinder"
         case .sortOrderChanged: "sortOrderChanged"
+        case .sortUsingCurrentComparator: "sortUsingCurrentComparator"
         case .terminateRequest: "terminateRequest"
         case .timeZoneChanged: "timeZoneChanged"
         case .toggleLogWindow: "toggleLogWindow"

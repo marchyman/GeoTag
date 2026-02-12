@@ -4,7 +4,7 @@ import Foundation
 //
 // An instance of a GpxTrackLog is created by opening and parsing a GPX file.
 
-public struct GpxTrackLog: Sendable {
+public struct GpxTrackLog: Sendable, Equatable {
     public let tracks: [Track]
 
     public init(contentsOf url: URL) throws {
@@ -29,12 +29,12 @@ public struct GpxTrackLog: Sendable {
 
 extension GpxTrackLog {
     // Tracks are made up of one or more Segments.
-    public struct Track: Sendable {
+    public struct Track: Sendable, Equatable {
         public var segments = [Segment]()
     }
 
     // Segments are made up of Points.
-    public struct Segment: Sendable {
+    public struct Segment: Sendable, Equatable {
         public var points = [Point]()
     }
 
