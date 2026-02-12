@@ -20,10 +20,10 @@ struct ContentView: View {
     @AppStorage(Self.splitVNormalKey) var vNormal = 0.60
     @AppStorage(Self.splitVAlternateKey) var vAlternate = 0.40
 
-    // @State private var removeOldFiles = false
     @State private var sheetType: SheetType?
     @State private var importFiles = false
     @State private var spinnerEnabled = false
+    @State private var inspectorPresented = false
 
     var body: some View {
         SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
@@ -88,10 +88,10 @@ struct ContentView: View {
         .removeBackupsAlert()  // Alert: Remove Old Backup files
         // .photoLibraryEnabledAlert()
         // .photoLibraryDisabledAlert()
-        // .inspector(isPresented: $state.inspectorPresented) {
-        //     ImageInspectorView()
-        //         .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
-        // }
+        .inspector(isPresented: $inspectorPresented) {
+            ImageInspectorView()
+                .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
+        }
         .onChange(of: store.importFiles) {
             importFiles.toggle()
         }
@@ -120,10 +120,10 @@ struct ContentView: View {
                     "file import: \(error.localizedDescription, privacy: .public)")
             }
         }
-        // .toolbar {
-        //     PhotoPickerView()
-        //     InspectorButtonView()
-        // }
+        .toolbar {
+            PhotoPickerView()
+            InspectorButtonView(presented: $inspectorPresented)
+        }
     }
 
     // when a sheet is dismissed check if there are more sheets to display
