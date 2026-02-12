@@ -23,6 +23,7 @@ struct ContentView: View {
     // @State private var removeOldFiles = false
     @State private var sheetType: SheetType?
     @State private var importFiles = false
+    @State private var spinnerEnabled = false
 
     var body: some View {
         SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
@@ -37,11 +38,11 @@ struct ContentView: View {
                     ImageTableView()
                 }
             }
-            // .overlay {
-            //     if state.applicationBusy {
-            //         ProgressView("Processing files...")
-            //     }
-            // }
+            .overlay {
+                if spinnerEnabled {
+                    ProgressView("Processing files...")
+                }
+            }
         } right: {
             if alternateLayout {
                 Text("MapView()")
@@ -57,12 +58,16 @@ struct ContentView: View {
         .border(windowBorderColor)
         .padding()
         .dropDestination(for: URL.self) { items, _ in
+            spinnerEnabled = true
             store.send(.openFiles(items)) {
                 if let urls = store.uniqueURLs {
                     Task {
                         await images(for: urls)
                         await tracks(for: urls)
+                        spinnerEnabled = false
                     }
+                } else {
+                    spinnerEnabled = false
                 }
             }
             return true
@@ -97,12 +102,16 @@ struct ContentView: View {
         ) { result in
             switch result {
             case let .success(files):
+                spinnerEnabled = true
                 store.send(.openFiles(files)) {
                     if let urls = store.uniqueURLs {
                         Task {
                             await images(for: urls)
                             await tracks(for: urls)
+                            spinnerEnabled = false
                         }
+                    } else {
+                        spinnerEnabled = false
                     }
                 }
             case let .failure(error):

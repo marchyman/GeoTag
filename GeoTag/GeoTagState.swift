@@ -22,7 +22,6 @@ struct GeoTagState {
         return ImageData()
     }
 
-    var applicationBusy = false
     var saveInProgress = false
     var importFiles = false
 

@@ -8,9 +8,6 @@ import UDF
 
 extension GeoTagReducer {
     func openFiles(_ state: inout GeoTagState, urls: [URL]) {
-        // marking app as busy will show progress indicator
-        state.applicationBusy.toggle()
-
         // Needed to access when using the fileImporter
         for url in urls where url.startAccessingSecurityScopedResource() {
             state.scopedURLs.append(url)
