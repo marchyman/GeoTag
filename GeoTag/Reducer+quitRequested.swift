@@ -7,7 +7,7 @@ extension GeoTagReducer {
             state.addSheet(type: .savingUpdatesSheet)
         }
 
-        if state.isDocumentEdited {
+        if state.unsavedChanges {
             state.confirmationMessage = """
                 If you quit GeoTag before saving changes the changes \
                 will be lost.  Are you sure you want to quit?

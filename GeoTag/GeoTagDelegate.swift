@@ -18,7 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func application(_ application: NSApplication, open urls: [URL]) {
         logger.info("\(#function)")
-        // event to process given urls
+        // TODO: event to process given urls
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(
@@ -30,7 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         -> NSApplication.TerminateReply {
         logger.info("\(#function)")
         if let store {
-            if store.saveInProgress || store.isDocumentEdited {
+            if store.saveInProgress || store.unsavedChanges {
                 store.send(.quitRequested)
                 return .terminateCancel
             }
@@ -52,7 +52,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // when changes are pending.
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         if let store {
-            if store.saveInProgress || store.isDocumentEdited {
+            if store.saveInProgress || store.unsavedChanges {
                 store.send(.quitRequested)
                 return false
             }

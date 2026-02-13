@@ -119,8 +119,7 @@ struct GeoTagReducer: Reducer, Sendable {
             newState.searchImages.sort(using: comparator)
 
         case .terminateRequest:
-            newState.isDocumentEdited = false
-            NSApp.terminate(nil)
+            newState.unsavedChanges = false
 
         case let .timeZoneChanged(newTimeZone):
             newState.timeZone = newTimeZone

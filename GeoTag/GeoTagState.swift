@@ -10,16 +10,35 @@ struct GeoTagState {
     var version = 1
     var imageData: [ImageData] = []
 
-    // individual images are accessed by ID. No setter is defined.
+    // individual images are accessed by ID.
     subscript(id: ImageData.ID?) -> ImageData {
-        if let index = imageData.firstIndex(where: { $0.id == id }) {
-            return imageData[index]
-        }
+        get {
+            if let index = imageData.firstIndex(where: { $0.id == id }) {
+                return imageData[index]
+            }
 
-        // A view may hold on to an ID that is no longer in the table
-        // If it tries to access the image associated with that id
-        // return a fake image
-        return ImageData()
+            // A view may hold on to an ID that is no longer in the table
+            // If it tries to access the image associated with that id
+            // return a fake image
+            return ImageData()
+        }
+        set {
+            if let index = imageData.firstIndex(where: { $0.id == id }) {
+                imageData[index] = newValue
+            } else {
+                let badId = id ?? -1
+                Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
+                       category: "GeoTagState")
+                    .error("no data for id \(badId, privacy: .public)")
+            }
+        }
+    }
+
+    @MainActor
+    var unsavedChanges = false {
+        didSet {
+            mainWindow?.isDocumentEdited = unsavedChanges
+        }
     }
 
     var saveInProgress = false
@@ -89,21 +108,5 @@ struct GeoTagState {
 extension GeoTagState: Equatable {
     static func == (lhs: GeoTagState, rhs: GeoTagState) -> Bool {
         return lhs.version == rhs.version
-    }
-}
-
-// The window isDocumentEdited flag is used both to inform the user
-// that there are unsaved changes and as a flag to track that state
-// within the app.
-
-extension GeoTagState {
-    @MainActor
-    var isDocumentEdited: Bool {
-        get {
-            mainWindow?.isDocumentEdited ?? false
-        }
-        set {
-            mainWindow?.isDocumentEdited = newValue
-        }
     }
 }

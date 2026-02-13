@@ -14,7 +14,11 @@ struct AreYouSure: ViewModifier {
         {
             Button("I'm sure", role: .destructive) {
                 if let event = store.confirmationEvent {
-                    store.send(event)
+                    store.send(event) {
+                        if event == .terminateRequest {
+                            NSApp.terminate(nil)
+                        }
+                    }
                 }
             }
             .keyboardShortcut(.defaultAction)
