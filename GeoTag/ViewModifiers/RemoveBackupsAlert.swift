@@ -10,6 +10,7 @@ struct RemoveBackupsAlert: ViewModifier {
             .alert("Delete old backup files?", isPresented: $removeBackups) {
                 Button("Delete", role: .destructive) {
                     store.send(.removeOldFiles)
+                    store.discardUndo()
                 }
                 Button("Cancel", role: .cancel) {}
                     .keyboardShortcut(.defaultAction)

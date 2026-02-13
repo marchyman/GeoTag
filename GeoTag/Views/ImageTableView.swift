@@ -74,13 +74,15 @@ struct ImageTableView: View {
         // }
         .onChange(of: selection) {
             store.send(.selectionChanged(selection)) {
+                       // description: "Selection changed") {
                 selection = store.selection
             }
         }
         .onChange(of: sortOrder) {
             if sortOrder != store.sortOrder {
                 store.send(.sortOrderChanged(sortOrder))
-                }
+                store.discardUndo()
+            }
         }
         .searchable(text: $searchFor, isPresented: $isSearching,
                     placement: .automatic, prompt: "Image name")

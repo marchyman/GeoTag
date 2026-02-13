@@ -8,8 +8,11 @@ struct NewItemCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
-            Button("Open…") { store.send(.openCommand) }
-                .keyboardShortcut("o")
+            Button("Open…") {
+                store.send(.openCommand)
+                store.discardUndo()
+            }
+            .keyboardShortcut("o")
         }
     }
 }

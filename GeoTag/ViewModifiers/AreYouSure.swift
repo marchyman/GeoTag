@@ -15,6 +15,7 @@ struct AreYouSure: ViewModifier {
             Button("I'm sure", role: .destructive) {
                 if let event = store.confirmationEvent {
                     store.send(event) {
+                        store.discardUndo()
                         if event == .terminateRequest {
                             NSApp.terminate(nil)
                         }

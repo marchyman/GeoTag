@@ -60,6 +60,7 @@ struct ContentView: View {
         .dropDestination(for: URL.self) { items, _ in
             spinnerEnabled = true
             store.send(.openFiles(items)) {
+                store.discardUndo()
                 if let urls = store.uniqueURLs {
                     Task {
                         await images(for: urls)
@@ -104,6 +105,7 @@ struct ContentView: View {
             case let .success(files):
                 spinnerEnabled = true
                 store.send(.openFiles(files)) {
+                    store.discardUndo()
                     if let urls = store.uniqueURLs {
                         Task {
                             await images(for: urls)
@@ -130,6 +132,7 @@ struct ContentView: View {
 
     private func sheetDismissed() {
         store.send(.sheetDismissed)
+        store.discardUndo()
     }
 
     // the UTTypes that can be imported into this app.
@@ -152,12 +155,14 @@ struct ContentView: View {
                     return ImageData(from: url)
                 }
             }
+            // TODO: group undo?
             for await imageData in group.compactMap({$0}) {
                 await store.send(.addImage(imageData))
             }
         }
         // TODO: link paired images
         await store.send(.sortUsingCurrentComparator)
+        await store.discardUndo()
     }
 
     nonisolated private func tracks(for urls: [URL]) async {
@@ -176,10 +181,12 @@ struct ContentView: View {
                 }
             }
             for await (path, tracklog) in group {
-                await store.send(.readTrackLog(path, tracklog))
+                await store.send(.readTrackLog(path, tracklog),
+                                 description: "Add track log")
             }
         }
         await store.send(.finishedAddingTracks)
+        await store.discardUndo()
     }
 }
 

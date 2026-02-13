@@ -7,7 +7,8 @@ import UDF
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @State private var store = Store(initialState: GeoTagState(),
-                                     reduce: GeoTagReducer())
+                                     reduce: GeoTagReducer(),
+                                     undoEnabled: true)
     @State private var mainWindow: NSWindow?
 
     @AppStorage(Self.doNotBackupKey) var doNotBackup = false
@@ -26,10 +27,13 @@ struct GeoTagApp: App {
                     if !doNotBackup {
                         if savedBookmark == Data() {
                             store.send(.initialBackupNotice)
+                            store.discardUndo()
                         } else {
                             store.send(.initBackupURL) {
+                            store.discardUndo()
                                 if store.backupURL != nil {
                                     store.send(.backupFolderSizeCheck)
+                                    store.discardUndo()
                                 }
                             }
                         }
@@ -38,6 +42,7 @@ struct GeoTagApp: App {
                 .onChange(of: mainWindow) {
                     mainWindow?.delegate = appDelegate
                     store.send(.mainWindowChange(mainWindow))
+                    store.discardUndo()
                 }
                 .environment(store)
 
@@ -45,7 +50,7 @@ struct GeoTagApp: App {
         .commands {
             NewItemCommands(store: store)
         //     SaveItemCommands(state: state)
-        //     UndoRedoCommands(state: state)
+            UndoRedoCommands(store: store)
             PasteboardCommands(store: store)
         //     ToolbarCommands(state: state)
             HelpCommands(store: store)

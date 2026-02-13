@@ -15,6 +15,7 @@ struct HelpCommands: Commands {
                  destination: URL(string: "https://github.com/marchyman/GeoTag/issues")!)
             Button("Show log…") {
                 store.send(.toggleLogWindow)
+                store.discardUndo()
             }
         }
     }

@@ -73,7 +73,8 @@ struct AdjustTimezoneView: View {
                     if currentZone != selectedZone {
                         currentZone = selectedZone
                         timeZone = selectedZone.timeZone
-                        store.send(.timeZoneChanged(timeZone))
+                        store.send(.timeZoneChanged(timeZone),
+                                   description: "Time zone change")
                     }
                     NSApplication.shared.keyWindow?.close()
                 }

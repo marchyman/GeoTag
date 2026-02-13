@@ -32,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if let store {
             if store.saveInProgress || store.unsavedChanges {
                 store.send(.quitRequested)
+                store.discardUndo()
                 return .terminateCancel
             }
         }
@@ -54,6 +55,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if let store {
             if store.saveInProgress || store.unsavedChanges {
                 store.send(.quitRequested)
+                store.discardUndo()
                 return false
             }
         }
