@@ -58,6 +58,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .initialBackupNotice:
             newState.addSheet(type: .noBackupFolderSheet)
 
+        case .linkPairedImages:
+            linkPairedImages(&newState)
+
         case let .locationChanged(coords):
             update(&newState, coords: coords)
 

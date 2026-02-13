@@ -19,6 +19,7 @@ enum GeoTagEvent: Equatable {
     case gpxLoadViewClosed
     case initBackupURL
     case initialBackupNotice
+    case linkPairedImages
     case locationChanged(Coords)
     case mainWindowChange(NSWindow?)
     case openCommand
@@ -55,6 +56,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
         case .initBackupURL: "initBackupURL"
         case .initialBackupNotice: "initialBackupCheck"
+        case .linkPairedImages: "linkPairedImages"
         case .locationChanged: "locationChanged"
         case .mainWindowChange: "mainWindowChange"
         case .openCommand: "openCommand"

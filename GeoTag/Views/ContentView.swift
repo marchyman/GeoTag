@@ -155,14 +155,17 @@ struct ContentView: View {
                     return ImageData(from: url)
                 }
             }
-            // TODO: group undo?
+            await store.beginUndoGroup(description: "Add images")
             for await imageData in group.compactMap({$0}) {
                 await store.send(.addImage(imageData))
             }
+            await store.endUndoGroup()
         }
-        // TODO: link paired images
-        await store.send(.sortUsingCurrentComparator)
-        await store.discardUndo()
+        await MainActor.run {
+            store.send(.linkPairedImages)
+            store.send(.sortUsingCurrentComparator)
+            store.discardUndo()
+        }
     }
 
     nonisolated private func tracks(for urls: [URL]) async {
@@ -180,13 +183,17 @@ struct ContentView: View {
                     }
                 }
             }
+            await store.beginUndoGroup(description: "Add track log")
             for await (path, tracklog) in group {
                 await store.send(.readTrackLog(path, tracklog),
                                  description: "Add track log")
             }
+            await store.endUndoGroup()
         }
-        await store.send(.finishedAddingTracks)
-        await store.discardUndo()
+        await MainActor.run {
+            store.send(.finishedAddingTracks)
+            store.discardUndo()
+        }
     }
 }
 

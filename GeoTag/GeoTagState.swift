@@ -62,7 +62,6 @@ struct GeoTagState {
     // URLs.
     var uniqueURLs: [URL]?
 
-    @ObservationIgnored
     var mainWindow: NSWindow?
     var showLogWindow = false
     var showTimeZoneWindow = false
@@ -72,14 +71,12 @@ struct GeoTagState {
     // A confirmation may required optional data or an action
     var presentConfirmation = false
     var confirmationMessage: String?
-    @ObservationIgnored
     var confirmationEvent: GeoTagEvent?
 
     // various actions can cause a sheet to be presented.  A stack of sheets
     // is supported so important notifications are not lost
     var sheetType: SheetType?
     var sheetStack: [SheetInfo] = []
-    @ObservationIgnored
     var sheetError: String?
     var sheetMessage: String?
     // var saveIssues = [ImageModel.ID: String]()
@@ -89,7 +86,6 @@ struct GeoTagState {
     var gpxGoodFileNames: [String] = []
     var gpxBadFileNames: [String] = []
 
-    @ObservationIgnored
     var backupURL: URL?
 
     // The folder containing backups is scanned at startup and when a

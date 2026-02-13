@@ -74,7 +74,7 @@ struct ImageTableView: View {
         // }
         .onChange(of: selection) {
             store.send(.selectionChanged(selection)) {
-                       // description: "Selection changed") {
+                store.discardUndo()
                 selection = store.selection
             }
         }
