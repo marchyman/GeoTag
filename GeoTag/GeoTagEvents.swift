@@ -27,7 +27,8 @@ enum GeoTagEvent: Equatable {
     case quitRequested
     case readTrackLog(String, GpxTrackLog?)
     case removeOldFiles
-    case searchTextChanged(String?)
+    case searchActiveChanged(Bool)
+    case searchTextChanged(String)
     case selectionChanged(Set<ImageData.ID>)
     case sheetDismissed
     case showInFinder
@@ -69,6 +70,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .quitRequested: "quitRequested"
         case .readTrackLog: "readTrackLog"
         case .removeOldFiles: "removeOldFiles"
+        case .searchActiveChanged: "searchActiveChanged"
         case .searchTextChanged: "searchTextChanged"
         case .selectionChanged: "selectionChanged"
         case .sheetDismissed: "sheetDismissed"

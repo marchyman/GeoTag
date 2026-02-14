@@ -84,6 +84,12 @@ struct GeoTagReducer: Reducer, Sendable {
                         from: newState.backupURL)
             newState.oldFiles = []
 
+        case let .searchActiveChanged(searchActive):
+            newState.searchActive = searchActive
+
+        case let .searchTextChanged(text):
+            newState.searchText = text
+
         case .sheetDismissed:
             if newState.sheetStack.isEmpty {
                 newState.sheetMessage = nil
@@ -95,15 +101,6 @@ struct GeoTagReducer: Reducer, Sendable {
                 newState.sheetType = sheetInfo.sheetType
             }
 
-        case let .searchTextChanged(name):
-            if let name {
-                newState.searchImages = newState.imageData.filter {
-                    $0.updatable && $0.name.fuzzy(name)
-                }
-            } else {
-                newState.searchImages.removeAll()
-            }
-
         case let .selectionChanged(selection):
             selectionChanged(&newState, selection: selection)
 
@@ -113,12 +110,10 @@ struct GeoTagReducer: Reducer, Sendable {
 
         case .sortUsingCurrentComparator:
             newState.imageData.sort(using: newState.sortOrder)
-            newState.searchImages.sort(using: newState.sortOrder)
 
         case let .sortOrderChanged(comparator):
             newState.sortOrder = comparator
             newState.imageData.sort(using: comparator)
-            newState.searchImages.sort(using: comparator)
 
         case .terminateRequest:
             newState.unsavedChanges = false

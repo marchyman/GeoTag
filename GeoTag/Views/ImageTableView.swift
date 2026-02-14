@@ -20,17 +20,17 @@ struct ImageTableView: View {
     let coordMinWidth = 120.0
     let coordMaxWidth = 160.0
 
-    @State private var searchText: String = ""
-    @State private var isSearching: Bool = false
+    @State private var searchActive = false
+    @State private var searchText = ""
     @State private var selection: Set<ImageData.ID> = []
     @State private var sortOrder = [KeyPathComparator(\ImageData.name)]
 
     var filteredImages: [ImageData] {
-        return store.searchImages.isEmpty
+        return store.searchText.isEmpty
             ? hideInvalidImages
                 ? store.imageData.filter { $0.updatable }
                 : store.imageData
-            : store.searchImages
+            : store.imageData.filter { $0.name.fuzzy(store.searchText) }
     }
 
     var body: some View {
@@ -84,26 +84,20 @@ struct ImageTableView: View {
                 store.discardUndo()
             }
         }
-        // .onChange(of: .isSearching) {
-        //     print(".isSearching changed: \(isSearching)")
-        // }
-        // .searchable(text: $searchText, isPresented: $isSearching,
-        //             placement: .automatic, prompt: "Image name")
-        // .background(
-        //     // cmd-f for search
-        //     Button("", action: { isSearching = true })
-        //         .keyboardShortcut("f").hidden()
-        //         .disabled(store.imageData.isEmpty)
-        // )
-        // .onSubmit(of: .searchText) {
-        //     store.send(.searchTextChanged(searchText))
-        //     isSearching = false
-        // }
-        // .onChange(of: searchText) {
-        //     if searchText.isEmpty {
-        //         store.send(.searchTextChanged(nil))
-        //     }
-        // }
+        .searchable(text: $searchText, isPresented: $searchActive,
+                    placement: .automatic, prompt: "image name")
+        .onChange(of: searchActive) {
+            store.send(.searchActiveChanged(searchActive))
+        }
+        .background(
+            // cmd-f for search
+            Button("", action: { searchActive = true })
+                .keyboardShortcut("f").hidden()
+                .disabled(store.imageData.isEmpty)
+        )
+        .onChange(of: searchText) {
+            store.send(.searchTextChanged(searchText))
+        }
         .onAppear {
             sortOrder = store.sortOrder
         }
