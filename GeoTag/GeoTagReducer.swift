@@ -95,15 +95,14 @@ struct GeoTagReducer: Reducer, Sendable {
                 newState.sheetType = sheetInfo.sheetType
             }
 
-        case let .searchForChanged(name):
-            logger.info("Search for \(name, privacy: .public)")
-            newState.searchImages = newState.imageData.filter {
-                $0.updatable && $0.name.fuzzy(name)
+        case let .searchTextChanged(name):
+            if let name {
+                newState.searchImages = newState.imageData.filter {
+                    $0.updatable && $0.name.fuzzy(name)
+                }
+            } else {
+                newState.searchImages.removeAll()
             }
-
-        case .searchForCleared:
-            logger.info("Clearing search")
-            newState.searchImages = []
 
         case let .selectionChanged(selection):
             selectionChanged(&newState, selection: selection)
@@ -130,6 +129,21 @@ struct GeoTagReducer: Reducer, Sendable {
         case .toggleLogWindow:
             newState.showLogWindow.toggle()
 
+        // pasteboard events
+        case .cutRequest:
+            cut(&newState)
+
+        case .copyRequest:
+            copy(&newState)
+
+        case .pasteRequest:
+            paste(&newState)
+
+        case .deleteRequest:
+            delete(&newState)
+
+        case .selectAllRequest:
+            selectAll(&newState)
         }
 
         return newState

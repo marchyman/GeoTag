@@ -69,7 +69,7 @@ struct LatLonSectionView: View {
                 if let latitude, let longitude {
                     store.send(.locationChanged(Coords(latitude: latitude,
                                                        longitude: longitude)),
-                               description: "Update location")
+                               description: "update location")
                 }
                 isFocused = false
             }

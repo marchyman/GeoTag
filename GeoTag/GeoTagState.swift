@@ -44,6 +44,7 @@ struct GeoTagState {
     var saveInProgress = false
     var importFiles = false
 
+    var searchActive = false
     var searchImages: [ImageData] = []
     var selection: Set<ImageData.ID> = []
     var mostSelected: ImageData.ID?

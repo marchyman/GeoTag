@@ -27,8 +27,7 @@ enum GeoTagEvent: Equatable {
     case quitRequested
     case readTrackLog(String, GpxTrackLog?)
     case removeOldFiles
-    case searchForChanged(String)
-    case searchForCleared
+    case searchTextChanged(String?)
     case selectionChanged(Set<ImageData.ID>)
     case sheetDismissed
     case showInFinder
@@ -37,6 +36,12 @@ enum GeoTagEvent: Equatable {
     case terminateRequest
     case timeZoneChanged(TimeZone)
     case toggleLogWindow
+    // pasteboard events
+    case cutRequest
+    case copyRequest
+    case pasteRequest
+    case deleteRequest
+    case selectAllRequest
 }
 
 // A description for each event
@@ -64,8 +69,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .quitRequested: "quitRequested"
         case .readTrackLog: "readTrackLog"
         case .removeOldFiles: "removeOldFiles"
-        case .searchForChanged: "searchForChanged"
-        case .searchForCleared: "clearSearchCleared"
+        case .searchTextChanged: "searchTextChanged"
         case .selectionChanged: "selectionChanged"
         case .sheetDismissed: "sheetDismissed"
         case .showInFinder: "showInFinder"
@@ -74,6 +78,13 @@ extension GeoTagEvent: CustomStringConvertible {
         case .terminateRequest: "terminateRequest"
         case .timeZoneChanged: "timeZoneChanged"
         case .toggleLogWindow: "toggleLogWindow"
+
+        // pasteboard events
+        case .cutRequest: "cutRequest"
+        case .copyRequest: "copyRequest"
+        case .pasteRequest: "pasteRequest"
+        case .deleteRequest: "deleteRequest"
+        case .selectAllRequest: "selectAllRequest"
         }
     }
 }

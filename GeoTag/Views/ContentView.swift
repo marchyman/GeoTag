@@ -63,9 +63,11 @@ struct ContentView: View {
                 store.discardUndo()
                 if let urls = store.uniqueURLs {
                     Task {
+                        store.beginUndoGroup(description: "drag files")
                         await images(for: urls)
                         await tracks(for: urls)
                         spinnerEnabled = false
+                        store.endUndoGroup()
                     }
                 } else {
                     spinnerEnabled = false
@@ -108,9 +110,11 @@ struct ContentView: View {
                     store.discardUndo()
                     if let urls = store.uniqueURLs {
                         Task {
+                            store.beginUndoGroup(description: "add files")
                             await images(for: urls)
                             await tracks(for: urls)
                             spinnerEnabled = false
+                            store.endUndoGroup()
                         }
                     } else {
                         spinnerEnabled = false
@@ -149,22 +153,19 @@ struct ContentView: View {
     // to the table.
 
     nonisolated private func images(for urls: [URL]) async {
-        await withTaskGroup(of: ImageData?.self) { group in
+        await withTaskGroup(of: ImageData.self) { group in
             for url in urls where url.pathExtension.lowercased() != "gpx" {
                 group.addTask {
                     return ImageData(from: url)
                 }
             }
-            await store.beginUndoGroup(description: "Add images")
-            for await imageData in group.compactMap({$0}) {
+            for await imageData in group {
                 await store.send(.addImage(imageData))
             }
-            await store.endUndoGroup()
         }
         await MainActor.run {
             store.send(.linkPairedImages)
             store.send(.sortUsingCurrentComparator)
-            store.discardUndo()
         }
     }
 
@@ -183,17 +184,11 @@ struct ContentView: View {
                     }
                 }
             }
-            await store.beginUndoGroup(description: "Add track log")
             for await (path, tracklog) in group {
-                await store.send(.readTrackLog(path, tracklog),
-                                 description: "Add track log")
+                await store.send(.readTrackLog(path, tracklog))
             }
-            await store.endUndoGroup()
         }
-        await MainActor.run {
-            store.send(.finishedAddingTracks)
-            store.discardUndo()
-        }
+        await store.send(.finishedAddingTracks)
     }
 }
 

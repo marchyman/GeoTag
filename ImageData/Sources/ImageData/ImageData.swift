@@ -4,7 +4,6 @@ import Foundation
 import Imagetool
 import Metadata
 import OSLog
-import SwiftUI
 
 public struct ImageData: Identifiable, Sendable {
     public let id: Int
@@ -12,7 +11,6 @@ public struct ImageData: Identifiable, Sendable {
     public var metadata: Metadata
     public var original: Metadata?
     public var pairedID: ImageData.ID?
-
 
     // a copy of the metadata before any changes will only exist if
     // the metadata is updatable. Use it's presence to determine
@@ -101,37 +99,5 @@ extension ImageData {
             Self.logger.error("Requested fullPath of metadata copy")
             return "unknown"
         }
-    }
-}
-
-// various image metadata values are displayed in different colors
-// depending upon current state.  The colors used in addition to
-// .primary and .secondary are defined here.
-
-extension Color {
-    public static let changed = Color(nsColor: .systemGreen)
-    public static let mostSelected = Color(nsColor: .systemYellow)
-}
-
-// and the code to select the appropriate color for timestamps
-// and location fields
-
-extension ImageData {
-    public var timestampTextColor: Color {
-        if updatable {
-            return metadata.dateTimeCreated == original?.dateTimeCreated
-                ? .primary
-                : .changed
-        }
-        return .secondary
-    }
-
-    public var locationTextColor: Color {
-        if updatable {
-            return metadata.location == original?.location
-                ? .primary
-                : .changed
-        }
-        return .secondary
     }
 }

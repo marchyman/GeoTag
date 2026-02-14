@@ -20,7 +20,7 @@ struct ImageTableView: View {
     let coordMinWidth = 120.0
     let coordMaxWidth = 160.0
 
-    @State private var searchFor: String = ""
+    @State private var searchText: String = ""
     @State private var isSearching: Bool = false
     @State private var selection: Set<ImageData.ID> = []
     @State private var sortOrder = [KeyPathComparator(\ImageData.name)]
@@ -84,23 +84,26 @@ struct ImageTableView: View {
                 store.discardUndo()
             }
         }
-        .searchable(text: $searchFor, isPresented: $isSearching,
-                    placement: .automatic, prompt: "Image name")
-        .background(
-            // cmd-f for search
-            Button("", action: { isSearching = true })
-                .keyboardShortcut("f").hidden()
-                .disabled(store.imageData.isEmpty)
-        )
-        .onSubmit(of: .search) {
-            store.send(.searchForChanged(searchFor))
-            isSearching = false
-        }
-        .onChange(of: searchFor) {
-            if searchFor.isEmpty {
-                store.send(.searchForCleared)
-            }
-        }
+        // .onChange(of: .isSearching) {
+        //     print(".isSearching changed: \(isSearching)")
+        // }
+        // .searchable(text: $searchText, isPresented: $isSearching,
+        //             placement: .automatic, prompt: "Image name")
+        // .background(
+        //     // cmd-f for search
+        //     Button("", action: { isSearching = true })
+        //         .keyboardShortcut("f").hidden()
+        //         .disabled(store.imageData.isEmpty)
+        // )
+        // .onSubmit(of: .searchText) {
+        //     store.send(.searchTextChanged(searchText))
+        //     isSearching = false
+        // }
+        // .onChange(of: searchText) {
+        //     if searchText.isEmpty {
+        //         store.send(.searchTextChanged(nil))
+        //     }
+        // }
         .onAppear {
             sortOrder = store.sortOrder
         }
