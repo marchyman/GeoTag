@@ -15,55 +15,55 @@ struct PasteboardCommands: Commands {
          CommandGroup(replacing: .pasteboard) {
             Group {
                 Button("Cut") {
-                    if textfieldFocused != nil {
+                    if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.cut(_:)),
                                          to: nil, from: nil)
                     } else {
-                        // store.send(.cut)
+                        store.send(.cutRequest)
                     }
                 }
                 .keyboardShortcut("x")
                 .disabled(cutCopyDisabled())
 
                 Button("Copy") {
-                    if textfieldFocused != nil {
+                    if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.copy(_:)),
                                          to: nil, from: nil)
                     } else {
-                        // store.send(.copy)
+                        store.send(.copyRequest)
                     }
                 }
                 .keyboardShortcut("c")
                 .disabled(cutCopyDisabled())
 
                 Button("Paste") {
-                    if textfieldFocused != nil {
+                    if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.paste(_:)),
                                          to: nil, from: nil)
                     } else {
-                        // store.send(.paste)
+                        store.send(.pasteRequest)
                     }
                 }
                 .keyboardShortcut("v")
                 .disabled(pasteDisabled())
 
                 Button("Delete") {
-                    if textfieldFocused != nil {
+                    if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.delete(_:)),
                                          to: nil, from: nil)
                     } else {
-                        // store.send(.delete)
+                        store.send(.deleteRequest)
                     }
                 }
                 .keyboardShortcut(.delete, modifiers: [])
                 .disabled(deleteDisabled())
 
                 Button("Select All") {
-                    if textfieldFocused != nil {
+                    if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.selectAll(_:)),
                                          to: nil, from: nil)
                     } else {
-                        // store.send(.selectAll)
+                        store.send(.selectAllRequest)
                     }
                 }
                 .keyboardShortcut("a")
@@ -72,15 +72,14 @@ struct PasteboardCommands: Commands {
 
             Divider()
 
-            // TODO: add this button
-            // Group {
-            //     Button("Find") {
-            //         state.masData.searchBarActive = true
-            //     }
-            //     .keyboardShortcut("f")
-            // }
-            //
-            // Divider()
+            Group {
+                Button("Find") {
+                    // TODO: state.masData.searchBarActive = true
+                }
+                .keyboardShortcut("f")
+            }
+
+            Divider()
 
             Group {
                 Button("Show In Finder") {
@@ -90,7 +89,7 @@ struct PasteboardCommands: Commands {
                 .disabled(store.mostSelected == nil)
 
                 Button("Locn From Track") {
-                    // store.send(.locnFromTrack(extendedTime)
+                    // TODO: store.send(.locnFromTrack(extendedTime)
                 }
                 .keyboardShortcut("l")
                 .disabled(locnFromTrackDisabled())
@@ -154,32 +153,8 @@ extension PasteboardCommands {
         return true
     }
 
-    // return true if a textField is focused.
-    // TODO: handle map search
+    // return true if a search active or a textField is focused.
     private func isFocused(_ textField: String?) -> Bool {
-        return textField != nil
+        return store.searchActive || textField != nil
     }
 }
-
-//
-//     var body: some Commands {
-//         CommandGroup(replacing: .pasteboard) {
-//
-//
-//             Group {
-//                 Button("Show In Finder") { state.showInFinderAction() }
-//                     .disabled(state.showInFinderDisabled())
-//
-//                 Button("Locn From Track") {
-//                     state.locnFromTrackAction(extendedTime: extendedTime) }
-//                     .keyboardShortcut("l")
-//                     .disabled(state.locnFromTrackDisabled())
-//
-//                 Button("Specify Time Zone…") {
-//                     state.changeTimeZoneWindow.toggle()
-//                 }
-//             }
-//         }
-//     }
-//
-// }

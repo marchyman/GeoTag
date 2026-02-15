@@ -86,7 +86,9 @@ struct ImageTableView: View {
         .searchable(text: $searchText, isPresented: $searchActive,
                     placement: .automatic, prompt: "image name")
         .onChange(of: searchActive) {
-            store.send(.searchActiveChanged(searchActive))
+            if searchActive != store.searchActive {
+                store.send(.searchActiveChanged(searchActive))
+            }
         }
         .background(
             // cmd-f for search
