@@ -1,10 +1,12 @@
 import CoreLocation
+import ImageData
 import MapKit
 import OSLog
+import UDF
 
 // actor to ensure only one reverse geocode can be active at a time
 
-struct FullAddress {
+struct FullAddress: Equatable {
     let location: CLLocationCoordinate2D
     let city: String?
     let state: String?
@@ -69,5 +71,14 @@ actor ReverseLocationFinder {
             }
             return nil
         }
+    }
+
+    @MainActor
+    public static func reverseGeocode(store: Store<GeoTagState, GeoTagEvent>,
+                                      id: ImageData.ID) async -> FullAddress? {
+        if let location = store[id].location(store.timeZone) {
+           return try? await ReverseLocationFinder.shared.get(location)
+        }
+        return nil
     }
 }

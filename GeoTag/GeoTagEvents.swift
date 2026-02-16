@@ -8,6 +8,7 @@ import ImageData
 
 enum GeoTagEvent: Equatable {
     case addImage(ImageData)
+    case addressChanged(ImageData.ID, FullAddress)
     case backupFolderSizeCheck
     case backupURLChanged(URL?)
     case badGpxFile(String)
@@ -55,6 +56,7 @@ extension GeoTagEvent: CustomStringConvertible {
     var description: String {
         switch self {
         case .addImage: "addImage"
+        case .addressChanged: "addressChanged"
         case .backupFolderSizeCheck: "backupFolderSizeCheck"
         case .backupURLChanged: "backupURLChanged"
         case .badGpxFile: "badGpxFile"

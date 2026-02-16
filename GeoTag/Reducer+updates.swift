@@ -12,8 +12,7 @@ extension GeoTagReducer {
         }
     }
 
-    // update a specific image with the given location and do a reverse
-    // lookup to set the city/state/country/countryCode
+    // update a specific image with the given location
 
     func update(_ state: inout GeoTagState, id: ImageData.ID,
                 location: Coords?, elevation: Double? = nil) {
@@ -38,41 +37,26 @@ extension GeoTagReducer {
 
         state[id].metadata.location = location
         state[id].metadata.elevation = elevation
-        switch state[id].metadata.source {
-        case .image, .xmp:
-            reverseGeocode(&state, id: id)
-        default:
-            // reverse geocoding not needed for photos library assets
-            break
+        if let pairedID = state[id].pairedID, state[pairedID].updatable {
+            state[pairedID].metadata.location = location
+            state[pairedID].metadata.elevation = elevation
         }
-        // TODO:
-        // if let pairedID = image.pairedID {
-        //     let pairedImage = tvm[pairedID]
-        //     if pairedImage.isValid {
-        //         pairedImage.location = location
-        //         pairedImage.elevation = elevation
-        //         reverseGeocode(pairedImage)
-        //     }
-        // }
         state.unsavedChanges = true
     }
-    
-    private func reverseGeocode(_ state: inout GeoTagState, id: ImageData.ID) {
-        // until I figure out what to do
 
-        state[id].metadata.city = nil
-        state[id].metadata.state = nil
-        state[id].metadata.country = nil
-        state[id].metadata.countryCode = nil
+    // update a specific image with reverse geocode information
 
-        if let location = state[id].location(state.timeZone) {
-            Task {
-                if let fullAddress = try? await ReverseLocationFinder.shared.get(location) {
-                    // TODO: how do I update the image without holding on
-                    // to state which I can't do.
-                    print(fullAddress)
-                }
-            }
+    func update(_ state: inout GeoTagState, id: ImageData.ID,
+                address: FullAddress) {
+        state[id].metadata.city = address.city
+        state[id].metadata.state = address.state
+        state[id].metadata.country = address.country
+        state[id].metadata.countryCode = address.countryCode
+        if let pairedID = state[id].pairedID, state[pairedID].updatable {
+            state[pairedID].metadata.city = address.city
+            state[pairedID].metadata.state = address.state
+            state[pairedID].metadata.country = address.country
+            state[pairedID].metadata.countryCode = address.countryCode
         }
     }
 }

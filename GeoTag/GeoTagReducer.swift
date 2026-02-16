@@ -18,19 +18,22 @@ struct GeoTagReducer: Reducer, Sendable {
         logger.debug("event: \(event)")
 
         switch event {
-        case let .addImage(imageData):
+        case .addImage(let imageData):
             newState.imageData.append(imageData)
+
+        case .addressChanged(let id, let address):
+            update(&newState, id: id, address: address)
 
         case .backupFolderSizeCheck:
             checkBackupFolderSize(&newState)
 
-        case let .backupURLChanged(backupURL):
+        case .backupURLChanged(let backupURL):
             newBackupFolder(&newState, url: backupURL)
 
-        case let .badGpxFile(filename):
+        case .badGpxFile(let filename):
             newState.gpxBadFileNames.append(filename)
 
-        case let .catchUnexpectedError(error, message):
+        case .catchUnexpectedError(let error, let message):
             newState.addSheet(type: .unexpectedErrorSheet,
                               error: error,
                               message: message)
@@ -41,12 +44,12 @@ struct GeoTagReducer: Reducer, Sendable {
         case .finishedAddingTracks:
             newState.addSheet(type: .gpxFileNameSheet)
 
-        case let .goodGpxFile(filename):
+        case .goodGpxFile(let filename):
             newState.gpxGoodFileNames.append(filename)
 
         case .gpxLoadViewClosed:
-            newState.gpxGoodFileNames = []
-            newState.gpxBadFileNames = []
+            newState.gpxGoodFileNames.removeAll()
+            newState.gpxBadFileNames.removeAll()
 
         case .initBackupURL:
             getBackupURL(&newState)
@@ -57,22 +60,22 @@ struct GeoTagReducer: Reducer, Sendable {
         case .linkPairedImages:
             linkPairedImages(&newState)
 
-        case let .locationChanged(coords):
+        case .locationChanged(let coords):
             update(&newState, coords: coords)
 
-        case let .mainWindowChange(window):
+        case .mainWindowChange(let window):
             newState.mainWindow = window
 
         case .openCommand:
             newState.importFiles.toggle()
 
-        case let .openFiles(urls):
+        case .openFiles(let urls):
             openFiles(&newState, urls: urls)
 
         case .quitRequested:
             quitRequested(&newState)
 
-        case let .readTrackLog(path, tracklog):
+        case .readTrackLog(let path, let tracklog):
             addTrackLog(&newState, path: path, tracklog: tracklog)
 
         case .removeOldFiles:
@@ -80,10 +83,10 @@ struct GeoTagReducer: Reducer, Sendable {
                         from: newState.backupURL)
             newState.oldFiles = []
 
-        case let .searchActiveChanged(searchActive):
+        case .searchActiveChanged(let searchActive):
             newState.searchActive = searchActive
 
-        case let .searchTextChanged(text):
+        case .searchTextChanged(let text):
             newState.searchText = text
 
         case .sheetDismissed:
@@ -97,7 +100,7 @@ struct GeoTagReducer: Reducer, Sendable {
                 newState.sheetType = sheetInfo.sheetType
             }
 
-        case let .selectionChanged(selection):
+        case .selectionChanged(let selection):
             selectionChanged(&newState, selection: selection)
 
         case .showInFinder:
@@ -107,14 +110,14 @@ struct GeoTagReducer: Reducer, Sendable {
         case .sortUsingCurrentComparator:
             newState.imageData.sort(using: newState.sortOrder)
 
-        case let .sortOrderChanged(comparator):
+        case .sortOrderChanged(let comparator):
             newState.sortOrder = comparator
             newState.imageData.sort(using: comparator)
 
         case .terminateRequest:
             newState.unsavedChanges = false
 
-        case let .timeZoneChanged(newTimeZone):
+        case .timeZoneChanged(let newTimeZone):
             newState.timeZone = newTimeZone
 
         case .toggleLogWindow:

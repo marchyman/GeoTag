@@ -69,9 +69,19 @@ struct LatLonSectionView: View {
                 if let latitude, let longitude {
                     store.send(.locationChanged(Coords(latitude: latitude,
                                                        longitude: longitude)),
-                               description: "update location")
+                               description: "update location") {
+                        Task {
+                            let address =
+                            await ReverseLocationFinder.reverseGeocode(store: store,
+                                                                       id: image.id)
+                            if let address {
+                                store.send(.addressChanged(image.id, address))
+                                store.discardUndo()
+                            }
+                        }
+                    }
+                    isFocused = false
                 }
-                isFocused = false
             }
         }
         .onChange(of: coordFormat) {
