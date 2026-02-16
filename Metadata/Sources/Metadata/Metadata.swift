@@ -66,6 +66,20 @@ public struct Metadata: Sendable {
     }
 }
 
+// Update an existing metadata from a copy
+
+extension Metadata {
+    public mutating func restore(from copy: Metadata) {
+        dateTimeCreated = copy.dateTimeCreated
+        location = copy.location
+        elevation = copy.elevation
+        city = copy.city
+        state = copy.state
+        country = copy.country
+        countryCode = copy.countryCode
+    }
+}
+
 // Metadata location and elevation formatting
 
 extension Metadata {

@@ -38,10 +38,6 @@ struct GeoTagReducer: Reducer, Sendable {
         case .changeTimeZone:
             newState.showTimeZoneWindow.toggle()
 
-        case .discardRequest:
-            // TODO
-            break
-
         case .finishedAddingTracks:
             newState.addSheet(type: .gpxFileNameSheet)
 
@@ -139,6 +135,19 @@ struct GeoTagReducer: Reducer, Sendable {
 
         case .selectAllRequest:
             selectAll(&newState)
+
+        // SaveItem events
+        case .saveRequest:
+            save(&newState)
+
+        case .discardChangesRequest:
+            discardChanges(&newState)
+
+        case .discardTracksRequest:
+            discardTracks(&newState)
+
+        case .clearImagesRequest:
+            clearImages(&newState)
         }
 
         return newState

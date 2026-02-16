@@ -38,12 +38,14 @@ extension GeoTagReducer {
 
         state[id].metadata.location = location
         state[id].metadata.elevation = elevation
+        switch state[id].metadata.source {
+        case .image, .xmp:
+            reverseGeocode(&state, id: id)
+        default:
+            // reverse geocoding not needed for photos library assets
+            break
+        }
         // TODO:
-        // don't bother reverse geocoding items from the users
-        // photo library
-        // if image.pickerItem == nil {
-        //     reverseGeocode(image)
-        // }
         // if let pairedID = image.pairedID {
         //     let pairedImage = tvm[pairedID]
         //     if pairedImage.isValid {
@@ -53,5 +55,24 @@ extension GeoTagReducer {
         //     }
         // }
         state.unsavedChanges = true
+    }
+    
+    private func reverseGeocode(_ state: inout GeoTagState, id: ImageData.ID) {
+        // until I figure out what to do
+
+        state[id].metadata.city = nil
+        state[id].metadata.state = nil
+        state[id].metadata.country = nil
+        state[id].metadata.countryCode = nil
+
+        if let location = state[id].location(state.timeZone) {
+            Task {
+                if let fullAddress = try? await ReverseLocationFinder.shared.get(location) {
+                    // TODO: how do I update the image without holding on
+                    // to state which I can't do.
+                    print(fullAddress)
+                }
+            }
+        }
     }
 }

@@ -13,7 +13,6 @@ enum GeoTagEvent: Equatable {
     case badGpxFile(String)
     case catchUnexpectedError(String?, String?)
     case changeTimeZone
-    case discardRequest
     case finishedAddingTracks
     case goodGpxFile(String)
     case gpxLoadViewClosed
@@ -43,6 +42,11 @@ enum GeoTagEvent: Equatable {
     case pasteRequest
     case deleteRequest
     case selectAllRequest
+    // SaveItems events
+    case saveRequest
+    case discardChangesRequest
+    case discardTracksRequest
+    case clearImagesRequest
 }
 
 // A description for each event
@@ -56,7 +60,6 @@ extension GeoTagEvent: CustomStringConvertible {
         case .badGpxFile: "badGpxFile"
         case .catchUnexpectedError: "catchUnexpectedError"
         case .changeTimeZone: "changeTimeZone"
-        case .discardRequest: "discardRequest"
         case .finishedAddingTracks: "finishedAddingTracks"
         case .goodGpxFile: "goodGpxFile"
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
@@ -87,6 +90,12 @@ extension GeoTagEvent: CustomStringConvertible {
         case .pasteRequest: "pasteRequest"
         case .deleteRequest: "deleteRequest"
         case .selectAllRequest: "selectAllRequest"
+
+        // SaveItems events
+        case .saveRequest: "saveReqest"
+        case .discardChangesRequest: "discardChangesRequest"
+        case .discardTracksRequest: "discardTracksRequest"
+        case .clearImagesRequest: "clearImagesRequest"
         }
     }
 }

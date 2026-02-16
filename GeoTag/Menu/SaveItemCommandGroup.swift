@@ -1,34 +1,58 @@
-// import SwiftUI
-//
-// // Add Save... and other menu, items
-//
-// struct SaveItemCommands: Commands {
-//     var state: AppState
-//
-//     var body: some Commands {
-//         CommandGroup(after: .saveItem) {
-//             Button("Save…") { state.saveAction() }
-//                 .keyboardShortcut("s")
-//                 .disabled(state.saveDisabled())
-//
-//             Button("Discard changes") {
-//                 state.confirmationMessage = """
-//                     Discarding all changes is not undoable.  \
-//                     Are you sure this is what you want to do?
-//                     """
-//                 state.confirmationAction = state.discardChangesAction
-//                 state.presentConfirmation = true
-//             }
-//             .disabled(state.discardChangesDisabled())
-//
-//             Button("Discard tracks") { state.discardTracksAction() }
-//                 .disabled(state.discardTracksDisabled())
-//
-//             Divider()
-//
-//             Button("Clear Image List") { state.clearImageListAction() }
-//                 .keyboardShortcut("k")
-//                 .disabled(state.clearDisabled)
-//         }
-//     }
-// }
+import SwiftUI
+import UDF
+
+// Add Save... and other menu, items
+
+struct SaveItemCommands: Commands {
+    var store: Store<GeoTagState, GeoTagEvent>
+
+    var body: some Commands {
+        CommandGroup(after: .saveItem) {
+            Button("Save…") {
+                store.send(.saveRequest)
+                store.discardAllUndo()
+            }
+            .keyboardShortcut("s")
+            .disabled(saveDisabled())
+
+            Button("Discard changes") {
+                store.send(.discardChangesRequest,
+                           description: "discard changes")
+            }
+            .disabled(discardChangesDisabled())
+
+            Button("Discard tracks") {
+                store.send(.discardTracksRequest,
+                           description: "discard tracks")
+            }
+            .disabled(discardTracksDisabled())
+
+            Divider()
+
+            Button("Clear Image List") {
+                store.send(.clearImagesRequest,
+                           description: "clear image list")
+            }
+            .keyboardShortcut("k")
+            .disabled(clearDisabled())
+        }
+    }
+}
+
+extension SaveItemCommands {
+    private func saveDisabled() -> Bool {
+        return store.saveInProgress || !store.unsavedChanges
+    }
+
+    private func discardChangesDisabled() -> Bool {
+        return !store.unsavedChanges
+    }
+
+    private func discardTracksDisabled() -> Bool {
+        return store.gpxTracks.isEmpty
+    }
+
+    private func clearDisabled() -> Bool {
+        return store.imageData.isEmpty || store.unsavedChanges
+    }
+}
