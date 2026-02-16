@@ -30,4 +30,3 @@ extension GeoTagReducer {
         state.imageData.removeAll()
     }
 }
-

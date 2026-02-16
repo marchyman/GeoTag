@@ -46,17 +46,19 @@ extension GeoTagReducer {
 
     // update a specific image with reverse geocode information
 
-    func update(_ state: inout GeoTagState, id: ImageData.ID,
+    func update(_ state: inout GeoTagState, selected: Set<ImageData.ID>,
                 address: FullAddress) {
-        state[id].metadata.city = address.city
-        state[id].metadata.state = address.state
-        state[id].metadata.country = address.country
-        state[id].metadata.countryCode = address.countryCode
-        if let pairedID = state[id].pairedID, state[pairedID].updatable {
-            state[pairedID].metadata.city = address.city
-            state[pairedID].metadata.state = address.state
-            state[pairedID].metadata.country = address.country
-            state[pairedID].metadata.countryCode = address.countryCode
+        for id in selected {
+            state[id].metadata.city = address.city
+            state[id].metadata.state = address.state
+            state[id].metadata.country = address.country
+            state[id].metadata.countryCode = address.countryCode
+            if let pairedID = state[id].pairedID, state[pairedID].updatable {
+                state[pairedID].metadata.city = address.city
+                state[pairedID].metadata.state = address.state
+                state[pairedID].metadata.country = address.country
+                state[pairedID].metadata.countryCode = address.countryCode
+            }
         }
     }
 }

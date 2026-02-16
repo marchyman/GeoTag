@@ -41,7 +41,20 @@ struct PasteboardCommands: Commands {
                         NSApp.sendAction(#selector(NSText.paste(_:)),
                                          to: nil, from: nil)
                     } else {
-                        store.send(.pasteRequest)
+                        store.send(.pasteRequest) {
+                            // remember the current selection
+                            guard let id = store.mostSelected else { return }
+                            let selected = store.selection
+                            Task {
+                                let address =
+                                await ReverseLocationFinder.reverseGeocode(store: store,
+                                                                           id: id)
+                                if let address {
+                                    store.send(.addressChanged(selected, address))
+                                    store.discardUndo()
+                                }
+                            }
+                        }
                     }
                 }
                 .keyboardShortcut("v")

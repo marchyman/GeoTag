@@ -21,8 +21,8 @@ struct GeoTagReducer: Reducer, Sendable {
         case .addImage(let imageData):
             newState.imageData.append(imageData)
 
-        case .addressChanged(let id, let address):
-            update(&newState, id: id, address: address)
+        case .addressChanged(let selected, let address):
+            update(&newState, selected: selected, address: address)
 
         case .backupFolderSizeCheck:
             checkBackupFolderSize(&newState)

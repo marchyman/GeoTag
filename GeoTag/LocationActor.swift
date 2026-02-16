@@ -40,11 +40,10 @@ actor ReverseLocationFinder {
         }
 
         // Creat a task to fetch reverse location
-        let task = requestTask(location) // Task<MKPlacemark?, Error> {
+        activeTask = requestTask(location)
 
-        // save it as the active task and wait for the result
-        activeTask = task
-        return try await task.value
+        // wait for the task to return a value
+        return try await activeTask?.value
     }
 
     nonisolated func requestTask(_ location: CLLocation) -> Task<FullAddress?, Error> {

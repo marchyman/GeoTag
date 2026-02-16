@@ -8,7 +8,7 @@ import ImageData
 
 enum GeoTagEvent: Equatable {
     case addImage(ImageData)
-    case addressChanged(ImageData.ID, FullAddress)
+    case addressChanged(Set<ImageData.ID>, FullAddress)
     case backupFolderSizeCheck
     case backupURLChanged(URL?)
     case badGpxFile(String)

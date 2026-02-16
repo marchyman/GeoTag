@@ -70,12 +70,14 @@ struct LatLonSectionView: View {
                     store.send(.locationChanged(Coords(latitude: latitude,
                                                        longitude: longitude)),
                                description: "update location") {
+                        // remember the current selection
+                        let selected = store.selection
                         Task {
                             let address =
                             await ReverseLocationFinder.reverseGeocode(store: store,
                                                                        id: image.id)
                             if let address {
-                                store.send(.addressChanged(image.id, address))
+                                store.send(.addressChanged(selected, address))
                                 store.discardUndo()
                             }
                         }
