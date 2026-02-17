@@ -3,6 +3,7 @@ import Coords
 import Foundation
 import GpxTrackLog
 import ImageData
+import SwiftUI
 
 // events that trigger a change of state
 
@@ -22,7 +23,7 @@ enum GeoTagEvent: Equatable {
     case linkPairedImages
     case locationChanged(Coords)
     case mainWindowChange(NSWindow?)
-    case makeThumbnail
+    case newThumbnail(Image)
     case openCommand
     case openFiles([URL])
     case quitRequested
@@ -68,7 +69,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .linkPairedImages: "linkPairedImages"
         case .locationChanged: "locationChanged"
         case .mainWindowChange: "mainWindowChange"
-        case .makeThumbnail: "makeThumbnail"
+        case .newThumbnail: "newThumbnail"
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
         case .quitRequested: "quitRequested"

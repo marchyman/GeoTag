@@ -66,9 +66,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .mainWindowChange(let window):
             newState.mainWindow = window
 
-        case .makeThumbnail:
+        case .newThumbnail(let image):
             if let id = newState.mostSelected {
-                newState[id].thumbnail = newState[id].makeThumbnail()
+                newState[id].thumbnail = image
             }
 
         case .openCommand:

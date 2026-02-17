@@ -12,6 +12,7 @@ let package = Package(
         .package(name: "Coords", path: "../Coords"),
         .package(name: "Exiftool", path: "../Exiftool"),
         .package(name: "Imagetool", path: "../Imagetool"),
+        .package(name: "Phototool", path: "../Phototool"),
         .package(name: "Metadata", path: "../Metadata")
     ],
     targets: [
@@ -21,6 +22,7 @@ let package = Package(
                 .product(name: "Coords", package: "Coords"),
                 .product(name: "Exiftool", package: "Exiftool"),
                 .product(name: "Imagetool", package: "Imagetool"),
+                .product(name: "Phototool", package: "Phototool"),
                 .product(name: "Metadata", package: "Metadata")
             ]
         ),

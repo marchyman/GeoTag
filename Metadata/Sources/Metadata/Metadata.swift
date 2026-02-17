@@ -12,17 +12,17 @@
 import Coords
 import Foundation
 import Photos
+import PhotosUI
+import SwiftUI
 
 public enum MetadataSource: Sendable {
     case image(URL)
     case xmp(URL)
-    case photos(PHAsset)
+    case photos(PhotosPickerItem, PHAsset)
     case copy
 }
 
 // Metadata source is Equatable
-// Add the special case where it is only desired to compare
-// on case without associated values
 
 extension MetadataSource: Equatable {}
 

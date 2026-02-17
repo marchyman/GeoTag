@@ -12,7 +12,7 @@ struct MetadataTests {
     @Test(arguments: [
         MetadataSource.image(imageURL),
         MetadataSource.xmp(sidecarURL),
-        MetadataSource.photos(PHAsset())
+        MetadataSource.photos(PhotosPickerItem(), PHAsset())
     ])
     func createFromSource(source: MetadataSource) async throws {
         let metadata = Metadata(source: source)

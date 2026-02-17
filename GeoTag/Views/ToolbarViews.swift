@@ -4,46 +4,37 @@ import UDF
 
 struct PhotoPickerView: View {
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
-    // var photoLibrary = PhotoLibrary.shared
-    //
-    // @State private var pickerItems: [PhotosPickerItem] = []
-    //
+    var photoLibrary = PhotoLibrary.shared
+
+    @State private var pickerItems: [PhotosPickerItem] = []
+
     var body: some View {
-        Button {
-            //
-        } label: {
-            Label("Photo Library", systemImage: "photo")
-                .imageScale(.large)
+        Group {
+            if photoLibrary.enabled {
+                PhotosPicker(selection: $pickerItems,
+                             matching: .images,
+                             photoLibrary: .shared()) {
+                    Label("Photo Library", systemImage: "photo")
+                        .imageScale(.large)
+                }
+                .keyboardShortcut("i", modifiers: [.shift, .command])
+            } else {
+                Button {
+                    photoLibrary.requestAuth {
+                        Task { @MainActor in
+                            if photoLibrary.enabled {
+                                // state.libraryEnabledMessage = true
+                            } else {
+                                // state.libraryDisabledMessage = true
+                            }
+                        }
+                    }
+                } label: {
+                    Label("Photo Library", systemImage: "photo")
+                        .imageScale(.large)
+                }
+            }
         }
-        .keyboardShortcut("i", modifiers: [.shift, .command])
-        // Group {
-        //     if photoLibrary.enabled {
-        //         PhotosPicker(
-        //             selection: $pickerItems,
-        //             matching: .images,
-        //             photoLibrary: .shared()
-        //         ) {
-        //             Label("Photo Library", systemImage: "photo")
-        //                 .imageScale(.large)
-        //         }
-        //         .keyboardShortcut("i", modifiers: [.shift, .command])
-        //     } else {
-        //         Button {
-        //             photoLibrary.requestAuth {
-        //                 Task { @MainActor in
-        //                     if photoLibrary.enabled {
-        //                         state.libraryEnabledMessage = true
-        //                     } else {
-        //                         state.libraryDisabledMessage = true
-        //                     }
-        //                 }
-        //             }
-        //         } label: {
-        //             Label("Photo Library", systemImage: "photo")
-        //                 .imageScale(.large)
-        //         }
-        //     }
-        // }
         // .onChange(of: pickerItems) {
         //     let selectedItems = pickerItems
         //     pickerItems = []

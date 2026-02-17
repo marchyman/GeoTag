@@ -4,6 +4,7 @@ import Foundation
 import ImageIO
 import Metadata
 import OSLog
+import SwiftUI
 
 // image metadata input and output functions
 
@@ -113,7 +114,49 @@ public struct Imagetool {
         return metadata
     }
 
-}
+    // Return an NSImage created from the given URL
+
+    public static func imageThumbnail(url: URL) -> NSImage? {
+        var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
+        guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil)
+        else {
+            return nil
+        }
+
+        // Create a "preview" of the image. If the image is larger than
+        // 1024x1024 constraint the preview to that size.  1024x1024 is an
+        // arbitrary limit.   Preview generation is used to work around a
+        // performance hit when using large raw images
+        let maxDimension = 1024.0
+        var imgOpts: [String: AnyObject] = [
+            Self.createThumbnailWithTransform: kCFBooleanTrue,
+            Self.createThumbnailFromImageIfAbsent: kCFBooleanTrue,
+            Self.thumbnailMaxPixelSize: maxDimension as AnyObject
+        ]
+        var checkSize = true
+        repeat {
+            if let imgPreview = CGImageSourceCreateThumbnailAtIndex(
+                imgRef, 0, imgOpts as NSDictionary) {
+                // Create an NSImage from the preview
+                let imgHeight = CGFloat(imgPreview.height)
+                let imgWidth = CGFloat(imgPreview.width)
+                if imgOpts[Self.createThumbnailFromImageAlways] == nil
+                    && imgHeight < maxDimension && imgWidth < maxDimension {
+                    // thumbnail too small.   Build a larger thumbnail
+                    imgOpts[Self.createThumbnailFromImageIfAbsent] = nil
+                    imgOpts[Self.createThumbnailFromImageAlways] =
+                        kCFBooleanTrue
+                    continue
+                }
+                image = NSImage(cgImage: imgPreview, size: .zero)
+            } else {
+                // could not create a preview
+                return nil
+            }
+            checkSize = false
+        } while checkSize
+        return image
+    }}
 
 // Define a logger for the package
 
@@ -125,20 +168,23 @@ extension Imagetool {
 // CFString to (NS)*String casts for Image Property constants
 
 extension Imagetool {
-    static let exifDictionary = kCGImagePropertyExifDictionary as String
-    static let exifDateTimeOriginal =
-        kCGImagePropertyExifDateTimeOriginal as String
+    static let GPSAltitude = kCGImagePropertyGPSAltitude as String
+    static let GPSAltitudeRef = kCGImagePropertyGPSAltitudeRef as String
     static let GPSDictionary = kCGImagePropertyGPSDictionary as String
-    static let GPSStatus = kCGImagePropertyGPSStatus as String
     static let GPSLatitude = kCGImagePropertyGPSLatitude as String
     static let GPSLatitudeRef = kCGImagePropertyGPSLatitudeRef as String
     static let GPSLongitude = kCGImagePropertyGPSLongitude as String
     static let GPSLongitudeRef = kCGImagePropertyGPSLongitudeRef as String
-    static let GPSAltitude = kCGImagePropertyGPSAltitude as String
-    static let GPSAltitudeRef = kCGImagePropertyGPSAltitudeRef as String
-    static let IPTCDictionary = kCGImagePropertyIPTCDictionary as String
+    static let GPSStatus = kCGImagePropertyGPSStatus as String
     static let IPTCCity = kCGImagePropertyIPTCCity as String
-    static let IPTCState = kCGImagePropertyIPTCProvinceState as String
     static let IPTCCountry = kCGImagePropertyIPTCCountryPrimaryLocationName as String
     static let IPTCCountryCode = kCGImagePropertyIPTCCountryPrimaryLocationCode as String
+    static let IPTCDictionary = kCGImagePropertyIPTCDictionary as String
+    static let IPTCState = kCGImagePropertyIPTCProvinceState as String
+    static let createThumbnailFromImageAlways = kCGImageSourceCreateThumbnailFromImageAlways as String
+    static let createThumbnailFromImageIfAbsent = kCGImageSourceCreateThumbnailFromImageIfAbsent as String
+    static let createThumbnailWithTransform = kCGImageSourceCreateThumbnailWithTransform as String
+    static let exifDateTimeOriginal = kCGImagePropertyExifDateTimeOriginal as String
+    static let exifDictionary = kCGImagePropertyExifDictionary as String
+    static let thumbnailMaxPixelSize = kCGImageSourceThumbnailMaxPixelSize as String
 }
