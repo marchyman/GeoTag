@@ -27,8 +27,9 @@ public struct ImageData: Identifiable, Sendable {
         self.name = name
         self.metadata = metadata
         switch metadata.source {
-        case let .image(url):
-            if Exiftool.helper.fileTypeIsWritable(for: url) {
+        case .image(let url):
+            if url.pathExtension.lowercased() != xmpExtension &&
+               Exiftool.helper.fileTypeIsWritable(for: url) {
                 original = Metadata(copying: metadata)
             }
         case .xmp, .photos:
