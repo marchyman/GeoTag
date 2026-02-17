@@ -52,7 +52,7 @@ struct GeoTagApp: App {
             SaveItemCommands(store: store)
             UndoRedoCommands(store: store)
             PasteboardCommands(store: store)
-        //     ToolbarCommands(state: state)
+            ToolbarCommands(store: store)
             HelpCommands(store: store)
         }
 
