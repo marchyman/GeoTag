@@ -12,13 +12,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                         category: "AppDelegate")
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        logger.info("\(#function): store is \(self.store == nil ? "nil" : "set")")
+        logger.info("\(#function): store is \(self.store == nil ? "nil" : "set", privacy: .public)")
         NSWindow.allowsAutomaticWindowTabbing = false
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        logger.info("\(#function)")
-        // TODO: event to process given urls
+        if let store {
+            OpenHelper.open(store, urls: urls, description: "open with",
+                            spinnerEnabled: nil)
+        } else {
+            logger.error("\(#function): store not set")
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(

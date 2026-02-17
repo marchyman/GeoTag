@@ -1,4 +1,3 @@
-// import AdjustTimeZoneView
 import RunLogView
 import SwiftUI
 import UDF
@@ -88,7 +87,7 @@ extension GeoTagApp {
     static var showRunLog = "GeoTag Run/Debug Log"
 }
 
-// AppSettings keys
+// Settings keys
 
 extension GeoTagApp {
     static let doNotBackupKey = "DoNotBackup"

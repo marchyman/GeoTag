@@ -1,5 +1,3 @@
-import GpxTrackLog
-import ImageData
 import OSLog
 import SplitHView
 import SplitVView
@@ -62,13 +60,9 @@ struct ContentView: View {
             store.send(.openFiles(items)) {
                 store.discardUndo()
                 if let urls = store.uniqueURLs {
-                    Task {
-                        store.beginUndoGroup(description: "drag files")
-                        await images(for: urls)
-                        await tracks(for: urls)
-                        spinnerEnabled = false
-                        store.endUndoGroup()
-                    }
+                    OpenHelper.open(store, urls: urls,
+                                    description: "drag files",
+                                    spinnerEnabled: $spinnerEnabled)
                 } else {
                     spinnerEnabled = false
                 }
@@ -109,13 +103,9 @@ struct ContentView: View {
                 store.send(.openFiles(files)) {
                     store.discardUndo()
                     if let urls = store.uniqueURLs {
-                        Task {
-                            store.beginUndoGroup(description: "add files")
-                            await images(for: urls)
-                            await tracks(for: urls)
-                            spinnerEnabled = false
-                            store.endUndoGroup()
-                        }
+                        OpenHelper.open(store, urls: urls,
+                                        description: "add files",
+                                        spinnerEnabled: $spinnerEnabled)
                     } else {
                         spinnerEnabled = false
                     }
@@ -147,48 +137,6 @@ struct ContentView: View {
             types.append(type)
         }
         return types
-    }
-
-    // Create ImageData entries for imported images and add them
-    // to the table.
-
-    nonisolated private func images(for urls: [URL]) async {
-        await withTaskGroup(of: ImageData.self) { group in
-            for url in urls where url.pathExtension.lowercased() != "gpx" {
-                group.addTask {
-                    return ImageData(from: url)
-                }
-            }
-            for await imageData in group {
-                await store.send(.addImage(imageData))
-            }
-        }
-        await MainActor.run {
-            store.send(.linkPairedImages)
-            store.send(.sortUsingCurrentComparator)
-        }
-    }
-
-    nonisolated private func tracks(for urls: [URL]) async {
-        let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
-        guard !gpxURLs.isEmpty else { return }
-
-        await withTaskGroup(of: (String, GpxTrackLog?).self) { group in
-            for url in gpxURLs {
-                group.addTask {
-                    do {
-                        let trackLog = try GpxTrackLog(contentsOf: url)
-                        return (url.path, trackLog)
-                    } catch {
-                        return (url.path, nil)
-                    }
-                }
-            }
-            for await (path, tracklog) in group {
-                await store.send(.readTrackLog(path, tracklog))
-            }
-        }
-        await store.send(.finishedAddingTracks)
     }
 }
 
