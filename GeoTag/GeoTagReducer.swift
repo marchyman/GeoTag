@@ -120,12 +120,6 @@ struct GeoTagReducer: Reducer, Sendable {
             newState.showLogWindow.toggle()
 
         // pasteboard events
-        case .cutRequest:
-            cut(&newState)
-
-        case .copyRequest:
-            copy(&newState)
-
         case .pasteRequest:
             paste(&newState)
 

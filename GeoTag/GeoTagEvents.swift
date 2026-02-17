@@ -37,8 +37,6 @@ enum GeoTagEvent: Equatable {
     case timeZoneChanged(TimeZone)
     case toggleLogWindow
     // pasteboard events
-    case cutRequest
-    case copyRequest
     case pasteRequest
     case deleteRequest
     case selectAllRequest
@@ -85,8 +83,6 @@ extension GeoTagEvent: CustomStringConvertible {
         case .toggleLogWindow: "toggleLogWindow"
 
         // pasteboard events
-        case .cutRequest: "cutRequest"
-        case .copyRequest: "copyRequest"
         case .pasteRequest: "pasteRequest"
         case .deleteRequest: "deleteRequest"
         case .selectAllRequest: "selectAllRequest"

@@ -19,19 +19,15 @@ struct PasteboardCommands: Commands {
                         NSApp.sendAction(#selector(NSText.cut(_:)),
                                          to: nil, from: nil)
                     } else {
-                        store.send(.cutRequest)
+                        copy()
+                        store.send(.deleteRequest)
                     }
                 }
                 .keyboardShortcut("x")
                 .disabled(cutCopyDisabled())
 
                 Button("Copy") {
-                    if isFocused(textfieldFocused) {
-                        NSApp.sendAction(#selector(NSText.copy(_:)),
-                                         to: nil, from: nil)
-                    } else {
-                        store.send(.copyRequest)
-                    }
+                    copy()
                 }
                 .keyboardShortcut("c")
                 .disabled(cutCopyDisabled())
@@ -181,6 +177,22 @@ extension PasteboardCommands {
     // return true if a search active or a textField is focused.
     private func isFocused(_ textField: String?) -> Bool {
         return store.searchActive || textField != nil
+    }
+}
+
+// copy the selected item into the pasteboard.  Does not change program state
+
+extension PasteboardCommands {
+    private func copy() {
+        if isFocused(textfieldFocused) {
+            NSApp.sendAction(#selector(NSText.copy(_:)),
+                to: nil, from: nil)
+        } else if let id = store.mostSelected {
+            let pb = NSPasteboard.general
+            pb.clearContents()
+            pb.setString(store[id].stringRepresentation,
+                         forType: .string)
+        }
     }
 }
 
