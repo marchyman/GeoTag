@@ -104,7 +104,7 @@ struct ExiftoolTests {
 
         // Extract needed data from the created sidecar file
 
-        let metadata = Exiftool.helper.metadata(from: sidecar)
+        let metadata = Exiftool.helper.metadata(from: sidecar, primaryURL: copy)
         #expect(metadata.dateTimeCreated == "2025:12:03 16:25:49")
         #expect(metadata.location?.latitude == 37.51878611116667)
         #expect(metadata.location?.longitude == -122.34516111116666)
@@ -137,7 +137,7 @@ struct ExiftoolTests {
 
         // Extract needed data from the created sidecar file
 
-        let newData = Exiftool.helper.metadata(from: sidecar)
+        let newData = Exiftool.helper.metadata(from: sidecar, primaryURL: copy)
 
         // Extract the same data from an existing sidecar file
 
@@ -145,7 +145,8 @@ struct ExiftoolTests {
             Bundle.module.url(forResource: "262M1559",
                               withExtension: "xmp")
         )
-        let oldData = Exiftool.helper.metadata(from: oldSidecar)
+        let oldData = Exiftool.helper.metadata(from: oldSidecar,
+                                               primaryURL: testImage)
 
         #expect(newData == oldData)
     }

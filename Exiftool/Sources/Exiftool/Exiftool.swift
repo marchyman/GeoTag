@@ -126,7 +126,7 @@ extension Exiftool {
 extension Exiftool {
 
     // swiftlint:disable cyclomatic_complexity
-    public func metadata(from xmp: URL) -> Metadata {
+    public func metadata(from xmp: URL, primaryURL: URL) -> Metadata {
         let args = [
             "-args", "-c", "%.15f", "-createdate",
             "-gpsstatus", "-gpslatitude", "-gpslongitude",
@@ -134,7 +134,7 @@ extension Exiftool {
             "-xmp:country", "-xmp:countrycode", xmp.path
         ]
 
-        var metadata = Metadata(source: .xmp(xmp))
+        var metadata = Metadata(source: .xmp(primaryURL))
 
         do {
             let data = try run(args)

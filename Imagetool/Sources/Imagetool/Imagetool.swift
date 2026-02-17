@@ -90,6 +90,9 @@ public struct Imagetool {
     // Therefore create a folder in the sandbox containing symbolic
     // links to the files elsewhere on disk. Point exiftool at the
     // sandbox link.
+    //
+    // The url in the returned metadata will reference the image,
+    // not the xmp file.
 
     public static func metadata(from imageURL: URL, xmp: URL) -> Metadata {
         let metadata: Metadata
@@ -100,7 +103,8 @@ public struct Imagetool {
                 NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter)
                 sandbox.removeSandboxFolder()
             }
-            metadata = Exiftool.helper.metadata(from: sandbox.xmpURL)
+            metadata = Exiftool.helper.metadata(from: sandbox.xmpURL,
+                                                primaryURL: imageURL)
         } else {
             Self.logger.error("\(#function): Can't create sandbox for \(imageURL.path, privacy: .public)")
             metadata = Metadata(source: .xmp(xmp))

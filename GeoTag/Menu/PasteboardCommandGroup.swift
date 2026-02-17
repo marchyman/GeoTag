@@ -96,10 +96,11 @@ struct PasteboardCommands: Commands {
 
             Group {
                 Button("Show In Finder") {
-                    store.send(.showInFinder)
-                    store.discardUndo()
+                    // this command does not update state and therefore
+                    // need not go through the reducer.
+                    showInFinder()
                 }
-                .disabled(store.mostSelected == nil)
+                .disabled(showInFinderDisabled())
 
                 Button("Locn From Track") {
                     // TODO: store.send(.locnFromTrack(extendedTime)
@@ -157,6 +158,17 @@ extension PasteboardCommands {
         return store.imageData.isEmpty
     }
 
+    private func showInFinderDisabled() -> Bool {
+        if let mostSelected = store.mostSelected {
+            switch store[mostSelected].metadata.source {
+            case .image, .xmp:
+                return false
+            default:
+                break
+            }
+        }
+        return true
+    }
     private func locnFromTrackDisabled() -> Bool {
         if store.gpxTracks.count > 0 {
             if let id = store.mostSelected, store[id].updatable {
@@ -169,5 +181,26 @@ extension PasteboardCommands {
     // return true if a search active or a textField is focused.
     private func isFocused(_ textField: String?) -> Bool {
         return store.searchActive || textField != nil
+    }
+}
+
+// show the selected items in the finder.  Does not change program state
+
+extension PasteboardCommands {
+    private func showInFinder() {
+        var urls: [URL] = []
+
+        for id in store.selection {
+            switch store[id].metadata.source {
+            case .image(let url), .xmp(let url):
+                urls.append(url)
+            default:
+                // not where the finder can see it
+                break
+            }
+        }
+        if !urls.isEmpty {
+            NSWorkspace.shared.activateFileViewerSelecting(urls)
+        }
     }
 }

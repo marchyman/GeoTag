@@ -103,10 +103,6 @@ struct GeoTagReducer: Reducer, Sendable {
         case .selectionChanged(let selection):
             selectionChanged(&newState, selection: selection)
 
-        case .showInFinder:
-            // TODO
-            break
-
         case .sortUsingCurrentComparator:
             newState.imageData.sort(using: newState.sortOrder)
 
