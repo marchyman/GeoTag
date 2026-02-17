@@ -4,6 +4,7 @@ import Foundation
 import Imagetool
 import Metadata
 import OSLog
+import SwiftUI
 
 public struct ImageData: Identifiable, Sendable {
     public let id: Int
@@ -11,6 +12,7 @@ public struct ImageData: Identifiable, Sendable {
     public var metadata: Metadata
     public var original: Metadata?
     public var pairedID: ImageData.ID?
+    public var thumbnail: Image?
 
     // a copy of the metadata before any changes will only exist if
     // the metadata is updatable. Use it's presence to determine

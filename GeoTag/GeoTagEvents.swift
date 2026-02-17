@@ -22,6 +22,7 @@ enum GeoTagEvent: Equatable {
     case linkPairedImages
     case locationChanged(Coords)
     case mainWindowChange(NSWindow?)
+    case makeThumbnail
     case openCommand
     case openFiles([URL])
     case quitRequested
@@ -67,6 +68,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .linkPairedImages: "linkPairedImages"
         case .locationChanged: "locationChanged"
         case .mainWindowChange: "mainWindowChange"
+        case .makeThumbnail: "makeThumbnail"
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
         case .quitRequested: "quitRequested"

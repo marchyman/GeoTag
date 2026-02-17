@@ -30,7 +30,7 @@ struct ContentView: View {
                     SplitVView(percent: $vAlternate) {
                         ImageTableView()
                     } bottom: {
-                        Text("ImageView()")
+                        ImageView()
                     }
                 } else {
                     ImageTableView()
@@ -46,7 +46,7 @@ struct ContentView: View {
                 Text("MapView()")
             } else {
                 SplitVView(percent: $vNormal) {
-                    Text("ImageView()")
+                    ImageView()
                 } bottom: {
                     Text("MapView()")
                 }
