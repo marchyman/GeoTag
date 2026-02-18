@@ -7,6 +7,8 @@ struct PhotoPickerView: View {
     var photoLibrary = PhotoLibrary.shared
 
     @State private var pickerItems: [PhotosPickerItem] = []
+    @State private var libraryEnabled = false
+    @State private var libraryDisabled = false
 
     var body: some View {
         Group {
@@ -23,9 +25,10 @@ struct PhotoPickerView: View {
                     photoLibrary.requestAuth {
                         Task { @MainActor in
                             if photoLibrary.enabled {
-                                // state.libraryEnabledMessage = true
+                                libraryEnabled.toggle()
+
                             } else {
-                                // state.libraryDisabledMessage = true
+                                libraryDisabled.toggle()
                             }
                         }
                     }
@@ -35,16 +38,18 @@ struct PhotoPickerView: View {
                 }
             }
         }
-        // .onChange(of: pickerItems) {
-        //     let selectedItems = pickerItems
-        //     pickerItems = []
-        //     Task {
-        //         await photoLibrary.addPhotos(from: selectedItems, to: state.tvm)
-        //     }
-        // }
-        // .onAppear {
-        //     AppState.logger.info("PhotoPickerView appeared")
-        // }
+        .onChange(of: pickerItems) {
+            if !pickerItems.isEmpty {
+                let selectedItems = pickerItems
+                pickerItems = []
+                Task {
+                    await photoLibrary.addPhotos(from: selectedItems,
+                                                 store: store)
+                }
+            }
+        }
+        .photoLibraryEnabledAlert(isPresented: $libraryEnabled)
+        .photoLibraryDisabledAlert(isPresented: $libraryDisabled)
     }
 }
 
