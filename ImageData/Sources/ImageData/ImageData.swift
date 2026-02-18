@@ -4,6 +4,8 @@ import Foundation
 import Imagetool
 import Metadata
 import OSLog
+import PhotosUI
+import Phototool
 import SwiftUI
 
 public struct ImageData: Identifiable, Sendable {
@@ -34,8 +36,12 @@ public struct ImageData: Identifiable, Sendable {
                Exiftool.helper.fileTypeIsWritable(for: url) {
                 original = Metadata(copying: metadata)
             }
-        case .xmp, .photos:
+        case .xmp:
             original = Metadata(copying: metadata)
+        case .photos(_, let assets):
+            if assets != nil {
+                original = Metadata(copying: metadata)
+            }
         default:
             break
         }
@@ -59,6 +65,14 @@ public struct ImageData: Identifiable, Sendable {
         } else {
             metadata = Imagetool.metadata(from: url)
         }
+        self.init(metadata: metadata, name: name)
+    }
+
+    // init given a PhotosPickerItem and an asset
+
+    public init(from item: PhotosPickerItem, asset: PHAsset?) {
+        let name = Phototool.name(from: asset)
+        let metadata = Phototool.metadata(from: item, asset: asset)
         self.init(metadata: metadata, name: name)
     }
 

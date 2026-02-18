@@ -43,8 +43,10 @@ struct PhotoPickerView: View {
                 let selectedItems = pickerItems
                 pickerItems = []
                 Task {
+                    store.beginUndoGroup(description: "add from photos lib")
                     await photoLibrary.addPhotos(from: selectedItems,
                                                  store: store)
+                    store.endUndoGroup()
                 }
             }
         }

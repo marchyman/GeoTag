@@ -18,7 +18,7 @@ import SwiftUI
 public enum MetadataSource: Sendable {
     case image(URL)
     case xmp(URL)
-    case photos(PhotosPickerItem, PHAsset)
+    case photos(PhotosPickerItem, PHAsset?)
     case copy
 }
 

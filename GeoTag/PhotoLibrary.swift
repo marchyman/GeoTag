@@ -1,6 +1,8 @@
+import ImageData
 import OSLog
 import Photos
 import PhotosUI
+import Phototool
 import SwiftUI
 import UDF
 
@@ -47,5 +49,15 @@ extension PhotoLibrary {
     func addPhotos(from items: [PhotosPickerItem],
                    store: Store<GeoTagState, GeoTagEvent>) async {
         Self.logger.notice("\(#function)")
+        for item in items {
+            if let id = item.itemIdentifier {
+                Self.logger.notice("\(id, privacy: .public)")
+                // check for dups... how?
+                // Look for .photos items with a matching id
+                let asset = await Phototool.assets(for: id)
+                let imageData = ImageData(from: item, asset: asset)
+                await store.send(.addImage(imageData))
+            }
+        }
     }
 }
