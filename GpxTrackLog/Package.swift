@@ -14,6 +14,7 @@ let package = Package(
                     dependencies: ["GpxTrackLog"],
                     resources: [.copy("BadTrack.GPX"),
                                 .copy("NoTrack.GPX"),
-                                .copy("TestTrack.GPX")])
+                                .copy("TestTrack.GPX"),
+                                .copy("MultiSeg.GPX")])
     ]
 )

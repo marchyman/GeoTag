@@ -8,15 +8,16 @@ extension GpxTrackLog {
     ///
     /// - Parameter imageTime:    the time from epoch of an image whose
     ///                           coords are desired
-    /// - Parameter extendedTime: number of minutes beyond the ends of
-    ///                           track logs that can match an image timestamp.
-    ///                           Default is 2 hours
+    /// - Parameter extendedTime: number of minutes that a tracklog entry can
+    ///                           vary to match the image timestamp.
+    ///                           Default is 2 hours (120 minutes)
     ///
 
     public func search(imageTime: TimeInterval,
                        extendedTime: Double = 120.0) async
     -> (CLLocationCoordinate2D, Double?)? {
         var lastPoint: Point?
+        let extendedSeconds = extendedTime * 60
 
         // search every track for the last point with a timestamp <= the
         // image timestamp.   The location of the found point (if any)
@@ -26,7 +27,7 @@ extension GpxTrackLog {
         for track in tracks {
             for segment in track.segments {
                 let possiblePoints = segment.points.prefix {
-                    $0.timeFromEpoch <= imageTime
+                    $0.timeFromEpoch <= (imageTime + extendedSeconds)
                 }
                 if let segmentLast = possiblePoints.last {
                     if lastPoint == nil {
@@ -45,12 +46,13 @@ extension GpxTrackLog {
                 }
             }
         }
+
         if let last = lastPoint {
             // we have a point. But does it make sense, meaning is the point
             // for some location reported many days from the image timestamp?
             // if the point timestamp isn't within extendedTime of the image
             // timestamp do not treat it as a match.
-            if (last.timeFromEpoch - imageTime).magnitude < extendedTime * 60 {
+            if (last.timeFromEpoch - imageTime).magnitude < extendedSeconds {
                 return (
                     CLLocationCoordinate2D(
                         latitude: last.lat,
