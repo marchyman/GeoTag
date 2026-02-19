@@ -25,11 +25,20 @@ public struct Phototool {
     public static func image(from item: PhotosPickerItem) async -> Image? {
         // Data -> NSImage -> Image dance needed to get proper orientation of
         // HEIC images.
-        // TODO: this failed on jpeg images.  Why?
         if let data = try? await item.loadTransferable(type: Data.self),
             let nsImage = NSImage(data: data) {
             return Image(nsImage: nsImage)
         }
+        let name: String
+        if let id = item.itemIdentifier {
+            let asset = await Self.assets(for: id)
+            name = Self.name(from: asset)
+        } else {
+            name = "unknown item"
+        }
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "PhotoTool",
+               category: "Phototool")
+            .error("Can not extract image for item \(name, privacy: .public)")
         return nil
     }
 

@@ -28,18 +28,13 @@ extension PhotoLibrary {
 // Request authorization to use Photo Library
 
 extension PhotoLibrary {
-    func requestAuth(authStatusUpdated: @Sendable @escaping () -> Void) {
+    func requestAuth(authStatusUpdated: @MainActor @Sendable @escaping (Bool) -> Void) {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             Self.logger.notice("Photo Library authorization: \(status.rawValue, privacy: .public)")
             Task { @MainActor in
-                Self.shared.statusChanged(newStatus: status == .authorized)
-                authStatusUpdated()
+                authStatusUpdated(status == .authorized)
             }
         }
-    }
-
-    mutating func statusChanged(newStatus: Bool) {
-        enabled = newStatus
     }
 }
 

@@ -10,9 +10,9 @@ struct PhotoLibraryEnabledAlert: ViewModifier {
                 // default action
             } message: {
                 Text("""
-                    Access to your Photos Library is now enabled. However \
-                    you may need to quit and re-launch GeoTag before you \
-                    can open your Photos Library.
+                    Access to your Photos Library is now enabled. Click \
+                    on the toolbar button or use Shift-⌘I to select images \
+                    from the library.
                     """)
             }
     }

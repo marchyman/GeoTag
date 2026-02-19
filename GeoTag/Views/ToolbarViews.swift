@@ -4,8 +4,7 @@ import UDF
 
 struct PhotoPickerView: View {
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
-    var photoLibrary = PhotoLibrary.shared
-
+    @State private var photoLibrary = PhotoLibrary.shared
     @State private var pickerItems: [PhotosPickerItem] = []
     @State private var libraryEnabled = false
     @State private var libraryDisabled = false
@@ -22,14 +21,13 @@ struct PhotoPickerView: View {
                 .keyboardShortcut("i", modifiers: [.shift, .command])
             } else {
                 Button {
-                    photoLibrary.requestAuth {
-                        Task { @MainActor in
-                            if photoLibrary.enabled {
-                                libraryEnabled.toggle()
+                    photoLibrary.requestAuth { @MainActor enabled in
+                        photoLibrary.enabled = enabled
+                        if photoLibrary.enabled {
+                            libraryEnabled.toggle()
 
-                            } else {
-                                libraryDisabled.toggle()
-                            }
+                        } else {
+                            libraryDisabled.toggle()
                         }
                     }
                 } label: {
