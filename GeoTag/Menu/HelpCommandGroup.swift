@@ -8,12 +8,14 @@ struct HelpCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .help) {
-            Link("GeoTag 5 Help…",
-                destination: URL(string: "https://www.snafu.org/GeoTag/GeoTag5Help/")!)
+            Link(destination: URL(string: "https://www.snafu.org/GeoTag/GeoTag5Help/")!) {
+                 Label("GeoTag 5 Help…", systemImage: "link")
+            }
             Divider()
-            Link("Report a bug…",
-                 destination: URL(string: "https://github.com/marchyman/GeoTag/issues")!)
-            Button("Show log…") {
+            Link(destination: URL(string: "https://github.com/marchyman/GeoTag/issues")!) {
+                Label("Report a bug…", systemImage: "link")
+            }
+            Button("Show log…", systemImage: "list.clipboard") {
                 store.send(.toggleLogWindow)
                 store.discardUndo()
             }

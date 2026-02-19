@@ -91,9 +91,9 @@ struct ImageTableView: View {
             }
         }
         .background(
-            // cmd-f for search
+            // ⌘F for search
             Button("", action: { searchActive = true })
-                .keyboardShortcut("f").hidden()
+                .keyboardShortcut("f", modifiers: .shift).hidden()
                 .disabled(store.imageData.isEmpty)
         )
         .onChange(of: searchText) {

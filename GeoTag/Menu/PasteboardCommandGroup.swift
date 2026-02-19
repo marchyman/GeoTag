@@ -14,7 +14,7 @@ struct PasteboardCommands: Commands {
     var body: some Commands {
          CommandGroup(replacing: .pasteboard) {
             Group {
-                Button("Cut") {
+                Button("Cut", systemImage: "scissors") {
                     if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.cut(_:)),
                                          to: nil, from: nil)
@@ -26,13 +26,13 @@ struct PasteboardCommands: Commands {
                 .keyboardShortcut("x")
                 .disabled(cutCopyDisabled())
 
-                Button("Copy") {
+                Button("Copy", systemImage: "document.on.document") {
                     copy()
                 }
                 .keyboardShortcut("c")
                 .disabled(cutCopyDisabled())
 
-                Button("Paste") {
+                Button("Paste", systemImage: "document.on.clipboard") {
                     if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.paste(_:)),
                                          to: nil, from: nil)
@@ -56,7 +56,7 @@ struct PasteboardCommands: Commands {
                 .keyboardShortcut("v")
                 .disabled(pasteDisabled())
 
-                Button("Delete") {
+                Button("Delete", systemImage: "trash") {
                     if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.delete(_:)),
                                          to: nil, from: nil)
@@ -67,7 +67,7 @@ struct PasteboardCommands: Commands {
                 .keyboardShortcut(.delete, modifiers: [])
                 .disabled(deleteDisabled())
 
-                Button("Select All") {
+                Button("Select All", systemImage: "character.textbox") {
                     if isFocused(textfieldFocused) {
                         NSApp.sendAction(#selector(NSText.selectAll(_:)),
                                          to: nil, from: nil)
@@ -82,7 +82,7 @@ struct PasteboardCommands: Commands {
             Divider()
 
             Group {
-                Button("Find") {
+                Button("Find (map)...") {
                     // TODO: state.masData.searchBarActive = true
                 }
                 .keyboardShortcut("f")

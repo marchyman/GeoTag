@@ -40,16 +40,22 @@ struct ShowHidePinView: View {
     @AppStorage(ImageTableView.hideInvalidImagesKey) var hideInvalidImages = false
 
     var body: some View {
-        Text("\(hideInvalidImages ? "Show" : "Hide") Disabled Files")
+        if hideInvalidImages {
+            Label("Hide Disabled Files", systemImage: "eye.slash")
+        } else {
+            Label("Show Disabled Files", systemImage: "eye")
+        }
     }
 }
 
 struct PinOptionView: View {
     @State private var showOtherPins = false
     var body: some View {
-        Picker("Pin view options…", selection: $showOtherPins) {
+        Picker(selection: $showOtherPins) {
             Text("Show pins for all selected items").tag(true)
             Text("Show pin for most selected item").tag(false)
+        } label: {
+            Label("Pin view options…", systemImage: "mappin.circle")
         }
         .pickerStyle(.menu)
     }
@@ -59,6 +65,7 @@ struct AlternateLayoutOptionView: View {
     @AppStorage(ContentView.alternateLayoutKey) var alternateLayout = false
 
     var body: some View {
-        Text("\(alternateLayout ? "Normal" : "Alternate") Layout")
+        Label("\(alternateLayout ? "Normal" : "Alternate") Layout",
+              systemImage: "arrow.left.arrow.right.square")
     }
 }

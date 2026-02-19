@@ -8,13 +8,13 @@ struct UndoRedoCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .undoRedo) {
-            Button(store.undoDescription) {
+            Button(store.undoDescription, systemImage: "arrow.uturn.backward") {
                 store.undo()
             }
             .keyboardShortcut("z")
             .disabled(!store.canUndo)
 
-            Button(store.redoDescription) {
+            Button(store.redoDescription, systemImage: "arrow.uturn.forward") {
                 store.redo()
             }
             .keyboardShortcut("z", modifiers: [.shift, .command])
