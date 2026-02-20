@@ -35,8 +35,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         logger.info("\(#function)")
         if let store {
             if store.saveInProgress || store.unsavedChanges {
-                store.send(.quitRequested)
-                store.discardUndo()
+                store.send(.quitRequested) {
+                    store.discardUndo()
+                }
                 return .terminateCancel
             }
         }
@@ -58,8 +59,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         if let store {
             if store.saveInProgress || store.unsavedChanges {
-                store.send(.quitRequested)
-                store.discardUndo()
+                store.send(.quitRequested) {
+                    store.discardUndo()
+                }
                 return false
             }
         }

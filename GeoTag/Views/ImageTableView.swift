@@ -85,8 +85,9 @@ struct ImageTableView: View {
         }
         .onChange(of: sortOrder) {
             if sortOrder != store.sortOrder {
-                store.send(.sortOrderChanged(sortOrder))
-                store.discardUndo()
+                store.send(.sortOrderChanged(sortOrder)) {
+                    store.discardUndo()
+                }
             }
         }
         .searchable(text: $searchText, isPresented: $searchActive,

@@ -9,8 +9,9 @@ struct NewItemCommands: Commands {
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
             Button("Open…", systemImage: "arrow.up.forward.app") {
-                store.send(.openCommand)
-                store.discardUndo()
+                store.send(.openCommand) {
+                    store.discardUndo()
+                }
             }
             .keyboardShortcut("o")
         }

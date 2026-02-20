@@ -43,12 +43,12 @@ struct ContentView: View {
             }
         } right: {
             if alternateLayout {
-                Text("MapView()")
+                MapView()
             } else {
                 SplitVView(percent: $vNormal) {
                     ImageView()
                 } bottom: {
-                    Text("MapView()")
+                    MapView()
                 }
             }
         }
@@ -123,8 +123,9 @@ struct ContentView: View {
     // when a sheet is dismissed check if there are more sheets to display
 
     private func sheetDismissed() {
-        store.send(.sheetDismissed)
-        store.discardUndo()
+        store.send(.sheetDismissed) {
+            store.discardUndo()
+        }
     }
 
     // the UTTypes that can be imported into this app.

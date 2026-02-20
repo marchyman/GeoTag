@@ -46,8 +46,9 @@ struct PasteboardCommands: Commands {
                                 await ReverseLocationFinder.reverseGeocode(store: store,
                                                                            id: id)
                                 if let address {
-                                    store.send(.addressChanged(selected, address))
-                                    store.discardUndo()
+                                    store.send(.addressChanged(selected, address)) {
+                                        store.discardUndo()
+                                    }
                                 }
                             }
                         }
@@ -106,8 +107,9 @@ struct PasteboardCommands: Commands {
                 .disabled(locnFromTrackDisabled())
 
                 Button("Specify Time Zone…") {
-                    store.send(.changeTimeZone)
-                    store.discardUndo()
+                    store.send(.changeTimeZone) {
+                        store.discardUndo()
+                    }
                 }
             }
         }
