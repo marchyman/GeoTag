@@ -72,17 +72,17 @@ struct GpxTests {
 
         // check for point within segment
         let insideInterval = insideSegment.timeIntervalSince1970
-        _ = try #require(await trackLog.search(imageTime: insideInterval, extendedTime: 1))
+        _ = try #require(trackLog.search(imageTime: insideInterval, extendedTime: 1))
 
         // check for point after segment
         let afterSegment = try #require(formatter.date(from: "2008-04-18T14:20:00Z"))
         let afterInterval = afterSegment.timeIntervalSince1970
-        #expect(await trackLog.search(imageTime: afterInterval, extendedTime: 1) == nil)
-        _ = try #require(await trackLog.search(imageTime: afterInterval, extendedTime: 10))
+        #expect(trackLog.search(imageTime: afterInterval, extendedTime: 1) == nil)
+        _ = try #require(trackLog.search(imageTime: afterInterval, extendedTime: 10))
 
         let beforeSegment = try #require(formatter.date(from: "2008-04-18T15:10:00Z"))
         let beforeInterval = beforeSegment.timeIntervalSince1970
-        #expect(await trackLog.search(imageTime: beforeInterval, extendedTime: 1) == nil)
-        _ = try #require(await trackLog.search(imageTime: beforeInterval, extendedTime: 10))
+        #expect(trackLog.search(imageTime: beforeInterval, extendedTime: 1) == nil)
+        _ = try #require(trackLog.search(imageTime: beforeInterval, extendedTime: 10))
     }
 }

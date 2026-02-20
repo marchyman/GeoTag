@@ -22,6 +22,7 @@ enum GeoTagEvent: Equatable {
     case initialBackupNotice
     case linkPairedImages
     case locationChanged(Coords)
+    case locationFromTrack([LocationHelper.LocationById])
     case mainWindowChange(NSWindow?)
     case newThumbnail(Image)
     case openCommand
@@ -68,6 +69,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .initialBackupNotice: "initialBackupCheck"
         case .linkPairedImages: "linkPairedImages"
         case .locationChanged: "locationChanged"
+        case .locationFromTrack: "locationFromTrack"
         case .mainWindowChange: "mainWindowChange"
         case .newThumbnail: "newThumbnail"
         case .openCommand: "openCommand"

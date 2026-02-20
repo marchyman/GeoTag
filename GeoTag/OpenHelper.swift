@@ -2,7 +2,6 @@ import GpxTrackLog
 import ImageData
 import SwiftUI
 import UDF
-// import UniformTypeIdentifiers
 
 @MainActor
 enum OpenHelper {

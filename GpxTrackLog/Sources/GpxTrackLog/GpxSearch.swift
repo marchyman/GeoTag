@@ -14,7 +14,7 @@ extension GpxTrackLog {
     ///
 
     public func search(imageTime: TimeInterval,
-                       extendedTime: Double = 120.0) async
+                       extendedTime: Double = 120.0)
     -> (CLLocationCoordinate2D, Double?)? {
         var lastPoint: Point?
         let extendedSeconds = extendedTime * 60

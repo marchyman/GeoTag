@@ -99,7 +99,8 @@ struct PasteboardCommands: Commands {
                 .disabled(showInFinderDisabled())
 
                 Button("Locn From Track") {
-                    // TODO: store.send(.locnFromTrack(extendedTime)
+                    LocationHelper.locationFromTrack(store,
+                                                     extendedTime: extendedTime)
                 }
                 .keyboardShortcut("l")
                 .disabled(locnFromTrackDisabled())

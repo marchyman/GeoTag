@@ -11,6 +11,7 @@ struct GeoTagReducer: Reducer, Sendable {
         Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
                category: "reducer")
 
+    // swiftlint:disable:next function_body_length
     func reduce(_ state: GeoTagState,
                 _ event: GeoTagEvent) -> GeoTagState {
         var newState = state
@@ -62,6 +63,12 @@ struct GeoTagReducer: Reducer, Sendable {
 
         case .locationChanged(let coords):
             update(&newState, coords: coords)
+
+        case .locationFromTrack(let updates):
+            for entry in updates {
+                update(&newState, id: entry.id,
+                       location: entry.coords, elevation: entry.elevation)
+            }
 
         case .mainWindowChange(let window):
             newState.mainWindow = window

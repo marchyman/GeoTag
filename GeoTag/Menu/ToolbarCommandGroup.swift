@@ -41,9 +41,9 @@ struct ShowHidePinView: View {
 
     var body: some View {
         if hideInvalidImages {
-            Label("Hide Disabled Files", systemImage: "eye.slash")
-        } else {
             Label("Show Disabled Files", systemImage: "eye")
+        } else {
+            Label("Hide Disabled Files", systemImage: "eye.slash")
         }
     }
 }

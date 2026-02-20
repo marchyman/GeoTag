@@ -72,8 +72,14 @@ struct ImageTableView: View {
         //     ContextMenuView(context: nil)
         // }
         .onChange(of: selection) {
-            store.send(.selectionChanged(selection)) {
-                store.discardUndo()
+            if selection != store.selection {
+                store.send(.selectionChanged(selection)) {
+                    store.discardUndo()
+                }
+            }
+        }
+        .onChange(of: store.selection) {
+            if selection != store.selection {
                 selection = store.selection
             }
         }
