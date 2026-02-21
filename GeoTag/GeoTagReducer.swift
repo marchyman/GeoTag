@@ -149,7 +149,7 @@ struct GeoTagReducer: Reducer, Sendable {
             discardChanges(&newState)
 
         case .discardTracksRequest:
-            discardTracks(&newState)
+            newState.gpxTracks.removeAll()
 
         case .clearImagesRequest:
             clearImages(&newState)

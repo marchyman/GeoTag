@@ -16,11 +16,6 @@ extension GeoTagReducer {
         state.unsavedChanges = false
     }
 
-    func discardTracks(_ state: inout GeoTagState) {
-        state.gpxTracks.removeAll()
-        // TODO: remove tracks from map
-    }
-
     func clearImages(_ state: inout GeoTagState) {
         state.selection = []
         for url in state.scopedURLs {

@@ -20,8 +20,7 @@ struct ToolbarCommands: Commands {
                 }
                 .keyboardShortcut("d")
 
-                // TODO: pin options
-                PinOptionView(/*masData: state.masData*/)
+                PinOptionView()
 
                 Button {
                     @AppStorage(ContentView.alternateLayoutKey) var alternateLayout = false
