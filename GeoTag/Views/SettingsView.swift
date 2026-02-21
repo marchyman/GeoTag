@@ -122,10 +122,7 @@ struct SettingsView: View {
                                 log GeoTag will assign locations to images \
                                 taken this many minutes before and after the \
                                 log endpoints. The first or last location \
-                                will be used as appropriate. Set this value \
-                                to zero to disable assigning locations to \
-                                images that are outside the range of the \
-                                track log.
+                                will be used as appropriate.
                                 """)
 
                             Text("Extend timestamps")

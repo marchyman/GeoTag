@@ -17,23 +17,41 @@ extension GpxTrackLog {
                        extendedTime: Double = 120.0)
     -> (CLLocationCoordinate2D, Double?)? {
         var lastPoint: Point?
-        let extendedSeconds = extendedTime * 60
+        var lastDelta: Double = 0
 
-        // search every track for the last point with a timestamp <= the
-        // image timestamp.   The location of the found point (if any)
-        // will be used as the image location.  All tracks must be searched
-        // as tracks are not sorted
+        // extendedTime must not be zero. Use a minimum of 60 seconds.
+        // (A zero value would cause the algorithm to only match points
+        // with exactly the same timestamp as the image).
+        let extendedSeconds = extendedTime == 0 ? 60 : extendedTime * 60
 
         for track in tracks {
             for segment in track.segments {
+                // points that might be a match
                 let possiblePoints = segment.points.prefix {
-                    $0.timeFromEpoch <= (imageTime + extendedSeconds)
+                    $0.timeFromEpoch <= imageTime
                 }
-                if let segmentLast = possiblePoints.last {
-                    if lastPoint == nil {
-                        lastPoint = segmentLast
-                    } else if segmentLast.timeFromEpoch > lastPoint!.timeFromEpoch {
-                        lastPoint = segmentLast
+
+                // use the last possible point. If there are now
+                // possible points use the first point in the segment
+                // if greater than the image time.
+                let potentialMatch: GpxTrackLog.Point?
+                if let lastPoint = possiblePoints.last {
+                    potentialMatch = lastPoint
+                } else if let firstPoint = segment.points.first,
+                          imageTime <= firstPoint.timeFromEpoch {
+                    potentialMatch = firstPoint
+                } else {
+                    potentialMatch = nil
+                }
+
+                // compare any potential match with any previously found
+                // point. Keep the one with a timestamp closest to that
+                // of the image.
+                if let potentialMatch {
+                    let potentialDelta = (potentialMatch.timeFromEpoch - imageTime).magnitude
+                    if lastPoint == nil || potentialDelta < lastDelta {
+                        lastPoint = potentialMatch
+                        lastDelta = potentialDelta
                     }
 
                     // if this wasn't the last point in a segment we've
@@ -52,7 +70,7 @@ extension GpxTrackLog {
             // for some location reported many days from the image timestamp?
             // if the point timestamp isn't within extendedTime of the image
             // timestamp do not treat it as a match.
-            if (last.timeFromEpoch - imageTime).magnitude < extendedSeconds {
+            if lastDelta < extendedSeconds {
                 return (
                     CLLocationCoordinate2D(
                         latitude: last.lat,
