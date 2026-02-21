@@ -17,6 +17,7 @@ extension GeoTagReducer {
     }
 
     func clearImages(_ state: inout GeoTagState) {
+        state.mostSelected = nil
         state.selection = []
         for url in state.scopedURLs {
             url.stopAccessingSecurityScopedResource()

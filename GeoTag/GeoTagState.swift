@@ -1,4 +1,5 @@
 import AppKit
+import Coords
 import GpxTrackLog
 import ImageData
 import OSLog
@@ -49,7 +50,12 @@ struct GeoTagState {
 
     var selection: Set<ImageData.ID> = []
     var mostSelected: ImageData.ID?
-
+    var currentLocation: Coords? {
+        if let id = mostSelected {
+            return self[id].metadata.location
+        }
+        return nil
+    }
     var sortOrder = [KeyPathComparator(\ImageData.name)]
 
     // keep track of security scoped URLs so they may be released when the

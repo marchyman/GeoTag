@@ -112,17 +112,20 @@ struct MapView: View {
                 setCameraPosition(to: center)
                 mapStyleName = .init(rawValue: savedMapStyle) ?? .standard
             }
-            .task(id: store.mostSelected) {
-                if let id = store.mostSelected {
-                    mainPin = store[id].metadata.location
+            .task(id: store.currentLocation) {
+                mainPin = store.currentLocation
+                if !otherPins.isEmpty {
                     otherPins = store.selection.compactMap {
                         OtherPin(store[$0].metadata.location)
                     }
                     .filter { $0.location != mainPin }
-                } else {
-                    mainPin = nil
-                    otherPins.removeAll()
                 }
+            }
+            .task(id: store.selection) {
+                otherPins = store.selection.compactMap {
+                    OtherPin(store[$0].metadata.location)
+                }
+                .filter { $0.location != mainPin }
             }
             .task(id: store.gpxTracks) {
                 if store.gpxTracks.isEmpty {
