@@ -49,7 +49,8 @@ struct ShowHidePinView: View {
 }
 
 struct PinOptionView: View {
-    @State private var showOtherPins = false
+    @AppStorage(MapView.showOtherPinsKey) var showOtherPins = false
+
     var body: some View {
         Picker(selection: $showOtherPins) {
             Text("Show pins for all selected items").tag(true)
