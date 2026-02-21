@@ -57,6 +57,13 @@ struct MapView: View {
                 MapScaleView()
                 MapZoomStepper()
             }
+            .onMapCameraChange(frequency: .onEnd) { context in
+                camera = context.camera
+                if let distance = camera?.distance {
+                    cameraDistance = distance
+                }
+                mapRect = context.rect
+            }
             .simultaneousGesture(SpatialTapGesture().onEnded { position in
                 // mapFocus.wrappedValue = nil  // get rid of any search views
                 if let id = store.mostSelected {
@@ -79,13 +86,6 @@ struct MapView: View {
                     }
                 }
             })
-            .onMapCameraChange(frequency: .onEnd) { context in
-                camera = context.camera
-                if let distance = camera?.distance {
-                    cameraDistance = distance
-                }
-                mapRect = context.rect
-            }
             .onChange(of: mapStyleName) {
                 savedMapStyle = mapStyleName.rawValue
             }
@@ -103,7 +103,7 @@ struct MapView: View {
             //         masData.searchText = ""
             //     }
             // }
-            .onChange(of: mainPin) { recenter(to: mainPin) }
+            .onChange(of: mainPin) { recenter(on: mainPin) }
             .onAppear {
                 let center = CLLocationCoordinate2D(
                     latitude: initialMapLatitude,
@@ -112,16 +112,8 @@ struct MapView: View {
                 setCameraPosition(to: center)
                 mapStyleName = .init(rawValue: savedMapStyle) ?? .standard
             }
-            .task(id: store.currentLocation) {
+            .task(id: store.version) {
                 mainPin = store.currentLocation
-                if !otherPins.isEmpty {
-                    otherPins = store.selection.compactMap {
-                        OtherPin(store[$0].metadata.location)
-                    }
-                    .filter { $0.location != mainPin }
-                }
-            }
-            .task(id: store.selection) {
                 otherPins = store.selection.compactMap {
                     OtherPin(store[$0].metadata.location)
                 }
@@ -150,7 +142,7 @@ extension MapView {
     }
 
     // recenter map if the given coords are not in view
-    func recenter(to coords: Coords?) {
+    func recenter(on coords: Coords?) {
         if let coords, let rect = mapRect {
             if !rect.contains(MKMapPoint(coords)) {
                 setCameraPosition(to: coords)
