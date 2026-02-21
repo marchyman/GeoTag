@@ -34,10 +34,12 @@ struct MapStylePicker: View {
     @Binding var mapStyleName: MapStyleName
 
     var body: some View {
-        Picker("Map Style...", selection: $mapStyleName) {
+        Picker(selection: $mapStyleName) {
             ForEach(MapStyleName.allCases) { style in
                 Text(style.rawValue).tag(style)
             }
+        } label: {
+            Label("Map style…", systemImage: "map")
         }
         .pickerStyle(.menu)
     }

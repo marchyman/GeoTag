@@ -64,6 +64,10 @@ struct MapView: View {
                 }
                 mapRect = context.rect
             }
+            .contextMenu {
+                MapContextMenu(camera: camera,
+                               mapStyleName: $mapStyleName)
+            }
             .simultaneousGesture(SpatialTapGesture().onEnded { position in
                 // mapFocus.wrappedValue = nil  // get rid of any search views
                 if let id = store.mostSelected {
