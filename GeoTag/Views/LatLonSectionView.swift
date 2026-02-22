@@ -78,7 +78,7 @@ struct LatLonSectionView: View {
                                                                        id: image.id)
                             if let address {
                                 store.send(.addressChanged(selected, address),
-                                           undoable: false) 
+                                           undoable: false)
                             }
                         }
                     }

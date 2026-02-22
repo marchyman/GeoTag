@@ -63,14 +63,14 @@ struct ImageTableView: View {
         } rows: {
             ForEach(filteredImages) { image in
                 TableRow(image)
-                    // .contextMenu {
-                    //     ContextMenuView(context: image)
-                    // }
+                    .contextMenu {
+                        ContextMenuView(context: image.id)
+                    }
             }
         }
-        // .contextMenu {
-        //     ContextMenuView(context: nil)
-        // }
+        .contextMenu {
+            ContextMenuView(context: nil)
+        }
         .onChange(of: selection) {
             if selection != store.selection {
                 store.send(.selectionChanged(selection), undoable: false)
