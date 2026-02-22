@@ -28,12 +28,12 @@ struct ContentView: View {
             Group {
                 if alternateLayout {
                     SplitVView(percent: $vAlternate) {
-                        ImageTableView()
+                        ImageTableView(inspectorPresented: $inspectorPresented)
                     } bottom: {
                         ImageView()
                     }
                 } else {
-                    ImageTableView()
+                    ImageTableView(inspectorPresented: $inspectorPresented)
                 }
             }
             .overlay {

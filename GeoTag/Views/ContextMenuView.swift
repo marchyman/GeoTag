@@ -6,19 +6,20 @@ import UDF
 
 struct ContextMenuView: View {
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
-    let context: ImageData.ID?
     @AppStorage(SettingsView.extendedTimeKey) var extendedTime = 120.0
+
+    let context: ImageData.ID?
+    @Binding var inspectorPresented: Bool
 
     var body: some View {
         Group {
             Button("Edit…", systemImage: "pencil") {
                 if let context {
                     store.send(.selectionChanged([context]), undoable: false)
-                    // TODO: need access to this state variable
-                    // state.inspectorPresented.toggle()
                 }
+                inspectorPresented.toggle()
             }
-            .disabled(context == nil)
+            .disabled(context == nil && store.mostSelected == nil)
         }
 
         Divider()
@@ -92,7 +93,7 @@ struct ContextMenuView: View {
             }
             .disabled(context == nil && store.mostSelected == nil)
 
-            Button("Locn From Track", systemImage: "") {
+            Button("Locn From Track") {
                 if let context {
                     store.send(.selectionChanged([context]), undoable: false)
                 }
@@ -106,7 +107,7 @@ struct ContextMenuView: View {
 
         Divider()
 
-        Button("Clear Image List", systemImage: "") {
+        Button("Clear Image List") {
             store.send(.clearImagesRequest,
                        description: "clear image list")
         }
@@ -159,7 +160,9 @@ extension ContextMenuView {
 }
 
 #Preview {
-    ContextMenuView(context: nil)
+    @Previewable @State var toggle = false
+    ContextMenuView(context: nil,
+                    inspectorPresented: $toggle)
         .environment(Store(initialState: GeoTagState(),
                            reduce: GeoTagReducer()))
 }

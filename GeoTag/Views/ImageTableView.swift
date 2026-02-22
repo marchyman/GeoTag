@@ -24,6 +24,8 @@ struct ImageTableView: View {
     @State private var selection: Set<ImageData.ID> = []
     @State private var sortOrder = [KeyPathComparator(\ImageData.name)]
 
+    @Binding var inspectorPresented: Bool
+
     var filteredImages: [ImageData] {
         return store.searchText.isEmpty
             ? hideInvalidImages
@@ -64,12 +66,14 @@ struct ImageTableView: View {
             ForEach(filteredImages) { image in
                 TableRow(image)
                     .contextMenu {
-                        ContextMenuView(context: image.id)
+                        ContextMenuView(context: image.id,
+                                        inspectorPresented: $inspectorPresented)
                     }
             }
         }
         .contextMenu {
-            ContextMenuView(context: nil)
+            ContextMenuView(context: nil,
+                            inspectorPresented: $inspectorPresented)
         }
         .onChange(of: selection) {
             if selection != store.selection {
