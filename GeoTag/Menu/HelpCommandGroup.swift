@@ -16,9 +16,7 @@ struct HelpCommands: Commands {
                 Label("Report a bug…", systemImage: "link")
             }
             Button("Show log…", systemImage: "list.clipboard") {
-                store.send(.toggleLogWindow) {
-                    store.discardUndo()
-                }
+                store.send(.toggleLogWindow, undoable: false)
             }
         }
     }

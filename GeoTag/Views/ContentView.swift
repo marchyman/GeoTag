@@ -57,8 +57,7 @@ struct ContentView: View {
         .padding()
         .dropDestination(for: URL.self) { items, _ in
             spinnerEnabled = true
-            store.send(.openFiles(items)) {
-                store.discardUndo()
+            store.send(.openFiles(items), undoable: false) {
                 if let urls = store.uniqueURLs {
                     OpenHelper.open(store, urls: urls,
                                     description: "drag files",
@@ -98,8 +97,7 @@ struct ContentView: View {
             switch result {
             case let .success(files):
                 spinnerEnabled = true
-                store.send(.openFiles(files)) {
-                    store.discardUndo()
+                store.send(.openFiles(files), undoable: false) {
                     if let urls = store.uniqueURLs {
                         OpenHelper.open(store, urls: urls,
                                         description: "add files",
@@ -123,9 +121,7 @@ struct ContentView: View {
     // when a sheet is dismissed check if there are more sheets to display
 
     private func sheetDismissed() {
-        store.send(.sheetDismissed) {
-            store.discardUndo()
-        }
+        store.send(.sheetDismissed, undoable: false)
     }
 
     // the UTTypes that can be imported into this app.

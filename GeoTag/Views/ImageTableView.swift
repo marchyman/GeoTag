@@ -73,9 +73,7 @@ struct ImageTableView: View {
         // }
         .onChange(of: selection) {
             if selection != store.selection {
-                store.send(.selectionChanged(selection)) {
-                    store.discardUndo()
-                }
+                store.send(.selectionChanged(selection), undoable: false)
             }
         }
         .onChange(of: store.selection) {
@@ -85,9 +83,7 @@ struct ImageTableView: View {
         }
         .onChange(of: sortOrder) {
             if sortOrder != store.sortOrder {
-                store.send(.sortOrderChanged(sortOrder)) {
-                    store.discardUndo()
-                }
+                store.send(.sortOrderChanged(sortOrder), undoable: false)
             }
         }
         .searchable(text: $searchText, isPresented: $searchActive,

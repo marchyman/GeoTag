@@ -77,9 +77,8 @@ struct LatLonSectionView: View {
                             await ReverseLocationFinder.reverseGeocode(store: store,
                                                                        id: image.id)
                             if let address {
-                                store.send(.addressChanged(selected, address)) {
-                                    store.discardUndo()
-                                }
+                                store.send(.addressChanged(selected, address),
+                                           undoable: false) 
                             }
                         }
                     }

@@ -79,9 +79,7 @@ struct GpxLoadView: View {
             }
         }
         .onDisappear {
-            store.send(.gpxLoadViewClosed) {
-                store.discardUndo()
-            }
+            store.send(.gpxLoadViewClosed, undoable: false)
         }
         .frame(
             minWidth: sheetWidth, maxWidth: sheetWidth,

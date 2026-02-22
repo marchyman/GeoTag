@@ -21,9 +21,7 @@ struct ImageView: View {
                 if store[id].thumbnail == nil {
                     thumbnail = await store[id].makeThumbnail()
                     if let thumbnail {
-                        store.send(.newThumbnail(thumbnail)) {
-                            store.discardUndo()
-                        }
+                        store.send(.newThumbnail(thumbnail), undoable: false)
                     }
                 } else {
                     thumbnail = store[id].thumbnail

@@ -25,16 +25,12 @@ struct GeoTagApp: App {
                     appDelegate.store = store
                     if !doNotBackup {
                         if savedBookmark == Data() {
-                            store.send(.initialBackupNotice) {
-                                store.discardUndo()
-                            }
+                            store.send(.initialBackupNotice, undoable: false)
                         } else {
-                            store.send(.initBackupURL) {
-                                store.discardUndo()
+                            store.send(.initBackupURL, undoable: false) {
                                 if store.backupURL != nil {
-                                    store.send(.backupFolderSizeCheck) {
-                                        store.discardUndo()
-                                    }
+                                    store.send(.backupFolderSizeCheck,
+                                               undoable: false)
                                 }
                             }
                         }
@@ -42,9 +38,7 @@ struct GeoTagApp: App {
                 }
                 .onChange(of: mainWindow) {
                     mainWindow?.delegate = appDelegate
-                    store.send(.mainWindowChange(mainWindow)) {
-                        store.discardUndo()
-                    }
+                    store.send(.mainWindowChange(mainWindow), undoable: false)
                 }
                 .environment(store)
 
