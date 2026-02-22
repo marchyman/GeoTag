@@ -1,9 +1,3 @@
-//
-// Copyright 2024 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 import OSLog
 import SwiftUI
 
@@ -46,6 +40,7 @@ public struct RunLogView: View {
 
                 ForEach(logEntries, id: \.self) { entry in
                     Text(entry)
+                    .font(Font.system(size: 13).monospaced())
                 }
             }
         }
@@ -58,7 +53,6 @@ public struct RunLogView: View {
 }
 
 extension RunLogView {
-
     nonisolated private func getLogEntries() async -> [String] {
         var loggedMessages: [String] = []
         let timeFormatter = DateFormatter()
@@ -72,7 +66,7 @@ extension RunLogView {
             for entry in myEntries {
                 let formattedTime = timeFormatter.string(from: entry.date)
                 let formatedEntry = """
-                    \(formattedTime):  \(entry.category) \
+                    \(formattedTime):  \(entry.category) | \
                     \(entry.composedMessage)
                     """
                 loggedMessages.append(formatedEntry)
@@ -87,7 +81,6 @@ extension RunLogView {
         }
         return loggedMessages
     }
-
 }
 
 #Preview {

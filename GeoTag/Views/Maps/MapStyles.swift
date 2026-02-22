@@ -1,0 +1,46 @@
+import MapKit
+import SwiftUI
+
+// map styles supported by this app
+
+enum MapStyleName: String, CaseIterable, Identifiable {
+    case standard = "Standard"
+    case imagery = "Imagery"
+    case hybrid = "Hybrid"
+    case standardTraffic = "Standard with traffic"
+    case hybridTraffic = "Hybrid with traffic"
+
+    var id: MapStyleName { self }
+
+    func mapStyle() -> MapStyle {
+        switch self {
+        case .standard:
+            return .standard(elevation: .realistic)
+        case .imagery:
+            return .imagery
+        case .hybrid:
+            return .hybrid
+        case .standardTraffic:
+            return .standard(showsTraffic: true)
+        case .hybridTraffic:
+            return .hybrid(showsTraffic: true)
+        }
+    }
+}
+
+// A picker view used to select a map style
+
+struct MapStylePicker: View {
+    @Binding var mapStyleName: MapStyleName
+
+    var body: some View {
+        Picker(selection: $mapStyleName) {
+            ForEach(MapStyleName.allCases) { style in
+                Text(style.rawValue).tag(style)
+            }
+        } label: {
+            Label("Map style…", systemImage: "map")
+        }
+        .pickerStyle(.menu)
+    }
+}

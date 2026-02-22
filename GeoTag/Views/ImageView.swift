@@ -1,21 +1,14 @@
-//
-// Copyright 2022 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 import SwiftUI
+import UDF
 
 struct ImageView: View {
-    @Environment(AppState.self) var state
+    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
     @State private var thumbnail: Image?
 
     var body: some View {
         Group {
             if let image = thumbnail {
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                image.resizable().aspectRatio(contentMode: .fit)
             } else {
                 Image(systemName: "photo")
                     .font(.system(size: 96))
@@ -23,14 +16,16 @@ struct ImageView: View {
             }
         }
         .padding()
-        .task(id: state.tvm.mostSelected) {
-            if let image = state.tvm.mostSelected {
-                let interval = state.markStart("thumbnail")
-                defer { state.markEnd("thumbnail", interval: interval) }
-                if image.thumbnail == nil {
-                    image.thumbnail = await image.makeThumbnail()
+        .task(id: store.mostSelected) {
+            if let id = store.mostSelected {
+                if store[id].thumbnail == nil {
+                    thumbnail = await store[id].makeThumbnail()
+                    if let thumbnail {
+                        store.send(.newThumbnail(thumbnail), undoable: false)
+                    }
+                } else {
+                    thumbnail = store[id].thumbnail
                 }
-                thumbnail = image.thumbnail
                 return
             }
             thumbnail = nil
@@ -40,5 +35,6 @@ struct ImageView: View {
 
 #Preview {
     ImageView()
-        .environment(AppState())
+        .environment(Store(initialState: GeoTagState(),
+                           reduce: GeoTagReducer()))
 }

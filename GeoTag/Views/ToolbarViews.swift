@@ -1,39 +1,33 @@
-//
-// Copyright 2024 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 import PhotosUI
 import SwiftUI
+import UDF
 
 struct PhotoPickerView: View {
-    @Environment(AppState.self) var state
-    var photoLibrary = PhotoLibrary.shared
-
+    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @State private var photoLibrary = PhotoLibrary.shared
     @State private var pickerItems: [PhotosPickerItem] = []
+    @State private var libraryEnabled = false
+    @State private var libraryDisabled = false
 
     var body: some View {
         Group {
             if photoLibrary.enabled {
-                PhotosPicker(
-                    selection: $pickerItems,
-                    matching: .images,
-                    photoLibrary: .shared()
-                ) {
+                PhotosPicker(selection: $pickerItems,
+                             matching: .images,
+                             photoLibrary: .shared()) {
                     Label("Photo Library", systemImage: "photo")
                         .imageScale(.large)
                 }
                 .keyboardShortcut("i", modifiers: [.shift, .command])
             } else {
                 Button {
-                    photoLibrary.requestAuth {
-                        Task { @MainActor in
-                            if photoLibrary.enabled {
-                                state.libraryEnabledMessage = true
-                            } else {
-                                state.libraryDisabledMessage = true
-                            }
+                    photoLibrary.requestAuth { @MainActor enabled in
+                        photoLibrary.enabled = enabled
+                        if photoLibrary.enabled {
+                            libraryEnabled.toggle()
+
+                        } else {
+                            libraryDisabled.toggle()
                         }
                     }
                 } label: {
@@ -43,24 +37,28 @@ struct PhotoPickerView: View {
             }
         }
         .onChange(of: pickerItems) {
-            let selectedItems = pickerItems
-            pickerItems = []
-            Task {
-                await photoLibrary.addPhotos(from: selectedItems, to: state.tvm)
+            if !pickerItems.isEmpty {
+                let selectedItems = pickerItems
+                pickerItems = []
+                Task {
+                    store.beginUndoGroup(description: "add from photos lib")
+                    await photoLibrary.addPhotos(from: selectedItems,
+                                                 store: store)
+                    store.endUndoGroup()
+                }
             }
         }
-        .onAppear {
-            AppState.logger.info("PhotoPickerView appeared")
-        }
+        .photoLibraryEnabledAlert(isPresented: $libraryEnabled)
+        .photoLibraryDisabledAlert(isPresented: $libraryDisabled)
     }
 }
 
 struct InspectorButtonView: View {
-    @Environment(AppState.self) var state
+    @Binding var presented: Bool
 
     var body: some View {
         Button {
-            state.inspectorPresented.toggle()
+            presented.toggle()
         } label: {
             Label("Toggle Inspector", systemImage: "info.circle")
         }

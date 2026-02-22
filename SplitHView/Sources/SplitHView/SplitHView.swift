@@ -1,14 +1,8 @@
-//
-// Copyright 2024 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 import SwiftUI
 
 // A horizontal view with two children separated by a dragable divider.
-// The divider is stored as a percentage of the window width for the
-// reserved for the right side of the view.
+// The divider is stored as a percentage of the window width reserved
+// for the right side of the view.
 
 public struct SplitHView<Left: View, Right: View>: View {
     @Binding var percent: Double

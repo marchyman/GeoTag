@@ -1,10 +1,5 @@
-//
-// Copyright 2022 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 import SwiftUI
+import UDF
 
 // sheet size
 let sheetWidth = 600.0
@@ -17,7 +12,7 @@ enum SheetType: Identifiable, View {
     case duplicateImageSheet
     case noBackupFolderSheet
     case savingUpdatesSheet
-    case saveErrorSheet
+    // case saveErrorSheet
     case unexpectedErrorSheet
 
     nonisolated var id: Self {
@@ -34,8 +29,8 @@ enum SheetType: Identifiable, View {
             NoBackupFolderView().withDismiss()
         case .savingUpdatesSheet:
             SavingUpdatesView().withDismiss()
-        case .saveErrorSheet:
-            SaveErrorView().withDismiss()
+        // case .saveErrorSheet:
+        //     SaveErrorView().withDismiss()
         case .unexpectedErrorSheet:
             UnexpectedErrorView().withDismiss()
         }
@@ -46,14 +41,14 @@ enum SheetType: Identifiable, View {
 // Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
 
 struct GpxLoadView: View {
-    @Environment(AppState.self) var state
+    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
 
     var body: some View {
         VStack(alignment: .leading) {
-            if state.gpxGoodFileNames.count > 0 {
+            if store.gpxGoodFileNames.count > 0 {
                 Text("GPX Files Loaded")
                     .font(.title)
-                List(state.gpxGoodFileNames, id: \.self) { Text($0) }
+                List(store.gpxGoodFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text(
                     """
@@ -64,10 +59,10 @@ struct GpxLoadView: View {
                 .lineLimit(nil)
                 .padding()
             }
-            if state.gpxBadFileNames.count > 0 {
+            if store.gpxBadFileNames.count > 0 {
                 Text("GPX Files NOT Loaded")
                     .font(.title)
-                List(state.gpxBadFileNames, id: \.self) { Text($0) }
+                List(store.gpxBadFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
@@ -84,9 +79,7 @@ struct GpxLoadView: View {
             }
         }
         .onDisappear {
-            // clear lists of good and bad track file names
-            state.gpxGoodFileNames = []
-            state.gpxBadFileNames = []
+            store.send(.gpxLoadViewClosed, undoable: false)
         }
         .frame(
             minWidth: sheetWidth, maxWidth: sheetWidth,
@@ -154,48 +147,48 @@ struct SavingUpdatesView: View {
     }
 }
 
-struct SaveErrorView: View {
-    @Environment(AppState.self) var state
-
-    var body: some View {
-        VStack {
-            Text("One or more files could not be saved")
-                .font(.title)
-                .padding()
-            Text("The updates to one or more files could not be updated.")
-                .lineLimit(nil)
-                .padding(.bottom, 40)
-            List {
-                ForEach(state.saveIssues.sorted(by: >), id: \.key) { key, value in
-                    VStack(alignment: .leading) {
-                        Text(key.lastPathComponent)
-                            .bold()
-                        Text(value)
-                            .padding(.bottom)
-                    }
-                }
-            }
-            .frame(maxHeight: .infinity)
-        }
-        .frame(maxWidth: 600, minHeight: 400)
-    }
-
-}
+// struct SaveErrorView: View {
+//     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+//
+//     var body: some View {
+//         VStack {
+//             Text("One or more files could not be saved")
+//                 .font(.title)
+//                 .padding()
+//             Text("The updates to one or more files could not be updated.")
+//                 .lineLimit(nil)
+//                 .padding(.bottom, 40)
+//             List {
+//                 ForEach(store.saveIssues.sorted(by: >), id: \.key) { key, value in
+//                     VStack(alignment: .leading) {
+//                         Text(key.lastPathComponent)
+//                             .bold()
+//                         Text(value)
+//                             .padding(.bottom)
+//                     }
+//                 }
+//             }
+//             .frame(maxHeight: .infinity)
+//         }
+//         .frame(maxWidth: 600, minHeight: 400)
+//     }
+//
+// }
 
 struct UnexpectedErrorView: View {
-    @Environment(AppState.self) var state
+    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
 
     var body: some View {
         VStack {
             Text("Unexpected Error")
                 .font(.title)
                 .padding()
-            if let message = state.sheetMessage {
+            if let message = store.sheetMessage {
                 Text(message)
                     .padding()
             }
-            if let error = state.sheetError {
-                Text(error.localizedDescription)
+            if let errorDescription = store.sheetError {
+                Text(errorDescription)
                     .padding()
             }
         }
@@ -235,25 +228,29 @@ extension View {
 // MARK: Previews
 
 #Preview("GpxLoadView") {
-    let state = AppState()
-    state.gpxGoodFileNames.append("Good/File/Name")
-    return SheetType.gpxFileNameSheet
-        .environment(state)
+    let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    // swiftlint:disable:next redundant_discardable_let
+    let _ = store.send(.goodGpxFile("Good/File/Name"))
+    SheetType.gpxFileNameSheet
+        .environment(store)
 }
 
 #Preview("GpxLoadView (bad)") {
-    let state = AppState()
-    state.gpxBadFileNames.append("Bad/File/Name")
-    return SheetType.gpxFileNameSheet
-        .environment(state)
+    let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    // swiftlint:disable:next redundant_discardable_let
+    let _ = store.send(.badGpxFile("Bad/File/Name"))
+    SheetType.gpxFileNameSheet
+        .environment(store)
 }
 
 #Preview("GpxLoadView (both)") {
-    let state = AppState()
-    state.gpxGoodFileNames.append("Good/File/Name")
-    state.gpxBadFileNames.append("Bad/File/Name")
-    return SheetType.gpxFileNameSheet
-        .environment(state)
+    let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+    // swiftlint:disable redundant_discardable_let
+    let _ = store.send(.goodGpxFile("Good/File/Name"))
+    let _ = store.send(.badGpxFile("Bad/File/Name"))
+    // swiftlint:enable redundant_discardable_let
+    SheetType.gpxFileNameSheet
+        .environment(store)
 }
 
 #Preview("DuplicateImageView") {
@@ -268,10 +265,10 @@ extension View {
     SheetType.savingUpdatesSheet
 }
 
-#Preview("SaveErrorView") {
-    let state = AppState()
-    state.saveIssues[URL(fileURLWithPath: "/path/to/some/image.jpg")] = "some save error"
-    state.saveIssues[URL(fileURLWithPath: "/path/to/some/other.jpg")] = "some other error"
-    return SheetType.saveErrorSheet
-        .environment(state)
-}
+// #Preview("SaveErrorView") {
+//     let store = Store(GeoTagState(), GeoTagReducer())
+//     store.saveIssues[URL(fileURLWithPath: "/path/to/some/image.jpg")] = "some save error"
+//     store.saveIssues[URL(fileURLWithPath: "/path/to/some/other.jpg")] = "some other error"
+//     return SheetType.saveErrorSheet
+//         .environment(store)
+// }

@@ -2,12 +2,13 @@ name: GeoTag
 
 options:
   deploymentTarget:
-    macOS: "15.0"
+    macOS: "26.0"
   groupOrdering:
     - order: [GeoTag, GeoTagTests, Packages, Products]
   fileTypes:
     "icon":
       file: true 
+  defaultSourceDirectoryType: syncedFolder
 
 settings:
   base:
@@ -42,18 +43,25 @@ targets:
     type: application
     platform: macOS
     dependencies:
-      - package: AdjustTimeZoneView
+      - package: UDF
+      - package: Coords
+      - package: Exiftool
       - package: GpxTrackLog
-      - package: MapAndSearchViews
+      - package: ImageData
+      - package: Imagetool
+      - package: Metadata
+      - package: Phototool
       - package: RunLogView
       - package: SplitHView
       - package: SplitVView
     sources:
+      - Supporting Files/AppIcon.icon
+      - Supporting Files/Assets.xcassets
+      - Supporting Files/Credits.rtf
+      - Supporting Files/PrivacyInfo.xcprivacy
       - GeoTag
-      - path: ExifTool
-        type: folder
     info:
-      path: GeoTag/Info.plist
+      path: Generated/Info.plist
       properties:
         CFBundleDisplayName: $(TARGET_NAME)
         LSApplicationCategoryType: public.app-category.photography
@@ -182,12 +190,23 @@ schemes:
       revealArchiveInOrganizer: YES
 
 packages:
-  AdjustTimeZoneView:
-    path: AdjustTimeZoneView
+  UDF:
+    url: git://snafu.org/UDF
+    branch: main
+  Coords:
+    path: Coords
+  Exiftool:
+    path: Exiftool
   GpxTrackLog:
     path: GpxTrackLog
-  MapAndSearchViews:
-    path: MapAndSearchViews
+  Imagetool:
+    path: Imagetool
+  ImageData:
+    path: ImageData
+  Metadata:
+    path: Metadata
+  Phototool:
+    path: Phototool
   RunLogView:
     path: RunLogView
   SplitHView:
