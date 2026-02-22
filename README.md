@@ -21,7 +21,7 @@ See <http://exiftool.org> for information about ExifTool.
     There is a map pin location issue when running on early versions of macOS
     Sonoma. If you see a pin placed above the point you clicked/tapped you are
     seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
-    14.4.1). It is not a problem in the latest versions of Sonoma or in Sequoia.
+    14.4.1). It is not a problem in the latest versions of Sonoma.
 
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
@@ -49,14 +49,6 @@ See <http://exiftool.org> for information about ExifTool.
 
 - Only the first raw-jpg pair was processed when the Disable paired jpegs
   option was set. All pairs are now properly processed.
-
-### Known Issues
-
-- Developer issue: User Interface testing is broken.  Sometimes the tests
-  pass. Sometimes they crash at startup.  Sometimes the main window
-  never opens.  I believe this is an XCUITest issue, probably triggered
-  by something GeoTag or the GeoTag tests do. Otherwise I'd expect
-  to see others complaining of the problem.
 
 ### Known issues
 
