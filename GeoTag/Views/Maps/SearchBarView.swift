@@ -6,8 +6,7 @@ struct SearchBarView: View {
     @Environment(\.colorScheme) var colorScheme
 
     var mapFocus: FocusState<MapWithSearchView.MapFocus?>.Binding
-
-    @State private var searchText = ""
+    @Binding var searchInfo: MapWithSearchView.SearchInfo
 
     private var searchBackgroundColor: Color {
         colorScheme == .dark ? .black : .white
@@ -20,7 +19,7 @@ struct SearchBarView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.primary)
-                    TextField(" Search location", text: $searchText)
+                    TextField(" Search location", text: $searchInfo.searchText)
                         .disableAutocorrection(true)
                         .focusEffectDisabled()
                         .focused(mapFocus, equals: .search)
@@ -28,7 +27,7 @@ struct SearchBarView: View {
                             if mapFocus.wrappedValue == .search {
                                 Button {
                                     mapFocus.wrappedValue = nil
-                                    searchText = ""
+                                    searchInfo.searchText = ""
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
                                 }
@@ -38,13 +37,11 @@ struct SearchBarView: View {
                         }
                         .onExitCommand {
                             mapFocus.wrappedValue = nil
+                            searchInfo.searchText = ""
                         }
                         .onSubmit {
                             mapFocus.wrappedValue = .searchList
-                            // masData.pickFirst.toggle()
-                        }
-                        .onChange(of: mapFocus.wrappedValue) {
-                            // masData.searchBarActive = mapFocus.wrappedValue == .search
+                            searchInfo.picked.toggle()
                         }
                 }
                 .padding(.vertical, 12)
@@ -54,10 +51,13 @@ struct SearchBarView: View {
     }
 }
 
-// #Preview {
-//     @FocusState var mapFocus: MapAndSearchView.MapFocus?
-//     return SearchBarView(mapFocus: $mapFocus, masData: MapAndSearchData())
-//         .frame(maxWidth: 400)
-//         .padding()
-// }
+#Preview {
+    @Previewable @State var searchInfo = MapWithSearchView.SearchInfo()
+    @FocusState var mapFocus: MapWithSearchView.MapFocus?
 
+    SearchBarView(mapFocus: $mapFocus, searchInfo: $searchInfo)
+        .frame(maxWidth: 400)
+        .padding()
+        .environment(Store(initialState: GeoTagState(),
+                           reduce: GeoTagReducer()))
+}

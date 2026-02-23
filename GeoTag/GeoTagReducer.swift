@@ -42,6 +42,12 @@ struct GeoTagReducer: Reducer, Sendable {
         case .changeTimeZone:
             newState.showTimeZoneWindow.toggle()
 
+        case .clearPlaces:
+            clearPlaces(&newState)
+
+        case .findInMap(let value):
+            newState.mapSearchActive = value
+
         case .finishedAddingTracks:
             newState.addSheet(type: .gpxFileNameSheet)
 
@@ -97,6 +103,9 @@ struct GeoTagReducer: Reducer, Sendable {
 
         case .searchActiveChanged(let searchActive):
             newState.searchActive = searchActive
+
+        case .placeSelection(let place):
+            savePlace(&newState, place)
 
         case .searchTextChanged(let text):
             newState.searchText = text

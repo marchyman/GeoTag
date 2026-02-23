@@ -35,6 +35,16 @@ struct GeoTagState {
         }
     }
 
+    var selection: Set<ImageData.ID> = []
+    var mostSelected: ImageData.ID?
+    var currentLocation: Coords? {
+        if let id = mostSelected {
+            return self[id].metadata.location
+        }
+        return nil
+    }
+    var sortOrder = [KeyPathComparator(\ImageData.name)]
+
     @MainActor
     var unsavedChanges = false {
         didSet {
@@ -50,17 +60,7 @@ struct GeoTagState {
     var searchActive = false
     var searchText = ""
     var mapSearchActive = false
-    var mapSearchText = ""
-
-    var selection: Set<ImageData.ID> = []
-    var mostSelected: ImageData.ID?
-    var currentLocation: Coords? {
-        if let id = mostSelected {
-            return self[id].metadata.location
-        }
-        return nil
-    }
-    var sortOrder = [KeyPathComparator(\ImageData.name)]
+    var places: [Place] = []
 
     // keep track of security scoped URLs so they may be released when the
     // table of images is cleared.

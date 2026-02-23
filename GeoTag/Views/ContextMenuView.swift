@@ -139,8 +139,6 @@ extension ContextMenuView {
         return true
     }
 
-    // TODO: this is duplicated in PastboardCommandsGroup.
-
     private func showInFinder() {
         var urls: [URL] = []
 

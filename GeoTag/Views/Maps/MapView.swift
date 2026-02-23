@@ -15,6 +15,9 @@ struct MapView: View {
     @AppStorage(SettingsView.trackWidthKey) var trackWidth = 0.0
     @AppStorage(SettingsView.trackColorKey) var trackColor = Color.black
 
+    var mapFocus: FocusState<MapWithSearchView.MapFocus?>.Binding
+    @Binding var searchInfo: MapWithSearchView.SearchInfo
+
     @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var cameraDistance: Double = 0
     @State private var mapRect: MKMapRect?
@@ -69,7 +72,7 @@ struct MapView: View {
                                mapStyleName: $mapStyleName)
             }
             .simultaneousGesture(SpatialTapGesture().onEnded { position in
-                // mapFocus.wrappedValue = nil  // get rid of any search views
+                mapFocus.wrappedValue = nil  // get rid of any search views
                 if let id = store.mostSelected {
                     if let loc = mapProxy.convert(position.location, from: .local) {
                         store.send(.locationChanged(loc),
@@ -92,20 +95,12 @@ struct MapView: View {
             .onChange(of: mapStyleName) {
                 savedMapStyle = mapStyleName.rawValue
             }
-            // .onChange(of: masData.searchResult) {
-            //     if let searchResult = masData.searchResult {
-            //         if !allPins.isEmpty {
-            //             // zoom in to better show pin when necessary
-            //             if masData.cameraDistance > zoomDistance {
-            //                 masData.cameraDistance = zoomDistance
-            //             }
-            //             updatePins(searchResult.coordinate.coord2D)
-            //         } else {
-            //             masData.setCameraPosition(to: searchResult.coordinate.coord2D)
-            //         }
-            //         masData.searchText = ""
-            //     }
-            // }
+            .onChange(of: searchInfo.recenterLocation) {
+                if let location = searchInfo.recenterLocation {
+                    recenter(on: location)
+                    searchInfo.recenterLocation = nil
+                }
+            }
             .onChange(of: mainPin) { recenter(on: mainPin) }
             .onAppear {
                 let center = CLLocationCoordinate2D(

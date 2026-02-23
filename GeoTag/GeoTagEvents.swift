@@ -15,6 +15,8 @@ enum GeoTagEvent: Equatable {
     case badGpxFile(String)
     case catchUnexpectedError(String?, String?)
     case changeTimeZone
+    case clearPlaces
+    case findInMap(Bool)
     case finishedAddingTracks
     case goodGpxFile(String)
     case gpxLoadViewClosed
@@ -27,6 +29,7 @@ enum GeoTagEvent: Equatable {
     case newThumbnail(Image)
     case openCommand
     case openFiles([URL])
+    case placeSelection(Place)
     case quitRequested
     case readTrackLog(String, GpxTrackLog?)
     case removeOldFiles
@@ -62,6 +65,8 @@ extension GeoTagEvent: CustomStringConvertible {
         case .badGpxFile: "badGpxFile"
         case .catchUnexpectedError: "catchUnexpectedError"
         case .changeTimeZone: "changeTimeZone"
+        case .clearPlaces: "clearPlaces"
+        case .findInMap: "findInMap"
         case .finishedAddingTracks: "finishedAddingTracks"
         case .goodGpxFile: "goodGpxFile"
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
@@ -74,6 +79,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .newThumbnail: "newThumbnail"
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
+        case .placeSelection: "placeSelection"
         case .quitRequested: "quitRequested"
         case .readTrackLog: "readTrackLog"
         case .removeOldFiles: "removeOldFiles"

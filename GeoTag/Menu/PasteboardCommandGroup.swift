@@ -83,7 +83,7 @@ struct PasteboardCommands: Commands {
 
             Group {
                 Button("Find (map)...") {
-                    // TODO: state.masData.searchBarActive = true
+                    store.send(.findInMap(true), undoable: false)
                 }
                 .keyboardShortcut("f")
             }
