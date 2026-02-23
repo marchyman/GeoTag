@@ -43,12 +43,12 @@ struct ContentView: View {
             }
         } right: {
             if alternateLayout {
-                MapView()
+                MapWithSearchView()
             } else {
                 SplitVView(percent: $vNormal) {
                     ImageView()
                 } bottom: {
-                    MapView()
+                    MapWithSearchView()
                 }
             }
         }

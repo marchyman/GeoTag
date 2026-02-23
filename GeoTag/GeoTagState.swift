@@ -45,8 +45,12 @@ struct GeoTagState {
     var saveInProgress = false
     var importFiles = false
 
+    // Search exists for items in the Image Table and locations
+    // on a map.
     var searchActive = false
     var searchText = ""
+    var mapSearchActive = false
+    var mapSearchText = ""
 
     var selection: Set<ImageData.ID> = []
     var mostSelected: ImageData.ID?
