@@ -1,4 +1,4 @@
-## GeoTag for macOS -- macOS 15 or later for latest version
+## GeoTag for macOS -- macOS 26 or later for GeoTag 6
 
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
@@ -14,17 +14,34 @@ See <http://exiftool.org> for information about ExifTool.
 
 ### Version requirements
 
+- GeoTag 6.0+ requires macOS 26 (Tahoe) or later
 - GeoTag 5.7+ requires macOS 15 (Sequoia) or later.
 - GeoTag 5.2 thru 5.6 requires macOS 14 (Sonoma) or later.
-
-    [!WARNING] 
-    There is a map pin location issue when running on early versions of macOS
-    Sonoma. If you see a pin placed above the point you clicked/tapped you are
-    seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
-    14.4.1). It is not a problem in the latest versions of Sonoma.
-
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
+
+## WIP (will be version 6)
+
+Mostly the same user interface, but restructured and rewriten under the hood.
+
+### Updates
+
+- Better Undo/Redo support with ability to undo more things. The undo
+  and redo menu items now work correctly.
+
+- ⌘f to select map search field, ⌘F to select table search field.
+
+### Bug Fixes
+
+- undo/redo menu
+- Paste after cut issue seems to be resolved
+- Apple added Fuji compressed raw image file support
+
+### Known issues
+
+- Images from a Photos can not always be displayed. This appears to be
+  an Apple issue that has been reported many times over the years. No
+  known workaround.
 
 ## GeoTag Version 5.7
 
