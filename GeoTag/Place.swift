@@ -2,6 +2,9 @@ import MapKit
 import OSLog
 import SwiftUI
 
+// TODO: combine this with FullAddress from LocationActor as they both
+// hold roughly the same data
+
 struct Place: Identifiable, Codable {
     var name: String
     var coordinate: Coordinate
@@ -9,8 +12,14 @@ struct Place: Identifiable, Codable {
 
     init(from item: MKMapItem) {
         self.name = item.name ?? "unknown"
-        if let address = item.address?.fullAddress {
-            name += ", \(address)"
+        if let locality = item.placemark.locality, locality != item.name {
+            self.name += ", \(locality)"
+        }
+        if let area = item.placemark.administrativeArea, area != item.name {
+            self.name += ", \(area)"
+        }
+        if let country = item.placemark.country, country != "United States" {
+            self.name += ", \(country)"
         }
         self.coordinate = .init(item.location.coordinate)
     }

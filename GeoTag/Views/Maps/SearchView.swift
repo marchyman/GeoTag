@@ -13,14 +13,12 @@ struct SearchView: View {
     var body: some View {
         VStack(alignment: .leading) {
             List(selection: $searchInfo.selection) {
-                Button {
-                    searchInfo.searchText = ""
+                Button(role: .destructive) {
                     mapFocus.wrappedValue = nil
                 } label: {
-                    Text("Cancel")
-                        .padding(.horizontal)
+                    Label("Cancel", systemImage: "xmark.circle.fill")
                 }
-                .padding(.vertical)
+                .buttonStyle(.borderless)
                 .listRowSeparator(.hidden)
 
                 Section {
@@ -142,8 +140,9 @@ struct SearchView: View {
     }
 }
 
-// #Preview {
-//     @Previewable @FocusState var mapFocus: MapWithSearchView.MapFocus?
-//     SearchView(mapFocus: $mapFocus)
-//         .environment(Store(initialState: GeoTagState(), reduce: GeoTagReducer()))
-// }
+#Preview {
+    @Previewable @FocusState var mapFocus: MapWithSearchView.MapFocus?
+    @Previewable @State var searchInfo = MapWithSearchView.SearchInfo()
+    SearchView(mapFocus: $mapFocus, searchInfo: $searchInfo)
+        .environment(Store(initialState: GeoTagState(), reduce: GeoTagReducer()))
+}
