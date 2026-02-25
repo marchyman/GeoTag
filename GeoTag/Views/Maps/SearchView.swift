@@ -51,11 +51,10 @@ struct SearchView: View {
                             leading: leadingInset,
                             bottom: 0,
                             trailing: 0))
-                    Button {
+                    Button("Clear List", systemImage: "xmark.circle") {
                         store.send(.clearPlaces)
-                    } label: {
-                        Text("Clear list")
                     }
+                    .buttonStyle(.borderless)
                     .padding(.vertical)
                     .padding(.leading, leadingInset)
                 } header: {
