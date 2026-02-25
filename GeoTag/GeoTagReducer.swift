@@ -99,6 +99,9 @@ struct GeoTagReducer: Reducer, Sendable {
                 newState[id].thumbnail = image
             }
 
+        case .newTimestamp(let date, let adjustment):
+                update(&newState, date: date, adjustment: adjustment)
+
         case .openCommand:
             newState.importFiles.toggle()
 

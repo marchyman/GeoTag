@@ -70,7 +70,6 @@ struct LatLonSectionView: View {
                     store.send(.locationChanged(Coords(latitude: latitude,
                                                        longitude: longitude)),
                                description: "update location") {
-                        // remember the current selection
                         let selected = store.selection
                         Task {
                             let address =

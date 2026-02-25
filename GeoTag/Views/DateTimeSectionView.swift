@@ -35,7 +35,9 @@ struct DateTimeSectionView: View {
         }
         .onChange(of: newDate) {
             if oldDate != newDate {
-                // upateTimestamps()
+                let adjustment =
+                    newDate.timeIntervalSince1970 - oldDate.timeIntervalSince1970
+                store.send(.newTimestamp(newDate, adjustment))
                 oldDate = newDate
             }
         }
@@ -44,44 +46,14 @@ struct DateTimeSectionView: View {
             newDate = oldDate
         }
     }
-
-    // TODO
-    // private func updateTimestamps() {
-    //     // calclulate the adjustment to make to selected images
-    //     let adjustment = newDate.timeIntervalSince1970 - oldDate.timeIntervalSince1970
-    //
-    //     // prepare for date to string conversions.
-    //     let dateFormatter = DateFormatter()
-    //     dateFormatter.dateFormat = ImageModel.dateFormat
-    //     dateFormatter.timeZone = state.timeZone
-    //
-    //     // apply adjustment to each selected image in an undo group
-    //     state.undoManager.beginUndoGrouping()
-    //     for image in state.tvm.selected {
-    //         var updatedDate: Date
-    //         if let originalDate = image.timestamp(for: state.timeZone) {
-    //             updatedDate = Date(
-    //                 timeInterval: adjustment,
-    //                 since: originalDate)
-    //         } else {
-    //             updatedDate = newDate
-    //         }
-    //         state.update(image, timestamp: dateFormatter.string(from: updatedDate))
-    //
-    //     }
-    //     state.undoManager.endUndoGrouping()
-    //     state.undoManager.setActionName("modify date/time")
-    // }
 }
 
-// TODO
-// #Preview {
-//     let image = ImageModel(
-//         imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
-//         validImage: true,
-//         dateTimeCreated: "2022:12:12 11:22:33",
-//         latitude: 33.123,
-//         longitude: 123.456)
-//     return DateTimeSectionView(image: image)
-//         .environment(AppState())
-// }
+ #Preview {
+     Text("""
+        Look at **ImageInspectorView**
+        to see a preview of this sub-view
+        """)
+         .multilineTextAlignment(.leading)
+         .padding()
+
+ }

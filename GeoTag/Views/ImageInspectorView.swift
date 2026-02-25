@@ -20,8 +20,11 @@ struct ImageInspectorView: View {
     }
 }
 
-// TODO
-// #Preview {
-//     ImageInspectorView()
-//         .environment(AppState())
-// }
+#Preview(traits: .store) {
+    Text("some view")
+        .inspector(isPresented: .constant(true)) {
+            ImageInspectorView()
+                .inspectorColumnWidth(400)
+        }
+        .frame(height: 1000)
+}

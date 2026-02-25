@@ -157,10 +157,12 @@ extension ContextMenuView {
     }
 }
 
-#Preview {
+#Preview(traits: .store) {
     @Previewable @State var toggle = false
-    ContextMenuView(context: nil,
-                    inspectorPresented: $toggle)
-        .environment(Store(initialState: GeoTagState(),
-                           reduce: GeoTagReducer()))
+    Text("Right Click to see context menu")
+        .contextMenu {
+            ContextMenuView(context: nil,
+                            inspectorPresented: $toggle)
+        }
+        .frame(width: 400, height: 400)
 }

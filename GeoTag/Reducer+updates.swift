@@ -1,5 +1,6 @@
 import Coords
 import ImageData
+import Metadata
 import SwiftUI
 import UDF
 
@@ -59,6 +60,24 @@ extension GeoTagReducer {
                 state[pairedID].metadata.country = address.country
                 state[pairedID].metadata.countryCode = address.countryCode
             }
+        }
+    }
+
+    // adjust the timestamp of all selected images by the given amount
+
+    func update(_ state: inout GeoTagState,
+                date: Date, adjustment: TimeInterval) {
+        for id in state.selection {
+            let updatedDate: Date
+            if state[id].metadata.dateTimeCreated == nil {
+                updatedDate = date
+            } else {
+                let originalDate = state[id].metadata.date(timeZone: state.timeZone)
+                updatedDate = Date(timeInterval: adjustment,
+                                   since: originalDate)
+            }
+            state[id].metadata.dateTimeCreated =
+                Metadata.timestamp(from: updatedDate)
         }
     }
 }

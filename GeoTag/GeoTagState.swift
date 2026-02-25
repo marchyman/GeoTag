@@ -118,3 +118,11 @@ extension GeoTagState: Equatable {
         return lhs.version == rhs.version
     }
 }
+
+extension GeoTagState {
+    init(forPreview: Bool = false) {
+        if forPreview {
+            loadPreviewData()
+        }
+    }
+}

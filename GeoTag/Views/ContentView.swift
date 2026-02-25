@@ -145,8 +145,7 @@ extension ContentView {
     static let splitVAlternateKey = "SplitVAlternatePercent"
 }
 
-#Preview {
+#Preview(traits: .store) {
     ContentView()
-        .environment(Store(initialState: GeoTagState(),
-                           reduce: GeoTagReducer()))
+        .frame(width: 800, height: 1000)
 }

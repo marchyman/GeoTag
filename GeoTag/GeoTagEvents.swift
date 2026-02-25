@@ -32,6 +32,7 @@ enum GeoTagEvent: Equatable {
     case locationFromTrack([LocationHelper.LocationById])
     case mainWindowChange(NSWindow?)
     case newThumbnail(Image)
+    case newTimestamp(Date, TimeInterval)
     case openCommand
     case openFiles([URL])
     case pasteRequest
@@ -81,6 +82,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .locationFromTrack: "locationFromTrack"
         case .mainWindowChange: "mainWindowChange"
         case .newThumbnail: "newThumbnail"
+        case .newTimestamp: "newTimestamp"
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
         case .pasteRequest: "pasteRequest"
