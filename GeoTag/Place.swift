@@ -2,30 +2,46 @@ import MapKit
 import OSLog
 import SwiftUI
 
-// TODO: combine this with FullAddress from LocationActor as they both
-// hold roughly the same data
-
 struct Place: Identifiable, Codable {
     var name: String
+    var city: String?
+    var state: String?
+    var country: String?
+    var countryCode: String?
     var coordinate: Coordinate
     var id = UUID()
 
     init(from item: MKMapItem) {
-        self.name = item.name ?? "unknown"
-        if let locality = item.placemark.locality, locality != item.name {
-            self.name += ", \(locality)"
+        name = item.name ?? "unknown"
+        let address = item.placemark
+        if let city = address.locality {
+            self.city = city
+            if city != name {
+                name += ", \(city)"
+            }
         }
-        if let area = item.placemark.administrativeArea, area != item.name {
-            self.name += ", \(area)"
+        if let state = address.administrativeArea {
+            self.state = state
+            if state != name {
+                name += ", \(state)"
+            }
         }
-        if let country = item.placemark.country, country != "United States" {
-            self.name += ", \(country)"
+        if let country = address.country {
+            self.country = country
+            if country != "United States" {
+                self.name += ", \(country)"
+            }
         }
+        self.countryCode = address.countryCode
         self.coordinate = .init(item.location.coordinate)
     }
 
     private enum CodingKeys: String, CodingKey {
         case name
+        case city
+        case state
+        case country
+        case countryCode
         case coordinate
     }
 }
@@ -51,6 +67,14 @@ struct Coordinate: Codable, Hashable {
     var longitude: Double
     var coord2D: CLLocationCoordinate2D {
         .init(self)
+    }
+}
+
+// Coordinates are equitable
+extension Coordinate: Equatable {
+    static func == (lhs: Coordinate, rhs: Coordinate) -> Bool {
+        return lhs.latitude == rhs.latitude &&
+               lhs.longitude == rhs.longitude
     }
 }
 

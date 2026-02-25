@@ -9,7 +9,7 @@ import SwiftUI
 
 enum GeoTagEvent: Equatable {
     case addImage(ImageData)
-    case addressChanged(Set<ImageData.ID>, FullAddress)
+    case addressChanged(Set<ImageData.ID>, Place)
     case backupFolderSizeCheck
     case backupURLChanged(URL?)
     case badGpxFile(String)
