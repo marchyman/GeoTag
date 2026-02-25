@@ -76,14 +76,15 @@ struct SearchView: View {
             if let place = searchInfo.searchResponse.first {
                 searchInfo.selection = place
             }
-            mapFocus.wrappedValue = nil
             searchInfo.searchText = ""
+            mapFocus.wrappedValue = nil
         }
         .onChange(of: searchInfo.selection) {
             if let place = searchInfo.selection {
                 store.send(.placeSelection(place))
                 locationChanged(location: place.coordinate)
             }
+            searchInfo.searchText = ""
             mapFocus.wrappedValue = nil
         }
         .onKeyPress(.escape) {
