@@ -40,6 +40,10 @@ struct GeoTagApp: App {
                     mainWindow?.delegate = appDelegate
                     store.send(.mainWindowChange(mainWindow), undoable: false)
                 }
+                .task {
+                    let savedPlaces = await PlaceSaver.shared.read()
+                    store.send(.initPlaces(savedPlaces), undoable: false)
+                }
                 .environment(store)
 
         }

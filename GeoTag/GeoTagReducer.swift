@@ -64,6 +64,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .initialBackupNotice:
             newState.addSheet(type: .noBackupFolderSheet)
 
+        case .initPlaces(let places):
+            newState.places = places
+
         case .linkPairedImages:
             linkPairedImages(&newState)
 

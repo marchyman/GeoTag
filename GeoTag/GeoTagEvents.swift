@@ -15,13 +15,18 @@ enum GeoTagEvent: Equatable {
     case badGpxFile(String)
     case catchUnexpectedError(String?, String?)
     case changeTimeZone
+    case clearImagesRequest
     case clearPlaces
+    case deleteRequest
+    case discardChangesRequest
+    case discardTracksRequest
     case findInMap(Bool)
     case finishedAddingTracks
     case goodGpxFile(String)
     case gpxLoadViewClosed
     case initBackupURL
     case initialBackupNotice
+    case initPlaces([Place])
     case linkPairedImages
     case locationChanged(Coords)
     case locationFromTrack([LocationHelper.LocationById])
@@ -29,12 +34,15 @@ enum GeoTagEvent: Equatable {
     case newThumbnail(Image)
     case openCommand
     case openFiles([URL])
+    case pasteRequest
     case placeSelection(Place)
     case quitRequested
     case readTrackLog(String, GpxTrackLog?)
     case removeOldFiles
+    case saveRequest
     case searchActiveChanged(Bool)
     case searchTextChanged(String)
+    case selectAllRequest
     case selectionChanged(Set<ImageData.ID>)
     case sheetDismissed
     case sortOrderChanged([KeyPathComparator<ImageData>])
@@ -42,15 +50,6 @@ enum GeoTagEvent: Equatable {
     case terminateRequest
     case timeZoneChanged(TimeZone)
     case toggleLogWindow
-    // pasteboard events
-    case pasteRequest
-    case deleteRequest
-    case selectAllRequest
-    // SaveItems events
-    case saveRequest
-    case discardChangesRequest
-    case discardTracksRequest
-    case clearImagesRequest
 }
 
 // A description for each event
@@ -72,6 +71,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
         case .initBackupURL: "initBackupURL"
         case .initialBackupNotice: "initialBackupCheck"
+        case .initPlaces: "initPlaces"
         case .linkPairedImages: "linkPairedImages"
         case .locationChanged: "locationChanged"
         case .locationFromTrack: "locationFromTrack"
