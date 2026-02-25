@@ -6,9 +6,16 @@ import SwiftUI
 import UDF
 
 extension GeoTagState {
+    init(forPreview: Bool = false) {
+        if forPreview {
+            loadPreviewData()
+        }
+    }
+
     mutating func loadPreviewData() {
         imageData.append(testImage1())
         imageData.append(testImage2())
+        imageData.append(testImage3())
         selection = [imageData[0].id]
         mostSelected = imageData[0].id
     }
@@ -31,6 +38,11 @@ extension GeoTagState {
         metadata.country = "some country"
         metadata.countryCode = "SCC"
         return ImageData(metadata: metadata, name: "test2.jpg")
+    }
+
+    private func testImage3() -> ImageData {
+        let url = URL(filePath: "TestData/TestPictures/IMG_7158.CR2")
+        return ImageData(from: url)
     }
 }
 

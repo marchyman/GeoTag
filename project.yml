@@ -17,6 +17,30 @@ settings:
     CODE_SIGN_IDENTITY: Apple Development
     CODE_SIGN_STYLE: Automatic
     DEAD_CODE_STRIPPING: YES
+    DEVELOPMENT_ASSET_PATHS:
+      - GeoTag/DevAssets/PreviewData.swift
+      - GeoTag/DevAssets/TestBadTrack.GPX
+      - GeoTag/DevAssets/TestTrack.GPX
+      - GeoTag/DevAssets/OtherPictures/788A1113.CR3
+      - GeoTag/DevAssets/OtherPictures/Berlijn-Fujifilm-X-Pro2.RAF
+      - GeoTag/DevAssets/TestPictures/IMG_7158.CR2
+      - GeoTag/DevAssets/TestPictures/IMG_7158.xmp
+      - GeoTag/DevAssets/TestPictures/IMG_7162.CR2
+      - GeoTag/DevAssets/TestPictures/IMG_7162.xmp
+      - GeoTag/DevAssets/TestPictures/L1000038.DNG
+      - GeoTag/DevAssets/TestPictures/L1000050.DNG
+      - GeoTag/DevAssets/TestPictures/L1000051.DNG
+      - GeoTag/DevAssets/TestPictures/L1000052.DNG
+      - GeoTag/DevAssets/TestPictures/P1000658.JPG
+      - GeoTag/DevAssets/TestPictures/P1000659.JPG
+      - GeoTag/DevAssets/TestPictures/P1000660.JPG
+      - GeoTag/DevAssets/TestPictures/P1000661.JPG
+      - GeoTag/DevAssets/TestPictures/P1000679.JPG
+      - GeoTag/DevAssets/TestPictures/P1000684.JPG
+      - GeoTag/DevAssets/TestPictures/P1000685.JPG
+      - GeoTag/DevAssets/TestPictures/P1000686.JPG
+      - GeoTag/DevAssets/TestPictures/Screenshot.png
+      - GeoTag/DevAssets/TestPictures/image.foo
     DEVELOPMENT_TEAM: A3UXBEBE8Z
     ENABLE_APP_SANDBOX: YES
     ENABLE_OUTGOING_NETWORK_CONNECTIONS: YES;
