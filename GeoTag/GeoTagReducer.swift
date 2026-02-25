@@ -42,8 +42,20 @@ struct GeoTagReducer: Reducer, Sendable {
         case .changeTimeZone:
             newState.showTimeZoneWindow.toggle()
 
+        case .clearImagesRequest:
+            clearImages(&newState)
+
         case .clearPlaces:
             clearPlaces(&newState)
+
+        case .deleteRequest:
+            delete(&newState)
+
+        case .discardChangesRequest:
+            discardChanges(&newState)
+
+        case .discardTracksRequest:
+            newState.gpxTracks.removeAll()
 
         case .findInMap(let value):
             newState.mapSearchActive = value
@@ -93,6 +105,12 @@ struct GeoTagReducer: Reducer, Sendable {
         case .openFiles(let urls):
             openFiles(&newState, urls: urls)
 
+        case .pasteRequest:
+            paste(&newState)
+
+        case .placeSelection(let place):
+            savePlace(&newState, place)
+
         case .quitRequested:
             quitRequested(&newState)
 
@@ -104,14 +122,20 @@ struct GeoTagReducer: Reducer, Sendable {
                         from: newState.backupURL)
             newState.oldFiles = []
 
+        case .saveRequest:
+            save(&newState)
+
         case .searchActiveChanged(let searchActive):
             newState.searchActive = searchActive
 
-        case .placeSelection(let place):
-            savePlace(&newState, place)
-
         case .searchTextChanged(let text):
             newState.searchText = text
+
+        case .selectAllRequest:
+            selectAll(&newState)
+
+        case .selectionChanged(let selection):
+            selectionChanged(&newState, selection: selection)
 
         case .sheetDismissed:
             if newState.sheetStack.isEmpty {
@@ -124,15 +148,12 @@ struct GeoTagReducer: Reducer, Sendable {
                 newState.sheetType = sheetInfo.sheetType
             }
 
-        case .selectionChanged(let selection):
-            selectionChanged(&newState, selection: selection)
-
-        case .sortUsingCurrentComparator:
-            newState.imageData.sort(using: newState.sortOrder)
-
         case .sortOrderChanged(let comparator):
             newState.sortOrder = comparator
             newState.imageData.sort(using: comparator)
+
+        case .sortUsingCurrentComparator:
+            newState.imageData.sort(using: newState.sortOrder)
 
         case .terminateRequest:
             newState.unsavedChanges = false
@@ -143,28 +164,6 @@ struct GeoTagReducer: Reducer, Sendable {
         case .toggleLogWindow:
             newState.showLogWindow.toggle()
 
-        // pasteboard events
-        case .pasteRequest:
-            paste(&newState)
-
-        case .deleteRequest:
-            delete(&newState)
-
-        case .selectAllRequest:
-            selectAll(&newState)
-
-        // SaveItem events
-        case .saveRequest:
-            save(&newState)
-
-        case .discardChangesRequest:
-            discardChanges(&newState)
-
-        case .discardTracksRequest:
-            newState.gpxTracks.removeAll()
-
-        case .clearImagesRequest:
-            clearImages(&newState)
         }
 
         return newState

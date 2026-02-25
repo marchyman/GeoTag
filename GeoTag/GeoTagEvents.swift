@@ -64,7 +64,11 @@ extension GeoTagEvent: CustomStringConvertible {
         case .badGpxFile: "badGpxFile"
         case .catchUnexpectedError: "catchUnexpectedError"
         case .changeTimeZone: "changeTimeZone"
+        case .clearImagesRequest: "clearImagesRequest"
         case .clearPlaces: "clearPlaces"
+        case .deleteRequest: "deleteRequest"
+        case .discardChangesRequest: "discardChangesRequest"
+        case .discardTracksRequest: "discardTracksRequest"
         case .findInMap: "findInMap"
         case .finishedAddingTracks: "finishedAddingTracks"
         case .goodGpxFile: "goodGpxFile"
@@ -79,12 +83,15 @@ extension GeoTagEvent: CustomStringConvertible {
         case .newThumbnail: "newThumbnail"
         case .openCommand: "openCommand"
         case .openFiles: "openFiles"
+        case .pasteRequest: "pasteRequest"
         case .placeSelection: "placeSelection"
         case .quitRequested: "quitRequested"
         case .readTrackLog: "readTrackLog"
         case .removeOldFiles: "removeOldFiles"
+        case .saveRequest: "saveReqest"
         case .searchActiveChanged: "searchActiveChanged"
         case .searchTextChanged: "searchTextChanged"
+        case .selectAllRequest: "selectAllRequest"
         case .selectionChanged: "selectionChanged"
         case .sheetDismissed: "sheetDismissed"
         case .sortOrderChanged: "sortOrderChanged"
@@ -92,17 +99,6 @@ extension GeoTagEvent: CustomStringConvertible {
         case .terminateRequest: "terminateRequest"
         case .timeZoneChanged: "timeZoneChanged"
         case .toggleLogWindow: "toggleLogWindow"
-
-        // pasteboard events
-        case .pasteRequest: "pasteRequest"
-        case .deleteRequest: "deleteRequest"
-        case .selectAllRequest: "selectAllRequest"
-
-        // SaveItems events
-        case .saveRequest: "saveReqest"
-        case .discardChangesRequest: "discardChangesRequest"
-        case .discardTracksRequest: "discardTracksRequest"
-        case .clearImagesRequest: "clearImagesRequest"
         }
     }
 }

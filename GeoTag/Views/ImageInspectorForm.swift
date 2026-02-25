@@ -24,6 +24,7 @@ struct ImageInspectorForm: View {
     }
 }
 
+// TODO
 // #Preview {
 //     let image = ImageModel(
 //         imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),

@@ -26,8 +26,7 @@ extension GeoTagState {
         }
     }
 
-    // Add a sheet of a given type only once.
-    // [unused]
+    // [unused] Add a sheet of a given type only once.
 
     // func hasSheet(type: SheetType) -> Bool {
     //     if sheetType == type {

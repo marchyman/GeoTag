@@ -126,7 +126,7 @@ extension ContextMenuView {
         return true
     }
 
-    // must have paste data in teh appropriate form and either
+    // must have paste data in the appropriate form and either
     // context or mostSelected for paste to be enabled.
 
     private func pasteDisabled(context: ImageData.ID?) -> Bool {

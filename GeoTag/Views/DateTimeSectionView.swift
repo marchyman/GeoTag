@@ -45,6 +45,7 @@ struct DateTimeSectionView: View {
         }
     }
 
+    // TODO
     // private func updateTimestamps() {
     //     // calclulate the adjustment to make to selected images
     //     let adjustment = newDate.timeIntervalSince1970 - oldDate.timeIntervalSince1970
@@ -73,6 +74,7 @@ struct DateTimeSectionView: View {
     // }
 }
 
+// TODO
 // #Preview {
 //     let image = ImageModel(
 //         imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),

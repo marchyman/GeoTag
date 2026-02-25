@@ -147,6 +147,7 @@ struct SavingUpdatesView: View {
     }
 }
 
+// TODO ???
 // struct SaveErrorView: View {
 //     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
 //
@@ -225,8 +226,6 @@ extension View {
     }
 }
 
-// MARK: Previews
-
 #Preview("GpxLoadView") {
     let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
     // swiftlint:disable:next redundant_discardable_let
@@ -265,6 +264,7 @@ extension View {
     SheetType.savingUpdatesSheet
 }
 
+// TODO
 // #Preview("SaveErrorView") {
 //     let store = Store(GeoTagState(), GeoTagReducer())
 //     store.saveIssues[URL(fileURLWithPath: "/path/to/some/image.jpg")] = "some save error"

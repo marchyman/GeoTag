@@ -10,7 +10,7 @@ public struct MapWithSearchView: View {
         case map, search, searchList
     }
 
-    // data shared between SearchBarView and SearchView
+    // data shared between MapView, SearchBarView, and SearchView
     struct SearchInfo {
         var picked: Bool = false
         var searchText = ""
