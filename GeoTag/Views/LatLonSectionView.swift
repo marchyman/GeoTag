@@ -134,19 +134,12 @@ extension LabeledContentStyle where Self == InlineLabeledContentStyle {
     static var inline: InlineLabeledContentStyle { InlineLabeledContentStyle() }
 }
 
-// TODO
-// #Preview {
-//     let image = ImageModel(
-//         imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
-//         validImage: true,
-//         dateTimeCreated: "2022:12:12 11:22:33",
-//         latitude: 33.123,
-//         longitude: 123.456)
-//     return Form {
-//         Section("Location") {
-//             LatLonSectionView(image: image)
-//         }
-//     }
-//     .environment(AppState())
-//     .frame(width: 500, height: 700)
-// }
+#Preview {
+    Text("""
+       Look at **ImageInspectorView**
+       to see a preview of this sub-view
+       """)
+        .multilineTextAlignment(.leading)
+        .padding()
+
+}

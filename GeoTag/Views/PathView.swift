@@ -47,4 +47,6 @@ struct PathView: NSViewRepresentable {
 #Preview {
     @Previewable @State var url: URL?
     PathView(url: $url)
+        .padding()
+        .frame(width: 400, height: 200)
 }

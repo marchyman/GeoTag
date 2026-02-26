@@ -211,3 +211,8 @@ extension MapView {
     static let savedMapStyleKey = "SavedMapStyle"
     static let showOtherPinsKey = "ShowOtherPins"
 }
+
+#Preview {
+    Text("Use MapWithSearchView to preview this sub-view")
+        .padding()
+}

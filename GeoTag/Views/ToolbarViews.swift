@@ -65,3 +65,11 @@ struct InspectorButtonView: View {
         .keyboardShortcut("i")
     }
 }
+
+#Preview{
+    Text("""
+        Look at the toolbar of ContentView
+        to see how these sub-views are used.
+        """)
+        .padding()
+}

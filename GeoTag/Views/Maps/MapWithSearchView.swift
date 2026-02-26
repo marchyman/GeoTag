@@ -56,7 +56,6 @@ public struct MapWithSearchView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .store) {
     MapWithSearchView()
-        .environment(Store(initialState: GeoTagState(), reduce: GeoTagReducer()))
 }

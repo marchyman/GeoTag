@@ -203,8 +203,9 @@ struct SettingsView: View {
                     NSApplication.shared.keyWindow?.close()
                 }
                 .keyboardShortcut(.defaultAction)
+                .padding()
             }
-            .padding()
+            .padding(.bottom)
         }
         .onChange(of: backupURL) {
             if backupURL != store.backupURL {
@@ -263,7 +264,8 @@ extension Color: @retroactive RawRepresentable {
     }
 }
 
-#Preview {
+#Preview(traits: .store) {
     SettingsView()
-        .environment(Store(initialState: GeoTagState(), reduce: GeoTagReducer()))
+        .frame(height: 650)
+        .padding()
 }

@@ -140,9 +140,8 @@ struct SearchView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .store) {
     @Previewable @FocusState var mapFocus: MapWithSearchView.MapFocus?
     @Previewable @State var searchInfo = MapWithSearchView.SearchInfo()
     SearchView(mapFocus: $mapFocus, searchInfo: $searchInfo)
-        .environment(Store(initialState: GeoTagState(), reduce: GeoTagReducer()))
 }

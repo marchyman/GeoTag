@@ -31,3 +31,11 @@ struct MapContextMenu: View {
         }
     }
 }
+
+#Preview {
+    Text("Right click to see the context menu")
+        .contextMenu {
+            MapContextMenu(camera: nil, mapStyleName: .constant(.standard))
+        }
+        .padding()
+}
