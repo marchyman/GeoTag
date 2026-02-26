@@ -91,7 +91,7 @@ struct GeoTagState {
     var sheetStack: [SheetInfo] = []
     var sheetError: String?
     var sheetMessage: String?
-    // var saveIssues = [ImageModel.ID: String]()
+    var saveIssues: [ImageData.ID: String] = [:]
 
     // GPX File Loading sheet information
     var gpxTracks: [GpxTrackLog] = []

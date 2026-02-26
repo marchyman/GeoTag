@@ -12,7 +12,7 @@ enum SheetType: Identifiable, View {
     case duplicateImageSheet
     case noBackupFolderSheet
     case savingUpdatesSheet
-    // case saveErrorSheet
+    case saveErrorSheet
     case unexpectedErrorSheet
 
     nonisolated var id: Self {
@@ -29,8 +29,8 @@ enum SheetType: Identifiable, View {
             NoBackupFolderView().withDismiss()
         case .savingUpdatesSheet:
             SavingUpdatesView().withDismiss()
-        // case .saveErrorSheet:
-        //     SaveErrorView().withDismiss()
+        case .saveErrorSheet:
+            SaveErrorView().withDismiss()
         case .unexpectedErrorSheet:
             UnexpectedErrorView().withDismiss()
         }
@@ -147,34 +147,33 @@ struct SavingUpdatesView: View {
     }
 }
 
-// TODO ???
-// struct SaveErrorView: View {
-//     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
-//
-//     var body: some View {
-//         VStack {
-//             Text("One or more files could not be saved")
-//                 .font(.title)
-//                 .padding()
-//             Text("The updates to one or more files could not be updated.")
-//                 .lineLimit(nil)
-//                 .padding(.bottom, 40)
-//             List {
-//                 ForEach(store.saveIssues.sorted(by: >), id: \.key) { key, value in
-//                     VStack(alignment: .leading) {
-//                         Text(key.lastPathComponent)
-//                             .bold()
-//                         Text(value)
-//                             .padding(.bottom)
-//                     }
-//                 }
-//             }
-//             .frame(maxHeight: .infinity)
-//         }
-//         .frame(maxWidth: 600, minHeight: 400)
-//     }
-//
-// }
+struct SaveErrorView: View {
+    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+
+    var body: some View {
+        VStack {
+            Text("One or more files could not be saved")
+                .font(.title)
+                .padding()
+            Text("The updates to one or more files could not be updated.")
+                .lineLimit(nil)
+                .padding(.bottom, 40)
+            List {
+                ForEach(store.saveIssues.sorted(by: >), id: \.key) { key, value in
+                    VStack(alignment: .leading) {
+                        Text(store[key].fullPath)
+                            .bold()
+                        Text(value)
+                            .padding(.bottom)
+                    }
+                }
+            }
+            .frame(maxHeight: .infinity)
+        }
+        .frame(maxWidth: 600, minHeight: 400)
+    }
+
+}
 
 struct UnexpectedErrorView: View {
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
@@ -264,11 +263,6 @@ extension View {
     SheetType.savingUpdatesSheet
 }
 
-// TODO
-// #Preview("SaveErrorView") {
-//     let store = Store(GeoTagState(), GeoTagReducer())
-//     store.saveIssues[URL(fileURLWithPath: "/path/to/some/image.jpg")] = "some save error"
-//     store.saveIssues[URL(fileURLWithPath: "/path/to/some/other.jpg")] = "some other error"
-//     return SheetType.saveErrorSheet
-//         .environment(store)
-// }
+#Preview("SaveErrorView", traits: .saveError) {
+    SheetType.saveErrorSheet
+}
