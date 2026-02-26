@@ -2,50 +2,52 @@ import Coords
 import Foundation
 import ImageData
 import Metadata
+import OSLog
 import SwiftUI
 import UDF
 
 extension GeoTagState {
-    init(forPreview: Bool = false) {
+    init(forPreview: Bool = false, withSelection: Set<Int>? = nil) {
         if forPreview {
             loadPreviewData()
+        }
+        if let selection = withSelection {
+            self.selection = selection
+            self.mostSelected = selection.first
         }
     }
 
     mutating func loadPreviewData() {
-        imageData.append(testImage1())
-        imageData.append(testImage2())
-        imageData.append(testImage3())
-        selection = [imageData[0].id]
-        mostSelected = imageData[0].id
+        for url in previewURLs() {
+            var item = ImageData(from: url)
+            // exiftool can't read files from the bundle?
+            // assume all files are updatable
+            item.original = Metadata(copying: item.metadata)
+            imageData.append(item)
+        }
+        imageData.sort(using: sortOrder)
     }
 
-    private func testImage1() -> ImageData {
-        let url = URL(string: "file://test1.jpg")!
-        var metadata = Metadata(source: .image(url))
-        metadata.location = Coords(latitude: 37.1234, longitude: -121.765)
-        metadata.elevation = 182.7
-        return ImageData(metadata: metadata, name: "test1.jpg")
-    }
+    private func previewURLs() -> [URL] {
+        var urls: [URL] = []
+        if let jpgs = Bundle.main.urls(forResourcesWithExtension: "JPG",
+                                       subdirectory: nil) {
+            urls.append(contentsOf: jpgs)
+        }
+        if let dngs = Bundle.main.urls(forResourcesWithExtension: "DNG",
+                                       subdirectory: nil) {
+            urls.append(contentsOf: dngs)
+        }
+        if let cr2s = Bundle.main.urls(forResourcesWithExtension: "CR2",
+                                       subdirectory: nil) {
+            urls.append(contentsOf: cr2s)
+        }
 
-    private func testImage2() -> ImageData {
-        let url = URL(string: "file://test2.jpg")!
-        var metadata = Metadata(source: .image(url))
-        metadata.location = Coords(latitude: 37.1234, longitude: -121.765)
-        metadata.elevation = 182.7
-        metadata.city = "some city"
-        metadata.state = "some state"
-        metadata.country = "some country"
-        metadata.countryCode = "SCC"
-        return ImageData(metadata: metadata, name: "test2.jpg")
-    }
-
-    private func testImage3() -> ImageData {
-        let url = URL(filePath: "TestData/TestPictures/IMG_7158.CR2")
-        return ImageData(from: url)
+        return urls
     }
 }
 
+// pre loaded store
 struct StoreTrait: PreviewModifier {
     func body(content: Content, context: Void) -> some View {
         content
@@ -54,6 +56,21 @@ struct StoreTrait: PreviewModifier {
     }
 }
 
+// pre loaded store with one or more items selected
+struct SelectTrait: PreviewModifier {
+    let selection: Set<Int>?
+
+    func body(content: Content, context: Void) -> some View {
+        content
+            .environment(Store(initialState: GeoTagState(forPreview: true,
+                                                         withSelection: selection),
+                               reduce: GeoTagReducer()))
+    }
+}
+
 extension PreviewTrait where T == Preview.ViewTraits {
     static var store: Self = .modifier(StoreTrait())
+    static func select(_ select: Int ...) -> Self {
+        .modifier(SelectTrait(selection: Set(select)))
+    }
 }

@@ -20,7 +20,7 @@ struct ImageInspectorView: View {
     }
 }
 
-#Preview(traits: .store) {
+#Preview(traits: .select(11)) {
     Text("some view")
         .inspector(isPresented: .constant(true)) {
             ImageInspectorView()
