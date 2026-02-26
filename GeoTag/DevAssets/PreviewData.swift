@@ -1,8 +1,6 @@
-import Coords
 import Foundation
 import ImageData
 import Metadata
-import OSLog
 import SwiftUI
 import UDF
 
@@ -22,6 +20,7 @@ extension GeoTagState {
             var item = ImageData(from: url)
             // exiftool can't read files from the bundle?
             // assume all files are updatable
+            // Doesn't help with accessing xmp files
             item.original = Metadata(copying: item.metadata)
             imageData.append(item)
         }

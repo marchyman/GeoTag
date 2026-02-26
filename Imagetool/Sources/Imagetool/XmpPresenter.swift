@@ -1,11 +1,11 @@
 import Foundation
 
-/// file extension used for sidecar files
+// file extension used for sidecar files
 
 public let xmpExtension = "xmp"
 
-/// Class used to access xmp sidecar files as related files to the image
-/// file being updated in a sandboxed environment.
+// Class used to access xmp sidecar files as related files to the image
+// file being updated in a sandboxed environment.
 
 final class XmpPresenter: NSObject, NSFilePresenter {
     let primaryPresentedItemURL: URL?
