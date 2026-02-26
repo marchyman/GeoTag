@@ -149,3 +149,8 @@ extension ContentView {
     ContentView()
         .frame(width: 800, height: 1000)
 }
+
+#Preview("selected", traits: .select(9, 10)) {
+    ContentView()
+        .frame(width: 800, height: 1000)
+}

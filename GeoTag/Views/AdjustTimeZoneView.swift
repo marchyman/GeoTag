@@ -90,8 +90,7 @@ struct AdjustTimezoneView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .store) {
     AdjustTimezoneView()
         .frame(height: 570)
-        .environment(Store(initialState: GeoTagState(), reduce: GeoTagReducer()))
 }

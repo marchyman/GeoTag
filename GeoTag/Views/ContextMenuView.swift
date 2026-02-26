@@ -166,3 +166,13 @@ extension ContextMenuView {
         }
         .frame(width: 400, height: 400)
 }
+
+#Preview("context", traits: .store) {
+    @Previewable @State var toggle = false
+    Text("Right Click to see context menu")
+        .contextMenu {
+            ContextMenuView(context: 11,
+                            inspectorPresented: $toggle)
+        }
+        .frame(width: 400, height: 400)
+}

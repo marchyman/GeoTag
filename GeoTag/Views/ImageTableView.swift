@@ -107,6 +107,7 @@ struct ImageTableView: View {
             store.send(.searchTextChanged(searchText))
         }
         .onAppear {
+            selection = store.selection
             sortOrder = store.sortOrder
         }
     }
@@ -117,4 +118,9 @@ struct ImageTableView: View {
 extension ImageTableView {
     static let imageTableConfigKey = "ImageTableConfig"
     static let hideInvalidImagesKey = "HideInvalidImages"
+}
+
+#Preview(traits: .store) {
+    ImageTableView(inspectorPresented: .constant(false))
+        .frame(width: 600, height: 1000)
 }
