@@ -47,6 +47,7 @@ extension PhotoLibrary {
         for item in items {
             if let id = item.itemIdentifier {
                 Self.logger.notice("\(id, privacy: .public)")
+                // TODO:
                 // check for dups... how?
                 // Look for .photos items with a matching id
                 let asset = await Phototool.assets(for: id)

@@ -58,4 +58,25 @@ public struct Phototool {
         }
         return "unknown"
     }
+
+    public static func update(timestamp: Date? = nil,
+                              location: CLLocation?,
+                              for asset: PHAsset) async {
+        let library = PHPhotoLibrary.shared()
+        do {
+            try await library.performChanges {
+                let assetChangeReqeust = PHAssetChangeRequest(for: asset)
+                if let timestamp {
+                    assetChangeReqeust.creationDate = timestamp
+                }
+                if let location {
+                    assetChangeReqeust.location = location
+                }
+            }
+        } catch {
+            Logger(subsystem: Bundle.main.bundleIdentifier ?? "PhotoTool",
+                   category: "Phototool")
+                .error("update: \(error.localizedDescription, privacy: .public)")
+        }
+    }
 }

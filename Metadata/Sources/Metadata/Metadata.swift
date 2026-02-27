@@ -22,10 +22,6 @@ public enum MetadataSource: Sendable {
     case copy
 }
 
-// Metadata source is Equatable
-
-extension MetadataSource: Equatable {}
-
 // Metadata structure:
 // Note: when dateTimeCreated is nil in data passed to Exiftool
 // the resulting metadata in the image or xmp file will not be changed.
@@ -150,5 +146,10 @@ extension Metadata: Equatable {
             && lhs.state == rhs.state
             && lhs.country == rhs.country
             && lhs.countryCode == rhs.countryCode
+    }
+    
+    public func matchesLocation(_ other: Metadata?) -> Bool {
+        return self.location == other?.location &&
+            self.elevation == other?.elevation
     }
 }
