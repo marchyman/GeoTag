@@ -1,3 +1,4 @@
+import Exiftool
 import SwiftUI
 
 // Image URLs reference their files relative to the application sandbox.
@@ -5,13 +6,16 @@ import SwiftUI
 // macOS does not allow creation of files in folders unless folder access
 // is explicitly allowed by the user.
 
-struct Sandbox {
+public struct Sandbox {
     let imgDir: URL
     let imgURL: URL
     let xmpURL: URL
     let xmpPresenter: XmpPresenter
 
-    init(for url: URL, sidecar: URL) throws {
+    public init(for url: URL) throws {
+        let sidecar = url.deletingPathExtension()
+                         .appendingPathExtension(xmpExtension)
+
         let fileManager = FileManager.default
         let uuid = UUID().uuidString
         imgDir = URL.documentsDirectory
@@ -48,6 +52,19 @@ extension Sandbox {
         }
     }
 }
+
+// Create a sidecar file in the sandbox.
+
+extension Sandbox {
+    public func makeSidecarFile() throws {
+        NSFileCoordinator.addFilePresenter(xmpPresenter)
+        defer {
+            NSFileCoordinator.removeFilePresenter(xmpPresenter)
+        }
+        try Exiftool.helper.makeSidecar(from: imgURL)
+    }
+}
+
 // TODO
 // extension Sandbox {
 //
@@ -75,16 +92,6 @@ extension Sandbox {
 //                 newName, isDirectory: false)
 //         }
 //         return saveFileURL
-//     }
-//
-//     // Make a sidecar file for the given image
-//
-//     func makeSidecarFile() {
-//         if !image.sidecarExists {
-//             // create a sidecar file for this image.
-//             image.sidecarExists = true
-//             Exiftool.helper.makeSidecar(from: self)
-//         }
 //     }
 //
 //     // Copy a sidecar file into the backup folder. The copy is done this

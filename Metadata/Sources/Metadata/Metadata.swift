@@ -46,20 +46,28 @@ public struct Metadata: Sendable {
         self.source = source
     }
 
-    // Create a new Metadata entry with a unique id. Set the
-    // source to `.copy` and intialize data fields from `copy`.
+    // convert a metadata by creating a new instance with the
+    // given source type.
 
-    public init(copying copy: Metadata) {
-        source = .copy
+    public init(converting: Metadata, to source: MetadataSource) {
+        self.source = source
 
-        dateTimeCreated = copy.dateTimeCreated
-        location = copy.location
-        elevation = copy.elevation
-        city = copy.city
-        state = copy.state
-        country = copy.country
-        countryCode = copy.countryCode
+        dateTimeCreated = converting.dateTimeCreated
+        location = converting.location
+        elevation = converting.elevation
+        city = converting.city
+        state = converting.state
+        country = converting.country
+        countryCode = converting.countryCode
     }
+
+    // Create a new Metadata entry. Set the source to `.copy`
+    // and intialize data fields from `copy`.
+
+    public init(copying metadata: Metadata) {
+        self.init(converting: metadata, to: .copy)
+    }
+
 }
 
 // Update an existing metadata from a copy
@@ -73,6 +81,15 @@ extension Metadata {
         state = copy.state
         country = copy.country
         countryCode = copy.countryCode
+    }
+}
+
+// Create an xmp metadata from an image metadata
+
+extension Metadata {
+    public func xmp() -> Metadata {
+        guard case .image(let url) = source else { return self }
+        return .init(converting: self, to: .xmp(url))
     }
 }
 
@@ -160,7 +177,7 @@ extension Metadata {
     public static let xmpExtension = "xmp"
 }
 
-// Metadata id and source are not included when comparing this type
+// Metadata source is not included when comparing this type
 
 extension Metadata: Equatable {
     static public func == (lhs: Self, rhs: Self) -> Bool {
@@ -171,10 +188,5 @@ extension Metadata: Equatable {
             && lhs.state == rhs.state
             && lhs.country == rhs.country
             && lhs.countryCode == rhs.countryCode
-    }
-
-    public func matchesLocation(_ other: Metadata?) -> Bool {
-        return self.location == other?.location &&
-            self.elevation == other?.elevation
     }
 }

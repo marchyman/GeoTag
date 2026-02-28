@@ -1,4 +1,5 @@
 import ImageData
+import Imagetool
 import Metadata
 import Phototool
 import SwiftUI
@@ -107,11 +108,90 @@ extension SaveItemCommands {
         return updateOK
     }
 
+    // pass copy if MainActor related data to a nonisolated function
+    // that performs updates in parallel
+
     func saveToImage(_ info: [ImageData.ID: Metadata]) async -> Bool {
-        // TODO
-        print("saving to files")
-        return true
+        @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
+        @AppStorage(SettingsView.addTagsKey) var addTags = false
+        @AppStorage(SettingsView.finderTagKey) var finderTag = "GeoTag"
+        @AppStorage(SettingsView.createSidecarFilesKey) var createSidecarFiles = false
+
+        let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
+        return await saveToImageTasks(info, createSidecarFiles,
+                                      !doNotBackup, store.backupURL,
+                                      addTags, tagName)
     }
+
+    // Update the items in the info dictionary in a task group
+
+    // swiftlint:disable:next function_parameter_count
+    nonisolated func saveToImageTasks(_ info: [ImageData.ID: Metadata],
+                                      _ createSidecarFiles: Bool,
+                                      _ makeBackup: Bool,
+                                      _ backupURL: URL?,
+                                      _ tagFiles: Bool,
+                                      _ tagName: String) async -> Bool {
+        var updateOK = true
+        struct TaskInfo {
+            let id: ImageData.ID
+            let metadata: Metadata
+            let sidecarCreated: Bool
+            let status: Bool
+        }
+
+        await withTaskGroup(of: TaskInfo.self) { group in
+            for (id, metadata) in info {
+                group.addTask {
+                    guard case .image(let imageURL) = metadata.source else {
+                        return TaskInfo(id: id, metadata: metadata,
+                                        sidecarCreated: false, status: false)
+                    }
+
+                    var sidecarCreated = false
+                    do {
+                        let sandbox = try Sandbox(for: imageURL)
+                        if createSidecarFiles {
+                            try sandbox.makeSidecarFile()
+                            sidecarCreated = true
+                        }
+                        if makeBackup {
+                            // make backup if needed
+                        }
+                        // save changes
+                        if tagFiles {
+                            // tag file
+                        }
+                        return TaskInfo(id: id, metadata: metadata,
+                                        sidecarCreated: sidecarCreated,
+                                        status: true)
+                    } catch {
+                        return TaskInfo(id: id, metadata: metadata,
+                                        sidecarCreated: sidecarCreated,
+                                        status: false)
+                    }
+                }
+            }
+
+            for await taskInfo in group {
+                if taskInfo.sidecarCreated {
+                    await MainActor.run {
+                        store.send(.sidecarCreated(taskInfo.id))
+                    }
+                }
+                if taskInfo.status {
+                    await MainActor.run {
+                        store.send(.imageSaved(taskInfo.id, taskInfo.metadata),
+                                   undoable: false)
+                    }
+                } else {
+                    updateOK = false
+                }
+            }
+        }
+        return updateOK
+    }
+
     func saveToXmp(_ info: [ImageData.ID: Metadata]) async -> Bool {
         // TODO
         print("saving to xmp")

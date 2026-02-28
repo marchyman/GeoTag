@@ -98,7 +98,7 @@ public struct Imagetool {
     public static func metadata(from imageURL: URL, xmp: URL) -> Metadata {
         let metadata: Metadata
 
-        if let sandbox = try? Sandbox(for: imageURL, sidecar: xmp) {
+        if let sandbox = try? Sandbox(for: imageURL) {
             NSFileCoordinator.addFilePresenter(sandbox.xmpPresenter)
             defer {
                 NSFileCoordinator.removeFilePresenter(sandbox.xmpPresenter)

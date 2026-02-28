@@ -163,6 +163,11 @@ struct GeoTagReducer: Reducer, Sendable {
                 newState.sheetType = sheetInfo.sheetType
             }
 
+        case .sidecarCreated(let id):
+            if case .image(let url) = newState[id].metadata.source {
+                newState[id].metadata = newState[id].metadata.xmp()
+            }
+
         case .sortOrderChanged(let comparator):
             newState.sortOrder = comparator
             newState.imageData.sort(using: comparator)

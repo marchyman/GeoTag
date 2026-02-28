@@ -102,7 +102,7 @@ extension Exiftool {
 // file.
 
 extension Exiftool {
-    public func makeSidecar(from imageURL: URL) {
+    public func makeSidecar(from imageURL: URL) throws {
         let sidecarURL = imageURL.deletingPathExtension()
             .appendingPathExtension(Metadata.xmpExtension)
         let args = [
@@ -114,6 +114,7 @@ extension Exiftool {
         } catch {
             Self.logger.error(
                 "\(#function): \(error.localizedDescription, privacy: .public)")
+            throw error
         }
     }
 }

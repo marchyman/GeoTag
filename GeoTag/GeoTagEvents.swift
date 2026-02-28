@@ -49,6 +49,7 @@ enum GeoTagEvent: Equatable {
     case selectAllRequest
     case selectionChanged(Set<ImageData.ID>)
     case sheetDismissed
+    case sidecarCreated(ImageData.ID)
     case sortOrderChanged([KeyPathComparator<ImageData>])
     case sortUsingCurrentComparator
     case terminateRequest
@@ -101,6 +102,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .selectAllRequest: "selectAllRequest"
         case .selectionChanged: "selectionChanged"
         case .sheetDismissed: "sheetDismissed"
+        case .sidecarCreated: "sidecarCreated"
         case .sortOrderChanged: "sortOrderChanged"
         case .sortUsingCurrentComparator: "sortUsingCurrentComparator"
         case .terminateRequest: "terminateRequest"
