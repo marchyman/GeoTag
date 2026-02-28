@@ -52,9 +52,6 @@ struct GeoTagState {
         }
     }
 
-    var saveInProgress = false
-    var importFiles = false
-
     // Search exists for items in the Image Table and locations
     // on a map.
     var searchActive = false
@@ -62,17 +59,22 @@ struct GeoTagState {
     var mapSearchActive = false
     var places: [Place] = []
 
-    // keep track of security scoped URLs so they may be released when the
-    // table of images is cleared.
-
+    // Image import variables
+    var importFiles = false
+    var uniqueURLs: [URL]?
     var scopedURLs: [URL] = []
 
-    // URLs are opened in multiple steps.  Step one is to create an array
-    // of unique URLs to open from the file/folder URLs selected
-    // by the user.  The second step is to create ImageData from
-    // each image URL.  The final step is to handle any gpx related
-    // URLs.
-    var uniqueURLs: [URL]?
+    // GPX File Loading information
+    var gpxTracks: [GpxTrackLog] = []
+    var gpxGoodFileNames: [String] = []
+    var gpxBadFileNames: [String] = []
+
+    // image save/update variables
+    var saveInProgress = false
+    var libraryImages: [ImageData.ID] = []
+    var fileImages: [ImageData.ID] = []
+    var xmpImages: [ImageData.ID] = []
+    var backupURL: URL?
 
     var mainWindow: NSWindow?
     var showLogWindow = false
@@ -93,18 +95,11 @@ struct GeoTagState {
     var sheetMessage: String?
     var saveIssues: [ImageData.ID: String] = [:]
 
-    // GPX File Loading sheet information
-    var gpxTracks: [GpxTrackLog] = []
-    var gpxGoodFileNames: [String] = []
-    var gpxBadFileNames: [String] = []
-
-    var backupURL: URL?
-
     // The folder containing backups is scanned at startup and when a
     // new backup folder is selected. The user is given the option to remove
     // backups older than 7 days.
 
-    var oldFiles = [URL]()
+    var oldFiles: [URL] = []
     var folderSize = 0
     var deletedSize = 0
 }

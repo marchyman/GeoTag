@@ -7,61 +7,36 @@ import Phototool
 import SwiftUI
 
 extension GeoTagReducer {
-    func save(_ state: inout GeoTagState,
-              done: AsyncStream<Bool>.Continuation) {
-        @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
-        // @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
-        //
+    // save the indices of all updatable images that have changed.
+    // The save process continues as the next step.
 
+    func save(_ state: inout GeoTagState) {
         state.saveInProgress = true
-
-        // Update data for images that came from the photos library
-        let libraryPhotosToSave = state.imageData.indices.filter {
-            if case .photos = state.imageData[$0].metadata.source,
-                state.imageData[$0].updatable {
-                return true
+        state.libraryImages = state.imageData.indices
+            .filter {
+                if case .photos = state.imageData[$0].metadata.source,
+                   state.imageData[$0].updatable,
+                   state.imageData[$0].metadata != state.imageData[$0].original {
+                    return true
+                }
+                return false
             }
-            return false
-        }
-        if libraryPhotosToSave.isEmpty {
-            done.yield(false)
-        } else {
-            saveLibraryPhotos(indices: libraryPhotosToSave,
-                              state: state,
-                              continuation: done)
-        }
-
-        let imagesToSave = state.imageData.indices.filter {
+        state.fileImages = state.imageData.indices.filter {
             if case .image = state.imageData[$0].metadata.source,
-               case .xmp = state.imageData[$0].metadata.source,
-               state.imageData[$0].updatable {
+               state.imageData[$0].updatable,
+               state.imageData[$0].metadata != state.imageData[$0].original {
                 return true
             }
             return false
         }
-
-        guard  imagesToSave.isEmpty || doNotBackup || state.backupURL != nil else {
-            state.addSheet(type: .noBackupFolderSheet)
-            done.yield(false)
-            return
+        state.xmpImages = state.imageData.indices.filter {
+            if case .xmp = state.imageData[$0].metadata.source,
+               state.imageData[$0].updatable,
+               state.imageData[$0].metadata != state.imageData[$0].original {
+                return true
+            }
+            return false
         }
-        // undoManager.removeAllActions()
-        // isDocumentEdited = false
-        //
-        // // process the image file saves in the background.
-        // Task {
-        //     saveIssues = await saveImageFiles(images: imagesToSave)
-        //     if !saveIssues.isEmpty {
-        //         isDocumentEdited = true
-        //         addSheet(type: .saveErrorSheet)
-        //     }
-        //     saveInProgress = false // not here
-        // }
-        // TODO:
-        // pretend we've processed all images to save
-        done.yield(true)
-
-        state.saveInProgress = false
     }
 
     private func saveLibraryPhotos(indices: [Int],
@@ -79,28 +54,28 @@ extension GeoTagReducer {
         for ix in indices {
             if case .photos(_, let asset) = state.imageData[ix].metadata.source,
                let asset {
-                if state.imageData[ix].metadata != state.imageData[ix].original {
-                    let timestamp: Date? =
-                        if state.imageData[ix].metadata.dateTimeCreated !=
-                            state.imageData[ix].original?.dateTimeCreated {
-                            state.imageData[ix].metadata.date()
-                        } else {
-                            nil
-                        }
-                    let location: CLLocation? =
-                        if !state.imageData[ix].metadata
-                            .matchesLocation(state.imageData[ix].original) {
-                            state.imageData[ix].location(nil)
-                        } else {
-                            nil
-                        }
-                    updateInfo.append(UpdateInfo(asset: asset,
-                                                 timestamp: timestamp,
-                                                 location: location))
-                }
+                let timestamp: Date? =
+                    if state.imageData[ix].metadata.dateTimeCreated !=
+                        state.imageData[ix].original?.dateTimeCreated {
+                        state.imageData[ix].metadata.date()
+                    } else {
+                        nil
+                    }
+                let location: CLLocation? =
+                    if !state.imageData[ix].metadata
+                        .matchesLocation(state.imageData[ix].original) {
+                        state.imageData[ix].location(nil)
+                    } else {
+                        nil
+                    }
+                updateInfo.append(UpdateInfo(asset: asset,
+                                             timestamp: timestamp,
+                                             location: location))
             }
         }
-        // perform the needed updates in a task
+        // perform the needed updates in a task. I don't know
+        // how well Photos handles parallelism or if at all. The
+        // updates are done one at a time.
         Task {
             for info in updateInfo {
                 await Phototool.update(timestamp: info.timestamp,
@@ -110,6 +85,25 @@ extension GeoTagReducer {
             }
             continuation.yield(true)
         }
+    }
+
+    private func checkOtherPhotos(_ state: GeoTagState) -> [ImageData.ID] {
+        return state.imageData.indices.filter {
+            if case .image = state.imageData[$0].metadata.source,
+               case .xmp = state.imageData[$0].metadata.source,
+               state.imageData[$0].updatable,
+               state.imageData[$0].metadata != state.imageData[$0].original {
+                return true
+            }
+            return false
+        }
+    }
+
+    private func saveOtherPhotos(indices: [Int],
+                                 state: GeoTagState,
+                                 continuation: AsyncStream<Bool>.Continuation) {
+        // TODO use a task group to fire off the exiftool task to
+        // do the updates.
     }
 
     func discardChanges(_ state: inout GeoTagState) {

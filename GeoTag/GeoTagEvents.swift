@@ -40,7 +40,7 @@ enum GeoTagEvent: Equatable {
     case quitRequested
     case readTrackLog(String, GpxTrackLog?)
     case removeOldFiles
-    case saveRequest(AsyncStream<Bool>.Continuation)
+    case saveRequest
     case searchActiveChanged(Bool)
     case searchTextChanged(String)
     case selectAllRequest

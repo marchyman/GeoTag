@@ -125,8 +125,8 @@ struct GeoTagReducer: Reducer, Sendable {
                         from: newState.backupURL)
             newState.oldFiles = []
 
-        case .saveRequest(let continuation):
-            save(&newState, done: continuation)
+        case .saveRequest:
+            save(&newState)
 
         case .searchActiveChanged(let searchActive):
             newState.searchActive = searchActive

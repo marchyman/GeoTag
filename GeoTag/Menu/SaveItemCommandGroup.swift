@@ -9,15 +9,23 @@ struct SaveItemCommands: Commands {
     var body: some Commands {
         CommandGroup(after: .saveItem) {
             Button("Save…", systemImage: "square.and.arrow.down.on.square") {
-                let waitStream = WaitStream()
-                store.send(.saveRequest(waitStream.continuation), undoable: false) {
-                    Task {
-                        for await flag in waitStream.stream {
-                            print("flag = \(flag)")
-                            break
-                        }
-                        print("saveRequest task ended")
-                    }
+                store.send(.saveRequest, undoable: false) {
+                    // capture the data needed to update images
+                    let libraryImages =
+                        Dictionary(uniqueKeysWithValues: store.libraryImages.map {
+                            (store.imageData[$0].id, store.imageData[$0].metadata)
+                        })
+                    print("libraryImages: \(libraryImages)")
+                    let fileImages =
+                        Dictionary(uniqueKeysWithValues: store.fileImages.map {
+                            (store.imageData[$0].id, store.imageData[$0].metadata)
+                        })
+                    print("fileImages: \(fileImages)")
+                    let xmpImages =
+                        Dictionary(uniqueKeysWithValues: store.xmpImages.map {
+                            (store.imageData[$0].id, store.imageData[$0].metadata)
+                        })
+                    print("xmpImages: \(xmpImages)")
                 }
                 store.discardAllUndo()
             }
