@@ -3,6 +3,7 @@ import Coords
 import Foundation
 import GpxTrackLog
 import ImageData
+import Metadata
 import SwiftUI
 
 // events that trigger a change of state
@@ -24,6 +25,7 @@ enum GeoTagEvent: Equatable {
     case finishedAddingTracks
     case goodGpxFile(String)
     case gpxLoadViewClosed
+    case imageSaved(ImageData.ID, Metadata)
     case initBackupURL
     case initialBackupNotice
     case initPlaces([Place])
@@ -40,6 +42,7 @@ enum GeoTagEvent: Equatable {
     case quitRequested
     case readTrackLog(String, GpxTrackLog?)
     case removeOldFiles
+    case saveComplete(Bool)
     case saveRequest
     case searchActiveChanged(Bool)
     case searchTextChanged(String)
@@ -74,6 +77,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .finishedAddingTracks: "finishedAddingTracks"
         case .goodGpxFile: "goodGpxFile"
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
+        case .imageSaved: "imageSaved"
         case .initBackupURL: "initBackupURL"
         case .initialBackupNotice: "initialBackupCheck"
         case .initPlaces: "initPlaces"
@@ -90,6 +94,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .quitRequested: "quitRequested"
         case .readTrackLog: "readTrackLog"
         case .removeOldFiles: "removeOldFiles"
+        case .saveComplete: "saveComplete"
         case .saveRequest: "saveReqest"
         case .searchActiveChanged: "searchActiveChanged"
         case .searchTextChanged: "searchTextChanged"

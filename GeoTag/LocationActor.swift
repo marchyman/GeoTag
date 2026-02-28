@@ -55,7 +55,7 @@ actor ReverseLocationFinder {
     @MainActor
     public static func reverseGeocode(store: Store<GeoTagState, GeoTagEvent>,
                                       id: ImageData.ID) async -> Place? {
-        if let location = store[id].location(store.timeZone) {
+        if let location = store[id].metadata.clLocation(store.timeZone) {
            return try? await ReverseLocationFinder.shared.get(location)
         }
         return nil

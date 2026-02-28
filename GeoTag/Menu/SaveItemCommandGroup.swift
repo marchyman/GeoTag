@@ -1,3 +1,6 @@
+import ImageData
+import Metadata
+import Phototool
 import SwiftUI
 import UDF
 
@@ -15,17 +18,23 @@ struct SaveItemCommands: Commands {
                         Dictionary(uniqueKeysWithValues: store.libraryImages.map {
                             (store.imageData[$0].id, store.imageData[$0].metadata)
                         })
-                    print("libraryImages: \(libraryImages)")
                     let fileImages =
                         Dictionary(uniqueKeysWithValues: store.fileImages.map {
                             (store.imageData[$0].id, store.imageData[$0].metadata)
                         })
-                    print("fileImages: \(fileImages)")
                     let xmpImages =
                         Dictionary(uniqueKeysWithValues: store.xmpImages.map {
                             (store.imageData[$0].id, store.imageData[$0].metadata)
                         })
-                    print("xmpImages: \(xmpImages)")
+                    Task {
+                        async let libUpdated = saveToLibrary(libraryImages)
+                        async let imgUpdated = saveToImage(fileImages)
+                        async let xmpUpdated = saveToXmp(xmpImages)
+
+                        let ok = await [libUpdated, imgUpdated, xmpUpdated]
+                        store.send(.saveComplete(ok.allSatisfy { $0 == true }),
+                                   undoable: false)
+                    }
                 }
                 store.discardAllUndo()
             }
@@ -72,5 +81,36 @@ extension SaveItemCommands {
 
     private func clearDisabled() -> Bool {
         return store.imageData.isEmpty || store.unsavedChanges
+    }
+}
+
+// save changes functions triggered by a save request
+
+extension SaveItemCommands {
+
+    func saveToLibrary(_ info: [ImageData.ID: Metadata]) async -> Bool {
+        var updateOK = true
+        for (id, metadata) in info {
+            if case .photos(_, let asset) = metadata.source, let asset {
+                let timestamp = metadata.date()
+                let location = metadata.clLocation(nil)
+                await Phototool.update(timestamp: timestamp,
+                                       location: location,
+                                       for: asset)
+                store.send(.imageSaved(id, metadata), undoable: false)
+            }
+        }
+        return updateOK
+    }
+
+    func saveToImage(_ info: [ImageData.ID: Metadata]) async -> Bool {
+        // TODO
+        print("saving to files")
+        return true
+    }
+    func saveToXmp(_ info: [ImageData.ID: Metadata]) async -> Bool {
+        // TODO
+        print("saving to xmp")
+        return true
     }
 }

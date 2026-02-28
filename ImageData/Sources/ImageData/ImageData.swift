@@ -100,6 +100,7 @@ extension ImageData: Hashable {
     }
 }
 
+
 // The full path to the image for display only. A fake path is created
 // for images in a Photos library.
 

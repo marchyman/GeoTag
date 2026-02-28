@@ -1,6 +1,7 @@
 import AppKit
 import Foundation
 import ImageData
+import Metadata
 import OSLog
 import UDF
 
@@ -70,6 +71,9 @@ struct GeoTagReducer: Reducer, Sendable {
             newState.gpxGoodFileNames.removeAll()
             newState.gpxBadFileNames.removeAll()
 
+        case .imageSaved(let id, let metadata):
+            newState[id].original = Metadata(copying: metadata)
+
         case .initBackupURL:
             getBackupURL(&newState)
 
@@ -124,6 +128,11 @@ struct GeoTagReducer: Reducer, Sendable {
             removeFiles(filesToRemove: newState.oldFiles,
                         from: newState.backupURL)
             newState.oldFiles = []
+
+        case .saveComplete(let ok):
+            newState.saveInProgress = false
+            newState.unsavedChanges = !ok
+            // TODO: the above it temp code
 
         case .saveRequest:
             save(&newState)
