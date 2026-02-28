@@ -9,7 +9,16 @@ struct SaveItemCommands: Commands {
     var body: some Commands {
         CommandGroup(after: .saveItem) {
             Button("Save…", systemImage: "square.and.arrow.down.on.square") {
-                store.send(.saveRequest)
+                let waitStream = WaitStream()
+                store.send(.saveRequest(waitStream.continuation), undoable: false) {
+                    Task {
+                        for await flag in waitStream.stream {
+                            print("flag = \(flag)")
+                            break
+                        }
+                        print("saveRequest task ended")
+                    }
+                }
                 store.discardAllUndo()
             }
             .keyboardShortcut("s")

@@ -4,38 +4,47 @@ import ImageData
 import Metadata
 import Photos
 import Phototool
+import SwiftUI
 
 extension GeoTagReducer {
-    func save(_ state: inout GeoTagState) {
-        // @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
+    func save(_ state: inout GeoTagState,
+              done: AsyncStream<Bool>.Continuation) {
+        @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
         // @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
         //
+
+        state.saveInProgress = true
+
         // Update data for images that came from the photos library
         let libraryPhotosToSave = state.imageData.indices.filter {
-            if case .photos(_, _) = state.imageData[$0].metadata.source,
+            if case .photos = state.imageData[$0].metadata.source,
                 state.imageData[$0].updatable {
                 return true
             }
             return false
         }
-        if !libraryPhotosToSave.isEmpty {
-            saveLibraryPhotos(indices: libraryPhotosToSave, state: &state)
-            // TODO update metadata here?
-            // but actual updates may still be in progress running
-            // on another task.
+        if libraryPhotosToSave.isEmpty {
+            done.yield(false)
+        } else {
+            saveLibraryPhotos(indices: libraryPhotosToSave,
+                              state: state,
+                              continuation: done)
         }
- 
 
-        // // get the image files that need saving
-        // let imagesToSave = tvm.images.filter { $0.asset == nil && $0.changed }
-        //
-        // // before starting check if a backup folder is needed
-        // guard imagesToSave.isEmpty || doNotBackup || backupURL != nil else {
-        //     addSheet(type: .noBackupFolderSheet)
-        //     return
-        // }
-        //
-        // saveInProgress = true
+        let imagesToSave = state.imageData.indices.filter {
+            if case .image = state.imageData[$0].metadata.source,
+               case .xmp = state.imageData[$0].metadata.source,
+               state.imageData[$0].updatable {
+                return true
+            }
+            return false
+        }
+
+        guard  imagesToSave.isEmpty || doNotBackup || state.backupURL != nil else {
+            state.addSheet(type: .noBackupFolderSheet)
+            done.yield(false)
+            return
+        }
         // undoManager.removeAllActions()
         // isDocumentEdited = false
         //
@@ -46,12 +55,18 @@ extension GeoTagReducer {
         //         isDocumentEdited = true
         //         addSheet(type: .saveErrorSheet)
         //     }
-        //     saveInProgress = false
+        //     saveInProgress = false // not here
         // }
         // TODO:
+        // pretend we've processed all images to save
+        done.yield(true)
+
+        state.saveInProgress = false
     }
 
-    private func saveLibraryPhotos(indices: [Int], state: inout GeoTagState) {
+    private func saveLibraryPhotos(indices: [Int],
+                                   state: GeoTagState,
+                                   continuation: AsyncStream<Bool>.Continuation) {
         struct UpdateInfo {
             var asset: PHAsset
             var timestamp: Date?
@@ -91,7 +106,9 @@ extension GeoTagReducer {
                 await Phototool.update(timestamp: info.timestamp,
                                        location: info.location,
                                        for: info.asset)
+                // TODO: handle errors
             }
+            continuation.yield(true)
         }
     }
 

@@ -147,7 +147,7 @@ extension Metadata: Equatable {
             && lhs.country == rhs.country
             && lhs.countryCode == rhs.countryCode
     }
-    
+
     public func matchesLocation(_ other: Metadata?) -> Bool {
         return self.location == other?.location &&
             self.elevation == other?.elevation
