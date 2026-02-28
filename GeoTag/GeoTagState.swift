@@ -93,7 +93,6 @@ struct GeoTagState {
     var sheetStack: [SheetInfo] = []
     var sheetError: String?
     var sheetMessage: String?
-    var saveIssues: [ImageData.ID: String] = [:]
 
     // The folder containing backups is scanned at startup and when a
     // new backup folder is selected. The user is given the option to remove

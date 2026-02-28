@@ -94,10 +94,14 @@ extension SaveItemCommands {
             if case .photos(_, let asset) = metadata.source, let asset {
                 let timestamp = metadata.date()
                 let location = metadata.clLocation(nil)
-                await Phototool.update(timestamp: timestamp,
-                                       location: location,
-                                       for: asset)
-                store.send(.imageSaved(id, metadata), undoable: false)
+                let ok = await Phototool.update(timestamp: timestamp,
+                                                location: location,
+                                                for: asset)
+                if ok {
+                    store.send(.imageSaved(id, metadata), undoable: false)
+                } else {
+                    updateOK = false
+                }
             }
         }
         return updateOK

@@ -61,7 +61,7 @@ public struct Phototool {
 
     public static func update(timestamp: Date? = nil,
                               location: CLLocation?,
-                              for asset: PHAsset) async {
+                              for asset: PHAsset) async -> Bool {
         let library = PHPhotoLibrary.shared()
         do {
             try await library.performChanges {
@@ -73,10 +73,12 @@ public struct Phototool {
                     assetChangeReqeust.location = location
                 }
             }
+            return true
         } catch {
             Logger(subsystem: Bundle.main.bundleIdentifier ?? "PhotoTool",
                    category: "Phototool")
                 .error("update: \(error.localizedDescription, privacy: .public)")
+            return false
         }
     }
 }

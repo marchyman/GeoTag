@@ -50,12 +50,10 @@ struct GpxLoadView: View {
                     .font(.title)
                 List(store.gpxGoodFileNames, id: \.self) { Text($0) }
                     .frame(maxHeight: .infinity)
-                Text(
-                    """
+                Text("""
                     The above GPX file(s) have been processed and will \
                     show as tracks on the map.
-                    """
-                )
+                    """)
                 .lineLimit(nil)
                 .padding()
             }
@@ -67,13 +65,11 @@ struct GpxLoadView: View {
                 Text("No valid tracks found in above GPX file(s).")
                     .font(.title)
                     .padding()
-                Text(
-                    """
+                Text("""
                     Either no tracks could be found or the GPX file was \
                     corrupted such that it could not be properly processed. \
                     Any track log information in the file has been ignored.
-                    """
-                )
+                    """)
                 .lineLimit(nil)
                 .padding([.leading, .bottom, .trailing])
             }
@@ -93,12 +89,10 @@ struct DuplicateImageView: View {
             Text("One or more files not opened")
                 .font(.title)
                 .padding()
-            Text(
-                """
+            Text("""
                 One or more files were not opened. Unopened files were \
                 duplicates of files previously opened for editing.
-                """
-            )
+                """)
             .lineLimit(nil)
             .padding(.bottom, 40)
         }
@@ -113,14 +107,12 @@ struct NoBackupFolderView: View {
             Text("Image backup folder can not be found")
                 .font(.title)
                 .padding()
-            Text(
-                """
+            Text("""
                 Image backups are enabled but no backup folder is \
                 specified or the specified folder can no longer be found. \
                 Please open the program settings window (⌘ ,) and select \
                 a folder for image backups.
-                """
-            )
+                """)
             .lineLimit(nil)
             .padding(.bottom, 40)
         }
@@ -134,12 +126,10 @@ struct SavingUpdatesView: View {
             Text("Save in progress")
                 .font(.title)
                 .padding()
-            Text(
-                """
+            Text("""
                 Image updates are still being processed.  Please wait \
                 for the updates to complete before quiting GeoTag.
-                """
-            )
+                """)
             .lineLimit(nil)
             .padding(.bottom, 40)
         }
@@ -148,27 +138,18 @@ struct SavingUpdatesView: View {
 }
 
 struct SaveErrorView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
-
     var body: some View {
         VStack {
             Text("One or more files could not be saved")
                 .font(.title)
                 .padding()
-            Text("The updates to one or more files could not be updated.")
+            Text("""
+                Changes to one or more images could not be sucessfully \
+                saved for unexpected reasons. The run log -- **Show log...** \
+                in the **Help** menu -- may contain more information.
+                """)
                 .lineLimit(nil)
                 .padding(.bottom, 40)
-            List {
-                ForEach(store.saveIssues.sorted(by: >), id: \.key) { key, value in
-                    VStack(alignment: .leading) {
-                        Text(store[key].fullPath)
-                            .bold()
-                        Text(value)
-                            .padding(.bottom)
-                    }
-                }
-            }
-            .frame(maxHeight: .infinity)
         }
         .frame(maxWidth: 600, minHeight: 400)
     }
@@ -263,6 +244,6 @@ extension View {
     SheetType.savingUpdatesSheet
 }
 
-#Preview("SaveErrorView", traits: .saveError) {
+#Preview("SaveErrorView") {
     SheetType.saveErrorSheet
 }

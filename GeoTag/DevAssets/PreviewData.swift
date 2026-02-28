@@ -6,18 +6,13 @@ import UDF
 
 extension GeoTagState {
     init(forPreview: Bool = false,
-         withSelection: Set<Int>? = nil,
-         saveError: Bool = false) {
+         withSelection: Set<Int>? = nil) {
         if forPreview {
             loadPreviewData()
         }
         if let selection = withSelection {
             self.selection = selection
             self.mostSelected = selection.first
-        }
-        if saveError {
-            self.saveIssues[self[1].id] = "some save error"
-            self.saveIssues[self[2].id] = "some other error"
         }
     }
 
@@ -73,20 +68,9 @@ struct SelectTrait: PreviewModifier {
     }
 }
 
-// pre loaded store with save errors
-struct SaveErrorTrait: PreviewModifier {
-    func body(content: Content, context: Void) -> some View {
-        content
-            .environment(Store(initialState: GeoTagState(forPreview: true,
-                                                         saveError: true),
-                               reduce: GeoTagReducer()))
-    }
-}
-
 extension PreviewTrait where T == Preview.ViewTraits {
     static var store: Self = .modifier(StoreTrait())
     static func select(_ select: Int ...) -> Self {
         .modifier(SelectTrait(selection: Set(select)))
     }
-    static var saveError: Self = .modifier(SaveErrorTrait())
 }

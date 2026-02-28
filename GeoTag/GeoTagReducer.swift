@@ -126,13 +126,16 @@ struct GeoTagReducer: Reducer, Sendable {
 
         case .removeOldFiles:
             removeFiles(filesToRemove: newState.oldFiles,
-                        from: newState.backupURL)
+                from: newState.backupURL)
             newState.oldFiles = []
 
         case .saveComplete(let ok):
             newState.saveInProgress = false
-            newState.unsavedChanges = !ok
-            // TODO: the above it temp code
+            if ok {
+                newState.unsavedChanges = false
+            } else {
+                newState.addSheet(type: .saveErrorSheet)
+            }
 
         case .saveRequest:
             save(&newState)
