@@ -25,7 +25,7 @@ enum SaveHelper {
         Task {
             async let libUpdated = saveToLibrary(store, libraryImages)
             async let imgUpdated = saveToImage(store, fileImages)
-            async let xmpUpdated = saveToXmp(store, xmpImages)
+            async let xmpUpdated = saveToImage(store, xmpImages, xmp: true)
 
             let ok = await [libUpdated, imgUpdated, xmpUpdated]
             store.send(.saveComplete(ok.allSatisfy { $0 == true }),
@@ -53,11 +53,12 @@ enum SaveHelper {
         return updateOK
     }
 
-    // pass copy if MainActor related data to a nonisolated function
-    // that performs updates in parallel
+    // pass copy of MainActor related data to a nonisolated function
+    // that will perform updates in parallel
 
     static func saveToImage(_ store: Store<GeoTagState, GeoTagEvent>,
-                            _ info: [ImageData.ID: Metadata]) async -> Bool {
+                            _ info: [ImageData.ID: Metadata],
+                            xmp: Bool = false) async -> Bool {
         @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
         @AppStorage(SettingsView.addTagsKey) var addTags = false
         @AppStorage(SettingsView.finderTagKey) var finderTag = "GeoTag"
@@ -75,6 +76,12 @@ enum SaveHelper {
         }
         let backupURL = doNotBackup ? nil : store.backupURL
         let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
+
+        // common work down, image vs xmp updates are slightly different
+        if xmp {
+            return await saveToXmpTasks(store, info, backupURL, store.timeZone,
+                                        addTags, tagName)
+        }
         return await saveToImageTasks(store, info, createSidecarFiles,
                                       backupURL, store.timeZone,
                                       addTags, tagName)
@@ -118,7 +125,6 @@ enum SaveHelper {
                         }
                         try await sandbox.saveChanges(from: metadata,
                                                       timeZone: timeZone)
-                        // save changes
                         if tagFiles {
                             try await sandbox.setTag(name: tagName)
                         }
@@ -152,10 +158,58 @@ enum SaveHelper {
         return updateOK
     }
 
-    static func saveToXmp(_ store: Store<GeoTagState, GeoTagEvent>,
-                          _ info: [ImageData.ID: Metadata]) async -> Bool {
-        // TODO
-        print("saving to xmp")
-        return true
+    // swiftlint:disable:next function_parameter_count
+    nonisolated static func saveToXmpTasks(_ store: Store<GeoTagState, GeoTagEvent>,
+                                           _ info: [ImageData.ID: Metadata],
+                                           _ backupURL: URL?,
+                                           _ timeZone: TimeZone?,
+                                           _ tagFiles: Bool,
+                                           _ tagName: String) async -> Bool {
+        var updateOK = true
+        struct TaskInfo {
+            let id: ImageData.ID
+            let metadata: Metadata
+            let status: Bool
+        }
+
+        await withTaskGroup(of: TaskInfo.self) { group in
+            for (id, metadata) in info {
+                group.addTask {
+                    guard case .xmp(let imageURL) = metadata.source else {
+                        return TaskInfo(id: id, metadata: metadata,
+                                        status: false)
+                    }
+
+                    do {
+                        let sandbox = try Sandbox(for: imageURL)
+                        if let backupURL {
+                            try await sandbox.makeSidecarBackup(backupURL)
+                        }
+                        try await sandbox.saveChanges(from: metadata,
+                                                      timeZone: timeZone)
+                        if tagFiles {
+                            try await sandbox.setTag(name: tagName)
+                        }
+                        return TaskInfo(id: id, metadata: metadata,
+                                        status: true)
+                    } catch {
+                        return TaskInfo(id: id, metadata: metadata,
+                                        status: false)
+                    }
+                }
+            }
+
+            for await taskInfo in group {
+                if taskInfo.status {
+                    await MainActor.run {
+                        store.send(.imageSaved(taskInfo.id, taskInfo.metadata),
+                                   undoable: false)
+                    }
+                } else {
+                    updateOK = false
+                }
+            }
+        }
+        return updateOK
     }
 }

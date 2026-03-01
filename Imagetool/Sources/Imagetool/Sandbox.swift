@@ -84,7 +84,7 @@ extension Sandbox {
         // sidecar files get special handling
 
         if sidecarExists {
-            try makeSidecarBackup(backupFolder)
+            try await makeSidecarBackup(backupFolder)
             return
         }
 
@@ -110,7 +110,7 @@ extension Sandbox {
     // security scoped folder using FileManager's copyItem(at:to:) throws
     // an error.
 
-    func makeSidecarBackup(_ backupFolder: URL) throws {
+    public func makeSidecarBackup(_ backupFolder: URL) async throws {
         let fileName = imgURL.deletingPathExtension()
                              .appendingPathExtension(xmpExtension)
                              .lastPathComponent
