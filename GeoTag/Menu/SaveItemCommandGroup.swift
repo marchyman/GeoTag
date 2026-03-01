@@ -130,14 +130,17 @@ extension SaveItemCommands {
         let backupURL = doNotBackup ? nil : store.backupURL
         let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
         return await saveToImageTasks(info, createSidecarFiles,
-                                      backupURL, addTags, tagName)
+                                      backupURL, store.timeZone,
+                                      addTags, tagName)
     }
 
     // Update the items in the info dictionary in a task group
 
+    // swiftlint:disable:next function_parameter_count
     nonisolated func saveToImageTasks(_ info: [ImageData.ID: Metadata],
                                       _ createSidecarFiles: Bool,
                                       _ backupURL: URL?,
+                                      _ timeZone: TimeZone?,
                                       _ tagFiles: Bool,
                                       _ tagName: String) async -> Bool {
         var updateOK = true
@@ -164,11 +167,13 @@ extension SaveItemCommands {
                             sidecarCreated = true
                         }
                         if let backupURL {
-                            // make backup
+                            try await sandbox.makeBackupFile(backupFolder: backupURL)
                         }
+                        try await sandbox.saveChanges(from: metadata,
+                                                      timeZone: timeZone)
                         // save changes
                         if tagFiles {
-                            // tag file
+                            try await sandbox.setTag(name: tagName)
                         }
                         return TaskInfo(id: id, metadata: metadata,
                                         sidecarCreated: sidecarCreated,
