@@ -25,7 +25,7 @@ struct GeoTagApp: App {
                     appDelegate.store = store
                     if !doNotBackup {
                         if savedBookmark == Data() {
-                            store.send(.initialBackupNotice, undoable: false)
+                            store.send(.noBackupNotice, undoable: false)
                         } else {
                             store.send(.initBackupURL, undoable: false) {
                                 if store.backupURL != nil {

@@ -65,6 +65,35 @@ extension Sandbox {
     }
 }
 
+// image backups
+
+extension Sandbox {
+//     func makeBackupFile(backupFolder: URL) async throws {
+//         // sidecar files get special handling
+//
+//         if image.sidecarExists {
+//             try makeSidecarBackup(backupFolder)
+//             return
+//         }
+//
+//         let fileName = image.fileURL.lastPathComponent
+//         let saveFileURL = backupName(for: fileName, in: backupFolder)
+//
+//         _ = backupFolder.startAccessingSecurityScopedResource()
+//         defer { backupFolder.stopAccessingSecurityScopedResource() }
+//
+//         // Copy the image file to the backup folder
+//         let fileManager = FileManager.default
+//         try fileManager.copyItem(at: image.fileURL, to: saveFileURL)
+//
+//         // belts and suspenders: verify the copy happened.  There once was
+//         // a macOS bug where the copy failed but no error was reported.
+//         if !fileManager.fileExists(atPath: saveFileURL.path) {
+//             throw BackupError.backupError("Image \(fileName) copy failed!")
+//         }
+//     }
+}
+
 // TODO
 // extension Sandbox {
 //

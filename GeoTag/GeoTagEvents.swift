@@ -27,7 +27,7 @@ enum GeoTagEvent: Equatable {
     case gpxLoadViewClosed
     case imageSaved(ImageData.ID, Metadata)
     case initBackupURL
-    case initialBackupNotice
+    case noBackupNotice
     case initPlaces([Place])
     case linkPairedImages
     case locationChanged(Coords)
@@ -80,7 +80,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .gpxLoadViewClosed: "gpxLoadViewClosed"
         case .imageSaved: "imageSaved"
         case .initBackupURL: "initBackupURL"
-        case .initialBackupNotice: "initialBackupCheck"
+        case .noBackupNotice: "noBackupNotice"
         case .initPlaces: "initPlaces"
         case .linkPairedImages: "linkPairedImages"
         case .locationChanged: "locationChanged"

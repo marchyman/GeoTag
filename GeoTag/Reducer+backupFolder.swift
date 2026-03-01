@@ -6,16 +6,13 @@ extension GeoTagReducer {
         @AppStorage(GeoTagApp.savedBookmarkKey) var savedBookmark = Data()
         var staleBookmark = false
 
-        let url = try? URL(
-            resolvingBookmarkData: savedBookmark,
-            options: [.withoutUI, .withSecurityScope],
-            bookmarkDataIsStale: &staleBookmark)
-        if let url {
-            if staleBookmark {
-                newBackupFolder(&state, url: url)
-            }
-        }
+        let url = try? URL(resolvingBookmarkData: savedBookmark,
+                           options: [.withoutUI, .withSecurityScope],
+                           bookmarkDataIsStale: &staleBookmark)
         state.backupURL = url
+        if let url, staleBookmark {
+            newBackupFolder(&state, url: url)
+        }
     }
 
     func checkBackupFolderSize(_ state: inout GeoTagState) {
@@ -84,12 +81,14 @@ extension GeoTagReducer {
 
     func newBackupFolder(_ state: inout GeoTagState, url: URL?) {
         @AppStorage(GeoTagApp.savedBookmarkKey) var savedBookmark = Data()
-        state.backupURL = url
+
         if let url {
             do {
                 try savedBookmark = url.bookmarkData(options: .withSecurityScope)
+                state.backupURL = url
                 checkBackupFolderSize(&state)
            } catch {
+                state.backupURL = nil
                 state.addSheet(
                     type: .unexpectedErrorSheet,
                     error: error.localizedDescription,

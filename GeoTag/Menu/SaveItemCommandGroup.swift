@@ -117,18 +117,26 @@ extension SaveItemCommands {
         @AppStorage(SettingsView.finderTagKey) var finderTag = "GeoTag"
         @AppStorage(SettingsView.createSidecarFilesKey) var createSidecarFiles = false
 
+        // make sure there is something to do
+        guard !info.isEmpty else { return true }
+
+        // make sure backups are disabled or we have a backup folder
+        guard doNotBackup || store.backupURL != nil else {
+            store.send(.noBackupNotice, undoable: false)
+            // return true as we've already notified the user that
+            // nothing was saved
+            return true
+        }
+        let backupURL = doNotBackup ? nil : store.backupURL
         let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
         return await saveToImageTasks(info, createSidecarFiles,
-                                      !doNotBackup, store.backupURL,
-                                      addTags, tagName)
+                                      backupURL, addTags, tagName)
     }
 
     // Update the items in the info dictionary in a task group
 
-    // swiftlint:disable:next function_parameter_count
     nonisolated func saveToImageTasks(_ info: [ImageData.ID: Metadata],
                                       _ createSidecarFiles: Bool,
-                                      _ makeBackup: Bool,
                                       _ backupURL: URL?,
                                       _ tagFiles: Bool,
                                       _ tagName: String) async -> Bool {
@@ -155,8 +163,8 @@ extension SaveItemCommands {
                             try sandbox.makeSidecarFile()
                             sidecarCreated = true
                         }
-                        if makeBackup {
-                            // make backup if needed
+                        if let backupURL {
+                            // make backup
                         }
                         // save changes
                         if tagFiles {
@@ -176,7 +184,7 @@ extension SaveItemCommands {
             for await taskInfo in group {
                 if taskInfo.sidecarCreated {
                     await MainActor.run {
-                        store.send(.sidecarCreated(taskInfo.id))
+                        store.send(.sidecarCreated(taskInfo.id), undoable: false)
                     }
                 }
                 if taskInfo.status {

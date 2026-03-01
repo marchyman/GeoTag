@@ -77,7 +77,7 @@ struct GeoTagReducer: Reducer, Sendable {
         case .initBackupURL:
             getBackupURL(&newState)
 
-        case .initialBackupNotice:
+        case .noBackupNotice:
             newState.addSheet(type: .noBackupFolderSheet)
 
         case .initPlaces(let places):
@@ -156,6 +156,7 @@ struct GeoTagReducer: Reducer, Sendable {
             if newState.sheetStack.isEmpty {
                 newState.sheetMessage = nil
                 newState.sheetError = nil
+                newState.sheetType = nil
             } else {
                 let sheetInfo = newState.sheetStack.removeFirst()
                 newState.sheetMessage = sheetInfo.sheetMessage
