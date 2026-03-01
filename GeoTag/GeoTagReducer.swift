@@ -58,6 +58,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .discardTracksRequest:
             newState.gpxTracks.removeAll()
 
+        case .duplicateImages:
+            newState.addSheet(type: .duplicateImageSheet)
+
         case .findInMap(let value):
             newState.mapSearchActive = value
 
@@ -165,7 +168,7 @@ struct GeoTagReducer: Reducer, Sendable {
             }
 
         case .sidecarCreated(let id):
-            if case .image(let url) = newState[id].metadata.source {
+            if case .image = newState[id].metadata.source {
                 newState[id].metadata = newState[id].metadata.xmp()
             }
 

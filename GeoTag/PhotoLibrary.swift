@@ -44,16 +44,35 @@ extension PhotoLibrary {
     func addPhotos(from items: [PhotosPickerItem],
                    store: Store<GeoTagState, GeoTagEvent>) async {
         Self.logger.notice("\(#function)")
+        var dupsFound = false
         for item in items {
             if let id = item.itemIdentifier {
                 Self.logger.notice("\(id, privacy: .public)")
-                // TODO:
-                // check for dups... how?
-                // Look for .photos items with a matching id
+                if await isDup(id, in: store) {
+                    dupsFound = true
+                    continue
+                }
                 let asset = await Phototool.assets(for: id)
                 let imageData = ImageData(from: item, asset: asset)
                 await store.send(.addImage(imageData))
             }
         }
+        if dupsFound {
+            await store.send(.duplicateImages, undoable: false)
+        }
+    }
+
+    // return true if the item exists in the table of opened images
+
+    @MainActor
+    func isDup(_ id: String,
+               in store: Store<GeoTagState, GeoTagEvent>) -> Bool {
+        for ix in store.imageData.indices {
+            if case .photos(let item, _) = store.imageData[ix].metadata.source,
+               item.itemIdentifier == id {
+                return true
+            }
+        }
+        return false
     }
 }

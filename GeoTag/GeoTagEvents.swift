@@ -21,6 +21,7 @@ enum GeoTagEvent: Equatable {
     case deleteRequest
     case discardChangesRequest
     case discardTracksRequest
+    case duplicateImages
     case findInMap(Bool)
     case finishedAddingTracks
     case goodGpxFile(String)
@@ -74,6 +75,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .deleteRequest: "deleteRequest"
         case .discardChangesRequest: "discardChangesRequest"
         case .discardTracksRequest: "discardTracksRequest"
+        case .duplicateImages: "duplicateImages"
         case .findInMap: "findInMap"
         case .finishedAddingTracks: "finishedAddingTracks"
         case .goodGpxFile: "goodGpxFile"
