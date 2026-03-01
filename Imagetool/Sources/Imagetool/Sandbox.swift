@@ -165,7 +165,7 @@ extension Sandbox {
                             timeZone: TimeZone?) async throws {
         NSFileCoordinator.addFilePresenter(xmpPresenter)
         defer { NSFileCoordinator.removeFilePresenter(xmpPresenter) }
-        try await Exiftool.helper.update(image: imgURL, 
+        try await Exiftool.helper.update(image: imgURL,
                                          from: metadata,
                                          timeZone: timeZone)
     }
