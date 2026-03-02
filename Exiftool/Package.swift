@@ -10,7 +10,8 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Coords", path: "../Coords"),
-        .package(name: "Metadata", path: "../Metadata")
+        .package(name: "Metadata", path: "../Metadata"),
+        .package(name: "ImageData", path: "../ImageData")
     ],
     targets: [
         .target(name: "Exiftool",
@@ -18,9 +19,12 @@ let package = Package(
                     .product(name: "Coords", package: "Coords"),
                     .product(name: "Metadata", package: "Metadata")
                 ],
-                resources: [.copy("ExifTool")]),
+                resources: [.copy("ExifTool")],
+                swiftSettings: [
+                    .define("DEBUG", .when(configuration: .debug)),
+                ]),
         .testTarget(name: "ExiftoolTests",
-                    dependencies: ["Exiftool"],
+                    dependencies: ["Exiftool", "ImageData"],
                     resources: [.copy("nowrite.typ"),
                                 .copy("262M1559.DNG"),
                                 .copy("262M1559.xmp"),

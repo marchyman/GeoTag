@@ -15,7 +15,7 @@ import Photos
 import PhotosUI
 import SwiftUI
 
-public enum MetadataSource: Sendable {
+public enum MetadataSource: Equatable, Sendable {
     case image(URL)
     case xmp(URL)
     case photos(PhotosPickerItem, PHAsset?)

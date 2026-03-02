@@ -1,5 +1,7 @@
 // Exiftool package tests
 
+import Coords
+import ImageData
 import Metadata
 import SwiftUI
 import Testing
@@ -77,7 +79,7 @@ struct ExiftoolTests {
 
         let name = testImage.lastPathComponent
         let copy = testFolder.appending(component: name)
-        Exiftool.helper.makeSidecar(from: copy)
+        try Exiftool.helper.makeSidecar(from: copy)
         let sidecar = copy.deletingPathExtension()
             .appendingPathExtension(Metadata.xmpExtension)
         #expect(FileManager.default.fileExists(atPath: sidecar.path))
@@ -97,7 +99,7 @@ struct ExiftoolTests {
         }
         let name = testImage.lastPathComponent
         let copy = testFolder.appending(component: name)
-        Exiftool.helper.makeSidecar(from: copy)
+        try Exiftool.helper.makeSidecar(from: copy)
         let sidecar = copy.deletingPathExtension()
             .appendingPathExtension(Metadata.xmpExtension)
         #expect(FileManager.default.fileExists(atPath: sidecar.path))
@@ -130,7 +132,7 @@ struct ExiftoolTests {
         }
         let name = testImage.lastPathComponent
         let copy = testFolder.appending(component: name)
-        Exiftool.helper.makeSidecar(from: copy)
+        try Exiftool.helper.makeSidecar(from: copy)
         let sidecar = copy.deletingPathExtension()
             .appendingPathExtension(Metadata.xmpExtension)
         #expect(FileManager.default.fileExists(atPath: sidecar.path))
@@ -149,5 +151,82 @@ struct ExiftoolTests {
                                                primaryURL: testImage)
 
         #expect(newData == oldData)
+    }
+
+    func makeTestData(_ metadata: inout Metadata) {
+        metadata.dateTimeCreated = "2019:03:12 18:47:20"
+        metadata.location = Coords(latitude: 33.123,
+                                   longitude: -122.345)
+        metadata.elevation = 125.5
+        metadata.city = "some city"
+        metadata.state = "some state"
+        metadata.country = "United States"
+        metadata.countryCode = "USA"
+    }
+
+    @Test(.serialized,
+        arguments: [
+        (false, false),
+        (false, true),
+        (true, false),
+        (true, true)
+    ])
+    func updateImage(ufm: Bool, ugt: Bool) async throws {
+        @AppStorage(Exiftool.updateFileModificationTimesKey) var updateFileModificationTimes = false
+        @AppStorage(Exiftool.updateGPSTimestampsKey) var updateGPSTimestamps = false
+
+        // setup
+        updateFileModificationTimes = ufm
+        updateGPSTimestamps = ugt
+
+        let testImage = try #require(
+            Bundle.module.url(forResource: "262M1559",
+                              withExtension: "DNG")
+        )
+        let testFolder = try makeTestFolder(andCopy: testImage)
+        defer {
+            try? FileManager.default.removeItem(at: testFolder)
+        }
+        let name = testImage.lastPathComponent
+        let copy = testFolder.appending(component: name)
+        let beforeDate = try FileManager.default
+                                        .attributesOfItem(atPath: copy.path)[
+            FileAttributeKey.creationDate] as? Date
+
+        var imageData = ImageData(from: copy)
+        makeTestData(&imageData.metadata)
+        let savedData = imageData.metadata
+
+        // run
+        try await Exiftool.helper.update(image: copy, from: imageData.metadata,
+                                         timeZone: nil)
+        // verify results
+        let newData = ImageData(from: copy)
+        #expect(newData.metadata == savedData)
+
+        // see if the file modification date was updated if requested
+        let afterDate = try FileManager.default
+                                       .attributesOfItem(atPath: copy.path)[
+            FileAttributeKey.creationDate] as? Date
+        if ufm {
+            #expect(beforeDate != afterDate)
+            let df = DateFormatter()
+            df.dateFormat = "yyyy:MM:dd HH:mm:ss"
+            let expectedDate = df.date(from: newData.metadata.dateTimeCreated!)
+            #expect(afterDate == expectedDate)
+        } else {
+            #expect(beforeDate == afterDate)
+        }
+
+        // see if the gps timestamp was updated when requested
+        let timestamp = try await Exiftool.helper
+                                          .getGPSTimestamp(for: copy)?
+                                          .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if ugt {
+            #expect(timestamp == "2019:03:13 01:47:20Z")
+        } else {
+            #expect(timestamp == "2019:03:11 18:47:20Z")
+        }
     }
 }

@@ -42,7 +42,6 @@ struct GpxTests {
         #expect(tracks == 1)
         #expect(segments == 29)
         #expect(points == 9999)
->>>>>>> gu/main
     }
 
     @Test func gpxParseNoTrack() async throws {
@@ -80,5 +79,4 @@ struct GpxTests {
         #expect(trackLog.search(imageTime: beforeInterval, extendedTime: 1) == nil)
         #expect(trackLog.search(imageTime: beforeInterval, extendedTime: 10) != nil)
     }
->>>>>>> gu/main
 }

@@ -158,7 +158,6 @@ targets:
             NSIsRelatedItemType: YES
             CFBundleTypeExtensions:
               - xmp
-
     settings:
       base:
         ENABLE_APP_SANDBOX: YES
@@ -205,6 +204,14 @@ schemes:
       gatherCoverageData: YES
       targets:
         - name: GeoTagTests
+        - package: Coords/CoordsTests
+        - package: Coords/CoordsValid
+        - package: Exiftool/ExiftoolTests
+        - package: GpxTrackLog/GpxTrackLogTests
+        - package: ImageData/ImageDataTests
+        - package: Imagetool/ImageToolTests
+        - package: Metadata/MetadataTests
+        - package: Phototool/PhototoolTests
     profile:
       config: Release
     analyze:

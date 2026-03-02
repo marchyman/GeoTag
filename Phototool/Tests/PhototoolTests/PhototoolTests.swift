@@ -3,5 +3,6 @@ import Testing
 
 struct PhototoolTests {
     @Test func example() async throws {
+        print("TODO: Phototool tests")
     }
 }

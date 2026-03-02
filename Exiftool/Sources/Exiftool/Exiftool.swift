@@ -272,12 +272,24 @@ extension Exiftool {
             countryArg, countryCodeArg
         ]
 
-        // user option to update file modify time
-        @AppStorage(Self.updateFileModificationTimesKey)
-        var updateFileModificationTimes = false
-        if updateFileModificationTimes {
-            args += ["-filemodifydate<datetimeoriginal"]
+        // add args to update date/time if present
+        if let dateTimeCreated = metadata.dateTimeCreated {
+            let dtoArg = "-datetimeoriginal=" + dateTimeCreated
+            let cdArg = "-createdate=" + dateTimeCreated
+            args += [dtoArg, cdArg]
+            // and update the file modification date if requested
+            @AppStorage(Self.updateFileModificationTimesKey)
+            var updateFileModificationTimes = false
+            if updateFileModificationTimes {
+                let fmd = "-filemodifydate=" + dateTimeCreated
+                args += [fmd]
+                // note: do not use -filemodifydate<datetimecreated as
+                // that will use the current date which might be
+                // different than that updated above.
+            }
         }
+
+        // user option to update file modify time
 
         // user option to update GPS timestamp
         @AppStorage(Self.updateGPSTimestampsKey)
@@ -299,12 +311,6 @@ extension Exiftool {
             }
         }
 
-        // add args to update date/time if present
-        if let dateTimeCreated = metadata.dateTimeCreated {
-            let dtoArg = "-datetimeoriginal=" + dateTimeCreated
-            let cdArg = "-createdate=" + dateTimeCreated
-            args += [dtoArg, cdArg]
-        }
         args += ["-gpsstatus=", image.path]
     #if DEBUG
         Self.logger.info("\(args, privacy: .public)")
@@ -326,6 +332,22 @@ extension Exiftool {
                 dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
                 return dateFormatter.string(from: date) + "Z"
             }
+        }
+        return nil
+    }
+}
+
+// Test support functions. Extract the GPS Timestamp if present
+extension Exiftool {
+    public func getGPSTimestamp(for url: URL) async throws -> String? {
+        var args = [
+            "-q", "-m", "-s3", "-GPSDateTime"
+        ]
+        args += [url.path]
+        let data = try run(args)
+        if data.count > 0 {
+            let string = String(data: data, encoding: String.Encoding.utf8)
+            return string
         }
         return nil
     }

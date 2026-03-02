@@ -1,6 +1,8 @@
 import Coords
 import Foundation
 import Photos
+import PhotosUI
+import SwiftUI
 
 import Testing
 @testable import Metadata
@@ -12,7 +14,7 @@ struct MetadataTests {
     @Test(arguments: [
         MetadataSource.image(imageURL),
         MetadataSource.xmp(sidecarURL),
-        MetadataSource.photos(PhotosPickerItem(), PHAsset())
+        MetadataSource.photos(PhotosPickerItem(itemIdentifier: "TestItem"), PHAsset())
     ])
     func createFromSource(source: MetadataSource) async throws {
         let metadata = Metadata(source: source)
