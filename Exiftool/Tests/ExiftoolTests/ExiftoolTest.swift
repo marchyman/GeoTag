@@ -2,32 +2,34 @@
 
 import Coords
 import ImageData
+import Imagetool
 import Metadata
 import SwiftUI
 import Testing
 
 @testable import Exiftool
 
+// return the url of a folder in the standard temporaryDirectory
+// used to hold files that will be modified by tests
+// if an image url is passed to the function copy the image
+// into the folder before returning
+
+func makeTestFolder(andCopy url: URL? = nil) throws -> URL {
+    let testFolder =
+        URL.temporaryDirectory.appending(components: UUID().uuidString)
+
+    try FileManager.default.createDirectory(at: testFolder,
+                                            withIntermediateDirectories: true)
+    if let url {
+        let name = url.lastPathComponent
+        let copy = testFolder.appending(component: name)
+        try FileManager.default.copyItem(at: url, to: copy)
+    }
+    return testFolder
+}
+
 struct ExiftoolTests {
 
-    // return the url of a folder in the standard temporaryDirectory
-    // used to hold files that will be modified by tests
-    // if an image url is passed to the function copy the image
-    // into the folder before returning
-
-    func makeTestFolder(andCopy url: URL? = nil) throws -> URL {
-        let testFolder =
-            URL.temporaryDirectory.appending(components: UUID().uuidString)
-
-        try FileManager.default.createDirectory(at: testFolder,
-                                                withIntermediateDirectories: true)
-        if let url {
-            let name = url.lastPathComponent
-            let copy = testFolder.appending(component: name)
-            try FileManager.default.copyItem(at: url, to: copy)
-        }
-        return testFolder
-    }
 
     // read the version of the embedded exiftool
     // verifies the tool is part of the bundle and can be
@@ -132,6 +134,7 @@ struct ExiftoolTests {
         }
         let name = testImage.lastPathComponent
         let copy = testFolder.appending(component: name)
+
         try Exiftool.helper.makeSidecar(from: copy)
         let sidecar = copy.deletingPathExtension()
             .appendingPathExtension(Metadata.xmpExtension)
@@ -152,7 +155,13 @@ struct ExiftoolTests {
 
         #expect(newData == oldData)
     }
+}
 
+// tests that use and modify global state (user defaults) that must be
+// serialized so one test doesn't clobber data used by another.
+
+@Suite(.serialized)
+struct ExiftoolSerializedTests {
     func makeTestData(_ metadata: inout Metadata) {
         metadata.dateTimeCreated = "2019:03:12 18:47:20"
         metadata.location = Coords(latitude: 33.123,
@@ -189,6 +198,8 @@ struct ExiftoolTests {
         }
         let name = testImage.lastPathComponent
         let copy = testFolder.appending(component: name)
+        #expect(FileManager.default.fileExists(atPath: copy.path))
+
         let beforeDate = try FileManager.default
                                         .attributesOfItem(atPath: copy.path)[
             FileAttributeKey.creationDate] as? Date
@@ -228,5 +239,66 @@ struct ExiftoolTests {
         } else {
             #expect(timestamp == "2019:03:11 18:47:20Z")
         }
+    }
+
+    // roughly the same as above but for XMP file updates
+
+    @Test(.serialized,
+        arguments: [
+        // (false, false),
+        // (false, true),
+        // (true, false),
+        (true, true)
+    ])
+    func updateXmp(ufm: Bool, ugt: Bool) async throws {
+        @AppStorage(Exiftool.updateFileModificationTimesKey) var updateFileModificationTimes = false
+        @AppStorage(Exiftool.updateGPSTimestampsKey) var updateGPSTimestamps = false
+
+        enum TestError: Error {
+            case testError
+        }
+
+        // setup
+        updateFileModificationTimes = ufm
+        updateGPSTimestamps = ugt
+
+        let testImage = try #require(
+            Bundle.module.url(forResource: "262M1559",
+                              withExtension: "DNG")
+        )
+        let testFolder = try makeTestFolder(andCopy: testImage)
+        defer {
+            try? FileManager.default.removeItem(at: testFolder)
+        }
+
+        let name = testImage.lastPathComponent
+        let copy = testFolder.appending(component: name)
+        #expect(FileManager.default.fileExists(atPath: copy.path))
+
+        // copy the xmp file, too
+        let xmpImage = testImage.deletingPathExtension()
+                                .appendingPathExtension(Metadata.xmpExtension)
+        let xmpName = xmpImage.lastPathComponent
+        let xmpCopy = testFolder.appending(component: xmpName)
+        try FileManager.default.copyItem(at: xmpImage, to: xmpCopy)
+        #expect(FileManager.default.fileExists(atPath: xmpCopy.path))
+
+        let beforeDate = try FileManager.default
+                                        .attributesOfItem(atPath: xmpCopy.path)[
+            FileAttributeKey.creationDate] as? Date
+ 
+        // grab metadata from the xmp file
+        var metadata = Exiftool.helper.metadata(from: xmpCopy,
+                                                primaryURL: copy)
+        makeTestData(&metadata)
+
+        // run
+        try await Exiftool.helper.update(image: copy, from: metadata,
+                                         timeZone: nil)
+
+        // verify results
+        let newdata = Exiftool.helper.metadata(from: xmpCopy,
+                                                primaryURL: copy)
+        #expect(newdata == metadata)
     }
 }

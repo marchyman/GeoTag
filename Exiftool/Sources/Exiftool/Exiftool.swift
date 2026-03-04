@@ -121,7 +121,7 @@ extension Exiftool {
 
 // use exiftool to read the contents of a sidecar file and extract
 // the metadata needed to create and return an Metadata struct.
-// Uses as Apple's ImageIO functions can not extract metadata from XMP
+// Used as Apple's ImageIO functions can not extract metadata from XMP
 // sidecar files.
 
 extension Exiftool {
