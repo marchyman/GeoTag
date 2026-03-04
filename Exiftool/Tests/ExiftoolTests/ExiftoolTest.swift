@@ -112,7 +112,7 @@ struct ExiftoolTests {
         #expect(metadata.dateTimeCreated == "2025:12:03 16:25:49")
         #expect(metadata.location?.latitude == 37.51878611116667)
         #expect(metadata.location?.longitude == -122.34516111116666)
-        #expect(metadata.elevation == nil)
+        #expect(metadata.elevation == 174.0)
         #expect(metadata.city == nil)
         #expect(metadata.state == nil)
         #expect(metadata.country == nil)
@@ -245,9 +245,9 @@ struct ExiftoolSerializedTests {
 
     @Test(.serialized,
         arguments: [
-        // (false, false),
-        // (false, true),
-        // (true, false),
+        (false, false),
+        (false, true),
+        (true, false),
         (true, true)
     ])
     func updateXmp(ufm: Bool, ugt: Bool) async throws {
@@ -293,12 +293,37 @@ struct ExiftoolSerializedTests {
         makeTestData(&metadata)
 
         // run
-        try await Exiftool.helper.update(image: copy, from: metadata,
+        try await Exiftool.helper.update(image: xmpCopy, from: metadata,
                                          timeZone: nil)
 
         // verify results
         let newdata = Exiftool.helper.metadata(from: xmpCopy,
-                                                primaryURL: copy)
+                                               primaryURL: copy)
         #expect(newdata == metadata)
+
+        // see if the file modification date was updated if requested
+        let afterDate = try FileManager.default
+                                       .attributesOfItem(atPath: xmpCopy.path)[
+            FileAttributeKey.creationDate] as? Date
+        if ufm {
+            #expect(beforeDate != afterDate)
+            let df = DateFormatter()
+            df.dateFormat = "yyyy:MM:dd HH:mm:ss"
+            let expectedDate = df.date(from: metadata.dateTimeCreated!)
+            #expect(afterDate == expectedDate)
+        } else {
+            #expect(beforeDate == afterDate)
+        }
+
+        // see if the gps timestamp was updated when requested
+        let timestamp = try await Exiftool.helper
+                                          .getGPSTimestamp(for: xmpCopy)?
+                                          .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if ugt {
+            #expect(timestamp == "2019:03:13 01:47:20Z")
+        } else {
+            #expect(timestamp == "2019:03:11 18:47:20Z")
+        }
     }
 }

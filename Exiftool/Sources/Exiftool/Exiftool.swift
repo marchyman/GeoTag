@@ -183,8 +183,8 @@ extension Exiftool {
                     case "-GPSAltitude":
                         let parts = value.split(separator: " ")
                         if let eleValue = Double(parts[0]),
-                           parts.count == 2 {
-                            ele = parts[1] == "1" ? eleValue : -eleValue
+                           parts.count >= 3 {
+                            ele = parts[2] == "Above" ? eleValue : -eleValue
                         }
                     case "-City":
                         metadata.city = String(value)
@@ -312,9 +312,6 @@ extension Exiftool {
         }
 
         args += ["-gpsstatus=", image.path]
-    #if DEBUG
-        Self.logger.info("\(args, privacy: .public)")
-    #endif
 
         try run(args)
     }
@@ -359,6 +356,9 @@ extension Exiftool {
 extension Exiftool {
     @discardableResult
     func run(_ args: [String]) throws -> Data {
+        #if DEBUG
+        Self.logger.info("\(args, privacy: .public)")
+        #endif
         let exiftool = Process()
         let pipe = Pipe()
         let err = Pipe()
