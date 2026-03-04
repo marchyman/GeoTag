@@ -159,13 +159,19 @@ extension Sandbox {
 
 extension Sandbox {
 
-    // use exiftool to save metadata changes to the image file
+    // use exiftool to save metadata changes to the image or xmp file
 
     public func saveChanges(from metadata: Metadata,
                             timeZone: TimeZone?) async throws {
+        let url: URL
+        if case .xmp = metadata.source {
+            url = xmpURL
+        } else {
+            url = imgURL
+        }
         NSFileCoordinator.addFilePresenter(xmpPresenter)
         defer { NSFileCoordinator.removeFilePresenter(xmpPresenter) }
-        try await Exiftool.helper.update(image: imgURL,
+        try await Exiftool.helper.update(image: url,
                                          from: metadata,
                                          timeZone: timeZone)
     }
