@@ -15,19 +15,21 @@ let package = Package(
     ],
     targets: [
         .target(name: "Exiftool",
-                dependencies: [
-                    .product(name: "Coords", package: "Coords"),
-                    .product(name: "Metadata", package: "Metadata")
-                ],
-                resources: [.copy("ExifTool")],
-                swiftSettings: [
-                    .define("DEBUG", .when(configuration: .debug)),
-                ]),
+                dependencies: ["Coords", "Metadata"],
+                resources: [.copy("ExifTool")]),
         .testTarget(name: "ExiftoolTests",
-                    dependencies: ["Exiftool", "ImageData"],
-                    resources: [.copy("nowrite.typ"),
-                                .copy("262M1559.DNG"),
-                                .copy("262M1559.xmp"),
-                                .copy("IMG_5654.HEIC")])
+                    dependencies: [
+                        "Exiftool", "Coords",
+                        "ImageData", "Metadata"
+                    ],
+                    resources: [
+                        .copy("nowrite.typ"),
+                        .copy("262M1559.DNG"),
+                        .copy("262M1559.xmp"),
+                        .copy("IMG_5654.HEIC")
+                    ],
+                    swiftSettings: [
+                        .define("DEBUG", .when(configuration: .debug))
+                    ])
     ]
 )
