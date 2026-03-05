@@ -205,8 +205,7 @@ schemes:
       targets:
         - name: GeoTagTests
         - package: Coords/CoordsTests
-        - package: Coords/CoordsValid
-        # - package: Exiftool/ExiftoolTests
+        - package: Exiftool/ExiftoolTests
         - package: GpxTrackLog/GpxTrackLogTests
         - package: ImageData/ImageDataTests
         - package: Imagetool/ImageToolTests

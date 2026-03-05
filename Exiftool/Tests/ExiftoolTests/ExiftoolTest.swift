@@ -30,7 +30,6 @@ func makeTestFolder(andCopy url: URL? = nil) throws -> URL {
 
 struct ExiftoolTests {
 
-
     // read the version of the embedded exiftool
     // verifies the tool is part of the bundle and can be
     // accessed by package code.
