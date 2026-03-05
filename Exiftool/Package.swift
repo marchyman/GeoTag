@@ -10,8 +10,6 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Coords", path: "../Coords"),
-        .package(name: "ImageData", path: "../ImageData"),
-        .package(name: "Imagetool", path: "../Imagetool"),
         .package(name: "Metadata", path: "../Metadata")
     ],
     targets: [
@@ -20,8 +18,7 @@ let package = Package(
                 resources: [.copy("ExifToolCommand")]),
         .testTarget(name: "ExiftoolTests",
                     dependencies: [
-                        "Exiftool", "Coords",
-                        "ImageData", "Imagetool", "Metadata"
+                        "Exiftool", "Coords", "Metadata"
                     ],
                     resources: [
                         .copy("nowrite.typ"),

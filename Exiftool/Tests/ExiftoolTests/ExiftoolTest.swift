@@ -1,8 +1,4 @@
-// Exiftool package tests
-
 import Coords
-import ImageData
-import Imagetool
 import Metadata
 import SwiftUI
 import Testing
@@ -172,6 +168,14 @@ struct ExiftoolSerializedTests {
         metadata.countryCode = "USA"
     }
 
+    // Note: the following test can not use ImageData or Imagetool as
+    // Exiftool is a dependency of those packages and using them will
+    // cause Xcode to compile/link twice as it creates an Exiftool_Exiftool
+    // target to break the dependency cycle. Grab existing image file
+    // metadata using Exiftool even though that is not how we get it
+    // in the main app. The tests are for updates, not reads, making this
+    // an acceptable workaround
+
     @Test(.serialized,
         arguments: [
         (false, false),
@@ -203,16 +207,17 @@ struct ExiftoolSerializedTests {
                                         .attributesOfItem(atPath: copy.path)[
             FileAttributeKey.creationDate] as? Date
 
-        var imageData = ImageData(from: copy)
-        makeTestData(&imageData.metadata)
-        let savedData = imageData.metadata
+        // grab metadata from the image file
+        var metadata = Exiftool.helper.metadata(from: nil, primaryURL: copy)
+        makeTestData(&metadata)
 
         // run
-        try await Exiftool.helper.update(image: copy, from: imageData.metadata,
+        try await Exiftool.helper.update(image: copy, from: metadata,
                                          timeZone: nil)
+
         // verify results
-        let newData = ImageData(from: copy)
-        #expect(newData.metadata == savedData)
+        let newdata = Exiftool.helper.metadata(from: nil, primaryURL: copy)
+        #expect(newdata == metadata)
 
         // see if the file modification date was updated if requested
         let afterDate = try FileManager.default
@@ -222,7 +227,7 @@ struct ExiftoolSerializedTests {
             #expect(beforeDate != afterDate)
             let df = DateFormatter()
             df.dateFormat = "yyyy:MM:dd HH:mm:ss"
-            let expectedDate = df.date(from: newData.metadata.dateTimeCreated!)
+            let expectedDate = df.date(from: metadata.dateTimeCreated!)
             #expect(afterDate == expectedDate)
         } else {
             #expect(beforeDate == afterDate)
