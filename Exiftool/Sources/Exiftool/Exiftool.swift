@@ -20,9 +20,8 @@ public struct Exiftool: Sendable {
 
     private init() {
         if let exiftoolUrl = Bundle.module.url(
-            forResource: "ExifTool",
-            withExtension: nil)
-        {
+            forResource: "ExifToolCommand",
+            withExtension: nil) {
             url = exiftoolUrl.appendingPathComponent("exiftool")
         } else {
             fatalError("The Application Bundle is corrupt.")

@@ -17,7 +17,7 @@ let package = Package(
     targets: [
         .target(name: "Exiftool",
                 dependencies: ["Coords", "Metadata"],
-                resources: [.copy("ExifTool")]),
+                resources: [.copy("ExifToolCommand")]),
         .testTarget(name: "ExiftoolTests",
                     dependencies: [
                         "Exiftool", "Coords",
