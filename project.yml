@@ -208,7 +208,7 @@ schemes:
         - package: Exiftool/ExiftoolTests
         - package: GpxTrackLog/GpxTrackLogTests
         - package: ImageData/ImageDataTests
-        - package: Imagetool/ImageToolTests
+        - package: Imagetool/ImagetoolTests
         - package: Metadata/MetadataTests
         - package: Phototool/PhototoolTests
     profile:

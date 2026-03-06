@@ -6,10 +6,9 @@ import Testing
 struct SandboxTests {
     @Test func initSandbox() async throws {
         let url = try #require(URL(string: "file:///a/path/to/a/file.img"))
-        let xmp = try #require(URL(string: "file:///a/path/to/a/file.xmp"))
         var dir: URL?
 
-        if let sandbox = try? Sandbox(for: url, sidecar: xmp) {
+        if let sandbox = try? Sandbox(for: url) {
             defer {
                 sandbox.removeSandboxFolder()
             }
@@ -27,7 +26,7 @@ struct SandboxTests {
             Bundle.module.url(forResource: "262M1559",
                               withExtension: "xmp"))
 
-        let sandbox = try Sandbox(for: url, sidecar: xmp)
+        let sandbox = try Sandbox(for: url)
         let contents =
             try FileManager.default.contentsOfDirectory(at: sandbox.imgDir,
                                                         includingPropertiesForKeys: [.isSymbolicLinkKey])
