@@ -112,4 +112,20 @@ struct ImagetoolTests {
         #expect(metadata.country == nil)
         #expect(metadata.countryCode == nil)
     }
+
+    @Test func imageThumbnail() async throws {
+        let url = try #require(
+            Bundle.module.url(forResource: "262M1559",
+                              withExtension: "DNG"))
+        let thumbnail = Imagetool.imageThumbnail(url: url)
+        #expect(thumbnail != nil)
+        let bogus = URL(filePath: "/some/file/path.img")
+        let noThumbnail = Imagetool.imageThumbnail(url: bogus)
+        #expect(noThumbnail == nil)
+        let smallImg = try #require(
+            Bundle.module.url(forResource: "toosmall",
+                              withExtension: "jpg"))
+        let small = Imagetool.imageThumbnail(url: smallImg)
+        #expect(small != nil)
+    }
 }

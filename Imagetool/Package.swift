@@ -27,6 +27,7 @@ let package = Package(
                         .copy("nolocation.jpg"),
                         .copy("location.jpg"),
                         .copy("status.DNG"),
+                        .copy("toosmall.jpg"),
                         .copy("noelevation.jpg"),
                         .copy("alldata.jpg"),
                         .copy("262M1559.DNG"),
