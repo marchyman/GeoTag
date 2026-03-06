@@ -290,7 +290,7 @@ struct ExiftoolSerializedTests {
         let beforeDate = try FileManager.default
                                         .attributesOfItem(atPath: xmpCopy.path)[
             FileAttributeKey.creationDate] as? Date
- 
+
         // grab metadata from the xmp file
         var metadata = Exiftool.helper.metadata(from: xmpCopy,
                                                 primaryURL: copy)

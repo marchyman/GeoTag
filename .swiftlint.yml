@@ -1,5 +1,6 @@
 disabled_rules:
   - opening_brace
+  - file_length
 
 included:
 

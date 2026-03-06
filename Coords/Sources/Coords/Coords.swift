@@ -8,7 +8,7 @@ import SwiftUI
 public typealias Coords = CLLocationCoordinate2D
 
 // Coordinate formatting types
-public enum CoordFormat: Int {
+public enum CoordFormat: Int, Sendable {
     case deg, degMin, degMinSec
 }
 
