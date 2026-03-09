@@ -23,6 +23,9 @@ struct MetadataDateTests {
         #expect(metadata.date() <= Date.now)
     }
 
+    // Daylight savings caused the following tests to fail.
+    // That's a little bit too fragile. Throw in a DST adjustment.
+
     @Test func timestampAsDate() async throws {
         var metadata = Metadata(source: .image(imageURL))
         let referenceDateString = "2001:01:01 00:00:00"
@@ -33,16 +36,18 @@ struct MetadataDateTests {
         let referenceUTCDate = Date(timeIntervalSinceReferenceDate: 0)
         #expect(metadata.date(timeZone: utc) == referenceUTCDate)
 
-        // without timezone
-        let timezoneOffset = TimeZone.current.secondsFromGMT()
-        let interval = TimeInterval(-timezoneOffset)
+        // without timezone (adjust for DST)
+        let timeZone = TimeZone.current
+        let dstOffset = timeZone.daylightSavingTimeOffset()
+        let interval = TimeInterval(-Double(TimeZone.current.secondsFromGMT()) + dstOffset)
         let referenceDate = Date(timeIntervalSinceReferenceDate: interval)
         #expect(metadata.date() == referenceDate)
     }
 
     @Test func createTimestampFromDate() async throws {
-        let timezoneOffset = TimeZone.current.secondsFromGMT()
-        let interval = TimeInterval(-timezoneOffset)
+        let timeZone = TimeZone.current
+        let dstOffset = timeZone.daylightSavingTimeOffset()
+        let interval = TimeInterval(-Double(TimeZone.current.secondsFromGMT()) + dstOffset)
         let date = Date(timeIntervalSinceReferenceDate: interval)
         let timestamp = Metadata.timestamp(from: date)
         #expect(timestamp == "2001:01:01 00:00:00")
