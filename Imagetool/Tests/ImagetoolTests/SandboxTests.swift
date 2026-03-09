@@ -93,4 +93,39 @@ struct SandboxTests {
         }
         sandbox.removeSandboxFolder()
     }
+
+    @Test func backupFile() async throws {
+        // Copy test image to test folder
+        let url = try #require(
+            Bundle.module.url(forResource: "alldata",
+                              withExtension: "jpg"))
+        let testFolder = try makeTestFolder(andCopy: url)
+        defer {
+            try? FileManager.default.removeItem(at: testFolder)
+        }
+
+        // make a sandbox entry for the copied test image
+        let name = url.lastPathComponent
+        let testImage = testFolder.appending(component: name)
+        let sandbox = try Sandbox(for: testImage)
+
+        // make a backup folder
+        let backupFolder = testFolder.appending(component: "backup/")
+        try FileManager.default.createDirectory(at: backupFolder,
+                                                withIntermediateDirectories: true)
+
+        // make a backup file twice to verify backup naming
+        try await sandbox.makeBackupFile(backupFolder: backupFolder)
+        try await sandbox.makeBackupFile(backupFolder: backupFolder)
+
+        // verify the backup folder contains both copies
+        let contents =
+            try FileManager.default.contentsOfDirectory(at: backupFolder,
+                                                        includingPropertiesForKeys: nil)
+        #expect(contents.contains { $0.lastPathComponent == name })
+        #expect(contents.count == 2)
+
+        // clean up
+        sandbox.removeSandboxFolder()
+    }
 }
