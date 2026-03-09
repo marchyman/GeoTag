@@ -1,4 +1,5 @@
 import Foundation
+import Exiftool
 import Metadata
 import Testing
 @testable import Imagetool
@@ -168,6 +169,77 @@ struct SandboxTests {
         #expect(contents.count == 2)
 
         // clean up
+        sandbox.removeSandboxFolder()
+    }
+
+    @Test func saveImage() async throws {
+        // Copy test image to test folder
+        let url = try #require(
+            Bundle.module.url(forResource: "alldata",
+                              withExtension: "jpg"))
+        let testFolder = try makeTestFolder(andCopy: url)
+        defer {
+            try? FileManager.default.removeItem(at: testFolder)
+        }
+
+        // make a sandbox entry for the copied test image
+        let name = url.lastPathComponent
+        let testImage = testFolder.appending(component: name)
+        let sandbox = try Sandbox(for: testImage)
+
+        // Create a metadata entry for the image
+        var metadata = Metadata(source: .image(testImage))
+        metadata.dateTimeCreated =  "2019:03:11 11:47:20"
+
+        // update the image using the created metadata
+        try await sandbox.saveChanges(from: metadata, timeZone: nil)
+
+        // see if the changes took effect
+        let updatedMetadata = Imagetool.metadata(from: testImage)
+        #expect(metadata == updatedMetadata)
+
+        sandbox.removeSandboxFolder()
+    }
+
+    // same as above, but using a file with a sidecar to check
+    // sidecar updates.
+
+    @Test func saveXmp() async throws {
+        // Copy test image to test folder
+        let url = try #require(
+            Bundle.module.url(forResource: "262M1559",
+                              withExtension: "DNG"))
+        let testFolder = try makeTestFolder(andCopy: url)
+        defer {
+            try? FileManager.default.removeItem(at: testFolder)
+        }
+
+        // Copy the Sidecar file, too.
+        let xmp = try #require(
+            Bundle.module.url(forResource: "262M1559",
+                              withExtension: "xmp"))
+        let xmpName = xmp.lastPathComponent
+        let xmpCopy = testFolder.appending(component: xmpName)
+        try FileManager.default.copyItem(at: xmp, to: xmpCopy)
+
+        // make a sandbox for the image and sidecar
+        let name = url.lastPathComponent
+        let testImage = testFolder.appending(component: name)
+        let sandbox = try Sandbox(for: testImage)
+
+        // Create a metadata entry for the update
+        var metadata = Metadata(source: .xmp(testImage))
+        metadata.dateTimeCreated =  "2019:03:11 11:47:20"
+
+        // update
+        try await sandbox.saveChanges(from: metadata, timeZone: nil)
+
+        // use exiftool to grab xmp data as the Imagetool function will create
+        // another sandbox. See if it matches.
+        let updatedMetadata = Exiftool.helper.metadata(from: sandbox.xmpURL,
+                                                       primaryURL: testImage)
+        #expect(metadata == updatedMetadata)
+
         sandbox.removeSandboxFolder()
     }
 }
