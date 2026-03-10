@@ -108,7 +108,7 @@ public struct Imagetool {
                                                 primaryURL: imageURL)
         } else {
             Self.logger.error("\(#function): Can't create sandbox for \(imageURL.path, privacy: .public)")
-            metadata = Metadata(source: .xmp(xmp))
+            metadata = Metadata(source: .xmp(imageURL))
         }
 
         return metadata

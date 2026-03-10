@@ -131,10 +131,10 @@ extension Exiftool {
         var metadata: Metadata
         if let xmp {
             url = xmp
-            metadata = Metadata(source: .xmp(url))
+            metadata = Metadata(source: .xmp(primaryURL))
         } else {
             url = primaryURL
-            metadata = Metadata(source: .image(url))
+            metadata = Metadata(source: .image(primaryURL))
         }
         let args = [
             "-args", "-c", "%.15f", "-createdate",

@@ -28,7 +28,12 @@ let package = Package(
         ),
         .testTarget(
             name: "ImageDataTests",
-            dependencies: ["ImageData"]
+            dependencies: ["ImageData"],
+            resources: [
+                .copy("alldata.jpg"),
+                .copy("262M1559.DNG"),
+                .copy("262M1559.xmp")
+            ]
         )
     ]
 )
