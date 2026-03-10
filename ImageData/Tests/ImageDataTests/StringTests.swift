@@ -24,12 +24,11 @@ struct ImageDataStringTests {
         return ImageData(metadata: metadata, name: "name.img")
     }
 
-
     @Test func stringRep() async throws {
         let noData = ImageData()
         #expect(noData.stringRepresentation == "")
     }
- 
+
     @Test(.serialized, arguments: [
         (CoordFormat.deg, " 37.087691, -122.088502, 101.0"),
         (CoordFormat.degMin, "37° 5.261460' N, 122° 5.310120' W, 101.0"),
@@ -71,7 +70,7 @@ struct ImageDataStringTests {
         ("37° 5' 15.69\" N, 122° 5' 18.61\" W, 101.0",
             37.08769166666667, -122.08850277777778, 101.0),
         ("37° 5' 15.69\" N, 122° 5' 18.61\" W",
-            37.08769166666667, -122.08850277777778, 0.0),
+            37.08769166666667, -122.08850277777778, 0.0)
     ])
     func stringRepDecode(rep: String, lat: Double, lon: Double,
                          elevation: Double) async throws {

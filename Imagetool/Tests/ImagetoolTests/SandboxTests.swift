@@ -269,7 +269,7 @@ struct SandboxTests {
         } else {
             Issue.record("Tag not set")
         }
- 
+
         // Tag a second time with the same tag
         try await sandbox.setTag(name: tagName)
 
