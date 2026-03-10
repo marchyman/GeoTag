@@ -11,7 +11,7 @@ public struct Phototool {
             metadata.dateTimeCreated = if let date = asset.creationDate {
                 Metadata.timestamp(from: date)
             } else {
-                ""
+                nil
             }
             metadata.location = asset.location?.coordinate
             metadata.elevation = asset.location?.altitude
