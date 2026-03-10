@@ -242,4 +242,41 @@ struct SandboxTests {
 
         sandbox.removeSandboxFolder()
     }
+
+    @Test func tagFile() async throws {
+        // Copy test image to test folder
+        let url = try #require(
+            Bundle.module.url(forResource: "262M1559",
+                              withExtension: "DNG"))
+        let testFolder = try makeTestFolder(andCopy: url)
+        defer {
+            try? FileManager.default.removeItem(at: testFolder)
+        }
+
+        // make a sandbox for the image and sidecar
+        let name = url.lastPathComponent
+        let testImage = testFolder.appending(component: name)
+        let sandbox = try Sandbox(for: testImage)
+
+        // tag the file with "TestTag"
+        let tagName = "TestTag"
+        try await sandbox.setTag(name: tagName)
+
+        // Verify the file is tagged
+        let tags = try sandbox.orgURL.resourceValues(forKeys: [.tagNamesKey])
+        if let name = tags.tagNames {
+            #expect(name.contains(tagName))
+        } else {
+            Issue.record("Tag not set")
+        }
+ 
+        // Tag a second time with the same tag
+        try await sandbox.setTag(name: tagName)
+
+        // verify the tag was not duplicated
+        let tags2 = try sandbox.orgURL.resourceValues(forKeys: [.tagNamesKey])
+        if let names = tags2.tagNames {
+            #expect(names.count { $0 == tagName } == 1)
+        }
+    }
 }
