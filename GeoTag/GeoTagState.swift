@@ -44,13 +44,7 @@ struct GeoTagState {
         return nil
     }
     var sortOrder = [KeyPathComparator(\ImageData.name)]
-
-    @MainActor
-    var unsavedChanges = false {
-        didSet {
-            mainWindow?.isDocumentEdited = unsavedChanges
-        }
-    }
+    var unsavedChanges = false
 
     // Search exists for items in the Image Table and locations
     // on a map.
