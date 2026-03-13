@@ -1,0 +1,129 @@
+import Foundation
+import ImageData
+import Testing
+import UDF
+
+@testable import GeoTag
+
+@MainActor
+struct ReducerTests {
+    @Test func addImageEvent() async throws {
+        let store = Store(initialState: GeoTagState(forPreview: true),
+                          reduce: GeoTagReducer())
+        #expect(!store.imageData.isEmpty)
+        let count = store.imageData.count
+        store.send(.addImage(ImageData()))
+        let expectedCount = count + 1
+        #expect(store.imageData.count == expectedCount)
+    }
+
+    @Test func addressChangedEvent() async throws {
+        let store = Store(initialState: GeoTagState(forPreview: true),
+                          reduce: GeoTagReducer())
+        #expect(!store.imageData.isEmpty)
+        let id = store.imageData[1].id
+        let selection: Set<ImageData.ID> = [id]
+        let place = Place(name: "Test Place",
+                          city: "Test City",
+                          state: "Test State",
+                          country: "Test Country",
+                          countryCode: "Test Country Code",
+                          coordinate: Coordinate(latitude: 37.123,
+                                                 longitude: -123.456))
+        store.send(.addressChanged(selection, place))
+        #expect(store[id].metadata.city == place.city)
+        #expect(store[id].metadata.state == place.state)
+        #expect(store[id].metadata.country == place.country)
+        #expect(store[id].metadata.countryCode == place.countryCode)
+        // .addressChanged event does not update location/coordinate
+    }
+
+    @Test func backupFolderSizeEvent() async throws {
+        let fm = FileManager.default
+        var state = GeoTagState()
+        let backupURL =
+            URL.temporaryDirectory.appending(components: UUID().uuidString)
+        try fm.createDirectory(at: backupURL,
+                               withIntermediateDirectories: true)
+
+        defer {
+            try? fm.removeItem(at: backupURL)
+        }
+        state.backupURL = backupURL
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+
+        // check with empty folder
+        store.send(.backupFolderSizeCheck)
+        #expect(store.oldFiles.isEmpty)
+        #expect(store.folderSize == 0)
+        #expect(store.deletedSize == 0)
+
+        // check with data
+        let urls = state.previewURLs()
+        print(urls)
+        for url in urls {
+            let name = url.lastPathComponent
+            try fm.copyItem(at: url, to: backupURL.appending(component: name))
+        }
+        store.send(.backupFolderSizeCheck)
+        #expect(store.oldFiles.count == 0)
+        #expect(store.folderSize == 220266855)
+        #expect(store.deletedSize == 0)
+
+        // no test for old files
+    }
+
+    @Test func backupURLChangedEvent() async throws {
+        let fm = FileManager.default
+        let backupURL =
+            URL.temporaryDirectory.appending(components: UUID().uuidString)
+        try fm.createDirectory(at: backupURL,
+                               withIntermediateDirectories: true)
+        defer {
+            try? fm.removeItem(at: backupURL)
+        }
+        var state = GeoTagState()
+        state.backupURL = nil
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+
+        store.send(.backupURLChanged(backupURL))
+
+        #expect(store.backupURL == backupURL)
+    }
+
+    @Test func badGpxFileEvent() async throws {
+        let badFileName = "/Bad/File/Name"
+        var state = GeoTagState()
+        state.gpxBadFileNames = []
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+
+        store.send(.badGpxFile(badFileName))
+
+        #expect(store.gpxBadFileNames.count == 1)
+        #expect(store.gpxBadFileNames[0] == badFileName)
+    }
+
+    @Test func catchUnexpectedErrorEvent() async throws {
+        let error = "The error string goes here"
+        let message = "An optional message to go with the error"
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+
+        store.send(.catchUnexpectedError(nil, nil))
+        #expect(store.sheetType == .unexpectedErrorSheet)
+        #expect(store.sheetError == nil)
+        #expect(store.sheetMessage == nil)
+        #expect(store.sheetStack.isEmpty)
+
+        store.send(.catchUnexpectedError(nil, message))
+        #expect(store.sheetStack.count == 1)
+        #expect(store.sheetStack[0].sheetType == .unexpectedErrorSheet)
+        #expect(store.sheetStack[0].sheetError == nil)
+        #expect(store.sheetStack[0].sheetMessage == message)
+
+        store.send(.catchUnexpectedError(error, message))
+        #expect(store.sheetStack.count == 2)
+        #expect(store.sheetStack[1].sheetType == .unexpectedErrorSheet)
+        #expect(store.sheetStack[1].sheetError == error)
+        #expect(store.sheetStack[1].sheetMessage == message)
+    }
+}

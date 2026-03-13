@@ -16,6 +16,9 @@ proj:
 test:
 	xcodebuild -scheme GeoTag test | xcbeautify | tee .test.out
 
+testapp:
+	xcodebuild -scheme AppOnly test | tee .test.out
+
 testGpxTrackLog:
 	xcodebuild -scheme GpxTrackLog test | tee .test.out | xcbeautify
 

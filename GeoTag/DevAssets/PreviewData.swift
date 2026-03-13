@@ -28,7 +28,7 @@ extension GeoTagState {
         imageData.sort(using: sortOrder)
     }
 
-    private func previewURLs() -> [URL] {
+    func previewURLs() -> [URL] {
         var urls: [URL] = []
         if let jpgs = Bundle.main.urls(forResourcesWithExtension: "JPG",
                                        subdirectory: nil) {

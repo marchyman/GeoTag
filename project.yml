@@ -218,6 +218,18 @@ schemes:
     archive:
       config: Release
       revealArchiveInOrganizer: YES
+  AppOnly:
+    build:
+      targets:
+        GeoTag: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: YES
+      targets:
+        - name: GeoTagTests
+
 
 packages:
   UDF:

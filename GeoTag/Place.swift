@@ -35,6 +35,16 @@ struct Place: Identifiable, Codable {
         self.coordinate = .init(item.location.coordinate)
     }
 
+    init(name: String, city: String?, state: String?, country: String?,
+         countryCode: String?, coordinate: Coordinate) {
+        self.name = name
+        self.city = city
+        self.state = state
+        self.country = country
+        self.countryCode = countryCode
+        self.coordinate = coordinate
+    }
+
     private enum CodingKeys: String, CodingKey {
         case name
         case city
