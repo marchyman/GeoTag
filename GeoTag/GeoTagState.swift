@@ -106,3 +106,16 @@ extension GeoTagState: Equatable {
         return lhs.version == rhs.version
     }
 }
+
+// while the state is only updated in the reducer the isDocumentEdited
+// flag for the mainWindow needs to follow the unsavedChanges flag which
+// might change as a result of an undo or redo action. The following
+// functions address that situation
+
+extension GeoTagState {
+    static func didUndoRedo(_ state: GeoTagState) {
+        Task { @MainActor in
+            state.mainWindow?.isDocumentEdited = state.unsavedChanges
+        }
+    }
+}

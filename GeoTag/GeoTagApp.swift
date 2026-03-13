@@ -7,7 +7,9 @@ struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     @State private var store = Store(initialState: GeoTagState(),
                                      reduce: GeoTagReducer(),
-                                     undoEnabled: true)
+                                     undoEnabled: true,
+                                     didUndo: GeoTagState.didUndoRedo,
+                                     didRedo: GeoTagState.didUndoRedo)
     @State private var mainWindow: NSWindow?
 
     @AppStorage(Self.doNotBackupKey) var doNotBackup = false

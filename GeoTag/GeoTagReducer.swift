@@ -191,8 +191,7 @@ struct GeoTagReducer: Reducer, Sendable {
         }
 
         // update the window document edited indicator when the
-        // unsavedChanges is modified. Note: this still doesn't handle
-        // state restoration via undo/redo.  TODO
+        // unsavedChanges is modified.
 
         if state.unsavedChanges != newState.unsavedChanges {
             newState.mainWindow?.isDocumentEdited = newState.unsavedChanges
