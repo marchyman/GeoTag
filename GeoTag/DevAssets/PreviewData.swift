@@ -25,6 +25,7 @@ extension GeoTagState {
             item.original = Metadata(copying: item.metadata)
             imageData.append(item)
         }
+        linkPairedImages(true)
         imageData.sort(using: sortOrder)
     }
 

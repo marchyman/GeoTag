@@ -30,7 +30,7 @@ enum GeoTagEvent: Equatable {
     case initBackupURL
     case noBackupNotice
     case initPlaces([Place])
-    case linkPairedImages
+    case linkPairedImages(Bool)
     case locationChanged(Coords)
     case locationFromTrack([LocationHelper.LocationById])
     case mainWindowChange(NSWindow?)

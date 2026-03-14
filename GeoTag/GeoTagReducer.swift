@@ -86,8 +86,8 @@ struct GeoTagReducer: Reducer, Sendable {
         case .initPlaces(let places):
             newState.places = places
 
-        case .linkPairedImages:
-            linkPairedImages(&newState)
+        case .linkPairedImages(let disablePairedJpegs):
+            newState.linkPairedImages(disablePairedJpegs)
 
         case .locationChanged(let coords):
             update(&newState, coords: coords)

@@ -7,6 +7,16 @@ import UDF
 
 @MainActor
 struct ReducerTests {
+    func testPlace() -> Place {
+        return Place(name: "Test Place",
+                     city: "Test City",
+                     state: "Test State",
+                     country: "Test Country",
+                     countryCode: "Test Country Code",
+                     coordinate: Coordinate(latitude: 37.123,
+                                            longitude: -123.456))
+    }
+
     @Test func addImageEvent() async throws {
         let store = Store(initialState: GeoTagState(forPreview: true),
                           reduce: GeoTagReducer())
@@ -23,13 +33,7 @@ struct ReducerTests {
         #expect(!store.imageData.isEmpty)
         let id = store.imageData[1].id
         let selection: Set<ImageData.ID> = [id]
-        let place = Place(name: "Test Place",
-                          city: "Test City",
-                          state: "Test State",
-                          country: "Test Country",
-                          countryCode: "Test Country Code",
-                          coordinate: Coordinate(latitude: 37.123,
-                                                 longitude: -123.456))
+        let place = testPlace()
         store.send(.addressChanged(selection, place))
         #expect(store[id].metadata.city == place.city)
         #expect(store[id].metadata.state == place.state)
@@ -125,5 +129,41 @@ struct ReducerTests {
         #expect(store.sheetStack[1].sheetType == .unexpectedErrorSheet)
         #expect(store.sheetStack[1].sheetError == error)
         #expect(store.sheetStack[1].sheetMessage == message)
+    }
+
+    @Test func changeTimeZoneEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        #expect(!store.showTimeZoneWindow)
+        store.send(.changeTimeZone)
+        #expect(store.showTimeZoneWindow)
+    }
+
+    @Test func clearImagesRequestEvent() async throws {
+        let store = Store(initialState: GeoTagState(forPreview: true),
+                          reduce: GeoTagReducer())
+        #expect(!store.imageData.isEmpty)
+        store.send(.clearImagesRequest)
+        #expect(store.mostSelected == nil)
+        #expect(store.selection.isEmpty)
+        #expect(store.scopedURLs.isEmpty)
+        #expect(store.imageData.isEmpty)
+    }
+
+    @Test func clearPlacesEvent() async throws {
+        var state = GeoTagState()
+        let place = testPlace()
+        state.places.append(place)
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        store.send(.clearPlaces)
+        #expect(store.places.isEmpty)
+        // The disk file containing save places is updated in a task
+        // give the task time to complete before verifying that the
+        // file has been emptied. Fragile.
+        try? await Task.sleep(for: .milliseconds(300))
+        let savedPlaces = await PlaceSaver.shared.read()
+        #expect(savedPlaces.isEmpty)
+    }
+
+    @Test func deleteRequestEvent() async throws {
     }
 }

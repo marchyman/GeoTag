@@ -35,7 +35,9 @@ enum OpenHelper {
             }
         }
         await MainActor.run {
-            store.send(.linkPairedImages)
+            @AppStorage(SettingsView.disablePairedJpegsKey) var disablePairedJpegs = false
+
+            store.send(.linkPairedImages(disablePairedJpegs))
             store.send(.sortUsingCurrentComparator)
         }
     }
