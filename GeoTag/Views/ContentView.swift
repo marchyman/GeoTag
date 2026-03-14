@@ -5,9 +5,6 @@ import SwiftUI
 import UDF
 import UniformTypeIdentifiers
 
-/// Window look and feel values
-let windowBorderColor = Color.gray
-
 struct ContentView: View {
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
     @Environment(\.openWindow) var openWindow
@@ -53,7 +50,6 @@ struct ContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .border(windowBorderColor)
         .padding()
         .dropDestination(for: URL.self) { items, _ in
             spinnerEnabled = true
