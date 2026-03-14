@@ -9,6 +9,10 @@ extension GeoTagState {
          withSelection: Set<Int>? = nil) {
         if forPreview {
             loadPreviewData()
+            Task { @MainActor in
+                @AppStorage(ImageTableView.hideInvalidImagesKey) var hideInvalidImages = false
+                hideInvalidImages = false
+            }
         }
         if let selection = withSelection {
             self.selection = selection
@@ -20,9 +24,11 @@ extension GeoTagState {
         for url in previewURLs() {
             var item = ImageData(from: url)
             // exiftool can't read files from the bundle?
-            // assume all files are updatable
+            // assume most files are updatable
             // Doesn't help with accessing xmp files
-            item.original = Metadata(copying: item.metadata)
+            if item.name != "image.foo" && item.name != "Screenshot.png" {
+                item.original = Metadata(copying: item.metadata)
+            }
             imageData.append(item)
         }
         linkPairedImages(true)
@@ -42,6 +48,14 @@ extension GeoTagState {
         if let cr2s = Bundle.main.urls(forResourcesWithExtension: "CR2",
                                        subdirectory: nil) {
             urls.append(contentsOf: cr2s)
+        }
+        if let pngs = Bundle.main.urls(forResourcesWithExtension: "png",
+                                       subdirectory: nil) {
+            urls.append(contentsOf: pngs)
+        }
+        if let foos = Bundle.main.urls(forResourcesWithExtension: "foo",
+                                       subdirectory: nil) {
+            urls.append(contentsOf: foos)
         }
 
         return urls
