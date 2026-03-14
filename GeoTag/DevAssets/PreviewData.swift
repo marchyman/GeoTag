@@ -1,4 +1,4 @@
-import Foundation
+import GpxTrackLog
 import ImageData
 import Metadata
 import SwiftUI
@@ -33,6 +33,9 @@ extension GeoTagState {
         }
         linkPairedImages(true)
         imageData.sort(using: sortOrder)
+        if let track = previewTrack() {
+            gpxTracks.append(track)
+        }
     }
 
     func previewURLs() -> [URL] {
@@ -59,6 +62,14 @@ extension GeoTagState {
         }
 
         return urls
+    }
+
+    func previewTrack() -> GpxTrackLog? {
+        guard let trackURL = Bundle.main.url(forResource: "TestTrack",
+                                             withExtension: "GPX") else {
+            return nil
+        }
+        return try? GpxTrackLog(contentsOf: trackURL)
     }
 }
 

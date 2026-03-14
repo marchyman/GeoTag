@@ -71,7 +71,7 @@ struct ReducerTests {
         }
         store.send(.backupFolderSizeCheck)
         #expect(store.oldFiles.count == 0)
-        #expect(store.folderSize == 220266855)
+        #expect(store.folderSize == 226059455)
         #expect(store.deletedSize == 0)
 
         // no test for old files
@@ -165,5 +165,57 @@ struct ReducerTests {
     }
 
     @Test func deleteRequestEvent() async throws {
+        var state = GeoTagState(forPreview: true)
+        for ix in state.imageData.indices {
+            // add images with a location to the selection
+            if state.imageData[ix].metadata.location != nil {
+                state.selection.insert(state.imageData[ix].id)
+            }
+        }
+        #expect(!state.selection.isEmpty)
+        state.mostSelected = state.selection.first
+
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        store.send(.deleteRequest)
+
+        for id in state.selection {
+            #expect(store[id].metadata.location == nil)
+            #expect(store[id].metadata.city == nil)
+            #expect(store[id].metadata.state == nil)
+            #expect(store[id].metadata.country == nil)
+            #expect(store[id].metadata.countryCode == nil)
+            if let pairedID = store[id].pairedID, store[pairedID].updatable {
+                #expect(store[pairedID].metadata.location == nil)
+                #expect(store[pairedID].metadata.city == nil)
+                #expect(store[pairedID].metadata.state == nil)
+                #expect(store[pairedID].metadata.country == nil)
+                #expect(store[pairedID].metadata.countryCode == nil)
+            }
+        }
+    }
+
+    @Test func discardChangesRequestEvent() async throws {
+        var state = GeoTagState(forPreview: true)
+        let ids = state.imageData
+                       .filter { $0.metadata.location != nil }
+                       .map { $0.id }
+        for id in ids {
+            state[id].metadata.location = nil
+        }
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+
+        store.send(.discardChangesRequest)
+        for id in ids {
+            #expect(store[id].metadata.location != nil)
+        }
+    }
+
+    @Test func discardTracksRequestEvent() async throws {
+        var state = GeoTagState(forPreview: true)
+        #expect(!state.gpxTracks.isEmpty)
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+
+        store.send(.discardTracksRequest)
+        #expect(store.gpxTracks.isEmpty)
     }
 }
