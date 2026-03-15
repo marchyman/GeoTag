@@ -1,5 +1,6 @@
 import Foundation
 import ImageData
+import SwiftUI
 import Testing
 import UDF
 
@@ -211,11 +212,88 @@ struct ReducerTests {
     }
 
     @Test func discardTracksRequestEvent() async throws {
-        var state = GeoTagState(forPreview: true)
+        let state = GeoTagState(forPreview: true)
         #expect(!state.gpxTracks.isEmpty)
         let store = Store(initialState: state, reduce: GeoTagReducer())
 
         store.send(.discardTracksRequest)
         #expect(store.gpxTracks.isEmpty)
+    }
+
+    @Test func duplicateImagesEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        store.send(.duplicateImages)
+        #expect(store.sheetType == .duplicateImageSheet)
+        #expect(store.sheetError == nil)
+        #expect(store.sheetMessage == nil)
+    }
+
+    @Test func findInMapEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        store.send(.findInMap(true))
+        #expect(store.mapSearchActive)
+        store.send(.findInMap(false))
+        #expect(!store.mapSearchActive)
+    }
+
+    @Test func finishAddingTracksEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        store.send(.finishedAddingTracks)
+        #expect(store.sheetType == .gpxFileNameSheet)
+        #expect(store.sheetError == nil)
+        #expect(store.sheetMessage == nil)
+    }
+
+    @Test func goodGpxFileEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        let name = "Good/file.gpx"
+        store.send(.goodGpxFile(name))
+        #expect(store.gpxGoodFileNames.count == 1)
+        #expect(store.gpxGoodFileNames[0] == name)
+    }
+
+    @Test func gpxLoadViewClosedEvent() async throws {
+        var state = GeoTagState()
+        state.gpxGoodFileNames.append("Good/File/Name:")
+        state.gpxBadFileNames.append("Bad/File/Name:")
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+
+        store.send(.gpxLoadViewClosed)
+        #expect(store.gpxBadFileNames.isEmpty)
+        #expect(store.gpxGoodFileNames.isEmpty)
+    }
+
+    @Test func removeOldFilesEvent() async throws {
+        // create a backup folder
+        let fm = FileManager.default
+        var state = GeoTagState()
+        let backupURL =
+            URL.temporaryDirectory.appending(components: UUID().uuidString)
+        try fm.createDirectory(at: backupURL,
+                               withIntermediateDirectories: true)
+        state.backupURL = backupURL
+
+        // put some files in the folder and add each to the list
+        // of oldfiles
+        let urls = state.previewURLs()
+        print(urls)
+        for url in urls {
+            let name = url.lastPathComponent
+            let oldFileName = backupURL.appending(component: name)
+            try fm.copyItem(at: url, to: oldFileName)
+            state.oldFiles.append(oldFileName)
+        }
+
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        store.send(.removeOldFiles)
+        #expect(store.oldFiles.isEmpty)
+
+        // files are removed in a task... wait a bit to give the task
+        // a chance to complete before verifying.
+        try await Task.sleep(for: .milliseconds(300))
+        store.send(.backupFolderSizeCheck)
+        #expect(store.oldFiles.isEmpty)
+        #expect(store.folderSize == 0)
+        #expect(store.deletedSize == 0)
     }
 }

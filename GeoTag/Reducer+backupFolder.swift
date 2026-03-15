@@ -84,7 +84,7 @@ extension GeoTagReducer {
 
         if let url {
             do {
-                try savedBookmark = url.bookmarkData(options: .withSecurityScope)
+                savedBookmark = try url.bookmarkData(options: .withSecurityScope)
                 state.backupURL = url
                 checkBackupFolderSize(&state)
            } catch {
