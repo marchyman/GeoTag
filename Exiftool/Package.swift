@@ -27,7 +27,7 @@ let package = Package(
                         .copy("IMG_5654.HEIC")
                     ],
                     swiftSettings: [
-                        .define("DEBUG", .when(configuration: .debug))
+                        .define("LOG_ARGS", .when(configuration: .debug))
                     ])
     ]
 )

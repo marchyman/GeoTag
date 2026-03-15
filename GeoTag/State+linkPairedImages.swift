@@ -49,9 +49,10 @@ extension GeoTagState {
 
         for jpeg in jpegBase {
             if let raw = rawBase.first(where: { $0.base == jpeg.base }) {
-                logger.notice(
-                    "Pairing \(jpeg.url, privacy: .public) <> \(raw.url, privacy: .public)"
-                )
+                logger.notice("""
+                    Pairing \(jpeg.url.lastPathComponent, privacy: .public) \
+                    <> \(raw.url.lastPathComponent, privacy: .public)"
+                    """ )
                 self[jpeg.id].pairedID = raw.id
                 self[raw.id].pairedID = jpeg.id
                 // disable the jpeg version if requested

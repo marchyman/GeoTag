@@ -362,7 +362,7 @@ extension Exiftool {
 extension Exiftool {
     @discardableResult
     func run(_ args: [String]) throws -> Data {
-        #if DEBUG
+        #if LOG_ARGS
         Self.logger.info("\(args, privacy: .public)")
         #endif
         let exiftool = Process()

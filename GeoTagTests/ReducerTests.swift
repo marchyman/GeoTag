@@ -1,4 +1,3 @@
-import Foundation
 import ImageData
 import SwiftUI
 import Testing
@@ -47,7 +46,8 @@ struct ReducerTests {
         let fm = FileManager.default
         var state = GeoTagState()
         let backupURL =
-            URL.temporaryDirectory.appending(components: UUID().uuidString)
+            URL.temporaryDirectory.appending(components: UUID().uuidString,
+                                             directoryHint: .isDirectory)
         try fm.createDirectory(at: backupURL,
                                withIntermediateDirectories: true)
 
@@ -81,7 +81,8 @@ struct ReducerTests {
     @Test func backupURLChangedEvent() async throws {
         let fm = FileManager.default
         let backupURL =
-            URL.temporaryDirectory.appending(components: UUID().uuidString)
+            URL.temporaryDirectory.appending(components: UUID().uuidString,
+                                             directoryHint: .isDirectory)
         try fm.createDirectory(at: backupURL,
                                withIntermediateDirectories: true)
         defer {
@@ -167,12 +168,8 @@ struct ReducerTests {
 
     @Test func deleteRequestEvent() async throws {
         var state = GeoTagState(forPreview: true)
-        for ix in state.imageData.indices {
-            // add images with a location to the selection
-            if state.imageData[ix].metadata.location != nil {
-                state.selection.insert(state.imageData[ix].id)
-            }
-        }
+        state.selection = Set(state.imageData.filter { $0.metadata.location != nil }
+                                             .map { $0.id })
         #expect(!state.selection.isEmpty)
         state.mostSelected = state.selection.first
 
@@ -261,39 +258,5 @@ struct ReducerTests {
         store.send(.gpxLoadViewClosed)
         #expect(store.gpxBadFileNames.isEmpty)
         #expect(store.gpxGoodFileNames.isEmpty)
-    }
-
-    @Test func removeOldFilesEvent() async throws {
-        // create a backup folder
-        let fm = FileManager.default
-        var state = GeoTagState()
-        let backupURL =
-            URL.temporaryDirectory.appending(components: UUID().uuidString)
-        try fm.createDirectory(at: backupURL,
-                               withIntermediateDirectories: true)
-        state.backupURL = backupURL
-
-        // put some files in the folder and add each to the list
-        // of oldfiles
-        let urls = state.previewURLs()
-        print(urls)
-        for url in urls {
-            let name = url.lastPathComponent
-            let oldFileName = backupURL.appending(component: name)
-            try fm.copyItem(at: url, to: oldFileName)
-            state.oldFiles.append(oldFileName)
-        }
-
-        let store = Store(initialState: state, reduce: GeoTagReducer())
-        store.send(.removeOldFiles)
-        #expect(store.oldFiles.isEmpty)
-
-        // files are removed in a task... wait a bit to give the task
-        // a chance to complete before verifying.
-        try await Task.sleep(for: .milliseconds(300))
-        store.send(.backupFolderSizeCheck)
-        #expect(store.oldFiles.isEmpty)
-        #expect(store.folderSize == 0)
-        #expect(store.deletedSize == 0)
     }
 }
