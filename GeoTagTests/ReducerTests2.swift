@@ -129,6 +129,146 @@ extension ReducerTests {
         }
     }
 
+    @Test func mainWindowChangeEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        #expect(store.mainWindow == nil)
+        let window = NSWindow()
+        store.send(.mainWindowChange(window))
+        #expect(store.mainWindow == window)
+    }
+
+    @Test func newThumbnailEvent() async throws {
+        var state = GeoTagState(forPreview: true)
+        let ids = Set(state.imageData.filter { $0.updatable }
+                                     .map { $0.id })
+        state.selection = ids
+        state.mostSelected = state.selection.first
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        let id = try #require(store.mostSelected)
+        #expect(store[id].thumbnail == nil)
+        let thumbnail = await store[id].makeThumbnail(scale: 1.0)
+        store.send(.newThumbnail(thumbnail))
+        #expect(store[id].thumbnail == thumbnail)
+    }
+
+    @Test func newTimestampEvent() async throws {
+        var state = GeoTagState(forPreview: true)
+        var ids: [ImageData.ID] = []
+        for ix in state.imageData.indices {
+            if case .image = state.imageData[ix].metadata.source,
+               state.imageData[ix].updatable {
+                ids.append(state.imageData[ix].id)
+            }
+        }
+        #expect(ids.count > 2)
+        let id = ids[0]
+        let id2 = ids[1]
+        state.selection = Set(ids)
+        state.mostSelected = id
+        state[id2].metadata.dateTimeCreated = nil
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        let oldDate = store[id].metadata.date()
+        let adjustment: TimeInterval = 60 * 60
+        let newDate = oldDate.addingTimeInterval(adjustment)
+        store.send(.newTimestamp(newDate, adjustment))
+        #expect(store[id].metadata.date() == newDate)
+        #expect(store[id2].metadata.date() == newDate)
+    }
+
+    @Test func openCommandEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        #expect(!store.importFiles)
+        store.send(.openCommand)
+        #expect(store.importFiles)
+    }
+
+    @Test func openFilesEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        let urls = store.state.previewURLs()
+        store.send(.openFiles(urls))
+        let openedURLs = try #require(store.uniqueURLs)
+        #expect(openedURLs.count == urls.count)
+        #expect(store.sheetType == nil)
+
+        // Try adding them in a store where they are allready loaded
+        let loaded = Store(initialState: GeoTagState(forPreview: true),
+                           reduce: GeoTagReducer())
+        loaded.send(.openFiles(urls))
+        #expect(loaded.uniqueURLs == nil)
+        #expect(loaded.sheetType == .duplicateImageSheet)
+        loaded.send(.sheetDismissed)
+
+        // build a hierarchy of files and open the items by only providing
+        // the URL of the top of the hierarchy
+        let fm = FileManager.default
+        let url =
+            URL.temporaryDirectory.appending(components: UUID().uuidString,
+                                             directoryHint: .isDirectory)
+        try fm.createDirectory(at: url, withIntermediateDirectories: true)
+        defer {
+            try? fm.removeItem(at: url)
+        }
+        for ix in 1...3 {
+            let name = "dir\(ix)"
+            let folder =
+                url.appending(components: name, directoryHint: .isDirectory)
+            try fm.createDirectory(at: folder, withIntermediateDirectories: true)
+            let filename = urls[ix].lastPathComponent
+            let copy = folder.appending(component: filename)
+            try fm.copyItem(at: urls[ix], to: copy)
+        }
+        let nextLevel = url.appending(path: "dir1/subdir/")
+        try fm.createDirectory(at: nextLevel, withIntermediateDirectories: true)
+        for ix in 4...6 {
+            let filename = urls[ix].lastPathComponent
+            let copy = nextLevel.appending(component: filename)
+            try fm.copyItem(at: urls[ix], to: copy)
+        }
+        loaded.send(.openFiles([url]))
+        let filesLoaded = try #require(loaded.uniqueURLs)
+        #expect(filesLoaded.count == 6)
+        #expect(loaded.sheetType == nil)
+    }
+
+    @Test func pasteRequestEvent() async throws {
+        let store = Store(initialState: GeoTagState(forPreview: true),
+                          reduce: GeoTagReducer())
+        store.send(.selectAllRequest)
+
+        let pb = NSPasteboard.general
+
+        // nothing should change when the pasteboard doesn't hold a location
+        pb.clearContents()
+        pb.setString("not a location", forType: .string)
+        store.send(.pasteRequest)
+        for id in store.selection where store[id].updatable {
+            #expect(store[id].metadata == store[id].original)
+        }
+
+        // note: Coords tests validate the various ways coordinates
+        // can be formatted. There is no reason to test the same here
+
+        // location without elevation
+        pb.clearContents()
+        pb.setString("37.890, -122.3456", forType: .string)
+        store.send(.pasteRequest)
+        for id in store.selection where store[id].updatable {
+            #expect(store[id].metadata.location?.latitude == 37.890)
+            #expect(store[id].metadata.location?.longitude == -122.3456)
+            #expect(store[id].metadata.elevation == nil)
+        }
+
+        // location with elevation
+        pb.clearContents()
+        pb.setString("-37.890, 122.3456, 123.4", forType: .string)
+        store.send(.pasteRequest)
+        for id in store.selection where store[id].updatable {
+            #expect(store[id].metadata.location?.latitude == -37.890)
+            #expect(store[id].metadata.location?.longitude == 122.3456)
+            #expect(store[id].metadata.elevation == 123.4)
+        }
+    }
+
     @Test func removeOldFilesEvent() async throws {
         // create a backup folder
         let fm = FileManager.default

@@ -25,7 +25,12 @@ extension GeoTagReducer {
             state.uniqueURLs = imageURLs.uniqued()
         } else {
             state.addSheet(type: .duplicateImageSheet)
-            state.uniqueURLs = imageURLs.filter { !duplicates.contains($0) }.uniqued()
+            let uniques = imageURLs.filter { !duplicates.contains($0) }.uniqued()
+            if uniques.isEmpty {
+                state.uniqueURLs = nil
+            } else {
+                state.uniqueURLs = uniques
+            }
         }
     }
 

@@ -6,9 +6,11 @@ import UDF
 @MainActor
 enum OpenHelper {
     @MainActor
+    @discardableResult
     static func open(_ store: Store<GeoTagState, GeoTagEvent>, urls: [URL],
-                     description: String, spinnerEnabled: Binding<Bool>?) {
-        Task { @MainActor in
+                     description: String,
+                     spinnerEnabled: Binding<Bool>?) -> Task<Void, Never> {
+        let task = Task { @MainActor in
             store.beginUndoGroup(description: description)
             await Self.images(for: urls, store: store)
             await Self.tracks(for: urls, store: store)
@@ -17,6 +19,7 @@ enum OpenHelper {
             }
             store.endUndoGroup()
         }
+        return task
     }
 
     // Create ImageData entries for imported images and add them

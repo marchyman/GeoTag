@@ -64,6 +64,7 @@ extension GeoTagReducer {
     }
 
     // adjust the timestamp of all selected images by the given amount
+    // If the image did not have an original timestamp assign the given date
 
     func update(_ state: inout GeoTagState,
                 date: Date, adjustment: TimeInterval) {
