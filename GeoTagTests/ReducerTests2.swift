@@ -108,6 +108,27 @@ extension ReducerTests {
         }
     }
 
+    @Test func locationFromTrackEvent() async throws {
+        var state = GeoTagState(forPreview: true)
+        let ids = Set(state.imageData.map { $0.id })
+        state.selection = ids
+        state.mostSelected = state.selection.first
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        // use the LocationHelper which preps data and sends
+        // the .locationFromTrack event with appropriate data
+        let task = LocationHelper.locationFromTrack(store, extendedTime: 120)
+        _ = await task.result
+        for id in ids where store[id].updatable {
+            // Two of the selected files should not have been updated
+            if store[id].name == "Screenshot.png" ||
+               store[id].name == "P1000686.JPG" {
+                #expect(store[id].metadata.location == nil)
+            } else {
+                #expect(store[id].metadata.location != nil)
+            }
+        }
+    }
+
     @Test func removeOldFilesEvent() async throws {
         // create a backup folder
         let fm = FileManager.default

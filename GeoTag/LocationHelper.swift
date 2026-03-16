@@ -17,8 +17,9 @@ enum LocationHelper {
     }
 
     @MainActor
+    @discardableResult
     static func locationFromTrack(_ store: Store<GeoTagState, GeoTagEvent>,
-                                  extendedTime: Double) {
+                                  extendedTime: Double) -> Task<Void, Never> {
         var locations: [LocationById] = []
         let timeZone = store.timeZone
 
@@ -29,13 +30,14 @@ enum LocationHelper {
                                             .date(timeZone: timeZone)
                                             .timeIntervalSince1970))
         }
-        Task {
+        let task = Task {
             let updatedLocations = await Self.locations(for: locations,
                                                         extendedTime: extendedTime,
                                                         tracks: store.gpxTracks)
             store.send(.locationFromTrack(updatedLocations),
                                           description: "location from tracks")
         }
+        return task
     }
 
     // look up the location for all the LocationById entries passed to
