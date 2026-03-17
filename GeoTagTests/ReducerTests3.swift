@@ -197,7 +197,7 @@ extension ReducerTests {
         #expect(store.sheetType == nil)
     }
 
-    @Test func sidecarCreated() async throws {
+    @Test func sidecarCreatedEvent() async throws {
         let store = Store(initialState: GeoTagState(forPreview: true),
                           reduce: GeoTagReducer())
         var id: ImageData.ID?
@@ -213,5 +213,57 @@ extension ReducerTests {
             return
         }
         Issue.record(".sidecarCreated failed")
+    }
+
+    @Test func sortOrderChangedEvent() async throws {
+        let store = Store(initialState: GeoTagState(forPreview: true),
+                          reduce: GeoTagReducer())
+
+        let nameOrder = [KeyPathComparator(\ImageData.name)]
+        let timeOrder = [KeyPathComparator(\ImageData.metadata.timestamp)]
+
+        #expect(store.sortOrder == nameOrder)
+        store.send(.sortOrderChanged(timeOrder))
+        #expect(store.sortOrder == timeOrder)
+        var prevOrder = ""
+        for ix in store.imageData.indices {
+            #expect(prevOrder <= store.imageData[ix].metadata.timestamp)
+            prevOrder = store.imageData[ix].metadata.timestamp
+        }
+    }
+
+    @Test func sortUsingCurrentComparatorEvent() async throws {
+        var state = GeoTagState(forPreview: true)
+        state.sortOrder = [KeyPathComparator(\ImageData.metadata.timestamp)]
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        store.send(.sortUsingCurrentComparator)
+
+        var prevOrder = ""
+        for ix in store.imageData.indices {
+            #expect(prevOrder <= store.imageData[ix].metadata.timestamp)
+            prevOrder = store.imageData[ix].metadata.timestamp
+        }
+    }
+
+    @Test func terminateRequestEvent() async throws {
+        var state = GeoTagState()
+        state.unsavedChanges = true
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        store.send(.terminateRequest)
+        #expect(!store.unsavedChanges)
+    }
+
+    @Test func timeZoneChangedEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        #expect(store.timeZone == TimeZone.current)
+        let timeZone = TimeZoneName.plus3.timeZone
+        store.send(.timeZoneChanged(timeZone))
+        #expect(store.timeZone == timeZone)
+    }
+
+    @Test func toggleLogWindowEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        store.send(.toggleLogWindow)
+        #expect(store.showLogWindow)
     }
 }
