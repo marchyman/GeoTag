@@ -171,4 +171,47 @@ extension ReducerTests {
         #expect(storeImages.mostSelected != nil)
         #expect(storeImages.selection.count == 15)
     }
+
+    @Test func selectionChangedEvent() async throws {
+        let store = Store(initialState: GeoTagState(forPreview: true),
+                          reduce: GeoTagReducer())
+        let proposedSelection = Set(store.imageData.map { $0.id })
+        store.send(.selectionChanged(proposedSelection))
+        #expect(store.selection != proposedSelection)
+        #expect(store.selection.count == 15)
+        for id in store.selection {
+            #expect(store[id].updatable)
+        }
+    }
+
+    @Test func sheetDismissedEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        store.send(.duplicateImages)
+        store.send(.finishedAddingTracks)
+        #expect(store.sheetType == .duplicateImageSheet)
+
+        store.send(.sheetDismissed)
+        #expect(store.sheetType == .gpxFileNameSheet)
+
+        store.send(.sheetDismissed)
+        #expect(store.sheetType == nil)
+    }
+
+    @Test func sidecarCreated() async throws {
+        let store = Store(initialState: GeoTagState(forPreview: true),
+                          reduce: GeoTagReducer())
+        var id: ImageData.ID?
+        for ix in store.imageData.indices {
+            if case .image = store.imageData[ix].metadata.source {
+                id = store.imageData[ix].id
+                break
+            }
+        }
+        let imageId = try #require(id)
+        store.send(.sidecarCreated(imageId))
+        if case .xmp = store[imageId].metadata.source {
+            return
+        }
+        Issue.record(".sidecarCreated failed")
+    }
 }
