@@ -7,8 +7,8 @@ import UDF
 
 @MainActor
 struct ReducerTests {
-    func testPlace() -> Place {
-        return Place(name: "Test Place",
+    func testPlace(_ id: Int = 1) -> Place {
+        return Place(name: "Test Place \(id)",
                      city: "Test City",
                      state: "Test State",
                      country: "Test Country",

@@ -1,7 +1,7 @@
 import MapKit
 import SwiftUI
 
-private let maxPlaces = 10
+let maxPlaces = 10      // used when testing
 
 // Functions to update the list of visited places and store
 // them in the Application Support folder so they won't be lost between
