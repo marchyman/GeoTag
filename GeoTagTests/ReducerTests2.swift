@@ -138,6 +138,31 @@ extension ReducerTests {
         #expect(store.mainWindow == window)
     }
 
+    @Test func mostSelectedChangedEvent() async throws {
+        let store = Store(initialState: GeoTagState(forPreview: true),
+                          reduce: GeoTagReducer())
+        store.send(.selectAllRequest)
+        var selection = store.selection
+        let mostSelected = try #require(store.mostSelected)
+
+        // Should be no change
+        store.send(.mostSelectedChanged(mostSelected))
+        #expect(selection == store.selection)
+        #expect(mostSelected == store.mostSelected)
+
+        selection.remove(mostSelected)
+        store.send(.selectionChanged(selection))
+        #expect(mostSelected != store.mostSelected)
+        store.send(.mostSelectedChanged(mostSelected))
+        #expect(mostSelected == store.mostSelected)
+        #expect(store.selection.contains(mostSelected))
+
+        store.send(.selectionChanged([]))
+        store.send(.mostSelectedChanged(mostSelected))
+        #expect(mostSelected == store.mostSelected)
+        #expect(store.selection.contains(mostSelected))
+    }
+
     @Test func newThumbnailEvent() async throws {
         var state = GeoTagState(forPreview: true)
         let ids = Set(state.imageData.filter { $0.updatable }

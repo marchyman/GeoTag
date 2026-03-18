@@ -1,5 +1,5 @@
 - [x] Initial run
-   `defaults delete org.snafu.GeoTag` before running)
+   `defaults delete org.snafu.GeoTag` before running
    Image backup folder can not be found sheet should be shown.
    open settings window and select a backup folder.  Close and quit.
  
@@ -18,8 +18,8 @@
 - [x] Use Shift-Cmd-Z to redo change.  Verify.
 
 - [x] File -> Discard changes.
-   Verify confirmation dialog.  Select Cancel.  Verify coords not changed.
-   Repeat, selecting "I'm Sure".  Verify coords reset.
+   Verify coords reset.
+   Note: since this is now an undoable change there is no "I'm sure" dialog.
 
 - [x] File -> Clear Image List.
    Verify empty table.
@@ -63,7 +63,7 @@
 - [x] Use Cmd-W to close the window.
    Verify an "are you sure" confirmation is shown.
    Click cancel
-   Use File -> Discard changes, confirm
+   Use File -> Discard changes
    Use GeoTag -> Settings or Cmd-, to open the Settings window.
    Click on the main window.
    Use Cmd-W or File -> Close to close the main window.
@@ -131,7 +131,7 @@
    Right Click -> Save map location to save the current location.
    Quit GeoTag.
 
-- [x] Launch GeoTag
+- [ ] Launch GeoTag
    Verify the configuration and map location are as saved.
    Drag in the test images and track.  Assign locations from the track.
    Select several images. Use cmd-i or click on the info button.
@@ -155,7 +155,7 @@
    Verify a finder window opens with the appropriate image selected.
    Quit GeoTag.  Answer "I,m sure" to the confirmation dialog.
 
-- [x] Launch GeoTag
+- [ ] Launch GeoTag
    Open settings window and check the Disable paired jpeg option
    Use View -> Show/Hide Disabled Files to show disabled files
    Drag in images that includes a raw/jpeg pair
@@ -167,7 +167,7 @@
    Verify the image locations are updated.
    Verify there is a pin on the map at the desired location.
 
-- [x] Select Edit -> Specify Time Zone
+- [ ] Select Edit -> Specify Time Zone
    Verify the Specify Camera Time Zone window opens
    Select a time zone other than the current time zone.
    Click on the Change button.
@@ -175,7 +175,7 @@
    Verify the "current" value is the value selected above.
    Quit GeoTag
 
-- [x] Launch GeoTag.
+- [ ] Launch GeoTag.
    Drag in a large number (> 1000) images. [photos/year/2024]
    Note the time it takes to load images
    - about 8-9 seconds for the table to start being populated,
@@ -186,7 +186,7 @@
    - slightly longer for DNGs, but still fairly quick
    Quit GeoTag
 
-- [x] Launch GeoTag
+- [ ] Launch GeoTag
    Drag in TestData
    Dismiss track log sheet
    Select an image and verify the thumbnail loads
@@ -195,7 +195,7 @@
    - Verify the right pane contains only the map and map search bar
    Quit GeoTag
 
-- [x] Lauch GeoTag
+- [ ] Lauch GeoTag
    Click on the icon to open the Photos image browser
    Select several image and click add
    Verify the images are added to the table

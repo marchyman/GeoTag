@@ -14,9 +14,7 @@ struct ContextMenuView: View {
     var body: some View {
         Group {
             Button("Edit…", systemImage: "pencil") {
-                if let context {
-                    store.send(.selectionChanged([context]), undoable: false)
-                }
+                handleContext()
                 inspectorPresented.toggle()
             }
             .disabled(context == nil && store.mostSelected == nil)
@@ -26,9 +24,7 @@ struct ContextMenuView: View {
 
         Group {
             Button("Cut", systemImage: "scissors") {
-                if let context {
-                    store.send(.selectionChanged([context]), undoable: false)
-                }
+                handleContext()
                 if let id = store.mostSelected {
                     let pb = NSPasteboard.general
                     pb.clearContents()
@@ -40,9 +36,7 @@ struct ContextMenuView: View {
             .disabled(nothingToEdit(context: context))
 
             Button("Copy", systemImage: "document.on.document") {
-                if let context {
-                    store.send(.selectionChanged([context]), undoable: false)
-                }
+                handleContext()
                 if let id = store.mostSelected {
                     let pb = NSPasteboard.general
                     pb.clearContents()
@@ -52,10 +46,8 @@ struct ContextMenuView: View {
             }
             .disabled(nothingToEdit(context: context))
 
-             Button("Paste", systemImage: "document.on.clipboard") {
-                if let context {
-                     store.send(.selectionChanged([context]), undoable: false)
-                }
+            Button("Paste", systemImage: "document.on.clipboard") {
+                handleContext()
                 if let id = store.mostSelected {
                     store.send(.pasteRequest) {
                         let selected = store.selection
@@ -74,9 +66,7 @@ struct ContextMenuView: View {
              .disabled(pasteDisabled(context: context))
 
             Button("Delete", systemImage: "trash") {
-                if let context {
-                    store.send(.selectionChanged([context]), undoable: false)
-                }
+                handleContext()
                 store.send(.deleteRequest)
             }
             .disabled(nothingToEdit(context: context))
@@ -86,17 +76,13 @@ struct ContextMenuView: View {
 
         Group {
             Button("Show In Finder") {
-                if let context {
-                    store.send(.selectionChanged([context]), undoable: false)
-                }
+                handleContext()
                 showInFinder()
             }
             .disabled(context == nil && store.mostSelected == nil)
 
             Button("Locn From Track") {
-                if let context {
-                    store.send(.selectionChanged([context]), undoable: false)
-                }
+                handleContext()
                 LocationHelper.locationFromTrack(store,
                                                  extendedTime: extendedTime)
 
@@ -112,6 +98,15 @@ struct ContextMenuView: View {
                        description: "clear image list")
         }
         .disabled(store.imageData.isEmpty || store.unsavedChanges)
+    }
+}
+
+extension ContextMenuView {
+    // update selection/mostselected if necessary
+    func handleContext() {
+        if let context {
+            store.send(.mostSelectedChanged(context))
+        }
     }
 }
 

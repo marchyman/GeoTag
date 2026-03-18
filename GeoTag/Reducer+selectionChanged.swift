@@ -22,9 +22,17 @@ extension GeoTagReducer {
             // If the image that was the "most" selected is in the proposed
             // selection set don't pick another
             if state.mostSelected == nil ||
-                !state.selection.contains(where: { $0 == state.mostSelected }) {
+                !state.selection.contains(state.mostSelected!) {
                 state.mostSelected = state.selection.first
             }
         }
+    }
+
+    func mostSelectedChanged(_ state: inout GeoTagState,
+                             mostSelected: ImageData.ID) {
+        if !state.selection.contains(mostSelected) {
+            state.selection.insert(mostSelected)
+        }
+        state.mostSelected = mostSelected
     }
 }
