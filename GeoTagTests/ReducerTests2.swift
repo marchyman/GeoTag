@@ -103,6 +103,7 @@ extension ReducerTests {
         let testCoords = Coords(latitude: 1.23, longitude: 4.56)
 
         store.send(.locationChanged(testCoords))
+        #expect(store.unsavedChanges)
         for id in ids {
             #expect(store[id].metadata.location == testCoords)
         }

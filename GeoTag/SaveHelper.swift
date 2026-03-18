@@ -7,7 +7,8 @@ import UDF
 
 @MainActor
 enum SaveHelper {
-    static func save(_ store: Store<GeoTagState, GeoTagEvent>) {
+    @discardableResult
+    static func save(_ store: Store<GeoTagState, GeoTagEvent>) -> Task<Void, Never> {
         // capture the data needed to update images
         let libraryImages =
             Dictionary(uniqueKeysWithValues: store.libraryImages.map {
@@ -22,7 +23,7 @@ enum SaveHelper {
                 (store.imageData[$0].id, store.imageData[$0].metadata)
             })
         // Do the save in the background, report when done.
-        Task {
+        let task = Task {
             async let libUpdated = saveToLibrary(store, libraryImages)
             async let imgUpdated = saveToImage(store, fileImages)
             async let xmpUpdated = saveToImage(store, xmpImages, xmp: true)
@@ -31,6 +32,7 @@ enum SaveHelper {
             store.send(.saveComplete(ok.allSatisfy { $0 == true }),
                        undoable: false)
         }
+        return task
     }
 
     static func saveToLibrary(_ store: Store<GeoTagState, GeoTagEvent>,
