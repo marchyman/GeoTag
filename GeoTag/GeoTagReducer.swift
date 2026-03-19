@@ -185,6 +185,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .terminateRequest:
             newState.unsavedChanges = false
 
+        case .textfieldFocusChanged(let focus):
+            newState.textfieldActive = focus
+
         case .timeZoneChanged(let newTimeZone):
             newState.timeZone = newTimeZone
 

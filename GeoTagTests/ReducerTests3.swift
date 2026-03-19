@@ -253,6 +253,14 @@ extension ReducerTests {
         #expect(!store.unsavedChanges)
     }
 
+    @Test func textfieldFocusChangedEvent() async throws {
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        store.send(.textfieldFocusChanged(true))
+        #expect(store.textfieldActive)
+        store.send(.textfieldFocusChanged(false))
+        #expect(!store.textfieldActive)
+    }
+
     @Test func timeZoneChangedEvent() async throws {
         let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
         #expect(store.timeZone == TimeZone.current)

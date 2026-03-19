@@ -85,11 +85,9 @@ struct ContentView: View {
         .onChange(of: store.importFiles) {
             importFiles.toggle()
         }
-        .fileImporter(
-            isPresented: $importFiles,
-            allowedContentTypes: importTypes(),
-            allowsMultipleSelection: true
-        ) { result in
+        .fileImporter(isPresented: $importFiles,
+                      allowedContentTypes: importTypes(),
+                      allowsMultipleSelection: true) { result in
             switch result {
             case let .success(files):
                 spinnerEnabled = true

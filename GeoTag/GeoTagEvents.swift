@@ -55,6 +55,7 @@ enum GeoTagEvent: Equatable {
     case sortOrderChanged([KeyPathComparator<ImageData>])
     case sortUsingCurrentComparator
     case terminateRequest
+    case textfieldFocusChanged(Bool)
     case timeZoneChanged(TimeZone)
     case toggleLogWindow
 }
@@ -110,6 +111,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .sortOrderChanged: "sortOrderChanged"
         case .sortUsingCurrentComparator: "sortUsingCurrentComparator"
         case .terminateRequest: "terminateRequest"
+        case .textfieldFocusChanged: "textfieldFocusChanged"
         case .timeZoneChanged: "timeZoneChanged"
         case .toggleLogWindow: "toggleLogWindow"
         }

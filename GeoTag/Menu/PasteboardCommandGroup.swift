@@ -8,14 +8,13 @@ import UDF
 
 struct PasteboardCommands: Commands {
     var store: Store<GeoTagState, GeoTagEvent>
-    @FocusedValue(\.textfieldFocused) var textfieldFocused
     @AppStorage(SettingsView.extendedTimeKey) var extendedTime = 120.0
 
     var body: some Commands {
          CommandGroup(replacing: .pasteboard) {
             Group {
                 Button("Cut", systemImage: "scissors") {
-                    if isFocused(textfieldFocused) {
+                    if store.textfieldActive {
                         NSApp.sendAction(#selector(NSText.cut(_:)),
                                          to: nil, from: nil)
                     } else {
@@ -33,7 +32,7 @@ struct PasteboardCommands: Commands {
                 .disabled(cutCopyDisabled())
 
                 Button("Paste", systemImage: "document.on.clipboard") {
-                    if isFocused(textfieldFocused) {
+                    if store.textfieldActive {
                         NSApp.sendAction(#selector(NSText.paste(_:)),
                                          to: nil, from: nil)
                     } else {
@@ -57,7 +56,7 @@ struct PasteboardCommands: Commands {
                 .disabled(pasteDisabled())
 
                 Button("Delete", systemImage: "trash") {
-                    if isFocused(textfieldFocused) {
+                    if store.textfieldActive {
                         NSApp.sendAction(#selector(NSText.delete(_:)),
                                          to: nil, from: nil)
                     } else {
@@ -68,7 +67,7 @@ struct PasteboardCommands: Commands {
                 .disabled(deleteDisabled())
 
                 Button("Select All", systemImage: "character.textbox") {
-                    if isFocused(textfieldFocused) {
+                    if store.textfieldActive {
                         NSApp.sendAction(#selector(NSText.selectAll(_:)),
                                          to: nil, from: nil)
                     } else {
@@ -82,6 +81,12 @@ struct PasteboardCommands: Commands {
             Divider()
 
             Group {
+                Button("Find (table)...") {
+                    store.send(.searchActiveChanged(true), undoable: false)
+                }
+                .keyboardShortcut("f", modifiers: [.shift, .command])
+                .disabled(store.imageData.isEmpty)
+
                 Button("Find (map)...") {
                     store.send(.findInMap(true), undoable: false)
                 }
@@ -118,7 +123,7 @@ struct PasteboardCommands: Commands {
 extension PasteboardCommands {
 
     private func cutCopyDisabled() -> Bool {
-        if isFocused(textfieldFocused) {
+        if store.textfieldActive {
             return false
         }
         if let id = store.mostSelected, store[id].metadata.location != nil {
@@ -128,7 +133,7 @@ extension PasteboardCommands {
     }
 
     private func pasteDisabled() -> Bool {
-        if isFocused(textfieldFocused) {
+        if store.textfieldActive {
             return false
         }
         let pb = NSPasteboard.general
@@ -141,14 +146,14 @@ extension PasteboardCommands {
     }
 
     private func deleteDisabled() -> Bool {
-        if isFocused(textfieldFocused) {
+        if store.textfieldActive {
             return false
         }
         return store.selection.allSatisfy { store[$0].metadata.location == nil }
     }
 
     private func selectAllDisabled() -> Bool {
-        if isFocused(textfieldFocused) {
+        if store.textfieldActive {
             return false
         }
         return store.imageData.isEmpty
@@ -184,7 +189,7 @@ extension PasteboardCommands {
 
 extension PasteboardCommands {
     private func copy() {
-        if isFocused(textfieldFocused) {
+        if store.textfieldActive {
             NSApp.sendAction(#selector(NSText.copy(_:)),
                 to: nil, from: nil)
         } else if let id = store.mostSelected {

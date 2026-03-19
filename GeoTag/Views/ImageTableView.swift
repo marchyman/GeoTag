@@ -92,17 +92,17 @@ struct ImageTableView: View {
         }
         .searchable(text: $searchText, isPresented: $searchActive,
                     placement: .automatic, prompt: "image name")
+        .onChange(of: store.searchActive) {
+            if searchActive != store.searchActive {
+                searchActive = store.searchActive
+            }
+        }
         .onChange(of: searchActive) {
+            store.send(.textfieldFocusChanged(searchActive), undoable: false)
             if searchActive != store.searchActive {
                 store.send(.searchActiveChanged(searchActive))
             }
         }
-        .background(
-            // ⌘F for search
-            Button("", action: { searchActive = true })
-                .keyboardShortcut("f", modifiers: .shift).hidden()
-                .disabled(store.imageData.isEmpty)
-        )
         .onChange(of: searchText) {
             store.send(.searchTextChanged(searchText))
         }

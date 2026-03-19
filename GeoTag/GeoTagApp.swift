@@ -96,10 +96,3 @@ extension GeoTagApp {
     static let doNotBackupKey = "DoNotBackup"
     static let savedBookmarkKey = "SavedBookmark"
 }
-
-// Text field focus. When non-nil a text field has focus.  Used to enable
-// appropriate pasteboard actions for text fields.
-
-extension FocusedValues {
-    @Entry var textfieldFocused: String?
-}

@@ -43,6 +43,8 @@ public struct MapWithSearchView: View {
             }
         }
         .onChange(of: mapFocus) {
+            store.send(.textfieldFocusChanged(mapFocus == .search),
+                       undoable: false)
             if store.mapSearchActive != (mapFocus == .search) {
                 store.send(.findInMap(mapFocus == .search),
                            undoable: false)

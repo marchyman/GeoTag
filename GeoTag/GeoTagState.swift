@@ -53,6 +53,11 @@ struct GeoTagState {
     var mapSearchActive = false
     var places: [Place] = []
 
+    // pasteboard actions vary with the selected field. Textfields
+    // and search fields use normal actions, table selections use
+    // GeoTag specific actions. Track that here.
+    var textfieldActive = false
+
     // Image import variables
     var importFiles = false
     var uniqueURLs: [URL]?

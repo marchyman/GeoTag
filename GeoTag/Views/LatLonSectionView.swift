@@ -27,7 +27,6 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldFocused, "focused")
             }
 
             LabeledContent("Longitude:") {
@@ -36,7 +35,6 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldFocused, "focused")
             }
 
             LabeledContent("City:") {
@@ -87,6 +85,9 @@ struct LatLonSectionView: View {
         }
         .onChange(of: coordFormat) {
             loadCoordinates()
+        }
+        .onChange(of: isFocused) {
+            store.send(.textfieldFocusChanged(isFocused), undoable: false)
         }
         .task(id: image.metadata.location) {
             loadCoordinates()
