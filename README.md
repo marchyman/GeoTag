@@ -45,6 +45,7 @@ Mostly the same user interface, but restructured and rewriten under the hood.
 - Images from the Photos Library can not always be displayed. This appears
   to be an Apple issue that has been reported many times over the years. No
   known workaround.
+- Undo/Redo are disabled in text and search fields.
 - When showing pins for all selected locations the red (most selected) pin
   may be hidden by the pin of another location near by unless the zoom level
   is such that both locations are slightly separated on the map.

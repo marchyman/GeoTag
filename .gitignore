@@ -4,6 +4,7 @@
 .dap
 
 notes
+tags
 buildServer.json
 Info.plist
 *.entitlements
