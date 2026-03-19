@@ -186,6 +186,7 @@ struct GeoTagReducer: Reducer, Sendable {
             newState.unsavedChanges = false
 
         case .textfieldFocusChanged(let focus):
+            logger.debug("textfield \(focus ? "active" : "inactive")")
             newState.textfieldActive = focus
 
         case .timeZoneChanged(let newTimeZone):

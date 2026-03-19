@@ -100,7 +100,8 @@ struct ImageTableView: View {
         .onChange(of: searchActive) {
             store.send(.textfieldFocusChanged(searchActive), undoable: false)
             if searchActive != store.searchActive {
-                store.send(.searchActiveChanged(searchActive))
+                store.send(.searchActiveChanged(searchActive),
+                           undoable: false)
             }
         }
         .onChange(of: searchText) {

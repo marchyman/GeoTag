@@ -131,7 +131,7 @@
    Right Click -> Save map location to save the current location.
    Quit GeoTag.
 
-- [ ] Launch GeoTag
+- [x] Launch GeoTag
    Verify the configuration and map location are as saved.
    Drag in the test images and track.  Assign locations from the track.
    Select several images. Use cmd-i or click on the info button.

@@ -8,17 +8,23 @@ struct UndoRedoCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .undoRedo) {
-            Button(store.undoDescription, systemImage: "arrow.uturn.backward") {
-                store.undo()
+            Button(store.textfieldActive ? "Undo" : store.undoDescription,
+                   systemImage: "arrow.uturn.backward") {
+                if !store.textfieldActive {
+                    store.undo()
+                }
             }
             .keyboardShortcut("z")
-            .disabled(!store.canUndo)
+            .disabled(store.textfieldActive || !store.canUndo)
 
-            Button(store.redoDescription, systemImage: "arrow.uturn.forward") {
-                store.redo()
+            Button(store.textfieldActive ? "Redo" : store.redoDescription,
+                   systemImage: "arrow.uturn.forward") {
+                if !store.textfieldActive {
+                    store.redo()
+                }
             }
             .keyboardShortcut("z", modifiers: [.shift, .command])
-            .disabled(!store.canRedo)
+            .disabled(store.textfieldActive || !store.canRedo)
         }
     }
 }
