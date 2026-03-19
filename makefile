@@ -13,6 +13,9 @@ $(PROJECT).xcodeproj/project.pbxproj:	project.yml
 proj:
 	xcodegen
 
+tags:
+	/opt/homebrew/bin/ctags -R
+
 test:
 	xcodebuild -scheme GeoTag test | xcbeautify | tee .test.out
 
