@@ -4,6 +4,7 @@ import UDF
 
 struct ImageInspectorForm: View {
     var image: ImageData
+
     let notice: LocalizedStringKey = """
         Latitude and Longitude updates will not take effect until the \
         *return* key is pressed when either field is active.

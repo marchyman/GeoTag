@@ -3,12 +3,13 @@ import SwiftUI
 import UDF
 
 struct DateTimeSectionView: View {
-    var image: ImageData
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
-    @FocusState private var isFocused: Bool
+
+    var image: ImageData
 
     @State private var oldDate = Date()
     @State private var newDate = Date()
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack {
@@ -40,6 +41,9 @@ struct DateTimeSectionView: View {
                 store.send(.newTimestamp(newDate, adjustment))
                 oldDate = newDate
             }
+        }
+        .onChange(of: isFocused) {
+            store.send(.textfieldFocusChanged(isFocused), undoable: false)
         }
         .task(id: image) {
             oldDate = image.metadata.date(timeZone: store.timeZone)

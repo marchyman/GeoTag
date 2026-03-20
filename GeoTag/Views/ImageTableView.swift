@@ -23,7 +23,7 @@ struct ImageTableView: View {
     @State private var searchText = ""
     @State private var selection: Set<ImageData.ID> = []
     @State private var sortOrder = [KeyPathComparator(\ImageData.name)]
-
+    @FocusState private var isFocused: Bool
     @Binding var inspectorPresented: Bool
 
     var filteredImages: [ImageData] {
@@ -71,6 +71,7 @@ struct ImageTableView: View {
                     }
             }
         }
+        .focused($isFocused)
         .contextMenu {
             ContextMenuView(context: nil,
                             inspectorPresented: $inspectorPresented)
@@ -106,6 +107,11 @@ struct ImageTableView: View {
         }
         .onChange(of: searchText) {
             store.send(.searchTextChanged(searchText))
+        }
+        .onChange(of: store.textfieldActive) {
+            if !store.textfieldActive {
+                isFocused = true
+            }
         }
         .onAppear {
             selection = store.selection

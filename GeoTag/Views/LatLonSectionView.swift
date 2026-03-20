@@ -5,12 +5,13 @@ import SwiftUI
 import UDF
 
 struct LatLonSectionView: View {
-    var image: ImageData
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
-    @FocusState private var isFocused: Bool
+
+    var image: ImageData
 
     @State private var latitude: Double?
     @State private var longitude: Double?
+    @FocusState private var isFocused: Bool
 
     @AppStorage(Coords.coordFormatKey) var coordFormat: CoordFormat = .deg
 

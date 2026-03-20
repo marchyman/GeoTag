@@ -2,7 +2,7 @@
    `defaults delete org.snafu.GeoTag` before running
    Image backup folder can not be found sheet should be shown.
    open settings window and select a backup folder.  Close and quit.
- 
+
 - [x] Launch.  Open settings and verify backup folder set.  Open "GeoTag About"
    and check program version.  Quit.
 
@@ -39,12 +39,12 @@
    Select TestTrack.gpx
    Verify track loaded sheet displayed
    Verify track shown on map
-  
+
 - [x] View -> Hide disabled files
    Verify disabled files hidden.
    Cmd-D to re-show the file.  Verify.
    Cmd-D again.  Verify files hidden.
-  
+
 - [x] Select all (Cmd-A) and Locn From Track (Cmd-L)
    Verify locations updated.
    Verify location for out of date image not updated.
@@ -71,7 +71,7 @@
    Use Cmd-W or File -> Close to close the settings window.
    Verify the settings window closes
    Verify the app quit
-  
+
 - [x] Launch the application Select Help -> GeoTag 5 Help…
    Verify Browser opens at the GeoTag 5 help pages.  Close browser.
    Open TestData that includes a bad GPX file
@@ -82,7 +82,7 @@
    Open only the bad track
    Verify the appropriate sheet is displayed.
    Quit
-  
+
 - [x] Prepare a folder of test images without locations
    Add a track log for the images to the folder.
    Launch GeoTag.
@@ -207,7 +207,6 @@
    Open the image browser again and select the image with the deleted data
    Verify there is no location data.
    Quit GeoTag
-   
 
 Remove folder of test data prepared for above
 Remove test configuration

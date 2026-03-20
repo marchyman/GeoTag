@@ -33,11 +33,12 @@ Mostly the same user interface, but restructured and rewriten under the hood.
 
 ### Bug Fixes
 
+- Table of images was not focused when leaving search or text fields; a
+  cause cut/copy/paste intermitent failures. Resolved.
 - option to update file modification time used the previous time if the
   timestamp was also updated; resolved
 - issues reading elevation from xmp files resolved
 - undo/redo menu
-- Paste after cut issue seems to be resolved
 - Apple added Fuji compressed raw image file support
 
 ### Known issues
