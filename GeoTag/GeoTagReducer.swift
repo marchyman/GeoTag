@@ -1,4 +1,4 @@
-import AppKi
+import AppKit
 import Foundation
 import ImageData
 import Metadata
@@ -17,7 +17,7 @@ struct GeoTagReducer: Reducer, Sendable {
                 _ event: GeoTagEvent) -> GeoTagState {
         var newState = state
         newState.version &+= 1
-        logger.debug("event: \(event)")
+        // logger.debug("event: \(event)")
 
         switch event {
         case .addImage(let imageData):

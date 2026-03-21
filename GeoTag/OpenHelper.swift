@@ -1,9 +1,12 @@
 import GpxTrackLog
 import ImageData
+import OSLog
 import SwiftUI
 import UDF
 
-private let maxConcurrentTasks = 8  // adjust to taste
+// Even though tasks are not threads trial and error shows this number
+// to be a good balance between speed and user interface feedback.
+private let maxConcurrentTasks = ProcessInfo.processInfo.processorCount
 
 @MainActor
 enum OpenHelper {
@@ -29,24 +32,31 @@ enum OpenHelper {
 
     static nonisolated private func images(for urls: [URL],
                                            store: Store<GeoTagState, GeoTagEvent>) async {
+        let start = Date.now.timeIntervalSince1970
         let images = urls.filter { $0.pathExtension.lowercased() != "gpx" }
         guard !images.isEmpty else { return }
 
         await withTaskGroup(of: ImageData.self) { group in
-            let maxTasks = min(images.count, maxConcurrentTasks)
-            for ix in 0..<maxTasks {
-                group.addTask { return await ImageData(from: images[ix]) }
+            var limit = min(images.count, maxConcurrentTasks)
+            for ix in 0..<limit {
+                group.addTask { return ImageData(from: images[ix]) }
             }
-            var nextIx = maxTasks
             for await imageData in group {
-                if nextIx < images.count {
-                    let image = images[nextIx]
-                    group.addTask { return await ImageData(from: image) }
-                    nextIx += 1
+                if limit < images.count {
+                    let image = images[limit]
+                    group.addTask { return ImageData(from: image) }
+                    limit += 1
                 }
                 await store.send(.addImage(imageData))
             }
         }
+        let duration = Date.now.timeIntervalSince1970 - start
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "OpenHelper",
+               category: "OpenHelper")
+            .info("""
+                \(images.count, privacy: .public) images added in \
+                \(duration, privacy: .public) seconds
+                """)
         await MainActor.run {
             @AppStorage(SettingsView.disablePairedJpegsKey) var disablePairedJpegs = false
 
@@ -61,8 +71,8 @@ enum OpenHelper {
         guard !gpxURLs.isEmpty else { return }
 
         await withTaskGroup(of: (String, GpxTrackLog?).self) { group in
-            let maxTasks = min(gpxURLs.count, maxConcurrentTasks)
-            for ix in 0..<maxTasks {
+            var limit = min(gpxURLs.count, maxConcurrentTasks)
+            for ix in 0..<limit {
                 let url = gpxURLs[ix]
                 group.addTask {
                     do {
@@ -73,10 +83,9 @@ enum OpenHelper {
                     }
                 }
             }
-            var nextIx = maxTasks
             for await (path, tracklog) in group {
-                if nextIx < gpxURLs.count {
-                    let url = gpxURLs[nextIx]
+                if limit < gpxURLs.count {
+                    let url = gpxURLs[limit]
                     group.addTask {
                         do {
                             let trackLog = try GpxTrackLog(contentsOf: url)
@@ -85,7 +94,7 @@ enum OpenHelper {
                             return (url.path, nil)
                         }
                     }
-                    nextIx += 1
+                    limit += 1
                 }
                 await store.send(.readTrackLog(path, tracklog))
             }

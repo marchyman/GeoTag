@@ -48,6 +48,7 @@ enum LocationHelper {
                                       extendedTime: Double,
                                       tracks: [GpxTrackLog]) async -> [LocationById] {
         var updatedLocations: [LocationById] = []
+        // TODO: max concurrent tasks
         await withTaskGroup { group in
             for ix in locations.indices {
                 group.addTask {

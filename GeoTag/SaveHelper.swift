@@ -107,6 +107,7 @@ enum SaveHelper {
             let status: Bool
         }
 
+        // TODO: max concurrent tasks
         await withTaskGroup(of: TaskInfo.self) { group in
             for (id, metadata) in info {
                 group.addTask {
@@ -174,6 +175,7 @@ enum SaveHelper {
             let status: Bool
         }
 
+        // TODO: max concurrent tasks
         await withTaskGroup(of: TaskInfo.self) { group in
             for (id, metadata) in info {
                 group.addTask {
