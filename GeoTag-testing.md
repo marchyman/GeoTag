@@ -155,7 +155,7 @@
    Verify a finder window opens with the appropriate image selected.
    Quit GeoTag.  Answer "I,m sure" to the confirmation dialog.
 
-- [ ] Launch GeoTag
+- [x] Launch GeoTag
    Open settings window and check the Disable paired jpeg option
    Use View -> Show/Hide Disabled Files to show disabled files
    Drag in images that includes a raw/jpeg pair
@@ -167,7 +167,7 @@
    Verify the image locations are updated.
    Verify there is a pin on the map at the desired location.
 
-- [ ] Select Edit -> Specify Time Zone
+- [x] Select Edit -> Specify Time Zone
    Verify the Specify Camera Time Zone window opens
    Select a time zone other than the current time zone.
    Click on the Change button.
@@ -175,11 +175,11 @@
    Verify the "current" value is the value selected above.
    Quit GeoTag
 
-- [ ] Launch GeoTag.
+- [x] Launch GeoTag.
    Drag in a large number (> 1000) images. [photos/year/2024]
    Note the time it takes to load images
-   - about 8-9 seconds for the table to start being populated,
-   - about 16-17 seconds for the load to complete
+   - about a second for the table to start being populated,
+   - about 25 seconds for the load to complete
    Select an image.  Note the time it takes before the image
    thumbnail is displayed
    - Very quick for jpeg

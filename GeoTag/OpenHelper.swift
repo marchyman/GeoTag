@@ -3,6 +3,8 @@ import ImageData
 import SwiftUI
 import UDF
 
+private let maxConcurrentTasks = 8  // adjust to taste
+
 @MainActor
 enum OpenHelper {
     @MainActor
@@ -27,13 +29,21 @@ enum OpenHelper {
 
     static nonisolated private func images(for urls: [URL],
                                            store: Store<GeoTagState, GeoTagEvent>) async {
+        let images = urls.filter { $0.pathExtension.lowercased() != "gpx" }
+        guard !images.isEmpty else { return }
+
         await withTaskGroup(of: ImageData.self) { group in
-            for url in urls where url.pathExtension.lowercased() != "gpx" {
-                group.addTask {
-                    return ImageData(from: url)
-                }
+            let maxTasks = min(images.count, maxConcurrentTasks)
+            for ix in 0..<maxTasks {
+                group.addTask { return await ImageData(from: images[ix]) }
             }
+            var nextIx = maxTasks
             for await imageData in group {
+                if nextIx < images.count {
+                    let image = images[nextIx]
+                    group.addTask { return await ImageData(from: image) }
+                    nextIx += 1
+                }
                 await store.send(.addImage(imageData))
             }
         }
@@ -51,7 +61,9 @@ enum OpenHelper {
         guard !gpxURLs.isEmpty else { return }
 
         await withTaskGroup(of: (String, GpxTrackLog?).self) { group in
-            for url in gpxURLs {
+            let maxTasks = min(gpxURLs.count, maxConcurrentTasks)
+            for ix in 0..<maxTasks {
+                let url = gpxURLs[ix]
                 group.addTask {
                     do {
                         let trackLog = try GpxTrackLog(contentsOf: url)
@@ -61,7 +73,20 @@ enum OpenHelper {
                     }
                 }
             }
+            var nextIx = maxTasks
             for await (path, tracklog) in group {
+                if nextIx < gpxURLs.count {
+                    let url = gpxURLs[nextIx]
+                    group.addTask {
+                        do {
+                            let trackLog = try GpxTrackLog(contentsOf: url)
+                            return (url.path, trackLog)
+                        } catch {
+                            return (url.path, nil)
+                        }
+                    }
+                    nextIx += 1
+                }
                 await store.send(.readTrackLog(path, tracklog))
             }
         }
