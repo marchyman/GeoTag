@@ -48,39 +48,60 @@ enum LocationHelper {
                                       extendedTime: Double,
                                       tracks: [GpxTrackLog]) async -> [LocationById] {
         var updatedLocations: [LocationById] = []
-        // TODO: max concurrent tasks
+
+        struct LocationInfo {
+            let ix: Int
+            let coords: Coords?
+            let elevation: Double?
+        }
+
+        func findLocation(_ ix: Int) -> LocationInfo {
+            var found: [(Coords, Double?)] = []
+
+            // search ALL known tracklogs for the timestamp of the
+            // given image.
+
+            for track in tracks {
+                if let locn = track.search(imageTime: locations[ix].timestamp,
+                                           extendedTime: extendedTime) {
+                    found.append(locn)
+                }
+            }
+
+            // return the last entry found. If the entry was in multiple
+            // tracklogs the last entry will be the entry closest to
+            // timestamp of the image because the gpxTracks array is
+            // assumed to be sorted by timestamp.
+
+            let last = found.last
+            return LocationInfo(ix: ix, coords: last?.0, elevation: last?.1)
+        }
+
         await withTaskGroup { group in
-            for ix in locations.indices {
-                group.addTask {
-                    var found: [(Coords, Double?)] = []
+            var limit = min(locations.count, GeoTagApp.maxConcurrentTasks)
+            var index = locations.startIndex
+            for _ in 0..<limit {
+                let ix = index
+                index = locations.index(after: index)
+                group.addTask { return findLocation(ix) }
+            }
 
-                    // search ALL known tracklogs for the timestamp of the
-                    // given image.
-
-                    for track in tracks {
-                        if let locn = track.search(imageTime: locations[ix].timestamp,
-                                                   extendedTime: extendedTime) {
-                            found.append(locn)
-                        }
-                    }
-
-                    // return the last entry found. If the entry was in multiple
-                    // tracklogs the last entry will be the entry closest to
-                    // timestamp of the image because the gpxTracks array is
-                    // assumed to be sorted by timestamp.
-
-                    return found.last
+            for await locationInfo in group {
+                if limit < locations.count {
+                    limit += 1
+                    let ix = index
+                    index = locations.index(after: index)
+                    group.addTask { return findLocation(ix) }
                 }
 
-                for await locn in group {
-                    if let locn {
-                        updatedLocations.append(
-                            LocationById(id: locations[ix].id,
-                                         timestamp: locations[ix].timestamp,
-                                         coords: locn.0,
-                                         elevation: locn.1)
-                        )
-                    }
+                if locationInfo.coords != nil {
+                    let ix = locationInfo.ix
+                    updatedLocations.append(
+                        LocationById(id: locations[ix].id,
+                                     timestamp: locations[ix].timestamp,
+                                     coords: locationInfo.coords,
+                                     elevation: locationInfo.elevation)
+                    )
                 }
             }
         }

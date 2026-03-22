@@ -32,4 +32,4 @@ testGpxTrackLog:
 clean:
 	test -d $(PROJECT).xcodeproj && xcodebuild clean || true
 	jj status
-	git clean -dfx -e .jj -e notes
+	git clean -dfx -e .jj -e notes -e .session

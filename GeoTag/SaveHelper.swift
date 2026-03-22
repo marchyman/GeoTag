@@ -79,7 +79,7 @@ enum SaveHelper {
         let backupURL = doNotBackup ? nil : store.backupURL
         let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
 
-        // common work down, image vs xmp updates are slightly different
+        // common work done, image vs xmp updates are slightly different
         if xmp {
             return await saveToXmpTasks(store, info, backupURL, store.timeZone,
                                         addTags, tagName)
