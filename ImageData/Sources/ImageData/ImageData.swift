@@ -53,6 +53,7 @@ public struct ImageData: Identifiable, Sendable {
     // metadata and name.
 
     public init(from url: URL) {
+        let interval = Self.markStart(#function)
         let sidecarURL = url.deletingPathExtension()
             .appendingPathExtension(xmpExtension)
         let hasSidecar = url != sidecarURL &&
@@ -65,6 +66,7 @@ public struct ImageData: Identifiable, Sendable {
         } else {
             metadata = Imagetool.metadata(from: url)
         }
+        Self.markEnd(#function, interval: interval)
         self.init(metadata: metadata, name: name)
     }
 
@@ -90,6 +92,17 @@ public struct ImageData: Identifiable, Sendable {
 extension ImageData {
     static let id = Bundle.main.bundleIdentifier ?? "ImageData"
     static let logger = Logger(subsystem: id, category: "ImageData")
+    static let signposter = OSSignposter(logger: logger)
+
+    static func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
+        let signpostID = Self.signposter.makeSignpostID()
+        let interval = Self.signposter.beginInterval(desc, id: signpostID)
+        return interval
+    }
+
+    static func markEnd(_ desc: StaticString, interval: OSSignpostIntervalState) {
+        Self.signposter.endInterval(desc, interval)
+    }
 }
 
 extension ImageData: Equatable {}

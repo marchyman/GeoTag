@@ -4,8 +4,11 @@ import OSLog
 import SwiftUI
 import UDF
 
-@MainActor
 enum OpenHelper {
+
+    static let logger =
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
+               category: "OpenHelper")
 
     // Start a mainactor task to process image and track files. The
     // task is returned so code tests can wait until the task is complete.
@@ -33,8 +36,8 @@ enum OpenHelper {
     // Create ImageData entries for imported images and add them
     // to the table.
 
-    static nonisolated private func images(for urls: [URL],
-                                           store: Store<GeoTagState, GeoTagEvent>) async {
+    static private func images(for urls: [URL],
+                               store: Store<GeoTagState, GeoTagEvent>) async {
         let images = urls.filter { $0.pathExtension.lowercased() != "gpx" }
         guard !images.isEmpty else { return }
         let start = Date.now.timeIntervalSince1970
@@ -47,29 +50,27 @@ enum OpenHelper {
             for await imageData in group {
                 if limit < images.count {
                     let image = images[limit]
-                    group.addTask { return ImageData(from: image) }
                     limit += 1
+                    group.addTask { return ImageData(from: image) }
                 }
                 await store.send(.addImage(imageData))
             }
         }
-        let duration = Date.now.timeIntervalSince1970 - start
         await MainActor.run {
             @AppStorage(SettingsView.disablePairedJpegsKey) var disablePairedJpegs = false
 
             store.send(.linkPairedImages(disablePairedJpegs))
             store.send(.sortUsingCurrentComparator)
         }
-        Logger(subsystem: Bundle.main.bundleIdentifier ?? "OpenHelper",
-               category: "OpenHelper")
-            .info("""
-                \(images.count, privacy: .public) images added in \
-                \(duration, privacy: .public) seconds
-                """)
+        let duration = Date.now.timeIntervalSince1970 - start
+        Self.logger.info("""
+            \(images.count, privacy: .public) images added in \
+            \(duration, privacy: .public) seconds
+            """)
     }
 
-    static nonisolated private func tracks(for urls: [URL],
-                                           store: Store<GeoTagState, GeoTagEvent>) async {
+    static private func tracks(for urls: [URL],
+                               store: Store<GeoTagState, GeoTagEvent>) async {
         let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
         guard !gpxURLs.isEmpty else { return }
         let start = Date.now.timeIntervalSince1970
@@ -105,11 +106,9 @@ enum OpenHelper {
         }
         await store.send(.finishedAddingTracks)
         let duration = Date.now.timeIntervalSince1970 - start
-        Logger(subsystem: Bundle.main.bundleIdentifier ?? "OpenHelper",
-               category: "OpenHelper")
-            .info("""
-                \(gpxURLs.count, privacy: .public) tracks added in \
-                \(duration, privacy: .public) seconds
-                """)
+        Self.logger.info("""
+            \(gpxURLs.count, privacy: .public) tracks added in \
+            \(duration, privacy: .public) seconds
+            """)
     }
 }
