@@ -6,19 +6,26 @@ import UDF
 
 @MainActor
 enum OpenHelper {
+
+    // Start a mainactor task to process image and track files. The
+    // task is returned so code tests can wait until the task is complete.
+
     @MainActor
     @discardableResult
     static func open(_ store: Store<GeoTagState, GeoTagEvent>, urls: [URL],
                      description: String,
                      spinnerEnabled: Binding<Bool>?) -> Task<Void, Never> {
         let task = Task { @MainActor in
+            if let spinnerEnabled {
+                spinnerEnabled.wrappedValue = true
+            }
             store.beginUndoGroup(description: description)
             await Self.images(for: urls, store: store)
             await Self.tracks(for: urls, store: store)
+            store.endUndoGroup()
             if let spinnerEnabled {
                 spinnerEnabled.wrappedValue = false
             }
-            store.endUndoGroup()
         }
         return task
     }

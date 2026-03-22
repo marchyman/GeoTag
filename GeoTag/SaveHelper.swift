@@ -7,6 +7,12 @@ import UDF
 
 @MainActor
 enum SaveHelper {
+    enum SaveStatus {
+        case saveOK                     // All changes saved
+        case saveError                  // Save issue, tell user
+        case saveErrorSupressWarning    // Save issue, user knows
+    }
+
     @discardableResult
     static func save(_ store: Store<GeoTagState, GeoTagEvent>) -> Task<Void, Never> {
         // capture the data needed to update images
@@ -28,16 +34,24 @@ enum SaveHelper {
             async let imgUpdated = saveToImage(store, fileImages)
             async let xmpUpdated = saveToImage(store, xmpImages, xmp: true)
 
-            let ok = await [libUpdated, imgUpdated, xmpUpdated]
-            store.send(.saveComplete(ok.allSatisfy { $0 == true }),
-                       undoable: false)
+            let status = await [libUpdated, imgUpdated, xmpUpdated]
+
+            let sendStatus: SaveStatus =
+                if status.allSatisfy({ $0 == .saveOK }) {
+                    .saveOK
+                } else if status.contains(.saveErrorSupressWarning) {
+                    .saveErrorSupressWarning
+                } else {
+                    .saveError
+                }
+            store.send(.saveComplete(sendStatus), undoable: false)
         }
         return task
     }
 
     static func saveToLibrary(_ store: Store<GeoTagState, GeoTagEvent>,
-                              _ info: [ImageData.ID: Metadata]) async -> Bool {
-        var updateOK = true
+                              _ info: [ImageData.ID: Metadata]) async -> SaveStatus {
+        var saveStatus: SaveStatus = .saveOK
         for (id, metadata) in info {
             if case .photos(_, let asset) = metadata.source, let asset {
                 let timestamp = metadata.date()
@@ -48,11 +62,11 @@ enum SaveHelper {
                 if ok {
                     store.send(.imageSaved(id, metadata), undoable: false)
                 } else {
-                    updateOK = false
+                    saveStatus = .saveError
                 }
             }
         }
-        return updateOK
+        return saveStatus
     }
 
     // pass copy of MainActor related data to a nonisolated function
@@ -60,21 +74,19 @@ enum SaveHelper {
 
     static func saveToImage(_ store: Store<GeoTagState, GeoTagEvent>,
                             _ info: [ImageData.ID: Metadata],
-                            xmp: Bool = false) async -> Bool {
+                            xmp: Bool = false) async -> SaveStatus {
         @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
         @AppStorage(SettingsView.addTagsKey) var addTags = false
         @AppStorage(SettingsView.finderTagKey) var finderTag = "GeoTag"
         @AppStorage(SettingsView.createSidecarFilesKey) var createSidecarFiles = false
 
         // make sure there is something to do
-        guard !info.isEmpty else { return true }
+        guard !info.isEmpty else { return .saveOK }
 
         // make sure backups are disabled or we have a backup folder
         guard doNotBackup || store.backupURL != nil else {
             store.send(.noBackupNotice, undoable: false)
-            // return true as we've already notified the user that
-            // nothing was saved
-            return true
+            return .saveErrorSupressWarning
         }
         let backupURL = doNotBackup ? nil : store.backupURL
         let tagName = finderTag.isEmpty ? "GeoTag" : finderTag
@@ -98,8 +110,9 @@ enum SaveHelper {
                                              _ backupURL: URL?,
                                              _ timeZone: TimeZone?,
                                              _ tagFiles: Bool,
-                                             _ tagName: String) async -> Bool {
-        var updateOK = true
+                                             _ tagName: String) async -> SaveStatus {
+        var saveStatus: SaveStatus = .saveOK
+
         struct TaskInfo {
             let id: ImageData.ID
             let metadata: Metadata
@@ -163,11 +176,11 @@ enum SaveHelper {
                                    undoable: false)
                     }
                 } else {
-                    updateOK = false
+                    saveStatus = .saveError
                 }
             }
         }
-        return updateOK
+        return saveStatus
     }
 
     // swiftlint:disable:next function_parameter_count
@@ -176,8 +189,9 @@ enum SaveHelper {
                                            _ backupURL: URL?,
                                            _ timeZone: TimeZone?,
                                            _ tagFiles: Bool,
-                                           _ tagName: String) async -> Bool {
-        var updateOK = true
+                                           _ tagName: String) async -> SaveStatus {
+        var saveStatus: SaveStatus = .saveOK
+
         struct TaskInfo {
             let id: ImageData.ID
             let metadata: Metadata
@@ -227,10 +241,10 @@ enum SaveHelper {
                                    undoable: false)
                     }
                 } else {
-                    updateOK = false
+                    saveStatus = .saveError
                 }
             }
         }
-        return updateOK
+        return saveStatus
     }
 }

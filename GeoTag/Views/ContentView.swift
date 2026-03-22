@@ -52,14 +52,11 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
         .dropDestination(for: URL.self) { items, _ in
-            spinnerEnabled = true
             store.send(.openFiles(items), undoable: false) {
                 if let urls = store.uniqueURLs {
                     OpenHelper.open(store, urls: urls,
                                     description: "drag files",
                                     spinnerEnabled: $spinnerEnabled)
-                } else {
-                    spinnerEnabled = false
                 }
             }
             return true
@@ -90,14 +87,11 @@ struct ContentView: View {
                       allowsMultipleSelection: true) { result in
             switch result {
             case let .success(files):
-                spinnerEnabled = true
                 store.send(.openFiles(files), undoable: false) {
                     if let urls = store.uniqueURLs {
                         OpenHelper.open(store, urls: urls,
                                         description: "add files",
                                         spinnerEnabled: $spinnerEnabled)
-                    } else {
-                        spinnerEnabled = false
                     }
                 }
             case let .failure(error):
