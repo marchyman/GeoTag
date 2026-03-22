@@ -4,10 +4,6 @@ import OSLog
 import SwiftUI
 import UDF
 
-// Even though tasks are not threads trial and error shows this number
-// to be a good balance between speed and user interface feedback.
-private let maxConcurrentTasks = ProcessInfo.processInfo.processorCount
-
 @MainActor
 enum OpenHelper {
     @MainActor
@@ -32,12 +28,12 @@ enum OpenHelper {
 
     static nonisolated private func images(for urls: [URL],
                                            store: Store<GeoTagState, GeoTagEvent>) async {
-        let start = Date.now.timeIntervalSince1970
         let images = urls.filter { $0.pathExtension.lowercased() != "gpx" }
         guard !images.isEmpty else { return }
+        let start = Date.now.timeIntervalSince1970
 
         await withTaskGroup(of: ImageData.self) { group in
-            var limit = min(images.count, maxConcurrentTasks)
+            var limit = min(images.count, GeoTagApp.maxConcurrentTasks)
             for ix in 0..<limit {
                 group.addTask { return ImageData(from: images[ix]) }
             }
@@ -51,27 +47,28 @@ enum OpenHelper {
             }
         }
         let duration = Date.now.timeIntervalSince1970 - start
-        Logger(subsystem: Bundle.main.bundleIdentifier ?? "OpenHelper",
-               category: "OpenHelper")
-            .info("""
-                \(images.count, privacy: .public) images added in \
-                \(duration, privacy: .public) seconds
-                """)
         await MainActor.run {
             @AppStorage(SettingsView.disablePairedJpegsKey) var disablePairedJpegs = false
 
             store.send(.linkPairedImages(disablePairedJpegs))
             store.send(.sortUsingCurrentComparator)
         }
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "OpenHelper",
+               category: "OpenHelper")
+            .info("""
+                \(images.count, privacy: .public) images added in \
+                \(duration, privacy: .public) seconds
+                """)
     }
 
     static nonisolated private func tracks(for urls: [URL],
                                            store: Store<GeoTagState, GeoTagEvent>) async {
         let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
         guard !gpxURLs.isEmpty else { return }
+        let start = Date.now.timeIntervalSince1970
 
         await withTaskGroup(of: (String, GpxTrackLog?).self) { group in
-            var limit = min(gpxURLs.count, maxConcurrentTasks)
+            var limit = min(gpxURLs.count, GeoTagApp.maxConcurrentTasks)
             for ix in 0..<limit {
                 let url = gpxURLs[ix]
                 group.addTask {
@@ -100,5 +97,12 @@ enum OpenHelper {
             }
         }
         await store.send(.finishedAddingTracks)
+        let duration = Date.now.timeIntervalSince1970 - start
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "OpenHelper",
+               category: "OpenHelper")
+            .info("""
+                \(gpxURLs.count, privacy: .public) tracks added in \
+                \(duration, privacy: .public) seconds
+                """)
     }
 }

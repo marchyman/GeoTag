@@ -90,6 +90,14 @@ extension GeoTagApp {
     static var showRunLog = "GeoTag Run/Debug Log"
 }
 
+// Max number of concurrent tasks that will be fired up in any single
+// task group. A number picked by trial and error to balance speed with
+// UI response
+
+extension GeoTagApp {
+    nonisolated static let maxConcurrentTasks = 16
+}
+
 // Settings keys
 
 extension GeoTagApp {

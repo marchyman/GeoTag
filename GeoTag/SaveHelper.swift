@@ -107,42 +107,51 @@ enum SaveHelper {
             let status: Bool
         }
 
-        // TODO: max concurrent tasks
-        await withTaskGroup(of: TaskInfo.self) { group in
-            for (id, metadata) in info {
-                group.addTask {
-                    guard case .image(let imageURL) = metadata.source else {
-                        return TaskInfo(id: id, metadata: metadata,
-                                        sidecarCreated: false, status: false)
-                    }
+        func buildTaskInfo(id: ImageData.ID) async -> TaskInfo {
+            let metadata = info[id]!
+            guard case .image(let imageURL) = metadata.source else {
+                return TaskInfo(id: id, metadata: metadata,
+                                sidecarCreated: false, status: false)
+            }
 
-                    var sidecarCreated = false
-                    do {
-                        let sandbox = try Sandbox(for: imageURL)
-                        if createSidecarFiles {
-                            try sandbox.makeSidecarFile()
-                            sidecarCreated = true
-                        }
-                        if let backupURL {
-                            try await sandbox.makeBackupFile(backupFolder: backupURL)
-                        }
-                        try await sandbox.saveChanges(from: metadata,
-                                                      timeZone: timeZone)
-                        if tagFiles {
-                            try await sandbox.setTag(name: tagName)
-                        }
-                        return TaskInfo(id: id, metadata: metadata,
-                                        sidecarCreated: sidecarCreated,
-                                        status: true)
-                    } catch {
-                        return TaskInfo(id: id, metadata: metadata,
-                                        sidecarCreated: sidecarCreated,
-                                        status: false)
-                    }
+            var sidecarCreated = false
+            do {
+                let sandbox = try Sandbox(for: imageURL)
+                if createSidecarFiles {
+                    try sandbox.makeSidecarFile()
+                    sidecarCreated = true
                 }
+                if let backupURL {
+                    try await sandbox.makeBackupFile(backupFolder: backupURL)
+                }
+                try await sandbox.saveChanges(from: metadata,
+                                              timeZone: timeZone)
+                if tagFiles {
+                    try await sandbox.setTag(name: tagName)
+                }
+                return TaskInfo(id: id, metadata: metadata,
+                                sidecarCreated: sidecarCreated,
+                                status: true)
+            } catch {
+                return TaskInfo(id: id, metadata: metadata,
+                                sidecarCreated: sidecarCreated,
+                                status: false)
+            }
+        }
+
+        await withTaskGroup(of: TaskInfo.self) { group in
+            let ids = Array(info.keys)
+            var limit = min(ids.count, GeoTagApp.maxConcurrentTasks)
+            for ix in 0..<limit {
+                group.addTask { return await buildTaskInfo(id: ids[ix]) }
             }
 
             for await taskInfo in group {
+                if limit < ids.count {
+                    let id = ids[limit]
+                    limit += 1
+                    group.addTask { return await buildTaskInfo(id: id) }
+                }
                 if taskInfo.sidecarCreated {
                     await MainActor.run {
                         store.send(.sidecarCreated(taskInfo.id), undoable: false)
@@ -175,35 +184,43 @@ enum SaveHelper {
             let status: Bool
         }
 
-        // TODO: max concurrent tasks
-        await withTaskGroup(of: TaskInfo.self) { group in
-            for (id, metadata) in info {
-                group.addTask {
-                    guard case .xmp(let imageURL) = metadata.source else {
-                        return TaskInfo(id: id, metadata: metadata,
-                                        status: false)
-                    }
+        func buildTaskInfo(id: ImageData.ID) async -> TaskInfo {
+            let metadata = info[id]!
+            guard case .xmp(let imageURL) = metadata.source else {
+                return TaskInfo(id: id, metadata: metadata,
+                                status: false)
+            }
 
-                    do {
-                        let sandbox = try Sandbox(for: imageURL)
-                        if let backupURL {
-                            try await sandbox.makeSidecarBackup(backupURL)
-                        }
-                        try await sandbox.saveChanges(from: metadata,
-                                                      timeZone: timeZone)
-                        if tagFiles {
-                            try await sandbox.setTag(name: tagName)
-                        }
-                        return TaskInfo(id: id, metadata: metadata,
-                                        status: true)
-                    } catch {
-                        return TaskInfo(id: id, metadata: metadata,
-                                        status: false)
-                    }
+            do {
+                let sandbox = try Sandbox(for: imageURL)
+                if let backupURL {
+                    try await sandbox.makeSidecarBackup(backupURL)
                 }
+                try await sandbox.saveChanges(from: metadata,
+                                              timeZone: timeZone)
+                if tagFiles {
+                    try await sandbox.setTag(name: tagName)
+                }
+                return TaskInfo(id: id, metadata: metadata,
+                                status: true)
+            } catch {
+                return TaskInfo(id: id, metadata: metadata,
+                                status: false)
+            }
+        }
+        await withTaskGroup(of: TaskInfo.self) { group in
+            let ids = Array(info.keys)
+            var limit = min(ids.count, GeoTagApp.maxConcurrentTasks)
+            for ix in 0..<limit {
+                group.addTask { return await buildTaskInfo(id: ids[ix]) }
             }
 
             for await taskInfo in group {
+                if limit < ids.count {
+                    let id = ids[limit]
+                    limit += 1
+                    group.addTask { return await buildTaskInfo(id: id) }
+                }
                 if taskInfo.status {
                     await MainActor.run {
                         store.send(.imageSaved(taskInfo.id, taskInfo.metadata),

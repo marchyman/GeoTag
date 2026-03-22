@@ -14,8 +14,6 @@ extension GeoTagState {
         let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
                             category: "GeoTagState")
 
-        logger.notice(#function)
-
         struct URLBase {
             let id: ImageData.ID
             let url: URL
