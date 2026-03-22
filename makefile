@@ -9,6 +9,8 @@ Build:	$(PROJECT).xcodeproj/project.pbxproj
 $(PROJECT).xcodeproj/project.pbxproj:	project.yml
 	xcodegen -c
 
+.PHONY: proj tags test testapp testGpxTrackLog clean
+
 # force project file rebuild
 proj:
 	xcodegen
