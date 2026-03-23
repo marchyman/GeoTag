@@ -229,6 +229,12 @@ schemes:
       gatherCoverageData: YES
       targets:
         - name: GeoTagTests
+  Release:
+    build:
+      targets:
+        GeoTag: all
+    run:
+      config: Release
 
 packages:
   UDF:

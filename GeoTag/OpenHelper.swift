@@ -13,7 +13,6 @@ enum OpenHelper {
     // Start a mainactor task to process image and track files. The
     // task is returned so code tests can wait until the task is complete.
 
-    @MainActor
     @discardableResult
     static func open(_ store: Store<GeoTagState, GeoTagEvent>, urls: [URL],
                      description: String,
@@ -36,41 +35,27 @@ enum OpenHelper {
     // Create ImageData entries for imported images and add them
     // to the table.
 
-    static private func images(for urls: [URL],
-                               store: Store<GeoTagState, GeoTagEvent>) async {
-        let images = urls.filter { $0.pathExtension.lowercased() != "gpx" }
-        guard !images.isEmpty else { return }
+    static private
+    func images(for urls: [URL],
+                store: Store<GeoTagState, GeoTagEvent>) async {
+        let imageURLs = urls.filter { $0.pathExtension.lowercased() != "gpx" }
+        guard !imageURLs.isEmpty else { return }
         let start = Date.now.timeIntervalSince1970
 
-        await withTaskGroup(of: ImageData.self) { group in
-            var limit = min(images.count, GeoTagApp.maxConcurrentTasks)
+        await withTaskGroup { group in
+            var limit = min(imageURLs.count, GeoTagApp.maxConcurrentTasks)
             for ix in 0..<limit {
-#if DEBUG
-                Self.logger.debug("\(images[ix].path) begin")
-#endif
-                group.addTask { return ImageData(from: images[ix]) }
+                group.addTask { ImageData(from: imageURLs[ix]) }
             }
             for await imageData in group {
-                if limit < images.count {
-                    let image = images[limit]
-#if DEBUG
-                    Self.logger.debug("\(image.path) begin")
-#endif
+                await MainActor.run {
+                    store.send(.addImage(imageData))
+                }
+                if limit < imageURLs.count {
+                    let url = imageURLs[limit]
                     limit += 1
-                    group.addTask { return ImageData(from: image) }
+                    group.addTask { ImageData(from: url) }
                 }
-#if DEBUG
-                let path = switch imageData.metadata.source {
-                case .image(let url):
-                    url.path
-                case .xmp(let url):
-                    url.path
-                default:
-                    "unknown"
-                }
-                Self.logger.debug("\(path) end")
-#endif
-                await store.send(.addImage(imageData))
             }
         }
         await MainActor.run {
@@ -81,13 +66,14 @@ enum OpenHelper {
         }
         let duration = Date.now.timeIntervalSince1970 - start
         Self.logger.info("""
-            \(images.count, privacy: .public) images added in \
+            \(imageURLs.count, privacy: .public) items added in \
             \(duration, privacy: .public) seconds
             """)
     }
 
-    static private func tracks(for urls: [URL],
-                               store: Store<GeoTagState, GeoTagEvent>) async {
+    static private
+    func tracks(for urls: [URL],
+                store: Store<GeoTagState, GeoTagEvent>) async {
         let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
         guard !gpxURLs.isEmpty else { return }
         let start = Date.now.timeIntervalSince1970

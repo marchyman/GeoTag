@@ -95,7 +95,7 @@ extension GeoTagApp {
 // UI response
 
 extension GeoTagApp {
-    nonisolated static let maxConcurrentTasks = 16
+    nonisolated static let maxConcurrentTasks = 128
 }
 
 // Settings keys
