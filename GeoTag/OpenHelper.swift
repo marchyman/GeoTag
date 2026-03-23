@@ -45,14 +45,31 @@ enum OpenHelper {
         await withTaskGroup(of: ImageData.self) { group in
             var limit = min(images.count, GeoTagApp.maxConcurrentTasks)
             for ix in 0..<limit {
+#if DEBUG
+                Self.logger.debug("\(images[ix].path) begin")
+#endif
                 group.addTask { return ImageData(from: images[ix]) }
             }
             for await imageData in group {
                 if limit < images.count {
                     let image = images[limit]
+#if DEBUG
+                    Self.logger.debug("\(image.path) begin")
+#endif
                     limit += 1
                     group.addTask { return ImageData(from: image) }
                 }
+#if DEBUG
+                let path = switch imageData.metadata.source {
+                case .image(let url):
+                    url.path
+                case .xmp(let url):
+                    url.path
+                default:
+                    "unknown"
+                }
+                Self.logger.debug("\(path) end")
+#endif
                 await store.send(.addImage(imageData))
             }
         }
