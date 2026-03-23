@@ -49,6 +49,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .clearPlaces:
             clearPlaces(&newState)
 
+        case .clearUniqueURLs:
+            newState.uniqueURLs = nil
+
         case .deleteRequest:
             delete(&newState)
 
@@ -56,7 +59,7 @@ struct GeoTagReducer: Reducer, Sendable {
             discardChanges(&newState)
 
         case .discardTracksRequest:
-            newState.gpxTracks.removeAll()
+            newState.gpxTracks = []
 
         case .duplicateImages:
             newState.addSheet(type: .duplicateImageSheet)
@@ -71,8 +74,8 @@ struct GeoTagReducer: Reducer, Sendable {
             newState.gpxGoodFileNames.append(filename)
 
         case .gpxLoadViewClosed:
-            newState.gpxGoodFileNames.removeAll()
-            newState.gpxBadFileNames.removeAll()
+            newState.gpxGoodFileNames = []
+            newState.gpxBadFileNames = []
 
         case .imageSaved(let id, let metadata):
             newState[id].original = Metadata(copying: metadata)
@@ -132,11 +135,14 @@ struct GeoTagReducer: Reducer, Sendable {
 
         case .removeOldFiles:
             removeFiles(filesToRemove: newState.oldFiles,
-                from: newState.backupURL)
+                        from: newState.backupURL)
             newState.oldFiles = []
 
         case .saveComplete(let saveStatus):
             newState.saveInProgress = false
+            newState.libraryImages = []
+            newState.fileImages = []
+            newState.xmpImages = []
             switch saveStatus {
             case .saveOK:
                 newState.unsavedChanges = false

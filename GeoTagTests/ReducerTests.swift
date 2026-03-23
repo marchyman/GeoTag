@@ -166,6 +166,17 @@ struct ReducerTests {
         #expect(savedPlaces.isEmpty)
     }
 
+    @Test func clearUniqueURLsEvent() async throws {
+        var state = GeoTagState()
+        state.uniqueURLs = [
+            URL(filePath: "Fake/URL/1"),
+            URL(filePath: "Fake/URL/2")
+        ]
+        let store = Store(initialState: state, reduce: GeoTagReducer())
+        store.send(.clearUniqueURLs)
+        #expect(store.uniqueURLs == nil)
+    }
+
     @Test func deleteRequestEvent() async throws {
         var state = GeoTagState(forPreview: true)
         state.selection = Set(state.imageData.filter { $0.metadata.location != nil }

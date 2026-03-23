@@ -117,12 +117,17 @@ extension ReducerTests {
         state.unsavedChanges = true
         let store = Store(initialState: state, reduce: GeoTagReducer())
 
-        store.send(.saveComplete(false))
+        store.send(.saveComplete(.saveErrorSupressWarning))
+        #expect(!store.saveInProgress)
+        #expect(store.unsavedChanges)
+        #expect(store.sheetType == nil)
+
+        store.send(.saveComplete(.saveError))
         #expect(!store.saveInProgress)
         #expect(store.unsavedChanges)
         #expect(store.sheetType == .saveErrorSheet)
 
-        store.send(.saveComplete(true))
+        store.send(.saveComplete(.saveOK))
         #expect(!store.unsavedChanges)
     }
 

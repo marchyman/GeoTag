@@ -18,6 +18,7 @@ enum GeoTagEvent: Equatable {
     case changeTimeZone
     case clearImagesRequest
     case clearPlaces
+    case clearUniqueURLs
     case deleteRequest
     case discardChangesRequest
     case discardTracksRequest
@@ -74,6 +75,7 @@ extension GeoTagEvent: CustomStringConvertible {
         case .changeTimeZone: "changeTimeZone"
         case .clearImagesRequest: "clearImagesRequest"
         case .clearPlaces: "clearPlaces"
+        case .clearUniqueURLs: "clearUniqueURLs"
         case .deleteRequest: "deleteRequest"
         case .discardChangesRequest: "discardChangesRequest"
         case .discardTracksRequest: "discardTracksRequest"

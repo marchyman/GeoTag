@@ -13,14 +13,13 @@ extension GeoTagReducer {
 
     func save(_ state: inout GeoTagState) {
         state.saveInProgress = true
-        state.libraryImages = state.imageData.indices
-            .filter {
-                if case .photos = state.imageData[$0].metadata.source,
-                   state.imageData[$0].updatable,
-                   state.imageData[$0].metadata != state.imageData[$0].original {
-                    return true
-                }
-                return false
+        state.libraryImages = state.imageData.indices.filter {
+            if case .photos = state.imageData[$0].metadata.source,
+               state.imageData[$0].updatable,
+               state.imageData[$0].metadata != state.imageData[$0].original {
+                return true
+            }
+            return false
             }
         state.fileImages = state.imageData.indices.filter {
             if case .image = state.imageData[$0].metadata.source,
@@ -57,7 +56,7 @@ extension GeoTagReducer {
         for url in state.scopedURLs {
             url.stopAccessingSecurityScopedResource()
         }
-        state.scopedURLs.removeAll()
-        state.imageData.removeAll()
+        state.scopedURLs = []
+        state.imageData = []
     }
 }

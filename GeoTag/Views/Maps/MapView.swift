@@ -119,7 +119,7 @@ struct MapView: View {
             }
             .task(id: store.gpxTracks) {
                 if store.gpxTracks.isEmpty {
-                    tracks.removeAll()
+                    tracks = []
                 } else {
                     tracks = mapTracks()
                     cameraPosition = .automatic

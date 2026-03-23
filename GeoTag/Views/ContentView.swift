@@ -57,6 +57,7 @@ struct ContentView: View {
                     OpenHelper.open(store, urls: urls,
                                     description: "drag files",
                                     spinnerEnabled: $spinnerEnabled)
+                    store.send(.clearUniqueURLs)
                 }
             }
             return true
