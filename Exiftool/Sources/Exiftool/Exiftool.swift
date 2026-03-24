@@ -68,7 +68,7 @@ extension Exiftool {
         "MRW", "NEF", "NKSC", "NRW", "ORF", "ORI", "PBM", "PDF",
         "PEF", "PGM", "PNG", "PPM", "PS", "PSB", "PSD", "QTIF",
         "RAF", "RAW", "RW2", "RWL", "SR2", "SRW", "THM", "TIFF",
-        "VRD", "WDP", "WEBP", "X3F", "XMP",
+        "VRD", "WDP", "WEBP", "X3F", "XMP"
     ]
 
     // Return true if the given URL is a known file type.

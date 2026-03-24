@@ -1,3 +1,4 @@
+import OSLog
 import RunLogView
 import SwiftUI
 import UDF
@@ -25,6 +26,13 @@ struct GeoTagApp: App {
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .onAppear {
                     appDelegate.store = store
+                    appDelegate.logger.debug("Delegate store set")
+                }
+                .onChange(of: mainWindow) {
+                    mainWindow?.delegate = appDelegate
+                    store.send(.mainWindowChange(mainWindow), undoable: false)
+                }
+                .task {
                     if !doNotBackup {
                         if savedBookmark == Data() {
                             store.send(.noBackupNotice, undoable: false)
@@ -37,12 +45,6 @@ struct GeoTagApp: App {
                             }
                         }
                     }
-                }
-                .onChange(of: mainWindow) {
-                    mainWindow?.delegate = appDelegate
-                    store.send(.mainWindowChange(mainWindow), undoable: false)
-                }
-                .task {
                     let savedPlaces = await PlaceSaver.shared.read()
                     store.send(.initPlaces(savedPlaces), undoable: false)
                 }

@@ -9,6 +9,17 @@ enum OpenHelper {
     static let logger =
         Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
                category: "OpenHelper")
+    static let signposter = OSSignposter(logger: logger)
+
+    static func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
+        let signpostID = Self.signposter.makeSignpostID()
+        let interval = Self.signposter.beginInterval(desc, id: signpostID)
+        return interval
+    }
+
+    static func markEnd(_ desc: StaticString, interval: OSSignpostIntervalState) {
+        Self.signposter.endInterval(desc, interval)
+    }
 
     // Start a mainactor task to process image and track files. The
     // task is returned so code tests can wait until the task is complete.
@@ -45,16 +56,26 @@ enum OpenHelper {
         await withTaskGroup { group in
             var limit = min(imageURLs.count, GeoTagApp.maxConcurrentTasks)
             for ix in 0..<limit {
-                group.addTask { ImageData(from: imageURLs[ix]) }
+                group.addTask {
+                    let interval = Self.markStart(#function)
+                    defer {
+                        Self.markEnd(#function, interval: interval)
+                    }
+                    return ImageData(from: imageURLs[ix])
+                }
             }
             for await imageData in group {
-                await MainActor.run {
-                    store.send(.addImage(imageData))
-                }
+                await store.send(.addImage(imageData))
                 if limit < imageURLs.count {
                     let url = imageURLs[limit]
                     limit += 1
-                    group.addTask { ImageData(from: url) }
+                    group.addTask {
+                        let interval = Self.markStart(#function)
+                        defer {
+                            Self.markEnd(#function, interval: interval)
+                        }
+                        return ImageData(from: url)
+                    }
                 }
             }
         }
