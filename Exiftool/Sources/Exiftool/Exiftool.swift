@@ -56,17 +56,19 @@ extension Exiftool {
 // that core graphics can read (usually) and exiftool can write.
 
 extension Exiftool {
-    // Last updated to match ExifTool version 12.30
+    // Last updated to match ExifTool version 12.45
 
     static private let writableTypes: Set = [
-        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF", "CR2", "CR3",
-        "CRM", "CRW", "CS1", "DCP", "DNG", "DR4", "DVB", "EPS", "ERF", "EXIF",
-        "EXV", "F4A/V", "FFF", "FLIF", "GIF", "GPR", "HDP", "HEIC", "HEIF",
-        "ICC", "IIQ", "IND", "INSP", "JNG", "JP2", "JPEG", "LRV", "M4A/V",
-        "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV", "MRW",
-        "NEF", "NRW", "ORF", "ORI", "PBM", "PDF", "PEF", "PGM", "PNG",
-        "PPM", "PS", "PSB", "PSD", "QTIF", "RAF", "RAW", "RW2",
-        "RWL", "SR2", "SRW", "THM", "TIFF", "VRD", "WDP", "X3F", "XMP"
+        "360", "3G2", "3GP", "AAX", "AI", "ARQ", "ARW", "AVIF",
+        "CR2", "CR3", "CRM", "CRW", "CS1", "DCP", "DNG", "DR4",
+        "DVB", "EPS", "ERF", "EXIF", "EXV", "F4A/V", "FFF", "FLIF",
+        "GIF", "GLV", "GPR", "HDP", "HEIC", "HEIF", "ICC", "IIQ",
+        "IND", "INSP", "JNG", "JP2", "JPEG", "JXL", "LRV", "M4A/V",
+        "MEF", "MIE", "MNG", "MOS", "MOV", "MP4", "MPO", "MQV",
+        "MRW", "NEF", "NKSC", "NRW", "ORF", "ORI", "PBM", "PDF",
+        "PEF", "PGM", "PNG", "PPM", "PS", "PSB", "PSD", "QTIF",
+        "RAF", "RAW", "RW2", "RWL", "SR2", "SRW", "THM", "TIFF",
+        "VRD", "WDP", "WEBP", "X3F", "XMP",
     ]
 
     // Return true if the given URL is a known file type.
@@ -75,6 +77,12 @@ extension Exiftool {
         let args = [
             "-m", "-q", "-S", "-fast3", "-FileType", file.path
         ]
+        // first, believe the file extension
+        let ext = file.pathExtension.uppercased()
+        if Self.writableTypes.contains(ext) { return true }
+
+        // Ask exiftool what it thinks the type might be and see if
+        // it is in the table.
         do {
             let data = try run(args)
             if data.count > 0,

@@ -20,6 +20,7 @@ public struct Imagetool {
         else {
             Self.logger.error(
                 "\(#function): failed to create CGImageSource from URL \(imageURL.path)")
+            metadata.readable = false
             return metadata
         }
 
@@ -29,11 +30,15 @@ public struct Imagetool {
             CGImageSourceCopyPropertiesAtIndex(imgRef, 0, nil)
                 as NSDictionary?
         else {
+            Self.logger.error(
+                "\(#function): failed to copy properties from URL \(imageURL.path)")
+            metadata.readable = false
             return metadata
         }
         if imgProps.count == 0 {
             Self.logger.error(
-                "\(#function): failed to copy properties from URL \(imageURL.path)")
+                "\(#function): no properties copied from URL \(imageURL.path)")
+            metadata.readable = false
             return metadata
         }
 
@@ -120,6 +125,7 @@ public struct Imagetool {
         var image = NSImage(size: NSRect(x: 0, y: 0, width: 0, height: 0).size)
         guard let imgRef = CGImageSourceCreateWithURL(url as CFURL, nil)
         else {
+            Self.logger.error("Can't create thumbnail for \(url.path, privacy: .public)")
             return nil
         }
 

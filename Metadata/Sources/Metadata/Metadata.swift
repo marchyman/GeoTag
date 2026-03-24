@@ -31,6 +31,7 @@ public enum MetadataSource: Equatable, Sendable {
 public struct Metadata: Sendable {
     public let source: MetadataSource
 
+    public var readable = true
     public var dateTimeCreated: String?
     public var location: Coords?
     public var elevation: Double?

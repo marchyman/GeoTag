@@ -32,7 +32,8 @@ public struct ImageData: Identifiable, Sendable {
         self.metadata = metadata
         switch metadata.source {
         case .image(let url):
-            if url.pathExtension.lowercased() != xmpExtension &&
+            if metadata.readable &&
+               url.pathExtension.lowercased() != xmpExtension &&
                Exiftool.helper.fileTypeIsWritable(for: url) {
                 original = Metadata(copying: metadata)
             }
@@ -54,6 +55,9 @@ public struct ImageData: Identifiable, Sendable {
 
     public init(from url: URL) {
         let interval = Self.markStart(#function)
+        defer {
+            Self.markEnd(#function, interval: interval)
+        }
         let sidecarURL = url.deletingPathExtension()
             .appendingPathExtension(xmpExtension)
         let hasSidecar = url != sidecarURL &&
@@ -66,7 +70,6 @@ public struct ImageData: Identifiable, Sendable {
         } else {
             metadata = Imagetool.metadata(from: url)
         }
-        Self.markEnd(#function, interval: interval)
         self.init(metadata: metadata, name: name)
     }
 
