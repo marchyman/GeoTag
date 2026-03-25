@@ -235,6 +235,13 @@ struct SandboxTests {
             sandbox.removeSandboxFolder()
         }
 
+        // Things of minor interest
+        print("sandbox.imgURL \(sandbox.imgURL.path())")
+        let exists = FileManager.default.fileExists(atPath: sandbox.imgURL.path)
+        print(exists ? "imgURL exists" : "ImgURL does not exist")
+        print("sandbox.xmpURL \(sandbox.xmpURL.path())")
+        print(sandbox.sidecarExists ? "xmpURL exists" : "xmpURL does not exist")
+
         // Create a metadata entry for the update
         var metadata = Metadata(source: .xmp(testImage))
         metadata.dateTimeCreated =  "2019:03:11 11:47:20"

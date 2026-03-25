@@ -8,10 +8,10 @@ import SwiftUI
 // is explicitly allowed by the user.
 
 public struct Sandbox {
-    let orgURL: URL
-    let imgDir: URL
-    let imgURL: URL
-    let xmpURL: URL
+    let orgURL: URL         // URL of image
+    let imgDir: URL         // URL of unique folder in document folder
+    let imgURL: URL         // URL of symlink in imgDir -> orgURL
+    let xmpURL: URL         // URL of symline in imgDir -> orgURL xmp file
     let xmpPresenter: XmpPresenter
 
     public init(for url: URL) throws {
