@@ -51,6 +51,8 @@ enum OpenHelper {
                 store: Store<GeoTagState, GeoTagEvent>) async {
         let imageURLs = urls.filter { $0.pathExtension.lowercased() != "gpx" }
         guard !imageURLs.isEmpty else { return }
+        var newImages: [ImageData] = []
+
         let start = Date.now.timeIntervalSince1970
 
         await withTaskGroup { group in
@@ -65,7 +67,7 @@ enum OpenHelper {
                 }
             }
             for await imageData in group {
-                await store.send(.addImage(imageData))
+                newImages.append(imageData)
                 if limit < imageURLs.count {
                     let url = imageURLs[limit]
                     limit += 1
@@ -82,6 +84,7 @@ enum OpenHelper {
         await MainActor.run {
             @AppStorage(SettingsView.disablePairedJpegsKey) var disablePairedJpegs = false
 
+            store.send(.addImages(newImages))
             store.send(.linkPairedImages(disablePairedJpegs))
             store.send(.sortUsingCurrentComparator)
         }
