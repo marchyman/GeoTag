@@ -48,6 +48,9 @@ struct SandboxTests {
                               withExtension: "xmp"))
 
         let sandbox = try Sandbox(for: url)
+        defer {
+            sandbox.removeSandboxFolder()
+        }
         let contents =
             try FileManager.default.contentsOfDirectory(at: sandbox.imgDir,
                                                         includingPropertiesForKeys: [.isSymbolicLinkKey])
@@ -61,7 +64,6 @@ struct SandboxTests {
                 #expect(url == original)
             }
         }
-        sandbox.removeSandboxFolder()
     }
 
     @Test func makeSidecar() async throws {
@@ -78,6 +80,9 @@ struct SandboxTests {
                                .appendingPathExtension(xmpExtension)
 
         let sandbox = try Sandbox(for: testImage)
+        defer {
+            sandbox.removeSandboxFolder()
+        }
         try sandbox.makeSidecarFile()
         let contents =
             try FileManager.default.contentsOfDirectory(at: sandbox.imgDir,
@@ -92,7 +97,6 @@ struct SandboxTests {
                 #expect(testImage == original)
             }
         }
-        sandbox.removeSandboxFolder()
     }
 
     @Test func backupFile() async throws {
@@ -109,6 +113,9 @@ struct SandboxTests {
         let name = url.lastPathComponent
         let testImage = testFolder.appending(component: name)
         let sandbox = try Sandbox(for: testImage)
+        defer {
+            sandbox.removeSandboxFolder()
+        }
 
         // make a backup folder
         let backupFolder = testFolder.appending(component: "backup/")
@@ -125,9 +132,6 @@ struct SandboxTests {
                                                         includingPropertiesForKeys: nil)
         #expect(contents.contains { $0.lastPathComponent == name })
         #expect(contents.count == 2)
-
-        // clean up
-        sandbox.removeSandboxFolder()
     }
 
     @Test func backupSidecar() async throws {
@@ -152,6 +156,9 @@ struct SandboxTests {
         let name = url.lastPathComponent
         let testImage = testFolder.appending(component: name)
         let sandbox = try Sandbox(for: testImage)
+        defer {
+            sandbox.removeSandboxFolder()
+        }
 
         // make a backup folder
         let backupFolder = testFolder.appending(component: "backup/")
@@ -167,9 +174,6 @@ struct SandboxTests {
                                                         includingPropertiesForKeys: nil)
         #expect(contents.contains { $0.lastPathComponent == xmpName })
         #expect(contents.count == 2)
-
-        // clean up
-        sandbox.removeSandboxFolder()
     }
 
     @Test func saveImage() async throws {
@@ -186,6 +190,9 @@ struct SandboxTests {
         let name = url.lastPathComponent
         let testImage = testFolder.appending(component: name)
         let sandbox = try Sandbox(for: testImage)
+        defer {
+            sandbox.removeSandboxFolder()
+        }
 
         // Create a metadata entry for the image
         var metadata = Metadata(source: .image(testImage))
@@ -197,8 +204,6 @@ struct SandboxTests {
         // see if the changes took effect
         let updatedMetadata = Imagetool.metadata(from: testImage)
         #expect(metadata == updatedMetadata)
-
-        sandbox.removeSandboxFolder()
     }
 
     // same as above, but using a file with a sidecar to check
@@ -226,6 +231,9 @@ struct SandboxTests {
         let name = url.lastPathComponent
         let testImage = testFolder.appending(component: name)
         let sandbox = try Sandbox(for: testImage)
+        defer {
+            sandbox.removeSandboxFolder()
+        }
 
         // Create a metadata entry for the update
         var metadata = Metadata(source: .xmp(testImage))
@@ -239,8 +247,6 @@ struct SandboxTests {
         let updatedMetadata = Exiftool.helper.metadata(from: sandbox.xmpURL,
                                                        primaryURL: testImage)
         #expect(metadata == updatedMetadata)
-
-        sandbox.removeSandboxFolder()
     }
 
     @Test func tagFile() async throws {
@@ -257,6 +263,9 @@ struct SandboxTests {
         let name = url.lastPathComponent
         let testImage = testFolder.appending(component: name)
         let sandbox = try Sandbox(for: testImage)
+        defer {
+            sandbox.removeSandboxFolder()
+        }
 
         // tag the file with "TestTag"
         let tagName = "TestTag"
