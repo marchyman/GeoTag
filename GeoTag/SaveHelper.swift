@@ -111,14 +111,15 @@ enum SaveHelper {
                                              _ timeZone: TimeZone?,
                                              _ tagFiles: Bool,
                                              _ tagName: String) async -> SaveStatus {
-        var saveStatus: SaveStatus = .saveOK
-
         struct TaskInfo {
             let id: ImageData.ID
             let metadata: Metadata
             let sidecarCreated: Bool
             let status: Bool
         }
+
+        var taskInfos: [TaskInfo] = []
+        var saveStatus: SaveStatus = .saveOK
 
         func buildTaskInfo(id: ImageData.ID) async -> TaskInfo {
             let metadata = info[id]!
@@ -160,21 +161,23 @@ enum SaveHelper {
             }
 
             for await taskInfo in group {
+                taskInfos.append(taskInfo)
                 if limit < ids.count {
                     let id = ids[limit]
                     limit += 1
                     group.addTask { return await buildTaskInfo(id: id) }
                 }
+            }
+        }
+        // Update state from the created TaskInfo on MainActor
+        await MainActor.run {
+            for taskInfo in taskInfos {
                 if taskInfo.sidecarCreated {
-                    await MainActor.run {
-                        store.send(.sidecarCreated(taskInfo.id), undoable: false)
-                    }
+                    store.send(.sidecarCreated(taskInfo.id), undoable: false)
                 }
                 if taskInfo.status {
-                    await MainActor.run {
-                        store.send(.imageSaved(taskInfo.id, taskInfo.metadata),
-                                   undoable: false)
-                    }
+                    store.send(.imageSaved(taskInfo.id, taskInfo.metadata),
+                               undoable: false)
                 } else {
                     saveStatus = .saveError
                 }
@@ -190,13 +193,14 @@ enum SaveHelper {
                                            _ timeZone: TimeZone?,
                                            _ tagFiles: Bool,
                                            _ tagName: String) async -> SaveStatus {
-        var saveStatus: SaveStatus = .saveOK
-
         struct TaskInfo {
             let id: ImageData.ID
             let metadata: Metadata
             let status: Bool
         }
+
+        var taskInfos: [TaskInfo] = []
+        var saveStatus: SaveStatus = .saveOK
 
         func buildTaskInfo(id: ImageData.ID) async -> TaskInfo {
             let metadata = info[id]!
@@ -222,6 +226,7 @@ enum SaveHelper {
                                 status: false)
             }
         }
+
         await withTaskGroup(of: TaskInfo.self) { group in
             let ids = Array(info.keys)
             var limit = min(ids.count, GeoTagApp.maxConcurrentTasks)
@@ -230,16 +235,21 @@ enum SaveHelper {
             }
 
             for await taskInfo in group {
+                taskInfos.append(taskInfo)
                 if limit < ids.count {
                     let id = ids[limit]
                     limit += 1
                     group.addTask { return await buildTaskInfo(id: id) }
                 }
+            }
+        }
+
+        // Update state from the created TaskInfo on MainActor
+        await MainActor.run {
+            for taskInfo in taskInfos {
                 if taskInfo.status {
-                    await MainActor.run {
-                        store.send(.imageSaved(taskInfo.id, taskInfo.metadata),
-                                   undoable: false)
-                    }
+                    store.send(.imageSaved(taskInfo.id, taskInfo.metadata),
+                               undoable: false)
                 } else {
                     saveStatus = .saveError
                 }

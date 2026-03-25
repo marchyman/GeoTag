@@ -6,21 +6,6 @@ import UDF
 
 enum OpenHelper {
 
-    static let logger =
-        Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
-               category: "OpenHelper")
-    static let signposter = OSSignposter(logger: logger)
-
-    static func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
-        let signpostID = Self.signposter.makeSignpostID()
-        let interval = Self.signposter.beginInterval(desc, id: signpostID)
-        return interval
-    }
-
-    static func markEnd(_ desc: StaticString, interval: OSSignpostIntervalState) {
-        Self.signposter.endInterval(desc, interval)
-    }
-
     // Start a mainactor task to process image and track files. The
     // task is returned so code tests can wait until the task is complete.
 
@@ -100,6 +85,8 @@ enum OpenHelper {
                 store: Store<GeoTagState, GeoTagEvent>) async {
         let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
         guard !gpxURLs.isEmpty else { return }
+        var tracklogs: [(String, GpxTrackLog?)] = []
+
         let start = Date.now.timeIntervalSince1970
 
         await withTaskGroup(of: (String, GpxTrackLog?).self) { group in
@@ -116,6 +103,7 @@ enum OpenHelper {
                 }
             }
             for await (path, tracklog) in group {
+                tracklogs.append((path, tracklog))
                 if limit < gpxURLs.count {
                     let url = gpxURLs[limit]
                     group.addTask {
@@ -128,14 +116,37 @@ enum OpenHelper {
                     }
                     limit += 1
                 }
-                await store.send(.readTrackLog(path, tracklog))
             }
         }
-        await store.send(.finishedAddingTracks)
+        await MainActor.run {
+            for (path, tracklog) in tracklogs {
+               store.send(.readTrackLog(path, tracklog))
+            }
+            store.send(.finishedAddingTracks)
+        }
         let duration = Date.now.timeIntervalSince1970 - start
         Self.logger.info("""
             \(gpxURLs.count, privacy: .public) tracks added in \
             \(duration, privacy: .public) seconds
             """)
+    }
+}
+
+// logging and signposting support
+
+extension OpenHelper {
+    static let logger =
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
+               category: "OpenHelper")
+    static let signposter = OSSignposter(logger: logger)
+
+    static func markStart(_ desc: StaticString) -> OSSignpostIntervalState {
+        let signpostID = Self.signposter.makeSignpostID()
+        let interval = Self.signposter.beginInterval(desc, id: signpostID)
+        return interval
+    }
+
+    static func markEnd(_ desc: StaticString, interval: OSSignpostIntervalState) {
+        Self.signposter.endInterval(desc, interval)
     }
 }
