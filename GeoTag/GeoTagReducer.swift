@@ -23,6 +23,9 @@ struct GeoTagReducer: Reducer, Sendable {
         case .addImage(let imageData):
             newState.imageData.append(imageData)
 
+        case .addImages(let imageDatas):
+            newState.imageData.append(contentsOf: imageDatas)
+
         case .addressChanged(let selected, let address):
             update(&newState, selected: selected, address: address)
 

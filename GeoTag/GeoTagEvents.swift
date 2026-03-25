@@ -10,6 +10,7 @@ import SwiftUI
 
 enum GeoTagEvent: Equatable {
     case addImage(ImageData)
+    case addImages([ImageData])
     case addressChanged(Set<ImageData.ID>, Place)
     case backupFolderSizeCheck
     case backupURLChanged(URL?)
@@ -67,6 +68,7 @@ extension GeoTagEvent: CustomStringConvertible {
     var description: String {
         switch self {
         case .addImage: "addImage"
+        case .addImages: "addImages"
         case .addressChanged: "addressChanged"
         case .backupFolderSizeCheck: "backupFolderSizeCheck"
         case .backupURLChanged: "backupURLChanged"

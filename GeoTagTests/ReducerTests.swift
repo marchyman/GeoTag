@@ -27,6 +27,16 @@ struct ReducerTests {
         #expect(store.imageData.count == expectedCount)
     }
 
+    @Test func addImagesEvent() async throws {
+        let state = GeoTagState(forPreview: true)
+        // state is a source of images for this test
+        // The store will use a different instance of state
+        let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
+        #expect(store.imageData.isEmpty)
+        store.send(.addImages(state.imageData))
+        #expect(store.imageData.count == state.imageData.count)
+    }
+
     @Test func addressChangedEvent() async throws {
         let store = Store(initialState: GeoTagState(forPreview: true),
                           reduce: GeoTagReducer())
