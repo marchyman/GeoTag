@@ -53,6 +53,7 @@ struct AdjustTimezoneView: View {
                         }
                         .labelsHidden()
                         .frame(width: 100)
+                        .accessibilityIdentifier(TestIDs.AdjustTimeZoneView.cameraTimeZoneID)
                         Text(selectedZone.timeZone.identifier)
                     }
                 }

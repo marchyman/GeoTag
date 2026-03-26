@@ -61,6 +61,7 @@ extension ReducerTests {
         let store = Store(initialState: GeoTagState(), reduce: GeoTagReducer())
         let goodName = "TestTrack.GPX"
         let badName = "BadTrack.GPX"
+        let anotherName = "AnotherTrack.GPX"
         let track = store.state.previewTrack()
 
         store.send(.readTrackLog(goodName, track))
@@ -72,6 +73,12 @@ extension ReducerTests {
         store.send(.readTrackLog(badName, nil))
         #expect(!store.gpxBadFileNames.isEmpty)
         #expect(store.gpxBadFileNames.first == badName)
+
+        store.send(.gpxLoadViewClosed)
+        let anotherTrack = store.state.previewAnotherTrack()
+        store.send(.readTrackLog(anotherName, anotherTrack))
+        #expect(store.gpxGoodFileNames.first == anotherName)
+        #expect(store.gpxBadFileNames.isEmpty)
     }
 
     @Test func removeOldFilesEvent() async throws {

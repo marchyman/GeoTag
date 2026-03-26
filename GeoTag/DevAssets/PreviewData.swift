@@ -71,6 +71,14 @@ extension GeoTagState {
         }
         return try? GpxTrackLog(contentsOf: trackURL)
     }
+
+    func previewAnotherTrack() -> GpxTrackLog? {
+        guard let trackURL = Bundle.main.url(forResource: "AnotherTrack",
+                                             withExtension: "GPX") else {
+            return nil
+        }
+        return try? GpxTrackLog(contentsOf: trackURL)
+    }
 }
 
 // pre loaded store

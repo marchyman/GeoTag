@@ -6,7 +6,7 @@ extension GeoTagReducer {
         if let tracklog {
             state.gpxGoodFileNames.append(path)
             state.gpxTracks.append(tracklog)
-            if !state.gpxTracks.isEmpty {
+            if state.gpxTracks.count > 1 {
                 state.gpxTracks.sort { $0.firstTimestamp < $1.firstTimestamp }
             }
         } else {

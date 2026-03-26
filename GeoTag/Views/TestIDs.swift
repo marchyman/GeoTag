@@ -39,4 +39,19 @@ enum TestIDs {
     enum DismissModifier {
         static let dismissButtonID = "DismissModifier.button.dismiss"
     }
+
+    enum AdjustTimeZoneView {
+        static let cameraTimeZoneID = "AdjustTimeZoneView.picker.cameraTimeZone"
+    }
+
+    // warning: these items must be identical to those defined in
+    // the RunLogView package.
+    enum RunLogView {
+        static let refreshID = "RunLogView.button.refresh"
+        static let copyID = "RunLogView.button.copy"
+    }
+
+    enum SettingsView {
+        static let closeID = "SettingsView.button.close"
+    }
 }

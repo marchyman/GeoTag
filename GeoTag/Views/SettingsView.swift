@@ -19,6 +19,8 @@ struct SettingsView: View {
 
     @State private var backupURL: URL?
 
+    private let testIDs = TestIDs.SettingsView.self
+
     var body: some View {
         VStack {
             Text("GeoTag Saved Settings")
@@ -202,6 +204,7 @@ struct SettingsView: View {
                 Button("Close") {
                     NSApplication.shared.keyWindow?.close()
                 }
+                .accessibilityIdentifier(testIDs.closeID)
                 .keyboardShortcut(.defaultAction)
                 .padding()
             }

@@ -212,6 +212,24 @@ extension MapView {
     static let showOtherPinsKey = "ShowOtherPins"
 }
 
+// reset map related defaults for testing
+
+extension MapView {
+    static func resetMapDefaults() { 
+        @AppStorage(Self.initialMapLatitudeKey) var initialMapLatitude = 37.7244
+        @AppStorage(Self.initialMapLongitudeKey) var initialMapLongitude = -122.4381
+        @AppStorage(Self.initialMapDistanceKey) var initialMapDistance = 50_000.0
+        @AppStorage(Self.savedMapStyleKey) var savedMapStyle = MapStyleName.standard.rawValue
+        @AppStorage(Self.showOtherPinsKey) var showOtherPins = false
+
+        initialMapLatitude = 37.7244
+        initialMapLongitude = -122.4381
+        initialMapDistance = 50_000.0
+        savedMapStyle = MapStyleName.standard.rawValue
+        showOtherPins = false
+    }
+}
+
 #Preview {
     Text("Use MapWithSearchView to preview this sub-view")
         .padding()

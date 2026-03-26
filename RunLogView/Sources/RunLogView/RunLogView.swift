@@ -6,6 +6,15 @@ public struct RunLogView: View {
     @State private var fetchingLog = false
     @State private var copyLog = true
 
+    // clone part of the main app TestIDs here
+    enum TestIDs {
+        enum RunLogView {
+            static let refreshID = "RunLogView.button.refresh"
+            static let copyID = "RunLogView.button.copy"
+        }
+    }
+    let testIDs = TestIDs.RunLogView.self
+
     public init() {}
 
     public var body: some View {
@@ -23,6 +32,7 @@ public struct RunLogView: View {
                         Text("Refresh list")
                             .padding(.horizontal)
                     }
+                    .accessibilityIdentifier(testIDs.refreshID)
                     .disabled(fetchingLog)
                     Button {
                         let pb = NSPasteboard.general
@@ -35,6 +45,7 @@ public struct RunLogView: View {
                         Text("\(copyLog ? "Copy" : "Copied!")")
                             .padding(.horizontal)
                     }
+                    .accessibilityIdentifier(testIDs.copyID)
                     .disabled(!copyLog || logEntries.isEmpty)
                 }
 

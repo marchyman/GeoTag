@@ -22,14 +22,16 @@ struct GeoTagApp: App {
     init() {
         appDelegate.store = store
         appDelegate.logger.debug("Delegate store set")
-        appDelegate.logger.debug("\(CommandLine.arguments, privacy: .public)")
+#if DEBUG
         if CommandLine.arguments.contains("-UIINIT") {
             SettingsView.clearAllSettings()
+            MapView.resetMapDefaults()
             appDelegate.logger.debug("Settings cleared")
         }
         if CommandLine.arguments.contains("-NOBACKUP") {
             doNotBackup = true
         }
+#endif
     }
 
     var body: some Scene {
