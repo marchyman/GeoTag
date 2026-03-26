@@ -4,7 +4,7 @@ options:
   deploymentTarget:
     macOS: "26.0"
   groupOrdering:
-    - order: [GeoTag, GeoTagTests, Packages, Products]
+    - order: [GeoTag, GeoTagTests, GeoTagUITests, Packages, Products]
   fileTypes:
     "icon":
       file: true 
@@ -190,6 +190,19 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagTests
     schemes: none
 
+  GeoTagUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    dependencies:
+      - target: GeoTag
+    sources:
+      - GeoTagUITests
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_NAME: $(TARGET_NAME)
+      PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagUITests
+    schemes: none
+
 schemes:
   GeoTag:
     build:
@@ -204,6 +217,7 @@ schemes:
       gatherCoverageData: YES
       targets:
         - name: GeoTagTests
+        - name: GeoTagUITests
         - package: Coords/CoordsTests
         - package: Exiftool/ExiftoolTests
         - package: GpxTrackLog/GpxTrackLogTests
