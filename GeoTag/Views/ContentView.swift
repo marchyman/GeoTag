@@ -20,17 +20,22 @@ struct ContentView: View {
     @State private var spinnerEnabled = false
     @State private var inspectorPresented = false
 
+    private let testIDs = TestIDs.ContentView.self
+
     var body: some View {
         SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
             Group {
                 if alternateLayout {
                     SplitVView(percent: $vAlternate) {
                         ImageTableView(inspectorPresented: $inspectorPresented)
+                            .accessibilityIdentifier(testIDs.imageTableViewAltID)
                     } bottom: {
                         ImageView()
+                            .accessibilityIdentifier(testIDs.imageViewAltID)
                     }
                 } else {
                     ImageTableView(inspectorPresented: $inspectorPresented)
+                        .accessibilityIdentifier(testIDs.imageTableViewID)
                 }
             }
             .overlay {
@@ -44,6 +49,7 @@ struct ContentView: View {
             } else {
                 SplitVView(percent: $vNormal) {
                     ImageView()
+                        .accessibilityIdentifier(testIDs.imageViewID)
                 } bottom: {
                     MapWithSearchView()
                 }
@@ -79,6 +85,7 @@ struct ContentView: View {
         .inspector(isPresented: $inspectorPresented) {
             ImageInspectorView()
                 .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
+                .accessibilityIdentifier(testIDs.imageInspectorViewID)
         }
         .onChange(of: store.importFiles) {
             importFiles.toggle()
@@ -103,7 +110,9 @@ struct ContentView: View {
         }
         .toolbar {
             PhotoPickerView()
+                .accessibilityIdentifier(testIDs.photoPickerViewID)
             InspectorButtonView(presented: $inspectorPresented)
+                .accessibilityIdentifier(testIDs.inspectorButtonViewID)
         }
     }
 

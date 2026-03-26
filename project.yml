@@ -197,6 +197,7 @@ targets:
       - target: GeoTag
     sources:
       - GeoTagUITests
+      - GeoTag/Views/TestIDs.swift
     settings:
       GENERATE_INFOPLIST_FILE: YES
       PRODUCT_NAME: $(TARGET_NAME)
