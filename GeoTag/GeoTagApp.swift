@@ -19,15 +19,16 @@ struct GeoTagApp: App {
     let windowWidth = 1000.0
     let windowHeight = 700.0
 
+    init() {
+        appDelegate.store = store
+        appDelegate.logger.debug("Delegate store set")
+    }
+
     var body: some Scene {
-        Window("GeoTag Version Six", id: "main") {
+        WindowGroup("GeoTag Version Six", id: "main") {
             ContentView()
                 .background(WindowAccessor(window: $mainWindow))
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
-                .onAppear {
-                    appDelegate.store = store
-                    appDelegate.logger.debug("Delegate store set")
-                }
                 .onChange(of: mainWindow) {
                     mainWindow?.delegate = appDelegate
                     store.send(.mainWindowChange(mainWindow), undoable: false)
