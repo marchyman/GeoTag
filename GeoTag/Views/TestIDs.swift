@@ -35,4 +35,8 @@ enum TestIDs {
         static let photoPickerViewID = "ContentView.view.photoPickerView"
         static let inspectorButtonViewID = "ContentView.view.inspectorButtonView"
     }
+
+    enum DismissModifier {
+        static let dismissButtonID = "DismissModifier.button.dismiss"
+    }
 }

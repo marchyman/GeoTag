@@ -218,6 +218,8 @@ struct SettingsView: View {
     }
 }
 
+// needed AppStorage keys
+
 extension SettingsView {
     static let createSidecarFilesKey = "CreateSidecarFiles"
     static let trackWidthKey = "TrackWidth"
@@ -228,6 +230,38 @@ extension SettingsView {
     static let updateGPSTimestampsKey = "UpdateGPSTimestamps"
     static let addTagsKey = "AddTags"
     static let finderTagKey = "FinderTag"
+}
+
+// Clear all settings for UI testing
+
+extension SettingsView {
+    static func clearAllSettings() {
+        @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
+        @AppStorage(GeoTagApp.savedBookmarkKey) var savedBookmark = Data()
+        @AppStorage(Self.createSidecarFilesKey) var createSidecarFiles = false
+        @AppStorage(Coords.coordFormatKey) var coordFormat: CoordFormat = .deg
+        @AppStorage(Self.trackWidthKey) var trackWidth = 0.0
+        @AppStorage(Self.trackColorKey) var trackColor = Color.black
+        @AppStorage(Self.extendedTimeKey) var extendedTime = 120.0
+        @AppStorage(Self.disablePairedJpegsKey) var disablePairedJpegs = false
+        @AppStorage(Self.updateFileModificationTimesKey) var updateFileModificationTimes = false
+        @AppStorage(Self.updateGPSTimestampsKey) var updateGPSTimestamps = false
+        @AppStorage(Self.addTagsKey) var addTags = false
+        @AppStorage(Self.finderTagKey) var finderTag = "GeoTag"
+
+        doNotBackup = false
+        savedBookmark = Data()
+        createSidecarFiles = false
+        coordFormat = .deg
+        trackWidth = 0.0
+        trackColor = Color.black
+        extendedTime = 120.0
+        disablePairedJpegs = false
+        updateFileModificationTimes = false
+        updateGPSTimestamps = false
+        addTags = false
+        finderTag = "GeoTag"
+    }
 }
 
 // Allow color to be saved in AppDefaults

@@ -183,6 +183,7 @@ struct UnexpectedErrorView: View {
 
 struct DismissModifier: ViewModifier {
     @Environment(\.dismiss) var dismiss
+    let testIDs = TestIDs.DismissModifier.self
 
     func body(content: Content) -> some View {
         VStack(alignment: .leading) {
@@ -191,6 +192,7 @@ struct DismissModifier: ViewModifier {
                 Button("Dismiss") {
                     dismiss()
                 }
+                .accessibilityIdentifier(testIDs.dismissButtonID)
                 .keyboardShortcut(.defaultAction)
             }
             content
