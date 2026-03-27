@@ -105,4 +105,23 @@ final class UITestGroup2: XCTestCase {
         app.menuItems["Discard changes"].click()
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
     }
+
+    func testCContextMenuView() async throws {
+        let testID = TestIDs.ContentView.imageTableViewID
+        let app = XCUIApplication()
+        app.launchArguments.append("-NOBACKUP")
+        app.activate()
+
+        app.outlines[testID].firstMatch.rightClick()
+        XCTAssert(element(app, matching: "Edit…").exists)
+        XCTAssert(element(app, matching: "Cut", index: 1).exists)
+        XCTAssert(element(app, matching: "Copy", index: 1).exists)
+        XCTAssert(element(app, matching: "Paste", index: 1).exists)
+        XCTAssert(element(app, matching: "Delete", index: 1).exists)
+        XCTAssert(element(app, matching: "Show In Finder", index: 1).exists)
+        XCTAssert(element(app, matching: "Locn From Track", index: 1).exists)
+        XCTAssert(element(app, matching: "Clear Image List", index: 1).exists)
+
+        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+    }
 }
