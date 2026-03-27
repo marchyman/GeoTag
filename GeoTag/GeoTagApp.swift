@@ -22,21 +22,7 @@ struct GeoTagApp: App {
     init() {
         appDelegate.store = store
         appDelegate.logger.debug("Delegate store set")
-#if DEBUG
-        if CommandLine.arguments.contains("-UIINIT") {
-            SettingsView.clearAllSettings()
-            MapView.resetMapDefaults()
-            appDelegate.logger.debug("Settings cleared")
-        }
-        if CommandLine.arguments.contains("-NOBACKUP") {
-            doNotBackup = true
-        } else if CommandLine.arguments.contains("-NOBACKUPFOLDER") {
-            doNotBackup = false
-            savedBookmark = Data()
-        } else if CommandLine.arguments.contains("-DOBACKUP") {
-            doNotBackup = false
-        }
-#endif
+        prepareForTesting()
     }
 
     var body: some Scene {
@@ -108,9 +94,34 @@ extension GeoTagApp {
     static var showRunLog = "GeoTag Run/Debug Log"
 }
 
+// Special handling for UI testing.  Various flags may be passed to
+// force the app into a specific state before running tests.
+
+extension GeoTagApp {
+    private func prepareForTesting() {
+#if DEBUG
+        if CommandLine.arguments.contains("-UIINIT") {
+            SettingsView.clearAllSettings()
+            MapView.resetMapDefaults()
+            appDelegate.logger.debug("Settings cleared")
+        }
+        if CommandLine.arguments.contains("-NOBACKUP") {
+            doNotBackup = true
+        } else if CommandLine.arguments.contains("-NOBACKUPFOLDER") {
+            doNotBackup = false
+            savedBookmark = Data()
+        } else if CommandLine.arguments.contains("-DOBACKUP") {
+            doNotBackup = false
+        }
+        if CommandLine.arguments.contains("-NOPLACES") {
+            store.send(.clearPlaces)
+        }
+#endif
+    }
+}
+
 // Max number of concurrent tasks that will be fired up in any single
-// task group. A number picked by trial and error to balance speed with
-// UI response
+// task group. A number picked out of thin air.
 
 extension GeoTagApp {
     nonisolated static let maxConcurrentTasks = 128

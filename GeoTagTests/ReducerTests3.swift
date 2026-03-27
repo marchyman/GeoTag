@@ -8,7 +8,7 @@ import UDF
 @testable import GeoTag
 
 extension ReducerTests {
-    @Test func placeRequestedEvent() async throws {
+    @Test func placeSelectionEvent() async throws {
         var state = GeoTagState()
         for id in 1..<maxPlaces {
             state.places.append(testPlace(id))

@@ -124,4 +124,31 @@ final class UITestGroup2: XCTestCase {
 
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
     }
+
+    func testDPlaceSaver() async throws {
+        let app = XCUIApplication()
+        app.launchArguments.append("-NOBACKUP")
+        app.launchArguments.append("-NOPLACES")
+        app.activate()
+
+        // wait a bit for any existing places to be cleared
+        try? await Task.sleep(for: .milliseconds(300))
+
+        // look for LA
+        app.typeKey("f", modifierFlags: .command)
+        app.typeText("Los Angeles")
+        // Give the search some time before accepting results
+        try? await Task.sleep(for: .milliseconds(300))
+        app.typeKey(.enter, modifierFlags: [])
+
+        // See if the results were saved
+        app.typeKey("f", modifierFlags: .command)
+        try? await Task.sleep(for: .milliseconds(300))
+        let predicate = NSPredicate(format: "value CONTAINS[c] 'Los Angeles'")
+        let la = app.staticTexts.containing(predicate).element
+        XCTAssert(la.exists)
+
+        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+    }
+
 }
