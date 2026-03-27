@@ -226,6 +226,8 @@ schemes:
         - package: Imagetool/ImagetoolTests
         - package: Metadata/MetadataTests
         - package: Phototool/PhototoolTests
+      environmentVariables:
+        ImagePath: $(SRCROOT)/GeoTag/DevAssets
     profile:
       config: Release
     analyze:

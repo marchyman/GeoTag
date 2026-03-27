@@ -7,8 +7,12 @@ final class UITestGroup2: XCTestCase {
         continueAfterFailure = false
     }
 
-    private func element(_ app: XCUIApplication, matching id: String) -> XCUIElement {
-        return app.descendants(matching: .any).matching(identifier: id).element
+    private func element(_ app: XCUIApplication,
+                         matching id: String,
+                         index: Int = 0) -> XCUIElement {
+        return app.descendants(matching: .any)
+                  .matching(identifier: id)
+                  .element(boundBy: index)
     }
 
     func testAPathView() async throws {
@@ -47,6 +51,58 @@ final class UITestGroup2: XCTestCase {
         XCTAssert(pathView.menuItems["tmp"].exists)
         closeButton.click()
 
+        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+    }
+
+    func testBContextMenuView() async throws {
+        let app = XCUIApplication()
+        app.launchArguments.append("-NOBACKUP")
+        app.activate()
+        var testImageFolder = ""
+        if let imagePath = ProcessInfo.processInfo.environment["ImagePath"] {
+            testImageFolder = imagePath
+        } else {
+            XCTAssert(false, "missing ImagePath in environment")
+        }
+
+        app.typeKey("o", modifierFlags: .command)
+        app.typeKey("g", modifierFlags: [.shift, .command])
+        app.typeText("\(testImageFolder)/TestPictures")
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+
+        // select an image and assign a lat/log
+        let testCell = element(app, matching: "L1000038.DNG")
+        XCTAssert(testCell.waitForExistence(timeout: 0.300))
+        testCell.rightClick()
+        let edit = element(app, matching: "Edit…")
+        XCTAssert(edit.exists)
+        edit.click()
+        let latitude = app.textFields["Latitude"]
+        let longitude = app.textFields["Longitude"]
+        XCTAssert(latitude.waitForExistence(timeout: 0.300))
+        latitude.click()
+        app.typeText("37.345")
+        longitude.click()
+        app.typeText("-121.234")
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey("i", modifierFlags: .command)
+
+        // copy the lat lon
+        testCell.rightClick()
+        let copy = element(app, matching: "Copy", index: 1)
+        XCTAssert(copy.exists)
+        copy.click()
+
+        // paste the copied data into a different cell
+        let pasteCell = element(app, matching: "L1000050.DNG")
+        XCTAssert(pasteCell.exists)
+        pasteCell.rightClick()
+        let paste = element(app, matching: "Paste", index: 1)
+        XCTAssert(paste.exists)
+        paste.click()
+
+        app.menuItems["Discard changes"].click()
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
     }
 }
