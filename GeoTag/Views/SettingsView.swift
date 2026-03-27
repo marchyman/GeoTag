@@ -42,6 +42,7 @@ struct SettingsView: View {
                             folder where GeoTag will place copies of images \
                             before performing any updates.
                             """)
+                            .accessibilityIdentifier(testIDs.pathViewID)
                     }
 
                     Toggle("Disable image backups", isOn: $doNotBackup)

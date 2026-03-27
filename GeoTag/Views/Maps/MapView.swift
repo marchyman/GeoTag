@@ -215,7 +215,7 @@ extension MapView {
 // reset map related defaults for testing
 
 extension MapView {
-    static func resetMapDefaults() { 
+    static func resetMapDefaults() {
         @AppStorage(Self.initialMapLatitudeKey) var initialMapLatitude = 37.7244
         @AppStorage(Self.initialMapLongitudeKey) var initialMapLongitude = -122.4381
         @AppStorage(Self.initialMapDistanceKey) var initialMapDistance = 50_000.0

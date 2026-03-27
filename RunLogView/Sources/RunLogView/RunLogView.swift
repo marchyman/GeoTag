@@ -1,18 +1,20 @@
 import OSLog
 import SwiftUI
 
+// clone part of the main app TestIDs here. The values need to be in
+// sync for automated user interface testing
+enum TestIDs {
+    enum RunLogView {
+        static let refreshID = "RunLogView.button.refresh"
+        static let copyID = "RunLogView.button.copy"
+    }
+}
+
 public struct RunLogView: View {
     @State private var logEntries: [String] = []
     @State private var fetchingLog = false
     @State private var copyLog = true
 
-    // clone part of the main app TestIDs here
-    enum TestIDs {
-        enum RunLogView {
-            static let refreshID = "RunLogView.button.refresh"
-            static let copyID = "RunLogView.button.copy"
-        }
-    }
     let testIDs = TestIDs.RunLogView.self
 
     public init() {}

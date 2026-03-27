@@ -30,6 +30,11 @@ struct GeoTagApp: App {
         }
         if CommandLine.arguments.contains("-NOBACKUP") {
             doNotBackup = true
+        } else if CommandLine.arguments.contains("-NOBACKUPFOLDER") {
+            doNotBackup = false
+            savedBookmark = Data()
+        } else if CommandLine.arguments.contains("-DOBACKUP") {
+            doNotBackup = false
         }
 #endif
     }

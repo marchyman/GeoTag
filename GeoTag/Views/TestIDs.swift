@@ -53,5 +53,6 @@ enum TestIDs {
 
     enum SettingsView {
         static let closeID = "SettingsView.button.close"
+        static let pathViewID = "SettingsView.view.pathView"
     }
 }
