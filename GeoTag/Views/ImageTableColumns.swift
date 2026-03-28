@@ -10,6 +10,7 @@ struct NameView: View {
 
     var body: some View {
         Text(image.name)
+            .accessibilityIdentifier(TestIDs.TableColumns.nameID)
             .fontWeight(isSelected ? .semibold : .regular)
             .foregroundColor(
                 isSelected
@@ -28,6 +29,7 @@ struct TimestampView: View {
 
     var body: some View {
         Text(image.metadata.timestamp)
+            .accessibilityIdentifier(TestIDs.TableColumns.timestampID)
             .foregroundColor(image.timestampTextColor)
     }
 }
@@ -37,6 +39,7 @@ struct LatitudeView: View {
 
     var body: some View {
         Text(image.metadata.formattedLatitude)
+            .accessibilityIdentifier(TestIDs.TableColumns.latitudeID)
             .foregroundColor(image.locationTextColor)
             .help(image.metadata.formattedElevation)
     }
@@ -48,6 +51,7 @@ struct LongitudeView: View {
 
     var body: some View {
         Text(image.metadata.formattedLongitude)
+            .accessibilityIdentifier(TestIDs.TableColumns.longitudeID)
             .foregroundColor(image.locationTextColor)
             .help(image.metadata.formattedElevation)
     }

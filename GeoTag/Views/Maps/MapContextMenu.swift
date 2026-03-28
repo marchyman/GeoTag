@@ -9,11 +9,15 @@ struct MapContextMenu: View {
     @AppStorage(MapView.initialMapLongitudeKey) var initialMapLongitude = -122.4381
     @AppStorage(MapView.initialMapDistanceKey) var initialMapDistance = 50_000.0
 
+    private let testIDs = TestIDs.MapContextMenu.self
+
     var body: some View {
         Group {
             MapStylePicker(mapStyleName: $mapStyleName)
+                .accessibilityIdentifier(testIDs.stylePickerID)
 
             PinOptionView()
+                .accessibilityIdentifier(testIDs.pinOptionID)
 
             Divider()
 

@@ -57,7 +57,7 @@ final class UITestGroup1: XCTestCase {
         let photoPickerButton = element(app, matching: testIDs.photoPickerViewID)
         XCTAssert(photoPickerButton.exists)
         photoPickerButton.click()
-        sleep(1)
+        try await Task.sleep(for: .milliseconds(100))
         let screenshot = app.screenshot()
         let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = "Photo Library Picker"

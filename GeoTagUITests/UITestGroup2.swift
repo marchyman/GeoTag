@@ -138,7 +138,8 @@ final class UITestGroup2: XCTestCase {
         app.typeKey("f", modifierFlags: .command)
         app.typeText("Los Angeles")
         // Give the search some time before accepting results
-        try? await Task.sleep(for: .milliseconds(300))
+        // this can take quite a while
+        try? await Task.sleep(for: .milliseconds(700))
         app.typeKey(.enter, modifierFlags: [])
 
         // See if the results were saved
@@ -151,4 +152,23 @@ final class UITestGroup2: XCTestCase {
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
     }
 
+    func testEMapContextMenu() async throws {
+        let testIDs = TestIDs.MapContextMenu.self
+        let app = XCUIApplication()
+        app.launchArguments.append("-NOBACKUP")
+        app.activate()
+
+        try? await Task.sleep(for: .milliseconds(300))
+        let map = app.maps.firstMatch
+        XCTAssert(map.exists)
+        map.rightClick()
+        let style = element(app, matching: testIDs.stylePickerID)
+        XCTAssert(style.exists)
+        style.click()
+        XCTAssert(element(app, matching: "Hybrid").exists)
+
+        XCTAssert(element(app, matching: testIDs.pinOptionID).exists)
+
+        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+    }
 }

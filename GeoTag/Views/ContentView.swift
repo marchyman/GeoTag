@@ -28,6 +28,7 @@ struct ContentView: View {
                 if alternateLayout {
                     SplitVView(percent: $vAlternate) {
                         ImageTableView(inspectorPresented: $inspectorPresented)
+                            .accessibilityElement(children: .contain)
                             .accessibilityIdentifier(testIDs.imageTableViewAltID)
                     } bottom: {
                         ImageView()
@@ -35,6 +36,7 @@ struct ContentView: View {
                     }
                 } else {
                     ImageTableView(inspectorPresented: $inspectorPresented)
+                        .accessibilityElement(children: .contain)
                         .accessibilityIdentifier(testIDs.imageTableViewID)
                 }
             }

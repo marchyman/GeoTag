@@ -55,4 +55,16 @@ enum TestIDs {
         static let closeID = "SettingsView.button.close"
         static let pathViewID = "SettingsView.view.pathView"
     }
+
+    enum MapContextMenu {
+        static let stylePickerID = "MapContextMenu.picker.mapStyle"
+        static let pinOptionID = "MapContextMenu.view.pinOption"
+    }
+
+    enum TableColumns {
+        static let nameID = "NameView.text.name"
+        static let timestampID = "TimestampView.text.timestamp"
+        static let latitudeID = "LatitudeView.text.latitude"
+        static let longitudeID = "LongitudeView.text.longitude"
+    }
 }
