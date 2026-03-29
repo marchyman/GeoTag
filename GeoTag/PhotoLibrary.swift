@@ -43,12 +43,12 @@ extension PhotoLibrary {
 extension PhotoLibrary {
     func addPhotos(from items: [PhotosPickerItem],
                    store: Store<GeoTagState, GeoTagEvent>) async {
-        Self.logger.notice("\(#function)")
+        // Self.logger.debug("\(#function)")
         var dupsFound = false
         for item in items {
             if let id = item.itemIdentifier {
-                Self.logger.notice("\(id, privacy: .public)")
                 if await isDup(id, in: store) {
+                    Self.logger.debug("dup id: \(id, privacy: .public)")
                     dupsFound = true
                     continue
                 }

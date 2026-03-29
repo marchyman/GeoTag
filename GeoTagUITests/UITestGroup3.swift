@@ -75,6 +75,22 @@ final class UITestGroup3: XCTestCase {
             XCTAssert(name.exists)
         }
 
+        // open the library a 2nd time
+        photoPickerButton.click()
+        try await Task.sleep(for: .seconds(2))
+        let dupImage = app.descendants(matching: .image)
+            .matching(identifier: "PXGGridLayout-Info")
+            .firstMatch
+
+        XCTAssert(dupImage.exists)
+        // TODO: why is this not a not-clickable image?
+        // Question posted on Apple developer forum.
+        if dupImage.isHittable {
+            dupImage.click()
+        } else {
+            print(dupImage.debugDescription)
+        }
+
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
     }
 }
