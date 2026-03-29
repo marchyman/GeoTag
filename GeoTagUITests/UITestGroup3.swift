@@ -75,7 +75,7 @@ final class UITestGroup3: XCTestCase {
             XCTAssert(name.exists)
         }
 
-        // open the library a 2nd time
+        // open the library a 2nd time and select the first image again
         photoPickerButton.click()
         try await Task.sleep(for: .seconds(2))
         let dupImage = app.descendants(matching: .image)
@@ -90,6 +90,10 @@ final class UITestGroup3: XCTestCase {
         } else {
             print(dupImage.debugDescription)
         }
+        // close the image picker
+
+        // Check for a dup image sheet here
+        // click the sheet dismiss button
 
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
     }
