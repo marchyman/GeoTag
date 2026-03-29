@@ -18,6 +18,7 @@ final class UITestGroup3: XCTestCase {
     func testAPhotoLibrary() async throws {
         let photoPickerID = TestIDs.ContentView.photoPickerViewID
         let nameID = TestIDs.TableColumns.nameID
+        let dismissID = TestIDs.DismissModifier.dismissButtonID
         let app = XCUIApplication()
 
         app.launchArguments.append("-NOBACKUP")
@@ -83,18 +84,31 @@ final class UITestGroup3: XCTestCase {
             .firstMatch
 
         XCTAssert(dupImage.exists)
+        // swiftlint:disable:next todo
         // TODO: why is this not a not-clickable image?
         // Question posted on Apple developer forum.
         if dupImage.isHittable {
             dupImage.click()
         } else {
-            print(dupImage.debugDescription)
+            XCTAssert(false, "dupImage not hittable")
+            return
         }
+
         // close the image picker
+        app.buttons["Add"].firstMatch.click()
+        app.buttons["Add"].firstMatch.click()
+        try await Task.sleep(for: .milliseconds(400))
 
         // Check for a dup image sheet here
-        // click the sheet dismiss button
+        let dupSheet = app.sheets.firstMatch
+        XCTAssert(dupSheet.exists)
 
+        // click the sheet dismiss button
+        let dismissButton = element(app, matching: dismissID)
+        XCTAssert(dismissButton.waitForExistence(timeout: 0.300))
+        dismissButton.click()
+
+        // quit the app
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
     }
 }
