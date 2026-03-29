@@ -19,13 +19,16 @@ tags:
 	/opt/homebrew/bin/ctags -R
 
 test:
-	xcodebuild -scheme GeoTag test | xcbeautify | tee .test.out
+	xcodebuild -scheme GeoTag test > .test.out
+	xcresultparser `sed -n '/xcresult/p' .test.out`
 
 testapp:
-	xcodebuild -scheme AppOnly test | tee .test.out
+	xcodebuild -scheme AppOnly test > .test.out
+	xcresultparser `sed -n '/xcresult/p' .test.out`
 
 testGpxTrackLog:
-	xcodebuild -scheme GpxTrackLog test | tee .test.out | xcbeautify
+	xcodebuild -scheme GpxTrackLog test > .test.out
+	xcresultparser `sed -n '/xcresult/p' .test.out`
 
 # remove files created during the build process
 # do **not** use the -d option to git clean without excluding .jj
