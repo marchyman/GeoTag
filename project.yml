@@ -92,6 +92,7 @@ targets:
         NSHumanReadableCopyright: Copyright 2022-2026 Marco S Hyman
         ITSAppUsesNonExemptEncryption: NO
         NSPhotoLibraryUsageDescription: Update Photo Timestamps and Location Coordinates
+        LSMultipleInstancesProhibited: YES
         CFBundleDocumentTypes:
           - CFBundleTypeName: Image Files
             CFBundleTypeRole: Editor

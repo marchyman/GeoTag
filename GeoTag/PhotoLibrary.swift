@@ -14,7 +14,7 @@ struct PhotoLibrary {
         enabled =
             PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized
         let isEnabled = enabled
-        Self.logger.notice("PhotoLibrary enabled \(isEnabled ? "true" : "false")")
+        Self.logger.notice("PhotoLibrary enabled \(isEnabled ? "true" : "false", privacy: .public)")
     }
 }
 
