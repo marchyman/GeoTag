@@ -11,6 +11,7 @@ Info.plist
 .swiftpm/
 
 .build/
+.workspaces/
 Build/
 DerivedData/
 SaveBackup/

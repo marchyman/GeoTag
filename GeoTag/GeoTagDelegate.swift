@@ -17,32 +17,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        logger.debug("\(#function) called")
         if let store {
             OpenHelper.open(store, urls: urls, description: "open with",
                             spinnerEnabled: nil)
         } else {
             logger.error("\(#function): store not set")
         }
-    }
-
-    // when opened with args this function is called one or more times
-    // treat args as file names and attempt to open the files
-    func application(_ application: NSApplication, openFiles files: [String]) {
-        logger.debug("\(#function) called")
-        if let store {
-            var urls: [URL] = []
-            for file in files {
-                if let url = URL(string: file) {
-                    urls.append(url)
-                }
+        if application.windows.count > 1 {
+            // dismiss the extra window here. We don't need more than one
+            if let window = application.windows.last {
+                window.close()
             }
-            if !urls.isEmpty {
-                OpenHelper.open(store, urls: urls, description: "open arg",
-                                spinnerEnabled: nil)
-            }
-        } else {
-            logger.error("\(#function): store not set")
         }
     }
 
@@ -51,8 +36,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
 
-    func applicationShouldTerminate(_ sender: NSApplication)
-        -> NSApplication.TerminateReply {
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         logger.info("\(#function)")
         if let store {
             if store.saveInProgress || store.unsavedChanges {
