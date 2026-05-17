@@ -31,6 +31,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
 
+    func applicationShouldHandleReopen(_ sender: NSApplication,
+                                       hasVisibleWindows: Bool) -> Bool {
+        for window in sender.windows where window == store?.mainWindow {
+            if !window.isVisible {
+                logger.debug("\(#function): reopen here")
+                window.orderFront(self)
+                return false
+            }
+        }
+        return true
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(
         _ theApplication: NSApplication) -> Bool {
         return true
