@@ -1,18 +1,4 @@
-// Each view will extend this enum adding accessibilityIdentifiers 
-// used by the view. In a perfect world it would look like this with
-// the extension inside the view source code.
-//
-// extension TestIDs {
-//     enum SomeView {
-//         static let someElementID = "SomeView.view.blah"
-//         static let anotherElementID = "SomeView.button.add"
-//         static func editButtonID(_ name: String) -> String {
-//             "SomeView.button.edit \(name)"
-//         }
-//     }
-// }
-
-// Alas, the UI test code also needs access and the way to do that is
+// The UI test code also needs access and the way to do that is
 // to put all of the ids in a separate file [this one] that can also be
 // compiled by the test code.
 //

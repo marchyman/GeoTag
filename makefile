@@ -1,9 +1,9 @@
 PROJECT = GeoTag
 
-buildServer.json:	Build
+buildServer.json:	build
 	xcode-build-server config -scheme $(PROJECT) -project $(PROJECT).xcodeproj
 
-Build:	$(PROJECT).xcodeproj/project.pbxproj
+build:	$(PROJECT).xcodeproj/project.pbxproj
 	xcodebuild -scheme $(PROJECT)
 
 $(PROJECT).xcodeproj/project.pbxproj:	project.yml
@@ -18,15 +18,15 @@ proj:
 tags:
 	/opt/homebrew/bin/ctags -R
 
-test:
+test: buildServer.json
 	xcodebuild -scheme GeoTag test > .test.out
 	xcresultparser `sed -n '/xcresult/p' .test.out`
 
-testapp:
+testapp: buildServer.json
 	xcodebuild -scheme AppOnly test > .test.out
 	xcresultparser `sed -n '/xcresult/p' .test.out`
 
-testGpxTrackLog:
+testGpxTrackLog: buildServer.json
 	xcodebuild -scheme GpxTrackLog test > .test.out
 	xcresultparser `sed -n '/xcresult/p' .test.out`
 
@@ -35,4 +35,4 @@ testGpxTrackLog:
 clean:
 	test -d $(PROJECT).xcodeproj && xcodebuild clean || true
 	jj status
-	git clean -dfx -e .jj -e notes -e .session
+	git clean -dfx -e .jj -e notes -e .session~
