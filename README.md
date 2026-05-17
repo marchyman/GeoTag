@@ -12,10 +12,14 @@ image metadata -- your image pixels are not touched.
 See <http://exiftool.org> for information about ExifTool.
 **ExifTool is built-in to GeoTag.**
 
+Current versions of GeoTag can also update geolocation information in images
+from your Photos Library.  Apple's Photos framework is used instead of
+ExifTool for such updates.  The original image file is not changed.
+
 ### Version requirements
 
 - GeoTag 6.0+ requires macOS 26 (Tahoe) or later
-- GeoTag 5.7+ requires macOS 15 (Sequoia) or later.
+- GeoTag 5.7 requires macOS 15 (Sequoia) or later.
 - GeoTag 5.2 thru 5.6 requires macOS 14 (Sonoma) or later.
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
@@ -39,6 +43,8 @@ Mostly the same user interface, but restructured and rewriten under the hood.
   timestamp was also updated; resolved
 - issues reading elevation from xmp files resolved
 - undo/redo menu
+- using `open with...` from finder or `open -a GeoTag ...` from the command
+  line no longer causes the app to quit when it was already running.
 - Apple added Fuji compressed raw image file support
 
 ### Known issues
@@ -57,51 +63,6 @@ Mostly the same user interface, but restructured and rewriten under the hood.
 - Double clicking to zoom in or option-double clicking to zoom out will
   move the pins of selected items. Deselect all items or use a different
   zoom method to workaround this issue.
-
-## GeoTag Version 5.7
-
-
-### Updates
-
-- show image names in orange when it appears to be a valid image format
-  but there is no existing metadata or the metadata can not be read. This
-  is the case with Fujifilm Compressed Raw files, for example. If the
-  image can not be previewed it is a format that can not be decoded.
-  Otherwise it is an image with no metadata.
-
-- Add a find command (shortcut ⌘F) to the edit menu. The command will
-  select the map search field.
-
-- Show City/State/Country/Country Code in the info pane.
-
-- Settings window re-design
-
-- Exiftool version 13.45
-
-### Bug Fixes
-
-- Only the first raw-jpg pair was processed when the Disable paired jpegs
-  option was set. All pairs are now properly processed.
-
-### Known issues
-
-- undo/redo menu items are always enabled, even when there are no undo or
-  redo actions that could be performed. The menu titles are also not updated
-  for the action to be performed.
-- When showing pins for all selected locations the red (most selected) pin
-  may be hidden by the pin of another location near by unless the zoom level
-  is such that both locations are slightly separated on the map.
-- when changing the selection to an image that has a location some of the pin
-  may off the map view.  In an extreme case only the point of the pin is on
-  the map and can not be seen. If you do not see a pin when you expect to
-  zoom out slightly.
-- Double clicking to zoom in or option-double clicking to zoom out will
-  move the pins of selected items. Deselect all items or use a different
-  zoom method to workaround this issue.
-- Double click to zoom in/out was hit or miss when tested on an intel
-  Mac running macOS Sequoia 15.7. Suggest using other methods of
-  zooming the map.
-- paste sometimes not enabled after cut. Can not reproduce on demand.
 
 ---
 

@@ -1,3 +1,34 @@
+## 5.7
+
+### Updates
+
+- show image names in orange when it appears to be a valid image format
+  but there is no existing metadata or the metadata can not be read. This
+  is the case with Fujifilm Compressed Raw files, for example. If the
+  image can not be previewed it is a format that can not be decoded.
+  Otherwise it is an image with no metadata.
+- Add a find command (shortcut ⌘F) to the edit menu. The command will
+  select the map search field.
+- Show City/State/Country/Country Code in the info pane.
+- Settings window re-design
+- Exiftool version 13.45
+
+### Bug Fixes
+
+- Only the first raw-jpg pair was processed when the Disable paired jpegs
+  option was set. All pairs are now properly processed.
+
+### Known issues
+
+- undo/redo menu items are always enabled, even when there are no undo or
+  redo actions that could be performed. The menu titles are also not updated
+  for the action to be performed.
+- Double click to zoom in/out was hit or miss when tested on an intel
+  Mac running macOS Sequoia 15.7. Suggest using other methods of
+  zooming the map.
+- paste sometimes not enabled after cut. Can not reproduce on demand.
+- See README.md for more
+
 ## 5.6
 
 ### Updates
