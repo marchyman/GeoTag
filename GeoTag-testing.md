@@ -9,6 +9,9 @@
 - [x] Select image in finder and use Open With selecting the version of GeoTag
    noted in the previous step.  Verify image is loaded into table.
 
+- [x] Select a different image in finder and use Open With. Verify image
+   is added into table.
+
 - [x] select image and assign a location by clicking on the map.
    Verify map pin placed
    Verify location assigned to image with coords colored green in table.
@@ -72,8 +75,11 @@
    Verify the settings window closes
    Verify the app quit
 
-- [x] Launch the application Select Help -> GeoTag 5 Help…
-   Verify Browser opens at the GeoTag 5 help pages.  Close browser.
+- [x] Launch the application Select Help -> GeoTag 6 Help…
+   Verify Browser opens at the GeoTag 6 help pages.  Close browser.
+   NOTE: this requires a web page update.  Until that happens the
+   GeoTag 5 help pages will be loaded as the GeoTagHelp link redirects
+   to those pages.
    Open TestData that includes a bad GPX file
    Verify the GPX file loaded sheet shows the bad file
    Dismiss the sheet
@@ -83,7 +89,7 @@
    Verify the appropriate sheet is displayed.
    Quit
 
-- [x] Prepare a folder of test images without locations
+- [ ] Prepare a folder of test images without locations
    Add a track log for the images to the folder.
    Launch GeoTag.
    Open Settings window and enable these options:
@@ -109,7 +115,7 @@
      file will be changed.
    Quit
 
-- [x] Launch GeoTag
+- [ ] Launch GeoTag
    Open settings window
    Verify changes made in the previous test not changed.
    Turn off Tag Updated Files and close window
@@ -131,7 +137,7 @@
    Right Click -> Save map location to save the current location.
    Quit GeoTag.
 
-- [x] Launch GeoTag
+- [ ] Launch GeoTag
    Verify the configuration and map location are as saved.
    Drag in the test images and track.  Assign locations from the track.
    Select several images. Use cmd-i or click on the info button.
@@ -155,7 +161,7 @@
    Verify a finder window opens with the appropriate image selected.
    Quit GeoTag.  Answer "I,m sure" to the confirmation dialog.
 
-- [x] Launch GeoTag
+- [ ] Launch GeoTag
    Open settings window and check the Disable paired jpeg option
    Use View -> Show/Hide Disabled Files to show disabled files
    Drag in images that includes a raw/jpeg pair
@@ -167,7 +173,7 @@
    Verify the image locations are updated.
    Verify there is a pin on the map at the desired location.
 
-- [x] Select Edit -> Specify Time Zone
+- [ ] Select Edit -> Specify Time Zone
    Verify the Specify Camera Time Zone window opens
    Select a time zone other than the current time zone.
    Click on the Change button.
@@ -175,7 +181,7 @@
    Verify the "current" value is the value selected above.
    Quit GeoTag
 
-- [x] Launch GeoTag.
+- [ ] Launch GeoTag.
    Drag in a large number (> 1000) images. [photos/year/2024]
    Note the time it takes to load images
    - about a second for the table to start being populated,
