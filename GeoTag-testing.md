@@ -89,7 +89,7 @@
    Verify the appropriate sheet is displayed.
    Quit
 
-- [ ] Prepare a folder of test images without locations
+- [x] Prepare a folder of test images without locations
    Add a track log for the images to the folder.
    Launch GeoTag.
    Open Settings window and enable these options:
@@ -115,7 +115,7 @@
      file will be changed.
    Quit
 
-- [ ] Launch GeoTag
+- [x] Launch GeoTag
    Open settings window
    Verify changes made in the previous test not changed.
    Turn off Tag Updated Files and close window
@@ -137,7 +137,7 @@
    Right Click -> Save map location to save the current location.
    Quit GeoTag.
 
-- [ ] Launch GeoTag
+- [x] Launch GeoTag
    Verify the configuration and map location are as saved.
    Drag in the test images and track.  Assign locations from the track.
    Select several images. Use cmd-i or click on the info button.
@@ -161,7 +161,7 @@
    Verify a finder window opens with the appropriate image selected.
    Quit GeoTag.  Answer "I,m sure" to the confirmation dialog.
 
-- [ ] Launch GeoTag
+- [x] Launch GeoTag
    Open settings window and check the Disable paired jpeg option
    Use View -> Show/Hide Disabled Files to show disabled files
    Drag in images that includes a raw/jpeg pair
@@ -173,7 +173,7 @@
    Verify the image locations are updated.
    Verify there is a pin on the map at the desired location.
 
-- [ ] Select Edit -> Specify Time Zone
+- [x] Select Edit -> Specify Time Zone
    Verify the Specify Camera Time Zone window opens
    Select a time zone other than the current time zone.
    Click on the Change button.
@@ -181,18 +181,17 @@
    Verify the "current" value is the value selected above.
    Quit GeoTag
 
-- [ ] Launch GeoTag.
+- [x] Launch GeoTag.
    Drag in a large number (> 1000) images. [photos/year/2024]
    Note the time it takes to load images
-   - about a second for the table to start being populated,
-   - about 25 seconds for the load to complete
+   - 3-4 seconds before the load is complete
    Select an image.  Note the time it takes before the image
    thumbnail is displayed
    - Very quick for jpeg
    - slightly longer for DNGs, but still fairly quick
    Quit GeoTag
 
-- [ ] Launch GeoTag
+- [x] Launch GeoTag
    Drag in TestData
    Dismiss track log sheet
    Select an image and verify the thumbnail loads
@@ -201,7 +200,7 @@
    - Verify the right pane contains only the map and map search bar
    Quit GeoTag
 
-- [ ] Lauch GeoTag
+- [x] Lauch GeoTag
    Click on the icon to open the Photos image browser
    Select several image and click add
    Verify the images are added to the table

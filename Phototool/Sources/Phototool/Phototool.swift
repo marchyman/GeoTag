@@ -66,12 +66,11 @@ public struct Phototool {
         do {
             try await library.performChanges {
                 let assetChangeReqeust = PHAssetChangeRequest(for: asset)
+                // timestamps can only be changed, not deleted
                 if let timestamp {
                     assetChangeReqeust.creationDate = timestamp
                 }
-                if let location {
-                    assetChangeReqeust.location = location
-                }
+                assetChangeReqeust.location = location
             }
             return true
         } catch {
