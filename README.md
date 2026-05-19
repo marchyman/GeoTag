@@ -67,7 +67,7 @@ Mostly the same user interface, but restructured and rewriten under the hood.
 
 ### Operating Instructions:
 
-*See <https://www.snafu.org/GeoTag/GeoTag5Help/> for more information.*
+*See <https://www.snafu.org/GeoTag/GeoTagHelp/> for more information.*
 
 Run Program.  Use the Open command from the menu or ⌘O to select files to
 modify. You can also drag files from the finder into the table on the left side
