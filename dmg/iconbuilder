@@ -1,0 +1,25 @@
+#!/bin/bash
+# Auto-generate icon.icns from icon.png (1024x1024)
+ICON_NAME=VolumeIcon
+ICONSET_NAME=${ICON_NAME}.iconset
+ICNS_NAME=${ICON_NAME}.icns
+ 
+if [ ! -f ${ICON_NAME}.png ]; then
+  echo "Please put ${ICON_NAME}.png in the current directory."
+  exit 1
+fi
+ 
+mkdir -p $ICONSET_NAME
+sips -z 16 16     ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_16x16.png
+sips -z 32 32     ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_16x16@2x.png
+sips -z 32 32     ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_32x32.png
+sips -z 64 64     ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_32x32@2x.png
+sips -z 128 128   ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_128x128.png
+sips -z 256 256   ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_128x128@2x.png
+sips -z 256 256   ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_256x256.png
+sips -z 512 512   ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_256x256@2x.png
+sips -z 512 512   ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_512x512.png
+sips -z 1024 1024 ${ICON_NAME}.png --out ${ICONSET_NAME}/icon_512x512@2x.png
+iconutil -c icns $ICONSET_NAME
+rm -rf $ICONSET_NAME
+echo "ICNS file created: ${ICNS_NAME}"
