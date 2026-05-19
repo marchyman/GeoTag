@@ -24,7 +24,7 @@ ExifTool for such updates.  The original image file is not changed.
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
 
-## WIP (will be version 6)
+## GeoTag 6.0
 
 Mostly the same user interface, but restructured and rewriten under the hood.
 
@@ -32,7 +32,6 @@ Mostly the same user interface, but restructured and rewriten under the hood.
 
 - Better Undo/Redo support with ability to undo more things. The undo
   and redo menu items now work correctly.
-
 - ⌘f to select map search field, ⌘F to select table search field.
 
 ### Bug Fixes
