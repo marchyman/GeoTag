@@ -1,16 +1,10 @@
-//
-// Copyright 2024 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 import Foundation
 
 // GPX file processing
 //
 // An instance of a GpxTrackLog is created by opening and parsing a GPX file.
 
-public struct GpxTrackLog: Sendable {
+public struct GpxTrackLog: Sendable, Equatable {
     public let tracks: [Track]
 
     public init(contentsOf url: URL) throws {
@@ -22,10 +16,9 @@ public struct GpxTrackLog: Sendable {
     // first track or the timestamp of the distant past.
     public var firstTimestamp: TimeInterval {
         if let timeInterval = tracks.first?
-            .segments.first?
-            .points.first?
-            .timeFromEpoch
-        {
+                                    .segments.first?
+                                    .points.first?
+                                    .timeFromEpoch {
             return timeInterval
         }
         return Date.now.timeIntervalSince(Date.distantPast)
@@ -36,12 +29,12 @@ public struct GpxTrackLog: Sendable {
 
 extension GpxTrackLog {
     // Tracks are made up of one or more Segments.
-    public struct Track: Sendable {
+    public struct Track: Sendable, Equatable {
         public var segments = [Segment]()
     }
 
     // Segments are made up of Points.
-    public struct Segment: Sendable {
+    public struct Segment: Sendable, Equatable {
         public var points = [Point]()
     }
 
@@ -66,14 +59,14 @@ private class Gpx: NSObject {
 
     // parser states
     enum ParseState {
-        case none  // starting state
-        case ignored(String)  // ignored element
-        case trk  // <trk> seen
-        case trkSeg  // <trkseg> seen
-        case trkPt  // <trkpt> seen
-        case time(String)  // <time> inside of a <trkpt>
-        case ele  // <ele> inside of a <trkpt>
-        case error  // bad GPX file
+        case none               // starting state
+        case ignored(String)    // ignored element
+        case trk                // <trk> seen
+        case trkSeg             // <trkseg> seen
+        case trkPt              // <trkpt> seen
+        case time(String)       // <time> inside of a <trkpt>
+        case ele                // <ele> inside of a <trkpt>
+        case error              // bad GPX file
     }
 
     /// date formater for track point timestamps.
@@ -169,13 +162,11 @@ extension Gpx: XMLParserDelegate {
     // process the start of an element according to the current state.
     // Most elements are ignored
 
-    func parser(
-        _ parser: XMLParser,
-        didStartElement elementName: String,
-        namespaceURI: String?,
-        qualifiedName qName: String?,
-        attributes attributeDict: [String: String] = [:]
-    ) {
+    func parser(_ parser: XMLParser,
+                didStartElement elementName: String,
+                namespaceURI: String?,
+                qualifiedName qName: String?,
+                attributes attributeDict: [String: String] = [:]) {
         switch parseState {
         case .none, .ignored:
             // ignore everything until the trk element
@@ -251,12 +242,10 @@ extension Gpx: XMLParserDelegate {
 
     // at the end of the elements we care about wind back the state
 
-    func parser(
-        _ parser: XMLParser,
-        didEndElement elementName: String,
-        namespaceURI: String?,
-        qualifiedName qName: String?
-    ) {
+    func parser(_ parser: XMLParser,
+                didEndElement elementName: String,
+                namespaceURI: String?,
+                qualifiedName qName: String?) {
         if case let .ignored(currentElement) = parseState {
             if elementName == currentElement {
                 parseState = .none
@@ -332,10 +321,8 @@ extension Gpx: XMLParserDelegate {
     // program only cares about characters for the time element and
     // the ele element
 
-    func parser(
-        _ parser: XMLParser,
-        foundCharacters string: String
-    ) {
+    func parser(_ parser: XMLParser,
+                foundCharacters string: String) {
         switch parseState {
         case .ele:
             // find the latest point
@@ -344,8 +331,8 @@ extension Gpx: XMLParserDelegate {
                 let segmentIx = tracks[trackIx].segments.count - 1
                 if !tracks[trackIx].segments[segmentIx].points.isEmpty {
                     let pointIx = tracks[trackIx].segments[segmentIx].points.count - 1
-                    tracks[trackIx].segments[segmentIx].points[pointIx].ele = Double(
-                        string)
+                    tracks[trackIx].segments[segmentIx].points[pointIx].ele =
+                        Double(string)
                     return
                 }
                 parseState = .error

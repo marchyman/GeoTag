@@ -1,12 +1,17 @@
 *~
 .DS_Store
 .test.out
+.dap
 
 notes
+tags
 buildServer.json
 Info.plist
 *.entitlements
+.swiftpm/
 
+.build/
+.workspaces/
 Build/
 DerivedData/
 SaveBackup/

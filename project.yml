@@ -2,12 +2,13 @@ name: GeoTag
 
 options:
   deploymentTarget:
-    macOS: "15.0"
+    macOS: "26.0"
   groupOrdering:
-    - order: [GeoTag, GeoTagTests, Packages, Products]
+    - order: [GeoTag, GeoTagTests, GeoTagUITests, Packages, Products]
   fileTypes:
     "icon":
       file: true 
+  defaultSourceDirectoryType: syncedFolder
 
 settings:
   base:
@@ -16,6 +17,30 @@ settings:
     CODE_SIGN_IDENTITY: Apple Development
     CODE_SIGN_STYLE: Automatic
     DEAD_CODE_STRIPPING: YES
+    DEVELOPMENT_ASSET_PATHS:
+      - GeoTag/DevAssets/PreviewData.swift
+      - GeoTag/DevAssets/TestBadTrack.GPX
+      - GeoTag/DevAssets/TestTrack.GPX
+      - GeoTag/DevAssets/OtherPictures/788A1113.CR3
+      - GeoTag/DevAssets/OtherPictures/Berlijn-Fujifilm-X-Pro2.RAF
+      - GeoTag/DevAssets/TestPictures/IMG_7158.CR2
+      - GeoTag/DevAssets/TestPictures/IMG_7158.xmp
+      - GeoTag/DevAssets/TestPictures/IMG_7162.CR2
+      - GeoTag/DevAssets/TestPictures/IMG_7162.xmp
+      - GeoTag/DevAssets/TestPictures/L1000038.DNG
+      - GeoTag/DevAssets/TestPictures/L1000050.DNG
+      - GeoTag/DevAssets/TestPictures/L1000051.DNG
+      - GeoTag/DevAssets/TestPictures/L1000052.DNG
+      - GeoTag/DevAssets/TestPictures/P1000658.JPG
+      - GeoTag/DevAssets/TestPictures/P1000659.JPG
+      - GeoTag/DevAssets/TestPictures/P1000660.JPG
+      - GeoTag/DevAssets/TestPictures/P1000661.JPG
+      - GeoTag/DevAssets/TestPictures/P1000679.JPG
+      - GeoTag/DevAssets/TestPictures/P1000684.JPG
+      - GeoTag/DevAssets/TestPictures/P1000685.JPG
+      - GeoTag/DevAssets/TestPictures/P1000686.JPG
+      - GeoTag/DevAssets/TestPictures/Screenshot.png
+      - GeoTag/DevAssets/TestPictures/image.foo
     DEVELOPMENT_TEAM: A3UXBEBE8Z
     ENABLE_APP_SANDBOX: YES
     ENABLE_OUTGOING_NETWORK_CONNECTIONS: YES;
@@ -42,24 +67,32 @@ targets:
     type: application
     platform: macOS
     dependencies:
-      - package: AdjustTimeZoneView
+      - package: UDF
+      - package: Coords
+      - package: Exiftool
       - package: GpxTrackLog
-      - package: MapAndSearchViews
+      - package: ImageData
+      - package: Imagetool
+      - package: Metadata
+      - package: Phototool
       - package: RunLogView
       - package: SplitHView
       - package: SplitVView
     sources:
+      - Supporting Files/AppIcon.icon
+      - Supporting Files/Assets.xcassets
+      - Supporting Files/Credits.rtf
+      - Supporting Files/PrivacyInfo.xcprivacy
       - GeoTag
-      - path: ExifTool
-        type: folder
     info:
-      path: GeoTag/Info.plist
+      path: Generated/Info.plist
       properties:
         CFBundleDisplayName: $(TARGET_NAME)
         LSApplicationCategoryType: public.app-category.photography
         NSHumanReadableCopyright: Copyright 2022-2026 Marco S Hyman
         ITSAppUsesNonExemptEncryption: NO
         NSPhotoLibraryUsageDescription: Update Photo Timestamps and Location Coordinates
+        LSMultipleInstancesProhibited: YES
         CFBundleDocumentTypes:
           - CFBundleTypeName: Image Files
             CFBundleTypeRole: Editor
@@ -126,7 +159,6 @@ targets:
             NSIsRelatedItemType: YES
             CFBundleTypeExtensions:
               - xmp
-
     settings:
       base:
         ENABLE_APP_SANDBOX: YES
@@ -159,6 +191,19 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagTests
     schemes: none
 
+  GeoTagUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    dependencies:
+      - target: GeoTag
+    sources:
+      - GeoTagUITests
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_NAME: $(TARGET_NAME)
+      PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagUITests
+    schemes: none
+
 schemes:
   GeoTag:
     build:
@@ -173,6 +218,16 @@ schemes:
       gatherCoverageData: YES
       targets:
         - name: GeoTagTests
+        - name: GeoTagUITests
+        - package: Coords/CoordsTests
+        - package: Exiftool/ExiftoolTests
+        - package: GpxTrackLog/GpxTrackLogTests
+        - package: ImageData/ImageDataTests
+        - package: Imagetool/ImagetoolTests
+        - package: Metadata/MetadataTests
+        - package: Phototool/PhototoolTests
+      environmentVariables:
+        ImagePath: $(SRCROOT)/GeoTag/DevAssets
     profile:
       config: Release
     analyze:
@@ -180,14 +235,42 @@ schemes:
     archive:
       config: Release
       revealArchiveInOrganizer: YES
+  AppOnly:
+    build:
+      targets:
+        GeoTag: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: YES
+      targets:
+        - name: GeoTagTests
+  Release:
+    build:
+      targets:
+        GeoTag: all
+    run:
+      config: Release
 
 packages:
-  AdjustTimeZoneView:
-    path: AdjustTimeZoneView
+  UDF:
+    url: git://snafu.org/UDF
+    branch: main
+  Coords:
+    path: Coords
+  Exiftool:
+    path: Exiftool
   GpxTrackLog:
     path: GpxTrackLog
-  MapAndSearchViews:
-    path: MapAndSearchViews
+  Imagetool:
+    path: Imagetool
+  ImageData:
+    path: ImageData
+  Metadata:
+    path: Metadata
+  Phototool:
+    path: Phototool
   RunLogView:
     path: RunLogView
   SplitHView:

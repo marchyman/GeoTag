@@ -1,22 +1,19 @@
-//
-// Copyright 2023 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
+import Coords
 import CoreLocation
+import ImageData
 import SwiftUI
+import UDF
 
 struct LatLonSectionView: View {
-    var image: ImageModel
-    @Environment(AppState.self) var state
-    @FocusState private var isFocused: Bool
+    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+
+    var image: ImageData
 
     @State private var latitude: Double?
     @State private var longitude: Double?
+    @FocusState private var isFocused: Bool
 
-    @AppStorage(AppSettings.coordFormatKey)
-    var coordFormat: AppSettings.CoordFormat = .deg
+    @AppStorage(Coords.coordFormatKey) var coordFormat: CoordFormat = .deg
 
     // notice the bogus "focused" value given to .focusedValue. I need a non
     // empty string to enable cut/copy/paste/select all and this was an
@@ -31,7 +28,6 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldFocused, "focused")
             }
 
             LabeledContent("Longitude:") {
@@ -40,26 +36,25 @@ struct LatLonSectionView: View {
                     .labelsHidden()
                     .padding()
                     .focused($isFocused)
-                    .focusedValue(\.textfieldFocused, "focused")
             }
 
             LabeledContent("City:") {
-                Text(image.city ?? "?")
+                Text(image.metadata.city ?? "?")
                     .frame(width: 200, alignment: .leading)
             }
 
             LabeledContent("State:") {
-                Text(image.state ?? "?")
+                Text(image.metadata.state ?? "?")
                     .frame(width: 200, alignment: .leading)
             }
 
             LabeledContent("Country:") {
-                Text(image.country ?? "?")
+                Text(image.metadata.country ?? "?")
                     .frame(width: 200, alignment: .leading)
             }
 
             LabeledContent("Country Code:") {
-                Text(image.countryCode ?? "?")
+                Text(image.metadata.countryCode ?? "?")
                     .frame(width: 200, alignment: .leading)
             }
         }
@@ -70,14 +65,32 @@ struct LatLonSectionView: View {
         }
         .onSubmit {
             if validateLocation() {
-                updateLocation()
-                isFocused = false
+                if let latitude, let longitude {
+                    store.send(.locationChanged(Coords(latitude: latitude,
+                                                       longitude: longitude)),
+                               description: "update location") {
+                        let selected = store.selection
+                        Task {
+                            let address =
+                            await ReverseLocationFinder.reverseGeocode(store: store,
+                                                                       id: image.id)
+                            if let address {
+                                store.send(.addressChanged(selected, address),
+                                           undoable: false)
+                            }
+                        }
+                    }
+                    isFocused = false
+                }
             }
         }
         .onChange(of: coordFormat) {
             loadCoordinates()
         }
-        .task(id: image.location) {
+        .onChange(of: isFocused) {
+            store.send(.textfieldFocusChanged(isFocused), undoable: false)
+        }
+        .task(id: image.metadata.location) {
             loadCoordinates()
         }
     }
@@ -85,7 +98,7 @@ struct LatLonSectionView: View {
     // set state variables from image location
 
     private func loadCoordinates() {
-        if let location = image.location {
+        if let location = image.metadata.location {
             latitude = location.latitude
             longitude = location.longitude
         } else {
@@ -106,25 +119,6 @@ struct LatLonSectionView: View {
         }
         return false
     }
-
-    // update all selected images with the location specified by the
-    // state variables.
-
-    private func updateLocation() {
-        // function won't be called if lat/lon are nil.
-        // guard used to convert to non-optional values
-        guard let latitude, let longitude else { return }
-        let newLocation = Coords(
-            latitude: latitude,
-            longitude: longitude)
-
-        state.undoManager.beginUndoGrouping()
-        for image in state.tvm.selected where image.location != newLocation {
-            state.update(image, location: newLocation)
-        }
-        state.undoManager.endUndoGrouping()
-        state.undoManager.setActionName("modify location")
-    }
 }
 
 // I want my labels in line with the text field.
@@ -143,17 +137,11 @@ extension LabeledContentStyle where Self == InlineLabeledContentStyle {
 }
 
 #Preview {
-    let image = ImageModel(
-        imageURL: URL(fileURLWithPath: "/test/path/to/image1.jpg"),
-        validImage: true,
-        dateTimeCreated: "2022:12:12 11:22:33",
-        latitude: 33.123,
-        longitude: 123.456)
-    return Form {
-        Section("Location") {
-            LatLonSectionView(image: image)
-        }
-    }
-    .environment(AppState())
-    .frame(width: 500, height: 700)
+    Text("""
+       Look at **ImageInspectorView**
+       to see a preview of this sub-view
+       """)
+        .multilineTextAlignment(.leading)
+        .padding()
+
 }

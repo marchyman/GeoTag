@@ -58,7 +58,7 @@ maps and elsewhere using code such as:
 ```
 
 Track log searches return the latitude, longitude, and optional elevation of
-the track point that is <= a given timestamp.  However, if any found point
-has a timestamp that is not within 6 hours (an arbitrary value) of the
-requested timestamp the search will return nil.
+the track point that is <= a given timestamp. An `extendedTime` argument with
+a default of 120 minutes can be provided to the search. Locations within
+`extendedTime` minutes of the ends of a segment are also returned.
 

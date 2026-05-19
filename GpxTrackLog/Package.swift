@@ -1,11 +1,10 @@
-// swift-tools-version: 6.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 6.2
 
 import PackageDescription
 
 let package = Package(
     name: "GpxTrackLog",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v26)],
     products: [
         .library(name: "GpxTrackLog", targets: ["GpxTrackLog"])
     ],
@@ -15,6 +14,7 @@ let package = Package(
                     dependencies: ["GpxTrackLog"],
                     resources: [.copy("BadTrack.GPX"),
                                 .copy("NoTrack.GPX"),
-                                .copy("TestTrack.GPX")])
+                                .copy("TestTrack.GPX"),
+                                .copy("MultiSeg.GPX")])
     ]
 )

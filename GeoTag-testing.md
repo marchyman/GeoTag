@@ -1,13 +1,16 @@
 - [x] Initial run
-   `defaults delete org.snafu.GeoTag` before running)
+   `defaults delete org.snafu.GeoTag` before running
    Image backup folder can not be found sheet should be shown.
    open settings window and select a backup folder.  Close and quit.
- 
+
 - [x] Launch.  Open settings and verify backup folder set.  Open "GeoTag About"
    and check program version.  Quit.
 
 - [x] Select image in finder and use Open With selecting the version of GeoTag
    noted in the previous step.  Verify image is loaded into table.
+
+- [x] Select a different image in finder and use Open With. Verify image
+   is added into table.
 
 - [x] select image and assign a location by clicking on the map.
    Verify map pin placed
@@ -18,8 +21,8 @@
 - [x] Use Shift-Cmd-Z to redo change.  Verify.
 
 - [x] File -> Discard changes.
-   Verify confirmation dialog.  Select Cancel.  Verify coords not changed.
-   Repeat, selecting "I'm Sure".  Verify coords reset.
+   Verify coords reset.
+   Note: since this is now an undoable change there is no "I'm sure" dialog.
 
 - [x] File -> Clear Image List.
    Verify empty table.
@@ -39,12 +42,12 @@
    Select TestTrack.gpx
    Verify track loaded sheet displayed
    Verify track shown on map
-  
+
 - [x] View -> Hide disabled files
    Verify disabled files hidden.
    Cmd-D to re-show the file.  Verify.
    Cmd-D again.  Verify files hidden.
-  
+
 - [x] Select all (Cmd-A) and Locn From Track (Cmd-L)
    Verify locations updated.
    Verify location for out of date image not updated.
@@ -63,7 +66,7 @@
 - [x] Use Cmd-W to close the window.
    Verify an "are you sure" confirmation is shown.
    Click cancel
-   Use File -> Discard changes, confirm
+   Use File -> Discard changes
    Use GeoTag -> Settings or Cmd-, to open the Settings window.
    Click on the main window.
    Use Cmd-W or File -> Close to close the main window.
@@ -71,9 +74,12 @@
    Use Cmd-W or File -> Close to close the settings window.
    Verify the settings window closes
    Verify the app quit
-  
-- [x] Launch the application Select Help -> GeoTag 5 Help…
-   Verify Browser opens at the GeoTag 5 help pages.  Close browser.
+
+- [x] Launch the application Select Help -> GeoTag 6 Help…
+   Verify Browser opens at the GeoTag 6 help pages.  Close browser.
+   NOTE: this requires a web page update.  Until that happens the
+   GeoTag 5 help pages will be loaded as the GeoTagHelp link redirects
+   to those pages.
    Open TestData that includes a bad GPX file
    Verify the GPX file loaded sheet shows the bad file
    Dismiss the sheet
@@ -82,7 +88,7 @@
    Open only the bad track
    Verify the appropriate sheet is displayed.
    Quit
-  
+
 - [x] Prepare a folder of test images without locations
    Add a track log for the images to the folder.
    Launch GeoTag.
@@ -178,8 +184,7 @@
 - [x] Launch GeoTag.
    Drag in a large number (> 1000) images. [photos/year/2024]
    Note the time it takes to load images
-   - about 8-9 seconds for the table to start being populated,
-   - about 16-17 seconds for the load to complete
+   - 3-4 seconds before the load is complete
    Select an image.  Note the time it takes before the image
    thumbnail is displayed
    - Very quick for jpeg
@@ -207,7 +212,6 @@
    Open the image browser again and select the image with the deleted data
    Verify there is no location data.
    Quit GeoTag
-   
 
 Remove folder of test data prepared for above
 Remove test configuration

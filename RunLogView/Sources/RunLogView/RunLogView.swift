@@ -1,16 +1,21 @@
-//
-// Copyright 2024 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
 import OSLog
 import SwiftUI
+
+// clone part of the main app TestIDs here. The values need to be in
+// sync for automated user interface testing
+enum TestIDs {
+    enum RunLogView {
+        static let refreshID = "RunLogView.button.refresh"
+        static let copyID = "RunLogView.button.copy"
+    }
+}
 
 public struct RunLogView: View {
     @State private var logEntries: [String] = []
     @State private var fetchingLog = false
     @State private var copyLog = true
+
+    let testIDs = TestIDs.RunLogView.self
 
     public init() {}
 
@@ -29,6 +34,7 @@ public struct RunLogView: View {
                         Text("Refresh list")
                             .padding(.horizontal)
                     }
+                    .accessibilityIdentifier(testIDs.refreshID)
                     .disabled(fetchingLog)
                     Button {
                         let pb = NSPasteboard.general
@@ -41,11 +47,13 @@ public struct RunLogView: View {
                         Text("\(copyLog ? "Copy" : "Copied!")")
                             .padding(.horizontal)
                     }
+                    .accessibilityIdentifier(testIDs.copyID)
                     .disabled(!copyLog || logEntries.isEmpty)
                 }
 
                 ForEach(logEntries, id: \.self) { entry in
                     Text(entry)
+                    .font(Font.system(size: 13).monospaced())
                 }
             }
         }
@@ -58,7 +66,6 @@ public struct RunLogView: View {
 }
 
 extension RunLogView {
-
     nonisolated private func getLogEntries() async -> [String] {
         var loggedMessages: [String] = []
         let timeFormatter = DateFormatter()
@@ -72,7 +79,7 @@ extension RunLogView {
             for entry in myEntries {
                 let formattedTime = timeFormatter.string(from: entry.date)
                 let formatedEntry = """
-                    \(formattedTime):  \(entry.category) \
+                    \(formattedTime):  \(entry.category) | \
                     \(entry.composedMessage)
                     """
                 loggedMessages.append(formatedEntry)
@@ -87,7 +94,6 @@ extension RunLogView {
         }
         return loggedMessages
     }
-
 }
 
 #Preview {

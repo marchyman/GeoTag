@@ -1,4 +1,4 @@
-## GeoTag for macOS -- macOS 15 or later for latest version
+## GeoTag for macOS -- macOS 26 or later for GeoTag 6
 
 GeoTag is a free OS X single window application that allows you to update image
 metadata with geolocation tags by selecting one or more images then panning and
@@ -12,49 +12,47 @@ image metadata -- your image pixels are not touched.
 See <http://exiftool.org> for information about ExifTool.
 **ExifTool is built-in to GeoTag.**
 
+Current versions of GeoTag can also update geolocation information in images
+from your Photos Library.  Apple's Photos framework is used instead of
+ExifTool for such updates.  The original image file is not changed.
+
 ### Version requirements
 
-- GeoTag 5.7+ requires macOS 15 (Sequoia) or later.
+- GeoTag 6.0+ requires macOS 26 (Tahoe) or later
+- GeoTag 5.7 requires macOS 15 (Sequoia) or later.
 - GeoTag 5.2 thru 5.6 requires macOS 14 (Sonoma) or later.
-
-    [!WARNING] 
-    There is a map pin location issue when running on early versions of macOS
-    Sonoma. If you see a pin placed above the point you clicked/tapped you are
-    seeing this bug. Apple fixed the issue in version 14.4 (or perhaps it was
-    14.4.1). It is not a problem in the latest versions of Sonoma.
-
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
 
-## GeoTag Version 5.7
+## WIP (will be version 6)
+
+Mostly the same user interface, but restructured and rewriten under the hood.
 
 ### Updates
 
-- show image names in orange when it appears to be a valid image format
-  but there is no existing metadata or the metadata can not be read. This
-  is the case with Fujifilm Compressed Raw files, for example. If the
-  image can not be previewed it is a format that can not be decoded.
-  Otherwise it is an image with no metadata.
+- Better Undo/Redo support with ability to undo more things. The undo
+  and redo menu items now work correctly.
 
-- Add a find command (shortcut ⌘F) to the edit menu. The command will
-  select the map search field.
-
-- Show City/State/Country/Country Code in the info pane.
-
-- Settings window re-design
-
-- Exiftool version 13.45
+- ⌘f to select map search field, ⌘F to select table search field.
 
 ### Bug Fixes
 
-- Only the first raw-jpg pair was processed when the Disable paired jpegs
-  option was set. All pairs are now properly processed.
+- Table of images was not focused when leaving search or text fields; a
+  cause cut/copy/paste intermitent failures. Resolved.
+- option to update file modification time used the previous time if the
+  timestamp was also updated; resolved
+- issues reading elevation from xmp files resolved
+- undo/redo menu
+- using `open with...` from finder or `open -a GeoTag ...` from the command
+  line no longer causes the app to quit when it was already running.
+- Apple added Fuji compressed raw image file support
 
 ### Known issues
 
-- undo/redo menu items are always enabled, even when there are no undo or
-  redo actions that could be performed. The menu titles are also not updated
-  for the action to be performed.
+- Images from the Photos Library can not always be displayed. This appears
+  to be an Apple issue that has been reported many times over the years. No
+  known workaround.
+- Undo/Redo are disabled in text and search fields.
 - When showing pins for all selected locations the red (most selected) pin
   may be hidden by the pin of another location near by unless the zoom level
   is such that both locations are slightly separated on the map.
@@ -65,10 +63,6 @@ See <http://exiftool.org> for information about ExifTool.
 - Double clicking to zoom in or option-double clicking to zoom out will
   move the pins of selected items. Deselect all items or use a different
   zoom method to workaround this issue.
-- Double click to zoom in/out was hit or miss when tested on an intel
-  Mac running macOS Sequoia 15.7. Suggest using other methods of
-  zooming the map.
-- paste sometimes not enabled after cut. Can not reproduce on demand.
 
 ---
 

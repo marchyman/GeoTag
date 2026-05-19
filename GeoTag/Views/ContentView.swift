@@ -1,127 +1,127 @@
-//
-// Copyright 2022 Marco S Hyman
-// See LICENSE file for info
-// https://www.snafu.org/
-//
-
+import OSLog
 import SplitHView
 import SplitVView
 import SwiftUI
+import UDF
 import UniformTypeIdentifiers
 
-/// Window look and feel values
-let windowBorderColor = Color.gray
-
 struct ContentView: View {
-    @Environment(AppState.self) var state
+    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
     @Environment(\.openWindow) var openWindow
 
-    @AppStorage(AppSettings.alternateLayoutKey) var alternateLayout = false
-    @AppStorage(AppSettings.doNotBackupKey) var doNotBackup = false
-    @AppStorage(AppSettings.savedBookmarkKey) var savedBookmark = Data()
-    @AppStorage(AppSettings.splitHNormalKey) var hNormal = 0.45
-    @AppStorage(AppSettings.splitHAlternateKey) var hAlternate = 0.55
-    @AppStorage(AppSettings.splitVNormalKey) var vNormal = 0.60
-    @AppStorage(AppSettings.splitVAlternateKey) var vAlternate = 0.40
+    @AppStorage(Self.alternateLayoutKey) var alternateLayout = false
+    @AppStorage(Self.splitHNormalKey) var hNormal = 0.45
+    @AppStorage(Self.splitHAlternateKey) var hAlternate = 0.55
+    @AppStorage(Self.splitVNormalKey) var vNormal = 0.60
+    @AppStorage(Self.splitVAlternateKey) var vAlternate = 0.40
 
-    @State private var removeOldFiles = false
+    @State private var sheetType: SheetType?
+    @State private var importFiles = false
+    @State private var spinnerEnabled = false
+    @State private var inspectorPresented = false
+
+    private let testIDs = TestIDs.ContentView.self
 
     var body: some View {
-        @Bindable var state = state
         SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
             Group {
                 if alternateLayout {
                     SplitVView(percent: $vAlternate) {
-                        ImageTableView(tvm: state.tvm)
+                        ImageTableView(inspectorPresented: $inspectorPresented)
+                            .accessibilityElement(children: .contain)
+                            .accessibilityIdentifier(testIDs.imageTableViewAltID)
                     } bottom: {
                         ImageView()
+                            .accessibilityIdentifier(testIDs.imageViewAltID)
                     }
                 } else {
-                    ImageTableView(tvm: state.tvm)
+                    ImageTableView(inspectorPresented: $inspectorPresented)
+                        .accessibilityElement(children: .contain)
+                        .accessibilityIdentifier(testIDs.imageTableViewID)
                 }
             }
             .overlay {
-                if state.applicationBusy {
+                if spinnerEnabled {
                     ProgressView("Processing files...")
                 }
             }
         } right: {
             if alternateLayout {
-                MapView()
+                MapWithSearchView()
             } else {
                 SplitVView(percent: $vNormal) {
                     ImageView()
+                        .accessibilityIdentifier(testIDs.imageViewID)
                 } bottom: {
-                    MapView()
+                    MapWithSearchView()
                 }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .border(windowBorderColor)
         .padding()
-        .onAppear {
-            // check for a backupURL. Once when this window appears.
-            if !state.initialBackupURLCheck
-                    && !doNotBackup && savedBookmark == Data() {
-                state.initialBackupURLCheck = true
-                state.addSheet(type: .noBackupFolderSheet)
-            }
-        }
         .dropDestination(for: URL.self) { items, _ in
-            let state = state
-            Task {
-                await state.prepareForEdit(inputURLs: items)
+            store.send(.openFiles(items), undoable: false) {
+                if let urls = store.uniqueURLs {
+                    OpenHelper.open(store, urls: urls,
+                                    description: "drag files",
+                                    spinnerEnabled: $spinnerEnabled)
+                    store.send(.clearUniqueURLs)
+                }
             }
             return true
         }
-        .onChange(of: state.changeTimeZoneWindow) {
+        .onChange(of: store.showTimeZoneWindow) {
             openWindow(id: GeoTagApp.adjustTimeZone)
         }
-        .onChange(of: state.showLogWindow) {
+        .onChange(of: store.showLogWindow) {
             openWindow(id: GeoTagApp.showRunLog)
         }
-        .sheet(item: $state.sheetType, onDismiss: sheetDismissed) { sheet in
+        .onChange(of: store.sheetType) {
+                sheetType = store.sheetType
+        }
+        .sheet(item: $sheetType, onDismiss: sheetDismissed) { sheet in
             sheet
         }
         .areYouSure()  // confirmations
         .removeBackupsAlert()  // Alert: Remove Old Backup files
-        .photoLibraryEnabledAlert()
-        .photoLibraryDisabledAlert()
-        .inspector(isPresented: $state.inspectorPresented) {
+        .inspector(isPresented: $inspectorPresented) {
             ImageInspectorView()
                 .inspectorColumnWidth(min: 300, ideal: 400, max: 500)
+                .accessibilityIdentifier(testIDs.imageInspectorViewID)
         }
-        .fileImporter(
-            isPresented: $state.importFiles,
-            allowedContentTypes: importTypes(),
-            allowsMultipleSelection: true
-        ) { result in
+        .onChange(of: store.importFiles) {
+            importFiles.toggle()
+        }
+        .fileImporter(isPresented: $importFiles,
+                      allowedContentTypes: importTypes(),
+                      allowsMultipleSelection: true) { result in
             switch result {
-            case .success(let files):
-                importFiles(files)
-            case .failure(let error):
-                AppState.logger.error(
+            case let .success(files):
+                store.send(.openFiles(files), undoable: false) {
+                    if let urls = store.uniqueURLs {
+                        OpenHelper.open(store, urls: urls,
+                                        description: "add files",
+                                        spinnerEnabled: $spinnerEnabled)
+                    }
+                }
+            case let .failure(error):
+                Logger(subsystem: Bundle.main.bundleIdentifier!,
+                       category: "ContentView").error(
                     "file import: \(error.localizedDescription, privacy: .public)")
             }
         }
         .toolbar {
             PhotoPickerView()
-            InspectorButtonView()
+                .accessibilityIdentifier(testIDs.photoPickerViewID)
+            InspectorButtonView(presented: $inspectorPresented)
+                .accessibilityIdentifier(testIDs.inspectorButtonViewID)
         }
     }
 
     // when a sheet is dismissed check if there are more sheets to display
 
     private func sheetDismissed() {
-        if state.sheetStack.isEmpty {
-            state.sheetMessage = nil
-            state.sheetError = nil
-        } else {
-            let sheetInfo = state.sheetStack.removeFirst()
-            state.sheetMessage = sheetInfo.sheetMessage
-            state.sheetError = sheetInfo.sheetError
-            state.sheetType = sheetInfo.sheetType
-        }
+        store.send(.sheetDismissed, undoable: false)
     }
 
     // the UTTypes that can be imported into this app.
@@ -133,16 +133,19 @@ struct ContentView: View {
         }
         return types
     }
-
-    private func importFiles(_ urls: [URL]) {
-        Task {
-            state.startSecurityScoping(urls: urls)
-            await state.prepareForEdit(inputURLs: urls)
-        }
-    }
 }
 
-#Preview {
+// AppSettings keys used to determine ContentView layout
+
+extension ContentView {
+    static let alternateLayoutKey = "AlternateLayout"
+    static let splitHNormalKey = "SplitHNormalPercent"
+    static let splitHAlternateKey = "SplitHAlternatePercent"
+    static let splitVNormalKey = "SplitVNormalPercent"
+    static let splitVAlternateKey = "SplitVAlternatePercent"
+}
+
+#Preview(traits: .store) {
     ContentView()
-        .environment(AppState())
+        .frame(width: 800, height: 1000)
 }
