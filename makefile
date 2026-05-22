@@ -9,7 +9,7 @@ build:	$(PROJECT).xcodeproj/project.pbxproj
 $(PROJECT).xcodeproj/project.pbxproj:	project.yml
 	xcodegen -c
 
-.PHONY: proj tags test testapp testGpxTrackLog clean
+.PHONY: proj tags dap test testapp testGpxTrackLog clean
 
 # force project file rebuild
 proj:
@@ -17,6 +17,10 @@ proj:
 
 tags:
 	/opt/homebrew/bin/ctags -R
+
+dap:
+	xcodebuild -scheme $(PROJECT) -showBuildSettings 2>&1 | \
+		sed -n -E '/TARGET_BUILD_DIR/s/.* = (.*)/\1\/GeoTag.app/p' > .dap
 
 test: buildServer.json
 	xcodebuild -scheme GeoTag test > .test.out

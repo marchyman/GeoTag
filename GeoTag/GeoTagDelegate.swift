@@ -20,14 +20,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if let store {
             OpenHelper.open(store, urls: urls, description: "open with",
                             spinnerEnabled: nil)
+            if store.mainWindow?.isVisible == false {
+                store.mainWindow?.orderFront(self)
+            }
         } else {
             logger.error("\(#function): store not set")
-        }
-        if application.windows.count > 1 {
-            // dismiss the extra window here. We don't need more than one
-            if let window = application.windows.last {
-                window.close()
-            }
         }
     }
 
@@ -43,10 +40,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
 
-    func applicationShouldTerminateAfterLastWindowClosed(
-        _ theApplication: NSApplication) -> Bool {
-        return true
-    }
+    // can not use: calls to application(_, open) when the app is running
+    // will otherwise quit the program as macOS closes the window.
+    // func applicationShouldTerminateAfterLastWindowClosed(
+    //     _ theApplication: NSApplication) -> Bool {
+    //     return true
+    // }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         logger.info("\(#function)")

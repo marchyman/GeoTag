@@ -199,6 +199,7 @@ extension ReducerTests {
         store.send(.newTimestamp(newDate, adjustment))
         #expect(store[id].metadata.date() == newDate)
         #expect(store[id2].metadata.date() == newDate)
+        #expect(store.unsavedChanges)
     }
 
     @Test func openCommandEvent() async throws {

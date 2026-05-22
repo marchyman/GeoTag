@@ -80,5 +80,6 @@ extension GeoTagReducer {
             state[id].metadata.dateTimeCreated =
                 Metadata.timestamp(from: updatedDate)
         }
+        state.unsavedChanges = true
     }
 }

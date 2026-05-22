@@ -28,6 +28,14 @@ ExifTool for such updates.  The original image file is not changed.
 
 Mostly the same user interface, but restructured and rewriten under the hood.
 
+> [!NOTE] 6.0.1 fixes these issues found in the 6.0 release
+> - Using finder 'open with' when multiple images are selected would open
+>   multiple windows.
+> - Save was not enabled when the only change was to image timestamps
+>
+> A side effect of the multiple window fix is that closing the window no
+> longer terminates the app.  You must use ⌘Q or the menu.
+
 ### Updates
 
 - Better Undo/Redo support with ability to undo more things. The undo

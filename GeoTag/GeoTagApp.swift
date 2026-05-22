@@ -26,11 +26,12 @@ struct GeoTagApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("GeoTag Version Six", id: "main") {
+        Window("GeoTag Version Six", id: "main") {
             ContentView()
                 .background(WindowAccessor(window: $mainWindow))
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .onChange(of: mainWindow) {
+                    appDelegate.logger.debug("mainWindow changed")
                     mainWindow?.delegate = appDelegate
                     store.send(.mainWindowChange(mainWindow), undoable: false)
                 }
