@@ -50,7 +50,7 @@ extension GeoTagReducer {
                                    includingPropertiesForKeys: [.isDirectoryKey],
                                    options: [.skipsHiddenFiles],
                                    errorHandler: nil) else {
-                logger.error("\(#function): No enumerator for \(url, privacy: .public)")
+                logger.error("\(#function, privacy: .public): No enumerator for \(url, privacy: .public)")
                 return []
             }
         while let fileUrl = urlEnumerator.nextObject() as? URL {

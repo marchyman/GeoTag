@@ -12,7 +12,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                         category: "AppDelegate")
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        logger.info("\(#function): store is \(self.store == nil ? "nil" : "set", privacy: .public)")
+        logger.info("\(#function, privacy: .public): store is \(self.store == nil ? "nil" : "set", privacy: .public)")
         NSWindow.allowsAutomaticWindowTabbing = false
     }
 
@@ -24,7 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 store.mainWindow?.orderFront(self)
             }
         } else {
-            logger.error("\(#function): store not set")
+            logger.error("\(#function, privacy: .public): store not set")
         }
     }
 
@@ -48,7 +48,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        logger.info("\(#function)")
+        logger.info("\(#function, privacy: .public)")
         if let store {
             if store.saveInProgress || store.unsavedChanges {
                 store.send(.quitRequested, undoable: false)
@@ -59,7 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        logger.info("\(#function)")
+        logger.info("\(#function, privacy: .public)")
         let environ = ProcessInfo.processInfo.environment
         if environ["APP_SANDBOX_CONTAINER_ID"] != nil {
             // we're sandboxed -- blow away the sandbox document directory

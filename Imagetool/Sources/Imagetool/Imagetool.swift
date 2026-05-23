@@ -19,7 +19,7 @@ public struct Imagetool {
         guard let imgRef = CGImageSourceCreateWithURL(imageURL as CFURL, nil)
         else {
             Self.logger.error(
-                "\(#function): failed to create CGImageSource from URL \(imageURL.path)")
+                "\(#function, privacy: .public): failed to create CGImageSource from URL \(imageURL.path, privacy: .public)")
             metadata.readable = false
             return metadata
         }
@@ -31,13 +31,13 @@ public struct Imagetool {
                 as NSDictionary?
         else {
             Self.logger.error(
-                "\(#function): failed to copy properties from URL \(imageURL.path)")
+                "\(#function, privacy: .public): failed to copy properties from URL \(imageURL.path, privacy: .public)")
             metadata.readable = false
             return metadata
         }
         if imgProps.count == 0 {
             Self.logger.error(
-                "\(#function): no properties copied from URL \(imageURL.path)")
+                "\(#function, privacy: .public): no properties copied from URL \(imageURL.path, privacy: .public)")
             metadata.readable = false
             return metadata
         }
@@ -112,7 +112,7 @@ public struct Imagetool {
             metadata = Exiftool.helper.metadata(from: sandbox.xmpURL,
                                                 primaryURL: imageURL)
         } else {
-            Self.logger.error("\(#function): Can't create sandbox for \(imageURL.path, privacy: .public)")
+            Self.logger.error("\(#function, privacy: .public): Can't create sandbox for \(imageURL.path, privacy: .public)")
             metadata = Metadata(source: .xmp(imageURL))
         }
 

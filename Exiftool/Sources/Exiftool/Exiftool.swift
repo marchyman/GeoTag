@@ -98,7 +98,7 @@ extension Exiftool {
             }
         } catch {
             Self.logger.error(
-                "\(#function): \(error.localizedDescription, privacy: .public)")
+                "\(#function, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
         return false
     }
@@ -120,7 +120,7 @@ extension Exiftool {
             try run(args)
         } catch {
             Self.logger.error(
-                "\(#function): \(error.localizedDescription, privacy: .public)")
+                "\(#function, privacy: .public): \(error.localizedDescription, privacy: .public)")
             throw error
         }
     }
@@ -221,7 +221,7 @@ extension Exiftool {
             }
         } catch {
             Self.logger.error(
-                "\(#function): \(error.localizedDescription, privacy: .public)")
+                "\(#function, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
         return metadata
     }

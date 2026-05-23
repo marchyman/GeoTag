@@ -55,7 +55,7 @@ extension Sandbox {
         do {
             try FileManager.default.removeItem(at: imgDir)
         } catch {
-            Imagetool.logger.error("\(#function): \(error.localizedDescription, privacy: .public)")
+            Imagetool.logger.error("\(#function, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
     }
 }
