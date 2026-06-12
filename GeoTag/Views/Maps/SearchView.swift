@@ -84,6 +84,7 @@ struct SearchView: View {
                 locationChanged(location: place.coordinate)
             }
             searchInfo.searchText = ""
+            searchInfo.selection = nil
             mapFocus.wrappedValue = nil
         }
         .onKeyPress(.escape) {
@@ -127,7 +128,6 @@ struct SearchView: View {
     nonisolated private func search(for query: String) async {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
-        request.addressFilter = .includingAll
         let searcher = MKLocalSearch(request: request)
         if let response = try? await searcher.start() {
             let places = response.mapItems.map {
