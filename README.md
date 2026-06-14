@@ -28,6 +28,8 @@ ExifTool for such updates.  The original image file is not changed.
 
 Mostly the same user interface, but restructured and rewriten under the hood.
 
+> [!NOTE] 6.0.2 improves map search
+
 > [!NOTE] 6.0.1 fixes these issues found in the 6.0 release
 > - Using finder 'open with' when multiple images are selected would open
 >   multiple windows.
