@@ -10,10 +10,6 @@ struct ContentView: View {
     @Environment(\.openWindow) var openWindow
 
     @AppStorage(Self.alternateLayoutKey) var alternateLayout = false
-    @AppStorage(Self.splitHNormalKey) var hNormal = 0.45
-    @AppStorage(Self.splitHAlternateKey) var hAlternate = 0.55
-    @AppStorage(Self.splitVNormalKey) var vNormal = 0.60
-    @AppStorage(Self.splitVAlternateKey) var vAlternate = 0.40
 
     @State private var sheetType: SheetType?
     @State private var importFiles = false
@@ -23,38 +19,13 @@ struct ContentView: View {
     private let testIDs = TestIDs.ContentView.self
 
     var body: some View {
-        SplitHView(percent: alternateLayout ? $hAlternate : $hNormal) {
-            Group {
-                if alternateLayout {
-                    SplitVView(percent: $vAlternate) {
-                        ImageTableView(inspectorPresented: $inspectorPresented)
-                            .accessibilityElement(children: .contain)
-                            .accessibilityIdentifier(testIDs.imageTableViewAltID)
-                    } bottom: {
-                        ImageView()
-                            .accessibilityIdentifier(testIDs.imageViewAltID)
-                    }
-                } else {
-                    ImageTableView(inspectorPresented: $inspectorPresented)
-                        .accessibilityElement(children: .contain)
-                        .accessibilityIdentifier(testIDs.imageTableViewID)
-                }
-            }
-            .overlay {
-                if spinnerEnabled {
-                    ProgressView("Processing files...")
-                }
-            }
-        } right: {
+        Group {
             if alternateLayout {
-                MapWithSearchView()
+                Layout2(inspectorPresented: $inspectorPresented,
+                        spinnerEnabled: $spinnerEnabled)
             } else {
-                SplitVView(percent: $vNormal) {
-                    ImageView()
-                        .accessibilityIdentifier(testIDs.imageViewID)
-                } bottom: {
-                    MapWithSearchView()
-                }
+                Layout1(inspectorPresented: $inspectorPresented,
+                        spinnerEnabled: $spinnerEnabled)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -135,14 +106,8 @@ struct ContentView: View {
     }
 }
 
-// AppSettings keys used to determine ContentView layout
-
 extension ContentView {
     static let alternateLayoutKey = "AlternateLayout"
-    static let splitHNormalKey = "SplitHNormalPercent"
-    static let splitHAlternateKey = "SplitHAlternatePercent"
-    static let splitVNormalKey = "SplitVNormalPercent"
-    static let splitVAlternateKey = "SplitVAlternatePercent"
 }
 
 #Preview(traits: .store) {
