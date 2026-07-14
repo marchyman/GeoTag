@@ -1,5 +1,6 @@
 extension GeoTagState {
 
+    @MainActor
     struct SheetInfo: Equatable {
         let sheetType: SheetType
         let sheetError: String?
@@ -11,6 +12,7 @@ extension GeoTagState {
         }
     }
 
+    @MainActor
     mutating func addSheet(type: SheetType, error: String? = nil, message: String? = nil) {
         if sheetType == nil {
             sheetType = type

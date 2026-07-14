@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.3
 
 import PackageDescription
 
@@ -35,5 +35,13 @@ let package = Package(
                 .copy("262M1559.xmp")
             ]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
+
+for target in package.targets {
+    var settings = target.swiftSettings ?? []
+    settings.append(.enableUpcomingFeature("InferIsolatedConformances"))
+    settings.append(.enableUpcomingFeature("NonisolatedNonsendingByDefault"))
+    target.swiftSettings = settings
+}

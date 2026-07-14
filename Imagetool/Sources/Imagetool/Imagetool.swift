@@ -18,8 +18,10 @@ public struct Imagetool {
         // create an image reference for the given URL
         guard let imgRef = CGImageSourceCreateWithURL(imageURL as CFURL, nil)
         else {
-            Self.logger.error(
-                "\(#function, privacy: .public): failed to create CGImageSource from URL \(imageURL.path, privacy: .public)")
+            Self.logger.error("""
+                \(#function, privacy: .public): failed to create \
+                CGImageSource from URL \(imageURL.path, privacy: .public)
+                """)
             metadata.readable = false
             return metadata
         }
@@ -112,7 +114,10 @@ public struct Imagetool {
             metadata = Exiftool.helper.metadata(from: sandbox.xmpURL,
                                                 primaryURL: imageURL)
         } else {
-            Self.logger.error("\(#function, privacy: .public): Can't create sandbox for \(imageURL.path, privacy: .public)")
+            Self.logger.error("""
+                \(#function, privacy: .public): Can't create sandbox for \
+                \(imageURL.path, privacy: .public)
+                """)
             metadata = Metadata(source: .xmp(imageURL))
         }
 

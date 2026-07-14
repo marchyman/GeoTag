@@ -15,7 +15,7 @@ enum SheetType: Identifiable, View {
     case saveErrorSheet
     case unexpectedErrorSheet
 
-    nonisolated var id: Self {
+    var id: Self {
         return self
     }
 

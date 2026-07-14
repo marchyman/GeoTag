@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.3
 
 import PackageDescription
 
@@ -29,5 +29,13 @@ let package = Package(
                     swiftSettings: [
                         .define("LOG_ARGS", .when(configuration: .debug))
                     ])
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
+
+for target in package.targets {
+    var settings = target.swiftSettings ?? []
+    settings.append(.enableUpcomingFeature("InferIsolatedConformances"))
+    settings.append(.enableUpcomingFeature("NonisolatedNonsendingByDefault"))
+    target.swiftSettings = settings
+}
