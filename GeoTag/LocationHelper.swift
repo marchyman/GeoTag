@@ -45,9 +45,10 @@ enum LocationHelper {
     // the function. The entries are updated when a location within
     // timestamp...timestamp+extendedTime is found.
 
-    static nonisolated func locations(for locations: [LocationById],
-                                      extendedTime: Double,
-                                      tracks: [GpxTrackLog]) async -> [LocationById] {
+    @concurrent static nonisolated
+    func locations(for locations: [LocationById],
+                   extendedTime: Double,
+                   tracks: [GpxTrackLog]) async -> [LocationById] {
         var updatedLocations: [LocationById] = []
 
         struct LocationInfo {

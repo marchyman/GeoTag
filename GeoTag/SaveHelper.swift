@@ -103,14 +103,15 @@ enum SaveHelper {
 
     // Update the items in the info dictionary in a task group
 
+    @concurrent nonisolated static
     // swiftlint:disable:next function_parameter_count
-    nonisolated static func saveToImageTasks(_ store: Store<GeoTagState, GeoTagEvent>,
-                                             _ info: [ImageData.ID: Metadata],
-                                             _ createSidecarFiles: Bool,
-                                             _ backupURL: URL?,
-                                             _ timeZone: TimeZone?,
-                                             _ tagFiles: Bool,
-                                             _ tagName: String) async -> SaveStatus {
+    func saveToImageTasks(_ store: Store<GeoTagState, GeoTagEvent>,
+                          _ info: [ImageData.ID: Metadata],
+                          _ createSidecarFiles: Bool,
+                          _ backupURL: URL?,
+                          _ timeZone: TimeZone?,
+                          _ tagFiles: Bool,
+                          _ tagName: String) async -> SaveStatus {
         struct TaskInfo {
             let id: ImageData.ID
             let metadata: Metadata
@@ -186,13 +187,14 @@ enum SaveHelper {
         return saveStatus
     }
 
+    @concurrent nonisolated static
     // swiftlint:disable:next function_parameter_count
-    nonisolated static func saveToXmpTasks(_ store: Store<GeoTagState, GeoTagEvent>,
-                                           _ info: [ImageData.ID: Metadata],
-                                           _ backupURL: URL?,
-                                           _ timeZone: TimeZone?,
-                                           _ tagFiles: Bool,
-                                           _ tagName: String) async -> SaveStatus {
+    func saveToXmpTasks(_ store: Store<GeoTagState, GeoTagEvent>,
+                        _ info: [ImageData.ID: Metadata],
+                        _ backupURL: URL?,
+                        _ timeZone: TimeZone?,
+                        _ tagFiles: Bool,
+                        _ tagName: String) async -> SaveStatus {
         struct TaskInfo {
             let id: ImageData.ID
             let metadata: Metadata

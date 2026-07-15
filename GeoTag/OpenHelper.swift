@@ -31,7 +31,7 @@ enum OpenHelper {
     // Create ImageData entries for imported images and add them
     // to the table.
 
-    static private
+    @concurrent static private
     func images(for urls: [URL],
                 store: Store<GeoTagState, GeoTagEvent>) async {
         let imageURLs = urls.filter { $0.pathExtension.lowercased() != "gpx" }
@@ -80,7 +80,7 @@ enum OpenHelper {
             """)
     }
 
-    static private
+    @concurrent static private
     func tracks(for urls: [URL],
                 store: Store<GeoTagState, GeoTagEvent>) async {
         let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
