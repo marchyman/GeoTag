@@ -6,12 +6,12 @@ import UDF
 public struct MapWithSearchView: View {
     @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
 
-    enum MapFocus: Hashable {
+    public enum MapFocus: Hashable {
         case map, search, searchList
     }
 
     // data shared between MapView, SearchBarView, and SearchView
-    struct SearchInfo {
+    public struct SearchInfo {
         var picked: Bool = false
         var searchText = ""
         var selection: Place?

@@ -4,6 +4,7 @@ import Testing
 import UDF
 
 @testable import GeoTag
+internal import _LocationEssentials
 
 @MainActor
 struct SaveHelperTests {

@@ -1,6 +1,7 @@
 import CoreLocation
 import ImageData
 import MapKit
+import Metadata
 import OSLog
 import UDF
 

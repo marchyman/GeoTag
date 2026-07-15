@@ -1,5 +1,6 @@
 import Foundation
 import ImageData
+import OSLog
 import SwiftUI
 import UDF
 

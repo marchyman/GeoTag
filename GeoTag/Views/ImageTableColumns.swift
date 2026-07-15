@@ -1,5 +1,6 @@
 import Coords
 import ImageData
+import Metadata
 import SwiftUI
 
 // ImageTableView column views

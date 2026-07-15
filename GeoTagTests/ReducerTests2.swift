@@ -6,6 +6,7 @@ import Testing
 import UDF
 
 @testable import GeoTag
+internal import _LocationEssentials
 
 extension ReducerTests {
     @Test func imageSavedEvent() async throws {

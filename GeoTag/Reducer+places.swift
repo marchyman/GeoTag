@@ -1,4 +1,5 @@
 import MapKit
+import OSLog
 import SwiftUI
 
 let maxPlaces = 10      // used when testing

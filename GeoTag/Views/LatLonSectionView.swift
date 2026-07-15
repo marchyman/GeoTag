@@ -1,6 +1,7 @@
 import Coords
 import CoreLocation
 import ImageData
+import Metadata
 import SwiftUI
 import UDF
 

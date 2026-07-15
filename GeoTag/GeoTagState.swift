@@ -2,6 +2,7 @@ import AppKit
 import Coords
 import GpxTrackLog
 import ImageData
+import Metadata
 import OSLog
 import SwiftUI
 

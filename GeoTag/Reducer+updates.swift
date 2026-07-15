@@ -1,8 +1,10 @@
 import Coords
 import ImageData
 import Metadata
+import OSLog
 import SwiftUI
 import UDF
+internal import _LocationEssentials
 
 extension GeoTagReducer {
     // Update all selected images with the given coords

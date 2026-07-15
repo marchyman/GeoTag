@@ -1,5 +1,6 @@
 import ImageData
 import OSLog
+import Metadata
 import Photos
 import PhotosUI
 import Phototool

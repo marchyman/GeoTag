@@ -1,5 +1,6 @@
 import AppKit
 import ImageData
+import Metadata
 
 extension GeoTagReducer {
     func paste(_ state: inout GeoTagState) {

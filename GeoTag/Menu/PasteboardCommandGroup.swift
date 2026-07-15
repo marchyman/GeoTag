@@ -1,6 +1,7 @@
 // import MapAndSearchViews
 import AppKit
 import ImageData
+import Metadata
 import SwiftUI
 import UDF
 

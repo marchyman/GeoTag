@@ -2,6 +2,7 @@ import Coords
 import Foundation
 import GpxTrackLog
 import ImageData
+import Metadata
 import UDF
 
 @MainActor
