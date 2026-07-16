@@ -42,10 +42,10 @@ struct ContentView: View {
             return true
         }
         .onChange(of: store.showTimeZoneWindow) {
-            openWindow(id: GeoTagApp.adjustTimeZone)
+            openWindow(id: GeoTagScene.adjustTimeZone)
         }
         .onChange(of: store.showLogWindow) {
-            openWindow(id: GeoTagApp.showRunLog)
+            openWindow(id: GeoTagScene.showRunLog)
         }
         .onChange(of: store.sheetType) {
                 sheetType = store.sheetType
