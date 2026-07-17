@@ -66,7 +66,8 @@ public struct RunLogView: View {
 }
 
 extension RunLogView {
-    nonisolated private func getLogEntries() async -> [String] {
+    @concurrent nonisolated private
+    func getLogEntries() async -> [String] {
         var loggedMessages: [String] = []
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "HH:mm:ss.SSS"
