@@ -9,8 +9,36 @@ final class UITestGroup1: XCTestCase {
         continueAfterFailure = false
     }
 
+    private let imageSaveLocation = "GeoTag/Snapshots/"
+    private let initialLaunchName = "Initial-launch.png"
+
     private func element(_ app: XCUIApplication, matching id: String) -> XCUIElement {
         return app.descendants(matching: .any).matching(identifier: id).element
+    }
+    private func saveImage(_ data: Data, as name: String) throws {
+        let saveFolder = URL.temporaryDirectory.appending(path: imageSaveLocation)
+        if !FileManager.default.fileExists(atPath: saveFolder.path) {
+            try FileManager.default.createDirectory(at: saveFolder,
+                                                    withIntermediateDirectories: true)
+        }
+        let saveURL = saveFolder.appendingPathComponent(name)
+        try data.write(to: saveURL)
+        print("saved \(name) to \(saveURL.path)")
+    }
+
+    private func diffImage(good baseImage: String, test testImage: String) throws {
+        let odiff = Process()
+        let pipe = Pipe()
+        let err = Pipe()
+        odiff.standardOutput = pipe
+        odiff.standardError = err
+        odiff.executableURL = URL(filePath: "/usr/local/bin/odiff")
+        odiff.arguments = [baseImage, testImage, "--aa", "-t", "0.8"]
+        try odiff.run()
+        odiff.waitUntilExit()
+        if odiff.terminationStatus != 0 {
+            XCTFail("Image mismatch: \(baseImage) \(testImage)")
+        }
     }
 
     // removing 'async' from the test function definitions allowd the tests
@@ -21,12 +49,10 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-UIINIT")
         app.activate()
-        XCTAssert(app.windows["GeoTag Version Six"].exists)
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = "Initial launch"
-        attachment.lifetime = .keepAlways
-        add(attachment)
+        let window = app.windows["GeoTag Version Six"]
+        XCTAssert(window.exists)
+        let screenshot = window.screenshot().pngRepresentation
+        try saveImage(screenshot, as: initialLaunchName)
         let dismissButton = element(app, matching: dismissID)
         XCTAssert(dismissButton.waitForExistence(timeout: 0.300))
         dismissButton.click()
@@ -36,6 +62,33 @@ final class UITestGroup1: XCTestCase {
         XCTAssert(element(app, matching: testIDs.photoPickerViewID).exists)
         XCTAssert(element(app, matching: testIDs.inspectorButtonViewID).exists)
         app.typeKey("q", modifierFlags: [.command])
+    }
+
+    // find the screenshot captured above and compare it with a known
+    // good version.
+    func testAVerify() throws {
+        // path to known good image
+        guard let snapshotPath =
+            ProcessInfo.processInfo.environment["Snapshots"] else {
+                XCTFail("Snapshots path not in environment")
+                return
+            }
+        let savedLaunchImage = snapshotPath + "/" + initialLaunchName
+        guard FileManager.default.isReadableFile(atPath: savedLaunchImage) else {
+            XCTFail("\(savedLaunchImage) not readable")
+            return
+        }
+
+        // path to most recent test snapshot
+        let saveFolder = URL.temporaryDirectory.appending(path: imageSaveLocation)
+        let saveURL = saveFolder.appendingPathComponent(initialLaunchName)
+        guard FileManager.default.isReadableFile(atPath: saveURL.path()) else {
+            XCTFail("\(saveURL.path()) not readable")
+            return
+        }
+
+        // run odiff to test if image changed
+        try diffImage(good: savedLaunchImage, test: saveURL.path)
     }
 
     func testBInspectorOpens() throws {

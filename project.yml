@@ -201,6 +201,7 @@ targets:
     sources:
       - GeoTagUITests
     settings:
+      ENABLE_APP_SANDBOX: NO
       GENERATE_INFOPLIST_FILE: YES
       PRODUCT_NAME: $(TARGET_NAME)
       PRODUCT_BUNDLE_IDENTIFIER: org.snafu.GeoTagUITests
@@ -230,6 +231,7 @@ schemes:
         - package: Phototool/PhototoolTests
       environmentVariables:
         ImagePath: $(SRCROOT)/GeoTag/DevAssets
+        Snapshots: $(SRCROOT)/GeoTagUITests/Snapshots
     profile:
       config: Release
     analyze:

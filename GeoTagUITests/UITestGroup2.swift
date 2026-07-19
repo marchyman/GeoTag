@@ -62,7 +62,7 @@ final class UITestGroup2: XCTestCase {
         if let imagePath = ProcessInfo.processInfo.environment["ImagePath"] {
             testImageFolder = imagePath
         } else {
-            XCTAssert(false, "missing ImagePath in environment")
+            XCTFail("missing ImagePath in environment")
         }
 
         app.typeKey("o", modifierFlags: .command)
