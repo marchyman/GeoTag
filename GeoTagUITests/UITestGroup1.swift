@@ -2,45 +2,16 @@ import XCTest
 
 @MainActor
 final class UITestGroup1: XCTestCase {
-
     private let testIDs = TestIDs.ContentView.self
+    let initialLaunchName = "Initial-launch.png"
 
     override func setUp() async throws {
         continueAfterFailure = false
     }
 
-    private let imageSaveLocation = "GeoTag/Snapshots/"
-    private let initialLaunchName = "Initial-launch.png"
-
     private func element(_ app: XCUIApplication, matching id: String) -> XCUIElement {
         return app.descendants(matching: .any).matching(identifier: id).element
     }
-    private func saveImage(_ data: Data, as name: String) throws {
-        let saveFolder = URL.temporaryDirectory.appending(path: imageSaveLocation)
-        if !FileManager.default.fileExists(atPath: saveFolder.path) {
-            try FileManager.default.createDirectory(at: saveFolder,
-                                                    withIntermediateDirectories: true)
-        }
-        let saveURL = saveFolder.appendingPathComponent(name)
-        try data.write(to: saveURL)
-        print("saved \(name) to \(saveURL.path)")
-    }
-
-    private func diffImage(good baseImage: String, test testImage: String) throws {
-        let odiff = Process()
-        let pipe = Pipe()
-        let err = Pipe()
-        odiff.standardOutput = pipe
-        odiff.standardError = err
-        odiff.executableURL = URL(filePath: "/usr/local/bin/odiff")
-        odiff.arguments = [baseImage, testImage, "--aa", "-t", "0.8"]
-        try odiff.run()
-        odiff.waitUntilExit()
-        if odiff.terminationStatus != 0 {
-            XCTFail("Image mismatch: \(baseImage) \(testImage)")
-        }
-    }
-
     // removing 'async' from the test function definitions allowd the tests
     // to work in that the main window now opens.
 
@@ -52,7 +23,7 @@ final class UITestGroup1: XCTestCase {
         let window = app.windows["GeoTag Version Six"]
         XCTAssert(window.exists)
         let screenshot = window.screenshot().pngRepresentation
-        try saveImage(screenshot, as: initialLaunchName)
+        try Snapshots.saveImage(screenshot, as: initialLaunchName)
         let dismissButton = element(app, matching: dismissID)
         XCTAssert(dismissButton.waitForExistence(timeout: 0.300))
         dismissButton.click()
@@ -80,15 +51,14 @@ final class UITestGroup1: XCTestCase {
         }
 
         // path to most recent test snapshot
-        let saveFolder = URL.temporaryDirectory.appending(path: imageSaveLocation)
-        let saveURL = saveFolder.appendingPathComponent(initialLaunchName)
+        let saveURL = Snapshots.saveImageURL(from: initialLaunchName)
         guard FileManager.default.isReadableFile(atPath: saveURL.path()) else {
             XCTFail("\(saveURL.path()) not readable")
             return
         }
 
         // run odiff to test if image changed
-        try diffImage(good: savedLaunchImage, test: saveURL.path)
+        try Snapshots.diffImage(good: savedLaunchImage, test: saveURL.path)
     }
 
     func testBInspectorOpens() throws {
