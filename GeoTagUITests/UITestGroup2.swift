@@ -51,7 +51,7 @@ final class UITestGroup2: XCTestCase {
         XCTAssert(pathView.menuItems["tmp"].exists)
         closeButton.click()
 
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 
     func testBContextMenuView() async throws {
@@ -103,7 +103,7 @@ final class UITestGroup2: XCTestCase {
         paste.click()
 
         app.menuItems["Discard changes"].click()
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 
     func testCContextMenuView() async throws {
@@ -122,7 +122,7 @@ final class UITestGroup2: XCTestCase {
         XCTAssert(element(app, matching: "Locn From Track", index: 1).exists)
         XCTAssert(element(app, matching: "Clear Image List", index: 1).exists)
 
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 
     func testDPlaceSaver() async throws {
@@ -149,7 +149,7 @@ final class UITestGroup2: XCTestCase {
         let la = app.staticTexts.containing(predicate).element
         XCTAssert(la.exists)
 
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 
     func testEMapContextMenu() async throws {
@@ -169,6 +169,6 @@ final class UITestGroup2: XCTestCase {
 
         XCTAssert(element(app, matching: testIDs.pinOptionID).exists)
 
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 }

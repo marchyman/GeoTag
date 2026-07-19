@@ -13,7 +13,10 @@ final class UITestGroup1: XCTestCase {
         return app.descendants(matching: .any).matching(identifier: id).element
     }
 
-    func testALaunch() async throws {
+    // removing 'async' from the test function definitions allowd the tests
+    // to work in that the main window now opens.
+
+    func testALaunch() throws {
         let dismissID = TestIDs.DismissModifier.dismissButtonID
         let app = XCUIApplication()
         app.launchArguments.append("-UIINIT")
@@ -32,10 +35,10 @@ final class UITestGroup1: XCTestCase {
         XCTAssert(element(app, matching: testIDs.imageTableViewID).exists)
         XCTAssert(element(app, matching: testIDs.photoPickerViewID).exists)
         XCTAssert(element(app, matching: testIDs.inspectorButtonViewID).exists)
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 
-    func testBInspectorOpens() async throws {
+    func testBInspectorOpens() throws {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUP")
         app.activate()
@@ -47,27 +50,13 @@ final class UITestGroup1: XCTestCase {
         XCTAssert(inspectorView.waitForExistence(timeout: 0.300))
         inspectorButton.click()
         XCTAssert(inspectorView.waitForNonExistence(timeout: 0.300))
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 
-    func testCLibraryOpens() async throws {
-        let app = XCUIApplication()
-        app.launchArguments.append("-NOBACKUP")
-        app.activate()
-        let photoPickerButton = element(app, matching: testIDs.photoPickerViewID)
-        XCTAssert(photoPickerButton.exists)
-        photoPickerButton.click()
-        try await Task.sleep(for: .milliseconds(100))
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = "Photo Library Picker"
-        attachment.lifetime = .keepAlways
-        add(attachment)
-        app.buttons["Cancel"].firstMatch.click()
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
-    }
+    // func testCLibraryOpens() throws { ... }
+    // library opens and item selection in UITestGroup3
 
-    func testDAdjustTimezoneWindow() async throws {
+    func testDAdjustTimezoneWindow() throws {
         let timezoneID = "Specify Time Zone…"
         let cameraTimezoneID = TestIDs.AdjustTimeZoneView.cameraTimeZoneID
         let app = XCUIApplication()
@@ -78,10 +67,10 @@ final class UITestGroup1: XCTestCase {
         timezoneButton.click()
         XCTAssert(element(app, matching: cameraTimezoneID).exists)
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 
-    func testEShowRunLogWindow() async throws {
+    func testEShowRunLogWindow() throws {
         let runlogID = "Show log…"
         let testIDs = TestIDs.RunLogView.self
         let app = XCUIApplication()
@@ -90,14 +79,14 @@ final class UITestGroup1: XCTestCase {
         let runlogButton = element(app, matching: runlogID)
         XCTAssert(runlogButton.exists)
         runlogButton.click()
-        XCTAssert(element(app, matching: testIDs.refreshID).exists)
+        XCTAssert(element(app, matching: testIDs.refreshID).waitForExistence(timeout: 0.300))
         XCTAssert(element(app, matching: testIDs.copyID).exists)
         sleep(1)
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 
-    func testFSettingsWindow() async throws {
+    func testFSettingsWindow() throws {
         let settingsID = "Settings…"
         let closeButtonID = TestIDs.SettingsView.closeID
         let app = XCUIApplication()
@@ -115,6 +104,6 @@ final class UITestGroup1: XCTestCase {
         let closeButton = element(app, matching: closeButtonID)
         XCTAssert(closeButton.exists)
         closeButton.click()
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 }
