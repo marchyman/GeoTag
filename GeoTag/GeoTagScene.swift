@@ -26,7 +26,6 @@ struct GeoTagScene: Scene {
                 .frame(minWidth: windowWidth, minHeight: windowHeight)
                 .onChange(of: mainWindow) {
                     appDelegate.logger.debug("mainWindow changed")
-                    mainWindow?.delegate = appDelegate
                     store.send(.mainWindowChange(mainWindow), undoable: false)
                 }
                 .task {

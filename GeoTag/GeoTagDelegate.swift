@@ -6,7 +6,7 @@ import UDF
 // pure SwiftUI life cycle
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate {
     var store: Store<GeoTagState, GeoTagEvent>?
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
                         category: "AppDelegate")
@@ -66,17 +66,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let fileManager = FileManager.default
             try? fileManager.removeItem(at: URL.documentsDirectory)
         }
-    }
-
-    // GeoTag needs this delegate to stop the windows from closing
-    // when changes are pending.
-    func windowShouldClose(_ sender: NSWindow) -> Bool {
-        if let store {
-            if store.saveInProgress || store.unsavedChanges {
-                store.send(.quitRequested, undoable: false)
-                return false
-            }
-        }
-        return true
     }
 }
