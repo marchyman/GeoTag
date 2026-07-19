@@ -4,6 +4,8 @@ import XCTest
 final class UITestGroup1: XCTestCase {
     private let testIDs = TestIDs.ContentView.self
     let initialLaunchName = "Initial-launch.png"
+    let secondLaunchName = "Second-launch.png"
+    let inspectorName = "Inspector.png"
 
     override func setUp() async throws {
         continueAfterFailure = false
@@ -38,42 +40,35 @@ final class UITestGroup1: XCTestCase {
     // find the screenshot captured above and compare it with a known
     // good version.
     func testAVerify() throws {
-        // path to known good image
-        guard let snapshotPath =
-            ProcessInfo.processInfo.environment["Snapshots"] else {
-                XCTFail("Snapshots path not in environment")
-                return
-            }
-        let savedLaunchImage = snapshotPath + "/" + initialLaunchName
-        guard FileManager.default.isReadableFile(atPath: savedLaunchImage) else {
-            XCTFail("\(savedLaunchImage) not readable")
-            return
-        }
-
-        // path to most recent test snapshot
-        let saveURL = Snapshots.saveImageURL(from: initialLaunchName)
-        guard FileManager.default.isReadableFile(atPath: saveURL.path()) else {
-            XCTFail("\(saveURL.path()) not readable")
-            return
-        }
-
         // run odiff to test if image changed
-        try Snapshots.diffImage(good: savedLaunchImage, test: saveURL.path)
+        try Snapshots.diffImage(name: initialLaunchName)
     }
 
     func testBInspectorOpens() throws {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUP")
         app.activate()
+        let window = app.windows["GeoTag Version Six"]
+        XCTAssert(window.exists)
+        var screenshot = window.screenshot().pngRepresentation
+        try Snapshots.saveImage(screenshot, as: secondLaunchName)
         let inspectorButton = element(app, matching: testIDs.inspectorButtonViewID)
         XCTAssert(inspectorButton.exists)
         let inspectorView = element(app, matching: testIDs.imageInspectorViewID)
         XCTAssert(!inspectorView.exists)
         inspectorButton.click()
         XCTAssert(inspectorView.waitForExistence(timeout: 0.300))
+        // update screenshot with inspector open
+        screenshot = window.screenshot().pngRepresentation
+        try Snapshots.saveImage(screenshot, as: inspectorName)
         inspectorButton.click()
         XCTAssert(inspectorView.waitForNonExistence(timeout: 0.300))
         app.typeKey("q", modifierFlags: [.command])
+    }
+
+    func testBVerify() throws {
+        try Snapshots.diffImage(name: secondLaunchName)
+        try Snapshots.diffImage(name: inspectorName)
     }
 
     // func testCLibraryOpens() throws { ... }
