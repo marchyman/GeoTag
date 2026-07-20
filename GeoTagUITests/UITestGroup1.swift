@@ -22,6 +22,7 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-UIINIT")
         app.activate()
+        XCTAssert(element(app, matching: testIDs.mapSearchViewID).waitForExistence(timeout: 0.300))
         let window = app.windows["GeoTag Version Six"]
         XCTAssert(window.exists)
         let screenshot = window.screenshot().pngRepresentation
@@ -48,6 +49,7 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUP")
         app.activate()
+        XCTAssert(element(app, matching: testIDs.mapSearchViewID).waitForExistence(timeout: 0.300))
         let window = app.windows["GeoTag Version Six"]
         XCTAssert(window.exists)
         var screenshot = window.screenshot().pngRepresentation

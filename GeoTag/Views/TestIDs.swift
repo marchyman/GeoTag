@@ -20,6 +20,7 @@ enum TestIDs {
         static let imageTableViewID = "ContentView.view.imageTableView"
         static let photoPickerViewID = "ContentView.view.photoPickerView"
         static let inspectorButtonViewID = "ContentView.view.inspectorButtonView"
+        static let mapSearchViewID = "ContentView.view.mapSearchView"
     }
 
     enum DismissModifier {

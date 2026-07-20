@@ -29,6 +29,7 @@ struct Layout2: View {
             }
         } right: {
             MapWithSearchView()
+                .accessibilityIdentifier(testIDs.mapSearchViewID)
         }
     }
 }

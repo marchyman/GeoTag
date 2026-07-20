@@ -28,6 +28,7 @@ struct Layout1: View {
                     .accessibilityIdentifier(testIDs.imageViewID)
             } bottom: {
                 MapWithSearchView()
+                    .accessibilityIdentifier(testIDs.mapSearchViewID)
             }
         }
     }
