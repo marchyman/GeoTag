@@ -130,5 +130,6 @@ a pop up menu by right clicking on an entry in the list.
   to generate the GeoTag.xcodeproj bundle. Install and run `xcodegen`.
 * Open the generated project in Xcode
 * ⌘R will build and run, ⌘B to build only
+* UI testing requires odiff -- install with brew
 
 Please report bugs, make requests, etc. [here](https://github.com/marchyman/GeoTag/issues)

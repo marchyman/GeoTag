@@ -2,6 +2,9 @@ import Foundation
 import XCTest
 
 // put snapshot releated items in their own namespace
+// this snapshotting code requires the app odiff found on github
+// https://github.com/dmtrKovalenko/odiff
+// I installed the current version using brew
 
 struct Snapshots {
     enum SnapshotError: Error {
