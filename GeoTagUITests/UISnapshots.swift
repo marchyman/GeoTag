@@ -59,7 +59,7 @@ struct Snapshots {
         let err = Pipe()
         odiff.standardOutput = pipe
         odiff.standardError = err
-        odiff.executableURL = URL(filePath: "/usr/local/bin/odiff")
+        odiff.executableURL = URL(filePath: "/opt/homebrew/bin/odiff")
         odiff.arguments = [good, test.path, "--aa", "-t", "0.8"]
         try odiff.run()
         odiff.waitUntilExit()

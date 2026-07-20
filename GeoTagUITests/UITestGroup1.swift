@@ -6,6 +6,8 @@ final class UITestGroup1: XCTestCase {
     let initialLaunchName = "Initial-launch.png"
     let secondLaunchName = "Second-launch.png"
     let inspectorName = "Inspector.png"
+    let timezoneName = "Timezone.png"
+    let settingsName = "Settings.png"
 
     override func setUp() async throws {
         continueAfterFailure = false
@@ -27,6 +29,7 @@ final class UITestGroup1: XCTestCase {
         XCTAssert(window.exists)
         let screenshot = window.screenshot().pngRepresentation
         try Snapshots.saveImage(screenshot, as: initialLaunchName)
+        try Snapshots.diffImage(name: initialLaunchName)
         let dismissButton = element(app, matching: dismissID)
         XCTAssert(dismissButton.waitForExistence(timeout: 0.300))
         dismissButton.click()
@@ -38,13 +41,6 @@ final class UITestGroup1: XCTestCase {
         app.typeKey("q", modifierFlags: [.command])
     }
 
-    // find the screenshot captured above and compare it with a known
-    // good version.
-    func testAVerify() throws {
-        // run odiff to test if image changed
-        try Snapshots.diffImage(name: initialLaunchName)
-    }
-
     func testBInspectorOpens() throws {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUP")
@@ -54,6 +50,7 @@ final class UITestGroup1: XCTestCase {
         XCTAssert(window.exists)
         var screenshot = window.screenshot().pngRepresentation
         try Snapshots.saveImage(screenshot, as: secondLaunchName)
+        try Snapshots.diffImage(name: secondLaunchName)
         let inspectorButton = element(app, matching: testIDs.inspectorButtonViewID)
         XCTAssert(inspectorButton.exists)
         let inspectorView = element(app, matching: testIDs.imageInspectorViewID)
@@ -63,14 +60,10 @@ final class UITestGroup1: XCTestCase {
         // update screenshot with inspector open
         screenshot = window.screenshot().pngRepresentation
         try Snapshots.saveImage(screenshot, as: inspectorName)
+        try Snapshots.diffImage(name: inspectorName)
         inspectorButton.click()
         XCTAssert(inspectorView.waitForNonExistence(timeout: 0.300))
         app.typeKey("q", modifierFlags: [.command])
-    }
-
-    func testBVerify() throws {
-        try Snapshots.diffImage(name: secondLaunchName)
-        try Snapshots.diffImage(name: inspectorName)
     }
 
     // func testCLibraryOpens() throws { ... }
@@ -85,6 +78,11 @@ final class UITestGroup1: XCTestCase {
         let timezoneButton = element(app, matching: timezoneID)
         XCTAssert(timezoneButton.exists)
         timezoneButton.click()
+        let window = app.windows["Change Time Zone"]
+        XCTAssert(window.exists)
+        let screenshot = window.screenshot().pngRepresentation
+        try Snapshots.saveImage(screenshot, as: timezoneName)
+        try Snapshots.diffImage(name: timezoneName)
         XCTAssert(element(app, matching: cameraTimezoneID).exists)
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
         app.typeKey("q", modifierFlags: [.command])
@@ -115,14 +113,12 @@ final class UITestGroup1: XCTestCase {
         let settingsButton = element(app, matching: settingsID)
         XCTAssert(settingsButton.exists)
         settingsButton.click()
-        sleep(1)
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = "Settings"
-        attachment.lifetime = .keepAlways
-        add(attachment)
         let closeButton = element(app, matching: closeButtonID)
-        XCTAssert(closeButton.exists)
+        XCTAssert(closeButton.waitForExistence(timeout: 0.300))
+        let window = app.windows["GeoTag Settings"]
+        let screenshot = window.screenshot().pngRepresentation
+        try Snapshots.saveImage(screenshot, as: settingsName)
+        try Snapshots.diffImage(name: settingsName)
         closeButton.click()
         app.typeKey("q", modifierFlags: [.command])
     }
