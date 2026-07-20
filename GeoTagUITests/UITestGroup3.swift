@@ -51,9 +51,10 @@ final class UITestGroup3: XCTestCase {
         photoPickerButton.click()
         // wait past the "loading photos" stage and give extra time
         // for all needed UI elements to load
-        try await Task.sleep(for: .seconds(2))
+        // try await Task.sleep(for: .seconds(2))
         let images = app.descendants(matching: .image)
                         .matching(identifier: "PXGGridLayout-Info")
+        XCTAssert(images.firstMatch.waitForExistence(timeout: 2000))
 
         // select the first 5 images
         for ix in 0..<5 {
@@ -90,7 +91,7 @@ final class UITestGroup3: XCTestCase {
         if dupImage.isHittable {
             dupImage.click()
         } else {
-            XCTAssert(false, "dupImage not hittable")
+            XCTFail("dupImage not hittable")
             return
         }
 
@@ -109,6 +110,6 @@ final class UITestGroup3: XCTestCase {
         dismissButton.click()
 
         // quit the app
-        app.buttons["_XCUI:CloseWindow"].firstMatch.click()
+        app.typeKey("q", modifierFlags: [.command])
     }
 }
