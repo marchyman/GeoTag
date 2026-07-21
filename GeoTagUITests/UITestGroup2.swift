@@ -2,18 +2,12 @@ import XCTest
 
 @MainActor
 final class UITestGroup2: XCTestCase {
+    let inspectorActiveName = "InspectorActive.png"
 
     override func setUp() async throws {
         continueAfterFailure = false
     }
 
-    private func element(_ app: XCUIApplication,
-                         matching id: String,
-                         index: Int = 0) -> XCUIElement {
-        return app.descendants(matching: .any)
-                  .matching(identifier: id)
-                  .element(boundBy: index)
-    }
 
     func testAPathView() async throws {
         let dismissID = TestIDs.DismissModifier.dismissButtonID
@@ -24,15 +18,15 @@ final class UITestGroup2: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUPFOLDER")
         app.activate()
-        let dismissButton = element(app, matching: dismissID)
+        let dismissButton = TestHelper.element(app, matching: dismissID)
         if dismissButton.exists {
             dismissButton.click()
         }
-        let settingsButton = element(app, matching: settingsID)
+        let settingsButton = TestHelper.element(app, matching: settingsID)
         XCTAssert(settingsButton.exists)
         settingsButton.click()
 
-        let pathView = element(app, matching: pathViewID)
+        let pathView = TestHelper.element(app, matching: pathViewID)
         XCTAssert(pathView.exists)
         pathView.click()
         pathView.menuItems["Choose…"].click()
@@ -40,8 +34,7 @@ final class UITestGroup2: XCTestCase {
         app.typeText("/tmp")
         app.typeKey(.enter, modifierFlags: [])
         app.typeKey(.enter, modifierFlags: [])
-
-        let closeButton = element(app, matching: closeButtonID)
+        let closeButton = TestHelper.element(app, matching: closeButtonID)
         XCTAssert(closeButton.exists)
         closeButton.click()
 
@@ -72,10 +65,10 @@ final class UITestGroup2: XCTestCase {
         app.typeKey(.enter, modifierFlags: [])
 
         // select an image and assign a lat/log
-        let testCell = element(app, matching: "L1000038.DNG")
+        let testCell = TestHelper.element(app, matching: "L1000038.DNG")
         XCTAssert(testCell.waitForExistence(timeout: 0.300))
         testCell.rightClick()
-        let edit = element(app, matching: "Edit…")
+        let edit = TestHelper.element(app, matching: "Edit…")
         XCTAssert(edit.exists)
         edit.click()
         let latitude = app.textFields["Latitude"]
@@ -86,19 +79,27 @@ final class UITestGroup2: XCTestCase {
         longitude.click()
         app.typeText("-121.234")
         app.typeKey(.enter, modifierFlags: [])
+        // snapshot window with inspector once the map settles
+        XCTAssert(TestHelper.element(app, matching: TestIDs.ContentView.mapSearchViewID)
+                            .waitForExistence(timeout: 0.300))
+        let window = app.windows["GeoTag Version Six"]
+        XCTAssert(window.exists)
+        let screenshot = window.screenshot().pngRepresentation
+        try Snapshots.saveImage(screenshot, as: inspectorActiveName)
+        try Snapshots.diffImage(name: inspectorActiveName)
         app.typeKey("i", modifierFlags: .command)
 
         // copy the lat lon
         testCell.rightClick()
-        let copy = element(app, matching: "Copy", index: 1)
+        let copy = TestHelper.element(app, matching: "Copy", index: 1)
         XCTAssert(copy.exists)
         copy.click()
 
         // paste the copied data into a different cell
-        let pasteCell = element(app, matching: "L1000050.DNG")
+        let pasteCell = TestHelper.element(app, matching: "L1000050.DNG")
         XCTAssert(pasteCell.exists)
         pasteCell.rightClick()
-        let paste = element(app, matching: "Paste", index: 1)
+        let paste = TestHelper.element(app, matching: "Paste", index: 1)
         XCTAssert(paste.exists)
         paste.click()
 
@@ -113,14 +114,14 @@ final class UITestGroup2: XCTestCase {
         app.activate()
 
         app.outlines[testID].firstMatch.rightClick()
-        XCTAssert(element(app, matching: "Edit…").exists)
-        XCTAssert(element(app, matching: "Cut", index: 1).exists)
-        XCTAssert(element(app, matching: "Copy", index: 1).exists)
-        XCTAssert(element(app, matching: "Paste", index: 1).exists)
-        XCTAssert(element(app, matching: "Delete", index: 1).exists)
-        XCTAssert(element(app, matching: "Show In Finder", index: 1).exists)
-        XCTAssert(element(app, matching: "Locn From Track", index: 1).exists)
-        XCTAssert(element(app, matching: "Clear Image List", index: 1).exists)
+        XCTAssert(TestHelper.element(app, matching: "Edit…").exists)
+        XCTAssert(TestHelper.element(app, matching: "Cut", index: 1).exists)
+        XCTAssert(TestHelper.element(app, matching: "Copy", index: 1).exists)
+        XCTAssert(TestHelper.element(app, matching: "Paste", index: 1).exists)
+        XCTAssert(TestHelper.element(app, matching: "Delete", index: 1).exists)
+        XCTAssert(TestHelper.element(app, matching: "Show In Finder", index: 1).exists)
+        XCTAssert(TestHelper.element(app, matching: "Locn From Track", index: 1).exists)
+        XCTAssert(TestHelper.element(app, matching: "Clear Image List", index: 1).exists)
 
         app.typeKey("q", modifierFlags: [.command])
     }
@@ -162,12 +163,12 @@ final class UITestGroup2: XCTestCase {
         let map = app.maps.firstMatch
         XCTAssert(map.exists)
         map.rightClick()
-        let style = element(app, matching: testIDs.stylePickerID)
+        let style = TestHelper.element(app, matching: testIDs.stylePickerID)
         XCTAssert(style.exists)
         style.click()
-        XCTAssert(element(app, matching: "Hybrid").exists)
+        XCTAssert(TestHelper.element(app, matching: "Hybrid").exists)
 
-        XCTAssert(element(app, matching: testIDs.pinOptionID).exists)
+        XCTAssert(TestHelper.element(app, matching: testIDs.pinOptionID).exists)
 
         app.typeKey("q", modifierFlags: [.command])
     }

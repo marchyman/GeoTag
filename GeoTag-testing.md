@@ -2,32 +2,42 @@
    `defaults delete org.snafu.GeoTag` before running
    Image backup folder can not be found sheet should be shown.
    open settings window and select a backup folder.  Close and quit.
+   - UITestGroup1.testALaunch() performs the first part of this test
+     using a -UIINIT flag.
+   - UITestGroup2.testAPathView() performs the second part of this test.
 
 - [x] Launch.  Open settings and verify backup folder set.  Open "GeoTag About"
    and check program version.  Quit.
+   - UITestGroup2.testAPathView() does this
 
-- [x] Select image in finder and use Open With selecting the version of GeoTag
+- [ ] Select image in finder and use Open With selecting the version of GeoTag
    noted in the previous step.  Verify image is loaded into table.
 
-- [x] Select a different image in finder and use Open With. Verify image
+- [ ] Select a different image in finder and use Open With. Verify image
    is added into table.
 
 - [x] select image and assign a location by clicking on the map.
    Verify map pin placed
    Verify location assigned to image with coords colored green in table.
+   - UITestGroup2.testBContextMenuView() checks pin placement
+   - UITestGroup4.testAPins() checks this
 
 - [x] Use Cmd-Z to undo change.  Verify.
+   - UITestGroup4.testAPins() checks this
 
 - [x] Use Shift-Cmd-Z to redo change.  Verify.
+   - UITestGroup4.testAPins() checks this
 
 - [x] File -> Discard changes.
    Verify coords reset.
    Note: since this is now an undoable change there is no "I'm sure" dialog.
+   - UITestGroup4.testAPins() checks this
 
 - [x] File -> Clear Image List.
    Verify empty table.
+   - UITestGroup4.testAPins() checks this
 
-- [x] File -> Open
+- [ ] File -> Open
    Select a single image from TestPictures
    Verify image loaded into table.
    Drag TestPictures onto GeoTag

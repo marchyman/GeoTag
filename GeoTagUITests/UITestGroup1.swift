@@ -13,9 +13,6 @@ final class UITestGroup1: XCTestCase {
         continueAfterFailure = false
     }
 
-    private func element(_ app: XCUIApplication, matching id: String) -> XCUIElement {
-        return app.descendants(matching: .any).matching(identifier: id).element
-    }
     // removing 'async' from the test function definitions allowd the tests
     // to work in that the main window now opens.
 
@@ -24,20 +21,20 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-UIINIT")
         app.activate()
-        XCTAssert(element(app, matching: testIDs.mapSearchViewID).waitForExistence(timeout: 0.300))
+        XCTAssert(TestHelper.element(app, matching: testIDs.mapSearchViewID).waitForExistence(timeout: 0.300))
         let window = app.windows["GeoTag Version Six"]
         XCTAssert(window.exists)
         let screenshot = window.screenshot().pngRepresentation
         try Snapshots.saveImage(screenshot, as: initialLaunchName)
         try Snapshots.diffImage(name: initialLaunchName)
-        let dismissButton = element(app, matching: dismissID)
+        let dismissButton = TestHelper.element(app, matching: dismissID)
         XCTAssert(dismissButton.waitForExistence(timeout: 0.300))
         dismissButton.click()
         XCTAssert(dismissButton.waitForNonExistence(timeout: 0.300))
-        XCTAssert(element(app, matching: testIDs.imageViewID).exists)
-        XCTAssert(element(app, matching: testIDs.imageTableViewID).exists)
-        XCTAssert(element(app, matching: testIDs.photoPickerViewID).exists)
-        XCTAssert(element(app, matching: testIDs.inspectorButtonViewID).exists)
+        XCTAssert(TestHelper.element(app, matching: testIDs.imageViewID).exists)
+        XCTAssert(TestHelper.element(app, matching: testIDs.imageTableViewID).exists)
+        XCTAssert(TestHelper.element(app, matching: testIDs.photoPickerViewID).exists)
+        XCTAssert(TestHelper.element(app, matching: testIDs.inspectorButtonViewID).exists)
         app.typeKey("q", modifierFlags: [.command])
     }
 
@@ -45,15 +42,15 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUP")
         app.activate()
-        XCTAssert(element(app, matching: testIDs.mapSearchViewID).waitForExistence(timeout: 0.300))
+        XCTAssert(TestHelper.element(app, matching: testIDs.mapSearchViewID).waitForExistence(timeout: 0.300))
         let window = app.windows["GeoTag Version Six"]
         XCTAssert(window.exists)
         var screenshot = window.screenshot().pngRepresentation
         try Snapshots.saveImage(screenshot, as: secondLaunchName)
         try Snapshots.diffImage(name: secondLaunchName)
-        let inspectorButton = element(app, matching: testIDs.inspectorButtonViewID)
+        let inspectorButton = TestHelper.element(app, matching: testIDs.inspectorButtonViewID)
         XCTAssert(inspectorButton.exists)
-        let inspectorView = element(app, matching: testIDs.imageInspectorViewID)
+        let inspectorView = TestHelper.element(app, matching: testIDs.imageInspectorViewID)
         XCTAssert(!inspectorView.exists)
         inspectorButton.click()
         XCTAssert(inspectorView.waitForExistence(timeout: 0.300))
@@ -75,7 +72,7 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUP")
         app.activate()
-        let timezoneButton = element(app, matching: timezoneID)
+        let timezoneButton = TestHelper.element(app, matching: timezoneID)
         XCTAssert(timezoneButton.exists)
         timezoneButton.click()
         let window = app.windows["Change Time Zone"]
@@ -83,7 +80,7 @@ final class UITestGroup1: XCTestCase {
         let screenshot = window.screenshot().pngRepresentation
         try Snapshots.saveImage(screenshot, as: timezoneName)
         try Snapshots.diffImage(name: timezoneName)
-        XCTAssert(element(app, matching: cameraTimezoneID).exists)
+        XCTAssert(TestHelper.element(app, matching: cameraTimezoneID).exists)
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
         app.typeKey("q", modifierFlags: [.command])
     }
@@ -94,11 +91,11 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUP")
         app.activate()
-        let runlogButton = element(app, matching: runlogID)
+        let runlogButton = TestHelper.element(app, matching: runlogID)
         XCTAssert(runlogButton.exists)
         runlogButton.click()
-        XCTAssert(element(app, matching: testIDs.refreshID).waitForExistence(timeout: 0.300))
-        XCTAssert(element(app, matching: testIDs.copyID).exists)
+        XCTAssert(TestHelper.element(app, matching: testIDs.refreshID).waitForExistence(timeout: 0.300))
+        XCTAssert(TestHelper.element(app, matching: testIDs.copyID).exists)
         sleep(1)
         app.buttons["_XCUI:CloseWindow"].firstMatch.click()
         app.typeKey("q", modifierFlags: [.command])
@@ -110,10 +107,10 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-NOBACKUP")
         app.activate()
-        let settingsButton = element(app, matching: settingsID)
+        let settingsButton = TestHelper.element(app, matching: settingsID)
         XCTAssert(settingsButton.exists)
         settingsButton.click()
-        let closeButton = element(app, matching: closeButtonID)
+        let closeButton = TestHelper.element(app, matching: closeButtonID)
         XCTAssert(closeButton.waitForExistence(timeout: 0.300))
         let window = app.windows["GeoTag Settings"]
         let screenshot = window.screenshot().pngRepresentation

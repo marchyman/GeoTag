@@ -7,14 +7,6 @@ final class UITestGroup3: XCTestCase {
         continueAfterFailure = false
     }
 
-    private func element(_ app: XCUIApplication,
-                         matching id: String,
-                         index: Int = 0) -> XCUIElement {
-        return app.descendants(matching: .any)
-                  .matching(identifier: id)
-                  .element(boundBy: index)
-    }
-
     func testAPhotoLibrary() async throws {
         let photoPickerID = TestIDs.ContentView.photoPickerViewID
         let nameID = TestIDs.TableColumns.nameID
@@ -25,7 +17,7 @@ final class UITestGroup3: XCTestCase {
         app.resetAuthorizationStatus(for: .photos)
         app.activate()
 
-        let photoPickerButton = element(app, matching: photoPickerID)
+        let photoPickerButton = TestHelper.element(app, matching: photoPickerID)
         XCTAssert(photoPickerButton.exists)
 
         // this will trigger a system alert
@@ -105,7 +97,7 @@ final class UITestGroup3: XCTestCase {
         XCTAssert(dupSheet.exists)
 
         // click the sheet dismiss button
-        let dismissButton = element(app, matching: dismissID)
+        let dismissButton = TestHelper.element(app, matching: dismissID)
         XCTAssert(dismissButton.waitForExistence(timeout: 0.300))
         dismissButton.click()
 
