@@ -5,6 +5,8 @@ final class UITestGroup4: XCTestCase {
     let mapPinName = "MapPinPlaced.png"
     let mapNoPinName = "MapNoPin.png"
     let noImagesName = "Second-launch.png"  // reuse existing image
+    let dupImageName = "DupImage.png"
+    let reverseSortName = "ReverseNames.png"
 
     func testAPins() throws {
         guard let imagePath = ProcessInfo.processInfo.environment["ImagePath"] else {
@@ -62,6 +64,44 @@ final class UITestGroup4: XCTestCase {
         screenshot = window.screenshot().pngRepresentation
         try Snapshots.saveImage(screenshot, as: noImagesName)
         try Snapshots.diffImage(name: noImagesName)
+
+        app.typeKey("q", modifierFlags: [.command])
+    }
+
+    func testBDup() throws {
+        let dismissID = TestIDs.DismissModifier.dismissButtonID
+        guard let imagePath = ProcessInfo.processInfo.environment["ImagePath"] else {
+            XCTFail("missing ImagePath in environment")
+            return
+        }
+        let app = XCUIApplication()
+        app.launchArguments.append("-NOBACKUP")
+
+        // load a single images
+        app.activate()
+        app.typeKey("o", modifierFlags: [.command])
+        app.typeKey("g", modifierFlags: [.shift, .command])
+        app.typeText("\(imagePath)/TestPictures/L1000052.DNG")
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+
+        // Load all images
+        app.activate()
+        app.typeKey("o", modifierFlags: [.command])
+        app.typeKey("g", modifierFlags: [.shift, .command])
+        app.typeText("\(imagePath)/TestPictures")
+        app.typeKey(.enter, modifierFlags: [])
+        app.typeKey(.enter, modifierFlags: [])
+
+        // verify dup image warning present
+        let dismissButton = TestHelper.element(app, matching: dismissID)
+        XCTAssert(dismissButton.waitForExistence(timeout: 0.300))
+        let window = app.windows["GeoTag Version Six"]
+        XCTAssert(window.exists)
+        let screenshot = window.screenshot().pngRepresentation
+        try Snapshots.saveImage(screenshot, as: dupImageName)
+        try Snapshots.diffImage(name: dupImageName)
+        dismissButton.click()
 
         app.typeKey("q", modifierFlags: [.command])
     }

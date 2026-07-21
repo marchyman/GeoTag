@@ -1,14 +1,13 @@
-- [x] Initial run
-   `defaults delete org.snafu.GeoTag` before running
-   Image backup folder can not be found sheet should be shown.
-   open settings window and select a backup folder.  Close and quit.
-   - UITestGroup1.testALaunch() performs the first part of this test
-     using a -UIINIT flag.
-   - UITestGroup2.testAPathView() performs the second part of this test.
+# GeoTag manual tests
 
-- [x] Launch.  Open settings and verify backup folder set.  Open "GeoTag About"
-   and check program version.  Quit.
-   - UITestGroup2.testAPathView() does this
+Now that UI testing issue workarounds have been implemented it is possibe
+to remove many of the tests that were done by hand. The UI tests now use
+snapshots where the visual output of a test is compared to known good output.
+This both simplifies and improves many of the tests.
+
+## Manual test checklist
+
+- [ ] Launch.  Open "GeoTag About" and check program version.  Quit.
 
 - [ ] Select image in finder and use Open With selecting the version of GeoTag
    noted in the previous step.  Verify image is loaded into table.
@@ -16,35 +15,9 @@
 - [ ] Select a different image in finder and use Open With. Verify image
    is added into table.
 
-- [x] select image and assign a location by clicking on the map.
-   Verify map pin placed
-   Verify location assigned to image with coords colored green in table.
-   - UITestGroup2.testBContextMenuView() checks pin placement
-   - UITestGroup4.testAPins() checks this
-
-- [x] Use Cmd-Z to undo change.  Verify.
-   - UITestGroup4.testAPins() checks this
-
-- [x] Use Shift-Cmd-Z to redo change.  Verify.
-   - UITestGroup4.testAPins() checks this
-
-- [x] File -> Discard changes.
-   Verify coords reset.
-   Note: since this is now an undoable change there is no "I'm sure" dialog.
-   - UITestGroup4.testAPins() checks this
-
-- [x] File -> Clear Image List.
-   Verify empty table.
-   - UITestGroup4.testAPins() checks this
+## Tests that have yet to be automated
 
 - [ ] File -> Open
-   Select a single image from TestPictures
-   Verify image loaded into table.
-   Drag TestPictures onto GeoTag
-   Verify images loaded
-   Verify Warning about duplicate image displayed
-   Verify images with sidecar files have a `*` after their name.
-   Verify images are listed in alpha order
    Click on the Name column to reverse the sort.  Verify
    Click in the timestamp column, verify sort
 

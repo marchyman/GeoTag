@@ -13,9 +13,6 @@ final class UITestGroup1: XCTestCase {
         continueAfterFailure = false
     }
 
-    // removing 'async' from the test function definitions allowd the tests
-    // to work in that the main window now opens.
-
     func testALaunch() throws {
         let dismissID = TestIDs.DismissModifier.dismissButtonID
         let app = XCUIApplication()
