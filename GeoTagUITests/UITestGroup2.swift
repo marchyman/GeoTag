@@ -8,7 +8,6 @@ final class UITestGroup2: XCTestCase {
         continueAfterFailure = false
     }
 
-
     func testAPathView() async throws {
         let dismissID = TestIDs.DismissModifier.dismissButtonID
         let pathViewID = TestIDs.SettingsView.pathViewID

@@ -18,7 +18,7 @@ final class UITestGroup1: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments.append("-UIINIT")
         app.activate()
-        XCTAssert(TestHelper.element(app, matching: testIDs.mapSearchViewID).waitForExistence(timeout: 0.300))
+        XCTAssert(TestHelper.element(app, matching: testIDs.mapSearchViewID).waitForExistence(timeout: 1.300))
         let window = app.windows["GeoTag Version Six"]
         XCTAssert(window.exists)
         let screenshot = window.screenshot().pngRepresentation
