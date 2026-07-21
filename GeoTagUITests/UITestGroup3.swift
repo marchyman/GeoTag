@@ -77,24 +77,17 @@ final class UITestGroup3: XCTestCase {
             .firstMatch
 
         XCTAssert(dupImage.exists)
-        // swiftlint:disable:next todo
-        // TODO: why is this not a not-clickable image?
-        // Question posted on Apple developer forum.
-        if dupImage.isHittable {
-            dupImage.click()
-        } else {
-            XCTFail("dupImage not hittable")
-            return
-        }
+        // for unknown reasons dumImage is not hittable. Instead of using
+        // dupImage.click tap on the center of its grid.
+        let center = dupImage.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        center.tap()
 
         // close the image picker
         app.buttons["Add"].firstMatch.click()
-        app.buttons["Add"].firstMatch.click()
-        try await Task.sleep(for: .milliseconds(400))
 
         // Check for a dup image sheet here
         let dupSheet = app.sheets.firstMatch
-        XCTAssert(dupSheet.exists)
+        XCTAssert(dupSheet.waitForExistence(timeout: 0.400))
 
         // click the sheet dismiss button
         let dismissButton = TestHelper.element(app, matching: dismissID)
