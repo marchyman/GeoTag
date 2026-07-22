@@ -43,7 +43,6 @@ final class UITestGroup3: XCTestCase {
         photoPickerButton.click()
         // wait past the "loading photos" stage and give extra time
         // for all needed UI elements to load
-        // try await Task.sleep(for: .seconds(2))
         let images = app.descendants(matching: .image)
                         .matching(identifier: "PXGGridLayout-Info")
         XCTAssert(images.firstMatch.waitForExistence(timeout: 2000))
@@ -96,5 +95,61 @@ final class UITestGroup3: XCTestCase {
 
         // quit the app
         app.typeKey("q", modifierFlags: [.command])
+        XCTAssert(app.state == .notRunning)
+    }
+
+    func testBUpdateLibrary() async throws {
+        // warn the user
+        print("""
+            ******************************************************************
+            *                                                                *
+            * WARNING: This test case modifies the first image in the photos *
+            * library. You have 15 seconds to cancel the test if that is not *
+            * something you want to do.                                      *
+            *                                                                *
+            ******************************************************************
+            """)
+        try await Task.sleep(for: .seconds(15))
+
+        // continue the test
+        let app = XCUIApplication()
+        app.launchArguments.append("-NOBACKUP")
+        app.activate()
+
+        let photoPickerID = TestIDs.ContentView.photoPickerViewID
+        let photoPickerButton = TestHelper.element(app, matching: photoPickerID)
+        XCTAssert(photoPickerButton.exists)
+        photoPickerButton.click()
+
+        // wait past the "loading photos" stage and give extra time
+        // for all needed UI elements to load.  Load the first image.
+        let image = app.descendants(matching: .image)
+                        .matching(identifier: "PXGGridLayout-Info")
+                        .firstMatch
+
+        XCTAssert(image.waitForExistence(timeout: 2.000))
+        image.click()
+        app.buttons["Add"].firstMatch.click()
+        app.buttons["Add"].firstMatch.click()
+        try await Task.sleep(for: .milliseconds(400))
+
+        // select the image
+        let nameID = TestIDs.TableColumns.nameID
+        let name = app.descendants(matching: .staticText)
+                      .matching(identifier: nameID)
+                      .firstMatch
+        XCTAssert(name.exists)
+        name.click()
+
+        // click on the map to change image location.  Any pin is in the
+        // center of the map, tap elsewhere.
+        let map = app.maps["ContentView.view.mapSearchView"]
+        let notCenter = map.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.25))
+        notCenter.tap()
+
+        // save changes, quit app, make sure app quit
+        app.typeKey("s", modifierFlags: [.command])
+        app.typeKey("q", modifierFlags: [.command])
+        XCTAssert(app.state == .notRunning)
     }
 }
