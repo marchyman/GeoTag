@@ -4,7 +4,7 @@ import UDF
 // Replace the undoRedo commands group
 
 struct UndoRedoCommands: Commands {
-    var store: Store<GeoTagState, GeoTagEvent>
+    var store: GeoTagStore
 
     var body: some Commands {
         CommandGroup(replacing: .undoRedo) {

@@ -3,7 +3,7 @@ import SwiftUI
 import UDF
 
 struct ImageView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
     @Environment(\.displayScale) var displayScale
     @State private var thumbnail: Image?
 

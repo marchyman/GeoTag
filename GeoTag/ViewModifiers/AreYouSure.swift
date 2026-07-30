@@ -4,7 +4,7 @@ import UDF
 // modifier designed to add a confirmation dialog to any view that uses it.
 
 struct AreYouSure: ViewModifier {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
     @State private var presentConfirmation = false
 
     func body(content: Content) -> some View {

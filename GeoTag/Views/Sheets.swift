@@ -41,7 +41,7 @@ enum SheetType: Identifiable, View {
 // Load failure occurs when a file with the extension of .gpx failed to parse as a valid GPX file
 
 struct GpxLoadView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -157,7 +157,7 @@ struct SaveErrorView: View {
 }
 
 struct UnexpectedErrorView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     var body: some View {
         VStack {

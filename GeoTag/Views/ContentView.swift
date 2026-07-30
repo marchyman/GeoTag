@@ -6,7 +6,7 @@ import UDF
 import UniformTypeIdentifiers
 
 struct ContentView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
     @Environment(\.openWindow) var openWindow
 
     @AppStorage(Self.alternateLayoutKey) var alternateLayout = false

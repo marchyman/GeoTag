@@ -4,7 +4,7 @@ import UDF
 // Add a file open command in place of New...
 
 struct NewItemCommands: Commands {
-    var store: Store<GeoTagState, GeoTagEvent>
+    var store: GeoTagStore
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {

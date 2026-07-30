@@ -3,7 +3,7 @@ import SwiftUI
 import UDF
 
 struct SettingsView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
     @AppStorage(Self.createSidecarFilesKey) var createSidecarFiles = false

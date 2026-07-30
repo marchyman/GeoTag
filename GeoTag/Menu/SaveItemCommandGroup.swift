@@ -4,7 +4,7 @@ import UDF
 // Add Save... and other menu, items
 
 struct SaveItemCommands: Commands {
-    var store: Store<GeoTagState, GeoTagEvent>
+    var store: GeoTagStore
 
     var body: some Commands {
         CommandGroup(after: .saveItem) {

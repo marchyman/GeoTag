@@ -7,7 +7,7 @@ import UDF
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    var store: Store<GeoTagState, GeoTagEvent>?
+    var store: GeoTagStore?
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "GeoTag",
                         category: "AppDelegate")
 

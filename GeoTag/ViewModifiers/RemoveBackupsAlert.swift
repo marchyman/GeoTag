@@ -2,7 +2,7 @@ import SwiftUI
 import UDF
 
 struct RemoveBackupsAlert: ViewModifier {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
     @State private var removeBackups = false
 
     func body(content: Content) -> some View {

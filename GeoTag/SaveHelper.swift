@@ -14,7 +14,7 @@ enum SaveHelper {
     }
 
     @discardableResult
-    static func save(_ store: Store<GeoTagState, GeoTagEvent>) -> Task<Void, Never> {
+    static func save(_ store: GeoTagStore) -> Task<Void, Never> {
         // capture the data needed to update images
         let libraryImages =
             Dictionary(uniqueKeysWithValues: store.libraryImages.map {
@@ -49,7 +49,7 @@ enum SaveHelper {
         return task
     }
 
-    static func saveToLibrary(_ store: Store<GeoTagState, GeoTagEvent>,
+    static func saveToLibrary(_ store: GeoTagStore,
                               _ info: [ImageData.ID: Metadata]) async -> SaveStatus {
         var saveStatus: SaveStatus = .saveOK
         for (id, metadata) in info {
@@ -72,7 +72,7 @@ enum SaveHelper {
     // pass copy of MainActor related data to a nonisolated function
     // that will perform updates in parallel
 
-    static func saveToImage(_ store: Store<GeoTagState, GeoTagEvent>,
+    static func saveToImage(_ store: GeoTagStore,
                             _ info: [ImageData.ID: Metadata],
                             xmp: Bool = false) async -> SaveStatus {
         @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
@@ -105,7 +105,7 @@ enum SaveHelper {
 
     @concurrent nonisolated static
     // swiftlint:disable:next function_parameter_count
-    func saveToImageTasks(_ store: Store<GeoTagState, GeoTagEvent>,
+    func saveToImageTasks(_ store: GeoTagStore,
                           _ info: [ImageData.ID: Metadata],
                           _ createSidecarFiles: Bool,
                           _ backupURL: URL?,
@@ -189,7 +189,7 @@ enum SaveHelper {
 
     @concurrent nonisolated static
     // swiftlint:disable:next function_parameter_count
-    func saveToXmpTasks(_ store: Store<GeoTagState, GeoTagEvent>,
+    func saveToXmpTasks(_ store: GeoTagStore,
                         _ info: [ImageData.ID: Metadata],
                         _ backupURL: URL?,
                         _ timeZone: TimeZone?,

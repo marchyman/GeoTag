@@ -27,7 +27,7 @@ struct SaveHelperTests {
         return url
     }
 
-    func createBackupFolder(for store: Store<GeoTagState, GeoTagEvent>) throws {
+    func createBackupFolder(for store: GeoTagStore) throws {
         let fm = FileManager.default
         let backupURL =
             URL.temporaryDirectory.appending(components: UUID().uuidString,

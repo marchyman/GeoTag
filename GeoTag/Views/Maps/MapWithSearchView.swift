@@ -4,7 +4,7 @@ import SwiftUI
 import UDF
 
 public struct MapWithSearchView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     public enum MapFocus: Hashable {
         case map, search, searchList

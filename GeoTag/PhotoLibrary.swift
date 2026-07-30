@@ -43,7 +43,7 @@ extension PhotoLibrary {
 
 extension PhotoLibrary {
     func addPhotos(from items: [PhotosPickerItem],
-                   store: Store<GeoTagState, GeoTagEvent>) async {
+                   store: GeoTagStore) async {
         // Self.logger.debug("\(#function)")
         var dupsFound = false
         for item in items {
@@ -67,7 +67,7 @@ extension PhotoLibrary {
 
     @MainActor
     func isDup(_ id: String,
-               in store: Store<GeoTagState, GeoTagEvent>) -> Bool {
+               in store: GeoTagStore) -> Bool {
         for ix in store.imageData.indices {
             if case .photos(let item, _) = store.imageData[ix].metadata.source,
                item.itemIdentifier == id {

@@ -2,7 +2,7 @@ import SwiftUI
 import UDF
 
 struct SearchBarView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
     @Environment(\.colorScheme) var colorScheme
 
     var mapFocus: FocusState<MapWithSearchView.MapFocus?>.Binding

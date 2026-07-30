@@ -2,7 +2,7 @@ import SwiftUI
 import UDF
 
 struct AdjustTimezoneView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     @State private var timeZone: TimeZone = TimeZone.current
     @State private var currentZone: TimeZoneName = .zero

@@ -3,7 +3,7 @@ import SwiftUI
 import UDF
 
 struct PhotoPickerView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
     @State private var photoLibrary = PhotoLibrary.shared
     @State private var pickerItems: [PhotosPickerItem] = []
     @State private var libraryEnabled = false

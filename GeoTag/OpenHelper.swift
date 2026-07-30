@@ -10,7 +10,7 @@ enum OpenHelper {
     // task is returned so code tests can wait until the task is complete.
 
     @discardableResult
-    static func open(_ store: Store<GeoTagState, GeoTagEvent>, urls: [URL],
+    static func open(_ store: GeoTagStore, urls: [URL],
                      description: String,
                      spinnerEnabled: Binding<Bool>?) -> Task<Void, Never> {
         let task = Task { @MainActor in
@@ -33,7 +33,7 @@ enum OpenHelper {
 
     @concurrent static private
     func images(for urls: [URL],
-                store: Store<GeoTagState, GeoTagEvent>) async {
+                store: GeoTagStore) async {
         let imageURLs = urls.filter { $0.pathExtension.lowercased() != "gpx" }
         guard !imageURLs.isEmpty else { return }
         var newImages: [ImageData] = []
@@ -82,7 +82,7 @@ enum OpenHelper {
 
     @concurrent static private
     func tracks(for urls: [URL],
-                store: Store<GeoTagState, GeoTagEvent>) async {
+                store: GeoTagStore) async {
         let gpxURLs = urls.filter { $0.pathExtension.lowercased() == "gpx" }
         guard !gpxURLs.isEmpty else { return }
         var tracklogs: [(String, GpxTrackLog?)] = []

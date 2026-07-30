@@ -8,7 +8,7 @@ import UDF
 // Replace the pasteboard commands group
 
 struct PasteboardCommands: Commands {
-    var store: Store<GeoTagState, GeoTagEvent>
+    var store: GeoTagStore
     @AppStorage(SettingsView.extendedTimeKey) var extendedTime = 120.0
 
     var body: some Commands {

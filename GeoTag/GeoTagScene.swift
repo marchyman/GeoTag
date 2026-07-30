@@ -7,7 +7,7 @@ import UDF
 // never opens when run from XCUITesting. Will leave it this way.
 
 struct GeoTagScene: Scene {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     @AppStorage(GeoTagApp.doNotBackupKey) var doNotBackup = false
     @AppStorage(GeoTagApp.savedBookmarkKey) var savedBookmark = Data()

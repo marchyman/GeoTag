@@ -19,7 +19,7 @@ enum LocationHelper {
 
     @MainActor
     @discardableResult
-    static func locationFromTrack(_ store: Store<GeoTagState, GeoTagEvent>,
+    static func locationFromTrack(_ store: GeoTagStore,
                                   extendedTime: Double) -> Task<Void, Never> {
         var locations: [LocationById] = []
         let timeZone = store.timeZone

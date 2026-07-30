@@ -5,7 +5,7 @@ import UDF
 // toolbar, but it's in the View menu which is where I want it.
 
 struct ToolbarCommands: Commands {
-    var store: Store<GeoTagState, GeoTagEvent>
+    var store: GeoTagStore
 
     var body: some Commands {
         CommandGroup(replacing: .toolbar) {

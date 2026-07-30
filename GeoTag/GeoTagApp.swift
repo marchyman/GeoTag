@@ -2,6 +2,9 @@ import OSLog
 import SwiftUI
 import UDF
 
+/// A type alias for the concrete type of Store used in this app.
+typealias GeoTagStore = Store<GeoTagState, GeoTagEvent>
+
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate

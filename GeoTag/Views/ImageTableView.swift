@@ -5,7 +5,7 @@ import SwiftUI
 import UDF
 
 struct ImageTableView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     @AppStorage(Self.imageTableConfigKey)
     private var columnCustomization: TableColumnCustomization<ImageData>

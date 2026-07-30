@@ -3,7 +3,7 @@ import SwiftUI
 import UDF
 
 struct SearchView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     var mapFocus: FocusState<MapWithSearchView.MapFocus?>.Binding
     @Binding var searchInfo: MapWithSearchView.SearchInfo

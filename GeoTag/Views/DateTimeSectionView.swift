@@ -4,7 +4,7 @@ import SwiftUI
 import UDF
 
 struct DateTimeSectionView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     var image: ImageData
 

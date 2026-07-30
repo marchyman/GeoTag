@@ -7,7 +7,7 @@ import SwiftUI
 import UDF
 
 struct MapView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     @AppStorage(Self.initialMapLatitudeKey) var initialMapLatitude = 37.7244
     @AppStorage(Self.initialMapLongitudeKey) var initialMapLongitude = -122.4381

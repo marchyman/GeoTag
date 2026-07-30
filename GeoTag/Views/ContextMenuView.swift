@@ -6,7 +6,7 @@ import UDF
 // Duplicates many of the menu commands
 
 struct ContextMenuView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
     @AppStorage(SettingsView.extendedTimeKey) var extendedTime = 120.0
 
     let context: ImageData.ID?

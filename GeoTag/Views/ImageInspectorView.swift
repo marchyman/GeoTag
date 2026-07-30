@@ -5,7 +5,7 @@ import UDF
 // show an inspector to modify image metadata if not nil
 
 struct ImageInspectorView: View {
-    @Environment(Store<GeoTagState, GeoTagEvent>.self) var store
+    @Environment(GeoTagStore.self) var store
 
     var body: some View {
         if let imageID = store.mostSelected {
