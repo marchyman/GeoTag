@@ -24,6 +24,12 @@ ExifTool for such updates.  The original image file is not changed.
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
 
+## WIP
+
+- Add a settings option to respect the GPSStatus tag in GPS Metadata.
+  GeoTag will ignore GPSStatus unless the reported latitude and longitude
+  are 0.
+
 ## GeoTag 6.0
 
 Mostly the same user interface, but restructured and rewriten under the hood.
