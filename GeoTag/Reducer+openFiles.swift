@@ -9,6 +9,11 @@ import UDF
 
 extension GeoTagReducer {
     func openFiles(_ state: inout GeoTagState, urls: [URL]) {
+        @AppStorage(SettingsView.gpsStatusKey) var gpsStatus = false
+
+        // save current value of gpsStatus
+        state.gpsStatus = gpsStatus
+
         // Needed to access when using the fileImporter
         for url in urls where url.startAccessingSecurityScopedResource() {
             state.scopedURLs.append(url)

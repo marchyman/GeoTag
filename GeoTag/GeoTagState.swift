@@ -61,6 +61,7 @@ struct GeoTagState {
 
     // Image import variables
     var importFiles = false
+    var gpsStatus = false
     var uniqueURLs: [URL]?
     var scopedURLs: [URL] = []
 

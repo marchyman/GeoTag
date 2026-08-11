@@ -22,7 +22,7 @@ extension GeoTagState {
 
     mutating func loadPreviewData() {
         for url in previewURLs() {
-            var item = ImageData(from: url)
+            var item = ImageData(from: url, useGpsStatus: false)
             // exiftool can't read files from the bundle?
             // assume most files are updatable
             // Doesn't help with accessing xmp files

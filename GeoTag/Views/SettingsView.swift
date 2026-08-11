@@ -16,6 +16,7 @@ struct SettingsView: View {
     @AppStorage(Self.updateGPSTimestampsKey) var updateGPSTimestamps = false
     @AppStorage(Self.addTagsKey) var addTags = false
     @AppStorage(Self.finderTagKey) var finderTag = "GeoTag"
+    @AppStorage(Self.gpsStatusKey) var gpsStatus = false
 
     @State private var backupURL: URL?
 
@@ -168,6 +169,21 @@ struct SettingsView: View {
                         for more information on setting the time zone.
                         """)
 
+                    Toggle("Respect GPSStatus metadata",
+                           isOn: $gpsStatus)
+                        .padding([.bottom, .horizontal])
+                        .help(
+                        """
+                        A GPSStatus tag may be present to indicate when \
+                        location measurement is active. Some cameras may \
+                        provide a location yet set the status to Void. \
+                        If GeoTag respects the status it would ignore the \
+                        location, treating the image as if no location was \
+                        present. This is usually not the desired outcome. \
+                        Turn this option on if you want GeoTag to ignore \
+                        locations when the GPSStatus is not active.
+                        """)
+
                     Toggle("Tag updated files", isOn: $addTags)
                         .padding(.horizontal)
                         .help("""
@@ -234,6 +250,7 @@ extension SettingsView {
     static let updateGPSTimestampsKey = "UpdateGPSTimestamps"
     static let addTagsKey = "AddTags"
     static let finderTagKey = "FinderTag"
+    static let gpsStatusKey = "GpsStatus"
 }
 
 // Clear all settings for UI testing
@@ -252,6 +269,7 @@ extension SettingsView {
         @AppStorage(Self.updateGPSTimestampsKey) var updateGPSTimestamps = false
         @AppStorage(Self.addTagsKey) var addTags = false
         @AppStorage(Self.finderTagKey) var finderTag = "GeoTag"
+        @AppStorage(Self.gpsStatusKey) var gpsStatus = false
 
         doNotBackup = false
         savedBookmark = Data()
@@ -265,6 +283,7 @@ extension SettingsView {
         updateGPSTimestamps = false
         addTags = false
         finderTag = "GeoTag"
+        gpsStatus = false
     }
 }
 

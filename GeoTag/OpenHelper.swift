@@ -18,7 +18,8 @@ enum OpenHelper {
                 spinnerEnabled.wrappedValue = true
             }
             store.beginUndoGroup(description: description)
-            await Self.images(for: urls, store: store)
+            await Self.images(for: urls, store: store,
+                              useGpsStatus: store.gpsStatus)
             await Self.tracks(for: urls, store: store)
             store.endUndoGroup()
             if let spinnerEnabled {
@@ -33,7 +34,8 @@ enum OpenHelper {
 
     @concurrent static private
     func images(for urls: [URL],
-                store: GeoTagStore) async {
+                store: GeoTagStore,
+                useGpsStatus: Bool) async {
         let imageURLs = urls.filter { $0.pathExtension.lowercased() != "gpx" }
         guard !imageURLs.isEmpty else { return }
         var newImages: [ImageData] = []
@@ -48,7 +50,8 @@ enum OpenHelper {
                     defer {
                         Self.markEnd(#function, interval: interval)
                     }
-                    return ImageData(from: imageURLs[ix])
+                    return ImageData(from: imageURLs[ix],
+                                     useGpsStatus: useGpsStatus)
                 }
             }
             for await imageData in group {
@@ -61,7 +64,8 @@ enum OpenHelper {
                         defer {
                             Self.markEnd(#function, interval: interval)
                         }
-                        return ImageData(from: url)
+                        return ImageData(from: url,
+                                         useGpsStatus: useGpsStatus)
                     }
                 }
             }

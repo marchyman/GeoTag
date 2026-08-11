@@ -12,7 +12,7 @@ public struct Imagetool {
 
     // read metadata from an image referenced by URL using ImageIO functions
 
-    public static func metadata(from imageURL: URL) -> Metadata {
+    public static func metadata(from imageURL: URL, useGpsStatus: Bool) -> Metadata {
         var metadata = Metadata(source: .image(imageURL))
 
         // create an image reference for the given URL
@@ -57,19 +57,26 @@ public struct Imagetool {
         if let gpsData = imgProps[Self.GPSDictionary]
             as? [String: AnyObject] {
 
-            // some Leica camera write GPS tags with a status tag of "V" (void)
-            // when no GPS info is available. If a status tag exists and its
-            // value is "V" ignore the GPS data.
+            // More cameras (Olympus, DJI Drones) are writing GPS location
+            // data with the status set to "V". The locations are good, but
+            // perhaps not exact. Ignore the V status unless
+            // - the lat/lon are 0
+            // - the gpsStatus setting is true
 
-            if let status = gpsData[Self.GPSStatus] as? String {
-                if status == "V" {
-                    return metadata
-                }
+            let status = gpsData[Self.GPSStatus] as? String
+            if status == "V", useGpsStatus {
+                return metadata
             }
+
             if let lat = gpsData[Self.GPSLatitude] as? Double,
                let latRef = gpsData[Self.GPSLatitudeRef] as? String,
                let lon = gpsData[Self.GPSLongitude] as? Double,
                let lonRef = gpsData[Self.GPSLongitudeRef] as? String {
+                // Do not ignore GPSStatus if that lat/lon are zero
+                // with the void flag set
+                if lat == 0.0, lon == 0.0, status == "V"  {
+                    return metadata
+                }
                 metadata.location = Coords.ifValid(
                     latitude: latRef == "N" ? lat : -lat,
                     longitude: lonRef == "E" ? lon : -lon)

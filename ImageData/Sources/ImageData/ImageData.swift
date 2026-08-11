@@ -53,7 +53,7 @@ public struct ImageData: Identifiable, Sendable {
     // the data in the image then initialize an ImageData with
     // metadata and name.
 
-    public init(from url: URL) {
+    public init(from url: URL, useGpsStatus: Bool) {
         let interval = Self.markStart(#function)
         defer {
             Self.markEnd(#function, interval: interval)
@@ -68,7 +68,7 @@ public struct ImageData: Identifiable, Sendable {
         if hasSidecar {
             metadata = Imagetool.metadata(from: url, xmp: sidecarURL)
         } else {
-            metadata = Imagetool.metadata(from: url)
+            metadata = Imagetool.metadata(from: url, useGpsStatus: useGpsStatus)
         }
         self.init(metadata: metadata, name: name)
     }
