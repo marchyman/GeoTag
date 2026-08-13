@@ -12,6 +12,7 @@ public struct Imagetool {
 
     // read metadata from an image referenced by URL using ImageIO functions
 
+    // swiftlint:disable:next cyclomatic_complexity
     public static func metadata(from imageURL: URL,
                                 useGpsStatus: Bool) -> Metadata {
         var metadata = Metadata(source: .image(imageURL))

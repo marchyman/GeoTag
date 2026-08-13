@@ -29,7 +29,7 @@ struct ImageDataTests {
             Bundle.module.url(forResource: "alldata",
                               withExtension: "jpg")
         )
-        let imageData = ImageData(from: url)
+        let imageData = ImageData(from: url, useGpsStatus: false)
         #expect(imageData.name == "alldata.jpg")
         #expect(imageData.updatable)
         #expect(imageData.fullPath == url.path)
@@ -40,7 +40,7 @@ struct ImageDataTests {
             Bundle.module.url(forResource: "262M1559",
                               withExtension: "DNG")
         )
-        let imageData = ImageData(from: url)
+        let imageData = ImageData(from: url, useGpsStatus: false)
         #expect(imageData.name == "262M1559.DNG*")
         #expect(imageData.updatable)
         #expect(imageData.fullPath == url.path)

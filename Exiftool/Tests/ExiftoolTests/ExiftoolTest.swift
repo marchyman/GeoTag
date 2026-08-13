@@ -103,7 +103,9 @@ struct ExiftoolTests {
 
         // Extract needed data from the created sidecar file
 
-        let metadata = Exiftool.helper.metadata(from: sidecar, primaryURL: copy)
+        let metadata = Exiftool.helper.metadata(from: sidecar,
+                                                primaryURL: copy,
+                                                useGpsStatus: false)
         #expect(metadata.dateTimeCreated == "2025:12:03 16:25:49")
         #expect(metadata.location?.latitude == 37.51878611116667)
         #expect(metadata.location?.longitude == -122.34516111116666)
@@ -137,7 +139,9 @@ struct ExiftoolTests {
 
         // Extract needed data from the created sidecar file
 
-        let newData = Exiftool.helper.metadata(from: sidecar, primaryURL: copy)
+        let newData = Exiftool.helper.metadata(from: sidecar,
+                                               primaryURL: copy,
+                                               useGpsStatus: false)
 
         // Extract the same data from an existing sidecar file
 
@@ -146,7 +150,8 @@ struct ExiftoolTests {
                               withExtension: "xmp")
         )
         let oldData = Exiftool.helper.metadata(from: oldSidecar,
-                                               primaryURL: testImage)
+                                               primaryURL: testImage,
+                                               useGpsStatus: false)
 
         #expect(newData == oldData)
     }
@@ -208,7 +213,8 @@ struct ExiftoolSerializedTests {
             FileAttributeKey.creationDate] as? Date
 
         // grab metadata from the image file
-        var metadata = Exiftool.helper.metadata(from: nil, primaryURL: copy)
+        var metadata = Exiftool.helper.metadata(from: nil, primaryURL: copy,
+                                                useGpsStatus: false)
         makeTestData(&metadata)
 
         // run
@@ -216,7 +222,8 @@ struct ExiftoolSerializedTests {
                                          timeZone: nil)
 
         // verify results
-        let newdata = Exiftool.helper.metadata(from: nil, primaryURL: copy)
+        let newdata = Exiftool.helper.metadata(from: nil, primaryURL: copy,
+                                               useGpsStatus: false)
         #expect(newdata == metadata)
 
         // see if the file modification date was updated if requested
@@ -293,7 +300,8 @@ struct ExiftoolSerializedTests {
 
         // grab metadata from the xmp file
         var metadata = Exiftool.helper.metadata(from: xmpCopy,
-                                                primaryURL: copy)
+                                                primaryURL: copy,
+                                                useGpsStatus: false)
         makeTestData(&metadata)
 
         // run
@@ -302,7 +310,8 @@ struct ExiftoolSerializedTests {
 
         // verify results
         let newdata = Exiftool.helper.metadata(from: xmpCopy,
-                                               primaryURL: copy)
+                                               primaryURL: copy,
+                                               useGpsStatus: false)
         #expect(newdata == metadata)
 
         // see if the file modification date was updated if requested

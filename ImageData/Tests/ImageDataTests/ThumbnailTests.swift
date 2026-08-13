@@ -15,7 +15,7 @@ struct ThumbnailTests {
             Bundle.module.url(forResource: "alldata",
                               withExtension: "jpg")
         )
-        let imageData = ImageData(from: url)
+        let imageData = ImageData(from: url, useGpsStatus: false)
         let image = await imageData.makeThumbnail(scale: 1.0)
         #expect(image != badImage)
     }
@@ -25,7 +25,7 @@ struct ThumbnailTests {
             Bundle.module.url(forResource: "262M1559",
                               withExtension: "DNG")
         )
-        let imageData = ImageData(from: url)
+        let imageData = ImageData(from: url, useGpsStatus: false)
         let image = await imageData.makeThumbnail(scale: 1.0)
         #expect(image != badImage)
     }

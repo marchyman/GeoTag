@@ -77,13 +77,13 @@ extension ReducerTests {
 
         let dng = try #require(Bundle.main.url(forResource: "L1000051",
                                                withExtension: "DNG"))
-        var dngItem = ImageData(from: dng)
+        var dngItem = ImageData(from: dng, useGpsStatus: false)
         dngItem.original = Metadata(copying: dngItem.metadata)
         state.imageData.append(dngItem)
 
         let jpg = try #require(Bundle.main.url(forResource: "L1000051",
                                                withExtension: "JPG"))
-        var jpgItem = ImageData(from: jpg)
+        var jpgItem = ImageData(from: jpg, useGpsStatus: false)
         jpgItem.original = Metadata(copying: jpgItem.metadata)
         state.imageData.append(jpgItem)
 
