@@ -202,7 +202,8 @@ struct SandboxTests {
         try await sandbox.saveChanges(from: metadata, timeZone: nil)
 
         // see if the changes took effect
-        let updatedMetadata = Imagetool.metadata(from: testImage)
+        let updatedMetadata = Imagetool.metadata(from: testImage,
+                                                 useGpsStatus: false)
         #expect(metadata == updatedMetadata)
     }
 
@@ -252,7 +253,8 @@ struct SandboxTests {
         // use exiftool to grab xmp data as the Imagetool function will create
         // another sandbox. See if it matches.
         let updatedMetadata = Exiftool.helper.metadata(from: sandbox.xmpURL,
-                                                       primaryURL: testImage)
+                                                       primaryURL: testImage,
+                                                       useGpsStatus: false)
         #expect(metadata == updatedMetadata)
     }
 

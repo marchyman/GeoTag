@@ -134,7 +134,9 @@ extension Exiftool {
 extension Exiftool {
 
     // swiftlint:disable cyclomatic_complexity
-    public func metadata(from xmp: URL?, primaryURL: URL) -> Metadata {
+    public func metadata(from xmp: URL?,
+                         primaryURL: URL,
+                         useGpsStatus: Bool) -> Metadata {
         let url: URL
         var metadata: Metadata
         if let xmp {
@@ -173,7 +175,7 @@ extension Exiftool {
                         // get rid of any trailing parts of a second
                         metadata.dateTimeCreated = String(value.split(separator: ".")[0])
                     case "-GPSStatus":
-                        if value.hasSuffix("Void") {
+                        if useGpsStatus, value.hasSuffix("Void") {
                             gpsStatus = false
                         }
                     case "-GPSLatitude":

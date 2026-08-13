@@ -12,7 +12,8 @@ public struct Imagetool {
 
     // read metadata from an image referenced by URL using ImageIO functions
 
-    public static func metadata(from imageURL: URL, useGpsStatus: Bool) -> Metadata {
+    public static func metadata(from imageURL: URL,
+                                useGpsStatus: Bool) -> Metadata {
         var metadata = Metadata(source: .image(imageURL))
 
         // create an image reference for the given URL
@@ -109,7 +110,9 @@ public struct Imagetool {
     // The url in the returned metadata will reference the image,
     // not the xmp file.
 
-    public static func metadata(from imageURL: URL, xmp: URL) -> Metadata {
+    public static func metadata(from imageURL: URL,
+                                xmp: URL,
+                                useGpsStatus: Bool) -> Metadata {
         let metadata: Metadata
 
         if let sandbox = try? Sandbox(for: imageURL) {
@@ -119,7 +122,8 @@ public struct Imagetool {
                 sandbox.removeSandboxFolder()
             }
             metadata = Exiftool.helper.metadata(from: sandbox.xmpURL,
-                                                primaryURL: imageURL)
+                                                primaryURL: imageURL,
+                                                useGpsStatus: useGpsStatus)
         } else {
             Self.logger.error("""
                 \(#function, privacy: .public): Can't create sandbox for \

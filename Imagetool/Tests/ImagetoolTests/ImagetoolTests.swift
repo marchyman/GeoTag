@@ -6,7 +6,7 @@ import Testing
 struct ImagetoolTests {
     @Test func imageSourceCreateFailure() async throws {
         let url = URL(string: "bad url")!
-        let metadata = Imagetool.metadata(from: url)
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: false)
         #expect(metadata.dateTimeCreated == nil)
         #expect(metadata.location == nil)
     }
@@ -20,7 +20,7 @@ struct ImagetoolTests {
             Bundle.module.url(forResource: "nometadata",
                               withExtension: "RAF")
         )
-        let metadata = Imagetool.metadata(from: url)
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: false)
         #expect(metadata.dateTimeCreated == nil)
         #expect(metadata.location == nil)
     }
@@ -30,7 +30,7 @@ struct ImagetoolTests {
             Bundle.module.url(forResource: "nolocation",
                               withExtension: "jpg")
         )
-        let metadata = Imagetool.metadata(from: url)
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: false)
         #expect(metadata.timestamp == "2026:01:23 09:20:11")
         #expect(metadata.location == nil)
         #expect(metadata.city == nil)
@@ -41,7 +41,7 @@ struct ImagetoolTests {
             Bundle.module.url(forResource: "location",
                               withExtension: "jpg")
         )
-        let metadata = Imagetool.metadata(from: url)
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: false)
         #expect(metadata.timestamp == "2025:10:12 09:38:23")
         let location = try #require(metadata.location)
         #expect(location.latitude == 37.837316666666666)
@@ -55,7 +55,7 @@ struct ImagetoolTests {
             Bundle.module.url(forResource: "status",
                               withExtension: "DNG")
         )
-        let metadata = Imagetool.metadata(from: url)
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: true)
         #expect(metadata.timestamp == "2016:04:01 15:54:48")
         #expect(metadata.location == nil)
         #expect(metadata.elevation == nil)
@@ -67,7 +67,7 @@ struct ImagetoolTests {
             Bundle.module.url(forResource: "noelevation",
                               withExtension: "jpg")
         )
-        let metadata = Imagetool.metadata(from: url)
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: false)
         #expect(metadata.timestamp == "2016:04:24 12:12:47")
         let location = try #require(metadata.location)
         #expect(location.latitude == 21.27491)
@@ -84,7 +84,7 @@ struct ImagetoolTests {
             Bundle.module.url(forResource: "alldata",
                               withExtension: "jpg")
         )
-        let metadata = Imagetool.metadata(from: url)
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: false)
         #expect(metadata.timestamp == "2025:12:07 10:00:51")
         let location = try #require(metadata.location)
         #expect(location.latitude == 37.224048333333336)
@@ -103,7 +103,9 @@ struct ImagetoolTests {
         let xmp = try #require(
             Bundle.module.url(forResource: "262M1559",
                               withExtension: "xmp"))
-        let metadata = Imagetool.metadata(from: url, xmp: xmp)
+        let metadata = Imagetool.metadata(from: url, xmp: xmp,
+                                          useGpsStatus:
+        false)
         #expect(metadata.dateTimeCreated == "2019:03:11 11:47:20")
         #expect(metadata.location == nil)
         #expect(metadata.elevation == nil)
