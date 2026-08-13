@@ -29,6 +29,7 @@ ExifTool for such updates.  The original image file is not changed.
 - Add a settings option to respect the GPSStatus tag in GPS Metadata.
   GeoTag will ignore GPSStatus unless the reported latitude and longitude
   are 0.
+- exiftool 13.59
 
 ## GeoTag 6.0
 

@@ -188,6 +188,8 @@ my %convCelsius = ( PrintConv => 'sprintf("%.2f C", $val)' );
     0x2c4 => { Name => 'VisibleFocalLength',        Format => 'float' },
 );
 
+1; # end
+
 __END__
 
 =head1 NAME
@@ -206,7 +208,7 @@ IJPEG SDK, used in cameras such as the P2 Pro.
 
 =head1 AUTHOR
 
-Copyright 2003-2025, Marcos Del Sol Vives (marcos at orca.pet)
+Copyright 2003-2026, Marcos Del Sol Vives (marcos at orca.pet)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

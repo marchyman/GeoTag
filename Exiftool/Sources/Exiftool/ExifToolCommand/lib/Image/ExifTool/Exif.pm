@@ -57,7 +57,7 @@ use vars qw($VERSION $AUTOLOAD @formatSize @formatName %formatNumber %intFormat
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::MakerNotes;
 
-$VERSION = '4.63';
+$VERSION = '4.65';
 
 sub ProcessExif($$$);
 sub WriteExif($$$);
@@ -158,6 +158,16 @@ $formatName[129] = 'utf8';  # (Exif 3.0)
     22 => 'D75',
     23 => 'D50',
     24 => 'ISO Studio Tungsten',
+    25 =>  'Daylight', # Exif3.1
+    26 =>  'Day White', # Exif3.1
+    27 =>  'Cool White', # Exif3.1
+    28 =>  'White', # Exif3.1
+    29 =>  'Warm White', # Exif3.1
+    30 =>  'Daylight LED',  # Exif3.1 (D 5700-7100K)
+    31 =>  'Day White LED', # Exif3.1 (N 4600-5500K)
+    32 =>  'Cool White LED',# Exif3.1 (W 3800-4500K)
+    33 =>  'White LED',     # Exif3.1 (WW 3250-3800K)
+    34 =>  'Warm White LED',# Exif3.1 (L 2600-3250K)
     255 => 'Other',
 );
 
@@ -209,11 +219,11 @@ $formatName[129] = 'utf8';  # (Exif 3.0)
     6 => 'JPEG (old-style)', #3
     7 => 'JPEG', #4
     8 => 'Adobe Deflate', #3
-    9 => 'JBIG B&W', #3
+    9 => 'JBIG B&W or VC-5', #3 / github411
     10 => 'JBIG Color', #3
     99 => 'JPEG', #16
     262 => 'Kodak 262', #16
-    32766 => 'Next or Sony ARW Compressed 2', #3/Milos
+    32766 => 'NeXt or Sony ARW Compressed 2', #3/Milos
     32767 => 'Sony ARW Compressed', #16
     32769 => 'Packed RAW', #PH (used by Epson, Nikon, Samsung)
     32770 => 'Samsung SRW Compressed', #PH
@@ -381,6 +391,20 @@ my %opcodeInfo = (
         14 => 'WarpRectilinear2', # (DNG 1.6)
     },
     PrintConvInv => undef,  # (so the inverse conversion is not performed)
+);
+
+# lookups for LearningOptOutIn tag
+my %use = (
+    0 => 'All / Individual Usage Not Specified',
+    1 => 'Non-Generative AI/ML Training',
+    2 => 'Generative AI/ML Training',
+    3 => 'Data Mining',
+    4 => 'Input to Foundation Model (Trained AI/ML Model)',
+);
+my %ind = (
+    0 => 'Opt-out',
+    1 => 'Opt-in',
+    2 => 'Unspecified',
 );
 
 # main EXIF tag table
@@ -1431,6 +1455,7 @@ my %opcodeInfo = (
         WriteGroup => 'IFD0',
         Mandatory => 1,
         PrintConv => {
+          # 0 - written by Adobe DNG converter 18.1 when converting from CR3
             1 => 'Centered',
             2 => 'Co-sited',
         },
@@ -2117,8 +2142,16 @@ my %opcodeInfo = (
     0x8827 => {
         Name => 'ISO',
         Notes => q{
-            called ISOSpeedRatings by EXIF 2.2, then PhotographicSensitivity by the EXIF
-            2.3 spec.
+            called ISOSpeedRatings by EXIF 2.2, then PhotographicSensitivity by EXIF
+            2.3.  This tag has a maximum value of 65535 because the brain-dead EXIF
+            specification limits it to a short integer, and while they can change the
+            name of the tag in an updated EXIF specification, they can't allow a larger
+            storage format for some reason.  For higher ISO settings, see the other
+            ISO-related tags StandardOutputSensitivity, RecommendedExposureIndex,
+            ISOSpeed, ISOSpeedLatitudeyyy and ISOSpeedLatitudezzz.  But the meanings of
+            these new tags are anyone's guess since the defining specification, ISO
+            12232, is imprisoned by the ISO organization who extort a ransom for the
+            release of this information
         },
         Writable => 'int16u',
         Count => -1,
@@ -2471,6 +2504,36 @@ my %opcodeInfo = (
         RawConvInv => 'Image::ExifTool::Exif::EncodeExifText($self,$val)',
         # SHOULD ADD SPECIAL LOGIC TO ALLOW CONDITIONAL OVERWRITE OF
         # "UNKNOWN" VALUES FILLED WITH SPACES
+    },
+    0x9287 => { #Exif3.1
+        Name => 'LearningOptOutIn',
+        Writable => 'undef',
+        Format => 'int16u',
+        Notes => 'multiple values: 0. "'.join('","',@use{0..4}).'
+                                ", 1. "'.join('","',@ind{0..2}).'"',
+        Count => -1,
+        PrintConv => sub {
+            my @a = split ' ', shift;
+            my ($i, @rtn);
+            for ($i=1; $i<@a; ++$i) {
+                push @rtn, (($i & 1) ? $use{$a[$i]} : $ind{$a[$i]}) || "Unknown($a[$i])";
+            }
+            return join('; ', @rtn);
+        },
+        PrintConvInv => sub {
+            my @a = split /; ?/, shift;
+            my ($i, @rtn);
+            for ($i=0; $i<@a; ++$i) {
+                my ($v, $multi) = Image::ExifTool::ReverseLookup($a[$i], ($i & 1) ? \%ind : \%use);
+                if (not defined $v) {
+                    $Image::ExifTool::evalWarning = qq{Can't convert "$a[$i]" (} .
+                        ($multi ? 'multiple' : 'no') . " matches)";
+                    return undef;
+                }
+                push @rtn, $v;
+            }
+            return join(' ', int(@rtn / 2), @rtn);
+        },
     },
     0x9290 => {
         Name => 'SubSecTime',
@@ -2908,7 +2971,48 @@ my %opcodeInfo = (
         },
     },
     # 0xa40d - int16u: 0 (GE E1486 TW)
+    0xa40d => { #Exif3.1
+        Name => 'DevelopmentType',
+        Writable => 'int16u',
+        ValueConv => '($val >> 8) . " " . ($val & 0xff)',
+        ValueConvInv => 'my @a=split " ",$val; (($a[0] & 0xff) << 8) + ($a[1] & 0xff)',
+        PrintConv => [{
+            1 => 'Accurate Reproduction',
+            2 => 'Small Differences',
+            4 => 'Extreme Differences',
+        },{
+            1 => 'Factory Default Settings',
+            2 => 'Not Default Settings',
+            4 => 'Unknown Settings',
+        }],
+    },
     # 0xa40e - int16u: 1 (GE E1486 TW)
+    0xa40e => { #Exif3.1
+        Name => 'DevelopmentTypeDescription',
+        Writable => 'string',
+        ValueConv => '$self->Decode($val, "UTF8")',
+        ValueConvInv => '$self->Encode($val,"UTF8")',
+    },
+    0xa40f => { #Exif3.1
+        Name => 'DistortionCorrection',
+        Writable => 'int16u',
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
+    },
+    0xa410 => { #Exif3.1
+        Name => 'ChromaticAberrationCorrection',
+        Writable => 'int16u',
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
+    },
+    0xa411 => { #Exif3.1
+        Name => 'ShadingCorrection',
+        Writable => 'int16u',
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
+    },
+    0xa412 => { #Exif3.1
+        Name => 'NoiseReduction',
+        Writable => 'int16u',
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
+    },
     0xa420 => { Name => 'ImageUniqueID', Writable => 'string' },
     0xa430 => { #24
         Name => 'OwnerName',
@@ -4698,7 +4802,7 @@ my %subSecConv = (
         PrintConv => 'sprintf("%.1f",$val)',
     },
     FocalLength35efl => { #26/PH
-        Description => 'Focal Length',
+        Description => 'Focal Length 35mm Equiv',
         Notes => 'this value may be incorrect if the image has been resized',
         Groups => { 2 => 'Camera' },
         Require => {
@@ -5066,8 +5170,8 @@ my %subSecConv = (
             0 => 'EXIF:DateTimeOriginal',
         },
         Desire => {
-            1 => 'SubSecTimeOriginal',
-            2 => 'OffsetTimeOriginal',
+            1 => 'EXIF:SubSecTimeOriginal',
+            2 => 'EXIF:OffsetTimeOriginal',
         },
         WriteAlso => {
             'EXIF:DateTimeOriginal' => '($val and $val=~/^(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/) ? $1 : undef',
@@ -5085,8 +5189,8 @@ my %subSecConv = (
             0 => 'EXIF:CreateDate',
         },
         Desire => {
-            1 => 'SubSecTimeDigitized',
-            2 => 'OffsetTimeDigitized',
+            1 => 'EXIF:SubSecTimeDigitized',
+            2 => 'EXIF:OffsetTimeDigitized',
         },
         WriteAlso => {
             'EXIF:CreateDate' => '($val and $val=~/^(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/) ? $1 : undef',
@@ -5104,8 +5208,8 @@ my %subSecConv = (
             0 => 'EXIF:ModifyDate',
         },
         Desire => {
-            1 => 'SubSecTime',
-            2 => 'OffsetTime',
+            1 => 'EXIF:SubSecTime',
+            2 => 'EXIF:OffsetTime',
         },
         WriteAlso => {
             'EXIF:ModifyDate' => '($val and $val=~/^(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/) ? $1 : undef',
@@ -6169,9 +6273,7 @@ sub NextOffsetName($;$)
 
 #------------------------------------------------------------------------------
 # Process EXIF directory
-# Inputs: 0) ExifTool object reference
-#         1) Reference to directory information hash
-#         2) Pointer to tag table for this directory
+# Inputs: 0) ExifTool ref, 1) dirInfo ref, 2) tag table ref
 # Returns: 1 on success, otherwise returns 0 and sets a Warning
 sub ProcessExif($$$)
 {
@@ -7156,7 +7258,7 @@ EXIF and TIFF meta information.
 
 =head1 AUTHOR
 
-Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2026, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

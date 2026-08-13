@@ -37,7 +37,7 @@ use vars qw($VERSION %leicaLensTypes);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '2.28';
+$VERSION = '2.29';
 
 sub ProcessLeicaLEIC($$$);
 sub WhiteBalanceConv($;$$);
@@ -361,6 +361,7 @@ my %shootingMode = (
                 '16 0'  => '1-area', # (FZ8)
                 '16 16' => '1-area (high speed)', # (FZ8)
                 '16 32' => '1-area +', #forum16903 (G9M2)
+                '16 225'=> '225-area 2', #forum16903 (S5D)
                 '17 0'  => 'Full Area', #forum16903 (G9M2)
                 # '32 0' is Face Detect for FS7, and Face Detect or Focus Tracking
                 # for the DMC-FZ200 (ref 17), and Auto is DMC-L1 guess,
@@ -1439,6 +1440,11 @@ my %shootingMode = (
             2 => 'Standard',
             3 => 'High',
         },
+    },
+    0xd4 => { #forum17795
+        Name => 'HybridLogGamma',
+        Writable => 'int16u',
+        PrintConv => { 0 => 'Off', 1 => 'On' },
     },
     0xd6 => { #PH (DC-S1)
         Name => 'NoiseReductionStrength',
@@ -2958,7 +2964,7 @@ Panasonic and Leica maker notes in EXIF information.
 
 =head1 AUTHOR
 
-Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2026, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

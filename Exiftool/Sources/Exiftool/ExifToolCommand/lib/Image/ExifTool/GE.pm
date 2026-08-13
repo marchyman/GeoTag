@@ -51,6 +51,8 @@ sub ProcessGE2($$$);
     # 0x0600 - int32u: 0
 );
 
+1; # end
+
 __END__
 
 =head1 NAME
@@ -68,7 +70,7 @@ General Imaging maker notes.
 
 =head1 AUTHOR
 
-Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2026, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

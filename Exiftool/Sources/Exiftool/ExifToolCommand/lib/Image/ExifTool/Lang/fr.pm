@@ -1234,7 +1234,7 @@ $VERSION = '1.37';
     },
    'BabyAge' => 'Âge du bébé',
    'BabyName' => 'Nom du bébé',
-   'BackLight' => {
+   'Backlight' => {
       Description => 'Contre-jour',
       PrintConv => {
         'Back Lit 1' => 'Rétroéclairage 1',
@@ -11270,7 +11270,7 @@ and values.
 
 =head1 AUTHOR
 
-Copyright 2003-2025, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2026, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
