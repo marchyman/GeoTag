@@ -26,6 +26,7 @@ let package = Package(
                         .copy("nometadata.RAF"),
                         .copy("nolocation.jpg"),
                         .copy("location.jpg"),
+                        .copy("location+void.jpg"),
                         .copy("status.DNG"),
                         .copy("toosmall.jpg"),
                         .copy("noelevation.jpg"),

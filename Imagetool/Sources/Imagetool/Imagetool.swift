@@ -84,6 +84,11 @@ public struct Imagetool {
             }
             if let alt = gpsData[Self.GPSAltitude] as? Double,
                let altRef = gpsData[Self.GPSAltitudeRef] as? Int {
+                // Do not ignore GPSStatus if the elevation is 0.0
+                // with the void flag set
+                if alt == 0.0, status == "V"  {
+                    return metadata
+                }
                 metadata.elevation = altRef == 0 ? alt : -alt
             }
 

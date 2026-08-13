@@ -55,11 +55,32 @@ struct ImagetoolTests {
             Bundle.module.url(forResource: "status",
                               withExtension: "DNG")
         )
-        let metadata = Imagetool.metadata(from: url, useGpsStatus: true)
+        // should not report 0/0 location even when ignoring status
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: false)
         #expect(metadata.timestamp == "2016:04:01 15:54:48")
         #expect(metadata.location == nil)
         #expect(metadata.elevation == nil)
         #expect(metadata.city == nil)
+    }
+
+    @Test func imageWithLocationAndVoidStatus() async throws {
+        let url = try #require(
+            Bundle.module.url(forResource: "location+void",
+                              withExtension: "jpg")
+        )
+        // Ignore void status, should report location
+        let metadata = Imagetool.metadata(from: url, useGpsStatus: false)
+        #expect(metadata.timestamp == "2026:08:07 18:42:50")
+        let location = try #require(metadata.location)
+        #expect(location.latitude == 51.38732666666667)
+        #expect(location.longitude == -0.7698766666666667)
+        #expect(metadata.elevation == 99.88122731771692)
+        #expect(metadata.city == nil)
+        // Do not ignore void status
+        let metadata2 = Imagetool.metadata(from: url, useGpsStatus: true)
+        #expect(metadata2.timestamp == "2026:08:07 18:42:50")
+        #expect(metadata2.location == nil)
+        #expect(metadata2.elevation == nil)
     }
 
     @Test func imageNoElevation() async throws {
