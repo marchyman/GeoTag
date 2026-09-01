@@ -32,7 +32,9 @@ let package = Package(
             resources: [
                 .copy("alldata.jpg"),
                 .copy("262M1559.DNG"),
-                .copy("262M1559.xmp")
+                .copy("262M1559.xmp"),
+                .copy("DSC04801.ARW"),
+                .copy("DSC04801.xmp")
             ]
         )
     ],

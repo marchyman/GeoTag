@@ -60,12 +60,23 @@ public struct ImageData: Identifiable, Sendable {
             FileManager.default.fileExists(atPath: sidecarURL.path)
         let name = url.lastPathComponent + (hasSidecar ? "*" : "")
 
+        // Sidecar files from Capture One apparently do not contain all
+        // image metadata, only metadata items overridden inside of
+        // capture one. To handle that situation always process image
+        // metadata first
+
+        let imageMetadata = Imagetool.metadata(from: url,
+                                               useGpsStatus: useGpsStatus)
+
         var metadata: Metadata
+
         if hasSidecar {
+            // override imageMetadata with metadata from the sidecar file
             metadata = Imagetool.metadata(from: url, xmp: sidecarURL,
+                                          overriding: imageMetadata,
                                           useGpsStatus: useGpsStatus)
         } else {
-            metadata = Imagetool.metadata(from: url, useGpsStatus: useGpsStatus)
+            metadata = imageMetadata
         }
         self.init(metadata: metadata, name: name)
     }

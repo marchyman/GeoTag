@@ -10,7 +10,7 @@ struct ImageView: View {
     var body: some View {
         Group {
             if let image = thumbnail {
-                image.resizable().aspectRatio(contentMode: .fit)
+                image.resizable().scaledToFit()
             } else {
                 Image(systemName: "photo")
                     .font(.system(size: 96))

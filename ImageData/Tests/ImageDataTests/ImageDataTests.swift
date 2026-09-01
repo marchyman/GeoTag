@@ -46,6 +46,19 @@ struct ImageDataTests {
         #expect(imageData.fullPath == url.path)
     }
 
+    @Test("URL with Sidecar containing partial data")
+    func initFromURLAndXmp() async throws {
+        let url = try #require(
+            Bundle.module.url(forResource: "DSC04801",
+                              withExtension: "ARW")
+        )
+        let imageData = ImageData(from: url, useGpsStatus: false)
+        #expect(imageData.name == "DSC04801.ARW*")
+        #expect(imageData.updatable)
+        #expect(imageData.fullPath == url.path)
+        #expect(imageData.metadata.location != nil)
+    }
+
     @Test func initFromPhotos() async throws {
         let imageData = ImageData(from: PhotosPickerItem(itemIdentifier: "TestItem"),
                                   asset: nil)

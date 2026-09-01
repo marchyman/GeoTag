@@ -118,6 +118,7 @@ public struct Imagetool {
 
     public static func metadata(from imageURL: URL,
                                 xmp: URL,
+                                overriding imageMetadata: Metadata,
                                 useGpsStatus: Bool) -> Metadata {
         let metadata: Metadata
 
@@ -129,6 +130,7 @@ public struct Imagetool {
             }
             metadata = Exiftool.helper.metadata(from: sandbox.xmpURL,
                                                 primaryURL: imageURL,
+                                                overriding: imageMetadata,
                                                 useGpsStatus: useGpsStatus)
         } else {
             Self.logger.error("""

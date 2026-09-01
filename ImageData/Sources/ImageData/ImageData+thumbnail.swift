@@ -39,7 +39,7 @@ extension ImageData {
         VStack {
             Image(systemName: "photo.badge.exclamationmark")
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .scaledToFit()
                 .opacity(0.18)
         }
         .frame(width: 1024, height: 1024)

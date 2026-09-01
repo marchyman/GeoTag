@@ -125,6 +125,7 @@ struct ImagetoolTests {
             Bundle.module.url(forResource: "262M1559",
                               withExtension: "xmp"))
         let metadata = Imagetool.metadata(from: url, xmp: xmp,
+                                          overriding: Metadata(source: .image(url)),
                                           useGpsStatus:
         false)
         #expect(metadata.dateTimeCreated == "2019:03:11 11:47:20")

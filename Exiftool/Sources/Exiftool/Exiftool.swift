@@ -136,12 +136,18 @@ extension Exiftool {
     // swiftlint:disable cyclomatic_complexity
     public func metadata(from xmp: URL?,
                          primaryURL: URL,
+                         overriding imageMetadata: Metadata? = nil,
                          useGpsStatus: Bool) -> Metadata {
         let url: URL
         var metadata: Metadata
         if let xmp {
             url = xmp
-            metadata = Metadata(source: .xmp(primaryURL))
+            if let imageMetadata {
+                metadata = Metadata(converting: imageMetadata,
+                                    to: .xmp(primaryURL))
+            } else {
+                metadata = Metadata(source: .xmp(primaryURL))
+            }
         } else {
             url = primaryURL
             metadata = Metadata(source: .image(primaryURL))
