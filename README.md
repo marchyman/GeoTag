@@ -26,6 +26,9 @@ ExifTool for such updates.  The original image file is not changed.
 
 ## WIP
 
+- Treat sidecar file metadata as overrrides to image metadata, not a complete
+  replacement. Some image editors apparently create sidecar files with
+  only differences instead of the complete set of metadata.
 - Add a settings option to respect the GPSStatus tag in GPS Metadata.
   GeoTag will ignore GPSStatus unless the reported latitude and longitude
   are 0.
