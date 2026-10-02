@@ -8,7 +8,7 @@ extension ImageData {
         var image: Image?
         switch metadata.source {
         case .image(let url), .xmp(let url):
-            if let nsImage = Imagetool.imageThumbnail(url: url) {
+            if let nsImage = Imagetool.imageThumbnail(url: url, scale: scale) {
                 image = Image(nsImage: nsImage)
             }
         case .photos(let pickerItem, _):
