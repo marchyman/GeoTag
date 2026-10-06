@@ -29,6 +29,31 @@ struct MapView: View {
     @State private var otherPins: [OtherPin] = []
     @State private var tracks: [MapTrack] = []
 
+    // Handle tap gesture to get locations
+    private func tap(proxy: MapProxy) -> some Gesture {
+        SpatialTapGesture().onEnded { position in
+            mapFocus.wrappedValue = nil  // get rid of any search views
+            if let id = store.mostSelected {
+                if let loc = proxy.convert(position.location, from: .local) {
+                    store.send(.locationChanged(loc),
+                               description: "map click") {
+                        // remember the current selection
+                        let selected = store.selection
+                        Task {
+                            let address =
+                                await ReverseLocationFinder
+                                    .reverseGeocode(store: store, id: id)
+                            if let address {
+                                store.send(.addressChanged(selected, address),
+                                           undoable: false)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     var body: some View {
         MapReader { mapProxy in
             Map(position: $cameraPosition) {
@@ -73,27 +98,7 @@ struct MapView: View {
                 MapContextMenu(camera: camera,
                                mapStyleName: $mapStyleName)
             }
-            .simultaneousGesture(SpatialTapGesture().onEnded { position in
-                mapFocus.wrappedValue = nil  // get rid of any search views
-                if let id = store.mostSelected {
-                    if let loc = mapProxy.convert(position.location, from: .local) {
-                        store.send(.locationChanged(loc),
-                                   description: "map click") {
-                            // remember the current selection
-                            let selected = store.selection
-                            Task {
-                                let address =
-                                await ReverseLocationFinder.reverseGeocode(store: store,
-                                                                           id: id)
-                                if let address {
-                                    store.send(.addressChanged(selected, address),
-                                               undoable: false)
-                                }
-                            }
-                        }
-                    }
-                }
-            })
+            .gesture(tap(proxy: mapProxy))
             .onChange(of: mapStyleName) {
                 savedMapStyle = mapStyleName.rawValue
             }

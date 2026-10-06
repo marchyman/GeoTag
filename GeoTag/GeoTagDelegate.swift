@@ -13,6 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         logger.info("\(#function, privacy: .public): store is \(self.store == nil ? "nil" : "set", privacy: .public)")
+        logger.debug("state version: \(self.store == nil ? 0 : self.store!.state.version, privacy: .public)")
         NSWindow.allowsAutomaticWindowTabbing = false
     }
 
@@ -50,6 +51,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         logger.info("\(#function, privacy: .public)")
         if let store {
+            logger.debug("terminate state version: \(store.state.version, privacy: .public)")
             if store.saveInProgress || store.unsavedChanges {
                 store.send(.quitRequested, undoable: false)
                 return .terminateCancel
