@@ -8,11 +8,11 @@ typealias GeoTagStore = Store<GeoTagState, GeoTagEvent>
 @main
 struct GeoTagApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
-    @State private var store = Store(initialState: GeoTagState(),
-                                     reduce: GeoTagReducer(),
-                                     undoEnabled: true,
-                                     didUndo: GeoTagState.didUndoRedo,
-                                     didRedo: GeoTagState.didUndoRedo)
+   private var store = Store(initialState: GeoTagState(),
+                             reduce: GeoTagReducer(),
+                             undoEnabled: true,
+                             didUndo: GeoTagState.didUndoRedo,
+                             didRedo: GeoTagState.didUndoRedo)
 
     init() {
         appDelegate.store = store

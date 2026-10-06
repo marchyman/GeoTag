@@ -26,11 +26,6 @@ ExifTool for such updates.  The original image file is not changed.
 
 ## WIP
 
-A release with the following fixes will not occur until I find out if
-Xcode is broken or my code is doing something wrong. As of Xcode 27 if you
-modify a location and then quit without saving the test for unsaved changes
-fails. Must fix or work around before release.
-
 - Do not report location changes when a map control is clicked.
 - Thumbnail image scaling (pull request from skatsubo on github)
 - Treat sidecar file metadata as overrrides to image metadata, not a complete
