@@ -70,6 +70,8 @@ Mostly the same user interface, but restructured and rewriten under the hood.
 
 ### Known issues
 
+- sidecar files named using the darktable/nitro format (file.ext.xmp) are not
+  recognized.
 - Images from the Photos Library can not always be displayed. This appears
   to be an Apple issue that has been reported many times over the years. No
   known workaround.
@@ -77,13 +79,15 @@ Mostly the same user interface, but restructured and rewriten under the hood.
 - When showing pins for all selected locations the red (most selected) pin
   may be hidden by the pin of another location near by unless the zoom level
   is such that both locations are slightly separated on the map.
-- when changing the selection to an image that has a location some of the pin
-  may off the map view.  In an extreme case only the point of the pin is on
-  the map and can not be seen. If you do not see a pin when you expect to
-  zoom out slightly.
+- when changing the selection to an image that has a location some portion
+  of the pin may be off the map view.  In an extreme case only the point of
+  the pin is on the map and can not be seen. If you do not see a pin when
+  you expect to zoom out slightly.
 - Double clicking to zoom in or option-double clicking to zoom out will
   move the pins of selected items. Deselect all items or use a different
   zoom method to workaround this issue.
+- The 3D button does not work when the map is in the image or one of the
+  hybrid modes.
 
 ---
 
