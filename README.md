@@ -24,9 +24,10 @@ ExifTool for such updates.  The original image file is not changed.
 - Use GeoTag 5.1 if running on macOS Ventura.
 - Those running earlier versions of macOS can use GeoTag version 4.15.
 
-## WIP
+## GeoTag 6.1
 
-- Do not report location changes when a map control is clicked.
+### Updates
+
 - Thumbnail image scaling (pull request from skatsubo on github)
 - Treat sidecar file metadata as overrrides to image metadata, not a complete
   replacement. Some image editors apparently create sidecar files with
@@ -36,37 +37,9 @@ ExifTool for such updates.  The original image file is not changed.
   are 0.
 - exiftool 13.59
 
-## GeoTag 6.0
-
-Mostly the same user interface, but restructured and rewriten under the hood.
-
-> [!NOTE] 6.0.2 improves map search
-
-> [!NOTE] 6.0.1 fixes these issues found in the 6.0 release
-> - Using finder 'open with' when multiple images are selected would open
->   multiple windows.
-> - Save was not enabled when the only change was to image timestamps
->
-> A side effect of the multiple window fix is that closing the window no
-> longer terminates the app.  You must use ⌘Q or the menu.
-
-### Updates
-
-- Better Undo/Redo support with ability to undo more things. The undo
-  and redo menu items now work correctly.
-- ⌘f to select map search field, ⌘F to select table search field.
-
 ### Bug Fixes
 
-- Table of images was not focused when leaving search or text fields; a
-  cause cut/copy/paste intermitent failures. Resolved.
-- option to update file modification time used the previous time if the
-  timestamp was also updated; resolved
-- issues reading elevation from xmp files resolved
-- undo/redo menu
-- using `open with...` from finder or `open -a GeoTag ...` from the command
-  line no longer causes the app to quit when it was already running.
-- Apple added Fuji compressed raw image file support
+- Do not report location changes when a map control is clicked.
 
 ### Known issues
 

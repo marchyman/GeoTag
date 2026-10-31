@@ -1,3 +1,55 @@
+## 6.0
+
+Mostly the same user interface, but restructured and rewriten under the hood.
+
+> [!NOTE] 6.0.2 improves map search
+
+> [!NOTE] 6.0.1 fixes these issues found in the 6.0 release
+> - Using finder 'open with' when multiple images are selected would open
+>   multiple windows.
+> - Save was not enabled when the only change was to image timestamps
+>
+> A side effect of the multiple window fix is that closing the window no
+> longer terminates the app.  You must use ⌘Q or the menu.
+
+### Updates
+
+- Better Undo/Redo support with ability to undo more things. The undo
+  and redo menu items now work correctly.
+- ⌘f to select map search field, ⌘F to select table search field.
+
+### Bug Fixes
+
+- Table of images was not focused when leaving search or text fields; a
+  cause cut/copy/paste intermitent failures. Resolved.
+- option to update file modification time used the previous time if the
+  timestamp was also updated; resolved
+- issues reading elevation from xmp files resolved
+- undo/redo menu
+- using `open with...` from finder or `open -a GeoTag ...` from the command
+  line no longer causes the app to quit when it was already running.
+- Apple added Fuji compressed raw image file support
+
+### Known issues
+
+- sidecar files named using the darktable/nitro format (file.ext.xmp) are not
+  recognized.
+- Images from the Photos Library can not always be displayed. This appears
+  to be an Apple issue that has been reported many times over the years. No
+  known workaround.
+- Undo/Redo are disabled in text and search fields.
+- When showing pins for all selected locations the red (most selected) pin
+  may be hidden by the pin of another location near by unless the zoom level
+  is such that both locations are slightly separated on the map.
+- when changing the selection to an image that has a location some portion
+  of the pin may be off the map view.  In an extreme case only the point of
+  the pin is on the map and can not be seen. If you do not see a pin when
+  you expect to zoom out slightly.
+- Double clicking to zoom in or option-double clicking to zoom out will
+  move the pins of selected items. Deselect all items or use a different
+  zoom method to workaround this issue.
+- The 3D button does not work when the map is in the image or one of the
+  hybrid modes.
 ## 5.7
 
 ### Updates
