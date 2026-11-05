@@ -137,7 +137,8 @@ public struct Imagetool {
                 \(#function, privacy: .public): Can't create sandbox for \
                 \(imageURL.path, privacy: .public)
                 """)
-            metadata = Metadata(source: .xmp(imageURL))
+            // ignore any xmp data
+            metadata = imageMetadata
         }
 
         return metadata
