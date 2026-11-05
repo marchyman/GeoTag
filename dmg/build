@@ -43,7 +43,6 @@ DMG=~/Desktop/${NAME}.dmg
 
 # create read/write DMG and open it
 rm -rf ${WORK}
-#hdiutil create -size 100m -fs 'Case-sensitive APFS' -volname ${NAME} ${WORK}
 diskutil image create blank --size 100m --volumeName ${NAME} ${WORK}
 open ${WORK}
 sleep 2 # give time for the volume to open
@@ -70,12 +69,10 @@ xattr -wx com.apple.FinderInfo \
      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00" ${DIR}
 
 # unmount the volume
-#hdiutil eject "/Volumes/${NAME}"
 diskutil eject "/Volumes/${NAME}"
 
 # convert the DNG to format UDZ0 and clean up
 rm -f ${DMG}
-#hdiutil convert ${WORK} -ov -format UDZO -imagekey zlib-level=9 -o ${DMG}
 diskutil image create from --format UDZO ${WORK} ${DMG}
 rm -rf ${WORK}
 
