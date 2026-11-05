@@ -13,7 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         logger.info("\(#function, privacy: .public): store is \(self.store == nil ? "nil" : "set", privacy: .public)")
-        logger.debug("state version: \(self.store == nil ? 0 : self.store!.state.version, privacy: .public)")
+        logger.debug("state version: \(self.store?.state.version ?? 0, privacy: .public)")
         NSWindow.allowsAutomaticWindowTabbing = false
     }
 
